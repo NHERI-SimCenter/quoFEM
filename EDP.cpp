@@ -43,6 +43,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QLabel>
 #include <QLineEdit>
 #include <QJsonObject>
+#include <QFrame>
 
 //
 // headers for EDPDistribution subclasses that user can select
@@ -65,13 +66,13 @@ EDP::EDP(QWidget *parent)
     variableName->setMinimumWidth(100);
     nameLayout->addWidget(variableLabel);
     nameLayout->addWidget(variableName);
-    nameLayout->setSpacing(10);
+    nameLayout->setSpacing(0);
     nameLayout->setMargin(0);
 
     QWidget *theWidget = new QWidget();
     QHBoxLayout *widgetLayout = new QHBoxLayout;
     widgetLayout->addLayout(nameLayout);
-    widgetLayout->setSpacing(10);
+    widgetLayout->setSpacing(0);
     widgetLayout->setMargin(0);
     theWidget->setLayout(widgetLayout);
     widgetLayout->addStretch();
@@ -84,7 +85,7 @@ EDP::EDP(QWidget *parent)
     //    mainLayout->insertWidget(mainLayout->count()-1, theDistribution);
     //    mainLayout->addWidget(theDistribution);
 
-    mainLayout->setSpacing(10);
+    mainLayout->setSpacing(0);
     mainLayout->setMargin(0);
 
     this->setLayout(mainLayout);

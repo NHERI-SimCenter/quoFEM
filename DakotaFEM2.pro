@@ -13,6 +13,7 @@ TEMPLATE = app
 
 INCLUDEPATH += ../widgets/RandomVariables
 include(../widgets/RandomVariables/RandomVariables.pri)
+include(../widgets/Common/Common.pri)
 
 SOURCES += main.cpp\
         MainWindow.cpp \

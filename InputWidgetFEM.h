@@ -30,7 +30,7 @@ public slots:
    void chooseFileName2(void);
 
 private:
-    QHBoxLayout *layout;
+    QVBoxLayout *layout;
     QWidget     *femSpecific;
     QComboBox   *femSelection;
 

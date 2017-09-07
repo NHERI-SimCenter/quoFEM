@@ -22,6 +22,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QDebug>
+#include <HeaderWidget.h>
+#include <FooterWidget.h>
 
 
 #include "InputWidgetEDP.h"
@@ -49,7 +51,14 @@ MainWindow::MainWindow(QWidget *parent) :
   this->makeUQMethod();
   this->makeFooter(); // this should be in some parent NHERI widget class
   
-  resize(QDesktopWidget().availableGeometry(this).size() * 0.9);
+  QRect rec = QApplication::desktop()->screenGeometry();
+
+  int height = 0.7*rec.height();
+  int width = 0.7*rec.width();
+
+  this->resize(width, height);
+  //resize(QDesktopWidget().availableGeometry(this).size() * 0.9);
+
 }
 
 MainWindow::~MainWindow()
@@ -58,15 +67,19 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::makeHeader(void) {
-  QLabel *header = new QLabel();
-  header->setText(tr("<html><head/><body><p><span style=\" font-size:18pt;\">DAKOTA-FEM Uncertainty Quantification Application </span></p></body></html>"));
+    HeaderWidget *header = new HeaderWidget();
+    header->setHeadingText(tr("DAKOTA-FEM Uncertainty Quantification Application"));
+
+//  QLabel *header = new QLabel();
+//  header->setText(tr("<html><head/><body><p><span style=\" font-size:18pt;\">DAKOTA-FEM Uncertainty Quantification Application </span></p></body></html>"));
   layout->addWidget(header);
 }
 
 void MainWindow::makeFooter(void) {
+      FooterWidget *footer = new FooterWidget();
   // create label for now
-  QLabel *footer = new QLabel();
-  footer->setText(tr("This work is based on material supported by the National Science Foundation under grant 1612843-2"));
+ // QLabel *footer = new QLabel();
+ // footer->setText(tr("This work is based on material supported by the National Science Foundation under grant 1612843-2"));
   layout->addWidget(footer);
 }  
 

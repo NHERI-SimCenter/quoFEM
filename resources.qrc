@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/fonts"/>
+    <qresource prefix="/images ">
+        <file>mdof.gif</file>
+    </qresource>
+</RCC>

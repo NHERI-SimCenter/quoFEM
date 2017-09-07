@@ -26,15 +26,19 @@ signals:
 
 public slots:
    void clear(void);
+    void uqSelectionChanged(const QString &arg1);
  //  void uqMethodChanged(const QString &arg1);
 
 private:
-    QHBoxLayout *layout;
+    QVBoxLayout *layout;
     QWidget     *methodSpecific;
     QComboBox   *samplingMethod;
     QLineEdit   *numSamples;
     QLineEdit   *randomSeed;
     QPushButton *run;
+
+     QComboBox   *uqSelection;
+     QWidget     *uqSpecific;
 };
 
 #endif // SAMPLINGMETHODINPUTWIDGET_H

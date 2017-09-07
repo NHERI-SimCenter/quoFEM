@@ -30,7 +30,9 @@ private:
     void makeEDP(void);
     QVBoxLayout *verticalLayout;
     QVBoxLayout *edpLayout;
-    QGroupBox *edp;
+    //QGroupBox *edp;
+    QFrame *edp;
+    //QWidget *edp;
 
     QVector<EDP *>theEDPs;
 };

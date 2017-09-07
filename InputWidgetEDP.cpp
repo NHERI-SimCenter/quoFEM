@@ -7,6 +7,10 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QLabel>
+#include <QFrame>
+#include <sectiontitle.h>
+#include <QSpacerItem>
+
 
 InputWidgetEDP::InputWidgetEDP(QWidget *parent) : QWidget(parent)
 {
@@ -23,12 +27,14 @@ InputWidgetEDP::~InputWidgetEDP()
 void
 InputWidgetEDP::makeEDP(void)
 {
-    // text and add button at top
-    QHBoxLayout *textRandom = new QHBoxLayout();
-    QLabel *textEDP = new QLabel();
-    textEDP->setText(tr("Output Parameters"));
-    textEDP->setMinimumWidth(250);
-    textEDP->setMaximumWidth(250);
+    // title & add button
+    QHBoxLayout *titleLayout = new QHBoxLayout();
+
+    SectionTitle *title=new SectionTitle();
+    title->setText(tr("Output Parameters"));
+    title->setMinimumWidth(250);
+    QSpacerItem *spacer1 = new QSpacerItem(50,10);
+    QSpacerItem *spacer2 = new QSpacerItem(20,10);
 
     QPushButton *addEDP = new QPushButton();
     addEDP->setMinimumWidth(75);
@@ -36,22 +42,36 @@ InputWidgetEDP::makeEDP(void)
     addEDP->setText(tr("Add"));
     connect(addEDP,SIGNAL(clicked()),this,SLOT(addEDP()));
 
-    textRandom->addWidget(textEDP);
-    textRandom->addWidget(addEDP);
-    textRandom->addStretch();
+    QPushButton *removeEDP = new QPushButton();
+    removeEDP->setMinimumWidth(75);
+    removeEDP->setMaximumWidth(75);
+    removeEDP->setText(tr("Remove"));
+  //  connect(addEDP,SIGNAL(clicked()),this,SLOT(addEDP()));
 
-    verticalLayout->addLayout(textRandom);
+    titleLayout->addWidget(title);
+    titleLayout->addItem(spacer1);
+    titleLayout->addWidget(addEDP);
+    titleLayout->addItem(spacer2);
+    titleLayout->addWidget(removeEDP);
+    titleLayout->addStretch();
+
+    verticalLayout->addLayout(titleLayout);
 
     QScrollArea *sa = new QScrollArea;
     sa->setWidgetResizable(true);
+    sa->setLineWidth(0);
+    sa->setFrameShape(QFrame::NoFrame);
 
-    edp = new QGroupBox(tr(""));
+    edp = new QFrame();
+    edp->setFrameShape(QFrame::NoFrame);
+    edp->setLineWidth(0);
+
 
     edpLayout = new QVBoxLayout;
-    edpLayout->addStretch();
+
     //setLayout(layout);
     edp->setLayout(edpLayout);
-
+    edpLayout->addStretch();
     this->addEDP();
 
      sa->setWidget(edp);
