@@ -1,0 +1,2 @@
+dprepro $1 params.template paramIN.ops
+rm -f *.com *.done *.dat *.log *.sta *.msgOpenSees main.ops >> ops.out

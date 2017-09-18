@@ -1,0 +1,37 @@
+environment
+tabular_data
+tabular_data_file = 'dakotaTab.out'
+
+method,
+sampling
+sample_type = LHS
+samples = 1000
+seed = 0
+
+variables,
+normal_uncertain = 2
+means = 29000 200 
+std_deviations = 100 0.1 
+descriptors = 'E' 'Fy' 
+lognormal_uncertain = 1
+means = 0 
+std_deviations = 0 
+descriptors = 'b' 
+
+
+interface,
+system # asynch evaluation_concurrency = 4
+analysis_driver = 'opensees_driver' 
+parameters_file = 'params.in' 
+results_file = 'results.out' 
+work_directory directory_tag 
+named 'workdir' file_save  directory_save 
+aprepro 
+
+responses, 
+response_functions = 2
+response_descriptors = 'RoofDisp' 'RoofAccel' 
+no_gradients
+no_hessians
+
+OpenSees
