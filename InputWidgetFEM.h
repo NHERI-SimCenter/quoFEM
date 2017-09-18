@@ -3,7 +3,7 @@
 
 // Written: fmckenna
 
-#include <QWidget>
+#include <SimCenterWidget.h>
 
 #include "EDP.h"
 #include <QGroupBox>
@@ -11,7 +11,7 @@
 #include <QVBoxLayout>
 #include <QComboBox>
 
-class InputWidgetFEM : public QWidget
+class InputWidgetFEM : public SimCenterWidget
 {
     Q_OBJECT
 public:
@@ -20,6 +20,9 @@ public:
 
     void outputToJSON(QJsonObject &rvObject);
     void inputFromJSON(QJsonObject &rvObject);
+
+    QString getApplicationName();
+    QString getMainInput();
 
 signals:
 

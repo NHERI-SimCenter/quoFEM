@@ -3,16 +3,17 @@
 
 // Written: fmckenna
 
-#include <QWidget>
+#include <SimCenterWidget.h>
 
 #include "EDP.h"
 #include <QGroupBox>
 #include <QVector>
 #include <QVBoxLayout>
 
-class InputWidgetEDP : public QWidget
+class InputWidgetEDP : public SimCenterWidget
 {
     Q_OBJECT
+
 public:
     explicit InputWidgetEDP(QWidget *parent = 0);
     ~InputWidgetEDP();
@@ -24,6 +25,7 @@ signals:
 
 public slots:
    void addEDP(void);
+   void removeEDP(void);
    void clear(void);
 
 private:

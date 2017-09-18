@@ -12,7 +12,7 @@
 #include <QSpacerItem>
 
 
-InputWidgetEDP::InputWidgetEDP(QWidget *parent) : QWidget(parent)
+InputWidgetEDP::InputWidgetEDP(QWidget *parent) : SimCenterWidget(parent)
 {
     verticalLayout = new QVBoxLayout();
     this->setLayout(verticalLayout);
@@ -46,7 +46,7 @@ InputWidgetEDP::makeEDP(void)
     removeEDP->setMinimumWidth(75);
     removeEDP->setMaximumWidth(75);
     removeEDP->setText(tr("Remove"));
-  //  connect(addEDP,SIGNAL(clicked()),this,SLOT(addEDP()));
+    connect(removeEDP,SIGNAL(clicked()),this,SLOT(removeEDP()));
 
     titleLayout->addWidget(title);
     titleLayout->addItem(spacer1);
@@ -65,7 +65,6 @@ InputWidgetEDP::makeEDP(void)
     edp = new QFrame();
     edp->setFrameShape(QFrame::NoFrame);
     edp->setLineWidth(0);
-
 
     edpLayout = new QVBoxLayout;
 
@@ -98,6 +97,24 @@ void InputWidgetEDP::clear(void)
   }
   theEDPs.clear();
 }
+
+
+void InputWidgetEDP::removeEDP(void)
+{
+    // find the ones selected & remove them
+    int numEDPs = theEDPs.size();
+    for (int i = numEDPs-1; i >= 0; i--) {
+        EDP *theEDP = theEDPs.at(i);
+        if (theEDP->isSelectedForRemoval()) {
+            theEDP->close();
+            edpLayout->removeWidget(theEDP);
+            theEDPs.remove(i);
+            //theEDP->setParent(0);
+            delete theEDP;
+        }
+    }
+}
+
 
 
 void

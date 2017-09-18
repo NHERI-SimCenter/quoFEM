@@ -11,9 +11,10 @@
 #include <QFileDialog>
 #include <QPushButton>
 #include <sectiontitle.h>
+#include <QFileInfo>
 
 
-InputWidgetFEM::InputWidgetFEM(QWidget *parent) : QWidget(parent)
+InputWidgetFEM::InputWidgetFEM(QWidget *parent) : SimCenterWidget(parent)
 {
     femSpecific = 0;
 
@@ -40,11 +41,11 @@ InputWidgetFEM::InputWidgetFEM(QWidget *parent) : QWidget(parent)
     titleLayout->setSpacing(0);
     titleLayout->setMargin(0);
 
-    name->addLayout(titleLayout);
+    layout->addLayout(titleLayout);
 
-    name->setSpacing(10);
-    name->setMargin(0);
-    name->addStretch();
+    layout->setSpacing(10);
+    layout->setMargin(0);
+   // name->addStretch();
 
     femSelection->addItem(tr("OpenSees"));
     femSelection->addItem(tr("OpenSees-2"));
@@ -56,12 +57,14 @@ InputWidgetFEM::InputWidgetFEM(QWidget *parent) : QWidget(parent)
     this->femProgramChanged(tr("OpenSees"));
 
    // layout->addStretch();
-    layout->setSpacing(10);
+   // layout->setSpacing(10);
     layout->setMargin(0);
+    layout->addStretch();
+
     this->setLayout(layout);
 
-     QSizePolicy sp(QSizePolicy::Preferred, QSizePolicy::Fixed);
-     this->setSizePolicy(sp);
+ //    QSizePolicy sp(QSizePolicy::Preferred, QSizePolicy::Fixed);
+  //   this->setSizePolicy(sp);
 }
 
 InputWidgetFEM::~InputWidgetFEM()
@@ -82,11 +85,19 @@ InputWidgetFEM::outputToJSON(QJsonObject &jsonObject)
 {
     QJsonObject fem;
     fem["program"]=femSelection->currentText();
+
     fileName1=file1->text();
     fileName2=file2->text();
 
     fem["inputFile"]=fileName1;
     fem["postprocessScript"]=fileName2;
+
+    QFileInfo fileInfo(fileName1);
+
+    fem["mainInput"]=fileInfo.fileName();
+    QString path = fileInfo.absolutePath();
+    fem["dir"]=path;
+
     jsonObject["fem"]=fem;
 }
 
@@ -98,6 +109,7 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
   QJsonObject fem = jsonObject["fem"].toObject();
   fileName1=fem["inputFile"].toString();
   fileName2=fem["postprocessScript"].toString();
+
 
   QString program=fem["program"].toString();
   int index = femSelection->findText(program);
@@ -129,6 +141,8 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
 
         QHBoxLayout *fileName1Layout = new QHBoxLayout();
         file1 = new QLineEdit;
+        file2 = new QLineEdit;
+
         QPushButton *chooseFile1 = new QPushButton();
         chooseFile1->setText(tr("Choose"));
         connect(chooseFile1,SIGNAL(clicked()),this,SLOT(chooseFileName1()));
@@ -144,9 +158,9 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         femLayout->addLayout(fileName1Layout);
         femLayout->setSpacing(10);
         femLayout->setMargin(0);
+
         femLayout->addStretch();
         femSpecific->setLayout(femLayout);
-
 
     } else if (arg1 == QString("FEAPpv")) {
         QVBoxLayout *femLayout = new QVBoxLayout();
@@ -188,7 +202,9 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         femLayout->setMargin(0);
         femLayout->addStretch();
         femSpecific->setLayout(femLayout);
+
     } else if (arg1 == QString("OpenSees-2")) {
+
         QVBoxLayout *femLayout = new QVBoxLayout();
         QLabel *label1 = new QLabel();
         label1->setText("Input Script");
@@ -213,7 +229,6 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         fileName2Layout->addWidget(file2);
         fileName2Layout->addWidget(chooseFile2);
         fileName2Layout->addStretch();
-
 
         fileName1Layout->setSpacing(10);
         fileName1Layout->setMargin(0);
@@ -244,4 +259,12 @@ void InputWidgetFEM::chooseFileName2(void)
 {
    fileName2=QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
    file2->setText(fileName2);
+}
+
+QString InputWidgetFEM::getApplicationName() {
+    return femSelection->currentText();
+}
+
+QString InputWidgetFEM::getMainInput() {
+    return fileName1;
 }
