@@ -43,6 +43,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 class QLineEdit;
 class QHBoxLayout;
+class QRadioButton;
 
 //class EDP_Data;
 
@@ -56,13 +57,15 @@ public:
     void outputToJSON(QJsonObject &rvObject);
     void inputFromJSON(QJsonObject &rvObject);
 
+    bool isSelectedForRemoval(void);
+
 signals:
 
 public slots:
 
 private:
    // EDPData *theData;
-
+    QRadioButton *button;
     QLineEdit *variableName;
     QHBoxLayout *mainLayout;
 };

@@ -44,6 +44,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QLineEdit>
 #include <QJsonObject>
 #include <QFrame>
+#include <QRadioButton>
 
 //
 // headers for EDPDistribution subclasses that user can select
@@ -78,8 +79,13 @@ EDP::EDP(QWidget *parent)
     widgetLayout->addStretch();
 
     mainLayout = new QHBoxLayout;
+
+    button = new QRadioButton();
+    mainLayout->addWidget(button);
+    mainLayout->addWidget(theWidget);;
     mainLayout->addStretch();
-    mainLayout->insertWidget(mainLayout->count()-1, theWidget);
+
+   // mainLayout->insertWidget(mainLayout->count()-1, theWidget);
 
     //    theDistribution = new NormalDistribution(this);
     //    mainLayout->insertWidget(mainLayout->count()-1, theDistribution);
@@ -94,6 +100,12 @@ EDP::EDP(QWidget *parent)
 EDP::~EDP()
 {
 
+}
+
+bool
+EDP::isSelectedForRemoval(void)
+{
+ return button->isChecked();
 }
 
 void EDP::outputToJSON(QJsonObject &jsonObject){
