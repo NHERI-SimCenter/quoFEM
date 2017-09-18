@@ -1,106 +1,115 @@
+
+// Written: fmckenna
+// Purpose: to test the INputWidgetSheetBM widget
+
+#include <QTreeView>
+#include <QStandardItemModel>
+#include <QItemSelectionModel>
+#include <QDebug>
 #include "MainWindow.h"
-#include <QDesktopWidget>
-
-#include "ui_mainwindow.h"
-
-#include "RandomVariableInputWidget.h"
-
 #include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QGroupBox>
-#include <QScrollArea>
-#include <QPushButton>
-#include "RandomVariableInputWidget.h"
-#include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QDir>
-#include <QTextStream>
-#include <QAction>
-#include <QJsonDocument>
 #include <QJsonObject>
-#include <QDebug>
+#include <QJsonDocument>
+#include <QMenuBar>
+#include <QAction>
+#include <QMenu>
+#include <QApplication>
+
+#include "SidebarWidgetSelection.h"
+
+#include <InputWidgetEDP.h>;
+#include <InputWidgetFEM.h>;
+#include <InputWidgetUQ.h>;
+#include <RandomVariableInputWidget.h>
+#include <QVBoxLayout>
 #include <HeaderWidget.h>
 #include <FooterWidget.h>
+#include <QPushButton>
+#include <InputWidgetFEM.h>
+#include <InputWidgetUQ.h>
+#include <InputWidgetEDP.h>
+#include <QFileInfo>
 
 
-#include "InputWidgetEDP.h"
-#include "InputWidgetFEM.h"
-#include "SamplingMethodInputWidget.h"
-
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent)
+  : QMainWindow(parent)
 {
-  layout = new QVBoxLayout;
+
+  QWidget *centralWidget = new QWidget();
+  QVBoxLayout *layout = new QVBoxLayout();
+  centralWidget->setLayout(layout);
+
+  HeaderWidget *header = new HeaderWidget();
+  header->setHeadingText(tr("DAKOTA-FEM Uncertainty Quantification Application"));
+
+  layout->addWidget(header);
+
+  random = new RandomVariableInputWidget();
+  edp = new InputWidgetEDP();
+  fem = new InputWidgetFEM();
+  uq = new InputWidgetUQ();
+
+  inputWidget = new SidebarWidgetSelection();
+  inputWidget->addInputWidget(tr("Input Random Variable"), random);
+  inputWidget->addInputWidget(tr("FEM Selection"), fem);
+  inputWidget->addInputWidget(tr("Output Paramaters"), edp);
+  inputWidget->addInputWidget(tr("UQ Selection"), uq);
+  inputWidget->buildTreee();
   
-  // create a widget and make the central widget
-  // set the new widgets layout to be one created
-  QWidget *window = new QWidget();
-  window->setLayout(layout);
-  setCentralWidget(window);
-  
+  inputWidget->setMinimumWidth(800);
+  layout->addWidget(inputWidget,1.0);
+
+   QPushButton *run = new QPushButton();
+   run->setText(tr("RUN"));
+   layout->addWidget(run);
+
+  FooterWidget *footer = new FooterWidget();
+  layout->addWidget(footer);
+
+  this->setCentralWidget(centralWidget);
   
   this->createActions();
-
-  this->makeHeader();
-  this->makeRV();
-  this->makeFEM();
-  this->makeEDP();
-  this->makeUQMethod();
-  this->makeFooter(); // this should be in some parent NHERI widget class
-  
-  QRect rec = QApplication::desktop()->screenGeometry();
-
-  int height = 0.7*rec.height();
-  int width = 0.7*rec.width();
-
-  this->resize(width, height);
-  //resize(QDesktopWidget().availableGeometry(this).size() * 0.9);
-
 }
 
 MainWindow::~MainWindow()
 {
-//    delete ui;
+
 }
 
-void MainWindow::makeHeader(void) {
-    HeaderWidget *header = new HeaderWidget();
-    header->setHeadingText(tr("DAKOTA-FEM Uncertainty Quantification Application"));
+void MainWindow::onRunButtonClicked() {
 
-//  QLabel *header = new QLabel();
-//  header->setText(tr("<html><head/><body><p><span style=\" font-size:18pt;\">DAKOTA-FEM Uncertainty Quantification Application </span></p></body></html>"));
-  layout->addWidget(header);
-}
+    // get program & input file from fem
+    QString application = fem->getApplicationName();
+    QString mainInput = fem->getMainInput();
 
-void MainWindow::makeFooter(void) {
-      FooterWidget *footer = new FooterWidget();
-  // create label for now
- // QLabel *footer = new QLabel();
- // footer->setText(tr("This work is based on material supported by the National Science Foundation under grant 1612843-2"));
-  layout->addWidget(footer);
-}  
+    QFileInfo fileInfo(mainInput);
 
-void MainWindow::makeRV(void) {
-   rvWidget = new RandomVariableInputWidget();
-   layout->addWidget(rvWidget);
-}
+    QString fileName =fileInfo.fileName();
+    QString path = fileInfo.absolutePath();
 
-void MainWindow::makeEDP(void) {
-    edpWidget = new InputWidgetEDP();
-    layout->addWidget(edpWidget);
-}
+    // in inputfile dir, crate a file of the data and copy the dakota python script
+    QString filenameTMP = path + tr("dakota.json");
+     QFile file(filenameTMP);
+     if (!file.open(QFile::WriteOnly | QFile::Text)) {
+       QMessageBox::warning(this, tr("Application"),
+                tr("Cannot write file %1:\n%2.")
+                .arg(QDir::toNativeSeparators(filenameTMP),
+                     file.errorString()));
+       return;
+     }
+     QJsonObject json;
+     inputWidget->outputToJSON(json);
+     QJsonDocument doc(json);
+     file.write(doc.toJson());
+     file.close();
 
-void MainWindow::makeUQMethod(void) {
-    uqWidget = new SamplingMethodInputWidget();
-    layout->addWidget(uqWidget);
-}
 
-void MainWindow::makeFEM(void) {
-    femWidget = new InputWidgetFEM();
-    layout->addWidget(femWidget);
+
+    // invoke the wrapper script
+
+    // read the results
 }
 
 bool MainWindow::save()
@@ -135,15 +144,10 @@ void MainWindow::open()
     loadFile(fileName);
 }
 
-
-
 void MainWindow::newFile()
 {
   // clear old
-  rvWidget->clear();
-  edpWidget->clear();
-  femWidget->clear();
-  uqWidget->clear();
+  inputWidget->clear();
 
   // set currentFile blank
   setCurrentFile(QString());
@@ -184,14 +188,7 @@ bool MainWindow::saveFile(const QString &fileName)
   //
 
   QJsonObject json;
-  rvWidget->outputToJSON(json);
-
-  edpWidget->outputToJSON(json);
-
-  femWidget->outputToJSON(json);
-
-  uqWidget->outputToJSON(json);
-
+  inputWidget->outputToJSON(json);
   QJsonDocument doc(json);
   file.write(doc.toJson());
 
@@ -228,10 +225,7 @@ void MainWindow::loadFile(const QString &fileName)
     file.close();
 
     // given the json object, create the C++ objects
-    rvWidget->inputFromJSON(jsonObj);
-    edpWidget->inputFromJSON(jsonObj);
-   // femWidget->inputFromJSON(jsonObj);
-   // uqWidget->inputFromJSON(jsonObj);
+   inputWidget->inputFromJSON(jsonObj);
 
     setCurrentFile(fileName);
 }
@@ -282,3 +276,4 @@ void MainWindow::createActions() {
  exitAction->setStatusTip(tr("Exit the application"));
  fileMenu->addAction(exitAction);
 }
+

@@ -2,61 +2,48 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-class RandomVariableInputWidget;
-class SamplingMethodInputWidget;
-class InputWidgetUQ;
-class InputWidgetEDP;
+#include <QItemSelection>
+#include <QTreeView>
+#include <QStandardItemModel>
+
+class SidebarWidgetSelection;
+class SimCenterWidget;
 class InputWidgetFEM;
-
-class QVBoxLayout;
-
-namespace Ui {
-class MainWindow;
-}
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
-
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
-
-public slots:
+  Q_OBJECT
+    
+    public:
+  explicit MainWindow(QWidget *parent = 0);
+  ~MainWindow();
+  
+  public slots:
     void newFile();
     void open();
     bool save();
     bool saveAs();
 
-private:
-    void createActions();
+    void onRunButtonClicked();
 
-    // methods to create the widgets
-    void makeHeader(void);
-    void makeFooter(void);
-    void makeRV(void);
-    void makeEDP(void);
-    void makeUQMethod(void);
-    void makeFEM(void);
+  //void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
 
-    // the widgets the above methods create
-    RandomVariableInputWidget *rvWidget;
-    InputWidgetEDP *edpWidget;
-    InputWidgetFEM *femWidget;
-    SamplingMethodInputWidget  *uqWidget;
-
-    // methods for saving/loading from files
+ private:
     void setCurrentFile(const QString &fileName);
     bool saveFile(const QString &fileName);
     void loadFile(const QString &fileName);
 
-    // file for saving to and loading from
+    void createActions();
+
+    //Ui::MainWindow *ui;
+
     QString currentFile;
+    SidebarWidgetSelection *inputWidget;
 
-    // main layout
-    QVBoxLayout *layout;
-
-
+    SimCenterWidget *edp;
+    InputWidgetFEM *fem;
+    SimCenterWidget *uq;
+    SimCenterWidget *random;
 };
 
 #endif // MAINWINDOW_H
