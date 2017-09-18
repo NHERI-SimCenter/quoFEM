@@ -1,0 +1,43 @@
+      RoofDisp  4.4218560000e+00  3.4168153591e-01  9.0479699168e-01  1.2941910857e+00
+     RoofAccel  3.8346200000e+02  4.3071176603e+01  3.1406826718e-01 -1.7239585309e+00
+
+95% confidence intervals for each response function:
+                    LowerCI_Mean      UpperCI_Mean    LowerCI_StdDev    UpperCI_StdDev
+      RoofDisp  3.9976023380e+00  4.8461096620e+00  2.0471273119e-01  9.8184090257e-01
+     RoofAccel  3.2998207065e+02  4.3694192935e+02  2.5805369245e+01  1.2376742220e+02
+
+Simple Correlation Matrix among all inputs and outputs:
+                        E           Fy            b     RoofDisp    RoofAccel 
+           E  1.00000e+00 
+          Fy  1.23008e-01  1.00000e+00 
+           b -5.08149e-02 -2.79143e-01  1.00000e+00 
+    RoofDisp -3.53523e-01  4.50312e-01 -5.06536e-01  1.00000e+00 
+   RoofAccel -4.23184e-01  2.12987e-01 -6.56602e-01  9.41651e-01  1.00000e+00 
+
+Partial Correlation Matrix between input and output:
+                 RoofDisp    RoofAccel 
+           E -5.23736e-01 -6.15237e-01 
+          Fy  4.74324e-01  1.38926e-01 
+           b -5.09758e-01 -7.27420e-01 
+
+Simple Rank Correlation Matrix among all inputs and outputs:
+                        E           Fy            b     RoofDisp    RoofAccel 
+           E  1.00000e+00 
+          Fy  1.00000e-01  1.00000e+00 
+           b  1.00000e-01  0.00000e+00  1.00000e+00 
+    RoofDisp -6.00000e-01  3.00000e-01 -7.00000e-01  1.00000e+00 
+   RoofAccel -7.00000e-01 -1.00000e-01 -6.00000e-01  9.00000e-01  1.00000e+00 
+
+Partial Rank Correlation Matrix between input and output:
+                 RoofDisp    RoofAccel 
+           E -8.72872e-01 -8.01784e-01 
+          Fy  7.47018e-01 -7.47018e-02 
+           b -8.96421e-01 -7.47018e-01 
+
+-----------------------------------------------------------------------------
+
+<<<<< Iterator random_sampling completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =   0.026099 [parent =   0.026085, child =    1.4e-05]
+  Total wall clock =    36.0589

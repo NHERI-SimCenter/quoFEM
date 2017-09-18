@@ -2,11 +2,11 @@
 set a [open floorDispEnv.out r]
 set line [gets $a]; set line [gets $a]; set line [gets $a]
 close $a
-set roofDisp [lindex $line [expr [llength $line] -1]]
+set RoofDisp [lindex $line [expr [llength $line] -1]]
 
 set a [open floorAccEnv.out r]
 set line [gets $a]; set line [gets $a]; set line [gets $a]
 close $a
-set roofAccel [lindex $line [expr [llength $line] -1]]
+set RoofAccel [lindex $line [expr [llength $line] -1]]
 
 
