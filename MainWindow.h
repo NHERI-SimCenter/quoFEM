@@ -9,6 +9,8 @@
 class SidebarWidgetSelection;
 class SimCenterWidget;
 class InputWidgetFEM;
+class InputWidgetUQ;
+class RandomVariableInputWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -40,10 +42,10 @@ class MainWindow : public QMainWindow
     QString currentFile;
     SidebarWidgetSelection *inputWidget;
 
-    SimCenterWidget *edp;
+//    SimCenterWidget *edp;
     InputWidgetFEM *fem;
-    SimCenterWidget *uq;
-    SimCenterWidget *random;
+    InputWidgetUQ *uq;
+    RandomVariableInputWidget *random;
 };
 
 #endif // MAINWINDOW_H

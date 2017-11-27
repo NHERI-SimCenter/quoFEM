@@ -130,15 +130,13 @@ int InputWidgetSampling::processResults(QString &filenameResults) {
         double mean, stdDev, num3, num4;
         std::string haystack;
         fileResults >> haystack >> mean >> stdDev >> num3 >> num4;
-       // std::getline(fileResults, haystack);
-        fprintf(stderr,"%s\n", haystack.c_str());
-       fprintf(stderr, "%f %f %f %f\n", mean, stdDev, num3, num4);
+
        data[i*4] = mean;
        data[i*4+1]=stdDev;
        data[i*4+2]=num3;
        data[i*4+3]=num4;
     }
-  theEdpWidget->processResults(data);
+    theEdpWidget->processResults(data);
 
     delete [] data;
     return 0;

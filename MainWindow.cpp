@@ -29,8 +29,9 @@
 #include <QPushButton>
 #include <InputWidgetFEM.h>
 #include <InputWidgetUQ.h>
-#include <InputWidgetEDP.h>
+//#include <InputWidgetEDP.h>
 #include <QFileInfo>
+#include <QProcess>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -47,14 +48,14 @@ MainWindow::MainWindow(QWidget *parent)
   layout->addWidget(header);
 
   random = new RandomVariableInputWidget();
-  edp = new InputWidgetEDP();
+ // edp = new InputWidgetEDP();
   fem = new InputWidgetFEM();
   uq = new InputWidgetUQ();
 
   inputWidget = new SidebarWidgetSelection();
   inputWidget->addInputWidget(tr("Input Random Variable"), random);
   inputWidget->addInputWidget(tr("FEM Selection"), fem);
-  inputWidget->addInputWidget(tr("Output Paramaters"), edp);
+  // inputWidget->addInputWidget(tr("Output Paramaters"), edp);
   inputWidget->addInputWidget(tr("UQ Selection"), uq);
   inputWidget->buildTreee();
   
@@ -64,7 +65,8 @@ MainWindow::MainWindow(QWidget *parent)
    QPushButton *run = new QPushButton();
    run->setText(tr("RUN"));
    layout->addWidget(run);
-
+   //connect(removeEDP,SIGNAL(clicked()),this,SLOT(removeEDP()));
+   connect(run, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
   FooterWidget *footer = new FooterWidget();
   layout->addWidget(footer);
 
@@ -85,9 +87,12 @@ void MainWindow::onRunButtonClicked() {
     QString mainInput = fem->getMainInput();
 
     QFileInfo fileInfo(mainInput);
+    QDir fileDir = fileInfo.absolutePath();
 
     QString fileName =fileInfo.fileName();
-    QString path = fileInfo.absolutePath();
+
+    // QString path = fileInfo.path();
+    QString path = fileDir.absolutePath() + QDir::separator();
 
     // in inputfile dir, crate a file of the data and copy the dakota python script
     QString filenameTMP = path + tr("dakota.json");
@@ -106,10 +111,13 @@ void MainWindow::onRunButtonClicked() {
      file.close();
 
 
-
     // invoke the wrapper script
+    QProcess *proc = new QProcess();
+    proc->execute("/Users/simcenter/NHERI/DakotaFEM2/localApp/wrapper.sh", QStringList() << path << mainInput );
 
     // read the results
+    QString filenameOUT = path + tr("dakota.out");
+    uq->processResults(filenameOUT);
 }
 
 bool MainWindow::save()

@@ -98,6 +98,11 @@ InputWidgetFEM::outputToJSON(QJsonObject &jsonObject)
     QString path = fileInfo.absolutePath();
     fem["dir"]=path;
 
+    QFileInfo fileInfo2(fileName2);
+
+    fem["mainPostprocessScript"]=fileInfo2.fileName();
+
+
     jsonObject["fem"]=fem;
 }
 
