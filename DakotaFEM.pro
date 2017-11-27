@@ -21,13 +21,15 @@ SOURCES += main.cpp\
     EDP.cpp \
     InputWidgetEDP.cpp \
     InputWidgetFEM.cpp \
-    InputWidgetUQ.cpp
+    InputWidgetUQ.cpp \
+    InputWidgetSampling.cpp
 
 HEADERS  += MainWindow.h \
     EDP.h \
     InputWidgetEDP.h \
     InputWidgetFEM.h \
         SidebarWidgetSelection.h \
-    InputWidgetUQ.h
+    InputWidgetUQ.h \
+    InputWidgetSampling.h
 
 FORMS    += mainwindow.ui
