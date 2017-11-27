@@ -111,15 +111,6 @@ for k in data["randomVariables"]:
         betaUncertainBetas.append(k["betas"])
         numBetaUncertain += 1
 
-# 
-# parse the EDPs
-#
-
-responseDescriptors =[]
-numResponses = 0
-for k in data["edps"]:
-        responseDescriptors.append(k["name"])
-        numResponses += 1
 
 #
 # Write the dakota input file: dakota.in 
@@ -135,7 +126,6 @@ f.write("environment\n")
 f.write("tabular_data\n")
 f.write("tabular_data_file = \'dakotaTab.out\'\n\n")
 
-
 #
 # write out the methods data
 #
@@ -144,20 +134,31 @@ f.write('method,\n')
 
 uqData = data["uqMethod"];
 type = uqData["uqType"];
+
+numResponses=0;
+responseDescriptors=[];
+
 if (type == "Sampling"):
+    samplingData = uqData["samplingMethodData"];
     numSamples = 0;
     seed = 0;    
     f.write('sampling\n');
-    method = uqData["method"];
-    numSamples=uqData["samples"];
-    seed = uqData["seed"];
+    method = samplingData["method"];
+    numSamples=samplingData["samples"];
+    seed = samplingData["seed"];
     f.write('sample_type = ' '{}'.format(method))
     f.write('\n');
     f.write('samples = ' '{}'.format(numSamples))
     f.write('\n');
     f.write('seed = ' '{}'.format(seed))
 
-f.write('\n\n')
+    edps = samplingData["edps"];
+    for edp in edps:
+        responseDescriptors.append(edp["name"]);
+        numResponses += 1;
+
+
+    f.write('\n\n')
 
 #
 # write out the variable data
@@ -340,10 +341,10 @@ f.write('\n\n')
 
 femProgram = femData["program"];
 
-if (femProgram == "OpenSees"):
+if (femProgram == "OpenSees" or femProgram == "OpenSees-2"):
     f.write('interface,\n')
     f.write('system # asynch evaluation_concurrency = 4\n')
-    f.write('analysis_driver = \'opensees_driver\' \n')
+    f.write('analysis_driver = \'fem_driver\' \n')
     f.write('parameters_file = \'params.in\' \n')
     f.write('results_file = \'results.out\' \n')
     f.write('work_directory directory_tag \n')
@@ -354,6 +355,8 @@ if (femProgram == "OpenSees"):
     
 
 # write out the responses
+print(numResponses)
+
 f.write('responses, \n')
 f.write('response_functions = ' '{}'.format(numResponses))
 f.write('\n')
@@ -374,6 +377,9 @@ f.close()  # you can omit in most cases as the destructor will call it
 #
 # if OpenSees, Write the OpenSees file for dprepo
 #
+
+femInputFile = "";
+femPostprocessFile = "";
 
 if (femProgram == "OpenSees"):
 
@@ -409,8 +415,44 @@ if (femProgram == "OpenSees"):
     f.write('source paramOUT.ops \n')
     f.close()
 
-    f = open('opensees_driver', 'w')
+    f = open('fem_driver', 'w')
     f.write('dprepro $1 params.template paramIN.ops\n')
     f.write('OpenSees main.ops >> ops.out\n')
+    f.close()
+
+
+if (femProgram == "OpenSees-2"):
+
+    f = open('params.template', 'w')
+    inputFile = femData["mainInput"];    
+    postprocessScript = femData["mainPostprocessScript"];    
+    f.write('pwd\n')
+    
+    for i in xrange(numUncertain):
+        f.write('set ')
+        f.write(uncertainName[i])
+        f.write(' {')
+        f.write(uncertainName[i])
+        f.write('}\n')
+
+    f.close()
+
+    f = open('main.ops', 'w')
+    f.write('source paramIN.ops \n')
+    f.write('source ')
+    f.write(inputFile)
+    f.write(' \n')
+    f.close()
+
+    f = open('fem_driver', 'w')
+    f.write('dprepro $1 params.template paramIN.ops\n')
+    f.write('OpenSees main.ops >> ops.out\n')
+    f.write('python ')
+    f.write(postprocessScript)
+    for i in xrange(numResponses):
+        f.write(' ')
+        f.write(responseDescriptors[i])    
+                                   
+    f.write('\n')
     f.close()
 

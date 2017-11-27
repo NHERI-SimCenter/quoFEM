@@ -34,9 +34,10 @@ echo $@
 
 dirNAME=$1
 scriptNAME=$2
+#filenameDAKOTA=$3
 
 if [ "$#" -ne 2 ] || ! [ -d "$1" ]; then
-  echo "Usage: $0 dirName scriptName" >&2
+  echo "Usage: $0 dirName scriptName filenameDakota" >&2
   exit 1
 fi
 
@@ -44,16 +45,19 @@ fi
 # cd to directory
 # make a tmp directory and copy all files & subdir to it
 # 
-
+mkdir $dirNAME/tmp.SimCenter
+mkdir $dirNAME/tmp.SimCenter/templatedir
+cp /Users/simcenter/NHERI/DakotaFEM2/localApp/parseJson.py $dirNAME/tmp.SimCenter/templatedir
 cd $dirNAME
-mkdir tmp.SimCenter
-mkdir tmp.SimCenter/templatedir
+#mkdir tmp.SimCenter
+#mkdir tmp.SimCenter/templatedir
 rsync -av --exclude ./tmp.SimCenter ./ ./tmp.SimCenter/templatedir 
+cp $dirName/dakota.json ./tmp.SimCenter/templatedir/dakota.json
 cd ./tmp.SimCenter/templatedir
-python parseJson.py dakota.json
+python parseJson.py $filenameDAKOTA
 mv dakota.in ../
-chmod 'u+x' opensees_driver
-mv opeensees_driver ../
+chmod 'u+x' fem_driver
+mv fem_driver ../
 cd ..
 
 #
