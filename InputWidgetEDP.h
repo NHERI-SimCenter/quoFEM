@@ -21,6 +21,9 @@ public:
     void outputToJSON(QJsonObject &rvObject);
     void inputFromJSON(QJsonObject &rvObject);
 
+    int processResults(double *data);
+    int getNumEDP(void);
+
 signals:
 
 public slots:

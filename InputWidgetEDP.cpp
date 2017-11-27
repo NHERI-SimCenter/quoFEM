@@ -11,6 +11,8 @@
 #include <sectiontitle.h>
 #include <QSpacerItem>
 
+#include <QDebug>
+
 
 InputWidgetEDP::InputWidgetEDP(QWidget *parent) : SimCenterWidget(parent)
 {
@@ -21,7 +23,7 @@ InputWidgetEDP::InputWidgetEDP(QWidget *parent) : SimCenterWidget(parent)
 
 InputWidgetEDP::~InputWidgetEDP()
 {
-
+// qDebug() << "InputWidgetEDP::DESTRCUTOR CALLED\n";
 }
 
 void
@@ -31,7 +33,7 @@ InputWidgetEDP::makeEDP(void)
     QHBoxLayout *titleLayout = new QHBoxLayout();
 
     SectionTitle *title=new SectionTitle();
-    title->setText(tr("Output Parameters"));
+    title->setText(tr("Engineeering Demand Parameters"));
     title->setMinimumWidth(250);
     QSpacerItem *spacer1 = new QSpacerItem(50,10);
     QSpacerItem *spacer2 = new QSpacerItem(20,10);
@@ -87,6 +89,12 @@ void InputWidgetEDP::addEDP(void)
    edpLayout->insertWidget(edpLayout->count()-1, theEDP);
 }
 
+
+int InputWidgetEDP::getNumEDP(void)
+{
+    return theEDPs.length();
+}
+
 void InputWidgetEDP::clear(void)
 {
   // loop over random variables, removing from layout & deleting
@@ -135,13 +143,22 @@ InputWidgetEDP::inputFromJSON(QJsonObject &rvObject)
 {
   this->clear();
 
-    // add the new
-    QJsonArray rvArray = rvObject["edps"].toArray();
-    foreach (const QJsonValue &rvValue, rvArray) {
-        QJsonObject rvObject = rvValue.toObject();
-        EDP *theEDP = new EDP();
-        theEDP->inputFromJSON(rvObject);
-        theEDPs.append(theEDP);
-        edpLayout->insertWidget(edpLayout->count()-1, theEDP);
+  // add the new
+  QJsonArray rvArray = rvObject["edps"].toArray();
+  foreach (const QJsonValue &rvValue, rvArray) {
+    QJsonObject rvObject = rvValue.toObject();
+    EDP *theEDP = new EDP();
+    theEDP->inputFromJSON(rvObject);
+    theEDPs.append(theEDP);
+    edpLayout->insertWidget(edpLayout->count()-1, theEDP);
+  }
+}
+
+int
+InputWidgetEDP::processResults(double *data) {
+    qDebug() << "InputWidgetEDP::processResults";
+
+    for (int i = 0; i <theEDPs.size(); ++i) {
+        theEDPs.at(i)->setResults(&data[i*4]);
     }
 }
