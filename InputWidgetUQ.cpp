@@ -12,9 +12,12 @@
 #include <QPushButton>
 #include <sectiontitle.h>
 
+#include <SimCenterWidget.h>
+#include <InputWidgetSampling.h>
+
 
 InputWidgetUQ::InputWidgetUQ(QWidget *parent)
-    : SimCenterWidget(parent),uqSpecific(0)
+    : SimCenterWidget(parent),uqType(0)
 {
     //femSpecific = 0;
 
@@ -48,7 +51,7 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
 
     uqSelection->addItem(tr("Sampling"));
     uqSelection->addItem(tr("Reliability"));
-    uqSelection->addItem(tr("Optimization"));
+    uqSelection->addItem(tr("Calibration"));
 
     connect(uqSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(uqSelectionChanged(QString)));
 
@@ -86,10 +89,11 @@ void
 InputWidgetUQ::outputToJSON(QJsonObject &jsonObject)
 {
     QJsonObject uq;
-    uq["uqType"]=uqSelection->currentText();
-    uq["method"]=samplingMethod->currentText();
-    uq["samples"]=numSamples->text().toInt();
-    uq["seed"]=randomSeed->text().toDouble();
+
+    if (uqType != 0) {
+        uqType->outputToJSON(uq);
+    }
+    uq["uqType"] = uqSelection->currentText();
     jsonObject["uqMethod"]=uq;
 }
 
@@ -102,76 +106,34 @@ InputWidgetUQ::inputFromJSON(QJsonObject &jsonObject)
     QJsonObject uq = jsonObject["uqMethod"].toObject();
     QString selection = uq["uqType"].toString();
     this->uqSelectionChanged(selection);
+    if (uqType != 0)
+         uqType->inputFromJSON(uq);
+}
 
-    int index;
-    index = uqSelection->findText(selection);
-    uqSelection->setCurrentIndex(index);
-
-    if (selection == tr("Sampling")) {
-        QString method =uq["method"].toString();
-        int samples=uq["samples"].toInt();
-        double seed=uq["seed"].toDouble();
-
-        numSamples->setText(QString::number(samples));
-        randomSeed->setText(QString::number(seed));
-        index = samplingMethod->findText(method);
-        samplingMethod->setCurrentIndex(index);
-    }
+int InputWidgetUQ::processResults(QString &filenameResults)
+{
+    if (samplingWidget != 0)
+        return samplingWidget->processResults(filenameResults);
 }
 
 void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
 {
-    if (uqSpecific != 0) {
+    if (uqType != 0) {
        // layout->rem
-        layout->removeWidget(uqSpecific);
-        delete uqSpecific;
-        uqSpecific = 0;
+        samplingWidget = 0;
+        layout->removeWidget(uqType);
+        delete uqType;
+        uqType = 0;
     }
 
-    uqSpecific = new QWidget();
+    //uqSpecific = new QWidget();
 
     if (arg1 == QString("Sampling")) {
-        QVBoxLayout *methodLayout= new QVBoxLayout;
-        QLabel *label1 = new QLabel();
-        label1->setText(QString("Method"));
-        samplingMethod = new QComboBox();
-        samplingMethod->addItem(tr("LHS"));
-        samplingMethod->addItem(tr("Monte Carlo"));
-
-        methodLayout->addWidget(label1);
-        methodLayout->addWidget(samplingMethod);
-
-       // connect(samplingMethod, SIGNAL(currentIndexChanged(QString)), this, SLOT(uqMethodChanged(QString)));
-
-        QVBoxLayout *samplesLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("# Samples"));
-        numSamples = new QLineEdit();
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-
-        samplesLayout->addWidget(label2);
-        samplesLayout->addWidget(numSamples);
-
-        QVBoxLayout *seedLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Seed"));
-        randomSeed = new QLineEdit();
-        randomSeed->setText(tr("0"));
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-
-        seedLayout->addWidget(label3);
-        seedLayout->addWidget(randomSeed);
-
-        QHBoxLayout *mLayout = new QHBoxLayout();
-        mLayout->addLayout(methodLayout);
-        mLayout->addLayout(samplesLayout);
-        mLayout->addLayout(seedLayout);
-        mLayout->addStretch();
-        uqSpecific->setLayout(mLayout);
+      //uqType = new InputWidgetSampling();
+      samplingWidget = new InputWidgetSampling();
+      uqType = samplingWidget;
     }
 
-    layout->insertWidget(1, uqSpecific);
-
+    if (uqType != 0)
+        layout->insertWidget(1, uqType,1);
 }

@@ -12,6 +12,9 @@
 #include <QComboBox>
 #include <QPushButton>
 
+class SimCenterWidget;
+class InputWidgetSampling;
+
 class InputWidgetUQ : public SimCenterWidget
 {
     Q_OBJECT
@@ -21,6 +24,8 @@ public:
 
     void outputToJSON(QJsonObject &rvObject);
     void inputFromJSON(QJsonObject &rvObject);
+
+    int processResults(QString &filenameResults);
 
 signals:
 
@@ -37,8 +42,10 @@ private:
     QLineEdit   *randomSeed;
     QPushButton *run;
 
-     QComboBox   *uqSelection;
-     QWidget     *uqSpecific;
+    QComboBox   *uqSelection;
+
+    SimCenterWidget     *uqType;
+    InputWidgetSampling *samplingWidget;
 };
 
 #endif // SAMPLINGMETHODINPUTWIDGET_H
