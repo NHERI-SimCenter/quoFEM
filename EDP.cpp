@@ -45,54 +45,53 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QJsonObject>
 #include <QFrame>
 #include <QRadioButton>
+#include <QDebug>
 
 //
 // headers for EDPDistribution subclasses that user can select
 //
 
+QWidget *addLabel(QString theLabelName, QLineEdit **theLineEdit){
+
+    QVBoxLayout *theLayout = new QVBoxLayout();
+    QLabel *theLabel = new QLabel();
+    theLabel->setText(theLabelName);
+    QLineEdit *theEdit = new QLineEdit();
+    theLabel->setMaximumWidth(100);
+    theLabel->setMinimumWidth(100);
+    theEdit->setMaximumWidth(100);
+    theEdit->setMinimumWidth(100);
+    theLayout->addWidget(theLabel);
+    theLayout->addWidget(theEdit);
+    theLayout->setSpacing(0);
+    theLayout->setMargin(0);
+    theLayout->addStretch();
+
+    QWidget *theWidget = new QWidget();
+    theWidget->setLayout(theLayout);
+
+    *theLineEdit = theEdit;
+    return theWidget;
+}
+
 EDP::EDP(QWidget *parent)
-    :QWidget(parent)
+    :QWidget(parent),resultsSet(false),mean(0),stdDev(0)
 {
     //
     // create a vertical layout to deal with variable name
     //
 
-    QVBoxLayout *nameLayout = new QVBoxLayout();
-    QLabel *variableLabel = new QLabel();
-    variableLabel->setText(QString("Variable Name"));
-    variableName = new QLineEdit();
-    variableLabel->setMaximumWidth(100);
-    variableLabel->setMinimumWidth(100);
-    variableName->setMaximumWidth(100);
-    variableName->setMinimumWidth(100);
-    nameLayout->addWidget(variableLabel);
-    nameLayout->addWidget(variableName);
-    nameLayout->setSpacing(0);
-    nameLayout->setMargin(0);
-
-    QWidget *theWidget = new QWidget();
-    QHBoxLayout *widgetLayout = new QHBoxLayout;
-    widgetLayout->addLayout(nameLayout);
-    widgetLayout->setSpacing(0);
-    widgetLayout->setMargin(0);
-    theWidget->setLayout(widgetLayout);
-    widgetLayout->addStretch();
-
     mainLayout = new QHBoxLayout;
+
+    QWidget *nameWidget = addLabel(QString("Variable Name"), &variableName);
 
     button = new QRadioButton();
     mainLayout->addWidget(button);
-    mainLayout->addWidget(theWidget);;
+    mainLayout->addWidget(nameWidget);;
     mainLayout->addStretch();
 
-   // mainLayout->insertWidget(mainLayout->count()-1, theWidget);
-
-    //    theDistribution = new NormalDistribution(this);
-    //    mainLayout->insertWidget(mainLayout->count()-1, theDistribution);
-    //    mainLayout->addWidget(theDistribution);
-
-    mainLayout->setSpacing(0);
-    mainLayout->setMargin(0);
+    mainLayout->setSpacing(5);
+    mainLayout->setMargin(5);
 
     this->setLayout(mainLayout);
 }
@@ -110,10 +109,55 @@ EDP::isSelectedForRemoval(void)
 
 void EDP::outputToJSON(QJsonObject &jsonObject){
     jsonObject["name"]=variableName->text();
+    if (resultsSet == true) {
+        jsonObject["mean"]=mean->text().toDouble();
+        jsonObject["stdDev"]=stdDev->text().toDouble();
+    }
 }
 
 void EDP::inputFromJSON(QJsonObject &jsonObject){
     QJsonValue theMeanValue = jsonObject["name"];
     variableName->setText(theMeanValue.toString());
+
+    if (jsonObject.contains("mean")) {
+
+        // add mean and stdDevl labels
+            QWidget *meanWidget = addLabel(QString("Mean"), &mean);
+            QJsonValue theMeanValue = jsonObject["mean"];
+            mean->setText(QString::number(theMeanValue.toDouble()));
+
+            mainLayout->insertWidget(2, meanWidget);
+
+            QWidget *stdDevWidget = addLabel(QString("StdDev"), &stdDev);
+            QJsonValue theStdDevValue = jsonObject["stdDev"];
+            stdDev->setText(QString::number(theStdDevValue.toDouble()));
+
+           mainLayout->insertWidget(3, stdDevWidget);
+           mainLayout->addStretch();
+     }
 }
 
+void EDP::setResults(double *data)
+{
+    qDebug() << "setResults; " << data[0];
+    if (mean == 0) {
+  qDebug() << "setResults 1; " << data[0];
+        // create mean and stdDev boxes, fill in
+            QWidget *meanWidget = addLabel(QString("Mean"), &mean);
+            mean->setText(QString::number(data[0]));
+            mainLayout->insertWidget(2, meanWidget);
+
+            QWidget *stdDevWidget = addLabel(QString("StdDev"), &stdDev);
+            stdDev->setText(QString::number(data[1]));
+
+           mainLayout->insertWidget(3, stdDevWidget);
+           mainLayout->addStretch();
+     } else {
+  qDebug() << "setResults 2; " << data[0];
+        // set text in mean and stdDev boxes
+        stdDev->setText(QString::number(data[1]));
+        mean->setText(QString::number(data[0]));
+
+    }
+
+}
