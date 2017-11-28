@@ -70,19 +70,20 @@ dakota -input dakota.in -output dakota.out -error dakota.err
 # copy dakota.out & remove stufff up to word Kurtosis
 #
 
-cp dakota.out dakota.tmp
+#cp dakota.out dakota.tmp
 
-if [[ $platform == 'Darwin' ]]; then
-    sed -i '' '1,/Kurtosis/d' dakota.tmp
-else
-    sed -i '1,/Kurtosis/d' dakota.tmp
-fi
+#if [[ $platform == 'Darwin' ]]; then
+#    sed -i '' '1,/Kurtosis/d' dakota.tmp
+#else
+#    sed -i '1,/Kurtosis/d' dakota.tmp
+#fi
 
 #
 # copy results to main directory
 #
 
-cp dakota.tmp ../dakota.out
+#cp dakota.tmp ../dakota.out
+cp dakota.out ..
 cp dakotaTab.out ..
 cd ..
 

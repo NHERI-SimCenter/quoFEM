@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,7 +22,9 @@ SOURCES += main.cpp\
     InputWidgetEDP.cpp \
     InputWidgetFEM.cpp \
     InputWidgetUQ.cpp \
-    InputWidgetSampling.cpp
+    InputWidgetSampling.cpp \
+    ../widgets/InputSheetBM/SimpleSpreadsheetWidget.cpp \
+    DakotaResultsSampling.cpp
 
 HEADERS  += MainWindow.h \
     EDP.h \
@@ -30,6 +32,8 @@ HEADERS  += MainWindow.h \
     InputWidgetFEM.h \
         SidebarWidgetSelection.h \
     InputWidgetUQ.h \
-    InputWidgetSampling.h
+    InputWidgetSampling.h \
+    ../widgets/InputSheetBM/SimpleSpreadsheetWidget.h \
+    DakotaResultsSampling.h
 
 FORMS    += mainwindow.ui

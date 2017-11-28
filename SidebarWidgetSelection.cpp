@@ -57,7 +57,13 @@ SidebarWidgetSelection::addInputWidget(const QString &name, SimCenterWidget *the
   widgets[name] = theWidget;
 }
 
-void 
+void
+SidebarWidgetSelection::removeInputWidget(const QString &name){
+
+}
+
+
+void
 SidebarWidgetSelection::buildTreee(){
   //register the model
   treeView->setModel(standardModel);
@@ -95,6 +101,24 @@ SidebarWidgetSelection::SidebarWidgetSelection(QWidget *parent)
 SidebarWidgetSelection::~SidebarWidgetSelection()
 {
 
+}
+
+
+void
+SidebarWidgetSelection::setSelection(const QString & newSelection)
+{
+  // remove current widget from layout
+  if (currentWidget != 0) {
+    horizontalLayout->removeWidget(currentWidget);
+    currentWidget->setParent(0);
+  }
+
+
+  currentWidget = widgets[newSelection];
+  if (currentWidget == 0)
+      qDebug() << "WIDGET NOT FOUND";
+  else
+    horizontalLayout->insertWidget(horizontalLayout->count()-1, currentWidget, 1);
 }
 
 

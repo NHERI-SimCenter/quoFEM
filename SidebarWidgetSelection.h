@@ -59,8 +59,10 @@ public:
     void inputFromJSON(QJsonObject &rvObject);
 
     void addInputWidget(const QString &, SimCenterWidget *);
+    void removeInputWidget(const QString &);
     void buildTreee();
     void clear(void);
+    void setSelection(const QString &newSelection);
 
 signals:
 

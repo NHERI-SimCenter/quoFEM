@@ -23,6 +23,9 @@
 #include <InputWidgetFEM.h>;
 #include <InputWidgetUQ.h>;
 #include <RandomVariableInputWidget.h>
+
+#include <DakotaResultsSampling.h>
+
 #include <QVBoxLayout>
 #include <HeaderWidget.h>
 #include <FooterWidget.h>
@@ -51,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
  // edp = new InputWidgetEDP();
   fem = new InputWidgetFEM();
   uq = new InputWidgetUQ();
+  results = 0;
 
   inputWidget = new SidebarWidgetSelection();
   inputWidget->addInputWidget(tr("Input Random Variable"), random);
@@ -117,7 +121,17 @@ void MainWindow::onRunButtonClicked() {
 
     // read the results
     QString filenameOUT = path + tr("dakota.out");
-    uq->processResults(filenameOUT);
+  //  uq->processResults(filenameOUT);
+
+    if (results == 0) {
+          results = new DakotaResultsSampling(this);
+          inputWidget->addInputWidget(tr("Results"), results);
+          results->processResults(filenameOUT);
+    }
+    inputWidget->setSelection("Results");
+
+
+
 }
 
 bool MainWindow::save()

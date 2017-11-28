@@ -117,7 +117,7 @@ void InputWidgetSampling::uqSelectionChanged(const QString &arg1)
 }
 
 int InputWidgetSampling::processResults(QString &filenameResults) {
-
+/*
     std::ifstream fileResults("/Users/simcenter/Downloads/pedro/dakota.out");
     if (!fileResults.is_open()) {
         qDebug() << "Could not open file";
@@ -139,6 +139,10 @@ int InputWidgetSampling::processResults(QString &filenameResults) {
     theEdpWidget->processResults(data);
 
     delete [] data;
+    fileResults.close();
+
+    //QWidget *resultsWindow = new QWidget();
+*/
     return 0;
 }
 /*
