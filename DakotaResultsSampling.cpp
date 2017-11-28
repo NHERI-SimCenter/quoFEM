@@ -83,54 +83,69 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
 }
 
 
-int DakotaResultsSampling::processResults(QString &filenameResults) {
+int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab) {
   //   tabWidget = new QTabWidget(this);
+
+    /*
+    qDebug() << "FILENAME RESULTS :" << filenameResults;
+    QFileInfo fileInfo(filenameResults);
+    QDir fileDir = fileInfo.absolutePath();
+    QString fileName =fileInfo.fileName();
+    */
+
+    //
+    // into a QTextEdit will place contents of Dakota out file
+    //
+
     dakotaText = new QTextEdit();
+    dakotaText->setReadOnly(true); // make it so user cannot edit the contents
 
-     dakotaText->setText("Contents Dakota Output File:");
-     dakotaText->setReadOnly(true);
+    dakotaText->setText("Contents Dakota Output File:");
 
-    std::ifstream fileResults("/Users/simcenter/Downloads/pedro/dakota.out");
+    // open file
+
+    std::ifstream fileResults(filenameResults.toStdString().c_str());
     if (!fileResults.is_open()) {
-        qDebug() << "Could not open file";
+        qDebug() << "Could not open file: " << filenameResults;
            return -1;
     }
 
-    // Since this is a read-only variable,
-    // also mark is as `const` to make intentions
-    // clear to the readers.
-    //
-    const std::string needle = "Kurtosis";
+    // now ignore every line until Kurtosis found
 
-    // Main reading loop:
-    //
+    const std::string needle = "Kurtosis";
     std::string haystack;
 
     while (std::getline(fileResults, haystack)) {
-        if (haystack.find(needle) != std::string::npos)
-        {
-            std::cout << haystack << "\n";
+        if (haystack.find(needle) != std::string::npos) {
             break;
         }
     }
-     dakotaText->append(haystack.c_str());
+
+    // now copy every subsequent line into text editor
+    dakotaText->append(haystack.c_str());
 
      while (std::getline(fileResults, haystack)) {
-     dakotaText->append(haystack.c_str());
+        dakotaText->append(haystack.c_str());
      }
 
 
     fileResults.close();
 
-
+    //
+    // now into a QTableWidget copy for each simulation the random variable and edp's
+    //
     spreadsheet = new QTableWidget();
-    std::ifstream tabResults("/Users/simcenter/Downloads/pedro/dakotaTab.out");
+
+    // open file
+    std::ifstream tabResults(filenameTab.toStdString().c_str());
     if (!tabResults.is_open()) {
         qDebug() << "Could not open file";
            return -1;
     }
 
-    //read first line
+    //
+    //read first line and set headings (ignoring second column for now)
+    //
     std::string inputLine;
     std::getline(tabResults, inputLine);
     std::istringstream iss(inputLine);
@@ -150,14 +165,12 @@ int DakotaResultsSampling::processResults(QString &filenameResults) {
            colCount++;
        } while (iss);
 
-    //colCount -= 2;
-
-
-
-
 
     spreadsheet->setColumnCount(colCount-2);
     spreadsheet->setHorizontalHeaderLabels(theHeadings);
+
+    // now until end of file, read lines and set data in QTAbleWidget
+
     int rowCount = 0;
     while (std::getline(tabResults, inputLine)) {
        std::istringstream is(inputLine);

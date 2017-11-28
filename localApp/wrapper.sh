@@ -11,10 +11,10 @@ platform='unknown'
 platform=$(uname)
 
 if [[ $platform == 'Darwin' ]]; then
-    export DAKOTA_PATH=$HOME/dakota/bin
+    export DAKOTA_PATH=$HOME/dakota-6.7.0/bin
     export OPENSEES_PATH=$HOME/bin
     export PATH=$PATH:$OPENSEES_PATH:$DAKOTA_PATH    
-    source $HOME/.profile
+    source $HOME/.bash_profile
 elif [[ $platform == 'Linux' ]]; then
     export DAKOTA_PATH=$HOME/dakota/dakota-6.5/bin
     export LD_LIBRARY_PATH=$HOME/dakota/dakota-6.5/lib
@@ -32,14 +32,17 @@ fi
 
 echo $@
 
-dirNAME=$1
-scriptNAME=$2
-#filenameDAKOTA=$3
 
-if [ "$#" -ne 2 ] || ! [ -d "$1" ]; then
-  echo "Usage: $0 dirName scriptName filenameDakota" >&2
+if [ "$#" -ne 3 ] || ! [ -d "$2" ]; then
+  echo "Usage: $0 localAppDir dirName scriptName filenameDakota" >&2
   exit 1
 fi
+
+appDIR=$1
+dirNAME=$2
+scriptNAME=$3
+
+#filenameDAKOTA=$3
 
 #
 # cd to directory
@@ -47,7 +50,7 @@ fi
 # 
 mkdir $dirNAME/tmp.SimCenter
 mkdir $dirNAME/tmp.SimCenter/templatedir
-cp /Users/simcenter/NHERI/DakotaFEM2/localApp/parseJson.py $dirNAME/tmp.SimCenter/templatedir
+cp $appDIR/parseJson.py $dirNAME/tmp.SimCenter/templatedir
 cd $dirNAME
 #mkdir tmp.SimCenter
 #mkdir tmp.SimCenter/templatedir

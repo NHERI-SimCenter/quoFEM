@@ -19,7 +19,7 @@ public:
     void outputToJSON(QJsonObject &rvObject);
     void inputFromJSON(QJsonObject &rvObject);
 
-    int processResults(QString &filenameResults);
+    int processResults(QString &filenameResults, QString &filenameTab);
 
 signals:
 

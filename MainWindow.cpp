@@ -100,6 +100,8 @@ void MainWindow::onRunButtonClicked() {
 
     // in inputfile dir, crate a file of the data and copy the dakota python script
     QString filenameTMP = path + tr("dakota.json");
+    qDebug() << filenameTMP;
+
      QFile file(filenameTMP);
      if (!file.open(QFile::WriteOnly | QFile::Text)) {
        QMessageBox::warning(this, tr("Application"),
@@ -115,22 +117,27 @@ void MainWindow::onRunButtonClicked() {
      file.close();
 
 
+     QString appDIR("/Users/fmckenna/NHERI/DakotaFEM2/localApp");
+     QString localScript = appDIR + QDir::separator() + QString("wrapper.sh");
+     qDebug() << localScript;
+     QStringList baby; baby<< appDIR << path << mainInput ;
+     qDebug() << baby;
+
     // invoke the wrapper script
     QProcess *proc = new QProcess();
-    proc->execute("/Users/simcenter/NHERI/DakotaFEM2/localApp/wrapper.sh", QStringList() << path << mainInput );
+    proc->execute(localScript, QStringList() << appDIR << path << mainInput );
 
     // read the results
     QString filenameOUT = path + tr("dakota.out");
+    QString filenameTAB = path + tr("dakotaTab.out");
   //  uq->processResults(filenameOUT);
 
     if (results == 0) {
           results = new DakotaResultsSampling(this);
           inputWidget->addInputWidget(tr("Results"), results);
-          results->processResults(filenameOUT);
+          results->processResults(filenameOUT, filenameTAB);
     }
     inputWidget->setSelection("Results");
-
-
 
 }
 
