@@ -19,9 +19,9 @@
 
 #include "SidebarWidgetSelection.h"
 
-#include <InputWidgetEDP.h>;
-#include <InputWidgetFEM.h>;
-#include <InputWidgetUQ.h>;
+#include <InputWidgetEDP.h>
+#include <InputWidgetFEM.h>
+#include <InputWidgetUQ.h>
 #include <RandomVariableInputWidget.h>
 
 #include <DakotaResultsSampling.h>
@@ -119,6 +119,7 @@ void MainWindow::onRunButtonClicked() {
 
      QString appDIR("/Users/fmckenna/NHERI/DakotaFEM2/localApp");
      QString localScript = appDIR + QDir::separator() + QString("wrapper.sh");
+
      qDebug() << localScript;
      QStringList baby; baby<< appDIR << path << mainInput ;
      qDebug() << baby;

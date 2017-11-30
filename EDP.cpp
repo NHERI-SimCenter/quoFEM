@@ -51,16 +51,16 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // headers for EDPDistribution subclasses that user can select
 //
 
-QWidget *addLabel(QString theLabelName, QLineEdit **theLineEdit){
+QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit){
 
     QVBoxLayout *theLayout = new QVBoxLayout();
     QLabel *theLabel = new QLabel();
     theLabel->setText(theLabelName);
     QLineEdit *theEdit = new QLineEdit();
-    theLabel->setMaximumWidth(100);
-    theLabel->setMinimumWidth(100);
-    theEdit->setMaximumWidth(100);
-    theEdit->setMinimumWidth(100);
+    theLabel->setMaximumWidth(120);
+    theLabel->setMinimumWidth(120);
+    theEdit->setMaximumWidth(120);
+    theEdit->setMinimumWidth(120);
     theLayout->addWidget(theLabel);
     theLayout->addWidget(theEdit);
     theLayout->setSpacing(0);
@@ -83,7 +83,7 @@ EDP::EDP(QWidget *parent)
 
     mainLayout = new QHBoxLayout;
 
-    QWidget *nameWidget = addLabel(QString("Variable Name"), &variableName);
+    QWidget *nameWidget = addLabeledLineEdit(QString("Variable Name"), &variableName);
 
     button = new QRadioButton();
     mainLayout->addWidget(button);
@@ -122,13 +122,13 @@ void EDP::inputFromJSON(QJsonObject &jsonObject){
     if (jsonObject.contains("mean")) {
 
         // add mean and stdDevl labels
-            QWidget *meanWidget = addLabel(QString("Mean"), &mean);
+            QWidget *meanWidget = addLabeledLineEdit(QString("Mean"), &mean);
             QJsonValue theMeanValue = jsonObject["mean"];
             mean->setText(QString::number(theMeanValue.toDouble()));
 
             mainLayout->insertWidget(2, meanWidget);
 
-            QWidget *stdDevWidget = addLabel(QString("StdDev"), &stdDev);
+            QWidget *stdDevWidget = addLabeledLineEdit(QString("StdDev"), &stdDev);
             QJsonValue theStdDevValue = jsonObject["stdDev"];
             stdDev->setText(QString::number(theStdDevValue.toDouble()));
 
@@ -139,25 +139,21 @@ void EDP::inputFromJSON(QJsonObject &jsonObject){
 
 void EDP::setResults(double *data)
 {
-    qDebug() << "setResults; " << data[0];
     if (mean == 0) {
-  qDebug() << "setResults 1; " << data[0];
         // create mean and stdDev boxes, fill in
-            QWidget *meanWidget = addLabel(QString("Mean"), &mean);
+            QWidget *meanWidget = addLabeledLineEdit(QString("Mean"), &mean);
             mean->setText(QString::number(data[0]));
             mainLayout->insertWidget(2, meanWidget);
 
-            QWidget *stdDevWidget = addLabel(QString("StdDev"), &stdDev);
+            QWidget *stdDevWidget = addLabeledLineEdit(QString("StdDev"), &stdDev);
             stdDev->setText(QString::number(data[1]));
 
            mainLayout->insertWidget(3, stdDevWidget);
            mainLayout->addStretch();
      } else {
-  qDebug() << "setResults 2; " << data[0];
         // set text in mean and stdDev boxes
         stdDev->setText(QString::number(data[1]));
         mean->setText(QString::number(data[0]));
 
     }
-
 }
