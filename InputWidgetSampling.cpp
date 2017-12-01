@@ -16,6 +16,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <time.h>
 
 
 InputWidgetSampling::InputWidgetSampling(QWidget *parent)
@@ -37,8 +38,10 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     QLabel *label2 = new QLabel();
     label2->setText(QString("# Samples"));
     numSamples = new QLineEdit();
+    numSamples->setText(tr("10"));
     numSamples->setMaximumWidth(100);
     numSamples->setMinimumWidth(100);
+
     
     samplesLayout->addWidget(label2);
     samplesLayout->addWidget(numSamples);
@@ -46,8 +49,11 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     QVBoxLayout *seedLayout= new QVBoxLayout;
     QLabel *label3 = new QLabel();
     label3->setText(QString("Seed"));
+    srand(time(NULL));
+    int randomNumber = rand() % 1000 + 1;
+
     randomSeed = new QLineEdit();
-    randomSeed->setText(tr("0"));
+    randomSeed->setText(QString::number(randomNumber));
     randomSeed->setMaximumWidth(100);
     randomSeed->setMinimumWidth(100);
     

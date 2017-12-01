@@ -87,6 +87,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     dakotaText->setText("\n");
 
     // open file
+qDebug() << filenameResults;
 
     std::ifstream fileResults(filenameResults.toStdString().c_str());
     if (!fileResults.is_open()) {

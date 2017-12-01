@@ -57,10 +57,10 @@ QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit){
     QLabel *theLabel = new QLabel();
     theLabel->setText(theLabelName);
     QLineEdit *theEdit = new QLineEdit();
-    theLabel->setMaximumWidth(120);
-    theLabel->setMinimumWidth(120);
-    theEdit->setMaximumWidth(120);
-    theEdit->setMinimumWidth(120);
+    theLabel->setMaximumWidth(200);
+    theLabel->setMinimumWidth(200);
+    theEdit->setMaximumWidth(200);
+    theEdit->setMinimumWidth(200);
     theLayout->addWidget(theLabel);
     theLayout->addWidget(theEdit);
     theLayout->setSpacing(0);
