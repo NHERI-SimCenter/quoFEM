@@ -23,7 +23,7 @@ InputWidgetEDP::InputWidgetEDP(QWidget *parent) : SimCenterWidget(parent)
 
 InputWidgetEDP::~InputWidgetEDP()
 {
-// qDebug() << "InputWidgetEDP::DESTRCUTOR CALLED\n";
+    // qDebug() << "InputWidgetEDP::DESTRCUTOR CALLED\n";
 }
 
 void
@@ -75,18 +75,18 @@ InputWidgetEDP::makeEDP(void)
     edpLayout->addStretch();
     this->addEDP();
 
-     sa->setWidget(edp);
-     verticalLayout->addWidget(sa);
+    sa->setWidget(edp);
+    verticalLayout->addWidget(sa);
 
-     verticalLayout->setSpacing(0);
-     verticalLayout->setMargin(0);
+    verticalLayout->setSpacing(0);
+    verticalLayout->setMargin(0);
 }
 
 void InputWidgetEDP::addEDP(void)
 {
-   EDP *theEDP = new EDP();
-   theEDPs.append(theEDP);
-   edpLayout->insertWidget(edpLayout->count()-1, theEDP);
+    EDP *theEDP = new EDP();
+    theEDPs.append(theEDP);
+    edpLayout->insertWidget(edpLayout->count()-1, theEDP);
 }
 
 
@@ -97,13 +97,13 @@ int InputWidgetEDP::getNumEDP(void)
 
 void InputWidgetEDP::clear(void)
 {
-  // loop over random variables, removing from layout & deleting
-  for (int i = 0; i <theEDPs.size(); ++i) {
-    EDP *theEDP = theEDPs.at(i);
-    edpLayout->removeWidget(theEDP);
-    delete theEDP;
-  }
-  theEDPs.clear();
+    // loop over random variables, removing from layout & deleting
+    for (int i = 0; i <theEDPs.size(); ++i) {
+        EDP *theEDP = theEDPs.at(i);
+        edpLayout->removeWidget(theEDP);
+        delete theEDP;
+    }
+    theEDPs.clear();
 }
 
 
@@ -124,7 +124,6 @@ void InputWidgetEDP::removeEDP(void)
 }
 
 
-
 void
 InputWidgetEDP::outputToJSON(QJsonObject &jsonObject)
 {
@@ -141,23 +140,21 @@ InputWidgetEDP::outputToJSON(QJsonObject &jsonObject)
 void
 InputWidgetEDP::inputFromJSON(QJsonObject &rvObject)
 {
-  this->clear();
+    this->clear();
 
-  // add the new
-  QJsonArray rvArray = rvObject["edps"].toArray();
-  foreach (const QJsonValue &rvValue, rvArray) {
-    QJsonObject rvObject = rvValue.toObject();
-    EDP *theEDP = new EDP();
-    theEDP->inputFromJSON(rvObject);
-    theEDPs.append(theEDP);
-    edpLayout->insertWidget(edpLayout->count()-1, theEDP);
-  }
+    // add the new
+    QJsonArray rvArray = rvObject["edps"].toArray();
+    foreach (const QJsonValue &rvValue, rvArray) {
+        QJsonObject rvObject = rvValue.toObject();
+        EDP *theEDP = new EDP();
+        theEDP->inputFromJSON(rvObject);
+        theEDPs.append(theEDP);
+        edpLayout->insertWidget(edpLayout->count()-1, theEDP);
+    }
 }
 
 int
 InputWidgetEDP::processResults(double *data) {
-    qDebug() << "InputWidgetEDP::processResults";
-
     for (int i = 0; i <theEDPs.size(); ++i) {
         theEDPs.at(i)->setResults(&data[i*4]);
     }

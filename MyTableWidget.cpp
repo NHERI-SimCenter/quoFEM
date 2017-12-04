@@ -41,7 +41,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDebug>
 
 MyTableWidget::MyTableWidget(QWidget *parent)
-:QTableWidget(parent),mLeft(true)
+    :QTableWidget(parent),mLeft(true)
 {
 
 }
@@ -53,18 +53,18 @@ MyTableWidget::~MyTableWidget()
 
 void MyTableWidget::mousePressEvent(QMouseEvent *event)
 {
-   // keep track of which button pressed
-   if(event->button() == Qt::LeftButton)
+    // keep track of which button pressed
+    if(event->button() == Qt::LeftButton)
         mLeft = true;                                // bool m_isLeftClick; is class member
     else if (event->button() == Qt::RightButton)
-         mLeft = false;
+        mLeft = false;
 
-   // call base class
-   this->QTableWidget::mousePressEvent(event);
+    // call base class
+    this->QTableWidget::mousePressEvent(event);
 }
 
 bool
 MyTableWidget::wasLeftKeyPressed(void)
 {
-  return mLeft;
+    return mLeft;
 }

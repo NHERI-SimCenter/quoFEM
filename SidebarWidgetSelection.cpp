@@ -52,9 +52,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 void 
 SidebarWidgetSelection::addInputWidget(const QString &name, SimCenterWidget *theWidget){
-  QStandardItem *item = new QStandardItem(name);
-  rootNode->appendRow(item);
-  widgets[name] = theWidget;
+    QStandardItem *item = new QStandardItem(name);
+    rootNode->appendRow(item);
+    widgets[name] = theWidget;
 }
 
 void
@@ -65,37 +65,37 @@ SidebarWidgetSelection::removeInputWidget(const QString &name){
 
 void
 SidebarWidgetSelection::buildTreee(){
-  //register the model
-  treeView->setModel(standardModel);
-  treeView->expandAll();
-  treeView->setHeaderHidden(true);
-  treeView->setMaximumWidth(200);
+    //register the model
+    treeView->setModel(standardModel);
+    treeView->expandAll();
+    treeView->setHeaderHidden(true);
+    treeView->setMaximumWidth(200);
 
-  // set up so that a slection change triggers the selectionChanged slot
-  QItemSelectionModel *selectionModel= treeView->selectionModel();
-  connect(selectionModel,
-          SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-          this,
-          SLOT(selectionChangedSlot(const QItemSelection &, const QItemSelection &)));
+    // set up so that a slection change triggers the selectionChanged slot
+    QItemSelectionModel *selectionModel= treeView->selectionModel();
+    connect(selectionModel,
+            SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this,
+            SLOT(selectionChangedSlot(const QItemSelection &, const QItemSelection &)));
 
-  // add the TreeView widget to the layout
-  horizontalLayout->addWidget(treeView);
-  horizontalLayout->addStretch();
+    // add the TreeView widget to the layout
+    horizontalLayout->addWidget(treeView);
+    horizontalLayout->addStretch();
 }
 
 SidebarWidgetSelection::SidebarWidgetSelection(QWidget *parent) 
-  : SimCenterWidget(parent), currentWidget(0)
+    : SimCenterWidget(parent), currentWidget(0)
 {
-  horizontalLayout = new QHBoxLayout();
-  this->setLayout(horizontalLayout);
+    horizontalLayout = new QHBoxLayout();
+    this->setLayout(horizontalLayout);
 
-  //
-  // create a tree widget, assign it a mode and add to layout
-  //
+    //
+    // create a tree widget, assign it a mode and add to layout
+    //
 
-  treeView = new QTreeView();
-  standardModel = new QStandardItemModel ;
-  rootNode = standardModel->invisibleRootItem();
+    treeView = new QTreeView();
+    standardModel = new QStandardItemModel ;
+    rootNode = standardModel->invisibleRootItem();
 }
 
 SidebarWidgetSelection::~SidebarWidgetSelection()
@@ -107,39 +107,39 @@ SidebarWidgetSelection::~SidebarWidgetSelection()
 void
 SidebarWidgetSelection::setSelection(const QString & newSelection)
 {
-  // remove current widget from layout
-  if (currentWidget != 0) {
-    horizontalLayout->removeWidget(currentWidget);
-    currentWidget->setParent(0);
-  }
+    // remove current widget from layout
+    if (currentWidget != 0) {
+        horizontalLayout->removeWidget(currentWidget);
+        currentWidget->setParent(0);
+    }
 
 
-  currentWidget = widgets[newSelection];
-  if (currentWidget == 0)
-      qDebug() << "WIDGET NOT FOUND";
-  else
-    horizontalLayout->insertWidget(horizontalLayout->count()-1, currentWidget, 1);
+    currentWidget = widgets[newSelection];
+    if (currentWidget == 0)
+        qDebug() << "WIDGET NOT FOUND";
+    else
+        horizontalLayout->insertWidget(horizontalLayout->count()-1, currentWidget, 1);
 }
 
 
 void 	
 SidebarWidgetSelection::selectionChangedSlot(const QItemSelection & /*newSelection*/, const QItemSelection & /*oldSelection*/)
 {
-  // remove current widget from layout
-  if (currentWidget != 0) {
-    horizontalLayout->removeWidget(currentWidget);
-    currentWidget->setParent(0);
-  }
+    // remove current widget from layout
+    if (currentWidget != 0) {
+        horizontalLayout->removeWidget(currentWidget);
+        currentWidget->setParent(0);
+    }
 
-  //get the text of the selected item
-  const QModelIndex index = treeView->selectionModel()->currentIndex();
-  QString selectedText = index.data(Qt::DisplayRole).toString();
+    //get the text of the selected item
+    const QModelIndex index = treeView->selectionModel()->currentIndex();
+    QString selectedText = index.data(Qt::DisplayRole).toString();
 
-  currentWidget = widgets[selectedText];
-  if (currentWidget == 0)
-      qDebug() << "WIDGET NOT FOUND";
-  else
-    horizontalLayout->insertWidget(horizontalLayout->count()-1, currentWidget, 1);
+    currentWidget = widgets[selectedText];
+    if (currentWidget == 0)
+        qDebug() << "WIDGET NOT FOUND";
+    else
+        horizontalLayout->insertWidget(horizontalLayout->count()-1, currentWidget, 1);
 }
 
 
@@ -154,7 +154,7 @@ SidebarWidgetSelection::outputToJSON(QJsonObject &jsonObject)
 void
 SidebarWidgetSelection::clear(void)
 {
-  //    theClineInput->clear();
+    //    theClineInput->clear();
 }
 
 void

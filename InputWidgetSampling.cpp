@@ -1,6 +1,8 @@
 // Written: fmckenna
 
 #include "InputWidgetSampling.h"
+#include <DakotaResultsSampling.h>
+
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -102,19 +104,19 @@ InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
 void
 InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
 {
-  this->clear();
+    this->clear();
 
-  QJsonObject uq = jsonObject["samplingMethodData"].toObject();
-  QString method =uq["method"].toString();
-  int samples=uq["samples"].toInt();
-  double seed=uq["seed"].toDouble();
-  
-  numSamples->setText(QString::number(samples));
-  randomSeed->setText(QString::number(seed));
-  int index = samplingMethod->findText(method);
-  samplingMethod->setCurrentIndex(index);
+    QJsonObject uq = jsonObject["samplingMethodData"].toObject();
+    QString method =uq["method"].toString();
+    int samples=uq["samples"].toInt();
+    double seed=uq["seed"].toDouble();
 
-  theEdpWidget->inputFromJSON(uq);
+    numSamples->setText(QString::number(samples));
+    randomSeed->setText(QString::number(seed));
+    int index = samplingMethod->findText(method);
+    samplingMethod->setCurrentIndex(index);
+
+    theEdpWidget->inputFromJSON(uq);
 }
 
 void InputWidgetSampling::uqSelectionChanged(const QString &arg1)
@@ -122,61 +124,12 @@ void InputWidgetSampling::uqSelectionChanged(const QString &arg1)
 
 }
 
-int InputWidgetSampling::processResults(QString &filenameResults) {
-/*
-    std::ifstream fileResults("/Users/simcenter/Downloads/pedro/dakota.out");
-    if (!fileResults.is_open()) {
-        qDebug() << "Could not open file";
-           return -1;
-    }
-    int numEDP = theEdpWidget->getNumEDP();
-    double *data = new double[numEDP*4];
+int InputWidgetSampling::processResults(QString &filenameResults, QString &filenameTab) {
 
-    for (int i=0; i<numEDP; i++) {
-        double mean, stdDev, num3, num4;
-        std::string haystack;
-        fileResults >> haystack >> mean >> stdDev >> num3 >> num4;
-
-       data[i*4] = mean;
-       data[i*4+1]=stdDev;
-       data[i*4+2]=num3;
-       data[i*4+3]=num4;
-    }
-    theEdpWidget->processResults(data);
-
-    delete [] data;
-    fileResults.close();
-
-    //QWidget *resultsWindow = new QWidget();
-*/
     return 0;
 }
-/*
-std::ifstream fileResults(filenameOUT.);
-    if (!fileResults.is_open())
-    {
-        std::cerr << "Failed to open file!\n";
-        return -1;
-    }
 
-    // Since this is a read-only variable,
-    // also mark is as `const` to make intentions
-    // clear to the readers.
-    //
-    const std::string needle = "Kurtosis";
-
-    // Main reading loop:
-    //
-    std::string haystack;
-    while (std::getline(file, haystack))
-    {
-        if (haystack.find(needle) != std::string::npos)
-        {
-            std::cout << haystack << "\n";
-            break;
-            // Prints
-            //  <a class="member-modal" href="https://website.net/users/membercard/890520">Phil Jankins</a>
-            // once
-        }
-    }
-    */
+DakotaResults *
+InputWidgetSampling::getResults(void) {
+    return new DakotaResultsSampling();
+}

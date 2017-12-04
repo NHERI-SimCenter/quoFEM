@@ -14,6 +14,7 @@
 
 class SimCenterWidget;
 class InputWidgetSampling;
+class DakotaResults;
 
 class InputWidgetUQ : public SimCenterWidget
 {
@@ -25,7 +26,8 @@ public:
     void outputToJSON(QJsonObject &rvObject);
     void inputFromJSON(QJsonObject &rvObject);
 
-    int processResults(QString &filenameResults);
+    int processResults(QString &filenameResults, QString &filenameTab);
+    DakotaResults *getResults(void);
 
 signals:
 

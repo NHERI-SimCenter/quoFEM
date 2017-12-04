@@ -11,6 +11,9 @@
 #include <QVBoxLayout>
 #include <QComboBox>
 #include <QPushButton>
+class DakotaSamplingResults;
+class DakotaResults;
+
 
 class InputWidgetEDP;
 
@@ -24,7 +27,8 @@ public:
     void outputToJSON(QJsonObject &rvObject);
     void inputFromJSON(QJsonObject &rvObject);
 
-    int processResults(QString &filenameResults);
+    int processResults(QString &filenameResults, QString &filenameTab);
+    DakotaResults *getResults(void);
 
 signals:
 
@@ -45,6 +49,8 @@ private:
     QWidget     *uqSpecific;
 
     InputWidgetEDP *theEdpWidget;
+
+    DakotaSamplingResults *results;
 };
 
 #endif // INPUTWIDGET_SAMPLING_H

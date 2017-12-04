@@ -45,7 +45,7 @@ InputWidgetFEM::InputWidgetFEM(QWidget *parent) : SimCenterWidget(parent)
 
     layout->setSpacing(10);
     layout->setMargin(0);
-   // name->addStretch();
+    // name->addStretch();
 
     femSelection->addItem(tr("OpenSees"));
     femSelection->addItem(tr("OpenSees-2"));
@@ -56,15 +56,15 @@ InputWidgetFEM::InputWidgetFEM(QWidget *parent) : SimCenterWidget(parent)
     layout->addLayout(name);
     this->femProgramChanged(tr("OpenSees"));
 
-   // layout->addStretch();
-   // layout->setSpacing(10);
+    // layout->addStretch();
+    // layout->setSpacing(10);
     layout->setMargin(0);
     layout->addStretch();
 
     this->setLayout(layout);
 
- //    QSizePolicy sp(QSizePolicy::Preferred, QSizePolicy::Fixed);
-  //   this->setSizePolicy(sp);
+    //    QSizePolicy sp(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    //   this->setSizePolicy(sp);
 }
 
 InputWidgetFEM::~InputWidgetFEM()
@@ -102,7 +102,6 @@ InputWidgetFEM::outputToJSON(QJsonObject &jsonObject)
 
     fem["mainPostprocessScript"]=fileInfo2.fileName();
 
-
     jsonObject["fem"]=fem;
 }
 
@@ -110,28 +109,28 @@ InputWidgetFEM::outputToJSON(QJsonObject &jsonObject)
 void
 InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
 {
-  this->clear();
-  QJsonObject fem = jsonObject["fem"].toObject();
-  fileName1=fem["inputFile"].toString();
-  fileName2=fem["postprocessScript"].toString();
+    this->clear();
+    QJsonObject fem = jsonObject["fem"].toObject();
+    fileName1=fem["inputFile"].toString();
+    fileName2=fem["postprocessScript"].toString();
 
 
-  QString program=fem["program"].toString();
-  int index = femSelection->findText(program);
-  femSelection->setCurrentIndex(index);
-  this->femProgramChanged(program);
-  if (program == tr("OpenSees")) {
-      file1->setText(fileName1);
-  } else {
-      file1->setText(fileName1);
-      file2->setText(fileName2);
-  }
+    QString program=fem["program"].toString();
+    int index = femSelection->findText(program);
+    femSelection->setCurrentIndex(index);
+    this->femProgramChanged(program);
+    if (program == tr("OpenSees")) {
+        file1->setText(fileName1);
+    } else {
+        file1->setText(fileName1);
+        file2->setText(fileName2);
+    }
 }
 
 void InputWidgetFEM::femProgramChanged(const QString &arg1)
 {
     if (femSpecific != 0) {
-       // layout->rem
+        // layout->rem
         layout->removeWidget(femSpecific);
         delete femSpecific;
         femSpecific = 0;
@@ -156,8 +155,8 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         fileName1Layout->addWidget(chooseFile1);
         fileName1Layout->addStretch();
 
-       fileName1Layout->setSpacing(0);
-       fileName1Layout->setMargin(0);
+        fileName1Layout->setSpacing(0);
+        fileName1Layout->setMargin(0);
 
         femLayout->addWidget(label1);
         femLayout->addLayout(fileName1Layout);
@@ -178,7 +177,7 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         file1 = new QLineEdit;
         QPushButton *chooseFile1 = new QPushButton();
         chooseFile1->setText(tr("Choose"));
-         connect(chooseFile1,SIGNAL(clicked()),this,SLOT(chooseFileName1()));
+        connect(chooseFile1,SIGNAL(clicked()),this,SLOT(chooseFileName1()));
 
         fileName1Layout->addWidget(file1);
         fileName1Layout->addWidget(chooseFile1);
@@ -194,10 +193,10 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         fileName2Layout->addStretch();
 
 
-       fileName1Layout->setSpacing(10);
-       fileName1Layout->setMargin(0);
-       fileName2Layout->setSpacing(10);
-       fileName2Layout->setMargin(0);
+        fileName1Layout->setSpacing(10);
+        fileName1Layout->setMargin(0);
+        fileName2Layout->setSpacing(10);
+        fileName2Layout->setMargin(0);
 
         femLayout->addWidget(label1);
         femLayout->addLayout(fileName1Layout);
@@ -262,8 +261,8 @@ void InputWidgetFEM::chooseFileName1(void)
 
 void InputWidgetFEM::chooseFileName2(void)
 {
-   fileName2=QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
-   file2->setText(fileName2);
+    fileName2=QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
+    file2->setText(fileName2);
 }
 
 QString InputWidgetFEM::getApplicationName() {

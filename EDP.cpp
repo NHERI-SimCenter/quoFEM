@@ -104,7 +104,7 @@ EDP::~EDP()
 bool
 EDP::isSelectedForRemoval(void)
 {
- return button->isChecked();
+    return button->isChecked();
 }
 
 void EDP::outputToJSON(QJsonObject &jsonObject){
@@ -122,35 +122,35 @@ void EDP::inputFromJSON(QJsonObject &jsonObject){
     if (jsonObject.contains("mean")) {
 
         // add mean and stdDevl labels
-            QWidget *meanWidget = addLabeledLineEdit(QString("Mean"), &mean);
-            QJsonValue theMeanValue = jsonObject["mean"];
-            mean->setText(QString::number(theMeanValue.toDouble()));
+        QWidget *meanWidget = addLabeledLineEdit(QString("Mean"), &mean);
+        QJsonValue theMeanValue = jsonObject["mean"];
+        mean->setText(QString::number(theMeanValue.toDouble()));
 
-            mainLayout->insertWidget(2, meanWidget);
+        mainLayout->insertWidget(2, meanWidget);
 
-            QWidget *stdDevWidget = addLabeledLineEdit(QString("StdDev"), &stdDev);
-            QJsonValue theStdDevValue = jsonObject["stdDev"];
-            stdDev->setText(QString::number(theStdDevValue.toDouble()));
+        QWidget *stdDevWidget = addLabeledLineEdit(QString("StdDev"), &stdDev);
+        QJsonValue theStdDevValue = jsonObject["stdDev"];
+        stdDev->setText(QString::number(theStdDevValue.toDouble()));
 
-           mainLayout->insertWidget(3, stdDevWidget);
-           mainLayout->addStretch();
-     }
+        mainLayout->insertWidget(3, stdDevWidget);
+        mainLayout->addStretch();
+    }
 }
 
 void EDP::setResults(double *data)
 {
     if (mean == 0) {
         // create mean and stdDev boxes, fill in
-            QWidget *meanWidget = addLabeledLineEdit(QString("Mean"), &mean);
-            mean->setText(QString::number(data[0]));
-            mainLayout->insertWidget(2, meanWidget);
+        QWidget *meanWidget = addLabeledLineEdit(QString("Mean"), &mean);
+        mean->setText(QString::number(data[0]));
+        mainLayout->insertWidget(2, meanWidget);
 
-            QWidget *stdDevWidget = addLabeledLineEdit(QString("StdDev"), &stdDev);
-            stdDev->setText(QString::number(data[1]));
+        QWidget *stdDevWidget = addLabeledLineEdit(QString("StdDev"), &stdDev);
+        stdDev->setText(QString::number(data[1]));
 
-           mainLayout->insertWidget(3, stdDevWidget);
-           mainLayout->addStretch();
-     } else {
+        mainLayout->insertWidget(3, stdDevWidget);
+        mainLayout->addStretch();
+    } else {
         // set text in mean and stdDev boxes
         stdDev->setText(QString::number(data[1]));
         mean->setText(QString::number(data[0]));

@@ -11,7 +11,7 @@ class SimCenterWidget;
 class InputWidgetFEM;
 class InputWidgetUQ;
 class RandomVariableInputWidget;
-class DakotaResultsSampling;
+class DakotaResults;
 
 
 class MainWindow : public QMainWindow
@@ -48,7 +48,7 @@ class MainWindow : public QMainWindow
     InputWidgetFEM *fem;
     InputWidgetUQ *uq;
     RandomVariableInputWidget *random;
-    DakotaResultsSampling *results;
+    DakotaResults *results;
 };
 
 #endif // MAINWINDOW_H

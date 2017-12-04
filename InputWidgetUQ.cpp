@@ -58,13 +58,13 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     layout->addLayout(name);
 
     layout->addStretch();
- //   run = new QPushButton();
- //   run->setText(tr("RUN"));
- //   layout->addWidget(run);
+    //   run = new QPushButton();
+    //   run->setText(tr("RUN"));
+    //   layout->addWidget(run);
 
     this->setLayout(layout);
-   // QSizePolicy sp(QSizePolicy::Preferred, QSizePolicy::Fixed);
-   // this->setSizePolicy(sp);
+    // QSizePolicy sp(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    // this->setSizePolicy(sp);
 
     this->uqSelectionChanged(tr("Sampling"));
     //layout->setSpacing(10);
@@ -101,25 +101,25 @@ InputWidgetUQ::outputToJSON(QJsonObject &jsonObject)
 void
 InputWidgetUQ::inputFromJSON(QJsonObject &jsonObject)
 {
-  this->clear();
+    this->clear();
 
     QJsonObject uq = jsonObject["uqMethod"].toObject();
     QString selection = uq["uqType"].toString();
     this->uqSelectionChanged(selection);
     if (uqType != 0)
-         uqType->inputFromJSON(uq);
+        uqType->inputFromJSON(uq);
 }
 
-int InputWidgetUQ::processResults(QString &filenameResults)
+int InputWidgetUQ::processResults(QString &filenameResults, QString &filenameTab)
 {
     if (samplingWidget != 0)
-        return samplingWidget->processResults(filenameResults);
+        return samplingWidget->processResults(filenameResults, filenameTab);
 }
 
 void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
 {
     if (uqType != 0) {
-       // layout->rem
+        // layout->rem
         samplingWidget = 0;
         layout->removeWidget(uqType);
         delete uqType;
@@ -129,11 +129,24 @@ void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
     //uqSpecific = new QWidget();
 
     if (arg1 == QString("Sampling")) {
-      //uqType = new InputWidgetSampling();
-      samplingWidget = new InputWidgetSampling();
-      uqType = samplingWidget;
+        //uqType = new InputWidgetSampling();
+        samplingWidget = new InputWidgetSampling();
+        uqType = samplingWidget;
     }
 
     if (uqType != 0)
         layout->insertWidget(1, uqType,1);
+}
+
+DakotaResults *
+InputWidgetUQ::getResults(void)
+{
+    qDebug() << "InputWidgetUQ::getResult()";
+
+    if (samplingWidget != 0) {
+        qDebug() << " HELLO";
+        return samplingWidget->getResults();
+    }
+
+    return 0;
 }
