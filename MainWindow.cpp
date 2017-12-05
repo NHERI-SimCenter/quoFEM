@@ -42,18 +42,23 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout();
     centralWidget->setLayout(layout);
 
+    //
+    // add SimCenter Header
+    //
+
     HeaderWidget *header = new HeaderWidget();
     header->setHeadingText(tr("DAKOTA-FEM Uncertainty Quantification Application"));
-
     layout->addWidget(header);
 
+    //
+    // create main input widget
+    //
+
     random = new RandomVariableInputWidget();
-    // edp = new InputWidgetEDP();
     fem = new InputWidgetFEM();
     uq = new InputWidgetUQ();
     results = new DakotaResults();
@@ -61,7 +66,6 @@ MainWindow::MainWindow(QWidget *parent)
     inputWidget = new SidebarWidgetSelection();
     inputWidget->addInputWidget(tr("Input Random Variable"), random);
     inputWidget->addInputWidget(tr("FEM Selection"), fem);
-    // inputWidget->addInputWidget(tr("Output Paramaters"), edp);
     inputWidget->addInputWidget(tr("UQ Selection"), uq);
     inputWidget->addInputWidget(tr("Results"), results);
 
@@ -70,11 +74,36 @@ MainWindow::MainWindow(QWidget *parent)
     inputWidget->setMinimumWidth(800);
     layout->addWidget(inputWidget,1.0);
 
-    QPushButton *run = new QPushButton();
-    run->setText(tr("RUN"));
-    layout->addWidget(run);
-    //connect(removeEDP,SIGNAL(clicked()),this,SLOT(removeEDP()));
-    connect(run, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
+    //
+    // add run, run-DesignSafe and exit buttons
+    //
+
+    QHBoxLayout *pushButtonLayout = new QHBoxLayout();
+    QWidget *buttonWidget = new QWidget();
+    buttonWidget->setLayout(pushButtonLayout);
+
+    QPushButton *runButton = new QPushButton();
+    runButton->setText(tr("RUN"));
+    pushButtonLayout->addWidget(runButton);
+
+    QPushButton *runDesignSafeButton = new QPushButton();
+    runDesignSafeButton->setText(tr("RUN at DesignSafe"));
+    pushButtonLayout->addWidget(runDesignSafeButton);
+
+    QPushButton *exitButton = new QPushButton();
+    exitButton->setText(tr("Exit"));
+    pushButtonLayout->addWidget(exitButton);
+
+    connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
+    connect(runDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onRemoteRunButtonClicked()));
+    connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
+
+    layout->addWidget(buttonWidget);
+
+    //
+    // add SimCenter footer
+    //
+
     FooterWidget *footer = new FooterWidget();
     layout->addWidget(footer);
 
@@ -88,23 +117,91 @@ MainWindow::~MainWindow()
 
 }
 
+bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory)
+{
+ //   qDebug() << "\n SOURCE: " << sourceDir << "\n DEST: " << destinationDir;
+
+    QDir originDirectory(sourceDir);
+//    qDebug() << originDirectory;
+    if (! originDirectory.exists())
+    {
+//        qDebug() << "Origin Directory Does not exist";
+        return false;
+    }
+
+    qDebug() << originDirectory;
+
+    QDir destinationDirectory(destinationDir);
+
+ //   qDebug() << destinationDirectory;
+
+    if(destinationDirectory.exists() && !overWriteDirectory)
+    {
+        return false;
+    }
+
+
+    else if(destinationDirectory.exists() && overWriteDirectory)
+    {
+        destinationDirectory.removeRecursively();
+    }
+
+    originDirectory.mkpath(destinationDir);
+ //   qDebug() << "MAKE PATH desitiation";
+    foreach (QString directoryName, originDirectory.entryList(QDir::Dirs | \
+                                                              QDir::NoDotAndDotDot))
+    {
+        if (directoryName != QString("tmp.SimCenter")) {
+        QString destinationPath = destinationDir + "/" + directoryName;
+        originDirectory.mkpath(destinationPath);
+        copyPath(sourceDir + "/" + directoryName, destinationPath, overWriteDirectory);
+        }
+    }
+
+    foreach (QString fileName, originDirectory.entryList(QDir::Files))
+    {
+        QFile::copy(sourceDir + "/" + fileName, destinationDir + "/" + fileName);
+    }
+
+    /*! Possible race-condition mitigation? */
+    QDir finalDestination(destinationDir);
+    finalDestination.refresh();
+
+    if(finalDestination.exists())
+    {
+        return true;
+    }
+
+    return false;
+}
+
 void MainWindow::onRunButtonClicked() {
 
-    // get program & input file from fem
+    //
+    // get program & input file from fem widget
+    //
+
     QString application = fem->getApplicationName();
     QString mainInput = fem->getMainInput();
 
     QFileInfo fileInfo(mainInput);
     QDir fileDir = fileInfo.absolutePath();
-
     QString fileName =fileInfo.fileName();
+    QString path = fileDir.absolutePath();// + QDir::separator();
 
-    // QString path = fileInfo.path();
-    QString path = fileDir.absolutePath() + QDir::separator();
+    //
+    // given path to input file we are going to create temporary directory below it
+    // and copy all files from this input file directory to the new subdirectory
+    //
 
-    // in inputfile dir, crate a file of the data and copy the dakota python script
-    QString filenameTMP = path + tr("dakota.json");
-    qDebug() << filenameTMP;
+    QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
+    copyPath(path, tmpDirectory, false);
+
+    //
+    // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
+    //
+
+    QString filenameTMP = tmpDirectory + QDir::separator() + tr("dakota.json");
 
     QFile file(filenameTMP);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
@@ -120,37 +217,58 @@ void MainWindow::onRunButtonClicked() {
     file.write(doc.toJson());
     file.close();
 
+    //
+    // now use the applications parseJSON file to run dakota and produce output files:
+    //    dakota.in dakota.out dakotaTab.out dakota.err
+    //
 
     QString appDIR("/Users/fmckenna/NHERI/DakotaFEM2/localApp");
-    QString localScript = appDIR + QDir::separator() + QString("wrapper.sh");
-
-    qDebug() << localScript;
-    QStringList baby; baby<< appDIR << path << mainInput ;
-    qDebug() << baby;
+    QString pySCRIPT = appDIR + QDir::separator() + QString("parseJson2.py");
 
     // invoke the wrapper script
     QProcess *proc = new QProcess();
-    //  proc->execute(localScript, QStringList() << appDIR << path << mainInput );
+    QString pythonSTRING(tr("python"));
+    QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter");
+   // proc->execute(pythonSTRING, QStringList() << pySCRIPT << tDirectory << tmpDirectory);
 
-    // read the results
-    QString filenameOUT = path + tr("dakota.out");
-    QString filenameTAB = path + tr("dakotaTab.out");
+    QString localScript = appDIR + QDir::separator() + QString("wrapper2.sh");
+    proc->execute(localScript, QStringList() << appDIR << path << mainInput );
 
-    //DakotaResults *result = uq->getResults();
+    //
+    // now copy results file from tmp.SimCenter directory and remove tmp directory
+    //
+
+   QString sourceDir = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator();
+   QString destinationDir = path + QDir::separator();
+
+   QStringList files;
+   files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
+
+   for (int i = 0; i < files.size(); i++) {
+       QString copy = files.at(i);
+       QFile::copy(sourceDir + copy, destinationDir + copy);
+   }
+
+   QDir dirToRemove(sourceDir);
+   dirToRemove.removeRecursively();
+
+    //
+    // process the results
+    //
+
+    QString filenameOUT = destinationDir + tr("dakota.out");
+    QString filenameTAB = destinationDir + tr("dakotaTab.out");
+
     DakotaResults *result=uq->getResults();
     result->processResults(filenameOUT, filenameTAB);
     results->setResultWidget(result);
+}
 
-    /*
-    results = uq->processResults(filenameOUT, filenameTAB);
-
-   // if (results == 0) {
-          results = new DakotaResultsSampling(this);
-          inputWidget->addInputWidget(tr("Results"), results);
-          results->processResults(filenameOUT, filenameTAB);
-    }
-    inputWidget->setSelection("Results");
-    */
+void MainWindow::onRemoteRunButtonClicked(){
+    qDebug() << "NOT YET IMPLEMENTED";
+}
+void MainWindow::onExitButtonClicked(){
+  QApplication::quit();
 }
 
 bool MainWindow::save()
@@ -274,7 +392,6 @@ void MainWindow::loadFile(const QString &fileName)
 
 void MainWindow::createActions() {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-
 
     //const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/images/open.png"));
     //const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/images/save.png"));

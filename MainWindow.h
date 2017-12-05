@@ -29,6 +29,8 @@ class MainWindow : public QMainWindow
     bool saveAs();
 
     void onRunButtonClicked();
+    void onRemoteRunButtonClicked();
+    void onExitButtonClicked();
 
   //void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
 
