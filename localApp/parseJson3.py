@@ -458,7 +458,8 @@ if (femProgram == "OpenSees-2"):
     f.write(' \n')
     f.close()
 
-    f = open('../fem_driver', 'w')
+    os.chdir(path1)
+    f = open('fem_driver', 'w')
     f.write('/Users/fmckenna/dakota-6.7.0/bin/dprepro $1 params.template paramIN.ops\n')
     f.write('/Users/fmckenna/bin/OpenSees main.ops >> ops.out\n')
     f.write('python ')
@@ -470,10 +471,10 @@ if (femProgram == "OpenSees-2"):
     f.write('\n')
     f.close()
 
-    os.chmod('../fem_driver', stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
+    os.chmod('fem_driver', stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
     
-os.chdir(path1)
+
 os.popen("/Users/fmckenna/dakota-6.7.0/bin/dakota -input dakota.in -output dakota.out -error dakota.err").read()
 
 
