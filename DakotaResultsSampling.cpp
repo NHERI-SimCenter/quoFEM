@@ -38,6 +38,8 @@ DakotaResultsSampling::DakotaResultsSampling(QWidget *parent)
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
     mLeft = true;
+    col1 = 0;
+    col2 = 0;
 }
 
 DakotaResultsSampling::~DakotaResultsSampling()
