@@ -11,6 +11,17 @@ inputArgs = sys.argv
 path1 = inputArgs[1]
 path2 = inputArgs[2]
 
+if (sys.platform == 'darwin'):
+    OpenSeesPath = '/Users/fmckenna/bin/'
+    DakotaPath = '/Users/fmckenna/dakota-6.7.0/bin/'
+
+else:
+    OpenSeesPath = 'C:\\Users\\SimCenter\\OpenSees\\Win64\\bin\\OpenSees\\'
+    DakotaPath = 'C:\\Users\\SimCenter\\dakota-6.7\\bin\\'
+
+print(OpenSeesPath)
+print(DakotaPath)
+
 os.chdir(path2)
 cwd = os.getcwd()
 #print cwd
@@ -430,7 +441,8 @@ if (femProgram == "OpenSees"):
 
     f = open('fem_driver', 'w')
     f.write('dprepro $1 params.template paramIN.ops\n')
-    f.write('/Users/fmckenna/bin/OpenSees main.ops >> ops.out\n')
+    f.write(OpenSeesPath)
+    f.write('OpenSees main.ops >> ops.out\n')
     f.close()
 
     os.chmod('fem_driver', stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
@@ -460,8 +472,10 @@ if (femProgram == "OpenSees-2"):
 
     os.chdir(path1)
     f = open('fem_driver', 'w')
-    f.write('/Users/fmckenna/dakota-6.7.0/bin/dprepro $1 params.template paramIN.ops\n')
-    f.write('/Users/fmckenna/bin/OpenSees main.ops >> ops.out\n')
+    f.write(DakotaPath)
+    f.write('dprepro $1 params.template paramIN.ops\n')
+    f.write(OpenSeesPath)
+    f.write('OpenSees main.ops >> ops.out\n')
     f.write('python ')
     f.write(postprocessScript)
     for i in range(numResponses):
@@ -473,9 +487,12 @@ if (femProgram == "OpenSees-2"):
 
     os.chmod('fem_driver', stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
-    
+    command = DakotaPath + 'dakota -input dakota.in -output dakota.out -error dakota.err'
 
-os.popen("/Users/fmckenna/dakota-6.7.0/bin/dakota -input dakota.in -output dakota.out -error dakota.err").read()
+    print(command)
+
+#os.popen("/Users/fmckenna/dakota-6.7.0/bin/dakota -input dakota.in -output dakota.out -error dakota.err").read()
+os.popen(command).read()
 
 
 
