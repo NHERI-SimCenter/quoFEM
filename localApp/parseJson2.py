@@ -6,14 +6,14 @@ import shutil
 from pprint import pprint
 
 inputArgs = sys.argv
-print inputArgs
+#print inputArgs
 
 path1 = inputArgs[1]
 path2 = inputArgs[2]
 
 os.chdir(path2)
 cwd = os.getcwd()
-print cwd
+#print cwd
 
 #
 # open file
