@@ -126,7 +126,6 @@ void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
         uqType = 0;
     }
 
-    //uqSpecific = new QWidget();
 
     if (arg1 == QString("Sampling")) {
         //uqType = new InputWidgetSampling();
@@ -141,10 +140,7 @@ void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
 DakotaResults *
 InputWidgetUQ::getResults(void)
 {
-    qDebug() << "InputWidgetUQ::getResult()";
-
     if (samplingWidget != 0) {
-        qDebug() << " HELLO";
         return samplingWidget->getResults();
     }
 

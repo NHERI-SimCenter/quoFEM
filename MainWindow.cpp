@@ -37,6 +37,7 @@
 //#include <InputWidgetEDP.h>
 #include <QFileInfo>
 #include <QProcess>
+#include <QDesktopWidget>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -45,6 +46,13 @@ MainWindow::MainWindow(QWidget *parent)
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout();
     centralWidget->setLayout(layout);
+
+    QRect rec = QApplication::desktop()->screenGeometry();
+
+    int height = 0.7*rec.height();
+    int width = 0.7*rec.width();
+
+    this->resize(width, height);
 
     //
     // add SimCenter Header
