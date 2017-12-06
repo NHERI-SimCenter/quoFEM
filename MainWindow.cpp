@@ -162,21 +162,15 @@ MainWindow::~MainWindow()
 
 bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory)
 {
- //   qDebug() << "\n SOURCE: " << sourceDir << "\n DEST: " << destinationDir;
-
     QDir originDirectory(sourceDir);
-//    qDebug() << originDirectory;
+
     if (! originDirectory.exists())
     {
         qDebug() << "Origin Directory: " << originDirectory << " Does not exist";
         return false;
     }
 
-    qDebug() << originDirectory;
-
     QDir destinationDirectory(destinationDir);
-
- //   qDebug() << destinationDirectory;
 
     if(destinationDirectory.exists() && !overWriteDirectory)
     {
@@ -190,7 +184,7 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
     }
 
     originDirectory.mkpath(destinationDir);
-   qDebug() << "MAKE PATH desitiation";
+
     foreach (QString directoryName, originDirectory.entryList(QDir::Dirs | \
                                                               QDir::NoDotAndDotDot))
     {
@@ -219,7 +213,6 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
 }
 
 void MainWindow::onRunButtonClicked() {
-fprintf(stderr,"runClicked\n");
     //
     // get program & input file from fem widget
     //
@@ -232,7 +225,6 @@ fprintf(stderr,"runClicked\n");
     QString fileName =fileInfo.fileName();
     QString path = fileDir.absolutePath();// + QDir::separator();
 
-    qDebug() << "filePATH:" << path;
     //
     // given path to input file we are going to create temporary directory below it
     // and copy all files from this input file directory to the new subdirectory
@@ -240,7 +232,7 @@ fprintf(stderr,"runClicked\n");
 
     QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
     copyPath(path, tmpDirectory, false);
-    qDebug() << "COPY" << path << " " << tmpDirectory;
+
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
     //
@@ -274,7 +266,7 @@ fprintf(stderr,"runClicked\n");
 
     QProcess *proc = new QProcess();
 
-     QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter");
+    QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter");
 
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
@@ -311,8 +303,8 @@ fprintf(stderr,"runClicked\n");
        QFile::copy(sourceDir + copy, destinationDir + copy);
    }
 
-  // QDir dirToRemove(sourceDir);
-  // dirToRemove.removeRecursively();
+   QDir dirToRemove(sourceDir);
+   dirToRemove.removeRecursively();
 
     //
     // process the results
