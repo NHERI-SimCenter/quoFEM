@@ -79,7 +79,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     inputWidget->buildTreee();
 
-    inputWidget->setMinimumWidth(800);
+    //inputWidget->setMinimumWidth(800);
     layout->addWidget(inputWidget,1.0);
 
     //
@@ -133,7 +133,7 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
 //    qDebug() << originDirectory;
     if (! originDirectory.exists())
     {
-//        qDebug() << "Origin Directory Does not exist";
+        qDebug() << "Origin Directory: " << originDirectory << " Does not exist";
         return false;
     }
 
@@ -155,7 +155,7 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
     }
 
     originDirectory.mkpath(destinationDir);
- //   qDebug() << "MAKE PATH desitiation";
+   qDebug() << "MAKE PATH desitiation";
     foreach (QString directoryName, originDirectory.entryList(QDir::Dirs | \
                                                               QDir::NoDotAndDotDot))
     {
@@ -184,7 +184,7 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
 }
 
 void MainWindow::onRunButtonClicked() {
-
+fprintf(stderr,"runClicked\n");
     //
     // get program & input file from fem widget
     //
@@ -197,6 +197,7 @@ void MainWindow::onRunButtonClicked() {
     QString fileName =fileInfo.fileName();
     QString path = fileDir.absolutePath();// + QDir::separator();
 
+    qDebug() << "filePATH:" << path;
     //
     // given path to input file we are going to create temporary directory below it
     // and copy all files from this input file directory to the new subdirectory
@@ -204,7 +205,7 @@ void MainWindow::onRunButtonClicked() {
 
     QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
     copyPath(path, tmpDirectory, false);
-
+    qDebug() << "COPY" << path << " " << tmpDirectory;
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
     //
@@ -230,17 +231,32 @@ void MainWindow::onRunButtonClicked() {
     //    dakota.in dakota.out dakotaTab.out dakota.err
     //
 
-    QString appDIR("/Users/fmckenna/NHERI/DakotaFEM2/localApp");
-    QString pySCRIPT = appDIR + QDir::separator() + QString("parseJson2.py");
+    QString homeDIR = QDir::homePath();
+    QString appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("DakotaFEM2") +
+            QDir::separator() + QString("localApp");
 
-    // invoke the wrapper script
+    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
+
     QProcess *proc = new QProcess();
+
+     QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter");
+
+#ifdef Q_OS_WIN
+    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
+    proc->execute("cmd", QStringList() << "/C" << command);
+#else
+
+#endif
+    /*
+    // invoke the wrapper script
+
     QString pythonSTRING(tr("python"));
     QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter");
-   // proc->execute(pythonSTRING, QStringList() << pySCRIPT << tDirectory << tmpDirectory);
+    proc->execute(pythonSTRING, QStringList() << pySCRIPT << tDirectory << tmpDirectory);
+*/
 
-    QString localScript = appDIR + QDir::separator() + QString("wrapper2.sh");
-    proc->execute(localScript, QStringList() << appDIR << path << mainInput );
+    //QString localScript = appDIR + QDir::separator() + QString("wrapper2.sh");
+    //proc->execute(localScript, QStringList() << appDIR << path << mainInput );
 
     //
     // now copy results file from tmp.SimCenter directory and remove tmp directory
@@ -257,8 +273,8 @@ void MainWindow::onRunButtonClicked() {
        QFile::copy(sourceDir + copy, destinationDir + copy);
    }
 
-   QDir dirToRemove(sourceDir);
-   dirToRemove.removeRecursively();
+ //  QDir dirToRemove(sourceDir);
+ //  dirToRemove.removeRecursively();
 
     //
     // process the results
