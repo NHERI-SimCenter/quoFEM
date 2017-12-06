@@ -14,10 +14,15 @@ path2 = inputArgs[2]
 if (sys.platform == 'darwin'):
     OpenSeesPath = '/Users/fmckenna/bin/'
     DakotaPath = '/Users/fmckenna/dakota-6.7.0/bin/'
+    Perl = ' '
 
 else:
-    OpenSeesPath = 'C:\\Users\\SimCenter\\OpenSees\\Win64\\bin\\OpenSees\\'
+    OpenSeesPath = 'C:\\Users\\SimCenter\\OpenSees\\Win64\\bin\\'
     DakotaPath = 'C:\\Users\\SimCenter\\dakota-6.7\\bin\\'
+    Perl = 'C:\\Perl64\\bin\perl '
+    OpenSeesPath = ' '
+    # DakotaPath = ' '
+    Perl = 'perl '
 
 print(OpenSeesPath)
 print(DakotaPath)
@@ -439,8 +444,10 @@ if (femProgram == "OpenSees"):
     f.write('source paramOUT.ops \n')
     f.close()
 
-    f = open('fem_driver', 'w')
-    f.write('dprepro $1 params.template paramIN.ops\n')
+    f = open('fem_driver.bat', 'w')
+    f.write('perl ')
+    f.write(DakotaPath)
+    f.write('dprepro params.in params.template paramIN.ops\n')
     f.write(OpenSeesPath)
     f.write('OpenSees main.ops >> ops.out\n')
     f.close()
@@ -471,9 +478,10 @@ if (femProgram == "OpenSees-2"):
     f.close()
 
     os.chdir(path1)
-    f = open('fem_driver', 'w')
+    f = open('fem_driver.bat', 'w')
+    f.write(Perl)
     f.write(DakotaPath)
-    f.write('dprepro $1 params.template paramIN.ops\n')
+    f.write('dprepro params.in params.template paramIN.ops\n')
     f.write(OpenSeesPath)
     f.write('OpenSees main.ops >> ops.out\n')
     f.write('python ')
@@ -485,11 +493,10 @@ if (femProgram == "OpenSees-2"):
     f.write('\n')
     f.close()
 
-    os.chmod('fem_driver', stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
+os.chmod('fem_driver.bat', stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
-    command = DakotaPath + 'dakota -input dakota.in -output dakota.out -error dakota.err'
-
-    print(command)
+command = DakotaPath + 'dakota -input dakota.in -output dakota.out -error dakota.err'
+print(command)
 
 #os.popen("/Users/fmckenna/dakota-6.7.0/bin/dakota -input dakota.in -output dakota.out -error dakota.err").read()
 os.popen(command).read()
