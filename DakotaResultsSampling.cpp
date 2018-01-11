@@ -65,7 +65,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtCharts/QScatterSeries>
 #include <QtCharts/QVXYModelMapper>
 using namespace QtCharts;
+#include <math.h>
+#include <QValueAxis>
 
+#include <QXYSeries>
 
 DakotaResultsSampling::DakotaResultsSampling(QWidget *parent)
     : DakotaResults(parent)
@@ -372,7 +375,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     std::getline(tabResults, inputLine);
     std::istringstream iss(inputLine);
     int colCount = 0;
-    theHeadings << "Rum #";
+    theHeadings << "Run #";
     do
     {
         std::string subs;
@@ -455,33 +458,119 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
     // create a new series
     chart->removeAllSeries();
+    //chart->removeA
+    QAbstractAxis *oldAxisX=chart->axisX();
+    if (oldAxisX != 0)
+        chart->removeAxis(oldAxisX);
+    QAbstractAxis *oldAxisY=chart->axisY();
+    if (oldAxisY != 0)
+        chart->removeAxis(oldAxisY);
 
-    QScatterSeries *series = new QScatterSeries;
+
+    // QScatterSeries *series;//= new QScatterSeries;
 
     int oldCol;
     if (mLeft == true) {
-        oldCol= col2;
-        col2 = col;
-    } else {
         oldCol= col1;
         col1 = col;
+    } else {
+        oldCol= col2;
+        col2 = col;
     }
 
     int rowCount = spreadsheet->rowCount();
-    //QLineSeries *series = new QLineSeries;
-    for (int i=0; i<rowCount; i++) {
-        QTableWidgetItem *itemX = spreadsheet->item(i,col1);
-        QTableWidgetItem *itemY = spreadsheet->item(i,col2);
-        QTableWidgetItem *itemOld = spreadsheet->item(i,oldCol);
-        itemOld->setData(Qt::BackgroundRole, QColor(Qt::white));
-        itemX->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
-        itemY->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
+    if (col1 != col2) {
+        QScatterSeries *series = new QScatterSeries;
 
-        series->append(itemX->text().toDouble(), itemY->text().toDouble());
+        for (int i=0; i<rowCount; i++) {
+            QTableWidgetItem *itemX = spreadsheet->item(i,col1);
+            QTableWidgetItem *itemY = spreadsheet->item(i,col2);
+            QTableWidgetItem *itemOld = spreadsheet->item(i,oldCol);
+            itemOld->setData(Qt::BackgroundRole, QColor(Qt::white));
+            itemX->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
+            itemY->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
+
+            series->append(itemX->text().toDouble(), itemY->text().toDouble());
+        }
+        chart->addSeries(series);
+        QValueAxis *axisX = new QValueAxis();
+        QValueAxis *axisY = new QValueAxis();
+
+        axisX->setTitleText(theHeadings.at(col1));
+        axisY->setTitleText(theHeadings.at(col2));
+
+        chart->setAxisX(axisX, series);
+        chart->setAxisY(axisY, series);
+
+    } else {
+
+        QLineSeries *series= new QLineSeries;
+
+        static int NUM_DIVISIONS = 10;
+        static double NUM_DIVISIONS_FOR_DIVISION = 10.0;
+        double *dataValues = new double[rowCount];
+        double histogram[NUM_DIVISIONS];
+        for (int i=0; i<NUM_DIVISIONS; i++)
+            histogram[i] = 0;
+
+        double min = 0;
+        double max = 0;
+        for (int i=0; i<rowCount; i++) {
+            QTableWidgetItem *itemX = spreadsheet->item(i,col1);
+            QTableWidgetItem *itemOld = spreadsheet->item(i,oldCol);
+            itemOld->setData(Qt::BackgroundRole, QColor(Qt::white));
+            itemX->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
+            double value = itemX->text().toDouble();
+            dataValues[i] =  value;
+
+            if (i == 0) {
+                min = value;
+                max = value;
+            } else if (value < min) {
+                min = value;
+            } else if (value > max) {
+                max = value;
+            }
+        }
+
+        double range = max-min;
+        double dRange = range/NUM_DIVISIONS_FOR_DIVISION;
+
+        for (int i=0; i<rowCount; i++) {
+            // compute block belongs to, watch under and overflow due to numerics
+            int block = floor((dataValues[i]-min)/dRange);
+            if (block < 0) block = 0;
+            if (block > NUM_DIVISIONS-1) block = NUM_DIVISIONS-1;
+            histogram[block] += 1;
+        }
+
+        double maxPercent = 0;
+        for (int i=0; i<NUM_DIVISIONS; i++) {
+            histogram[i]/rowCount;
+            if (histogram[i] > maxPercent)
+                maxPercent = histogram[i];
+        }
+        for (int i=0; i<NUM_DIVISIONS; i++) {
+            series->append(min+i*dRange, 0);
+            series->append(min+i*dRange, histogram[i]);
+            series->append(min+(i+1)*dRange, histogram[i]);
+            series->append(min+(i+1)*dRange, 0);
+        }
+
+        delete dataValues;
+
+        chart->addSeries(series);
+        QValueAxis *axisX = new QValueAxis();
+        QValueAxis *axisY = new QValueAxis();
+
+        axisX->setRange(min, max);
+        axisY->setRange(0, maxPercent);
+        axisY->setTitleText("Frequency %");
+        axisX->setTitleText(theHeadings.at(col1));
+        axisX->setTickCount(NUM_DIVISIONS+1);
+        chart->setAxisX(axisX, series);
+        chart->setAxisY(axisY, series);
     }
-
-    chart->addSeries(series);
-    chart->createDefaultAxes();
 }
 
 
