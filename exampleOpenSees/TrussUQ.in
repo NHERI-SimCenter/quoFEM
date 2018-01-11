@@ -1,0 +1,31 @@
+environment
+	tabular_data
+
+method
+	id_method = 'UQ'
+	sampling
+		sample_type lhs
+		samples 100
+		seed 50
+  
+variables
+	normal_uncertain = 4
+		means			= 205e3 25e3 250 500
+		std_deviations	= 15e3	2.5e3 10 25
+		descriptors		= 'E' 'P' 'A1' 'A2'
+	
+responses
+	response_functions 1
+		descriptors 'disp'
+	no_gradients
+	no_hessians
+	
+interface
+	fork asynchronous evaluation_concurrency = 8
+	analysis_drivers 'OpenSeesDriver.sh'
+	parameters_file = 'FEM.in'
+	results_file = 'results.out'
+	file_tag file_save
+	work_directory named 'WorkDir/OpenSeesWorkDir'
+	directory_save
+	copy_files 'TrussTemplate.tcl'
