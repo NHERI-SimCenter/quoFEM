@@ -13,6 +13,7 @@ path2 = inputArgs[2]
 
 if (sys.platform == 'darwin'):
     OpenSeesPath = '/Users/fmckenna/bin/'
+    FeapPath = '/Users/fmckenna/bin/'
     DakotaPath = '/Users/fmckenna/dakota-6.7.0/bin/'
     OpenSeesPath = ' ' 
     DakotaPath = ' '
@@ -177,6 +178,8 @@ if (type == "Sampling"):
     seed = 0;    
     f.write('sampling\n');
     method = samplingData["method"];
+    if (method == "Monte Carlo"):
+        method = 'random'
     numSamples=samplingData["samples"];
     seed = samplingData["seed"];
     f.write('sample_type = ' '{}'.format(method))
@@ -374,9 +377,9 @@ f.write('\n\n')
 
 femProgram = femData["program"];
 
-if (femProgram == "OpenSees" or femProgram == "OpenSees-2"):
+if (femProgram == "OpenSees" or femProgram == "OpenSees-2" or femProgram == "FEAPpv"):
     f.write('interface,\n')
-    f.write('system # asynch evaluation_concurrency = 4\n')
+    f.write('system # asynch evaluation_concurrency = 8\n')
     f.write('analysis_driver = \'fem_driver\' \n')
     f.write('parameters_file = \'params.in\' \n')
     f.write('results_file = \'results.out\' \n')
@@ -386,9 +389,8 @@ if (femProgram == "OpenSees" or femProgram == "OpenSees-2"):
     f.write('aprepro \n')
     f.write('\n')
     
-
 # write out the responses
-print(numResponses)
+# print(numResponses)
 
 f.write('responses, \n')
 f.write('response_functions = ' '{}'.format(numResponses))
@@ -416,62 +418,33 @@ femPostprocessFile = "";
 
 if (femProgram == "OpenSees"):
 
-    f = open('params.template', 'w')
     inputFile = femData["mainInput"];    
-    f.write('pwd\n')
-    
-    for i in range(numUncertain):
-        f.write('set ')
-        f.write(uncertainName[i])
-        f.write(' {')
-        f.write(uncertainName[i])
-        f.write('}\n')
 
-    f.close()
-
-    f = open('paramOUT.ops', 'w')
-    f.write('set outFile [open results.out w]\n')
-    
-    for i in range(numResponses):
-        f.write('puts $outFile $')
-        f.write(responseDescriptors[i])
-        f.write('\n')
-        
-    f.write('close $outFile\n\n')
-    f.close()
-
-    f = open('main.ops', 'w')
-    f.write('source paramIN.ops \n')
-    f.write('source ')
-    f.write(inputFile)
-    f.write(' \n')
-    f.write('source paramOUT.ops \n')
-    f.close()
+    os.chdir(path1)
 
     f = open(fem_driver, 'w')
-    f.write('perl ')
+    f.write(Perl)
     f.write(DakotaPath)
-    f.write('dprepro params.in params.template paramIN.ops\n')
+    f.write('dprepro $1 ')
+    f.write(inputFile)
+    f.write(' SimCenterInput.tcl\n')
     f.write(OpenSeesPath)
-    f.write('OpenSees main.ops >> ops.out\n')
+    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
+    f.write('mv results.out $2\n')
     f.close()
-
-    os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
 if (femProgram == "OpenSees-2"):
 
-    f = open('params.template', 'w')
     inputFile = femData["mainInput"];    
     postprocessScript = femData["mainPostprocessScript"];    
-    f.write('pwd\n')
-    
+
+    f = open('params.template', 'w')
     for i in range(numUncertain):
         f.write('set ')
         f.write(uncertainName[i])
         f.write(' {')
         f.write(uncertainName[i])
         f.write('}\n')
-
     f.close()
 
     f = open('main.ops', 'w')
@@ -493,6 +466,38 @@ if (femProgram == "OpenSees-2"):
     for i in range(numResponses):
         f.write(' ')
         f.write(responseDescriptors[i])    
+    f.write('\n')
+    f.close()
+
+if (femProgram == "FEAPpv"):
+
+    inputFile = femData["mainInput"];    
+    postprocessScript = femData["mainPostprocessScript"];    
+
+    f = open('feapname', 'w')
+    f.write('SimCenterIn.txt   \n')
+    f.write('SimCenterOut.txt   \n')
+    f.write('SimCenterR.txt   \n')
+    f.write('SimCenterR.txt   \n')
+    f.write('NONE   \n')
+    f.write('\n')
+    f.close()
+    
+    os.chdir(path1)
+    f = open(fem_driver, 'w')
+    f.write(Perl)
+    f.write(DakotaPath)
+    f.write('dprepro $1 ')
+    f.write(inputFile)
+    f.write(' SimCenterIn.txt --output-format=\'\%10.5f\'\n')
+    f.write('echo y|')
+    f.write(FeapPath)
+    f.write('feappv\n')
+    f.write('python ')
+    f.write(postprocessScript)
+    for i in range(numResponses):
+        f.write(' ')
+        f.write(responseDescriptors[i])    
                                    
     f.write('\n')
     f.close()
@@ -504,7 +509,6 @@ print(command)
 
 #os.popen("/Users/fmckenna/dakota-6.7.0/bin/dakota -input dakota.in -output dakota.out -error dakota.err").read()
 os.popen(command).read()
-
 
 
 
