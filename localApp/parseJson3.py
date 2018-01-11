@@ -425,12 +425,11 @@ if (femProgram == "OpenSees"):
     f = open(fem_driver, 'w')
     f.write(Perl)
     f.write(DakotaPath)
-    f.write('dprepro $1 ')
+    f.write('dprepro params.in ')
     f.write(inputFile)
     f.write(' SimCenterInput.tcl\n')
     f.write(OpenSeesPath)
     f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
-    f.write('mv results.out $2\n')
     f.close()
 
 if (femProgram == "OpenSees-2"):
@@ -487,7 +486,7 @@ if (femProgram == "FEAPpv"):
     f = open(fem_driver, 'w')
     f.write(Perl)
     f.write(DakotaPath)
-    f.write('dprepro $1 ')
+    f.write('dprepro params.in ')
     f.write(inputFile)
     f.write(' SimCenterIn.txt --output-format=\'\%10.5f\'\n')
     f.write('echo y|')
