@@ -1,0 +1,52 @@
+{
+    "fem": {
+        "dir": "/Users/fmckenna/NHERI/DakotaFEM2/exampleOpenSees",
+        "inputFile": "/Users/fmckenna/NHERI/DakotaFEM2/exampleOpenSees/TrussTemplate.tcl",
+        "mainInput": "TrussTemplate.tcl",
+        "mainPostprocessScript": "",
+        "postprocessScript": "",
+        "program": "OpenSees"
+    },
+    "randomVariables": [
+        {
+            "distribution": "Normal",
+            "mean": 205000,
+            "name": "E",
+            "stdDev": 15000
+        },
+        {
+            "distribution": "Normal",
+            "mean": 25000,
+            "name": "P",
+            "stdDev": 2500
+        },
+        {
+            "distribution": "Normal",
+            "mean": 250,
+            "name": "A1",
+            "stdDev": 10
+        },
+        {
+            "distribution": "Normal",
+            "mean": 500,
+            "name": "A2",
+            "stdDev": 25
+        }
+    ],
+    "uqMethod": {
+        "samplingMethodData": {
+            "edps": [
+                {
+                    "name": "Node_3_Disp"
+                }
+            ],
+            "method": "LHS",
+            "samples": 100,
+            "seed": 10
+        },
+        "uqType": "Sampling"
+    },
+    "uqResults": {
+        "resultType": "NONE"
+    }
+}
