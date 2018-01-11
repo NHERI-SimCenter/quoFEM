@@ -213,6 +213,7 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
 }
 
 void MainWindow::onRunButtonClicked() {
+
     //
     // get program & input file from fem widget
     //
@@ -263,10 +264,32 @@ void MainWindow::onRunButtonClicked() {
             QDir::separator() + QString("localApp");
 
     QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
-
-    QProcess *proc = new QProcess();
-
     QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter");
+
+    // remove current results widget
+
+    results->setResultWidget(0);
+
+    //
+    // want to first remove old dakota files from the current directory
+    //
+
+    QString sourceDir = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator();
+    QString destinationDir = path + QDir::separator();
+
+    QStringList files;
+    files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
+
+    for (int i = 0; i < files.size(); i++) {
+        QString copy = files.at(i);
+        QFile file(destinationDir + copy);
+        file.remove();
+    }
+
+    //
+    // now invoke dakota, done via a python script in tool app dircetory
+    //
+    QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
@@ -275,28 +298,14 @@ void MainWindow::onRunButtonClicked() {
 #else
     QString command = QString("source $HOME/.bashrc; python3 ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
     proc->execute("bash", QStringList() << "-c" <<  command);
+    //    qDebug() << command;
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
     proc->waitForStarted();
 
-    //QString pythonSTRING(tr("/usr/local/bin/python3"));
-    //    QString pythonSTRING(tr("python"));
-    //QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter");
-    //proc->execute(pythonSTRING, QStringList() << pySCRIPT << tDirectory << tmpDirectory);
-
-    // invoke the wrapper script
-    //QString localScript = appDIR + QDir::separator() + QString("wrapper2.sh");
-    //proc->execute(localScript, QStringList() << appDIR << path << mainInput );
-
     //
     // now copy results file from tmp.SimCenter directory and remove tmp directory
     //
-
-   QString sourceDir = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator();
-   QString destinationDir = path + QDir::separator();
-
-   QStringList files;
-   files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
 
    for (int i = 0; i < files.size(); i++) {
        QString copy = files.at(i);
@@ -304,7 +313,7 @@ void MainWindow::onRunButtonClicked() {
    }
 
    QDir dirToRemove(sourceDir);
-   dirToRemove.removeRecursively();
+   //dirToRemove.removeRecursively();
 
     //
     // process the results
@@ -316,6 +325,7 @@ void MainWindow::onRunButtonClicked() {
     DakotaResults *result=uq->getResults();
     result->processResults(filenameOUT, filenameTAB);
     results->setResultWidget(result);
+    inputWidget->setSelection(QString("Results"));
 }
 
 void MainWindow::onRemoteRunButtonClicked(){
