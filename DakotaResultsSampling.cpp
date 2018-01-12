@@ -269,6 +269,54 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
 }
 
 
+void merge_helper(double *input, int left, int right, double *scratch)
+{
+    // if one element: done  else: recursive call and then merge
+    if(right == left + 1) {
+        return;
+    } else {
+        int length = right - left;
+        int midpoint_distance = length/2;
+        /* l and r are to the positions in the left and right subarrays */
+        int l = left, r = left + midpoint_distance;
+
+        // sort each subarray
+        merge_helper(input, left, left + midpoint_distance, scratch);
+        merge_helper(input, left + midpoint_distance, right, scratch);
+
+        // merge the arrays together using scratch for temporary storage
+        for(int i = 0; i < length; i++) {
+            /* Check to see if any elements remain in the left array; if so,
+            * we check if there are any elements left in the right array; if
+            * so, we compare them.  Otherwise, we know that the merge must
+            * use take the element from the left array */
+            if(l < left + midpoint_distance &&
+                    (r == right || fmin(input[l], input[r]) == input[l])) {
+                scratch[i] = input[l];
+                l++;
+            } else {
+                scratch[i] = input[r];
+                r++;
+            }
+        }
+        // Copy the sorted subarray back to the input
+        for(int i = left; i < right; i++) {
+            input[i] = scratch[i - left];
+        }
+    }
+}
+
+int mergesort(double *input, int size)
+{
+    double *scratch = new double[size];
+    if(scratch != NULL) {
+        merge_helper(input, 0, size, scratch);
+        delete [] scratch;
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab) {
 
@@ -471,11 +519,11 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
     int oldCol;
     if (mLeft == true) {
-        oldCol= col1;
-        col1 = col;
-    } else {
         oldCol= col2;
         col2 = col;
+    } else {
+        oldCol= col1;
+        col1 = col;
     }
 
     int rowCount = spreadsheet->rowCount();
@@ -532,44 +580,71 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
                 max = value;
             }
         }
+        if (mLeft == true) {
 
-        double range = max-min;
-        double dRange = range/NUM_DIVISIONS_FOR_DIVISION;
+            // frequency distribution
+            double range = max-min;
+            double dRange = range/NUM_DIVISIONS_FOR_DIVISION;
 
-        for (int i=0; i<rowCount; i++) {
-            // compute block belongs to, watch under and overflow due to numerics
-            int block = floor((dataValues[i]-min)/dRange);
-            if (block < 0) block = 0;
-            if (block > NUM_DIVISIONS-1) block = NUM_DIVISIONS-1;
-            histogram[block] += 1;
+            for (int i=0; i<rowCount; i++) {
+                // compute block belongs to, watch under and overflow due to numerics
+                int block = floor((dataValues[i]-min)/dRange);
+                if (block < 0) block = 0;
+                if (block > NUM_DIVISIONS-1) block = NUM_DIVISIONS-1;
+                histogram[block] += 1;
+            }
+
+            double maxPercent = 0;
+            for (int i=0; i<NUM_DIVISIONS; i++) {
+                histogram[i]/rowCount;
+                if (histogram[i] > maxPercent)
+                    maxPercent = histogram[i];
+            }
+            for (int i=0; i<NUM_DIVISIONS; i++) {
+                series->append(min+i*dRange, 0);
+                series->append(min+i*dRange, histogram[i]);
+                series->append(min+(i+1)*dRange, histogram[i]);
+                series->append(min+(i+1)*dRange, 0);
+            }
+
+            delete dataValues;
+
+            chart->addSeries(series);
+            QValueAxis *axisX = new QValueAxis();
+            QValueAxis *axisY = new QValueAxis();
+
+            axisX->setRange(min, max);
+            axisY->setRange(0, maxPercent);
+            axisY->setTitleText("Frequency %");
+            axisX->setTitleText(theHeadings.at(col1));
+            axisX->setTickCount(NUM_DIVISIONS+1);
+            chart->setAxisX(axisX, series);
+            chart->setAxisY(axisY, series);
+    } else {
+
+            // cumulative distributionn
+            mergesort(dataValues, rowCount);
+
+            for (int i=0; i<rowCount; i++) {
+                series->append(dataValues[i], 1.0*i/rowCount);
+            }
+
+            delete dataValues;
+
+            chart->addSeries(series);
+            QValueAxis *axisX = new QValueAxis();
+            QValueAxis *axisY = new QValueAxis();
+
+            axisX->setRange(min, max);
+            axisY->setRange(0, 1);
+            axisY->setTitleText("Cumulative Probability");
+            axisX->setTitleText(theHeadings.at(col1));
+            axisX->setTickCount(NUM_DIVISIONS+1);
+            chart->setAxisX(axisX, series);
+            chart->setAxisY(axisY, series);
         }
 
-        double maxPercent = 0;
-        for (int i=0; i<NUM_DIVISIONS; i++) {
-            histogram[i]/rowCount;
-            if (histogram[i] > maxPercent)
-                maxPercent = histogram[i];
-        }
-        for (int i=0; i<NUM_DIVISIONS; i++) {
-            series->append(min+i*dRange, 0);
-            series->append(min+i*dRange, histogram[i]);
-            series->append(min+(i+1)*dRange, histogram[i]);
-            series->append(min+(i+1)*dRange, 0);
-        }
 
-        delete dataValues;
-
-        chart->addSeries(series);
-        QValueAxis *axisX = new QValueAxis();
-        QValueAxis *axisY = new QValueAxis();
-
-        axisX->setRange(min, max);
-        axisY->setRange(0, maxPercent);
-        axisY->setTitleText("Frequency %");
-        axisX->setTitleText(theHeadings.at(col1));
-        axisX->setTickCount(NUM_DIVISIONS+1);
-        chart->setAxisX(axisX, series);
-        chart->setAxisY(axisY, series);
     }
 }
 
