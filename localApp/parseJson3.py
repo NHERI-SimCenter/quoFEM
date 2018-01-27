@@ -71,6 +71,12 @@ uniformUncertainName=[];
 uniformUncertainLower =[];
 uniformUncertainHigher =[];
 
+numContinuousDesign = 0;
+continuousDesignName=[];
+continuousDesignLower =[];
+continuousDesignUpper =[];
+continuousDesignInitialPoint =[];
+
 numWeibullUncertain = 0;
 weibullUncertainName=[];
 weibullUncertainAlphas =[];
@@ -114,6 +120,14 @@ for k in data["randomVariables"]:
         uniformUncertainLower.append(k["upperBounds"])
         uniformUncertainUpper.append(k["lowerBounds"])
         numUniformUncertain += 1
+    elif (k["distribution"] == "ContinuousDesign"):
+        uncertainName.append(k["name"])
+        numUncertain += 1
+        continuousDesignName.append(k["name"])
+        continuousDesignLower.append(k["min"])
+        continuousDesignUpper.append(k["max"])
+        continuousDesignInitialPoint.append(k["initialPoint"])
+        numContinuousDesign += 1
     elif (k["distribution"] == "Weibull"):
         uncertainName.append(k["name"])
         numUncertain += 1
@@ -180,6 +194,8 @@ if (type == "Sampling"):
     method = samplingData["method"];
     if (method == "Monte Carlo"):
         method = 'random'
+    else:
+        method = 'lhs'
     numSamples=samplingData["samples"];
     seed = samplingData["seed"];
     f.write('sample_type = ' '{}'.format(method))
@@ -195,6 +211,32 @@ if (type == "Sampling"):
 
 
     f.write('\n\n')
+
+elif (type == "Calibration"):
+    calibrationData = uqData["calibrationMethodData"];
+    maxIterations = 10;
+    convergenceTol = 1.0e-4
+    method = calibrationData["method"];
+    if (method == "OPT++GaussNewton"):
+        method = 'optpp_g_newton'
+    else:
+        method = 'nl2sol'
+    f.write(method);
+    f.write('\n');
+    convergenceTol=calibrationData["convergenceTol"];
+    maxIter = calibrationData["maxIterations"];
+    f.write('convergence_tolerance = ' '{}'.format(convergenceTol))
+    f.write('\n');
+    f.write('max_iterations = ' '{}'.format(maxIter))
+
+    edps = calibrationData["edps"];
+    for edp in edps:
+        responseDescriptors.append(edp["name"]);
+        numResponses += 1;
+
+
+    f.write('\n\n')
+
 
 #
 # write out the variable data
@@ -265,6 +307,36 @@ if (numUniformUncertain > 0):
     for i in range(numUniformUncertain):
         f.write('\'')
         f.write(uniformUncertainName[i])
+        f.write('\' ')
+    f.write('\n')
+
+
+if (numContinuousDesign > 0):
+    f.write('continuous_design = ' '{}'.format(numContinuousDesign))
+    f.write('\n')
+
+    f.write('initial_point = ')
+    for i in range(numContinuousDesign):
+        f.write('{}'.format(continuousDesignInitialPoint[i]))
+        f.write(' ')
+    f.write('\n')
+
+    f.write('lower_bounds = ')
+    for i in range(numContinuousDesign):
+        f.write('{}'.format(continuousDesignLower[i]))
+        f.write(' ')
+    f.write('\n')
+
+    f.write('upper_bounds = ')
+    for i in range(numContinuousDesign):
+        f.write('{}'.format(continuousDesignUpper[i]))
+        f.write(' ')
+    f.write('\n')
+    
+    f.write('descriptors = ')    
+    for i in range(numContinuousDesign):
+        f.write('\'')
+        f.write(continuousDesignName[i])
         f.write('\' ')
     f.write('\n')
 
@@ -392,17 +464,31 @@ if (femProgram == "OpenSees" or femProgram == "OpenSees-2" or femProgram == "FEA
 # write out the responses
 # print(numResponses)
 
-f.write('responses, \n')
-f.write('response_functions = ' '{}'.format(numResponses))
-f.write('\n')
-f.write('response_descriptors = ')    
-for i in range(numResponses):
-    f.write('\'')
-    f.write(responseDescriptors[i])
-    f.write('\' ')
-f.write('\n')
-f.write('no_gradients\n')
-f.write('no_hessians\n\n')
+if (type == "Sampling"):
+    f.write('responses, \n')
+    f.write('response_functions = ' '{}'.format(numResponses))
+    f.write('\n')
+    f.write('response_descriptors = ')    
+    for i in range(numResponses):
+        f.write('\'')
+        f.write(responseDescriptors[i])
+        f.write('\' ')
+        f.write('\n')
+        f.write('no_gradients\n')
+        f.write('no_hessians\n\n')
+
+elif (type == "Calibration"):
+    f.write('responses, \n')
+    f.write('calibration_terms = ' '{}'.format(numResponses))
+    f.write('\n')
+    f.write('response_descriptors = ')    
+    for i in range(numResponses):
+        f.write('\'')
+        f.write(responseDescriptors[i])
+        f.write('\' ')
+        f.write('\n')
+    f.write('numerical_gradients\n')
+    f.write('no_hessians\n\n')
 
 f.close()  # you can omit in most cases as the destructor will call it
 
@@ -417,7 +503,7 @@ femInputFile = "";
 femPostprocessFile = "";
 
 if (femProgram == "OpenSees"):
-
+    print("OpenSees PROGRAM")
     inputFile = femData["mainInput"];    
 
     os.chdir(path1)
@@ -433,33 +519,17 @@ if (femProgram == "OpenSees"):
     f.close()
 
 if (femProgram == "OpenSees-2"):
-
+    print("OpenSees PROGRAM - 2 2 2")
     inputFile = femData["mainInput"];    
     postprocessScript = femData["mainPostprocessScript"];    
-
-    f = open('params.template', 'w')
-    for i in range(numUncertain):
-        f.write('set ')
-        f.write(uncertainName[i])
-        f.write(' {')
-        f.write(uncertainName[i])
-        f.write('}\n')
-    f.close()
-
-    f = open('main.ops', 'w')
-    f.write('source paramIN.ops \n')
-    f.write('source ')
-    f.write(inputFile)
-    f.write(' \n')
-    f.close()
 
     os.chdir(path1)
     f = open(fem_driver, 'w')
     f.write(Perl)
     f.write(DakotaPath)
-    f.write('dprepro params.in params.template paramIN.ops\n')
+    f.write('dprepro params.in %s SimCenterInput.tcl\n' %inputFile)
     f.write(OpenSeesPath)
-    f.write('OpenSees main.ops >> ops.out\n')
+    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
     f.write('python ')
     f.write(postprocessScript)
     for i in range(numResponses):

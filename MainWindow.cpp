@@ -37,6 +37,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
+
 #include <QTreeView>
 #include <QStandardItemModel>
 #include <QItemSelectionModel>
@@ -58,8 +59,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetFEM.h>
 #include <InputWidgetUQ.h>
 #include <DakotaResults.h>
-
+#include <InputWidgetParameters.h>
 #include <RandomVariableInputWidget.h>
+
 
 #include <DakotaResultsSampling.h>
 
@@ -101,15 +103,18 @@ MainWindow::MainWindow(QWidget *parent)
     // create main input widget
     //
 
-    random = new RandomVariableInputWidget();
+   // random = new RandomVariableInputWidget();
+
     fem = new InputWidgetFEM();
     uq = new InputWidgetUQ();
+    random = new InputWidgetParameters();
+    random->setParametersWidget(uq->getParameters());
     results = new DakotaResults();
 
     inputWidget = new SidebarWidgetSelection();
-    inputWidget->addInputWidget(tr("Input Random Variable"), random);
     inputWidget->addInputWidget(tr("FEM Selection"), fem);
-    inputWidget->addInputWidget(tr("UQ Selection"), uq);
+    inputWidget->addInputWidget(tr("Method Selection"), uq);
+    inputWidget->addInputWidget(tr("Input Variables"), random);
     inputWidget->addInputWidget(tr("Results"), results);
 
     inputWidget->buildTreee();
@@ -140,6 +145,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
     connect(runDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onRemoteRunButtonClicked()));
     connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
+
+    connect(uq,SIGNAL(uqWidgetChanged()), this,SLOT(onDakotaMethodChanged()));
 
     layout->addWidget(buttonWidget);
 
@@ -298,7 +305,7 @@ void MainWindow::onRunButtonClicked() {
 #else
     QString command = QString("source $HOME/.bashrc; python3 ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
     proc->execute("bash", QStringList() << "-c" <<  command);
-    //    qDebug() << command;
+    qDebug() << command;
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
     proc->waitForStarted();
@@ -313,7 +320,7 @@ void MainWindow::onRunButtonClicked() {
    }
 
    QDir dirToRemove(sourceDir);
-   //dirToRemove.removeRecursively();
+   dirToRemove.removeRecursively();
 
     //
     // process the results
@@ -331,9 +338,16 @@ void MainWindow::onRunButtonClicked() {
 void MainWindow::onRemoteRunButtonClicked(){
     qDebug() << "NOT YET IMPLEMENTED";
 }
+
 void MainWindow::onExitButtonClicked(){
-  QApplication::quit();
+    RandomVariableInputWidget *theParameters = uq->getParameters();
+    QApplication::quit();
 }
+
+void MainWindow::onDakotaMethodChanged(void) {
+    random->setParametersWidget(uq->getParameters());
+}
+
 
 bool MainWindow::save()
 {
@@ -448,7 +462,11 @@ void MainWindow::loadFile(const QString &fileName)
     file.close();
 
     // given the json object, create the C++ objects
-    inputWidget->inputFromJSON(jsonObj);
+    //inputWidget->inputFromJSON(jsonObj);
+    fem->inputFromJSON(jsonObj);
+    uq->inputFromJSON(jsonObj);
+    random->inputFromJSON(jsonObj);
+    results->inputFromJSON(jsonObj);
 
     setCurrentFile(fileName);
 }

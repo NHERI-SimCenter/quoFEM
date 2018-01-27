@@ -65,7 +65,6 @@ QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit){
     theLayout->addWidget(theEdit);
     theLayout->setSpacing(0);
     theLayout->setMargin(0);
-    theLayout->addStretch();
 
     QWidget *theWidget = new QWidget();
     theWidget->setLayout(theLayout);

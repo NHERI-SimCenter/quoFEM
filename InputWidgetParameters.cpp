@@ -1,6 +1,3 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -39,58 +36,52 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <QMainWindow>
-#include <QItemSelection>
-#include <QTreeView>
-#include <QStandardItemModel>
+#include "InputWidgetParameters.h"
+#include <QVBoxLayout>
+#include <QJsonObject>
+#include <RandomVariableInputWidget.h>
+#include <QMessageBox>
+#include <QDebug>
 
-class SidebarWidgetSelection;
-class SimCenterWidget;
-class InputWidgetFEM;
-class InputWidgetUQ;
-class InputWidgetParameters;
-class DakotaResults;
-
-
-class MainWindow : public QMainWindow
+InputWidgetParameters::InputWidgetParameters(QWidget *parent)
+    : SimCenterWidget(parent), theParameters(0)
 {
-  Q_OBJECT
-    
-    public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
-  
-  public slots:
-    void newFile();
-    void open();
-    bool save();
-    bool saveAs();
+    layout = new QVBoxLayout();
+    this->setLayout(layout);
+}
 
-    void onRunButtonClicked();
-    void onRemoteRunButtonClicked();
-    void onExitButtonClicked();
+InputWidgetParameters::~InputWidgetParameters()
+{
 
-    void onDakotaMethodChanged(void);
+}
 
-  //void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
 
- private:
-    void setCurrentFile(const QString &fileName);
-    bool saveFile(const QString &fileName);
-    void loadFile(const QString &fileName);
+void
+InputWidgetParameters::outputToJSON(QJsonObject &jsonObject)
+{
+  if (theParameters != 0) 
+    theParameters->outputToJSON(jsonObject);
+}
 
-    void createActions();
 
-    //Ui::MainWindow *ui;
+void
+InputWidgetParameters::inputFromJSON(QJsonObject &jsonObject)
+{   
+  if (theParameters != 0) 
+    theParameters->inputFromJSON(jsonObject);
+}
 
-    QString currentFile;
-    SidebarWidgetSelection *inputWidget;
+void
+InputWidgetParameters::setParametersWidget(RandomVariableInputWidget *param) {
+    if (theParameters != 0) {
+        layout->removeWidget(theParameters);
+        delete theParameters;
+        theParameters = 0;
+    }
 
-//    SimCenterWidget *edp;
-    InputWidgetFEM *fem;
-    InputWidgetUQ *uq;
-    InputWidgetParameters *random;
-    DakotaResults *results;
-};
+    if (param != 0) {
+        layout->addWidget(param);
+        theParameters = param;
+    }
+}
 
-#endif // MAINWINDOW_H

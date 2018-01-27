@@ -50,8 +50,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPushButton>
 
 class SimCenterWidget;
-class InputWidgetSampling;
+class InputWidgetDakotaMethod;
 class DakotaResults;
+class RandomVariableInputWidget;
 
 class InputWidgetUQ : public SimCenterWidget
 {
@@ -64,13 +65,18 @@ public:
     void inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
-    DakotaResults *getResults(void);
+
+    virtual DakotaResults *getResults(void);
+    virtual RandomVariableInputWidget  *getParameters();
 
 signals:
 
 public slots:
    void clear(void);
-    void uqSelectionChanged(const QString &arg1);
+   void uqSelectionChanged(const QString &arg1);
+
+signals:
+    void uqWidgetChanged(void);
  //  void uqMethodChanged(const QString &arg1);
 
 private:
@@ -83,8 +89,8 @@ private:
 
     QComboBox   *uqSelection;
 
-    SimCenterWidget     *uqType;
-    InputWidgetSampling *samplingWidget;
+    SimCenterWidget         *uqType;
+    InputWidgetDakotaMethod *dakotaMethod;
 };
 
 #endif // SAMPLINGMETHODINPUTWIDGET_H

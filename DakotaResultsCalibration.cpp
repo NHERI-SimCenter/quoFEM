@@ -36,7 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "DakotaResultsSampling.h"
+#include "DakotaResultsCalibration.h"
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QApplication>
@@ -70,7 +70,7 @@ using namespace QtCharts;
 
 #include <QXYSeries>
 
-DakotaResultsSampling::DakotaResultsSampling(QWidget *parent)
+DakotaResultsCalibration::DakotaResultsCalibration(QWidget *parent)
     : DakotaResults(parent)
 {
     // title & add button
@@ -81,13 +81,13 @@ DakotaResultsSampling::DakotaResultsSampling(QWidget *parent)
     col2 = 0;
 }
 
-DakotaResultsSampling::~DakotaResultsSampling()
+DakotaResultsCalibration::~DakotaResultsCalibration()
 {
 
 }
 
 
-void DakotaResultsSampling::clear(void)
+void DakotaResultsCalibration::clear(void)
 {
     QWidget *res=tabWidget->widget(0);
     QWidget *gen=tabWidget->widget(0);
@@ -102,9 +102,9 @@ void DakotaResultsSampling::clear(void)
 
 
 void
-DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
+DakotaResultsCalibration::outputToJSON(QJsonObject &jsonObject)
 {
-    jsonObject["resultType"]=QString(tr("DakotaResultsSampling"));
+    jsonObject["resultType"]=QString(tr("DakotaResultsCalibration"));
 
     //
     // add summary data
@@ -161,7 +161,7 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
 
 
 void
-DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
+DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
 {
     this->clear();
 
@@ -318,7 +318,7 @@ static int mergesort(double *input, int size)
     }
 }
 
-int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab) {
+int DakotaResultsCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
     //
     // get a Qwidget ready to place summary data, the EDP name, mean, stdDev into
@@ -349,7 +349,8 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     // now ignore every line until Kurtosis found
 
-    const std::string needle = "Kurtosis";
+    const std::string needle = "Best parameters          =";
+    const std::string needle2 = "Best residual terms =";
     std::string haystack;
 
     while (std::getline(fileResults, haystack)) {
@@ -368,10 +369,11 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     bool isSummaryDone = false;
 
     while (std::getline(fileResults, haystack)) {
+        std::cerr << haystack << "\n";
         dakotaText->append(haystack.c_str());
         if (isSummaryDone == false) {
 
-            if ( strlen(haystack.c_str()) == 0) {
+            if (haystack.find(needle2) != std::string::npos) {
                 isSummaryDone = true;
             } else {
                 //
@@ -382,17 +384,13 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
                 std::string subs;
 
                 iss >> subs;
+                QString bestText(QString::fromStdString(subs));
+                double best = bestText.toDouble();
+
+                iss >> subs;
                 QString  nameString(QString::fromStdString(subs));
 
-                iss >> subs;
-                QString meanText(QString::fromStdString(subs));
-                double mean = meanText.toDouble();
-
-                iss >> subs;
-                QString stdDevText(QString::fromStdString(subs));
-                double stdDev = stdDevText.toDouble();
-
-                QWidget *theWidget = this->createResultEDPWidget(nameString, mean, stdDev);
+                QWidget *theWidget = this->createResultEDPWidget(nameString, best, 0.0);
                 summaryLayout->addWidget(theWidget);
             }
         }
@@ -500,7 +498,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 }
 
 void
-DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
+DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
 {
     mLeft = spreadsheet->wasLeftKeyPressed();
 
@@ -652,7 +650,7 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 extern QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit);
 
 QWidget *
-DakotaResultsSampling::createResultEDPWidget(QString &name, double mean, double stdDev) {
+DakotaResultsCalibration::createResultEDPWidget(QString &name, double mean, double stdDev) {
     QWidget *edp = new QWidget;
     QHBoxLayout *edpLayout = new QHBoxLayout();
 

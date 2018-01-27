@@ -113,7 +113,6 @@ SidebarWidgetSelection::setSelection(const QString & newSelection)
         currentWidget->setParent(0);
     }
 
-
     currentWidget = widgets[newSelection];
     if (currentWidget == 0)
         qDebug() << "WIDGET NOT FOUND";

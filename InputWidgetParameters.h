@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef INPUT_WIDGET_PARAMETERS_H
+#define INPUT_WIDGET_PARAMETERS_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,58 +39,29 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <QMainWindow>
-#include <QItemSelection>
-#include <QTreeView>
-#include <QStandardItemModel>
+#include <SimCenterWidget.h>
+class QVBoxLayout;
+class RandomVariableInputWidget;
 
-class SidebarWidgetSelection;
-class SimCenterWidget;
-class InputWidgetFEM;
-class InputWidgetUQ;
-class InputWidgetParameters;
-class DakotaResults;
-
-
-class MainWindow : public QMainWindow
+class InputWidgetParameters : public SimCenterWidget
 {
-  Q_OBJECT
-    
-    public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
-  
-  public slots:
-    void newFile();
-    void open();
-    bool save();
-    bool saveAs();
+    Q_OBJECT
+public:
+    explicit InputWidgetParameters(QWidget *parent = 0);
+    virtual ~InputWidgetParameters();
 
-    void onRunButtonClicked();
-    void onRemoteRunButtonClicked();
-    void onExitButtonClicked();
+    virtual void outputToJSON(QJsonObject &rvObject);
+    virtual void inputFromJSON(QJsonObject &rvObject);
 
-    void onDakotaMethodChanged(void);
+    void setParametersWidget(RandomVariableInputWidget *theParameters);
 
-  //void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
+signals:
 
- private:
-    void setCurrentFile(const QString &fileName);
-    bool saveFile(const QString &fileName);
-    void loadFile(const QString &fileName);
+public slots:
 
-    void createActions();
-
-    //Ui::MainWindow *ui;
-
-    QString currentFile;
-    SidebarWidgetSelection *inputWidget;
-
-//    SimCenterWidget *edp;
-    InputWidgetFEM *fem;
-    InputWidgetUQ *uq;
-    InputWidgetParameters *random;
-    DakotaResults *results;
+protected:
+    RandomVariableInputWidget *theParameters;
+    QVBoxLayout *layout;
 };
 
-#endif // MAINWINDOW_H
+#endif // INPUT_WIDGET_PARAMETERS_SAMPLING_H

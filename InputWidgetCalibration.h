@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef INPUTWIDGET_CALIBRATION_H
+#define INPUTWIDGET_CALIBRATION_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,58 +39,52 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <QMainWindow>
-#include <QItemSelection>
-#include <QTreeView>
-#include <QStandardItemModel>
+#include <InputWidgetDakotaMethod.h>
 
-class SidebarWidgetSelection;
-class SimCenterWidget;
-class InputWidgetFEM;
-class InputWidgetUQ;
-class InputWidgetParameters;
+#include "EDP.h"
+#include <QGroupBox>
+#include <QVector>
+#include <QVBoxLayout>
+#include <QComboBox>
+#include <QPushButton>
+
+class DakotaCalibrationResults;
 class DakotaResults;
+class RandomVariableInputWidget;
 
 
-class MainWindow : public QMainWindow
+class InputWidgetEDP;
+
+class InputWidgetCalibration : public InputWidgetDakotaMethod
 {
-  Q_OBJECT
-    
-    public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
-  
-  public slots:
-    void newFile();
-    void open();
-    bool save();
-    bool saveAs();
+    Q_OBJECT
+public:
+    explicit InputWidgetCalibration(QWidget *parent = 0);
+    ~InputWidgetCalibration();
 
-    void onRunButtonClicked();
-    void onRemoteRunButtonClicked();
-    void onExitButtonClicked();
+    void outputToJSON(QJsonObject &rvObject);
+    void inputFromJSON(QJsonObject &rvObject);
 
-    void onDakotaMethodChanged(void);
+    int processResults(QString &filenameResults, QString &filenameTab);
+    DakotaResults *getResults(void);
 
-  //void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
+    RandomVariableInputWidget *getParameters();
 
- private:
-    void setCurrentFile(const QString &fileName);
-    bool saveFile(const QString &fileName);
-    void loadFile(const QString &fileName);
+signals:
 
-    void createActions();
+public slots:
+   void clear(void);
+   void methodChanged(const QString &arg1);
 
-    //Ui::MainWindow *ui;
+private:
+    QVBoxLayout *layout;
+    QComboBox   *calibrationMethod;
+    QLineEdit   *maxIterations;
+    QLineEdit   *convergenceTol;
 
-    QString currentFile;
-    SidebarWidgetSelection *inputWidget;
-
-//    SimCenterWidget *edp;
-    InputWidgetFEM *fem;
-    InputWidgetUQ *uq;
-    InputWidgetParameters *random;
-    DakotaResults *results;
+    RandomVariableInputWidget *theParameters;
+    InputWidgetEDP *theEdpWidget;
+    DakotaCalibrationResults *results;
 };
 
-#endif // MAINWINDOW_H
+#endif // INPUTWIDGET_CALIBRATION_H

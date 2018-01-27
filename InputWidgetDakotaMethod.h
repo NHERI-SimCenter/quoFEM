@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef INPUTWIDGET_DAKOTAMETHOD_H
+#define INPUTWIDGET_DAKOTAMETHOD_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,58 +39,32 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <QMainWindow>
-#include <QItemSelection>
-#include <QTreeView>
-#include <QStandardItemModel>
+#include <SimCenterWidget.h>
 
-class SidebarWidgetSelection;
-class SimCenterWidget;
-class InputWidgetFEM;
-class InputWidgetUQ;
-class InputWidgetParameters;
 class DakotaResults;
+class RandomVariableInputWidget;
 
-
-class MainWindow : public QMainWindow
+class InputWidgetDakotaMethod : public SimCenterWidget
 {
-  Q_OBJECT
-    
-    public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
-  
-  public slots:
-    void newFile();
-    void open();
-    bool save();
-    bool saveAs();
+    Q_OBJECT
+public:
+    explicit InputWidgetDakotaMethod(QWidget *parent = 0);
+    virtual ~InputWidgetDakotaMethod();
 
-    void onRunButtonClicked();
-    void onRemoteRunButtonClicked();
-    void onExitButtonClicked();
+    virtual void outputToJSON(QJsonObject &rvObject) =0;
+    virtual void inputFromJSON(QJsonObject &rvObject) =0;
 
-    void onDakotaMethodChanged(void);
+    virtual int processResults(QString &filenameResults, QString &filenameTab) =0;
+    virtual RandomVariableInputWidget *getParameters() = 0;
+    virtual DakotaResults *getResults(void) =0;
+    void clear(void);
 
-  //void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
+signals:
 
- private:
-    void setCurrentFile(const QString &fileName);
-    bool saveFile(const QString &fileName);
-    void loadFile(const QString &fileName);
+public slots:
 
-    void createActions();
+private:
 
-    //Ui::MainWindow *ui;
-
-    QString currentFile;
-    SidebarWidgetSelection *inputWidget;
-
-//    SimCenterWidget *edp;
-    InputWidgetFEM *fem;
-    InputWidgetUQ *uq;
-    InputWidgetParameters *random;
-    DakotaResults *results;
 };
 
-#endif // MAINWINDOW_H
+#endif // INPUTWIDGET_DAKOTAMETHOD_H

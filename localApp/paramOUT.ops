@@ -1,5 +1,0 @@
-set outFile [open results.out w]
-puts $outFile $RoofDisp
-puts $outFile $RoofAccel
-close $outFile
-

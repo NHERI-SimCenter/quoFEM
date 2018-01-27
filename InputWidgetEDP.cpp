@@ -68,7 +68,7 @@ InputWidgetEDP::makeEDP(void)
     QHBoxLayout *titleLayout = new QHBoxLayout();
 
     SectionTitle *title=new SectionTitle();
-    title->setText(tr("Engineeering Demand Parameters"));
+    title->setText(tr("Response Parameters"));
     title->setMinimumWidth(250);
     QSpacerItem *spacer1 = new QSpacerItem(50,10);
     QSpacerItem *spacer2 = new QSpacerItem(20,10);
@@ -193,4 +193,5 @@ InputWidgetEDP::processResults(double *data) {
     for (int i = 0; i <theEDPs.size(); ++i) {
         theEDPs.at(i)->setResults(&data[i*4]);
     }
+    return 0;
 }

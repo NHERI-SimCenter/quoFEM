@@ -147,10 +147,12 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
 {
     this->clear();
     QJsonObject fem = jsonObject["fem"].toObject();
+
     fileName1=fem["inputFile"].toString();
+    qDebug() << "file1: " << fileName1;
     fileName2=fem["postprocessScript"].toString();
 
-
+ qDebug() << "file2: " << fileName2;
     QString program=fem["program"].toString();
     int index = femSelection->findText(program);
     femSelection->setCurrentIndex(index);

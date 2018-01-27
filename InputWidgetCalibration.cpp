@@ -38,10 +38,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetSampling.h"
-#include <DakotaResultsSampling.h>
-#include <RandomVariableInputWidget.h>
-
+#include "InputWidgetCalibration.h"
+#include <DakotaResultsCalibration.h>
 
 #include <QPushButton>
 #include <QScrollArea>
@@ -60,52 +58,50 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <fstream>
 #include <time.h>
 
+#include <RandomVariableInputWidget.h>
 
-InputWidgetSampling::InputWidgetSampling(QWidget *parent)
-    : InputWidgetDakotaMethod(parent),uqSpecific(0)
+
+InputWidgetCalibration::InputWidgetCalibration(QWidget *parent)
+    : InputWidgetDakotaMethod(parent)
 {
     layout = new QVBoxLayout();
 
     QVBoxLayout *methodLayout= new QVBoxLayout;
     QLabel *label1 = new QLabel();
     label1->setText(QString("Method"));
-    samplingMethod = new QComboBox();
-    samplingMethod->addItem(tr("LHS"));
-    samplingMethod->addItem(tr("Monte Carlo"));
+    calibrationMethod = new QComboBox();
+    calibrationMethod->addItem(tr("OPT++GaussNewton"));
+    calibrationMethod->addItem(tr("NL2SOL"));
     
     methodLayout->addWidget(label1);
-    methodLayout->addWidget(samplingMethod);
+    methodLayout->addWidget(calibrationMethod);
     
-    QVBoxLayout *samplesLayout= new QVBoxLayout;
+    QVBoxLayout *maxIterLayout= new QVBoxLayout;
     QLabel *label2 = new QLabel();
-    label2->setText(QString("# Samples"));
-    numSamples = new QLineEdit();
-    numSamples->setText(tr("10"));
-    numSamples->setMaximumWidth(100);
-    numSamples->setMinimumWidth(100);
-
+    label2->setText(QString("max # Iterations"));
+    maxIterations = new QLineEdit();
+    maxIterations->setText(tr("1000"));
+    maxIterations->setMaximumWidth(100);
+    maxIterations->setMinimumWidth(100);
     
-    samplesLayout->addWidget(label2);
-    samplesLayout->addWidget(numSamples);
+    maxIterLayout->addWidget(label2);
+    maxIterLayout->addWidget(maxIterations);
     
-    QVBoxLayout *seedLayout= new QVBoxLayout;
+    QVBoxLayout *tolLayout= new QVBoxLayout;
     QLabel *label3 = new QLabel();
-    label3->setText(QString("Seed"));
-    srand(time(NULL));
-    int randomNumber = rand() % 1000 + 1;
-
-    randomSeed = new QLineEdit();
-    randomSeed->setText(QString::number(randomNumber));
-    randomSeed->setMaximumWidth(100);
-    randomSeed->setMinimumWidth(100);
+    label3->setText(QString("Convergence Tol"));
+    convergenceTol = new QLineEdit();
+    convergenceTol->setText(QString::number(1.0e-2));
+    convergenceTol->setMaximumWidth(100);
+    convergenceTol->setMinimumWidth(100);
     
-    seedLayout->addWidget(label3);
-    seedLayout->addWidget(randomSeed);
+    tolLayout->addWidget(label3);
+    tolLayout->addWidget(convergenceTol);
     
     QHBoxLayout *mLayout = new QHBoxLayout();
     mLayout->addLayout(methodLayout);
-    mLayout->addLayout(samplesLayout);
-    mLayout->addLayout(seedLayout);
+    mLayout->addLayout(maxIterLayout);
+    mLayout->addLayout(tolLayout);
     mLayout->addStretch();
 
     layout->addLayout(mLayout);
@@ -116,66 +112,66 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     this->setLayout(layout);
 }
 
-InputWidgetSampling::~InputWidgetSampling()
+InputWidgetCalibration::~InputWidgetCalibration()
 {
 
 }
 
 
-void InputWidgetSampling::clear(void)
+void InputWidgetCalibration::clear(void)
 {
 
 }
-
-
 
 void
-InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
+InputWidgetCalibration::outputToJSON(QJsonObject &jsonObject)
 {
     QJsonObject uq;
-    uq["method"]=samplingMethod->currentText();
-    uq["samples"]=numSamples->text().toInt();
-    uq["seed"]=randomSeed->text().toDouble();
+    uq["method"]=calibrationMethod->currentText();
+    uq["maxIterations"]=maxIterations->text().toInt();
+    uq["convergenceTol"]=convergenceTol->text().toDouble();
     theEdpWidget->outputToJSON(uq);
-    jsonObject["samplingMethodData"]=uq;
+    jsonObject["calibrationMethodData"]=uq;
 }
 
 
 void
-InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
+InputWidgetCalibration::inputFromJSON(QJsonObject &jsonObject)
 {
     this->clear();
 
-    QJsonObject uq = jsonObject["samplingMethodData"].toObject();
+    QJsonObject uq = jsonObject["calibrationMethodData"].toObject();
     QString method =uq["method"].toString();
-    int samples=uq["samples"].toInt();
-    double seed=uq["seed"].toDouble();
+    int maxIter=uq["maxIterations"].toInt();
+    double convTol=uq["convergenceTol"].toDouble();
 
-    numSamples->setText(QString::number(samples));
-    randomSeed->setText(QString::number(seed));
-    int index = samplingMethod->findText(method);
-    samplingMethod->setCurrentIndex(index);
+    maxIterations->setText(QString::number(maxIter));
+    convergenceTol->setText(QString::number(convTol));
+    int index = calibrationMethod->findText(method);
+    calibrationMethod->setCurrentIndex(index);
 
     theEdpWidget->inputFromJSON(uq);
 }
 
-void InputWidgetSampling::uqSelectionChanged(const QString &arg1)
+void 
+InputWidgetCalibration::methodChanged(const QString &arg1)
 {
 
 }
 
-int InputWidgetSampling::processResults(QString &filenameResults, QString &filenameTab) {
-
+int 
+InputWidgetCalibration::processResults(QString &filenameResults, QString &filenameTab) 
+{
     return 0;
 }
 
 DakotaResults *
-InputWidgetSampling::getResults(void) {
-    return new DakotaResultsSampling();
+InputWidgetCalibration::getResults(void) {
+  return new DakotaResultsCalibration();
 }
 
 RandomVariableInputWidget *
-InputWidgetSampling::getParameters(void) {
-    QString classType("Uncertain");
+InputWidgetCalibration::getParameters(void) {
+  QString classType("Design");
   return new RandomVariableInputWidget(classType);
 }

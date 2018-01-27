@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+// Written: fmckenna
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,58 +38,43 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <QMainWindow>
-#include <QItemSelection>
-#include <QTreeView>
-#include <QStandardItemModel>
+#include "InputWidgetDakotaMethod.h"
+#include <DakotaResultsSampling.h>
 
-class SidebarWidgetSelection;
-class SimCenterWidget;
-class InputWidgetFEM;
-class InputWidgetUQ;
-class InputWidgetParameters;
-class DakotaResults;
+#include <QPushButton>
+#include <QScrollArea>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QLabel>
+#include <QLineEdit>
+#include <QDebug>
+#include <QFileDialog>
+#include <QPushButton>
+#include <sectiontitle.h>
+#include <InputWidgetEDP.h>
+
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <time.h>
 
 
-class MainWindow : public QMainWindow
+InputWidgetDakotaMethod::InputWidgetDakotaMethod(QWidget *parent)
+: SimCenterWidget(parent)
 {
-  Q_OBJECT
-    
-    public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
-  
-  public slots:
-    void newFile();
-    void open();
-    bool save();
-    bool saveAs();
 
-    void onRunButtonClicked();
-    void onRemoteRunButtonClicked();
-    void onExitButtonClicked();
+}
 
-    void onDakotaMethodChanged(void);
+InputWidgetDakotaMethod::~InputWidgetDakotaMethod()
+{
 
-  //void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
+}
 
- private:
-    void setCurrentFile(const QString &fileName);
-    bool saveFile(const QString &fileName);
-    void loadFile(const QString &fileName);
 
-    void createActions();
 
-    //Ui::MainWindow *ui;
 
-    QString currentFile;
-    SidebarWidgetSelection *inputWidget;
 
-//    SimCenterWidget *edp;
-    InputWidgetFEM *fem;
-    InputWidgetUQ *uq;
-    InputWidgetParameters *random;
-    DakotaResults *results;
-};
 
-#endif // MAINWINDOW_H
+
+
+

@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef DAKOTA_RESULTS_CALIBRATION_H
+#define DAKOTA_RESULTS_CALIBRATION_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,58 +39,47 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <QMainWindow>
-#include <QItemSelection>
-#include <QTreeView>
-#include <QStandardItemModel>
+#include <DakotaResults.h>
+#include <QtCharts/QChart>
+using namespace QtCharts;
 
-class SidebarWidgetSelection;
-class SimCenterWidget;
-class InputWidgetFEM;
-class InputWidgetUQ;
-class InputWidgetParameters;
-class DakotaResults;
+class QTextEdit;
+class QTabWidget;
+class MyTableWidget;
+//class QChart;
 
-
-class MainWindow : public QMainWindow
+class DakotaResultsCalibration : public DakotaResults
 {
-  Q_OBJECT
-    
-    public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
-  
-  public slots:
-    void newFile();
-    void open();
-    bool save();
-    bool saveAs();
+    Q_OBJECT
+public:
+    explicit DakotaResultsCalibration(QWidget *parent = 0);
+    ~DakotaResultsCalibration();
 
-    void onRunButtonClicked();
-    void onRemoteRunButtonClicked();
-    void onExitButtonClicked();
+    void outputToJSON(QJsonObject &rvObject);
+    void inputFromJSON(QJsonObject &rvObject);
 
-    void onDakotaMethodChanged(void);
+    int processResults(QString &filenameResults, QString &filenameTab);
+    QWidget *createResultEDPWidget(QString &name, double mean, double stdDev);
 
-  //void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
+signals:
 
- private:
-    void setCurrentFile(const QString &fileName);
-    bool saveFile(const QString &fileName);
-    void loadFile(const QString &fileName);
+public slots:
+   void clear(void);
+   void onSpreadsheetCellClicked(int, int);
 
-    void createActions();
+private:
+   QTabWidget *tabWidget;
+   QTextEdit  *dakotaText;
+   MyTableWidget *spreadsheet;
+   QChart *chart;
 
-    //Ui::MainWindow *ui;
+   int col1, col2;
+   bool mLeft;
+   QStringList theHeadings;
 
-    QString currentFile;
-    SidebarWidgetSelection *inputWidget;
-
-//    SimCenterWidget *edp;
-    InputWidgetFEM *fem;
-    InputWidgetUQ *uq;
-    InputWidgetParameters *random;
-    DakotaResults *results;
+   QVector<QString>theNames;
+   QVector<double>theMeans;
+   QVector<double>theStdDevs;
 };
 
-#endif // MAINWINDOW_H
+#endif // DAKOTA_RESULTS_CALIBRATION_H

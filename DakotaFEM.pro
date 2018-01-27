@@ -25,7 +25,11 @@ SOURCES += main.cpp\
         InputWidgetSampling.cpp \
         DakotaResults.cpp \
         DakotaResultsSampling.cpp \
-        MyTableWidget.cpp
+        MyTableWidget.cpp \
+    DakotaResultsCalibration.cpp \
+    InputWidgetCalibration.cpp \
+    InputWidgetDakotaMethod.cpp \
+    InputWidgetParameters.cpp
 
 HEADERS  += MainWindow.h \
     EDP.h \
@@ -36,6 +40,10 @@ HEADERS  += MainWindow.h \
     InputWidgetSampling.h \
     DakotaResults.h \
     DakotaResultsSampling.h \
-    MyTableWidget.h
+    MyTableWidget.h \
+    InputWidgetCalibration.h \
+    DakotaResultsCalibration.h \
+    InputWidgetDakotaMethod.h \
+    InputWidgetParameters.h
 
 FORMS    += mainwindow.ui

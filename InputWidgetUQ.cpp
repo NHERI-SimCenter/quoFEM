@@ -50,6 +50,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <SimCenterWidget.h>
 #include <InputWidgetSampling.h>
+#include <InputWidgetCalibration.h>
 
 
 InputWidgetUQ::InputWidgetUQ(QWidget *parent)
@@ -86,8 +87,9 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     name->setMargin(0);
 
     uqSelection->addItem(tr("Sampling"));
-    uqSelection->addItem(tr("Reliability"));
     uqSelection->addItem(tr("Calibration"));
+    uqSelection->addItem(tr("Reliability"));
+
 
     connect(uqSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(uqSelectionChanged(QString)));
 
@@ -129,6 +131,7 @@ InputWidgetUQ::outputToJSON(QJsonObject &jsonObject)
     if (uqType != 0) {
         uqType->outputToJSON(uq);
     }
+
     uq["uqType"] = uqSelection->currentText();
     jsonObject["uqMethod"]=uq;
 }
@@ -141,6 +144,8 @@ InputWidgetUQ::inputFromJSON(QJsonObject &jsonObject)
 
     QJsonObject uq = jsonObject["uqMethod"].toObject();
     QString selection = uq["uqType"].toString();
+    int index = uqSelection->findText(selection);
+    uqSelection->setCurrentIndex(index);
     this->uqSelectionChanged(selection);
     if (uqType != 0)
         uqType->inputFromJSON(uq);
@@ -148,36 +153,52 @@ InputWidgetUQ::inputFromJSON(QJsonObject &jsonObject)
 
 int InputWidgetUQ::processResults(QString &filenameResults, QString &filenameTab)
 {
-    if (samplingWidget != 0)
-        return samplingWidget->processResults(filenameResults, filenameTab);
+    if (dakotaMethod != 0)
+        return dakotaMethod->processResults(filenameResults, filenameTab);
+    return 0;
 }
 
 void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
 {
+    qDebug() << "uqSelectionChanged: " << arg1;
     if (uqType != 0) {
         // layout->rem
-        samplingWidget = 0;
+        dakotaMethod = 0;
         layout->removeWidget(uqType);
         delete uqType;
         uqType = 0;
     }
 
-
     if (arg1 == QString("Sampling")) {
         //uqType = new InputWidgetSampling();
-        samplingWidget = new InputWidgetSampling();
-        uqType = samplingWidget;
+        dakotaMethod = new InputWidgetSampling();
+        uqType = dakotaMethod;
+    } else if (arg1 == QString("Calibration")) {
+         dakotaMethod = new InputWidgetCalibration();
+         uqType = dakotaMethod;
     }
 
-    if (uqType != 0)
+    if (uqType != 0) {
+        this->uqWidgetChanged();
         layout->insertWidget(1, uqType,1);
+    }
 }
 
 DakotaResults *
 InputWidgetUQ::getResults(void)
 {
-    if (samplingWidget != 0) {
-        return samplingWidget->getResults();
+    if (dakotaMethod != 0) {
+        return dakotaMethod->getResults();
+    }
+
+    return 0;
+}
+
+RandomVariableInputWidget *
+InputWidgetUQ::getParameters(void)
+{
+    if (dakotaMethod != 0) {
+        return dakotaMethod->getParameters();
     }
 
     return 0;

@@ -39,7 +39,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterWidget.h>
+#include <InputWidgetDakotaMethod.h>
 
 #include "EDP.h"
 #include <QGroupBox>
@@ -52,8 +52,9 @@ class DakotaResults;
 
 
 class InputWidgetEDP;
+class RandomVariableInputWidget;
 
-class InputWidgetSampling : public SimCenterWidget
+class InputWidgetSampling : public InputWidgetDakotaMethod
 {
     Q_OBJECT
 public:
@@ -64,7 +65,9 @@ public:
     void inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
+
     DakotaResults *getResults(void);
+    RandomVariableInputWidget  *getParameters();
 
 signals:
 
@@ -84,8 +87,8 @@ private:
     QComboBox   *uqSelection;
     QWidget     *uqSpecific;
 
+    RandomVariableInputWidget *theParameters;
     InputWidgetEDP *theEdpWidget;
-
     DakotaSamplingResults *results;
 };
 
