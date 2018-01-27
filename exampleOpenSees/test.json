@@ -3,34 +3,38 @@
         "dir": "/Users/fmckenna/NHERI/DakotaFEM2/exampleOpenSees",
         "inputFile": "/Users/fmckenna/NHERI/DakotaFEM2/exampleOpenSees/TrussTemplate.tcl",
         "mainInput": "TrussTemplate.tcl",
-        "mainPostprocessScript": "",
-        "postprocessScript": "",
-        "program": "OpenSees"
+        "mainPostprocessScript": "postprocess.py",
+        "postprocessScript": "/Users/fmckenna/NHERI/DakotaFEM2/exampleOpenSees/postprocess.py",
+        "program": "OpenSees-2"
     },
     "randomVariables": [
         {
             "distribution": "Normal",
             "mean": 205000,
             "name": "E",
-            "stdDev": 15000
+            "stdDev": 15000,
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Normal",
             "mean": 25000,
             "name": "P",
-            "stdDev": 2500
+            "stdDev": 2500,
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Normal",
             "mean": 250,
             "name": "A1",
-            "stdDev": 10
+            "stdDev": 10,
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Normal",
             "mean": 500,
             "name": "A2",
-            "stdDev": 25
+            "stdDev": 25,
+            "variableClass": "Uncertain"
         }
     ],
     "uqMethod": {

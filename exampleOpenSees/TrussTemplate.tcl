@@ -26,6 +26,9 @@ pattern Plain 1 1 {
     load 2 0 -$P
     load 3 0 -$P
 }
+
+recorder Node -file node.out -node 1 2 3 4 5 6 -dof 2 disp
+
 algorithm Linear
 integrator LoadControl 1.0
 system ProfileSPD
@@ -33,10 +36,3 @@ numberer RCM
 constraints Plain
 analysis Static
 analyze 1
-
-set result [nodeDisp 3 2]
-
-set fileOut [open results.out w]
-puts $fileOut [expr abs($result)]
-close $fileOut
-
