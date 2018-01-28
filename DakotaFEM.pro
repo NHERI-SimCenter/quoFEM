@@ -29,7 +29,9 @@ SOURCES += main.cpp\
     DakotaResultsCalibration.cpp \
     InputWidgetCalibration.cpp \
     InputWidgetDakotaMethod.cpp \
-    InputWidgetParameters.cpp
+    InputWidgetParameters.cpp \
+    DakotaResultsBayesianCalibration.cpp \
+    InputWidgetBayesianCalibration.cpp
 
 HEADERS  += MainWindow.h \
     EDP.h \
@@ -44,6 +46,9 @@ HEADERS  += MainWindow.h \
     InputWidgetCalibration.h \
     DakotaResultsCalibration.h \
     InputWidgetDakotaMethod.h \
-    InputWidgetParameters.h
+    InputWidgetParameters.h \
+    InputWidgetBayesianCalibration.h \
+    InputWidgetBayesianCalibration.h \
+    DakotaResultsBayesianCalibration.h
 
 FORMS    += mainwindow.ui

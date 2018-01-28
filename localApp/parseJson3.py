@@ -69,7 +69,7 @@ lognormalUncertainStdDev =[];
 numUniformUncertain = 0;
 uniformUncertainName=[];
 uniformUncertainLower =[];
-uniformUncertainHigher =[];
+uniformUncertainUpper =[];
 
 numContinuousDesign = 0;
 continuousDesignName=[];
@@ -117,8 +117,8 @@ for k in data["randomVariables"]:
         uncertainName.append(k["name"])
         numUncertain += 1
         uniformUncertainName.append(k["name"])
-        uniformUncertainLower.append(k["upperBounds"])
-        uniformUncertainUpper.append(k["lowerBounds"])
+        uniformUncertainLower.append(k["lower_bounds"])
+        uniformUncertainUpper.append(k["upper_bounds"])
         numUniformUncertain += 1
     elif (k["distribution"] == "ContinuousDesign"):
         uncertainName.append(k["name"])
@@ -237,6 +237,31 @@ elif (type == "Calibration"):
 
     f.write('\n\n')
 
+elif (type == "Bayesian Calibration"):
+    samplingData = uqData["bayesian_calibration_method_data"];
+    chainSamples = 0;
+    seed = 0;    
+
+    method = samplingData["method"];
+    if (method == "DREAM"):
+        method = 'dream'
+    chainSamples=samplingData["chain_samples"];
+    seed = samplingData["seed"];
+
+    f.write('bayes_calibration ' '{}'.format(method))
+    f.write('\n');
+    f.write('chain_samples = ' '{}'.format(chainSamples))
+    f.write('\n');
+    f.write('seed = ' '{}'.format(seed))
+
+    edps = samplingData["edps"];
+    for edp in edps:
+        responseDescriptors.append(edp["name"]);
+        numResponses += 1;
+
+
+    f.write('\n\n')
+
 
 #
 # write out the variable data
@@ -299,7 +324,7 @@ if (numUniformUncertain > 0):
 
     f.write('upper_bounds = ')
     for i in range(numUniformUncertain):
-        f.write('{}'.format(uniformUncertainHigher[i]))
+        f.write('{}'.format(uniformUncertainUpper[i]))
         f.write(' ')
     f.write('\n')
     
@@ -478,6 +503,19 @@ if (type == "Sampling"):
         f.write('no_hessians\n\n')
 
 elif (type == "Calibration"):
+    f.write('responses, \n')
+    f.write('calibration_terms = ' '{}'.format(numResponses))
+    f.write('\n')
+    f.write('response_descriptors = ')    
+    for i in range(numResponses):
+        f.write('\'')
+        f.write(responseDescriptors[i])
+        f.write('\' ')
+        f.write('\n')
+    f.write('numerical_gradients\n')
+    f.write('no_hessians\n\n')
+
+elif (type == "Bayesian Calibration"):
     f.write('responses, \n')
     f.write('calibration_terms = ' '{}'.format(numResponses))
     f.write('\n')
