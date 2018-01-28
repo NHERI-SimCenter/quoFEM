@@ -51,6 +51,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SimCenterWidget.h>
 #include <InputWidgetSampling.h>
 #include <InputWidgetCalibration.h>
+#include <InputWidgetBayesianCalibration.h>
 
 
 InputWidgetUQ::InputWidgetUQ(QWidget *parent)
@@ -71,8 +72,8 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     QSpacerItem *spacer = new QSpacerItem(50,10);
 
     uqSelection = new QComboBox();
-    uqSelection->setMaximumWidth(100);
-    uqSelection->setMinimumWidth(100);
+    uqSelection->setMaximumWidth(200);
+    uqSelection->setMinimumWidth(200);
 
     titleLayout->addWidget(textFEM);
     titleLayout->addItem(spacer);
@@ -88,7 +89,7 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
 
     uqSelection->addItem(tr("Sampling"));
     uqSelection->addItem(tr("Calibration"));
-    uqSelection->addItem(tr("Reliability"));
+    uqSelection->addItem(tr("Bayesian Calibration"));
 
 
     connect(uqSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(uqSelectionChanged(QString)));
@@ -173,8 +174,13 @@ void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
         //uqType = new InputWidgetSampling();
         dakotaMethod = new InputWidgetSampling();
         uqType = dakotaMethod;
+
     } else if (arg1 == QString("Calibration")) {
          dakotaMethod = new InputWidgetCalibration();
+         uqType = dakotaMethod;
+
+    } else if (arg1 == QString("Bayesian Calibration")) {
+         dakotaMethod = new InputWidgetBayesianCalibration();
          uqType = dakotaMethod;
     }
 

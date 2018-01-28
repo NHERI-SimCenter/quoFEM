@@ -59,7 +59,7 @@ public:
     void inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
-    QWidget *createResultEDPWidget(QString &name, double mean, double stdDev);
+    QWidget *createResultParameterWidget(QString &name, double value);
 
 signals:
 
@@ -78,8 +78,7 @@ private:
    QStringList theHeadings;
 
    QVector<QString>theNames;
-   QVector<double>theMeans;
-   QVector<double>theStdDevs;
+   QVector<double>theBestValues;
 };
 
 #endif // DAKOTA_RESULTS_CALIBRATION_H

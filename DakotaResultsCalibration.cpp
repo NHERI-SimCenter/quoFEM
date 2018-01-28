@@ -115,8 +115,7 @@ DakotaResultsCalibration::outputToJSON(QJsonObject &jsonObject)
     for (int i=0; i<numEDP; i++) {
         QJsonObject edpData;
         edpData["name"]=theNames.at(i);
-        edpData["mean"]=theMeans.at(i);
-        edpData["stdDev"]=theStdDevs.at(i);
+        edpData["best_value"]=theBestValues.at(i);
         resultsData.append(edpData);
     }
     jsonObject["summary"]=resultsData;
@@ -176,18 +175,15 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
     QJsonArray edpArray = jsonObject["summary"].toArray();
     foreach (const QJsonValue &edpValue, edpArray) {
         QString name;
-        double mean, stdDev;
+        double bestValue;
         QJsonObject edpObject = edpValue.toObject();
         QJsonValue theNameValue = edpObject["name"];
         name = theNameValue.toString();
 
-        QJsonValue theMeanValue = edpObject["mean"];
-        mean = theMeanValue.toDouble();
+        QJsonValue theBestValue = edpObject["best_value"];
+        bestValue = theBestValue.toDouble();
 
-        QJsonValue theStdDevValue = edpObject["stdDev"];
-        stdDev = theStdDevValue.toDouble();
-
-        QWidget *theWidget = this->createResultEDPWidget(name, mean, stdDev);
+        QWidget *theWidget = this->createResultParameterWidget(name, bestValue);
         summaryLayout->addWidget(theWidget);
     }
     summaryLayout->addStretch();
@@ -390,7 +386,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
                 iss >> subs;
                 QString  nameString(QString::fromStdString(subs));
 
-                QWidget *theWidget = this->createResultEDPWidget(nameString, best, 0.0);
+                QWidget *theWidget = this->createResultParameterWidget(nameString, best);
                 summaryLayout->addWidget(theWidget);
             }
         }
@@ -650,7 +646,7 @@ DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
 extern QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit);
 
 QWidget *
-DakotaResultsCalibration::createResultEDPWidget(QString &name, double mean, double stdDev) {
+DakotaResultsCalibration::createResultParameterWidget(QString &name, double bestValue) {
     QWidget *edp = new QWidget;
     QHBoxLayout *edpLayout = new QHBoxLayout();
 
@@ -664,18 +660,11 @@ DakotaResultsCalibration::createResultEDPWidget(QString &name, double mean, doub
     edpLayout->addWidget(nameWidget);
 
     QLineEdit *meanLineEdit;
-    QWidget *meanWidget = addLabeledLineEdit(QString("Mean"), &meanLineEdit);
-    meanLineEdit->setText(QString::number(mean));
+    QWidget *meanWidget = addLabeledLineEdit(QString("Best Parameter"), &meanLineEdit);
+    meanLineEdit->setText(QString::number(bestValue));
     meanLineEdit->setDisabled(true);
-    theMeans.append(mean);
+    theBestValues.append(bestValue);
     edpLayout->addWidget(meanWidget);
-
-    QLineEdit *stdDevLineEdit;
-    QWidget *stdDevWidget = addLabeledLineEdit(QString("StdDev"), &stdDevLineEdit);
-    stdDevLineEdit->setText(QString::number(stdDev));
-    stdDevLineEdit->setDisabled(true);
-    theStdDevs.append(stdDev);
-    edpLayout->addWidget(stdDevWidget);
 
     edpLayout->addStretch();
 
