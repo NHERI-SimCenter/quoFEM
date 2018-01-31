@@ -21,7 +21,7 @@ val1 = math.sqrt(val1);
 val2 = math.sqrt(val2);
 
 #result = math.sqrt(val1) + math.sqrt(val2)
-print("%.3f %.3f" % (val1,val2))
+#print("%.3f %.3f" % (val1,val2))
 
 outFile = open('results.out','w')
 outFile.write("%.3f %.3f" % (val1,val2))

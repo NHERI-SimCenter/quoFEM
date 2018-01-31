@@ -5,8 +5,8 @@
 import sys
 import re
 
-print 'Number of arguments:', len(sys.argv), 'arguments.'
-print 'Argument List:', str(sys.argv)
+#print 'Number of arguments:', len(sys.argv), 'arguments.'
+#print 'Argument List:', str(sys.argv)
 
 inputArgs = sys.argv
 #outFile = open('results.out','w')
