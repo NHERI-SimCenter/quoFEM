@@ -1,7 +1,7 @@
 # parameters student played with and cannot remember
 
-set roofFactor {roofFactor}
-set dampRatio {dampRatio}
+pset roofFactor 0.5
+pset dampRatio 0.02
 
 
 # other paramaters he used 

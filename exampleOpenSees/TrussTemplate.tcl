@@ -1,7 +1,8 @@
-set E {E}
-set P {P}
-set A1 {A1}
-set A2 {A2}
+pset E 20500
+pset P 25000
+pset A1 250
+pset A2 500
+
 model Basic -ndm 2 -ndf 2
 node 1     0    0
 node 2  4000    0

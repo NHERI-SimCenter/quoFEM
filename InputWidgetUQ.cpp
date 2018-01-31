@@ -161,7 +161,6 @@ int InputWidgetUQ::processResults(QString &filenameResults, QString &filenameTab
 
 void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
 {
-    qDebug() << "uqSelectionChanged: " << arg1;
     if (uqType != 0) {
         // layout->rem
         dakotaMethod = 0;

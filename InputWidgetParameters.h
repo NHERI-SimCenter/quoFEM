@@ -54,6 +54,8 @@ public:
     virtual void inputFromJSON(QJsonObject &rvObject);
 
     void setParametersWidget(RandomVariableInputWidget *theParameters);
+    void setInitialVarNamesAndValues(QStringList varNamesAndValues);
+    QStringList getParametereNames(void);
 
 signals:
 
@@ -62,6 +64,8 @@ public slots:
 protected:
     RandomVariableInputWidget *theParameters;
     QVBoxLayout *layout;
+
+    QStringList varNamesAndValues;
 };
 
 #endif // INPUT_WIDGET_PARAMETERS_SAMPLING_H

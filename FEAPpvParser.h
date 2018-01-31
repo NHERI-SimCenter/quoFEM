@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGETFEM_H
-#define INPUTWIDGETFEM_H
+#ifndef FEAPpv_PARSER_H
+#define FEAPpv_PARSER_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,55 +39,19 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterWidget.h>
+#include <QStringList>
 
-#include "EDP.h"
-#include <QGroupBox>
-#include <QVector>
-#include <QVBoxLayout>
-#include <QComboBox>
-
-class InputWidgetParameters;
-
-class InputWidgetFEM : public SimCenterWidget
+class FEAPpvParser
 {
-    Q_OBJECT
 public:
-    explicit InputWidgetFEM(InputWidgetParameters *theParams, QWidget *parent = 0);
-    ~InputWidgetFEM();
+    FEAPpvParser();
+    ~FEAPpvParser();
 
-    void outputToJSON(QJsonObject &rvObject);
-    void inputFromJSON(QJsonObject &rvObject);
-
-    QString getApplicationName();
-    QString getMainInput();
-
-     // copy main file to new filename ONLY if varNamesAndValues not empy
-    void specialCopyMainInput(QString fileName, QStringList varNamesAndValues);
-    int setFilename1(QString filnema1);
-
-signals:
-
-public slots:
-   void clear(void);
-   void femProgramChanged(const QString &arg1);
-   void chooseFileName1(void);
-   void chooseFileName2(void);
+    QStringList getVariables(QString inFilename);
+    void writeFile(QString infilename, QString outFilename, QStringList varToChange);
 
 private:
 
-    QVBoxLayout *layout;
-    QWidget     *femSpecific;
-    QComboBox   *femSelection;
-
-    QLineEdit *file1;
-    QLineEdit *file2;
-
-    QString fileName1;
-    QString fileName2;
-
-    InputWidgetParameters *theParameters;
-    QStringList varNamesAndValues;
 };
 
-#endif // INPUTWIDGETFEM_H
+#endif // FEAPpv_PARSER_H

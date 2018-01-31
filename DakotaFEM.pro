@@ -31,7 +31,9 @@ SOURCES += main.cpp\
     InputWidgetDakotaMethod.cpp \
     InputWidgetParameters.cpp \
     DakotaResultsBayesianCalibration.cpp \
-    InputWidgetBayesianCalibration.cpp
+    InputWidgetBayesianCalibration.cpp \
+    OpenSeesParser.cpp \
+    FEAPpvParser.cpp
 
 HEADERS  += MainWindow.h \
     EDP.h \
@@ -49,6 +51,8 @@ HEADERS  += MainWindow.h \
     InputWidgetParameters.h \
     InputWidgetBayesianCalibration.h \
     InputWidgetBayesianCalibration.h \
-    DakotaResultsBayesianCalibration.h
+    DakotaResultsBayesianCalibration.h \
+    OpenSeesParser.h \
+    FEAPpvParser.h
 
 FORMS    += mainwindow.ui

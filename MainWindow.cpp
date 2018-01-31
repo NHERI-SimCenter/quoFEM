@@ -105,9 +105,10 @@ MainWindow::MainWindow(QWidget *parent)
 
    // random = new RandomVariableInputWidget();
 
-    fem = new InputWidgetFEM();
+
     uq = new InputWidgetUQ();
     random = new InputWidgetParameters();
+    fem = new InputWidgetFEM(random);
     random->setParametersWidget(uq->getParameters());
     results = new DakotaResults();
 
@@ -241,6 +242,9 @@ void MainWindow::onRunButtonClicked() {
     QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
     copyPath(path, tmpDirectory, false);
 
+    // special copy the of the main script to set up lines containg parameters for dakota
+    QString mainScriptTmp = tmpDirectory + QDir::separator() + fileName;
+    fem->specialCopyMainInput(mainScriptTmp, random->getParametereNames());
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
     //
@@ -296,6 +300,7 @@ void MainWindow::onRunButtonClicked() {
     //
     // now invoke dakota, done via a python script in tool app dircetory
     //
+
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN

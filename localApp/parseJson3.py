@@ -77,6 +77,10 @@ continuousDesignLower =[];
 continuousDesignUpper =[];
 continuousDesignInitialPoint =[];
 
+numConstantState = 0;
+constantStateName=[];
+constantStateValue =[];
+
 numWeibullUncertain = 0;
 weibullUncertainName=[];
 weibullUncertainAlphas =[];
@@ -113,6 +117,12 @@ for k in data["randomVariables"]:
         lognormalUncertainMean.append(k["mean"])
         lognormalUncertainStdDev.append(k["stdDev"])
         numLognormalUncertain += 1
+    elif (k["distribution"] == "Constant"):
+        uncertainName.append(k["name"])
+        numUncertain += 1
+        constantStateName.append(k["name"])
+        constantStateValue.append(k["value"])
+        numConstantState += 1
     elif (k["distribution"] == "Uniform"):
         uncertainName.append(k["name"])
         numUncertain += 1
@@ -124,8 +134,8 @@ for k in data["randomVariables"]:
         uncertainName.append(k["name"])
         numUncertain += 1
         continuousDesignName.append(k["name"])
-        continuousDesignLower.append(k["min"])
-        continuousDesignUpper.append(k["max"])
+        continuousDesignLower.append(k["lower_bounds"])
+        continuousDesignUpper.append(k["upper_bounds"])
         continuousDesignInitialPoint.append(k["initialPoint"])
         numContinuousDesign += 1
     elif (k["distribution"] == "Weibull"):
@@ -365,6 +375,23 @@ if (numContinuousDesign > 0):
         f.write('\' ')
     f.write('\n')
 
+if (numConstantState > 0):
+    f.write('discrete_state_range = ' '{}'.format(numConstantState))
+    f.write('\n')
+
+    f.write('initial_state = ')
+    for i in range(numConstantState):
+        f.write('{}'.format(constantStateValue[i]))
+        f.write(' ')
+    f.write('\n')
+
+    f.write('descriptors = ')    
+    for i in range(numConstantState):
+        f.write('\'')
+        f.write(constantStateName[i])
+        f.write('\' ')
+    f.write('\n')
+
 if (numBetaUncertain > 0):
     f.write('beta_uncertain = ' '{}'.format(numBetaUncertain))
     f.write('\n')
@@ -499,8 +526,8 @@ if (type == "Sampling"):
         f.write(responseDescriptors[i])
         f.write('\' ')
         f.write('\n')
-        f.write('no_gradients\n')
-        f.write('no_hessians\n\n')
+    f.write('no_gradients\n')
+    f.write('no_hessians\n\n')
 
 elif (type == "Calibration"):
     f.write('responses, \n')
@@ -540,8 +567,8 @@ f.close()  # you can omit in most cases as the destructor will call it
 femInputFile = "";
 femPostprocessFile = "";
 
-if (femProgram == "OpenSees"):
-    print("OpenSees PROGRAM")
+if (femProgram == "OpenSees-SingleScript"):
+
     inputFile = femData["mainInput"];    
 
     os.chdir(path1)
@@ -556,18 +583,37 @@ if (femProgram == "OpenSees"):
     f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
     f.close()
 
-if (femProgram == "OpenSees-2"):
-    print("OpenSees PROGRAM - 2 2 2")
+if (femProgram == "OpenSees"):
+
     inputFile = femData["mainInput"];    
     postprocessScript = femData["mainPostprocessScript"];    
+
+    f = open('SimCenterParams.template', 'w')
+    for i in range(numUncertain):
+        f.write('set ')
+        f.write(uncertainName[i])
+        f.write(' {')
+        f.write(uncertainName[i])
+        f.write('}\n')
+    f.close()
+
+    f = open('SimCenterInput.ops', 'w')
+    f.write('source SimCenterParamIN.ops \n')
+    f.write('source ')
+    f.write(inputFile)
+    f.write(' \n')
+    f.close()
 
     os.chdir(path1)
     f = open(fem_driver, 'w')
     f.write(Perl)
     f.write(DakotaPath)
-    f.write('dprepro params.in %s SimCenterInput.tcl\n' %inputFile)
+    f.write('dprepro params.in SimCenterParams.template SimCenterParamIN.ops\n')
     f.write(OpenSeesPath)
-    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
+    f.write('OpenSees SimCenterInput.ops >> ops.out\n')
+    #    f.write('dprepro params.in %s SimCenterInput.tcl\n' %inputFile)
+    #    f.write(OpenSeesPath)
+    #    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
     f.write('python ')
     f.write(postprocessScript)
     for i in range(numResponses):

@@ -82,6 +82,23 @@ InputWidgetParameters::setParametersWidget(RandomVariableInputWidget *param) {
     if (param != 0) {
         layout->addWidget(param);
         theParameters = param;
+        theParameters->setInitialConstantRVs(varNamesAndValues);
     }
 }
 
+void
+InputWidgetParameters::setInitialVarNamesAndValues(QStringList theList){
+    varNamesAndValues=theList;
+    theParameters->setInitialConstantRVs(varNamesAndValues);
+}
+
+QStringList
+InputWidgetParameters::getParametereNames(void)
+{
+    if (theParameters != 0)
+        return theParameters->getRandomVariableNames();
+    else {
+        QStringList empty;
+        return empty;
+    }
+}

@@ -49,8 +49,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <sectiontitle.h>
 #include <QFileInfo>
 
+#include <OpenSeesParser.h>
+#include <FEAPpvParser.h>
 
-InputWidgetFEM::InputWidgetFEM(QWidget *parent) : SimCenterWidget(parent)
+#include <InputWidgetParameters.h>
+
+InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
+    : SimCenterWidget(parent), theParameters(param)
 {
     femSpecific = 0;
 
@@ -83,8 +88,8 @@ InputWidgetFEM::InputWidgetFEM(QWidget *parent) : SimCenterWidget(parent)
     layout->setMargin(0);
     // name->addStretch();
 
+    //femSelection->addItem(tr("OpenSees"));
     femSelection->addItem(tr("OpenSees"));
-    femSelection->addItem(tr("OpenSees-2"));
     femSelection->addItem(tr("FEAPpv"));
 
     connect(femSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(femProgramChanged(QString)));
@@ -149,20 +154,30 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
     QJsonObject fem = jsonObject["fem"].toObject();
 
     fileName1=fem["inputFile"].toString();
-    qDebug() << "file1: " << fileName1;
     fileName2=fem["postprocessScript"].toString();
 
- qDebug() << "file2: " << fileName2;
     QString program=fem["program"].toString();
+    if (program == tr("OpenSees-2"))
+        program = tr("OpenSees");
+
     int index = femSelection->findText(program);
     femSelection->setCurrentIndex(index);
     this->femProgramChanged(program);
+
+    /*
     if (program == tr("OpenSees")) {
         file1->setText(fileName1);
     } else {
         file1->setText(fileName1);
         file2->setText(fileName2);
     }
+    */
+
+    file1->setText(fileName1);
+    file2->setText(fileName2);
+
+    // call setFilename1 so parser works on input file
+    this->setFilename1(fileName1);
 }
 
 void InputWidgetFEM::femProgramChanged(const QString &arg1)
@@ -176,6 +191,8 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
 
     femSpecific = new QWidget();
     //femLayout = new QVBoxLayout();
+
+    /************ single script OpenSees *****************
     if (arg1 == QString("OpenSees")) {
         QVBoxLayout *femLayout = new QVBoxLayout();
         QLabel *label1 = new QLabel();
@@ -204,7 +221,10 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         femLayout->addStretch();
         femSpecific->setLayout(femLayout);
 
-    } else if (arg1 == QString("FEAPpv")) {
+    } else
+    * *********************************************************/
+
+    if (arg1 == QString("FEAPpv")) {
         QVBoxLayout *femLayout = new QVBoxLayout();
         QLabel *label1 = new QLabel();
         label1->setText("Input File");
@@ -245,7 +265,7 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         femLayout->addStretch();
         femSpecific->setLayout(femLayout);
 
-    } else if (arg1 == QString("OpenSees-2")) {
+    } else if (arg1 == QString("OpenSees")) {
 
         QVBoxLayout *femLayout = new QVBoxLayout();
         QLabel *label1 = new QLabel();
@@ -288,13 +308,49 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
     }
     // femSpecific->addStretch();
 
-    layout->addWidget(femSpecific);
+    //layout->addWidget(femSpecific);
+    layout->insertWidget(1, femSpecific);
+
+}
+
+int InputWidgetFEM::setFilename1(QString name1){
+    fileName1 = name1;
+    file1->setText(name1);
+
+    // if OpenSees or FEAP parse the file for the variables
+    QString pName = femSelection->currentText();
+    if (pName == "OpenSees" || pName == "OpenSees-2") {
+        OpenSeesParser theParser;
+        varNamesAndValues = theParser.getVariables(fileName1);
+    }  else if (pName == "FEAPpv") {
+        FEAPpvParser theParser;
+        varNamesAndValues = theParser.getVariables(fileName1);
+    }
+    // qDebug() << "VARNAMESANDVALUES: " << varNamesAndValues;
+    theParameters->setInitialVarNamesAndValues(varNamesAndValues);
+
+
 }
 
 void InputWidgetFEM::chooseFileName1(void)
 {
     fileName1=QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
-    file1->setText(fileName1);
+    int ok = this->setFilename1(fileName1);
+}
+
+void
+InputWidgetFEM::specialCopyMainInput(QString fileName, QStringList varNames) {
+    // if OpenSees or FEAP parse the file for the variables
+    if (varNames.size() > 0) {
+        QString pName = femSelection->currentText();
+        if (pName == "OpenSees" || pName == "OpenSees-2") {
+            OpenSeesParser theParser;
+            theParser.writeFile(file1->text(), fileName,varNames);
+        }  else if (pName == "FEAPpv") {
+            FEAPpvParser theParser;
+            theParser.writeFile(file1->text(), fileName,varNames);
+        }
+    }
 }
 
 void InputWidgetFEM::chooseFileName2(void)
