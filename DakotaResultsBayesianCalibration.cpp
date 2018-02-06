@@ -607,7 +607,7 @@ DakotaResultsBayesianCalibration::onSpreadsheetCellClicked(int row, int col)
                 series->append(min+(i+1)*dRange, 0);
             }
 
-            delete dataValues;
+            delete [] dataValues;
 
             chart->addSeries(series);
             QValueAxis *axisX = new QValueAxis();
@@ -629,7 +629,7 @@ DakotaResultsBayesianCalibration::onSpreadsheetCellClicked(int row, int col)
                 series->append(dataValues[i], 1.0*i/rowCount);
             }
 
-            delete dataValues;
+            delete [] dataValues;
 
             chart->addSeries(series);
             QValueAxis *axisX = new QValueAxis();

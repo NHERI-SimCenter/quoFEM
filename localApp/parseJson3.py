@@ -19,6 +19,7 @@ if (sys.platform == 'darwin'):
     DakotaPath = ' '
     Perl = ' '
     fem_driver = 'fem_driver'
+    numCPUs = 8
 
 else:
     OpenSeesPath = 'C:\\Users\\SimCenter\\OpenSees\\Win64\\bin\\'
@@ -28,6 +29,7 @@ else:
     # DakotaPath = ' '
     Perl = 'perl '
     fem_driver = 'fem_driver.bat'
+    numCPUs = 8
 
 print(OpenSeesPath)
 print(DakotaPath)
@@ -503,8 +505,9 @@ femProgram = femData["program"];
 
 if (femProgram == "OpenSees" or femProgram == "OpenSees-2" or femProgram == "FEAPpv"):
     f.write('interface,\n')
-    f.write('system # asynch evaluation_concurrency = 8\n')
-    f.write('analysis_driver = \'fem_driver\' \n')
+    # f.write('system # asynch evaluation_concurrency = 8\n')
+    f.write('fork asynchronous evaluation_concurrency = ' '{}'.format(numCPUs))
+    f.write('\nanalysis_driver = \'fem_driver\' \n')
     f.write('parameters_file = \'params.in\' \n')
     f.write('results_file = \'results.out\' \n')
     f.write('work_directory directory_tag \n')

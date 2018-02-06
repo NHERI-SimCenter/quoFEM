@@ -329,7 +329,7 @@ int InputWidgetFEM::setFilename1(QString name1){
     // qDebug() << "VARNAMESANDVALUES: " << varNamesAndValues;
     theParameters->setInitialVarNamesAndValues(varNamesAndValues);
 
-
+    return 0;
 }
 
 void InputWidgetFEM::chooseFileName1(void)
