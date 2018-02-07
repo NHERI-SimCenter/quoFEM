@@ -70,6 +70,8 @@ using namespace QtCharts;
 
 #include <QXYSeries>
 
+#define NUM_DIVISIONS 10
+
 DakotaResultsSampling::DakotaResultsSampling(QWidget *parent)
     : DakotaResults(parent)
 {
@@ -554,7 +556,6 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
         QLineSeries *series= new QLineSeries;
 
-        static int NUM_DIVISIONS = 10;
         static double NUM_DIVISIONS_FOR_DIVISION = 10.0;
         double *dataValues = new double[rowCount];
         double histogram[NUM_DIVISIONS];

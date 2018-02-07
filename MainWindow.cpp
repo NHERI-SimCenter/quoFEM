@@ -310,6 +310,7 @@ void MainWindow::onRunButtonClicked() {
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
     proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
+    qDebug() << command;
 #else
     QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
     proc->execute("bash", QStringList() << "-c" <<  command);
@@ -328,7 +329,7 @@ void MainWindow::onRunButtonClicked() {
    }
 
    QDir dirToRemove(sourceDir);
-   dirToRemove.removeRecursively();
+   //dirToRemove.removeRecursively();
 
     //
     // process the results
