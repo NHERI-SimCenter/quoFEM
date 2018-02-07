@@ -505,7 +505,7 @@ femProgram = femData["program"];
 
 if (femProgram == "OpenSees" or femProgram == "OpenSees-2" or femProgram == "FEAPpv"):
     f.write('interface,\n')
-    # f.write('system # asynch evaluation_concurrency = 8\n')
+    #f.write('system # asynch evaluation_concurrency = 8')
     f.write('fork asynchronous evaluation_concurrency = ' '{}'.format(numCPUs))
     f.write('\nanalysis_driver = \'fem_driver\' \n')
     f.write('parameters_file = \'params.in\' \n')
@@ -607,6 +607,23 @@ if (femProgram == "OpenSees"):
     f.write(' \n')
     f.close()
 
+    f = open(fem_driver, 'w')
+    f.write(Perl)
+    f.write(DakotaPath)
+    f.write('dprepro params.in SimCenterParams.template SimCenterParamIN.ops\n')
+    f.write(OpenSeesPath)
+    f.write('OpenSees SimCenterInput.ops >> ops.out\n')
+    #    f.write('dprepro params.in %s SimCenterInput.tcl\n' %inputFile)
+    #    f.write(OpenSeesPath)
+    #    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
+    f.write('python ')
+    f.write(postprocessScript)
+    for i in range(numResponses):
+        f.write(' ')
+        f.write(responseDescriptors[i])    
+    f.write('\n')
+    f.close()
+	
     os.chdir(path1)
     f = open(fem_driver, 'w')
     f.write(Perl)
