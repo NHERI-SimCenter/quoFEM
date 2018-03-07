@@ -377,11 +377,36 @@ if (numContinuousDesign > 0):
         f.write('\' ')
     f.write('\n')
 
-if (numConstantState > 0):
+
+numCState = 0
+if (numCState > 0):
     f.write('discrete_state_range = ' '{}'.format(numConstantState))
     f.write('\n')
 
     f.write('initial_state = ')
+    for i in range(numConstantState):
+        f.write('{}'.format(constantStateValue[i]))
+        f.write(' ')
+    f.write('\n')
+
+    f.write('descriptors = ')    
+    for i in range(numConstantState):
+        f.write('\'')
+        f.write(constantStateName[i])
+        f.write('\' ')
+    f.write('\n')
+
+if (numConstantState > 0):
+    f.write('discrete_design_set\nreal = ' '{}'.format(numConstantState))
+    f.write('\n')
+
+    f.write('num_set_values = ')
+    for i in range(numConstantState):
+        f.write('{}'.format(1))
+        f.write(' ')
+    f.write('\n')
+
+    f.write('set_values = ')
     for i in range(numConstantState):
         f.write('{}'.format(constantStateValue[i]))
         f.write(' ')
