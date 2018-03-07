@@ -96,7 +96,7 @@ MainWindow::MainWindow(QWidget *parent)
     //
 
     HeaderWidget *header = new HeaderWidget();
-    header->setHeadingText(tr("DAKOTA-FEM Uncertainty Quantification Application"));
+    header->setHeadingText(tr("uqFEM Application"));
     layout->addWidget(header);
 
     //
@@ -273,8 +273,8 @@ void MainWindow::onRunButtonClicked() {
     QString homeDIR = QDir::homePath();
     QString appDIR = qApp->applicationDirPath();
 
-    //appDir = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("DakotaFEM2") +
-    //   QDir::separator() + QString("localApp");
+    //appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("DakotaFEM2") +
+    //  QDir::separator() + QString("localApp");
 
     //
     QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
@@ -310,7 +310,7 @@ void MainWindow::onRunButtonClicked() {
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
     proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
-    qDebug() << command;
+    //qDebug() << command;
 #else
     QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
     proc->execute("bash", QStringList() << "-c" <<  command);
@@ -329,7 +329,7 @@ void MainWindow::onRunButtonClicked() {
    }
 
    QDir dirToRemove(sourceDir);
-   //dirToRemove.removeRecursively();
+   dirToRemove.removeRecursively();
 
     //
     // process the results
