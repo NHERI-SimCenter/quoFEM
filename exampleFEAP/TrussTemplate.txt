@@ -3,9 +3,9 @@ FEAP * * Elastic Truss
 
 PARAmeter
 E 	= 205000
-P 	= 2500
-A2	= 10
-A1 	= 25
+P 	= 25000
+A2	= 500
+A1 	= 250
 
 MATErial 1
 TRUSs
