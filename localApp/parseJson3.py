@@ -10,6 +10,7 @@ inputArgs = sys.argv
 
 path1 = inputArgs[1]
 path2 = inputArgs[2]
+exeDakota = inputArgs[3]
 
 if (sys.platform == 'darwin'):
     OpenSeesPath = '/Users/fmckenna/bin/'
@@ -30,6 +31,9 @@ else:
     Perl = 'perl '
     fem_driver = 'fem_driver.bat'
     numCPUs = 8
+
+if exeDakota in ['runningRemote']:
+    OpenSeesPath = '/home1/00477/tg457427/bin/'
 
 print(OpenSeesPath)
 print(DakotaPath)
@@ -531,7 +535,8 @@ femProgram = femData["program"];
 if (femProgram == "OpenSees" or femProgram == "OpenSees-2" or femProgram == "FEAPpv"):
     f.write('interface,\n')
     #f.write('system # asynch evaluation_concurrency = 8')
-    f.write('fork asynchronous evaluation_concurrency = ' '{}'.format(numCPUs))
+    #f.write('fork asynchronous evaluation_concurrency = ' '{}'.format(numCPUs))
+    f.write('fork \n asynchronous')
     f.write('\nanalysis_driver = \'fem_driver\' \n')
     f.write('parameters_file = \'params.in\' \n')
     f.write('results_file = \'results.out\' \n')
@@ -704,9 +709,10 @@ os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
 command = DakotaPath + 'dakota -input dakota.in -output dakota.out -error dakota.err'
 print(command)
-
 #os.popen("/Users/fmckenna/dakota-6.7.0/bin/dakota -input dakota.in -output dakota.out -error dakota.err").read()
-os.popen(command).read()
+
+if exeDakota in ['runningLocal']:
+    os.popen(command).read()
 
 
 

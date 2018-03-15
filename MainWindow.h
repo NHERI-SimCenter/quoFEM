@@ -51,6 +51,9 @@ class InputWidgetUQ;
 class InputWidgetParameters;
 class DakotaResults;
 
+class AgaveCLI;
+class RemoteJobCreatorWidget;
+class RemoteJobManagerWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -68,16 +71,19 @@ class MainWindow : public QMainWindow
 
     void onRunButtonClicked();
     void onRemoteRunButtonClicked();
+    void onJobsManagerButtonClicked();
     void onExitButtonClicked();
 
     void onDakotaMethodChanged(void);
 
   //void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
 
- private:
-    void setCurrentFile(const QString &fileName);
     bool saveFile(const QString &fileName);
     void loadFile(const QString &fileName);
+    void processResults(QString &filename1, QString & filename2);
+
+ private:
+    void setCurrentFile(const QString &fileName);
 
     void createActions();
 
@@ -86,11 +92,14 @@ class MainWindow : public QMainWindow
     QString currentFile;
     SidebarWidgetSelection *inputWidget;
 
-//    SimCenterWidget *edp;
     InputWidgetFEM *fem;
     InputWidgetUQ *uq;
     InputWidgetParameters *random;
     DakotaResults *results;
+
+    AgaveCLI *theCLI;
+    RemoteJobCreatorWidget *jobCreator;
+    RemoteJobManagerWidget *jobManager;
 };
 
 #endif // MAINWINDOW_H

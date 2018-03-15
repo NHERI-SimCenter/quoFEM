@@ -75,11 +75,30 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFileInfo>
 #include <QProcess>
 #include <QDesktopWidget>
+#include <QUuid>
+
+
+#include "../TestAgave/AgaveCLI.h"
+#include <RemoteJobCreatorWidget.h>
+#include <RemoteJobManagerWidget.h>
 
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    //
+    // create the interface, jobCreator and jobManager
+    //
+
+    theCLI = new AgaveCLI();
+    jobCreator = new RemoteJobCreatorWidget(theCLI);
+    jobManager = new RemoteJobManagerWidget(theCLI, this);
+
+    //
+    // create a layout & widget for central area of this QMainWidget
+    //  to this widget we will add a header, selection, button and footer widgets
+    //
+
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout();
     centralWidget->setLayout(layout);
@@ -91,6 +110,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->resize(width, height);
 
+
     //
     // add SimCenter Header
     //
@@ -100,16 +120,26 @@ MainWindow::MainWindow(QWidget *parent)
     layout->addWidget(header);
 
     //
-    // create main input widget
+    // create a widget for selection:
     //
+    // first create the main widgets for input:
+    //   fem - for obtaiinging FEM info
+    //   random - for the random variable definitions
+    //   uq - for the UQ or optimization method
+    //   results - to display the results
+    //
+    // then we add these to the selection widget, something that will allow users to switch between
+    // these input widges & add the input widets to this selection widget
+    //
+    // finally we add new selection widget to layout
 
-   // random = new RandomVariableInputWidget();
-
-
+    //the input widgets
     uq = new InputWidgetUQ();
     random = new InputWidgetParameters();
     fem = new InputWidgetFEM(random);
     random->setParametersWidget(uq->getParameters());
+
+    // create selection widget & add the input widgets
     results = new DakotaResults();
 
     inputWidget = new SidebarWidgetSelection();
@@ -118,18 +148,23 @@ MainWindow::MainWindow(QWidget *parent)
     inputWidget->addInputWidget(tr("Input Variables"), random);
     inputWidget->addInputWidget(tr("Results"), results);
 
+    // let ubput widget know end of ptions, then set initial input to fem
     inputWidget->buildTreee();
+    inputWidget->setSelection(tr("FEM Selection"));
 
-    //inputWidget->setMinimumWidth(800);
+    // add selection widget to the central layout previosuly created
     layout->addWidget(inputWidget,1.0);
 
     //
-    // add run, run-DesignSafe and exit buttons
+    // add run, run-DesignSafe and exit buttons into a new widget for buttons
     //
 
+    // create the buttons widget and a layout for it
     QHBoxLayout *pushButtonLayout = new QHBoxLayout();
     QWidget *buttonWidget = new QWidget();
     buttonWidget->setLayout(pushButtonLayout);
+
+    // create a bunch of buttons
 
     QPushButton *runButton = new QPushButton();
     runButton->setText(tr("RUN"));
@@ -139,16 +174,24 @@ MainWindow::MainWindow(QWidget *parent)
     runDesignSafeButton->setText(tr("RUN at DesignSafe"));
     pushButtonLayout->addWidget(runDesignSafeButton);
 
+    QPushButton *getDesignSafeButton = new QPushButton();
+    getDesignSafeButton->setText(tr("GET from DesignSafe"));
+    pushButtonLayout->addWidget(getDesignSafeButton);
+
     QPushButton *exitButton = new QPushButton();
     exitButton->setText(tr("Exit"));
     pushButtonLayout->addWidget(exitButton);
 
+    // connect clicked signal of button with MainWindow methods
+
     connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
     connect(runDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onRemoteRunButtonClicked()));
+    connect(getDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onJobsManagerButtonClicked()));
     connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
 
     connect(uq,SIGNAL(uqWidgetChanged()), this,SLOT(onDakotaMethodChanged()));
 
+    // add button widget to layout
     layout->addWidget(buttonWidget);
 
     //
@@ -165,7 +208,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-
+    // invoke destructor as AgaveCLI not a QObject
+    delete theCLI;
 }
 
 bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory)
@@ -174,7 +218,7 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
 
     if (! originDirectory.exists())
     {
-        qDebug() << "Origin Directory: " << originDirectory << " Does not exist";
+        qDebug() << "Origin Directory: " << sourceDir << " Does not exist";
         return false;
     }
 
@@ -273,8 +317,8 @@ void MainWindow::onRunButtonClicked() {
     QString homeDIR = QDir::homePath();
     QString appDIR = qApp->applicationDirPath();
 
-    //appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("DakotaFEM2") +
-    //  QDir::separator() + QString("localApp");
+    appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
+      QDir::separator() + QString("localApp");
 
     //
     QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
@@ -312,7 +356,7 @@ void MainWindow::onRunButtonClicked() {
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
     //qDebug() << command;
 #else
-    QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
+    QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningLocal");
     proc->execute("bash", QStringList() << "-c" <<  command);
     qDebug() << command;
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
@@ -338,14 +382,122 @@ void MainWindow::onRunButtonClicked() {
     QString filenameOUT = destinationDir + tr("dakota.out");
     QString filenameTAB = destinationDir + tr("dakotaTab.out");
 
-    DakotaResults *result=uq->getResults();
-    result->processResults(filenameOUT, filenameTAB);
-    results->setResultWidget(result);
-    inputWidget->setSelection(QString("Results"));
+    this->processResults(filenameOUT, filenameTAB);
 }
 
 void MainWindow::onRemoteRunButtonClicked(){
-    qDebug() << "NOT YET IMPLEMENTED";
+
+    //
+    // get program & input file from fem widget
+    //
+
+    QString application = fem->getApplicationName();
+    QString mainInput = fem->getMainInput();
+
+    QFileInfo fileInfo(mainInput);
+    QDir fileDir = fileInfo.absolutePath();
+    QString fileName =fileInfo.fileName();
+    QString path = fileDir.absolutePath();// + QDir::separator();
+
+    //
+    // given path to input file we are going to create temporary directory below it
+    // and copy all files from this input file directory to the new subdirectory
+    //
+
+    QUuid uniqueName = QUuid::createUuid();
+    QString strUnique = uniqueName.toString();
+    strUnique = strUnique.mid(1,36);
+
+    QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + strUnique + QDir::separator() + QString("templatedir");
+    copyPath(path, tmpDirectory, false);
+
+    // special copy the of the main script to set up lines containg parameters for dakota
+    QString mainScriptTmp = tmpDirectory + QDir::separator() + fileName;
+    fem->specialCopyMainInput(mainScriptTmp, random->getParametereNames());
+
+    //
+    // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
+    //
+
+    QString filenameTMP = tmpDirectory + QDir::separator() + tr("dakota.json");
+
+    QFile file(filenameTMP);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::warning(this, tr("Application"),
+                             tr("Cannot write file %1:\n%2.")
+                             .arg(QDir::toNativeSeparators(filenameTMP),
+                                  file.errorString()));
+        return;
+    }
+    QJsonObject json;
+    inputWidget->outputToJSON(json);
+    QJsonDocument doc(json);
+    file.write(doc.toJson());
+    file.close();
+
+    //
+    // now use the applications parseJSON file to run dakota and produce output files:
+    //    dakota.in dakota.out dakotaTab.out dakota.err
+    //
+
+    QString homeDIR = QDir::homePath();
+    QString appDIR = qApp->applicationDirPath();
+
+    appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
+      QDir::separator() + QString("localApp");
+
+    //
+    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
+    QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter") + strUnique;
+
+    // remove current results widget
+    results->setResultWidget(0);
+
+    //
+    // want to first remove old dakota files from the current directory
+    //
+
+    QString sourceDir = path + QDir::separator() + QString("tmp.SimCenter") + strUnique + QDir::separator();
+    QString destinationDir = path + QDir::separator();
+
+    QStringList files;
+    files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
+
+    for (int i = 0; i < files.size(); i++) {
+        QString copy = files.at(i);
+        QFile file(destinationDir + copy);
+        file.remove();
+    }
+
+    //
+    // now invoke dakota, done via a python script in tool app dircetory
+    //
+
+    QProcess *proc = new QProcess();
+
+#ifdef Q_OS_WIN
+    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
+    proc->execute("cmd", QStringList() << "/C" << command);
+    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
+    //qDebug() << command;
+#else
+    QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
+    proc->execute("bash", QStringList() << "-c" <<  command);
+    qDebug() << command;
+    // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
+#endif
+    proc->waitForStarted();
+
+    // when setup is complete, pop open the jobCreateor Widget which will allow user
+    // to set some needed info before running at DesignSafe
+    jobCreator->setInputDirectory(tDirectory);
+    jobCreator->show();
+}
+
+
+void MainWindow::onJobsManagerButtonClicked(){
+    jobManager->updateJobTable();
+    jobManager->show();
 }
 
 void MainWindow::onExitButtonClicked(){
@@ -457,7 +609,8 @@ void MainWindow::loadFile(const QString &fileName)
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Application"),
                              tr("Cannot read file %1:\n%2.")
-                             .arg(QDir::toNativeSeparators(fileName), file.errorString()));
+                             .arg(QDir::toNativeSeparators(fileName),
+                                 file.errorString()));
         return;
     }
 
@@ -480,6 +633,14 @@ void MainWindow::loadFile(const QString &fileName)
     setCurrentFile(fileName);
 }
 
+
+void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
+{
+    DakotaResults *result=uq->getResults();
+    result->processResults(dakotaIN, dakotaTAB);
+    results->setResultWidget(result);
+    inputWidget->setSelection(QString("Results"));
+}
 
 void MainWindow::createActions() {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
