@@ -49,12 +49,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPushButton>
 #include <QJsonObject>
 
-#include <AgaveCLI.h>
+#include <AgaveInterface.h>
 #include <QDebug>
 #include <QDir>
 
 
-RemoteJobCreatorWidget::RemoteJobCreatorWidget(AgaveCLI *theInt, QWidget *parent)
+RemoteJobCreatorWidget::RemoteJobCreatorWidget(AgaveInterface *theInt, QWidget *parent)
     : QWidget(parent), theInterface(theInt)
 {
     QGridLayout *layout = new QGridLayout();

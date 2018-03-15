@@ -44,17 +44,18 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //  - the widget aasks for additional info needed and provide a submit button to submit the jb when clicked.
 
 #include <QWidget>
+#include <AgaveInterface.h>
+
 class QLineEdit;
 
 class JobManager;
-class AgaveCLI;
 class MainWindow;
 
 class RemoteJobCreatorWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit RemoteJobCreatorWidget(AgaveCLI *, QWidget *parent = nullptr);
+    explicit RemoteJobCreatorWidget(AgaveInterface *, QWidget *parent = nullptr);
     void setInputDirectory(const QString & directoryName);
 
 signals:
@@ -70,7 +71,7 @@ private:
     QLineEdit *numProcessorsLineEdit;
     QLineEdit *runtimeLineEdit;
 
-    AgaveCLI   *theInterface;
+    AgaveInterface   *theInterface;
  //   JobManager *theManager;
 
     QString directoryName;

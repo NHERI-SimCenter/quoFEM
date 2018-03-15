@@ -51,7 +51,7 @@ class InputWidgetUQ;
 class InputWidgetParameters;
 class DakotaResults;
 
-class AgaveCLI;
+class AgaveInterface;
 class RemoteJobCreatorWidget;
 class RemoteJobManagerWidget;
 
@@ -97,7 +97,7 @@ class MainWindow : public QMainWindow
     InputWidgetParameters *random;
     DakotaResults *results;
 
-    AgaveCLI *theCLI;
+    AgaveInterface *theCLI;
     RemoteJobCreatorWidget *jobCreator;
     RemoteJobManagerWidget *jobManager;
 };

@@ -42,7 +42,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 #include "RemoteJobManagerWidget.h"
-#include <AgaveCLI.h>
+#include <AgaveInterface.h>
 #include <QJsonDocument>
 
 #include <QHBoxLayout>
@@ -59,7 +59,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include  <QDebug>
 
 
-RemoteJobManagerWidget::RemoteJobManagerWidget(AgaveCLI *theInt, MainWindow *theMain, QWidget *parent)
+RemoteJobManagerWidget::RemoteJobManagerWidget(AgaveInterface *theInt, MainWindow *theMain, QWidget *parent)
     : QWidget(parent), theInterface(theInt), theMainWindow(theMain), triggeredRow(-1)
 {
     jobsTable = 0;

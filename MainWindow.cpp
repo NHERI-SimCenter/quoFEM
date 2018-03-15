@@ -37,7 +37,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-
 #include <QTreeView>
 #include <QStandardItemModel>
 #include <QItemSelectionModel>
@@ -62,7 +61,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetParameters.h>
 #include <RandomVariableInputWidget.h>
 
-
 #include <DakotaResultsSampling.h>
 
 #include <QVBoxLayout>
@@ -78,7 +76,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QUuid>
 
 
-#include "../TestAgave/AgaveCLI.h"
+#include <AgaveCLI.h>
 #include <RemoteJobCreatorWidget.h>
 #include <RemoteJobManagerWidget.h>
 

@@ -49,9 +49,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStringList>
 #include <QString>
 
+#include <AgaveInterface.h>
 
-class AgaveCLI;
- class MainWindow;
+class MainWindow;
 class QTableWidget;
 
 class RemoteJobManagerWidget : public QWidget
@@ -59,7 +59,7 @@ class RemoteJobManagerWidget : public QWidget
     Q_OBJECT
 public:
 
-    explicit RemoteJobManagerWidget(AgaveCLI *, MainWindow *, QWidget *parent = nullptr);
+    explicit RemoteJobManagerWidget(AgaveInterface *, MainWindow *, QWidget *parent = nullptr);
     bool updateJobTable(void);
     bool addJob(QString &jobID);
 
@@ -74,7 +74,7 @@ public slots:
 
 private:
     QString inputDirectory;
-    AgaveCLI *theInterface;
+    AgaveInterface *theInterface;
     MainWindow *theMainWindow;
     QJsonObject jobs;
 
