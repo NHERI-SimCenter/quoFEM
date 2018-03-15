@@ -12,7 +12,7 @@ TARGET = uqFEM
 TEMPLATE = app
 
 INCLUDEPATH += ../widgets/RandomVariables
-INCLUDEPATH += ../TestAgave
+INCLUDEPATH += ../simcenterAgave/interface
 
 
 include(../widgets/RandomVariables/RandomVariables.pri)
@@ -62,6 +62,7 @@ HEADERS  += MainWindow.h \
     ../simcenterAgave/interface/AgaveCLI.h \
     RemoteJobCreatorWidget.h \
     RemoteJobManagerWidget.h \
-    MyTableWidget.h
+    MyTableWidget.h \
+    ../simcenterAgave/interface/AgaveInterface.h
 
 FORMS    += mainwindow.ui
