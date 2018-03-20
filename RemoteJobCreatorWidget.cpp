@@ -126,16 +126,16 @@ RemoteJobCreatorWidget::pushButtonClicked(void)
     QDir theDirectory(directoryName);
     QString dirName = theDirectory.dirName();
 
-    QString userName="tg457427";
-
-    QString remoteDirectory = QString("agave://designsafe.storage.default/") + userName + QString("/") + dirName;
+  // QString userName=theInterface->getHomeDir();
+  //  QString remoteDirectory = QString("agave://designsafe.storage.default/") + userName + QString("/") + dirName;
+    QString remoteDirectory = theInterface->getHomeDirPath() + QString("/") + dirName;
 
      QJsonObject inputs;
      inputs["inputDirectory"]=remoteDirectory;
      job["inputs"]=inputs;
 
     // upload directory under user & submit job
-    theInterface->uploadDirectory(directoryName, userName);
+    theInterface->uploadDirectory(directoryName, theInterface->getHomeDirPath());
 
     theInterface->startJob(job);
 

@@ -34,7 +34,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-
 // Written: fmckenna
 
 #include <QTreeView>
@@ -74,21 +73,39 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QProcess>
 #include <QDesktopWidget>
 #include <QUuid>
+#include <QLabel>
+#include <QLineEdit>
 
 
 #include <AgaveCLI.h>
 #include <RemoteJobCreatorWidget.h>
 #include <RemoteJobManagerWidget.h>
 
+static MainWindow *theOneStaticMainWindow = 0;
+
+void errorMessage(const QString &msg){
+    //qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+    theOneStaticMainWindow->errorLabel->setText(msg);
+    qDebug() << "ERROR MESSAGE" << msg;
+}
+void warningMessage(const QStringList &msg){
+
+}
+void updateMessage(const QStringList &msg)
+{
+
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    theOneStaticMainWindow = this;
+
     //
     // create the interface, jobCreator and jobManager
     //
 
-    theCLI = new AgaveCLI();
+    theCLI = new AgaveCLI(&errorMessage, this);
     jobCreator = new RemoteJobCreatorWidget(theCLI);
     jobManager = new RemoteJobManagerWidget(theCLI, this);
 
@@ -116,6 +133,23 @@ MainWindow::MainWindow(QWidget *parent)
     HeaderWidget *header = new HeaderWidget();
     header->setHeadingText(tr("uqFEM Application"));
     layout->addWidget(header);
+
+    // place a location for messages;
+    QHBoxLayout *layoutMessages = new QHBoxLayout();
+    errorLabel = new QLabel();
+    layoutMessages->addWidget(errorLabel);
+    header->appendLayout(layoutMessages);
+
+    // place login info
+    QHBoxLayout *layoutLogin = new QHBoxLayout();
+    QLabel *name = new QLabel();
+    //name->setText("");
+    loginButton = new QPushButton();
+    loginButton->setText("Login");
+    layoutLogin->addWidget(name);
+    layoutLogin->addWidget(loginButton);
+    layoutLogin->setAlignment(Qt::AlignLeft);
+    header->appendLayout(layoutLogin);
 
     //
     // create a widget for selection:
@@ -182,6 +216,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // connect clicked signal of button with MainWindow methods
 
+    connect(loginButton,SIGNAL(clicked(bool)),this,SLOT(onLoginButtonClicked()));
     connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
     connect(runDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onRemoteRunButtonClicked()));
     connect(getDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onJobsManagerButtonClicked()));
@@ -263,6 +298,8 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
 }
 
 void MainWindow::onRunButtonClicked() {
+
+    errorMessage("");
 
     //
     // get program & input file from fem widget
@@ -385,6 +422,13 @@ void MainWindow::onRunButtonClicked() {
 
 void MainWindow::onRemoteRunButtonClicked(){
 
+    // check logged in
+    if (theCLI->isLoggedIn() == false) {
+          errorMessage("ERROR - You Need to Login");
+          return;
+    } else
+        loginButton->setText("logout");
+
     //
     // get program & input file from fem widget
     //
@@ -494,8 +538,31 @@ void MainWindow::onRemoteRunButtonClicked(){
 
 
 void MainWindow::onJobsManagerButtonClicked(){
-    jobManager->updateJobTable();
-    jobManager->show();
+
+    errorMessage("");
+
+    if (theCLI->isLoggedIn()) {
+        loginButton->setText("logout");
+        jobManager->updateJobTable();
+        jobManager->show();
+    } else {
+        errorMessage("ERROR - You Need to Login");
+    }
+}
+
+
+void MainWindow::onLoginButtonClicked(){
+
+    errorMessage("");
+
+    if (loginButton->text().contains("Login"))
+        theCLI->login(); // if logged in we change text in pushbutton on remote job submission or other
+    else {
+        theCLI->logout();
+        jobCreator->hide();
+        jobManager->hide();
+        loginButton->setText("Login");
+    }
 }
 
 void MainWindow::onExitButtonClicked(){
@@ -504,12 +571,16 @@ void MainWindow::onExitButtonClicked(){
 }
 
 void MainWindow::onDakotaMethodChanged(void) {
+    errorMessage("");
+
     random->setParametersWidget(uq->getParameters());
 }
 
 
 bool MainWindow::save()
 {
+    errorMessage("");
+
     if (currentFile.isEmpty()) {
         return saveAs();
     } else {
@@ -519,6 +590,8 @@ bool MainWindow::save()
 
 bool MainWindow::saveAs()
 {
+    errorMessage("");
+
     //
     // get filename
     //
@@ -535,6 +608,8 @@ bool MainWindow::saveAs()
 
 void MainWindow::open()
 {
+    errorMessage("");
+
     QString fileName = QFileDialog::getOpenFileName(this);
     if (!fileName.isEmpty())
         loadFile(fileName);
@@ -542,6 +617,8 @@ void MainWindow::open()
 
 void MainWindow::newFile()
 {
+    errorMessage("");
+
     // clear old
     inputWidget->clear();
 
@@ -563,7 +640,7 @@ void MainWindow::setCurrentFile(const QString &fileName)
 }
 
 bool MainWindow::saveFile(const QString &fileName)
-{
+{   
     //
     // open file
     //
@@ -598,7 +675,7 @@ bool MainWindow::saveFile(const QString &fileName)
 }
 
 void MainWindow::loadFile(const QString &fileName)
-{
+{    
     //
     // open file
     //
@@ -634,6 +711,8 @@ void MainWindow::loadFile(const QString &fileName)
 
 void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 {
+    errorMessage("");
+
     DakotaResults *result=uq->getResults();
     result->processResults(dakotaIN, dakotaTAB);
     results->setResultWidget(result);

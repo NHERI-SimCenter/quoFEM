@@ -54,6 +54,8 @@ class DakotaResults;
 class AgaveInterface;
 class RemoteJobCreatorWidget;
 class RemoteJobManagerWidget;
+class QPushButton;
+class QLabel;
 
 class MainWindow : public QMainWindow
 {
@@ -62,7 +64,8 @@ class MainWindow : public QMainWindow
     public:
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
-  
+  QLabel *errorLabel;
+
   public slots:
     void newFile();
     void open();
@@ -73,6 +76,7 @@ class MainWindow : public QMainWindow
     void onRemoteRunButtonClicked();
     void onJobsManagerButtonClicked();
     void onExitButtonClicked();
+    void onLoginButtonClicked();
 
     void onDakotaMethodChanged(void);
 
@@ -89,6 +93,7 @@ class MainWindow : public QMainWindow
 
     //Ui::MainWindow *ui;
 
+
     QString currentFile;
     SidebarWidgetSelection *inputWidget;
 
@@ -100,6 +105,9 @@ class MainWindow : public QMainWindow
     AgaveInterface *theCLI;
     RemoteJobCreatorWidget *jobCreator;
     RemoteJobManagerWidget *jobManager;
+
+    QPushButton *loginButton;
+
 };
 
 #endif // MAINWINDOW_H
