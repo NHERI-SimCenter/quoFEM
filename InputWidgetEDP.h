@@ -54,8 +54,8 @@ public:
     explicit InputWidgetEDP(QWidget *parent = 0);
     ~InputWidgetEDP();
 
-    void outputToJSON(QJsonObject &rvObject);
-    void inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(double *data);
     int getNumEDP(void);

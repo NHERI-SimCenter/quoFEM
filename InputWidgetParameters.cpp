@@ -55,24 +55,27 @@ InputWidgetParameters::~InputWidgetParameters()
 
 }
 
-
-void
+bool
 InputWidgetParameters::outputToJSON(QJsonObject &jsonObject)
 {
   if (theParameters != 0) 
-    theParameters->outputToJSON(jsonObject);
+    return theParameters->outputToJSON(jsonObject);
+  return true;
 }
 
 
-void
+bool
 InputWidgetParameters::inputFromJSON(QJsonObject &jsonObject)
 {   
+  qDebug() << "InputWidgetParameters::inputFromJSON";
   if (theParameters != 0) 
-    theParameters->inputFromJSON(jsonObject);
+    return theParameters->inputFromJSON(jsonObject);
+  return true;
 }
 
 void
 InputWidgetParameters::setParametersWidget(RandomVariableInputWidget *param) {
+
     if (theParameters != 0) {
         layout->removeWidget(theParameters);
         delete theParameters;
@@ -83,6 +86,8 @@ InputWidgetParameters::setParametersWidget(RandomVariableInputWidget *param) {
         layout->addWidget(param);
         theParameters = param;
         theParameters->setInitialConstantRVs(varNamesAndValues);
+    //    connect(this,SLOT(errorMessage(QString)),param,SIGNAL(sendErrorMessage(QString)));
+        connect(param,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     }
 }
 
@@ -101,4 +106,10 @@ InputWidgetParameters::getParametereNames(void)
         QStringList empty;
         return empty;
     }
+}
+
+void
+InputWidgetParameters::errorMessage(QString message){
+    qDebug() << "InputWidgetParameters" << message;
+    emit this->sendErrorMessage(message);
 }

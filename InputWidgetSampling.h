@@ -61,8 +61,8 @@ public:
     explicit InputWidgetSampling(QWidget *parent = 0);
     ~InputWidgetSampling();
 
-    void outputToJSON(QJsonObject &rvObject);
-    void inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
 

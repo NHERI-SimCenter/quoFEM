@@ -123,21 +123,26 @@ void InputWidgetCalibration::clear(void)
 
 }
 
-void
+bool
 InputWidgetCalibration::outputToJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
+
     QJsonObject uq;
     uq["method"]=calibrationMethod->currentText();
     uq["maxIterations"]=maxIterations->text().toInt();
     uq["convergenceTol"]=convergenceTol->text().toDouble();
     theEdpWidget->outputToJSON(uq);
     jsonObject["calibrationMethodData"]=uq;
+
+    return result;
 }
 
 
-void
+bool
 InputWidgetCalibration::inputFromJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
     this->clear();
 
     QJsonObject uq = jsonObject["calibrationMethodData"].toObject();
@@ -150,7 +155,9 @@ InputWidgetCalibration::inputFromJSON(QJsonObject &jsonObject)
     int index = calibrationMethod->findText(method);
     calibrationMethod->setCurrentIndex(index);
 
-    theEdpWidget->inputFromJSON(uq);
+    result = theEdpWidget->inputFromJSON(uq);
+    return result;
+
 }
 
 void 

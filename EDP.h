@@ -55,8 +55,8 @@ public:
     explicit EDP(QWidget *parent = 0);
     ~EDP();
 
-    void outputToJSON(QJsonObject &rvObject);
-    void inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
     void setResults(double *);
 

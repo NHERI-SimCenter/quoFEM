@@ -36,6 +36,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
+// essentially an abstract class, if no results are available this is the widget that shows up
+
 #include "DakotaResults.h"
 #include <QVBoxLayout>
 #include <QJsonObject>
@@ -57,36 +59,54 @@ DakotaResults::~DakotaResults()
 }
 
 
-void
+bool
 DakotaResults::outputToJSON(QJsonObject &jsonObject)
 {
     QJsonObject uq;
+    bool result = true;
 
     if (resultWidget != 0) {
-        resultWidget->outputToJSON(uq);
+        result = resultWidget->outputToJSON(uq);
     } else {
         uq["resultType"]=QString(tr("NONE"));
     }
     jsonObject["uqResults"]=uq;
+    return result;
 }
 
 
-void
+bool
 DakotaResults::inputFromJSON(QJsonObject &jsonObject)
 {   
-    QJsonValue uqValue = jsonObject["uqResults"];
-    if ( uqValue.isUndefined())// !! uqValue.isNull() )
-        return;
+    bool result = false;
+    if (jsonObject.contains("uqResults")) {
+        QJsonValue uqValue = jsonObject["uqResults"];
 
-    QJsonObject uq = uqValue.toObject();
-    QString resultType = uq["resultType"].toString();
-    DakotaResults *newResultWidget = 0;
-    if (resultType == QString("DakotaResultsSampling")) {
-        newResultWidget = new DakotaResultsSampling();
-        newResultWidget->inputFromJSON(uq);
+        QJsonObject uq = uqValue.toObject();
+        QString resultType = uq["resultType"].toString();
+        DakotaResults *newResultWidget = 0;
+
+        if (resultType == "NONE") {
+          return true; // no results saved
+        }
+
+        // NOTE: this is kinda kludgy, this class need to know what subclasses enter here
+        // so that we can create object of correct type .. this should be done by this class
+        if (resultType == QString("DakotaResultsSampling")) {
+            newResultWidget = new DakotaResultsSampling();
+            result = newResultWidget->inputFromJSON(uq);
+            this->setResultWidget(newResultWidget);
+            result = true;
+        }
+
+    } else {
+        emit sendErrorMessage("ERROR: Dakota Results - no \"uqResults\" entry");
+        return false;
     }
 
-    this->setResultWidget(newResultWidget);
+
+    // no error if no results .. maybe none actually in file
+    return result;
 }
 
 int 

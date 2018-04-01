@@ -61,8 +61,8 @@ public:
     explicit InputWidgetUQ(QWidget *parent = 0);
     ~InputWidgetUQ();
 
-    void outputToJSON(QJsonObject &rvObject);
-    void inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
 
@@ -74,6 +74,7 @@ signals:
 public slots:
    void clear(void);
    void uqSelectionChanged(const QString &arg1);
+   void errorMessage(QString message);
 
 signals:
     void uqWidgetChanged(void);
@@ -91,6 +92,7 @@ private:
 
     SimCenterWidget         *uqType;
     InputWidgetDakotaMethod *dakotaMethod;
+    bool selectionChangeOK;
 };
 
 #endif // SAMPLINGMETHODINPUTWIDGET_H

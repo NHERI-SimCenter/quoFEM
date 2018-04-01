@@ -100,11 +100,11 @@ void DakotaResultsCalibration::clear(void)
     delete res;
 }
 
-
-
-void
+bool
 DakotaResultsCalibration::outputToJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
+
     jsonObject["resultType"]=QString(tr("DakotaResultsCalibration"));
 
     //
@@ -157,12 +157,14 @@ DakotaResultsCalibration::outputToJSON(QJsonObject &jsonObject)
     spreadsheetData["data"]=dataArray;
 
     jsonObject["spreadsheet"] = spreadsheetData;
+    return result;
 }
 
 
-void
+bool
 DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
     this->clear();
 
     //
@@ -263,6 +265,7 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
     tabWidget->addTab(widget, tr("Data Values"));
 
     tabWidget->adjustSize();
+    return result;
 }
 
 

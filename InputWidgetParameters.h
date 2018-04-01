@@ -50,8 +50,8 @@ public:
     explicit InputWidgetParameters(QWidget *parent = 0);
     virtual ~InputWidgetParameters();
 
-    virtual void outputToJSON(QJsonObject &rvObject);
-    virtual void inputFromJSON(QJsonObject &rvObject);
+    virtual bool outputToJSON(QJsonObject &rvObject);
+    virtual bool inputFromJSON(QJsonObject &rvObject);
 
     void setParametersWidget(RandomVariableInputWidget *theParameters);
     void setInitialVarNamesAndValues(QStringList varNamesAndValues);
@@ -60,6 +60,7 @@ public:
 signals:
 
 public slots:
+       void errorMessage(QString message);
 
 protected:
     RandomVariableInputWidget *theParameters;

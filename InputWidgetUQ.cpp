@@ -55,10 +55,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 InputWidgetUQ::InputWidgetUQ(QWidget *parent)
-    : SimCenterWidget(parent),uqType(0)
+    : SimCenterWidget(parent),dakotaMethod(0)
 {
-    //femSpecific = 0;
-
     layout = new QVBoxLayout();
 
     QVBoxLayout *name= new QVBoxLayout;
@@ -91,24 +89,16 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     uqSelection->addItem(tr("Calibration"));
     uqSelection->addItem(tr("Bayesian Calibration"));
 
-
     connect(uqSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(uqSelectionChanged(QString)));
 
     layout->addLayout(name);
-
     layout->addStretch();
-    //   run = new QPushButton();
-    //   run->setText(tr("RUN"));
-    //   layout->addWidget(run);
 
     this->setLayout(layout);
-    // QSizePolicy sp(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    // this->setSizePolicy(sp);
 
+    // set Samlping as the default
     this->uqSelectionChanged(tr("Sampling"));
-    //layout->setSpacing(10);
     layout->setMargin(0);
-    //layout->addStretch();
 }
 
 InputWidgetUQ::~InputWidgetUQ()
@@ -124,32 +114,50 @@ void InputWidgetUQ::clear(void)
 
 
 
-void
+bool
 InputWidgetUQ::outputToJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
+
+    //
+    // create a json object, fill it and then add this to the object with uqMethod key
+    //
+
     QJsonObject uq;
-
-    if (uqType != 0) {
-        uqType->outputToJSON(uq);
+    if (dakotaMethod != 0) {
+        result = dakotaMethod->outputToJSON(uq);
     }
-
     uq["uqType"] = uqSelection->currentText();
+
     jsonObject["uqMethod"]=uq;
+
+    return result;
 }
 
 
-void
+bool
 InputWidgetUQ::inputFromJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
+
     this->clear();
 
-    QJsonObject uq = jsonObject["uqMethod"].toObject();
-    QString selection = uq["uqType"].toString();
-    int index = uqSelection->findText(selection);
-    uqSelection->setCurrentIndex(index);
-    this->uqSelectionChanged(selection);
-    if (uqType != 0)
-        uqType->inputFromJSON(uq);
+    if (jsonObject.contains("uqMethod")) {
+        QJsonObject uq = jsonObject["uqMethod"].toObject();
+        QString selection = uq["uqType"].toString();
+        int index = uqSelection->findText(selection);
+        uqSelection->setCurrentIndex(index);
+        this->uqSelectionChanged(selection);
+        if (selectionChangeOK == true && dakotaMethod != 0)
+            result = dakotaMethod->inputFromJSON(uq);
+        else
+            result = false;
+    } else {
+        qDebug() << "ERROR: UQ Method Input - no \"uqMethod\" entry";
+        emit sendErrorMessage("ERROR: UQ Method Input - no \"uqMethod\" entry");
+        return false;
+    }
+    return result;
 }
 
 int InputWidgetUQ::processResults(QString &filenameResults, QString &filenameTab)
@@ -161,6 +169,11 @@ int InputWidgetUQ::processResults(QString &filenameResults, QString &filenameTab
 
 void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
 {
+    selectionChangeOK = true;
+
+    /* ************************************************************
+     * old functionailty .. now leaving last active if incorrect ..
+     * note way incorrect if reading from bad json input
     if (uqType != 0) {
         // layout->rem
         dakotaMethod = 0;
@@ -168,25 +181,35 @@ void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
         delete uqType;
         uqType = 0;
     }
+    **************************************************************/
+    InputWidgetDakotaMethod *oldMethod = dakotaMethod;
+
+    if (dakotaMethod != 0)
+        layout->removeWidget(dakotaMethod);
 
     if (arg1 == QString("Sampling")) {
-        //uqType = new InputWidgetSampling();
+        delete dakotaMethod;
         dakotaMethod = new InputWidgetSampling();
-        uqType = dakotaMethod;
 
     } else if (arg1 == QString("Calibration")) {
-         dakotaMethod = new InputWidgetCalibration();
-         uqType = dakotaMethod;
+        delete dakotaMethod;
+        dakotaMethod = new InputWidgetCalibration();
 
     } else if (arg1 == QString("Bayesian Calibration")) {
-         dakotaMethod = new InputWidgetBayesianCalibration();
-         uqType = dakotaMethod;
+        delete dakotaMethod;
+        dakotaMethod = new InputWidgetBayesianCalibration();
+    } else {
+        selectionChangeOK = false;
+        emit sendErrorMessage("ERROR: UQ Input - no valid Method provided .. keeping old");
     }
 
-    if (uqType != 0) {
+    if (dakotaMethod != 0) {
         this->uqWidgetChanged();
-        layout->insertWidget(1, uqType,1);
+        layout->insertWidget(1, dakotaMethod,1);
+        connect(dakotaMethod,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     }
+
+    return;
 }
 
 DakotaResults *
@@ -207,4 +230,9 @@ InputWidgetUQ::getParameters(void)
     }
 
     return 0;
+}
+
+void
+InputWidgetUQ::errorMessage(QString message){
+  emit sendErrorMessage(message);
 }

@@ -127,36 +127,45 @@ void InputWidgetBayesianCalibration::clear(void)
 }
 
 
-
-void
+bool
 InputWidgetBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
     QJsonObject uq;
     uq["method"]=calibrationMethod->currentText();
     uq["chain_samples"]=chainSamples->text().toInt();
     uq["seed"]=randomSeed->text().toDouble();
-    theEdpWidget->outputToJSON(uq);
+    result =  theEdpWidget->outputToJSON(uq);
     jsonObject["bayesian_calibration_method_data"]=uq;
+    return result;
+
 }
 
 
-void
+bool
 InputWidgetBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 {
-    qDebug() << "BayesianCalibration::inputFromJSON";
+    bool result = true;
     this->clear();
 
-    QJsonObject uq = jsonObject["bayesian_calibration_method_data"].toObject();
-    QString method =uq["method"].toString();
-    int samples=uq["chain_samples"].toInt();
-    double seed=uq["seed"].toDouble();
-qDebug() << samples << " " << seed;
-    chainSamples->setText(QString::number(samples));
-    randomSeed->setText(QString::number(seed));
-    int index = calibrationMethod->findText(method);
-    calibrationMethod->setCurrentIndex(index);
+    if (jsonObject.contains("bayesian_calibration_method_data")) {
+        QJsonObject uq = jsonObject["bayesian_calibration_method_data"].toObject();
+        QString method =uq["method"].toString();
+        int samples=uq["chain_samples"].toInt();
+        double seed=uq["seed"].toDouble();
 
-    theEdpWidget->inputFromJSON(uq);
+        chainSamples->setText(QString::number(samples));
+        randomSeed->setText(QString::number(seed));
+
+        int index = calibrationMethod->findText(method);
+        calibrationMethod->setCurrentIndex(index);
+        return theEdpWidget->inputFromJSON(uq);
+    } else {
+        emit sendErrorMessage("ERROR: Bayesian Calibration INput - no \"bayesian_calibration_method\" data");
+        return false;
+    }
+
+    return true;
 }
 
 void InputWidgetBayesianCalibration::uqSelectionChanged(const QString &arg1)

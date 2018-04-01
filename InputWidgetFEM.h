@@ -56,8 +56,8 @@ public:
     explicit InputWidgetFEM(InputWidgetParameters *theParams, QWidget *parent = 0);
     ~InputWidgetFEM();
 
-    void outputToJSON(QJsonObject &rvObject);
-    void inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
     QString getApplicationName();
     QString getMainInput();

@@ -51,8 +51,8 @@ public:
     explicit InputWidgetDakotaMethod(QWidget *parent = 0);
     virtual ~InputWidgetDakotaMethod();
 
-    virtual void outputToJSON(QJsonObject &rvObject) =0;
-    virtual void inputFromJSON(QJsonObject &rvObject) =0;
+    virtual bool outputToJSON(QJsonObject &rvObject) =0;
+    virtual bool inputFromJSON(QJsonObject &rvObject) =0;
 
     virtual int processResults(QString &filenameResults, QString &filenameTab) =0;
     virtual RandomVariableInputWidget *getParameters() = 0;

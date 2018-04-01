@@ -121,7 +121,7 @@ void InputWidgetFEM::clear(void)
 
 
 
-void
+bool
 InputWidgetFEM::outputToJSON(QJsonObject &jsonObject)
 {
     QJsonObject fem;
@@ -144,40 +144,38 @@ InputWidgetFEM::outputToJSON(QJsonObject &jsonObject)
     fem["mainPostprocessScript"]=fileInfo2.fileName();
 
     jsonObject["fem"]=fem;
+
+    return true;
 }
 
 
-void
+bool
 InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
 {
     this->clear();
-    QJsonObject fem = jsonObject["fem"].toObject();
+    qDebug() << jsonObject;
+    if (jsonObject.contains("fem")) {
 
-    fileName1=fem["inputFile"].toString();
-    fileName2=fem["postprocessScript"].toString();
+        QJsonObject fem = jsonObject["fem"].toObject();
 
-    QString program=fem["program"].toString();
-    if (program == tr("OpenSees-2"))
-        program = tr("OpenSees");
+        fileName1=fem["inputFile"].toString();
+        fileName2=fem["postprocessScript"].toString();
+        QString program=fem["program"].toString();
 
-    int index = femSelection->findText(program);
-    femSelection->setCurrentIndex(index);
-    this->femProgramChanged(program);
+        int index = femSelection->findText(program);
+        femSelection->setCurrentIndex(index);
+        this->femProgramChanged(program);
 
-    /*
-    if (program == tr("OpenSees")) {
-        file1->setText(fileName1);
-    } else {
         file1->setText(fileName1);
         file2->setText(fileName2);
+
+        // call setFilename1 so parser works on input file
+        this->setFilename1(fileName1);
+    } else {
+        emit sendErrorMessage("ERROR: FEM Input - no fem section in input file");
+        return false;
     }
-    */
-
-    file1->setText(fileName1);
-    file2->setText(fileName2);
-
-    // call setFilename1 so parser works on input file
-    this->setFilename1(fileName1);
+    return true;
 }
 
 void InputWidgetFEM::femProgramChanged(const QString &arg1)

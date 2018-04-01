@@ -35,6 +35,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 // Written: fmckenna
+
+// Purpose: to present a widget for OpenSees,
+// 1) to open feap input files, to parse for any parameters that have been set WITH THE PSET command
+// and then to return the variablename and values in a string. These are used to init the random variable widget.
+// 2) for dakota to again open and parse the input file, this time replacing any input parameters
+// with the needed dakota input format: pset varName {varName}
+
 #include <OpenSeesParser.h>
 #include <iostream>
 #include <fstream>
@@ -116,7 +123,7 @@ OpenSeesParser::writeFile(QString inFilename, QString outFilename, QStringList v
             QString val1(QString::fromStdString(varName));
 
             if (varToChange.contains(val1)) {
-                /****drpero cannot handle {} in tcl syntax .. comment out line now instead ***
+                /****drpero cannot handle {} in tcl syntax .. comment out line now instead - python script source new file! ***
                 // strip possible ; from end of value (possible if comment) line
                 regex delim(";");
                 value = regex_replace(value,delim,"");

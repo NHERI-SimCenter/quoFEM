@@ -1,10 +1,10 @@
 {
     "fem": {
-        "dir": "/Users/fmckenna/NHERI/DakotaFEM2/exampleOpenSees",
-        "inputFile": "/Users/fmckenna/NHERI/DakotaFEM2/exampleOpenSees/TrussTemplate.tcl",
+        "dir": "/Users/fmckenna/NHERI/uqFEM/exampleOpenSees",
+        "inputFile": "/Users/fmckenna/NHERI/uqFEM/exampleOpenSees/TrussTemplate.tcl",
         "mainInput": "TrussTemplate.tcl",
         "mainPostprocessScript": "postprocess.py",
-        "postprocessScript": "/Users/fmckenna/NHERI/DakotaFEM2/exampleOpenSees/postprocess.py",
+        "postprocessScript": "/Users/fmckenna/NHERI/uqFEM/exampleOpenSees/postprocess.py",
         "program": "OpenSees"
     },
     "randomVariables": [

@@ -159,33 +159,46 @@ void InputWidgetEDP::removeEDP(void)
 }
 
 
-void
+bool
 InputWidgetEDP::outputToJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
+
+    // create an JSON array and add each one that succesfully writes itself
     QJsonArray edpArray;
     for (int i = 0; i <theEDPs.size(); ++i) {
         QJsonObject edp;
-        theEDPs.at(i)->outputToJSON(edp);
-        edpArray.append(edp);
+        if (theEDPs.at(i)->outputToJSON(edp) == true)
+            edpArray.append(edp);
+        else
+            result = false;
     }
     jsonObject["edps"]=edpArray;
+    return result;
 }
 
 
-void
+bool
 InputWidgetEDP::inputFromJSON(QJsonObject &rvObject)
 {
+    bool result = true;
+
+    // clear existing
     this->clear();
 
-    // add the new
+    // go get the array, and for each component create one, get it to read & then add
     QJsonArray rvArray = rvObject["edps"].toArray();
     foreach (const QJsonValue &rvValue, rvArray) {
         QJsonObject rvObject = rvValue.toObject();
         EDP *theEDP = new EDP();
-        theEDP->inputFromJSON(rvObject);
-        theEDPs.append(theEDP);
-        edpLayout->insertWidget(edpLayout->count()-1, theEDP);
+        if (theEDP->inputFromJSON(rvObject) == true) {
+            theEDPs.append(theEDP);
+            edpLayout->insertWidget(edpLayout->count()-1, theEDP);
+        } else
+            result = false;
     }
+
+    return result;
 }
 
 int

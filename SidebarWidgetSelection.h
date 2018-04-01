@@ -55,8 +55,8 @@ public:
     explicit SidebarWidgetSelection(QWidget *parent = 0);
     ~SidebarWidgetSelection();
 
-    void outputToJSON(QJsonObject &rvObject);
-    void inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
     void addInputWidget(const QString &, SimCenterWidget *);
     void removeInputWidget(const QString &);

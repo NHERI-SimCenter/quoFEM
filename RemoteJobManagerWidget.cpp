@@ -104,7 +104,7 @@ RemoteJobManagerWidget::updateJobTable(void){
     QLayout *layout = new QHBoxLayout();
     layout->addWidget(jobsTable);
     this->setLayout(layout);
-
+    return true;
 }
 
 
@@ -115,7 +115,7 @@ RemoteJobManagerWidget::bringUpJobActionMenu(int row, int col){
     QMenu jobMenu;
 
     jobMenu.addAction("Refresh Job", this, SLOT(updateJobStatus()));
-    jobMenu.addAction("Retrive Data", this, SLOT(getJobData()));
+    jobMenu.addAction("Retrieve Data", this, SLOT(getJobData()));
     jobMenu.addSeparator();
     jobMenu.addAction("Delete Job", this, SLOT(deleteJob()));
     jobMenu.addAction("Delete Job And Data", this, SLOT(deleteJobAndData()));

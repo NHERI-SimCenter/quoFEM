@@ -106,20 +106,20 @@ EDP::isSelectedForRemoval(void)
     return button->isChecked();
 }
 
-void EDP::outputToJSON(QJsonObject &jsonObject){
+bool EDP::outputToJSON(QJsonObject &jsonObject){
     jsonObject["name"]=variableName->text();
     if (resultsSet == true) {
         jsonObject["mean"]=mean->text().toDouble();
         jsonObject["stdDev"]=stdDev->text().toDouble();
     }
+    return true;
 }
 
-void EDP::inputFromJSON(QJsonObject &jsonObject){
+bool EDP::inputFromJSON(QJsonObject &jsonObject){
     QJsonValue theMeanValue = jsonObject["name"];
     variableName->setText(theMeanValue.toString());
 
     if (jsonObject.contains("mean")) {
-
         // add mean and stdDevl labels
         QWidget *meanWidget = addLabeledLineEdit(QString("Mean"), &mean);
         QJsonValue theMeanValue = jsonObject["mean"];
@@ -134,6 +134,7 @@ void EDP::inputFromJSON(QJsonObject &jsonObject){
         mainLayout->insertWidget(3, stdDevWidget);
         mainLayout->addStretch();
     }
+    return true;
 }
 
 void EDP::setResults(double *data)

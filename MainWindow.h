@@ -64,6 +64,7 @@ class MainWindow : public QMainWindow
     public:
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
+
   QLabel *errorLabel;
 
   public slots:
@@ -80,6 +81,9 @@ class MainWindow : public QMainWindow
 
     void onDakotaMethodChanged(void);
 
+    void errorMessage(QString message);
+    void fatalMessage(QString message);
+
   //void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
 
     bool saveFile(const QString &fileName);
@@ -88,11 +92,9 @@ class MainWindow : public QMainWindow
 
  private:
     void setCurrentFile(const QString &fileName);
-
     void createActions();
 
     //Ui::MainWindow *ui;
-
 
     QString currentFile;
     SidebarWidgetSelection *inputWidget;

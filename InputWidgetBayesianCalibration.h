@@ -61,8 +61,8 @@ public:
     explicit InputWidgetBayesianCalibration(QWidget *parent = 0);
     ~InputWidgetBayesianCalibration();
 
-    void outputToJSON(QJsonObject &rvObject);
-    void inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
 

@@ -14,6 +14,7 @@ TEMPLATE = app
 INCLUDEPATH += ../widgets/RandomVariables
 INCLUDEPATH += ../simcenterAgave/interface
 
+LIBS += /usr/lib/libcurl.dylib
 
 include(../widgets/RandomVariables/RandomVariables.pri)
 include(../widgets/Common/Common.pri)
@@ -39,7 +40,9 @@ SOURCES += main.cpp\
         ../simcenterAgave/interface/AgaveCLI.cpp \
     RemoteJobCreatorWidget.cpp \
     RemoteJobManagerWidget.cpp \
-    MyTableWidget.cpp
+    MyTableWidget.cpp \
+    ../simcenterAgave/interface/AgaveInterface.cpp \
+    ../simcenterAgave/interface/AgaveCurl.cpp
 
 HEADERS  += MainWindow.h \
     EDP.h \
@@ -63,6 +66,7 @@ HEADERS  += MainWindow.h \
     RemoteJobCreatorWidget.h \
     RemoteJobManagerWidget.h \
     MyTableWidget.h \
-    ../simcenterAgave/interface/AgaveInterface.h
+    ../simcenterAgave/interface/AgaveInterface.h \
+    ../simcenterAgave/interface/AgaveCurl.h
 
 FORMS    += mainwindow.ui

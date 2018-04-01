@@ -103,9 +103,11 @@ void DakotaResultsBayesianCalibration::clear(void)
 
 
 
-void
+bool
 DakotaResultsBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
+
     jsonObject["resultType"]=QString(tr("DakotaResultsBayesianCalibration"));
 
     //
@@ -159,13 +161,15 @@ DakotaResultsBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
     spreadsheetData["data"]=dataArray;
 
     jsonObject["spreadsheet"] = spreadsheetData;
+    return result;
 }
 
-
-void
+bool
 DakotaResultsBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 {
     this->clear();
+
+    bool result = true;
 
     //
     // create a summary widget in which place basic output (name, mean, stdDev)
@@ -268,6 +272,7 @@ DakotaResultsBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
     tabWidget->addTab(widget, tr("Data Values"));
 
     tabWidget->adjustSize();
+    return result;
 }
 
 

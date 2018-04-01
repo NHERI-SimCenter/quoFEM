@@ -103,9 +103,11 @@ void DakotaResultsSampling::clear(void)
 
 
 
-void
+bool
 DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
+
     jsonObject["resultType"]=QString(tr("DakotaResultsSampling"));
 
     //
@@ -159,12 +161,15 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
     spreadsheetData["data"]=dataArray;
 
     jsonObject["spreadsheet"] = spreadsheetData;
+    return result;
 }
 
 
-void
+bool
 DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
+
     this->clear();
 
     //
@@ -268,6 +273,7 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     tabWidget->addTab(widget, tr("Data Values"));
 
     tabWidget->adjustSize();
+    return result;
 }
 
 

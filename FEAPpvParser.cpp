@@ -35,6 +35,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 // Written: fmckenna
+
+// Purpose: to present a widget for FEAPpv,
+// 1) to open feap input files, to parse for any parameters that have been set
+// and then to return the variablename and values in a string. These are used to init the random variable widget.
+// 2) for dakota to again open and parse the input file, this time replacing any input parameters
+// with the needed dakota input format: varName {varName}
+
 #include <FEAPpvParser.h>
 #include <iostream>
 #include <fstream>

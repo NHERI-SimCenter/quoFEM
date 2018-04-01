@@ -55,8 +55,8 @@ public:
     explicit DakotaResultsBayesianCalibration(QWidget *parent = 0);
     ~DakotaResultsBayesianCalibration();
 
-    void outputToJSON(QJsonObject &rvObject);
-    void inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
     QWidget *createResultParameterWidget(QString &name, double mean, double stdDev);

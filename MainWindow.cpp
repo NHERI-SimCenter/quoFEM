@@ -78,16 +78,21 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 #include <AgaveCLI.h>
+#include <AgaveCurl.h>
 #include <RemoteJobCreatorWidget.h>
 #include <RemoteJobManagerWidget.h>
 
-static MainWindow *theOneStaticMainWindow = 0;
+/*
+static
+MainWindow::MainWindow *theOneStaticMainWindow = 0;
 
-void errorMessage(const QString &msg){
+void
+MainWindow::errorMessage(const QString msg){
     //qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     theOneStaticMainWindow->errorLabel->setText(msg);
     qDebug() << "ERROR MESSAGE" << msg;
 }
+
 void warningMessage(const QStringList &msg){
 
 }
@@ -95,19 +100,38 @@ void updateMessage(const QStringList &msg)
 {
 
 }
+*/
+
+void
+MainWindow::errorMessage(const QString msg){
+    //qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+    errorLabel->setText(msg);
+    qDebug() << "ERROR MESSAGE" << msg;
+}
+
+void
+MainWindow::fatalMessage(const QString msg){
+    //qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+    errorLabel->setText(msg);
+    qDebug() << "ERROR MESSAGE" << msg;
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    theOneStaticMainWindow = this;
+   // theOneStaticMainWindow = this;
 
     //
     // create the interface, jobCreator and jobManager
     //
+    QString tenant("designsafe");
+    QString storage("agave://designsafe.storage.default/");
 
-    theCLI = new AgaveCLI(&errorMessage, this);
+    //theCLI = new AgaveCLI(tenant, storage, this);
+    theCLI =  new AgaveCurl(tenant, storage, this);
     jobCreator = new RemoteJobCreatorWidget(theCLI);
     jobManager = new RemoteJobManagerWidget(theCLI, this);
+
 
     //
     // create a layout & widget for central area of this QMainWidget
@@ -223,6 +247,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
 
     connect(uq,SIGNAL(uqWidgetChanged()), this,SLOT(onDakotaMethodChanged()));
+
+    connect(theCLI,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
+    connect(theCLI,SIGNAL(sendFatalMessage(QString)), this, SLOT(fatalMessage(QString)));
+    connect(fem,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(random,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(results,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
 
     // add button widget to layout
     layout->addWidget(buttonWidget);
@@ -571,8 +602,6 @@ void MainWindow::onExitButtonClicked(){
 }
 
 void MainWindow::onDakotaMethodChanged(void) {
-    errorMessage("");
-
     random->setParametersWidget(uq->getParameters());
 }
 
@@ -682,10 +711,8 @@ void MainWindow::loadFile(const QString &fileName)
 
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("Application"),
-                             tr("Cannot read file %1:\n%2.")
-                             .arg(QDir::toNativeSeparators(fileName),
-                                 file.errorString()));
+        QString message = QString("Error: could not open file") + fileName;
+        this->errorMessage(message);
         return;
     }
 
@@ -698,12 +725,23 @@ void MainWindow::loadFile(const QString &fileName)
     // close file
     file.close();
 
+    // check file contains valid object
+    if (jsonObj.isEmpty()) {
+        this->errorMessage("ERROR: file either empty or malformed JSON");
+        return;
+    }
+
+
     // given the json object, create the C++ objects
     //inputWidget->inputFromJSON(jsonObj);
-    fem->inputFromJSON(jsonObj);
-    uq->inputFromJSON(jsonObj);
-    random->inputFromJSON(jsonObj);
-    results->inputFromJSON(jsonObj);
+    if (fem->inputFromJSON(jsonObj) != true)
+        return;
+    if (uq->inputFromJSON(jsonObj) != true)
+        return;
+    if (random->inputFromJSON(jsonObj) != true)
+        return;
+    if (results->inputFromJSON(jsonObj) != true)
+        return;
 
     setCurrentFile(fileName);
 }

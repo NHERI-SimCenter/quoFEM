@@ -49,8 +49,8 @@ public:
     explicit DakotaResults(QWidget *parent = 0);
     virtual ~DakotaResults();
 
-    virtual void outputToJSON(QJsonObject &rvObject);
-    virtual void inputFromJSON(QJsonObject &rvObject);
+    virtual bool outputToJSON(QJsonObject &rvObject);
+    virtual bool inputFromJSON(QJsonObject &rvObject);
 
     virtual int processResults(QString &filenameResults, QString &filenameTab);
 

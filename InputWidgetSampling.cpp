@@ -66,6 +66,10 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
 {
     layout = new QVBoxLayout();
 
+    //
+    // create layout for selection box for method type to layout
+    //
+
     QVBoxLayout *methodLayout= new QVBoxLayout;
     QLabel *label1 = new QLabel();
     label1->setText(QString("Method"));
@@ -76,6 +80,10 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     methodLayout->addWidget(label1);
     methodLayout->addWidget(samplingMethod);
     
+    //
+    // create layout label and entry for # samples
+    //
+
     QVBoxLayout *samplesLayout= new QVBoxLayout;
     QLabel *label2 = new QLabel();
     label2->setText(QString("# Samples"));
@@ -83,11 +91,14 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     numSamples->setText(tr("10"));
     numSamples->setMaximumWidth(100);
     numSamples->setMinimumWidth(100);
-
     
     samplesLayout->addWidget(label2);
     samplesLayout->addWidget(numSamples);
     
+    //
+    // create label and entry for seed to layout
+    //
+
     QVBoxLayout *seedLayout= new QVBoxLayout;
     QLabel *label3 = new QLabel();
     label3->setText(QString("Seed"));
@@ -102,6 +113,10 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     seedLayout->addWidget(label3);
     seedLayout->addWidget(randomSeed);
     
+    //
+    // create main layout and add previously created layouts to it
+    //
+
     QHBoxLayout *mLayout = new QHBoxLayout();
     mLayout->addLayout(methodLayout);
     mLayout->addLayout(samplesLayout);
@@ -109,6 +124,8 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     mLayout->addStretch();
 
     layout->addLayout(mLayout);
+
+    // finally add the EDP layout & set widget layout
 
     theEdpWidget = new InputWidgetEDP();
     layout->addWidget(theEdpWidget,1);
@@ -128,40 +145,79 @@ void InputWidgetSampling::clear(void)
 }
 
 
-
-void
+bool
 InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
+
+    //note method will always return true as initial values set
+
+    //
+    // in a json object we will place the values and then add object to input
+    //
+
     QJsonObject uq;
     uq["method"]=samplingMethod->currentText();
     uq["samples"]=numSamples->text().toInt();
     uq["seed"]=randomSeed->text().toDouble();
-    theEdpWidget->outputToJSON(uq);
+    result = theEdpWidget->outputToJSON(uq);
     jsonObject["samplingMethodData"]=uq;
+    return result;
 }
 
 
-void
+bool
 InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
 {
+    bool result = false;
     this->clear();
 
-    QJsonObject uq = jsonObject["samplingMethodData"].toObject();
-    QString method =uq["method"].toString();
-    int samples=uq["samples"].toInt();
-    double seed=uq["seed"].toDouble();
+    //
+    // get sampleingMethodData, if not present it's an error
 
-    numSamples->setText(QString::number(samples));
-    randomSeed->setText(QString::number(seed));
-    int index = samplingMethod->findText(method);
-    samplingMethod->setCurrentIndex(index);
+    if (jsonObject.contains("samplingMethodData")) {
+        QJsonObject uq = jsonObject["samplingMethodData"].toObject();
 
-    theEdpWidget->inputFromJSON(uq);
+        //
+        // get method, #sample and seed, if not present an error
+        // given method, set selection box to point to it and finnally input the EDPs
+        //
+
+        if (uq.contains("method") && uq.contains("samples") && uq.contains("seed")) {
+
+            QString method =uq["method"].toString();
+            int samples=uq["samples"].toInt();
+            double seed=uq["seed"].toDouble();
+
+            numSamples->setText(QString::number(samples));
+            randomSeed->setText(QString::number(seed));
+            int index = samplingMethod->findText(method);
+            if (index == -1) {
+                emit sendErrorMessage("ERROR: Sampling Input Widget - \"samplingMethodData\" invalid type .. keeping current");
+                return false;
+            }
+
+            samplingMethod->setCurrentIndex(index);
+            return theEdpWidget->inputFromJSON(uq);
+
+        } else {
+            emit sendErrorMessage("ERROR: Sampling Input Widget - no \"method\" ,\"samples\" or \"seed\" data");
+            return false;
+        }
+
+    } else {
+        emit sendErrorMessage("ERROR: Sampling Input Widget - no \"samplingMethodData\" input");
+        return false;
+    }
+
+    // should never get here .. if do my logic is screwy and need to return a false
+    emit sendErrorMessage("ERROR - faulty logic - contact code developers");
+    return result;
 }
 
 void InputWidgetSampling::uqSelectionChanged(const QString &arg1)
 {
-
+    // if more data than just num samples and seed code would go here to add or remove widgets from layout
 }
 
 int InputWidgetSampling::processResults(QString &filenameResults, QString &filenameTab) {
