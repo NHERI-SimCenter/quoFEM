@@ -55,6 +55,8 @@ SidebarWidgetSelection::addInputWidget(const QString &name, SimCenterWidget *the
     QStandardItem *item = new QStandardItem(name);
     rootNode->appendRow(item);
     widgets[name] = theWidget;
+    widgetIndices[name] = numWidgets;
+    numWidgets++;
 }
 
 void
@@ -96,6 +98,7 @@ SidebarWidgetSelection::SidebarWidgetSelection(QWidget *parent)
     treeView = new QTreeView();
     standardModel = new QStandardItemModel ;
     rootNode = standardModel->invisibleRootItem();
+    numWidgets = 0;
 }
 
 SidebarWidgetSelection::~SidebarWidgetSelection()
@@ -114,11 +117,16 @@ SidebarWidgetSelection::setSelection(const QString &newSelection)
     }
 
     // find replacement given inut & add that one to layout
+
     currentWidget = widgets[newSelection];
+    int widgetIndex= widgetIndices[newSelection];
     if (currentWidget == 0)
         qDebug() << "WIDGET NOT FOUND";
-    else
+    else {
         horizontalLayout->insertWidget(horizontalLayout->count()-1, currentWidget, 1);
+       // standardModel->index(0,0);
+        treeView->setCurrentIndex(treeView->model()->index(widgetIndex,0));
+    }
 
 }
 

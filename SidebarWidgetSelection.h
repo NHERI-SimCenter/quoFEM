@@ -75,6 +75,8 @@ private:
     QStandardItemModel *standardModel;
 
     QMap<QString, SimCenterWidget *>widgets;
+    QMap<QString, int>widgetIndices;
+    int numWidgets;
     QStandardItem *rootNode;
     QWidget *currentWidget;
 };
