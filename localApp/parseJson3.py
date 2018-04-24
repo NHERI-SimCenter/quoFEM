@@ -140,9 +140,9 @@ for k in data["randomVariables"]:
         uncertainName.append(k["name"])
         numUncertain += 1
         continuousDesignName.append(k["name"])
-        continuousDesignLower.append(k["lower_bounds"])
-        continuousDesignUpper.append(k["upper_bounds"])
-        continuousDesignInitialPoint.append(k["initialPoint"])
+        continuousDesignLower.append(k["lowerbound"])
+        continuousDesignUpper.append(k["upperbound"])
+        continuousDesignInitialPoint.append(k["initialpoint"])
         numContinuousDesign += 1
     elif (k["distribution"] == "Weibull"):
         uncertainName.append(k["name"])
