@@ -108,6 +108,10 @@ betaUncertainLower =[];
 betaUncertainHigher =[];
 betaUncertainAlphas =[];
 
+print("-----------------")
+print(data)
+print("-----------------")
+
 for k in data["randomVariables"]:
     if (k["distribution"] == "Normal"):
         uncertainName.append(k["name"])
@@ -132,16 +136,17 @@ for k in data["randomVariables"]:
     elif (k["distribution"] == "Uniform"):
         uncertainName.append(k["name"])
         numUncertain += 1
+        print("Hellooo,, Setting lower upper bounds...")
         uniformUncertainName.append(k["name"])
-        uniformUncertainLower.append(k["lower_bounds"])
-        uniformUncertainUpper.append(k["upper_bounds"])
+        uniformUncertainLower.append(k["lowerbound"])
+        uniformUncertainUpper.append(k["upperbound"])
         numUniformUncertain += 1
     elif (k["distribution"] == "ContinuousDesign"):
         uncertainName.append(k["name"])
         numUncertain += 1
         continuousDesignName.append(k["name"])
-        continuousDesignLower.append(k["lower_bounds"])
-        continuousDesignUpper.append(k["upper_bounds"])
+        continuousDesignLower.append(k["lowerbound"])
+        continuousDesignUpper.append(k["upperbound"])
         continuousDesignInitialPoint.append(k["initialPoint"])
         numContinuousDesign += 1
     elif (k["distribution"] == "Weibull"):
