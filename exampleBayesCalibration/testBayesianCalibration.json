@@ -1,0 +1,45 @@
+{
+    "fem": {
+        "dir": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleBayesCalibration",
+        "inputFile": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleBayesCalibration\\mdofHarmonicTemplate.tcl",
+        "mainInput": "mdofHarmonicTemplate.tcl",
+        "mainPostprocessScript": "postprocess.py",
+        "postprocessScript": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleBayesCalibration\\postprocess.py",
+        "program": "OpenSees"
+    },
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "upperbound": 1,
+            "lowerbound": 0.1,
+            "name": "roofFactor",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "upperbound": 0.05,
+            "lowerbound": 0.01,
+            "name": "dampRatio",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "uqMethod": {
+        "bayesian_calibration_method_data": {
+            "chain_samples": 400,
+            "edps": [
+                {
+                    "name": "Roof_Disp_3"
+                },
+                {
+                    "name": "Roof_Disp_4"
+                }
+            ],
+            "method": "DREAM",
+            "seed": 519
+        },
+        "uqType": "Bayesian Calibration"
+    },
+    "uqResults": {
+        "resultType": "NONE"
+    }
+}
