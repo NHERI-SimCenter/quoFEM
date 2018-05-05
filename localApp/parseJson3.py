@@ -90,7 +90,7 @@ constantStateValue =[];
 numWeibullUncertain = 0;
 weibullUncertainName=[];
 weibullUncertainAlphas =[];
-wuibullUncertainBetas =[];
+weibullUncertainBetas =[];
 
 numGammaUncertain = 0;
 gammaUncertainName=[];
@@ -153,8 +153,8 @@ for k in data["randomVariables"]:
         uncertainName.append(k["name"])
         numUncertain += 1
         weibullUncertainName.append(k["name"])
-        weibullUncertainAlphas.append(k["alphas"])
-        weibullUncertainBetas.append(k["betas"])
+        weibullUncertainAlphas.append(k["scaleparam"])
+        weibullUncertainBetas.append(k["shapeparam"])
         numWeibullUncertain += 1
     elif (k["distribution"] == "Gamma"):
         uncertainName.append(k["name"])
@@ -507,7 +507,7 @@ if (numGumbellUncertain > 0):
     f.write('\n')
 
 if (numWeibullUncertain > 0):
-    f.write('gamma_uncertain = ' '{}'.format(numWeibullUncertain))
+    f.write('weibull_uncertain = ' '{}'.format(numWeibullUncertain))
     f.write('\n')
     f.write('alphas = ')
     for i in range(numWeibullUncertain):
