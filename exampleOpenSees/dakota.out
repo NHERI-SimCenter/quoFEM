@@ -1,0 +1,310 @@
+Dakota version 6.7 released Nov 15 2017.
+Repository revision 0616ac7c (2017-11-10) built Nov 13 2017 02:56:03.
+Running serial Dakota executable in serial mode.
+Start time: Fri May  4 18:32:17 2018
+
+-----------------------
+Begin DAKOTA input file
+dakota.in
+-----------------------
+environment
+tabular_data
+tabular_data_file = 'dakotaTab.out'
+
+method,
+sampling
+sample_type = lhs
+samples = 10
+seed = 981
+
+variables,
+normal_uncertain = 3
+means = 25000 250 500 
+std_deviations = 2500 25 50 
+descriptors = 'P' 'A1' 'A2' 
+weibull_uncertain = 1
+alphas = 1 
+betas = 10.2 
+descriptors = 'E' 
+
+
+interface,
+fork 
+ asynchronous
+analysis_driver = 'fem_driver' 
+parameters_file = 'params.in' 
+results_file = 'results.out' 
+work_directory directory_tag 
+copy_files = 'templatedir/*' 
+named 'workdir' file_save  directory_save 
+aprepro 
+
+responses, 
+response_functions = 1
+response_descriptors = 'Node_3_Disp' 
+no_gradients
+no_hessians
+
+---------------------
+End DAKOTA input file
+---------------------
+
+Using Dakota input file 'dakota.in'
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running random_sampling iterator.
+
+NonD lhs Samples = 10 Seed (user-specified) = 981
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      2.3243998103e+04 P
+                      2.1601887914e+02 A1
+                      5.2272432889e+02 A2
+                      1.3060891327e+01 E
+
+(Asynchronous job 1 added to queue)
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      2.5401490561e+04 P
+                      2.7738911512e+02 A1
+                      5.2704148223e+02 A2
+                      2.0889685936e+01 E
+
+(Asynchronous job 2 added to queue)
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      2.5737976835e+04 P
+                      2.1935088467e+02 A1
+                      4.0098450890e+02 A2
+                      1.0660547711e+01 E
+
+(Asynchronous job 3 added to queue)
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      2.6821534740e+04 P
+                      2.4382042423e+02 A1
+                      4.9363375636e+02 A2
+                      3.1165594136e+00 E
+
+(Asynchronous job 4 added to queue)
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      2.7373377105e+04 P
+                      2.5448968527e+02 A1
+                      5.4948110171e+02 A2
+                      1.2928594951e+00 E
+
+(Asynchronous job 5 added to queue)
+
+---------------------
+Begin Evaluation    6
+---------------------
+Parameters for evaluation 6:
+                      2.8304777297e+04 P
+                      2.6428203540e+02 A1
+                      4.3885398912e+02 A2
+                      8.0408039157e+00 E
+
+(Asynchronous job 6 added to queue)
+
+---------------------
+Begin Evaluation    7
+---------------------
+Parameters for evaluation 7:
+                      2.0967659150e+04 P
+                      3.2189912983e+02 A1
+                      4.6939774852e+02 A2
+                      9.9569001785e-01 E
+
+(Asynchronous job 7 added to queue)
+
+---------------------
+Begin Evaluation    8
+---------------------
+Parameters for evaluation 8:
+                      2.4157281134e+04 P
+                      2.3636670364e+02 A1
+                      5.6568629612e+02 A2
+                      5.6152818339e+00 E
+
+(Asynchronous job 8 added to queue)
+
+---------------------
+Begin Evaluation    9
+---------------------
+Parameters for evaluation 9:
+                      2.2271908255e+04 P
+                      2.3775707641e+02 A1
+                      4.8719347326e+02 A2
+                      4.7696509174e+00 E
+
+(Asynchronous job 9 added to queue)
+
+---------------------
+Begin Evaluation   10
+---------------------
+Parameters for evaluation 10:
+                      2.4926504597e+04 P
+                      2.5739841808e+02 A1
+                      5.0280567861e+02 A2
+                      2.3563946301e+01 E
+
+(Asynchronous job 10 added to queue)
+
+Blocking synchronize of 10 asynchronous evaluations
+First pass: initiating 10 local asynchronous jobs
+Initiating evaluation 1
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 2
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 3
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 4
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 5
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 6
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 7
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 8
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 9
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 10
+nonblocking fork: fem_driver params.in results.out
+Waiting on completed jobs
+Evaluation 7 has completed
+Waiting on completed jobs
+Evaluation 1 has completed
+Evaluation 4 has completed
+Waiting on completed jobs
+Evaluation 9 has completed
+Waiting on completed jobs
+Evaluation 5 has completed
+Waiting on completed jobs
+Evaluation 8 has completed
+Waiting on completed jobs
+Evaluation 3 has completed
+Waiting on completed jobs
+Evaluation 2 has completed
+Waiting on completed jobs
+Evaluation 10 has completed
+Waiting on completed jobs
+Evaluation 6 has completed
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                     -1.1350500000e+05 Node_3_Disp
+
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                     -6.7324700000e+04 Node_3_Disp
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                     -1.7222900000e+05 Node_3_Disp
+
+
+Active response data for evaluation 4:
+Active set vector = { 1 }
+                     -5.2611400000e+05 Node_3_Disp
+
+
+Active response data for evaluation 5:
+Active set vector = { 1 }
+                     -1.2042700000e+06 Node_3_Disp
+
+
+Active response data for evaluation 6:
+Active set vector = { 1 }
+                     -2.1869700000e+05 Node_3_Disp
+
+
+Active response data for evaluation 7:
+Active set vector = { 1 }
+                     -1.1505500000e+06 Node_3_Disp
+
+
+Active response data for evaluation 8:
+Active set vector = { 1 }
+                     -2.5192700000e+05 Node_3_Disp
+
+
+Active response data for evaluation 9:
+Active set vector = { 1 }
+                     -2.9111300000e+05 Node_3_Disp
+
+
+Active response data for evaluation 10:
+Active set vector = { 1 }
+                     -6.2289900000e+04 Node_3_Disp
+
+<<<<< Function evaluation summary: 10 total (10 new, 0 duplicate)
+-----------------------------------------------------------------------------
+Statistics based on 10 samples:
+
+Sample moment statistics for each response function:
+                            Mean           Std Dev          Skewness          Kurtosis
+   Node_3_Disp -4.0580196000e+05  4.2831405913e+05 -1.4054940447e+00  5.4785640385e-01
+
+95% confidence intervals for each response function:
+                    LowerCI_Mean      UpperCI_Mean    LowerCI_StdDev    UpperCI_StdDev
+   Node_3_Disp -7.1219938012e+05 -9.9404539876e+04  2.9460948942e+05  7.8193450767e+05
+
+Simple Correlation Matrix among all inputs and outputs:
+                        P           A1           A2            E  Node_3_Disp 
+           P  1.00000e+00 
+          A1 -2.31536e-01  1.00000e+00 
+          A2 -9.51222e-02 -2.91589e-02  1.00000e+00 
+           E  7.58623e-02 -1.14310e-01  2.53951e-02  1.00000e+00 
+ Node_3_Disp  9.37108e-02 -5.24974e-01 -1.30273e-01  7.30950e-01  1.00000e+00 
+
+Partial Correlation Matrix between input and output:
+              Node_3_Disp 
+           P -1.63924e-01 
+          A1 -6.83634e-01 
+          A2 -3.27457e-01 
+           E  8.14575e-01 
+
+Simple Rank Correlation Matrix among all inputs and outputs:
+                        P           A1           A2            E  Node_3_Disp 
+           P  1.00000e+00 
+          A1  9.09091e-02  1.00000e+00 
+          A2 -5.45455e-02 -1.03030e-01  1.00000e+00 
+           E  6.66667e-02 -1.63636e-01  7.87879e-02  1.00000e+00 
+ Node_3_Disp -3.03030e-02 -1.15152e-01  6.06061e-03  9.87879e-01  1.00000e+00 
+
+Partial Rank Correlation Matrix between input and output:
+              Node_3_Disp 
+           P -8.02469e-01 
+          A1  5.44607e-01 
+          A2 -6.82852e-01 
+           E  9.96881e-01 
+
+-----------------------------------------------------------------------------
+
+<<<<< Iterator random_sampling completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =       1.03 [parent =       1.03, child =          0]
+  Total wall clock =      1.032

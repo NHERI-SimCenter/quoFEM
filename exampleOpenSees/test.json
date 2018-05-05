@@ -1,10 +1,10 @@
 {
     "fem": {
-        "dir": "/Users/fmckenna/NHERI/uqFEM/exampleOpenSees",
-        "inputFile": "/Users/fmckenna/NHERI/uqFEM/exampleOpenSees/TrussTemplate.tcl",
+        "dir": "C:/Users/nikhil/NHERI/uqFEM/exampleOpenSees",
+        "inputFile": "C:/Users/nikhil/NHERI/uqFEM/exampleOpenSees/TrussTemplate.tcl",
         "mainInput": "TrussTemplate.tcl",
         "mainPostprocessScript": "postprocess.py",
-        "postprocessScript": "/Users/fmckenna/NHERI/uqFEM/exampleOpenSees/postprocess.py",
+        "postprocessScript": "C:/Users/nikhil/NHERI/uqFEM/exampleOpenSees/postprocess.py",
         "program": "OpenSees"
     },
     "randomVariables": [
@@ -12,7 +12,7 @@
             "distribution": "Normal",
             "mean": 205000,
             "name": "E",
-            "stdDev": 15000,
+            "stdDev": 25000,
             "variableClass": "Uncertain"
         },
         {
@@ -26,14 +26,14 @@
             "distribution": "Normal",
             "mean": 250,
             "name": "A1",
-            "stdDev": 10,
+            "stdDev": 25,
             "variableClass": "Uncertain"
         },
         {
             "distribution": "Normal",
             "mean": 500,
             "name": "A2",
-            "stdDev": 25,
+            "stdDev": 50,
             "variableClass": "Uncertain"
         }
     ],
@@ -45,8 +45,8 @@
                 }
             ],
             "method": "LHS",
-            "samples": 100,
-            "seed": 10
+            "samples": 10,
+            "seed": 981
         },
         "uqType": "Sampling"
     },
