@@ -151,7 +151,7 @@ InputWidgetUQ::inputFromJSON(QJsonObject &jsonObject)
         if (selectionChangeOK == true && dakotaMethod != 0)
             result = dakotaMethod->inputFromJSON(uq);
         else
-            result = false;
+            result = false; // don't emit error as one should have been generated
     } else {
         qDebug() << "ERROR: UQ Method Input - no \"uqMethod\" entry";
         emit sendErrorMessage("ERROR: UQ Method Input - no \"uqMethod\" entry");

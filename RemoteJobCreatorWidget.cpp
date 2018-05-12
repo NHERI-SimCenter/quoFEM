@@ -89,7 +89,7 @@ RemoteJobCreatorWidget::RemoteJobCreatorWidget(AgaveInterface *theInt, QWidget *
     runtimeLineEdit->setText("00:10:00");
     layout->addWidget(runtimeLineEdit,3,1);
 
-    QPushButton *pushButton = new QPushButton();
+    pushButton = new QPushButton();
     pushButton->setText("Submit");
     layout->addWidget(pushButton,4,1);
 
@@ -105,6 +105,8 @@ RemoteJobCreatorWidget::pushButtonClicked(void)
     this->hide();
     QJsonObject job;
 
+    pushButton->setDisabled(true);
+
     job["name"]=QString("uqFEM:") + nameLineEdit->text();
     job["nodeCount"]=numCPU_LineEdit->text();
     job["processorsPerNode"]=numProcessorsLineEdit->text();
@@ -118,6 +120,8 @@ RemoteJobCreatorWidget::pushButtonClicked(void)
 
     QJsonObject parameters;
     parameters["inputFile"]="dakota.in";
+    parameters["outputFile"]="dakota.out";
+    parameters["errorFile"]="dakota.err";
     parameters["driverFile"]="fem_driver";
     parameters["modules"]="petsc";
     job["parameters"]=parameters;
@@ -136,11 +140,12 @@ RemoteJobCreatorWidget::pushButtonClicked(void)
 
     // upload directory under user & submit job
     theInterface->uploadDirectory(directoryName, theInterface->getHomeDirPath());
-
     theInterface->startJob(job);
 
     // now remove the tmp directory
     theDirectory.removeRecursively();
+
+    pushButton->setEnabled(true);
 }
 
 

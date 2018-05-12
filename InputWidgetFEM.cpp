@@ -104,8 +104,6 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
 
     this->setLayout(layout);
 
-    //    QSizePolicy sp(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    //   this->setSizePolicy(sp);
 }
 
 InputWidgetFEM::~InputWidgetFEM()

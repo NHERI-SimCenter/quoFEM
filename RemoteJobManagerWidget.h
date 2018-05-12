@@ -53,6 +53,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 class MainWindow;
 class QTableWidget;
+class QPushButton;
 
 class RemoteJobManagerWidget : public QWidget
 {
@@ -82,6 +83,8 @@ private:
     QStringList  headers;
     int triggeredRow;
     QString htmlInputDirectory;
+
+    QPushButton *pushButton;
 };
 
 #endif // REMOTEJOBMANAGERWIDGET_H

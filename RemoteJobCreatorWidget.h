@@ -50,6 +50,7 @@ class QLineEdit;
 
 class JobManager;
 class MainWindow;
+class QPushButton;
 
 class RemoteJobCreatorWidget : public QWidget
 {
@@ -75,6 +76,7 @@ private:
  //   JobManager *theManager;
 
     QString directoryName;
+    QPushButton *pushButton;
 };
 
 #endif // REMOTEJOBCREATORWIDGET_H
