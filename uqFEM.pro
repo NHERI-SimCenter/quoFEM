@@ -14,7 +14,9 @@ TEMPLATE = app
 INCLUDEPATH += ../widgets/RandomVariables
 INCLUDEPATH += ../simcenterAgave/interface
 
-LIBS += /usr/lib/libcurl.dylib
+macos:LIBS += /usr/lib/libcurl.dylib
+win32:INCLUDEPATH+=../libCurl-7.59.0/include
+win32:LIBS += ../libCurl-7.59.0/lib/libcurl.lib
 
 include(../widgets/RandomVariables/RandomVariables.pri)
 include(../widgets/Common/Common.pri)

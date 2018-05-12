@@ -38,7 +38,7 @@ moc*
 *.app
 
 # QT
-*.pro.user
+uqFEM.pro.user
 
 # application
 *.tmp

@@ -154,3 +154,4 @@ void RemoteJobCreatorWidget::setInputDirectory(const QString &name)
     directoryName = name;
     qDebug() << "DIR NAME: " << directoryName ;
 }
+

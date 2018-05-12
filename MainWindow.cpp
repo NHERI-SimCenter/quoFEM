@@ -417,12 +417,14 @@ void MainWindow::onRunButtonClicked() {
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
+    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
+ qDebug() << command;
     proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
-    //qDebug() << command;
+    qDebug() << command;
 #else
-    QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningLocal");
+    QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+            tmpDirectory + QString(" runningLocal");
     proc->execute("bash", QStringList() << "-c" <<  command);
     qDebug() << command;
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
@@ -439,7 +441,8 @@ void MainWindow::onRunButtonClicked() {
    }
 
    QDir dirToRemove(sourceDir);
-   dirToRemove.removeRecursively();
+   //dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
+                                    // so to debug you can simply comment it
 
     //
     // process the results
@@ -547,12 +550,13 @@ void MainWindow::onRemoteRunButtonClicked(){
     //
 
     QProcess *proc = new QProcess();
-
+qDebug() << "HELLO";
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
+    qDebug() << command;
     proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
-    //qDebug() << command;
+
 #else
     QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     proc->execute("bash", QStringList() << "-c" <<  command);

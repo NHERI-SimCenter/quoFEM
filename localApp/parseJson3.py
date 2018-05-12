@@ -90,7 +90,7 @@ constantStateValue =[];
 numWeibullUncertain = 0;
 weibullUncertainName=[];
 weibullUncertainAlphas =[];
-wuibullUncertainBetas =[];
+weibullUncertainBetas =[];
 
 numGammaUncertain = 0;
 gammaUncertainName=[];
@@ -107,6 +107,10 @@ betaUncertainName=[];
 betaUncertainLower =[];
 betaUncertainHigher =[];
 betaUncertainAlphas =[];
+
+print("-----------------")
+print(data)
+print("-----------------")
 
 for k in data["randomVariables"]:
     if (k["distribution"] == "Normal"):
@@ -132,9 +136,10 @@ for k in data["randomVariables"]:
     elif (k["distribution"] == "Uniform"):
         uncertainName.append(k["name"])
         numUncertain += 1
+        print("Hellooo,, Setting lower upper bounds...")
         uniformUncertainName.append(k["name"])
-        uniformUncertainLower.append(k["lower_bounds"])
-        uniformUncertainUpper.append(k["upper_bounds"])
+        uniformUncertainLower.append(k["lowerbound"])
+        uniformUncertainUpper.append(k["upperbound"])
         numUniformUncertain += 1
     elif (k["distribution"] == "ContinuousDesign"):
         uncertainName.append(k["name"])
@@ -142,14 +147,14 @@ for k in data["randomVariables"]:
         continuousDesignName.append(k["name"])
         continuousDesignLower.append(k["lowerbound"])
         continuousDesignUpper.append(k["upperbound"])
-        continuousDesignInitialPoint.append(k["initialpoint"])
+        continuousDesignInitialPoint.append(k["initialPoint"])
         numContinuousDesign += 1
     elif (k["distribution"] == "Weibull"):
         uncertainName.append(k["name"])
         numUncertain += 1
         weibullUncertainName.append(k["name"])
-        weibullUncertainAlphas.append(k["alphas"])
-        weibullUncertainBetas.append(k["betas"])
+        weibullUncertainAlphas.append(k["scaleparam"])
+        weibullUncertainBetas.append(k["shapeparam"])
         numWeibullUncertain += 1
     elif (k["distribution"] == "Gamma"):
         uncertainName.append(k["name"])
@@ -502,7 +507,7 @@ if (numGumbellUncertain > 0):
     f.write('\n')
 
 if (numWeibullUncertain > 0):
-    f.write('gamma_uncertain = ' '{}'.format(numWeibullUncertain))
+    f.write('weibull_uncertain = ' '{}'.format(numWeibullUncertain))
     f.write('\n')
     f.write('alphas = ')
     for i in range(numWeibullUncertain):
@@ -713,6 +718,7 @@ print(command)
 
 if exeDakota in ['runningLocal']:
     os.popen(command).read()
+
 
 
 
