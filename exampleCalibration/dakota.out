@@ -1,0 +1,545 @@
+Dakota version 6.7 released Nov 15 2017.
+Repository revision 0616ac7c (2017-11-10) built Nov 13 2017 02:56:03.
+Running serial Dakota executable in serial mode.
+Start time: Sun Apr 29 14:06:08 2018
+
+-----------------------
+Begin DAKOTA input file
+dakota.in
+-----------------------
+environment
+tabular_data
+tabular_data_file = 'dakotaTab.out'
+
+method,
+optpp_g_newton
+convergence_tolerance = 0.01
+max_iterations = 1000
+
+variables,
+continuous_design = 2
+initial_point = 0.75 0.02 
+lower_bounds = 0.5 0.01 
+upper_bounds = 1 0.05 
+descriptors = 'roofFactor' 'dampRatio' 
+
+
+interface,
+fork 
+ asynchronous
+analysis_driver = 'fem_driver' 
+parameters_file = 'params.in' 
+results_file = 'results.out' 
+work_directory directory_tag 
+copy_files = 'templatedir/*' 
+named 'workdir' file_save  directory_save 
+aprepro 
+
+responses, 
+calibration_terms = 2
+response_descriptors = 'Floor3' 
+'Floor4' 
+numerical_gradients
+no_hessians
+
+---------------------
+End DAKOTA input file
+---------------------
+
+Using Dakota input file 'dakota.in'
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running optpp_g_newton iterator.
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> Initial map for analytic portion of response:
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      7.5000000000e-01 roofFactor
+                      2.0000000000e-02 dampRatio
+
+(Asynchronous job 1 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      7.5075000000e-01 roofFactor
+                      2.0000000000e-02 dampRatio
+
+(Asynchronous job 2 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      7.5000000000e-01 roofFactor
+                      2.0020000000e-02 dampRatio
+
+(Asynchronous job 3 added to queue)
+
+
+
+Blocking synchronize of 3 asynchronous evaluations
+First pass: initiating 3 local asynchronous jobs
+Initiating evaluation 1
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 2
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 3
+nonblocking fork: fem_driver params.in results.out
+Waiting on completed jobs
+Evaluation 1 has completed
+Waiting on completed jobs
+Evaluation 2 has completed
+Waiting on completed jobs
+Evaluation 3 has completed
+
+Active response data for evaluation 1:
+Active set vector = { 1 1 }
+                      1.4897000000e+01 Floor3
+                      1.4423000000e+01 Floor4
+
+
+Active response data for evaluation 2:
+Active set vector = { 1 1 }
+                      1.4881000000e+01 Floor3
+                      1.4309000000e+01 Floor4
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 1 }
+                      1.4875000000e+01 Floor3
+                      1.4407000000e+01 Floor4
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 3 3 } Deriv vars vector = { 1 2 }
+                      1.4897000000e+01 Floor3
+                      1.4423000000e+01 Floor4
+ [ -2.1333333333e+01 -1.1000000000e+03 ] Floor3 gradient
+ [ -1.5200000000e+02 -8.0000000000e+02 ] Floor4 gradient
+
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> Initial map for analytic portion of response:
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      7.7629451263e-01 roofFactor
+                      3.3032779450e-02 dampRatio
+
+(Asynchronous job 4 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      7.7707080715e-01 roofFactor
+                      3.3032779450e-02 dampRatio
+
+(Asynchronous job 5 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation    6
+---------------------
+Parameters for evaluation 6:
+                      7.7629451263e-01 roofFactor
+                      3.3065812229e-02 dampRatio
+
+(Asynchronous job 6 added to queue)
+
+
+
+Blocking synchronize of 3 asynchronous evaluations
+First pass: initiating 3 local asynchronous jobs
+Initiating evaluation 4
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 5
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 6
+nonblocking fork: fem_driver params.in results.out
+Waiting on completed jobs
+Evaluation 4 has completed
+Waiting on completed jobs
+Evaluation 5 has completed
+Waiting on completed jobs
+Evaluation 6 has completed
+
+Active response data for evaluation 4:
+Active set vector = { 1 1 }
+                      2.0240000000e+00 Floor3
+                      1.3130000000e+00 Floor4
+
+
+Active response data for evaluation 5:
+Active set vector = { 1 1 }
+                      2.1220000000e+00 Floor3
+                      1.3050000000e+00 Floor4
+
+
+Active response data for evaluation 6:
+Active set vector = { 1 1 }
+                      1.9920000000e+00 Floor3
+                      1.2900000000e+00 Floor4
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 3 3 } Deriv vars vector = { 1 2 }
+                      2.0240000000e+00 Floor3
+                      1.3130000000e+00 Floor4
+ [  1.2624074807e+02 -9.6873470937e+02 ] Floor3 gradient
+ [ -1.0305367190e+01 -6.9627807236e+02 ] Floor4 gradient
+
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> Initial map for analytic portion of response:
+
+---------------------
+Begin Evaluation    7
+---------------------
+Parameters for evaluation 7:
+                      7.7489162333e-01 roofFactor
+                      3.4939284662e-02 dampRatio
+
+(Asynchronous job 7 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation    8
+---------------------
+Parameters for evaluation 8:
+                      7.7566651495e-01 roofFactor
+                      3.4939284662e-02 dampRatio
+
+(Asynchronous job 8 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation    9
+---------------------
+Parameters for evaluation 9:
+                      7.7489162333e-01 roofFactor
+                      3.4974223947e-02 dampRatio
+
+(Asynchronous job 9 added to queue)
+
+
+
+Blocking synchronize of 3 asynchronous evaluations
+First pass: initiating 3 local asynchronous jobs
+Initiating evaluation 7
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 8
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 9
+nonblocking fork: fem_driver params.in results.out
+Waiting on completed jobs
+Evaluation 7 has completed
+Waiting on completed jobs
+Evaluation 8 has completed
+Waiting on completed jobs
+Evaluation 9 has completed
+
+Active response data for evaluation 7:
+Active set vector = { 1 1 }
+                      5.5000000000e-02 Floor3
+                      5.4000000000e-02 Floor4
+
+
+Active response data for evaluation 8:
+Active set vector = { 1 1 }
+                      1.9000000000e-01 Floor3
+                      1.3500000000e-01 Floor4
+
+
+Active response data for evaluation 9:
+Active set vector = { 1 1 }
+                      2.9000000000e-02 Floor3
+                      3.3000000000e-02 Floor4
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 3 3 } Deriv vars vector = { 1 2 }
+                      5.5000000000e-02 Floor3
+                      5.4000000000e-02 Floor4
+ [  1.7421791117e+02 -7.4414803427e+02 ] Floor3 gradient
+ [  1.0453074670e+02 -6.0104264307e+02 ] Floor4 gradient
+
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> Initial map for analytic portion of response:
+
+---------------------
+Begin Evaluation   10
+---------------------
+Parameters for evaluation 10:
+                      7.7515628815e-01 roofFactor
+                      3.5075157531e-02 dampRatio
+
+(Asynchronous job 10 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   11
+---------------------
+Parameters for evaluation 11:
+                      7.7593144444e-01 roofFactor
+                      3.5075157531e-02 dampRatio
+
+(Asynchronous job 11 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   12
+---------------------
+Parameters for evaluation 12:
+                      7.7515628815e-01 roofFactor
+                      3.5110232688e-02 dampRatio
+
+(Asynchronous job 12 added to queue)
+
+
+
+Blocking synchronize of 3 asynchronous evaluations
+First pass: initiating 3 local asynchronous jobs
+Initiating evaluation 10
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 11
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 12
+nonblocking fork: fem_driver params.in results.out
+Waiting on completed jobs
+Evaluation 12 has completed
+Waiting on completed jobs
+Evaluation 11 has completed
+Waiting on completed jobs
+Evaluation 10 has completed
+
+Active response data for evaluation 10:
+Active set vector = { 1 1 }
+                      6.8000000000e-02 Floor3
+                      6.9000000000e-02 Floor4
+
+
+Active response data for evaluation 11:
+Active set vector = { 1 1 }
+                      2.1300000000e-01 Floor3
+                      2.1900000000e-01 Floor4
+
+
+Active response data for evaluation 12:
+Active set vector = { 1 1 }
+                      9.8000000000e-02 Floor3
+                      9.1000000000e-02 Floor4
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 3 3 } Deriv vars vector = { 1 2 }
+                      6.8000000000e-02 Floor3
+                      6.9000000000e-02 Floor4
+ [  1.8705905147e+02  8.5530620849e+02 ] Floor3 gradient
+ [  1.9350936359e+02  6.2722455290e+02 ] Floor4 gradient
+
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> Initial map for analytic portion of response:
+
+---------------------
+Begin Evaluation   13
+---------------------
+Parameters for evaluation 13:
+                      7.7499421850e-01 roofFactor
+                      3.4991954676e-02 dampRatio
+
+(Asynchronous job 13 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   14
+---------------------
+Parameters for evaluation 14:
+                      7.7576921272e-01 roofFactor
+                      3.4991954676e-02 dampRatio
+
+(Asynchronous job 14 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   15
+---------------------
+Parameters for evaluation 15:
+                      7.7499421850e-01 roofFactor
+                      3.5026946631e-02 dampRatio
+
+(Asynchronous job 15 added to queue)
+
+
+
+Blocking synchronize of 3 asynchronous evaluations
+First pass: initiating 3 local asynchronous jobs
+Initiating evaluation 13
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 14
+nonblocking fork: fem_driver params.in results.out
+Initiating evaluation 15
+nonblocking fork: fem_driver params.in results.out
+Waiting on completed jobs
+Evaluation 13 has completed
+Waiting on completed jobs
+Evaluation 15 has completed
+Waiting on completed jobs
+Evaluation 14 has completed
+
+Active response data for evaluation 13:
+Active set vector = { 1 1 }
+                      7.0000000000e-03 Floor3
+                      6.0000000000e-03 Floor4
+
+
+Active response data for evaluation 14:
+Active set vector = { 1 1 }
+                      1.9000000000e-01 Floor3
+                      1.6200000000e-01 Floor4
+
+
+Active response data for evaluation 15:
+Active set vector = { 1 1 }
+                      2.6000000000e-02 Floor3
+                      1.8000000000e-02 Floor4
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 3 3 } Deriv vars vector = { 1 2 }
+                      7.0000000000e-03 Floor3
+                      6.0000000000e-03 Floor4
+ [  2.3613079379e+02  5.4298195616e+02 ] Floor3 gradient
+ [  2.0129182422e+02  3.4293597231e+02 ] Floor4 gradient
+
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   16
+---------------------
+Parameters for evaluation 16:
+                      7.7576921272e-01 roofFactor
+                      3.4991954676e-02 dampRatio
+
+Duplication detected: analysis_drivers not invoked.
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   17
+---------------------
+Parameters for evaluation 17:
+                      7.7499421850e-01 roofFactor
+                      3.5026946631e-02 dampRatio
+
+Duplication detected: analysis_drivers not invoked.
+
+
+
+Blocking synchronize of 0 asynchronous evaluations, 0 cached evaluations, and 2 duplicates
+
+Active response data for evaluation 16:
+Active set vector = { 1 1 }
+                      1.9000000000e-01 Floor3
+                      1.6200000000e-01 Floor4
+
+
+Active response data for evaluation 17:
+Active set vector = { 1 1 }
+                      2.6000000000e-02 Floor3
+                      1.8000000000e-02 Floor4
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 } Deriv vars vector = { 1 2 }
+ [  2.3613079379e+02  5.4298195616e+02 ] Floor3 gradient
+ [  2.0129182422e+02  3.4293597231e+02 ] Floor4 gradient
+
+
+<<<<< Function evaluation summary: 17 total (15 new, 2 duplicate)
+<<<<< Best parameters          =
+                      7.7499421850e-01 roofFactor
+                      3.4991954676e-02 dampRatio
+<<<<< Best residual terms =
+                      7.0000000000e-03
+                      6.0000000000e-03
+<<<<< Best residual norm =  9.2195444573e-03; 0.5 * norm^2 =  4.2500000000e-05
+<<<<< Best data captured at function evaluation 13
+
+Confidence Intervals on Calibrated Parameters:
+    roofFactor: [ 7.7233772814e-01, 7.7765070885e-01 ]
+     dampRatio: [ 3.3708471691e-02, 3.6275437661e-02 ]
+
+<<<<< Iterator optpp_g_newton completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =     14.325 [parent =     14.325, child = -1.77636e-15]
+  Total wall clock =     14.323

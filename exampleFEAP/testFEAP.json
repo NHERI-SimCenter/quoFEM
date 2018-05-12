@@ -1,18 +1,18 @@
 {
     "fem": {
-        "dir": "C:/Users/nikhil/NHERI/uqFEM/exampleOpenSees",
-        "inputFile": "C:/Users/nikhil/NHERI/uqFEM/exampleOpenSees/TrussTemplate.tcl",
-        "mainInput": "TrussTemplate.tcl",
+        "dir": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleFEAP",
+        "inputFile": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleFEAP\\TrussTemplate.txt",
+        "mainInput": "TrussTemplate.txt",
         "mainPostprocessScript": "postprocess.py",
-        "postprocessScript": "C:/Users/nikhil/NHERI/uqFEM/exampleOpenSees/postprocess.py",
-        "program": "OpenSees"
+        "postprocessScript": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleFEAP\\postprocess.py",
+        "program": "FEAPpv"
     },
     "randomVariables": [
         {
             "distribution": "Normal",
             "mean": 205000,
             "name": "E",
-            "stdDev": 25000,
+            "stdDev": 15000,
             "variableClass": "Uncertain"
         },
         {
@@ -26,14 +26,14 @@
             "distribution": "Normal",
             "mean": 250,
             "name": "A1",
-            "stdDev": 25,
+            "stdDev": 10,
             "variableClass": "Uncertain"
         },
         {
             "distribution": "Normal",
             "mean": 500,
             "name": "A2",
-            "stdDev": 50,
+            "stdDev": 25,
             "variableClass": "Uncertain"
         }
     ],
@@ -41,12 +41,12 @@
         "samplingMethodData": {
             "edps": [
                 {
-                    "name": "Node_3_Disp"
+                    "name": "Node_3_Disp_2"
                 }
             ],
             "method": "LHS",
-            "samples": 10,
-            "seed": 981
+            "samples": 100,
+            "seed": 10
         },
         "uqType": "Sampling"
     },
