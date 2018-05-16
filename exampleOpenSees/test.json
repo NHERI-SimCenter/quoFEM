@@ -45,7 +45,7 @@
                 }
             ],
             "method": "LHS",
-            "samples": 10,
+            "samples": 100,
             "seed": 981
         },
         "uqType": "Sampling"
