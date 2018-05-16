@@ -51,11 +51,12 @@ class InputWidgetUQ;
 class InputWidgetParameters;
 class DakotaResults;
 
-class AgaveInterface;
-class RemoteJobCreatorWidget;
-class RemoteJobManagerWidget;
+class AgaveCurl;
+class RemoteJobCreator;
+class RemoteJobManager;
 class QPushButton;
 class QLabel;
+class QThread;
 
 class MainWindow : public QMainWindow
 {
@@ -67,17 +68,27 @@ class MainWindow : public QMainWindow
 
   QLabel *errorLabel;
 
+signals:
+    void attemptLogin(QString, QString);
+    void logout();
+
   public slots:
     void newFile();
     void open();
     bool save();
     bool saveAs();
 
+
     void onRunButtonClicked();
     void onRemoteRunButtonClicked();
     void onJobsManagerButtonClicked();
     void onExitButtonClicked();
+
     void onLoginButtonClicked();
+    void onLoginSubmitButtonClicked();
+
+    void attemptLoginReturn(bool);
+    void logoutReturn(bool);
 
     void onDakotaMethodChanged(void);
 
@@ -104,12 +115,20 @@ class MainWindow : public QMainWindow
     InputWidgetParameters *random;
     DakotaResults *results;
 
-    AgaveInterface *theCLI;
-    RemoteJobCreatorWidget *jobCreator;
-    RemoteJobManagerWidget *jobManager;
+    AgaveCurl *theRemoteInterface;
+    RemoteJobCreator *jobCreator;
+    RemoteJobManager *jobManager;
 
-    QPushButton *loginButton;
 
+    bool loggedIn;
+    QWidget *loginWindow;            // popup window for when login clicked
+    QLineEdit *nameLineEdit;         // username line edit
+    QLineEdit *passwordLineEdit;     // password line edit
+    int numTries;
+    QPushButton *loginButton;         // login button on main screen
+    QPushButton *loginSubmitButton;   // submit button on login screen
+
+    QThread *thread;
 };
 
 #endif // MAINWINDOW_H

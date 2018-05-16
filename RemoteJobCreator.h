@@ -1,5 +1,5 @@
-#ifndef REMOTEJOBCREATORWIDGET_H
-#define REMOTEJOBCREATORWIDGET_H
+#ifndef REMOTEJOBCREATOR_H
+#define REMOTEJOBCREATOR_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -44,7 +44,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //  - the widget aasks for additional info needed and provide a submit button to submit the jb when clicked.
 
 #include <QWidget>
-#include <AgaveInterface.h>
+#include <AgaveCurl.h>
 
 class QLineEdit;
 
@@ -52,17 +52,27 @@ class JobManager;
 class MainWindow;
 class QPushButton;
 
-class RemoteJobCreatorWidget : public QWidget
+class RemoteJobCreator : public QWidget
 {
     Q_OBJECT
 public:
-    explicit RemoteJobCreatorWidget(AgaveInterface *, QWidget *parent = nullptr);
+    explicit RemoteJobCreator(AgaveCurl *, QWidget *parent = nullptr);
     void setInputDirectory(const QString & directoryName);
 
 signals:
+   void getHomeDirCall(void);
+   void uploadDirCall(const QString &local, const QString &remote);
+   void startJobCall(QJsonObject theJob);
+   void successfullJobStart(void);
 
 public slots:
+    void attemptLoginReturn(bool);
+
     void pushButtonClicked(void);
+    void uploadDirReturn(bool);
+    void getHomeDirReturned(QString);
+    void startJobReturn(QString);
+
 
 private:
     void submitJob(void);
@@ -72,11 +82,14 @@ private:
     QLineEdit *numProcessorsLineEdit;
     QLineEdit *runtimeLineEdit;
 
-    AgaveInterface   *theInterface;
+    AgaveCurl   *theInterface;
  //   JobManager *theManager;
 
     QString directoryName;
     QPushButton *pushButton;
+
+    QString remoteHomeDirPath;
+    QJsonObject theJob;
 };
 
-#endif // REMOTEJOBCREATORWIDGET_H
+#endif // REMOTEJOBCREATOR_H

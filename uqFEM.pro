@@ -12,7 +12,7 @@ TARGET = uqFEM
 TEMPLATE = app
 
 INCLUDEPATH += ../widgets/RandomVariables
-INCLUDEPATH += ../simcenterAgave/interface
+# INCLUDEPATH += ../simcenterAgave/interface
 
 macos:LIBS += /usr/lib/libcurl.dylib
 win32:INCLUDEPATH+=../libCurl-7.59.0/include
@@ -39,12 +39,10 @@ SOURCES += main.cpp\
         InputWidgetBayesianCalibration.cpp \
         OpenSeesParser.cpp \
         FEAPpvParser.cpp \
-        ../simcenterAgave/interface/AgaveCLI.cpp \
-    RemoteJobCreatorWidget.cpp \
-    RemoteJobManagerWidget.cpp \
+    RemoteJobCreator.cpp \
     MyTableWidget.cpp \
-    ../simcenterAgave/interface/AgaveInterface.cpp \
-    ../simcenterAgave/interface/AgaveCurl.cpp
+    RemoteJobManager.cpp \
+    AgaveCurl.cpp
 
 HEADERS  += MainWindow.h \
     EDP.h \
@@ -64,11 +62,9 @@ HEADERS  += MainWindow.h \
     DakotaResultsBayesianCalibration.h \
     OpenSeesParser.h \
     FEAPpvParser.h \
-    ../simcenterAgave/interface/AgaveCLI.h \
-    RemoteJobCreatorWidget.h \
-    RemoteJobManagerWidget.h \
+    RemoteJobCreator.h \
     MyTableWidget.h \
-    ../simcenterAgave/interface/AgaveInterface.h \
-    ../simcenterAgave/interface/AgaveCurl.h
+    RemoteJobManager.h \
+    AgaveCurl.h
 
 FORMS    += mainwindow.ui

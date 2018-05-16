@@ -77,10 +77,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QLineEdit>
 
 
-#include <AgaveCLI.h>
+//#include <AgaveCLI.h>
 #include <AgaveCurl.h>
-#include <RemoteJobCreatorWidget.h>
-#include <RemoteJobManagerWidget.h>
+#include <RemoteJobCreator.h>
+#include <RemoteJobManager.h>
+#include <QThread>
 
 /*
 static
@@ -117,7 +118,7 @@ MainWindow::fatalMessage(const QString msg){
 }
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent), loggedIn(false)
 {
    // theOneStaticMainWindow = this;
 
@@ -127,10 +128,10 @@ MainWindow::MainWindow(QWidget *parent)
     QString tenant("designsafe");
     QString storage("agave://designsafe.storage.default/");
 
-    //theCLI = new AgaveCLI(tenant, storage, this);
-    theCLI =  new AgaveCurl(tenant, storage, this);
-    jobCreator = new RemoteJobCreatorWidget(theCLI);
-    jobManager = new RemoteJobManagerWidget(theCLI, this);
+    //theRemoteInterface = new AgaveCLI(tenant, storage, this);
+    theRemoteInterface =  new AgaveCurl(tenant, storage);
+    jobCreator = new RemoteJobCreator(theRemoteInterface);
+    jobManager = new RemoteJobManager(theRemoteInterface, this);
 
 
     //
@@ -238,22 +239,62 @@ MainWindow::MainWindow(QWidget *parent)
     exitButton->setText(tr("Exit"));
     pushButtonLayout->addWidget(exitButton);
 
-    // connect clicked signal of button with MainWindow methods
+    //
+    // finally create login window for when loogged in clicked
+    //
 
-    connect(loginButton,SIGNAL(clicked(bool)),this,SLOT(onLoginButtonClicked()));
-    connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
-    connect(runDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onRemoteRunButtonClicked()));
-    connect(getDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onJobsManagerButtonClicked()));
-    connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
+    loginWindow = new QWidget();
+    QGridLayout *loginLayout = new QGridLayout();
+    QLabel *nameLabel = new QLabel();
+    nameLabel->setText("username:");
+    QLabel *passwordLabel = new QLabel();
+    passwordLabel->setText("password:");
+    nameLineEdit = new QLineEdit();
+    passwordLineEdit = new QLineEdit();
+    passwordLineEdit->setEchoMode(QLineEdit::Password);
+    loginSubmitButton = new QPushButton();
+    loginSubmitButton->setText("Login");
+    loginLayout->addWidget(nameLabel,0,0);
+    loginLayout->addWidget(nameLineEdit,0,1);
+    loginLayout->addWidget(passwordLabel,1,0);
+    loginLayout->addWidget(passwordLineEdit,1,1);
+    loginLayout->addWidget(loginSubmitButton,2,2);
+    loginWindow->setLayout(loginLayout);
 
-    connect(uq,SIGNAL(uqWidgetChanged()), this,SLOT(onDakotaMethodChanged()));
+    //
+    // connect signals & slots
+    //
 
-    connect(theCLI,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
-    connect(theCLI,SIGNAL(sendFatalMessage(QString)), this, SLOT(fatalMessage(QString)));
+    // error & status messages
+    connect(theRemoteInterface,SIGNAL(errorMessage(QString)), this, SLOT(errorMessage(QString)));
+    connect(theRemoteInterface,SIGNAL(statusMessage(QString)), this, SLOT(errorMessage(QString)));
+    connect(theRemoteInterface,SIGNAL(fatalMessage(QString)), this, SLOT(fatalMessage(QString)));
     connect(fem,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(random,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(results,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+
+    // login
+    connect(loginButton,SIGNAL(clicked(bool)),this,SLOT(onLoginButtonClicked()));
+    connect(loginSubmitButton,SIGNAL(clicked(bool)),this,SLOT(onLoginSubmitButtonClicked()));
+
+    connect(this,SIGNAL(attemptLogin(QString, QString)),theRemoteInterface,SLOT(loginCall(QString, QString)));
+    connect(theRemoteInterface,SIGNAL(loginReturn(bool)),this,SLOT(attemptLoginReturn(bool)));
+
+
+    // logout
+    connect(this,SIGNAL(logout()),theRemoteInterface,SLOT(logoutCall()));
+    connect(theRemoteInterface,SIGNAL(logoutReturn(bool)),this,SLOT(logoutReturn(bool)));
+
+    // connect job manager
+    connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
+    connect(runDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onRemoteRunButtonClicked()));
+    connect(getDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onJobsManagerButtonClicked()));
+
+    // exit
+    connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
+
+    connect(uq,SIGNAL(uqWidgetChanged()), this,SLOT(onDakotaMethodChanged()));
 
     // add button widget to layout
     layout->addWidget(buttonWidget);
@@ -268,12 +309,23 @@ MainWindow::MainWindow(QWidget *parent)
     this->setCentralWidget(centralWidget);
 
     this->createActions();
+
+    thread = new QThread();
+    theRemoteInterface->moveToThread(thread);
+
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+
+    thread->start();
+
 }
 
 MainWindow::~MainWindow()
 {
     // invoke destructor as AgaveCLI not a QObject
-    delete theCLI;
+    //delete theRemoteInterface;
+    thread->quit();
+    theRemoteInterface->deleteLater();
+    thread->terminate();
 }
 
 bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory)
@@ -457,11 +509,10 @@ void MainWindow::onRunButtonClicked() {
 void MainWindow::onRemoteRunButtonClicked(){
 
     // check logged in
-    if (theCLI->isLoggedIn() == false) {
+    if (loggedIn == false) {
           errorMessage("ERROR - You Need to Login");
           return;
-    } else
-        loginButton->setText("logout");
+    }
 
     //
     // get program & input file from fem widget
@@ -576,9 +627,8 @@ void MainWindow::onJobsManagerButtonClicked(){
 
     errorMessage("");
 
-    if (theCLI->isLoggedIn()) {
-        loginButton->setText("logout");
-        jobManager->updateJobTable();
+    if (loggedIn == true) {
+        jobManager->updateJobTable("");
         jobManager->show();
     } else {
         errorMessage("ERROR - You Need to Login");
@@ -586,19 +636,81 @@ void MainWindow::onJobsManagerButtonClicked(){
 }
 
 
-void MainWindow::onLoginButtonClicked(){
+void MainWindow::onLoginButtonClicked() {
 
-    errorMessage("");
-
-    if (loginButton->text().contains("Login"))
-        theCLI->login(); // if logged in we change text in pushbutton on remote job submission or other
-    else {
-        theCLI->logout();
-        jobCreator->hide();
-        jobManager->hide();
-        loginButton->setText("Login");
+    if (loggedIn == false) {
+        numTries = 0;
+        loginWindow->show();
+    } else {
+        loggedIn = false;
+        emit logout();
     }
 }
+
+void MainWindow::onLoginSubmitButtonClicked() {
+
+    int maxNumTries = 3;
+
+    if (loggedIn == false && numTries < maxNumTries) {
+        // obtain login info
+        QString login = nameLineEdit->text();
+        QString password = passwordLineEdit->text();
+        if (login.size() == 0) {
+            login = "no_username";
+        }
+        if (password.size() == 0)
+            password = "no_password";
+
+        emit attemptLogin(login, password);
+        return;
+    }
+}
+
+
+void
+MainWindow::attemptLoginReturn(bool ok){
+
+    int maxNumTries = 3;
+
+    if (ok == true) {
+  //      emit updateJobTable("");
+        loginWindow->hide();
+        loggedIn = true;
+        loginButton->setText("Logout");
+        //this->enableButtons();
+
+        //theJobManager->up
+    } else {
+        loggedIn = false;
+
+        numTries++;
+
+        if (numTries >= maxNumTries) {
+            loginWindow->hide();
+            nameLineEdit->setText("");
+            passwordLineEdit->setText("");
+            this->errorMessage("ERROR: Max Login Attempts Exceeded .. Contact DesignSafe for password help");
+        }
+    }
+}
+
+
+void
+MainWindow::logoutReturn(bool ok){
+
+    if (ok == true) {
+        loggedIn = false;
+        jobManager->clearTable();
+        loginButton->setText("Login");
+        jobManager->hide();
+        jobCreator->hide();
+        //this->disableButtons();
+
+        // bring up login button
+      //  this->onLoginButtonClicked();
+    }
+}
+
 
 void MainWindow::onExitButtonClicked(){
     RandomVariableInputWidget *theParameters = uq->getParameters();
@@ -753,7 +865,7 @@ void MainWindow::loadFile(const QString &fileName)
 
 void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 {
-    errorMessage("");
+    errorMessage("Processing Results");
 
     DakotaResults *result=uq->getResults();
     result->processResults(dakotaIN, dakotaTAB);

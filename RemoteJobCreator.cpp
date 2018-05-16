@@ -40,7 +40,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Purpose: a widget for managing submiited jobs by uqFEM tool
 //  - allow for refresh of status, deletion of submitted jobs, and download of results from finished job
 
-#include "RemoteJobCreatorWidget.h"
+#include "RemoteJobCreator.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -49,12 +49,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPushButton>
 #include <QJsonObject>
 
-#include <AgaveInterface.h>
+//#include <AgaveInterface.h>
 #include <QDebug>
 #include <QDir>
 
 
-RemoteJobCreatorWidget::RemoteJobCreatorWidget(AgaveInterface *theInt, QWidget *parent)
+RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
     : QWidget(parent), theInterface(theInt)
 {
     QGridLayout *layout = new QGridLayout();
@@ -95,63 +95,108 @@ RemoteJobCreatorWidget::RemoteJobCreatorWidget(AgaveInterface *theInt, QWidget *
 
     this->setLayout(layout);
 
+    //
+    // set up connections
+    //
+
     connect(pushButton,SIGNAL(clicked()), this, SLOT(pushButtonClicked()));
+
+    // on login from interface to set up homeDirPath
+    connect(theInterface,SIGNAL(loginReturn(bool)),this,SLOT(attemptLoginReturn(bool)));
+    connect(this,SIGNAL(getHomeDirCall()),theInterface,SLOT(getHomeDirPathCall()));
+    connect(theInterface,SIGNAL(getHomeDirPathReturn(QString)), this, SLOT(getHomeDirReturned(QString)));
+
+    // to start job need to connect uploadDir and start job
+    connect(this,SIGNAL(uploadDirCall(const QString &,const QString &)), theInterface, SLOT(uploadDirectoryCall(const QString &,const QString &)));
+    connect(theInterface, SIGNAL(uploadDirectoryReturn(bool)), this, SLOT(uploadDirReturn(bool)));
+    connect(this,SIGNAL(startJobCall(QJsonObject)),theInterface,SLOT(startJobCall(QJsonObject)));
+    connect(theInterface,SIGNAL(startJobReturn(QString)), this, SLOT(startJobReturn(QString)));
+
 }
 
-
 void
-RemoteJobCreatorWidget::pushButtonClicked(void)
+RemoteJobCreator::pushButtonClicked(void)
 {
-    this->hide();
-    QJsonObject job;
-
-    pushButton->setDisabled(true);
-
-    job["name"]=QString("uqFEM:") + nameLineEdit->text();
-    job["nodeCount"]=numCPU_LineEdit->text();
-    job["processorsPerNode"]=numProcessorsLineEdit->text();
-    job["requestedTime"]=runtimeLineEdit->text();
-
-    // defaults (possibly from a parameters file)
-    job["appId"]="dakota-6.6.0";
-    job["memoryPerNode"]= "1GB";
-    job["archive"]="true";
-    job["archiveSystem"]="designsafe.storage.default";
-
-    QJsonObject parameters;
-    parameters["inputFile"]="dakota.in";
-    parameters["outputFile"]="dakota.out";
-    parameters["errorFile"]="dakota.err";
-    parameters["driverFile"]="fem_driver";
-    parameters["modules"]="petsc";
-    job["parameters"]=parameters;
-
-
     QDir theDirectory(directoryName);
     QString dirName = theDirectory.dirName();
 
-  // QString userName=theInterface->getHomeDir();
-  //  QString remoteDirectory = QString("agave://designsafe.storage.default/") + userName + QString("/") + dirName;
-    QString remoteDirectory = theInterface->getHomeDirPath() + QString("/") + dirName;
-
-     QJsonObject inputs;
-     inputs["inputDirectory"]=remoteDirectory;
-     job["inputs"]=inputs;
+    QString remoteDirectory = remoteHomeDirPath + QString("/") + dirName;
 
     // upload directory under user & submit job
-    theInterface->uploadDirectory(directoryName, theInterface->getHomeDirPath());
-    theInterface->startJob(job);
+    //  NOTE: the job is actually submitted when the uploadDirectory returns
+    emit uploadDirCall(directoryName, remoteHomeDirPath);
+}
 
-    // now remove the tmp directory
-    theDirectory.removeRecursively();
+// this slot is invoked on return from uploadDirectory signal in pushButtonClicked slot
+void
+RemoteJobCreator::uploadDirReturn(bool result)
+{
+    if (result == true) {
 
+        // this->hide();
+        QJsonObject job;
+
+        pushButton->setDisabled(true);
+
+        job["name"]=QString("uqFEM:") + nameLineEdit->text();
+        job["nodeCount"]=numCPU_LineEdit->text();
+        job["processorsPerNode"]=numProcessorsLineEdit->text();
+        job["requestedTime"]=runtimeLineEdit->text();
+
+        // defaults (possibly from a parameters file)
+        job["appId"]="dakota-6.6.0";
+        job["memoryPerNode"]= "1GB";
+        job["archive"]="true";
+        job["archiveSystem"]="designsafe.storage.default";
+
+        QJsonObject parameters;
+        parameters["inputFile"]="dakota.in";
+        parameters["outputFile"]="dakota.out";
+        parameters["errorFile"]="dakota.err";
+        parameters["driverFile"]="fem_driver";
+        parameters["modules"]="petsc";
+        job["parameters"]=parameters;
+
+        QDir theDirectory(directoryName);
+        QString dirName = theDirectory.dirName();
+
+        QString remoteDirectory = remoteHomeDirPath + QString("/") + dirName;
+
+        QJsonObject inputs;
+
+        inputs["inputDirectory"]=remoteDirectory;
+        job["inputs"]=inputs;
+
+        emit startJobCall(job);
+
+        // now remove the tmp directory
+        theDirectory.removeRecursively();
+    }
     pushButton->setEnabled(true);
 }
 
 
-void RemoteJobCreatorWidget::setInputDirectory(const QString &name)
+void RemoteJobCreator::setInputDirectory(const QString &name)
 {
     directoryName = name;
     qDebug() << "DIR NAME: " << directoryName ;
 }
 
+void
+RemoteJobCreator::attemptLoginReturn(bool ok) {
+    if (ok == true) {
+        emit getHomeDirCall();
+    }
+}
+
+
+void
+RemoteJobCreator::getHomeDirReturned(QString path){
+    qDebug() << "RemoteJobCreator: setting remotePath: " << path;
+    remoteHomeDirPath = path;
+}
+
+void
+RemoteJobCreator::startJobReturn(QString result) {
+  
+}

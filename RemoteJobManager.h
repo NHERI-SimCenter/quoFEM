@@ -1,5 +1,5 @@
-#ifndef REMOTEJOBMANAGERWIDGET_H
-#define REMOTEJOBMANAGERWIDGET_H
+#ifndef REMOTEJOBMANAGER_H
+#define REMOTEJOBMANAGER_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -48,23 +48,48 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QJsonObject>
 #include <QStringList>
 #include <QString>
+class MainWindow;
 
-#include <AgaveInterface.h>
+//#include <AgaveCurl.h>
 
 class MainWindow;
 class QTableWidget;
 class QPushButton;
+class AgaveCurl;
 
-class RemoteJobManagerWidget : public QWidget
+class RemoteJobManager : public QWidget
 {
     Q_OBJECT
 public:
 
-    explicit RemoteJobManagerWidget(AgaveInterface *, MainWindow *, QWidget *parent = nullptr);
-    bool updateJobTable(void);
+    explicit RemoteJobManager(AgaveCurl *theInterface, MainWindow *, QWidget *parent = nullptr);
     bool addJob(QString &jobID);
+    void clearTable(void);
 
 signals:
+    void statusMessage(QString);
+    void errorMessage(QString);
+
+    void getJobsList(QString);
+    void getJobStatus(QString);
+    void getJobDetails(QString);
+    void deleteJob(QString, QStringList);
+    void downloadFiles(QStringList, QStringList);
+
+  //  void deleteDirectory(QString);
+  //  void downloadFile(QString);
+
+public slots:
+    void updateJobTable(QString);
+    void jobsListReturn(QJsonObject);
+    void jobStatusReturn(QString);
+    void deleteJobReturn(bool);
+    void getJobDetailsReturn(QJsonObject);
+
+
+    // void deleteDirectoryReturn(bool);
+    // void jobDetailsReturn(QJsonObject);
+    void downloadFilesReturn(bool);
 
 public slots:
     void bringUpJobActionMenu(int row, int col);
@@ -75,8 +100,7 @@ public slots:
 
 private:
     QString inputDirectory;
-    AgaveInterface *theInterface;
-    MainWindow *theMainWindow;
+   // AgaveCurl *theInterface;
     QJsonObject jobs;
 
     QTableWidget *jobsTable;
@@ -85,6 +109,14 @@ private:
     QString htmlInputDirectory;
 
     QPushButton *pushButton;
+
+    QString jobIDRequest;
+    int getJobDetailsRequest;
+
+    QString name1;
+    QString name2;
+    QString name3;
+    MainWindow *theMainWindow;
 };
 
-#endif // REMOTEJOBMANAGERWIDGET_H
+#endif // REMOTEJOBMANAGER_H
