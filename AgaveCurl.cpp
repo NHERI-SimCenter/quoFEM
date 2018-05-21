@@ -598,7 +598,10 @@ AgaveCurl::uploadFileCall(const QString &local, const QString &remote) {
 bool
 AgaveCurl::uploadFile(const QString &local, const QString &remote) {
 
-    QString message = QString("Contacting ") + tenant + QString(" to upload file ") + local;
+    QFileInfo localNameInfo(local);
+    QString localName = localNameInfo.fileName();
+
+    QString message = QString("Contacting ") + tenant + QString(" to upload file ") + localName;
     emit statusMessage(message);
 
     bool result = false;
@@ -696,6 +699,7 @@ AgaveCurl::downloadFilesCall(const QStringList &remoteFiles, const QStringList &
     for (int i=0; i<remoteFiles.size(); i++) {
         QString remote = remoteFiles.at(i);
         QString local = localFiles.at(i);
+
         result = this->downloadFile(remote, local);
         if (result == false) {
             emit downloadFilesReturn(result);
@@ -713,7 +717,11 @@ AgaveCurl::downloadFile(const QString &remoteFile, const QString &localFile)
     bool result = true;
     CURLcode ret;
 
-    QString message = QString("Contacting ") + tenant + QString(" to download remote file to ") + localFile;
+    QFileInfo remoteFileInfo(remoteFile);
+    QString remoteName = remoteFileInfo.fileName();
+ //   QString localName = localFile.fileName();
+
+    QString message = QString("Contacting ") + tenant + QString(" to download remote file ") + remoteName; // + QString( " to ") + localFile;
     emit statusMessage(message);
 
     // set up the call

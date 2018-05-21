@@ -283,7 +283,7 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         archiveDir = archiveDir + QString("/") + inputDir.remove(QRegExp(".*\/")); // regex to remove up till last /
 
         //
-        // create 2 temp file names neede to store remote data files locally
+        // create 3 temp file names neede to store remote data files locally
         //
 
         QTemporaryFile tmpFile1;
@@ -314,6 +314,9 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
             // will have to overwrite any local dakotaTab.out;
             name3 = "dakotaTab.out";
         }
+        name1="dakota.json";
+
+
         QStringList localFiles;
         localFiles.append(name1);
         localFiles.append(name2);

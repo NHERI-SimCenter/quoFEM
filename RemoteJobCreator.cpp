@@ -144,7 +144,9 @@ RemoteJobCreator::uploadDirReturn(bool result)
         job["requestedTime"]=runtimeLineEdit->text();
 
         // defaults (possibly from a parameters file)
+        //Dakota-6.6.0.0u1
         job["appId"]="dakota-6.6.0";
+        //job["appId"]="Dakota-6.6.0.0u1";
         job["memoryPerNode"]= "1GB";
         job["archive"]="true";
         job["archiveSystem"]="designsafe.storage.default";

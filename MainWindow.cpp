@@ -326,6 +326,8 @@ MainWindow::~MainWindow()
     thread->quit();
     theRemoteInterface->deleteLater();
     thread->terminate();
+    delete jobCreator;
+    delete jobManager;
 }
 
 bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory)
@@ -616,8 +618,12 @@ qDebug() << "HELLO";
 #endif
     proc->waitForStarted();
 
+    //
     // when setup is complete, pop open the jobCreateor Widget which will allow user
     // to set some needed info before running at DesignSafe
+    //
+    jobCreator->hide();
+    jobManager->hide();
     jobCreator->setInputDirectory(tDirectory);
     jobCreator->show();
 }
@@ -628,6 +634,7 @@ void MainWindow::onJobsManagerButtonClicked(){
     errorMessage("");
 
     if (loggedIn == true) {
+        jobManager->hide();
         jobManager->updateJobTable("");
         jobManager->show();
     } else {
