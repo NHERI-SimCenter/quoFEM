@@ -11,15 +11,15 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = uqFEM
 TEMPLATE = app
 
-INCLUDEPATH += ../widgets/RandomVariables
+INCLUDEPATH += ../SimCenterCommon/RandomVariables
 # INCLUDEPATH += ../simcenterAgave/interface
 
 macos:LIBS += /usr/lib/libcurl.dylib
 win32:INCLUDEPATH+=../libCurl-7.59.0/include
 win32:LIBS += ../libCurl-7.59.0/lib/libcurl.lib
 
-include(../widgets/RandomVariables/RandomVariables.pri)
-include(../widgets/Common/Common.pri)
+include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
+include(../SimCenterCommon/Common/Common.pri)
 
 SOURCES += main.cpp\
         MainWindow.cpp \
