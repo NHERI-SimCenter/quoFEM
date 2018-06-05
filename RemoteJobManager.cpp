@@ -221,8 +221,6 @@ RemoteJobManager::deleteJobAndData(void){
         //   NOTE SHOULD probably check job status not RUNNING befre doing this
         //
 
-
-
         QTableWidgetItem *itemID=jobsTable->item(triggeredRow,2);
 
         jobIDRequest = itemID->text();
@@ -262,6 +260,12 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
     }
 
      if (getJobDetailsRequest == 2) {
+
+         //
+         // the request was a getJobData
+         //    we have to download the files & then process them
+         //    note: the processing done after files have downloaded
+         //
 
          QString archiveDir;
          QString inputDir;
@@ -337,24 +341,26 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         filesToDownload.append(dakotaTAB);
 
         emit downloadFiles(filesToDownload, localFiles);
-
-        //theInterface->downloadFile(dakotaJSON, name1);
-        //theMainWindow->loadFile(name1);
-
-         // now download the output data & process it
-        //theInterface->downloadFile(dakotaOUT, name1);
-       // theInterface->downloadFile(dakotaTAB, name2);
-       // theMainWindow->processResults(name1, name2);
      }
 }
 
 void
 RemoteJobManager::downloadFilesReturn(bool result)
 {
-    qDebug() << " name1: " << name1 << "name2: " << name2 << " name3: " << name3;
-    theMainWindow->loadFile(name1);
-    theMainWindow->processResults(name2, name3);
-    this->hide();
+    //
+    // this method called only during the loading of a remote job
+    //    called as a resultt of method abive which emitted a downloadFIles(),
+    //    which itself was a result of the getJobData methid and it's emit getJobDetails signal
+    //
+
+    if (result == true) {
+        theMainWindow->loadFile(name1);
+        theMainWindow->processResults(name2, name3);
+        this->hide();
+    } else {
+        emit errorMessage("ERROR - Failed to download File - did Job finish successfully?");
+    }
+
 }
 
 void
