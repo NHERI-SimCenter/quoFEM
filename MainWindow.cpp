@@ -437,8 +437,8 @@ void MainWindow::onRunButtonClicked() {
     QString homeDIR = QDir::homePath();
     QString appDIR = qApp->applicationDirPath();
 
-    appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
-      QDir::separator() + QString("localApp");
+ //   appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
+  //    QDir::separator() + QString("localApp");
 
     //
     QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
@@ -495,9 +495,8 @@ void MainWindow::onRunButtonClicked() {
    }
 
    QDir dirToRemove(sourceDir);
-   //dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
+   dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
                                     // so to debug you can simply comment it
-
     //
     // process the results
     //
@@ -572,8 +571,8 @@ void MainWindow::onRemoteRunButtonClicked(){
     QString homeDIR = QDir::homePath();
     QString appDIR = qApp->applicationDirPath();
 
-    appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
-      QDir::separator() + QString("localApp");
+   // appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
+   //   QDir::separator() + QString("localApp");
 
     //
     QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
@@ -622,6 +621,7 @@ qDebug() << "HELLO";
     // when setup is complete, pop open the jobCreateor Widget which will allow user
     // to set some needed info before running at DesignSafe
     //
+
     jobCreator->hide();
     jobManager->hide();
     jobCreator->setInputDirectory(tDirectory);

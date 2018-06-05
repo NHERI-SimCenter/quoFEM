@@ -547,7 +547,8 @@ if (femProgram == "OpenSees" or femProgram == "OpenSees-2" or femProgram == "FEA
     f.write('results_file = \'results.out\' \n')
     f.write('work_directory directory_tag \n')
     f.write('copy_files = \'templatedir/*\' \n')
-    f.write('named \'workdir\' file_save  directory_save \n')
+#    f.write('named \'workdir\' file_save  directory_save \n')
+    f.write('named \'workdir\' \n')
     f.write('aprepro \n')
     f.write('\n')
     
