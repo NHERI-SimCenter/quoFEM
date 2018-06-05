@@ -74,7 +74,7 @@ RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
     layout->addWidget(numCPU_LineEdit,1,1);
 
     QLabel *numProcessorsLabel = new QLabel();
-    numProcessorsLabel->setText(QString("num Nodes:"));
+    numProcessorsLabel->setText(QString("num Processors:"));
     layout->addWidget(numProcessorsLabel,2,0);
 
     numProcessorsLineEdit = new QLineEdit();
@@ -89,9 +89,18 @@ RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
     runtimeLineEdit->setText("00:10:00");
     layout->addWidget(runtimeLineEdit,3,1);
 
+    QLabel *appNameLabel = new QLabel();
+    appNameLabel->setText("App Name");
+    layout->addWidget(appNameLabel,4,0);
+
+    appLineEdit = new QLineEdit();
+    //appLineEdit->setText("dakota-6.6.0");
+    appLineEdit->setText("Dakota-6.6.0.0u1");
+    layout->addWidget(appLineEdit,4,1);
+
     pushButton = new QPushButton();
     pushButton->setText("Submit");
-    layout->addWidget(pushButton,4,1);
+    layout->addWidget(pushButton,5,1);
 
     this->setLayout(layout);
 
@@ -145,8 +154,9 @@ RemoteJobCreator::uploadDirReturn(bool result)
 
         // defaults (possibly from a parameters file)
         //Dakota-6.6.0.0u1
-        job["appId"]="dakota-6.6.0";
+        //job["appId"]="dakota-6.6.0";
         //job["appId"]="Dakota-6.6.0.0u1";
+        job["appId"]=appLineEdit->text();
         job["memoryPerNode"]= "1GB";
         job["archive"]="true";
         job["archiveSystem"]="designsafe.storage.default";
@@ -169,12 +179,14 @@ RemoteJobCreator::uploadDirReturn(bool result)
         inputs["inputDirectory"]=remoteDirectory;
         job["inputs"]=inputs;
 
+        // disable the button while the job is being uploaded and started
+        pushButton->setEnabled(false);
+
         emit startJobCall(job);
 
         // now remove the tmp directory
-        theDirectory.removeRecursively();
+        //theDirectory.removeRecursively();
     }
-    pushButton->setEnabled(true);
 }
 
 
@@ -200,5 +212,5 @@ RemoteJobCreator::getHomeDirReturned(QString path){
 
 void
 RemoteJobCreator::startJobReturn(QString result) {
-  
+   pushButton->setEnabled(true);
 }

@@ -81,6 +81,7 @@ private:
     QLineEdit *numCPU_LineEdit;
     QLineEdit *numProcessorsLineEdit;
     QLineEdit *runtimeLineEdit;
+    QLineEdit *appLineEdit;
 
     AgaveCurl   *theInterface;
  //   JobManager *theManager;
