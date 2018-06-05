@@ -541,7 +541,10 @@ if (femProgram == "OpenSees" or femProgram == "OpenSees-2" or femProgram == "FEA
     f.write('interface,\n')
     #f.write('system # asynch evaluation_concurrency = 8')
     #f.write('fork asynchronous evaluation_concurrency = ' '{}'.format(numCPUs))
-    f.write('fork \n asynchronous')
+    if exeDakota in ['runningLocal']:
+        f.write('fork \n asynchronous')
+    else:
+        f.write('system # asynch evaluation_concurrency = 8')
     f.write('\nanalysis_driver = \'fem_driver\' \n')
     f.write('parameters_file = \'params.in\' \n')
     f.write('results_file = \'results.out\' \n')

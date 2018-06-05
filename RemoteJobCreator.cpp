@@ -133,6 +133,7 @@ RemoteJobCreator::pushButtonClicked(void)
 
     // upload directory under user & submit job
     //  NOTE: the job is actually submitted when the uploadDirectory returns
+    pushButton->setEnabled(false);
     emit uploadDirCall(directoryName, remoteHomeDirPath);
 }
 
@@ -213,4 +214,6 @@ RemoteJobCreator::getHomeDirReturned(QString path){
 void
 RemoteJobCreator::startJobReturn(QString result) {
    pushButton->setEnabled(true);
+   qDebug() << result;
+   this->hide();
 }
