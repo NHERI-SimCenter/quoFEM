@@ -35,7 +35,8 @@ else:
 if exeDakota in ['runningRemote']:
     OpenSeesPath = '/home1/00477/tg457427/bin/'
     fem_driver = 'fem_driver'
-    DakotaPath = ' '
+    DakotaPath = ' ' 
+    Perl = ' '
 
 print(OpenSeesPath)
 print(DakotaPath)
