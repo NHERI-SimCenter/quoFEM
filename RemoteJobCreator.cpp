@@ -187,6 +187,8 @@ RemoteJobCreator::uploadDirReturn(bool result)
 
         // now remove the tmp directory
         theDirectory.removeRecursively();
+
+
     }
 }
 
@@ -214,6 +216,6 @@ RemoteJobCreator::getHomeDirReturned(QString path){
 void
 RemoteJobCreator::startJobReturn(QString result) {
    pushButton->setEnabled(true);
-   qDebug() << result;
+   qDebug() << "RemoteJobCreator::startJobReturn returned" << result;
    this->hide();
 }
