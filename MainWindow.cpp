@@ -325,7 +325,7 @@ MainWindow::~MainWindow()
     //delete theRemoteInterface;
     thread->quit();
     theRemoteInterface->deleteLater();
-//    thread->terminate();
+
     delete jobCreator;
     delete jobManager;
 }
@@ -437,7 +437,7 @@ void MainWindow::onRunButtonClicked() {
     QString homeDIR = QDir::homePath();
     QString appDIR = qApp->applicationDirPath();
 
- //   appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
+  //   appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
   //    QDir::separator() + QString("localApp");
 
     //

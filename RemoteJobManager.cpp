@@ -54,6 +54,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <MainWindow.h>
 #include <QTemporaryFile>
 #include <QHeaderView>
+#include <QRect>
+#include <QApplication>
+#include <QDesktopWidget>
 
 #include <QMenu>
 
@@ -80,6 +83,14 @@ RemoteJobManager::RemoteJobManager(AgaveCurl *theRemoteInterface, MainWindow *th
     layout->addWidget(jobsTable, 1.0);
     //jobsTable->setSizePolicy(QSizePolicy::Ignored);
     this->setLayout(layout);
+    QRect rec = QApplication::desktop()->screenGeometry();
+
+    int height = 0.5*rec.height();
+    int width = 0.5*rec.width();
+
+    this->resize(width, height);
+
+
     //jobsTable->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
     this->setMinimumHeight(200);
@@ -290,6 +301,7 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         // create 3 temp file names neede to store remote data files locally
         //
 
+        /* name1 in following keeps failing .. just use same file names
         QTemporaryFile tmpFile1;
        // QString name1, name2, name3;
 
@@ -318,8 +330,11 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
             // will have to overwrite any local dakotaTab.out;
             name3 = "dakotaTab.out";
         }
-        name1="dakota.json";
+        */
 
+        name1="dakota.json";
+        name2="dakota.out";
+        name3="dakotaTab.out";
 
         QStringList localFiles;
         localFiles.append(name1);
@@ -360,6 +375,7 @@ RemoteJobManager::downloadFilesReturn(bool result)
     } else {
         emit errorMessage("ERROR - Failed to download File - did Job finish successfully?");
     }
+
 
 }
 

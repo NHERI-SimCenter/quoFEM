@@ -157,6 +157,7 @@ RemoteJobCreator::uploadDirReturn(bool result)
         //Dakota-6.6.0.0u1
         //job["appId"]="dakota-6.6.0";
         //job["appId"]="Dakota-6.6.0.0u1";
+
         job["appId"]=appLineEdit->text();
         job["memoryPerNode"]= "1GB";
         job["archive"]="true";
@@ -194,7 +195,6 @@ RemoteJobCreator::uploadDirReturn(bool result)
 void RemoteJobCreator::setInputDirectory(const QString &name)
 {
     directoryName = name;
-    qDebug() << "DIR NAME: " << directoryName ;
 }
 
 void
@@ -207,13 +207,11 @@ RemoteJobCreator::attemptLoginReturn(bool ok) {
 
 void
 RemoteJobCreator::getHomeDirReturned(QString path){
-    qDebug() << "RemoteJobCreator: setting remotePath: " << path;
     remoteHomeDirPath = path;
 }
 
 void
 RemoteJobCreator::startJobReturn(QString result) {
    pushButton->setEnabled(true);
-   qDebug() << result;
    this->hide();
 }
