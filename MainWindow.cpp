@@ -325,7 +325,7 @@ MainWindow::~MainWindow()
     //delete theRemoteInterface;
     thread->quit();
     theRemoteInterface->deleteLater();
-    thread->terminate();
+//    thread->terminate();
     delete jobCreator;
     delete jobManager;
 }
@@ -476,11 +476,13 @@ void MainWindow::onRunButtonClicked() {
     proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
     qDebug() << command;
+
+    //std::cerr << command << "\n";
 #else
     QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
             tmpDirectory + QString(" runningLocal");
     proc->execute("bash", QStringList() << "-c" <<  command);
-    qDebug() << command;
+    qInfo() << command;
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
     proc->waitForStarted();
@@ -496,7 +498,8 @@ void MainWindow::onRunButtonClicked() {
 
    QDir dirToRemove(sourceDir);
    dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
-                                    // so to debug you can simply comment it
+    //                                  // so to debug you can simply comment it
+
     //
     // process the results
     //
@@ -604,7 +607,7 @@ void MainWindow::onRemoteRunButtonClicked(){
     QProcess *proc = new QProcess();
 qDebug() << "HELLO";
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory;
+    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     qDebug() << command;
     proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
