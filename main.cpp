@@ -39,9 +39,48 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "MainWindow.h"
 #include <QApplication>
 #include <QFile>
+#include <QTime>
+#include <QTextStream>
+
+const QString logFilePath = "debug.log";
+bool logToFile = false;
+
+void customMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QHash<QtMsgType, QString> msgLevelHash({{QtDebugMsg, "Debug"}, {QtInfoMsg, "Info"}, {QtWarningMsg, "Warning"}, {QtCriticalMsg, "Critical"}, {QtFatalMsg, "Fatal"}});
+    QByteArray localMsg = msg.toLocal8Bit();
+    QTime time = QTime::currentTime();
+    QString formattedTime = time.toString("hh:mm:ss.zzz");
+    QByteArray formattedTimeMsg = formattedTime.toLocal8Bit();
+    QString logLevelName = msgLevelHash[type];
+    QByteArray logLevelMsg = logLevelName.toLocal8Bit();
+
+    if (logToFile) {
+        QString txt = QString("%1 %2: %3 (%4)").arg(formattedTime, logLevelName, msg,  context.file);
+        QFile outFile(logFilePath);
+        outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+        QTextStream ts(&outFile);
+        ts << txt << endl;
+        outFile.close();
+    } else {
+        fprintf(stderr, "%s %s: %s (%s:%u, %s)\n", formattedTimeMsg.constData(), logLevelMsg.constData(), localMsg.constData(), context.file, context.line, context.function);
+        fflush(stderr);
+    }
+
+    if (type == QtFatalMsg)
+        abort();
+}
+
 
 int main(int argc, char *argv[])
 {
+    QByteArray envVar = qgetenv("QTDIR");       //  check if the app is ran in Qt Creator
+
+       if (envVar.isEmpty())
+           logToFile = true;
+
+       qInstallMessageHandler(customMessageOutput);
+
     //qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
