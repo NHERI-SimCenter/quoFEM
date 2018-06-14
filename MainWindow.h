@@ -101,6 +101,12 @@ signals:
     void loadFile(const QString &fileName);
     void processResults(QString &filename1, QString & filename2);
 
+
+    void about();
+    void submitFeedback();
+    void version();
+    void copyright();
+
  private:
     void setCurrentFile(const QString &fileName);
     void createActions();
