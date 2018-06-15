@@ -81,13 +81,13 @@ AgaveCurl::AgaveCurl(QString &_tenant, QString &_storage, QObject *parent)
     // for operation the class needs two temporary files to function
     //  - either use name Qt provides or use a QUid in current dir
 
-    QUuid uniqueName = QUuid::createUuid();
-    QString strUnique = uniqueName.toString();
-    uniqueFileName1 = QCoreApplication::applicationDirPath() + QDir::separator() + strUnique.mid(1,36);
+    QUuid uniqueName1 = QUuid::createUuid();
+    QString strUnique1 = uniqueName1.toString();
+    uniqueFileName1 = QCoreApplication::applicationDirPath() + QDir::separator() + strUnique1.mid(1,36);
 
     QUuid uniqueName2 = QUuid::createUuid();
     QString strUnique2 = uniqueName2.toString();
-    uniqueFileName2 = strUnique2.mid(1,36);
+    uniqueFileName2 = QCoreApplication::applicationDirPath() + QDir::separator() + strUnique2.mid(1,36);
 
     //
     // init curl variables
@@ -129,6 +129,7 @@ AgaveCurl::~AgaveCurl()
 
   QFile file1 (uniqueFileName1);
   file1.remove();
+
   QFile file2 (uniqueFileName2);
   file2.remove();
 
