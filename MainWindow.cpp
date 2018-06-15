@@ -481,8 +481,12 @@ void MainWindow::onRunButtonClicked() {
 
     //std::cerr << command << "\n";
 #else
-    QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+   // QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+   //         tmpDirectory + QString(" runningLocal");
+
+    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
             tmpDirectory + QString(" runningLocal");
+
     proc->execute("bash", QStringList() << "-c" <<  command);
     qInfo() << command;
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
