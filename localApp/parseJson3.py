@@ -13,34 +13,34 @@ path2 = inputArgs[2]
 exeDakota = inputArgs[3]
 
 if (sys.platform == 'darwin'):
-    OpenSeesPath = '/Users/fmckenna/bin/'
-    FeapPath = '/Users/fmckenna/bin/'
-    DakotaPath = '/Users/fmckenna/dakota-6.7.0/bin/'
-    OpenSeesPath = ' ' 
-    DakotaPath = ' '
+    OpenSees = '/Users/fmckenna/bin/OpenSees'
+    Feap = '/Users/fmckenna/bin/feappv'
+    Dakota = '/Users/fmckenna/dakota-6.7.0/bin/dakota'
+    DakotaR = '/Users/fmckenna/dakota-6.7.0/bin/dprepro'
     Perl = ' '
     fem_driver = 'fem_driver'
     numCPUs = 8
 
 else:
-    OpenSeesPath = 'C:\\Users\\SimCenter\\OpenSees\\Win64\\bin\\'
-    DakotaPath = 'C:\\Users\\SimCenter\\dakota-6.7\\bin\\'
+    OpenSees = 'C:\\Users\\SimCenter\\OpenSees\\Win64\\bin\\OpenSees.exe'
+    Feap = 'C:\\Users\\SimCenter\\feap\\Feappv41.exe'
+    Dakota = 'C:\\Users\\SimCenter\\dakota-6.7\\bin\\dakota.bat'
+    DakotaR = 'C:\\Perl64\\bin\\perl C:\\Users\\SimCenter\\dakota-6.7\\bin\\dprepro.perl'
     Perl = 'C:\\Perl64\\bin\perl '
-    OpenSeesPath = ' '
-    # DakotaPath = ' '
     Perl = 'perl '
     fem_driver = 'fem_driver.bat'
     numCPUs = 8
 
 if exeDakota in ['runningRemote']:
-    OpenSeesPath = '/home1/00477/tg457427/bin/'
-    FeapPath = '/home1/00477/tg457427/bin/'
+    OpenSees = '/home1/00477/tg457427/bin/OpenSees'
+    Feap = '/home1/00477/tg457427/bin/feappv'
+    Dakota = 'dakota'
+    DakotaR = 'dprepro'
     fem_driver = 'fem_driver'
-    DakotaPath = ' ' 
     Perl = ' '
 
-print(OpenSeesPath)
-print(DakotaPath)
+print(OpenSees)
+print(Dakota)
 
 os.chdir(path2)
 cwd = os.getcwd()
@@ -621,12 +621,12 @@ if (femProgram == "OpenSees-SingleScript"):
 
     f = open(fem_driver, 'w')
     f.write(Perl)
-    f.write(DakotaPath)
-    f.write('dprepro params.in ')
+    f.write(DakotaR)
+    f.write(' params.in ')
     f.write(inputFile)
     f.write(' SimCenterInput.tcl\n')
-    f.write(OpenSeesPath)
-    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
+    f.write(OpenSees)
+    f.write(' SimCenterInput.tcl >> ops.out\n')
     f.close()
 
 if (femProgram == "OpenSees"):
@@ -652,10 +652,10 @@ if (femProgram == "OpenSees"):
 
     f = open(fem_driver, 'w')
     f.write(Perl)
-    f.write(DakotaPath)
-    f.write('dprepro params.in SimCenterParams.template SimCenterParamIN.ops\n')
-    f.write(OpenSeesPath)
-    f.write('OpenSees SimCenterInput.ops >> ops.out\n')
+    f.write(DakotaR)
+    f.write(' params.in SimCenterParams.template SimCenterParamIN.ops\n')
+    f.write(OpenSees)
+    f.write(' SimCenterInput.ops >> ops.out\n')
     #    f.write('dprepro params.in %s SimCenterInput.tcl\n' %inputFile)
     #    f.write(OpenSeesPath)
     #    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
@@ -670,10 +670,10 @@ if (femProgram == "OpenSees"):
     os.chdir(path1)
     f = open(fem_driver, 'w')
     f.write(Perl)
-    f.write(DakotaPath)
-    f.write('dprepro params.in SimCenterParams.template SimCenterParamIN.ops\n')
-    f.write(OpenSeesPath)
-    f.write('OpenSees SimCenterInput.ops >> ops.out\n')
+    f.write(DakotaR)
+    f.write(' params.in SimCenterParams.template SimCenterParamIN.ops\n')
+    f.write(OpenSees)
+    f.write(' SimCenterInput.ops >> ops.out\n')
     #    f.write('dprepro params.in %s SimCenterInput.tcl\n' %inputFile)
     #    f.write(OpenSeesPath)
     #    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
@@ -702,13 +702,13 @@ if (femProgram == "FEAPpv"):
     os.chdir(path1)
     f = open(fem_driver, 'w')
     f.write(Perl)
-    f.write(DakotaPath)
-    f.write('dprepro params.in ')
+    f.write(DakotaR)
+    f.write(' params.in ')
     f.write(inputFile)
     f.write(' SimCenterIn.txt --output-format=\'\%10.5f\'\n')
     f.write('echo y|')
-    f.write(FeapPath)
-    f.write('feappv\n')
+    f.write(Feap)
+    f.write(' \n')
     f.write('python ')
     f.write(postprocessScript)
     for i in range(numResponses):
@@ -720,7 +720,7 @@ if (femProgram == "FEAPpv"):
 
 os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
-command = DakotaPath + 'dakota -input dakota.in -output dakota.out -error dakota.err'
+command = Dakota + ' -input dakota.in -output dakota.out -error dakota.err'
 print(command)
 #os.popen("/Users/fmckenna/dakota-6.7.0/bin/dakota -input dakota.in -output dakota.out -error dakota.err").read()
 
