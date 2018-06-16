@@ -17,7 +17,6 @@ if (sys.platform == 'darwin'):
     Feap = '/Users/fmckenna/bin/feappv'
     Dakota = '/Users/fmckenna/dakota-6.7.0/bin/dakota'
     DakotaR = '/Users/fmckenna/dakota-6.7.0/bin/dprepro'
-    Perl = ' '
     fem_driver = 'fem_driver'
     numCPUs = 8
 
@@ -35,14 +34,9 @@ if exeDakota in ['runningRemote']:
     Dakota = 'dakota'
     DakotaR = 'dprepro'
     fem_driver = 'fem_driver'
-    Perl = ' '
-
-print(OpenSees)
-print(Dakota)
 
 os.chdir(path2)
 cwd = os.getcwd()
-#print cwd
 
 #
 # open file
@@ -110,12 +104,8 @@ betaUncertainLower =[];
 betaUncertainHigher =[];
 betaUncertainAlphas =[];
 
-print("-----------------")
-print(data)
-print("-----------------")
-
 for k in data["randomVariables"]:
-    if (k["distribution"] == "Normal"):
+    if (k["distribution"] == 'Normal'):
         uncertainName.append(k["name"])
         numUncertain += 1
         normalUncertainName.append(k["name"])
@@ -182,6 +172,9 @@ for k in data["randomVariables"]:
         betaUncertainBetas.append(k["betas"])
         numBetaUncertain += 1
 
+#print("-----------------")
+#print(data)
+#print("-----------------")
 
 #
 # Write the dakota input file: dakota.in 
@@ -544,7 +537,7 @@ if (femProgram == "OpenSees" or femProgram == "OpenSees-2" or femProgram == "FEA
     #f.write('system # asynch evaluation_concurrency = 8')
     #f.write('fork asynchronous evaluation_concurrency = ' '{}'.format(numCPUs))
     if exeDakota in ['runningLocal']:
-        f.write('fork asynchronous evaluation_concurrency = 8')
+        f.write("fork \n asynchronous evaluation_concurrency = %d" % numCPUs)
     else:
         f.write('fork \n asynchronous')
     f.write('\nanalysis_driver = \'fem_driver\' \n')
@@ -656,10 +649,12 @@ if (femProgram == "OpenSees"):
     #    f.write(OpenSeesPath)
     #    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
     f.write('python ')
-    f.write(postprocessScript)
+    f.write("%s " % postprocessScript)
+    #    f.write(postprocessScript)
     for i in range(numResponses):
-        f.write(' ')
-        f.write(responseDescriptors[i])    
+        #        f.write(' ')
+        #        f.write(responseDescriptors[i])    
+        f.write("%s " %responseDescriptors[i])
     f.write('\n')
     f.close()
 	
@@ -673,11 +668,13 @@ if (femProgram == "OpenSees"):
     #    f.write(OpenSeesPath)
     #    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
     f.write('python ')
-    f.write(postprocessScript)
+    f.write("%s " % postprocessScript)
     for i in range(numResponses):
-        f.write(' ')
-        f.write(responseDescriptors[i])    
-    f.write('\n')
+        #        f.write(' ')
+        #        f.write(responseDescriptors[i])    
+        #    f.write('\n')
+        f.write("%s " %responseDescriptors[i])    
+
     f.close()
 
 if (femProgram == "FEAPpv"):
