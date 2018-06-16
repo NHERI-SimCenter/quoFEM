@@ -25,9 +25,7 @@ else:
     OpenSees = 'C:\\Users\\SimCenter\\OpenSees\\Win64\\bin\\OpenSees.exe'
     Feap = 'C:\\Users\\SimCenter\\feap\\Feappv41.exe'
     Dakota = 'C:\\Users\\SimCenter\\dakota-6.7\\bin\\dakota.bat'
-    DakotaR = 'C:\\Perl64\\bin\\perl C:\\Users\\SimCenter\\dakota-6.7\\bin\\dprepro.perl'
-    Perl = 'C:\\Perl64\\bin\perl '
-    Perl = 'perl '
+    DakotaR = 'python C:\\Users\\SimCenter\\dakota-6.7\\bin\\dprepro'
     fem_driver = 'fem_driver.bat'
     numCPUs = 8
 
@@ -620,7 +618,6 @@ if (femProgram == "OpenSees-SingleScript"):
     os.chdir(path1)
 
     f = open(fem_driver, 'w')
-    f.write(Perl)
     f.write(DakotaR)
     f.write(' params.in ')
     f.write(inputFile)
@@ -651,7 +648,6 @@ if (femProgram == "OpenSees"):
     f.close()
 
     f = open(fem_driver, 'w')
-    f.write(Perl)
     f.write(DakotaR)
     f.write(' params.in SimCenterParams.template SimCenterParamIN.ops\n')
     f.write(OpenSees)
@@ -669,7 +665,6 @@ if (femProgram == "OpenSees"):
 	
     os.chdir(path1)
     f = open(fem_driver, 'w')
-    f.write(Perl)
     f.write(DakotaR)
     f.write(' params.in SimCenterParams.template SimCenterParamIN.ops\n')
     f.write(OpenSees)
@@ -701,7 +696,6 @@ if (femProgram == "FEAPpv"):
     
     os.chdir(path1)
     f = open(fem_driver, 'w')
-    f.write(Perl)
     f.write(DakotaR)
     f.write(' params.in ')
     f.write(inputFile)
