@@ -544,7 +544,7 @@ if (femProgram == "OpenSees" or femProgram == "OpenSees-2" or femProgram == "FEA
     #f.write('system # asynch evaluation_concurrency = 8')
     #f.write('fork asynchronous evaluation_concurrency = ' '{}'.format(numCPUs))
     if exeDakota in ['runningLocal']:
-        f.write('system # asynch evaluation_concurrency = 8')
+        f.write('fork asynchronous evaluation_concurrency = 8')
     else:
         f.write('fork \n asynchronous')
     f.write('\nanalysis_driver = \'fem_driver\' \n')
