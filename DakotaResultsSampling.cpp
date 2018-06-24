@@ -108,6 +108,12 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
+    int numEDP = theNames.count();
+
+    // quick return .. noEDP -> no analysis done -> no results out
+    if (numEDP == 0)
+      return true;
+
     jsonObject["resultType"]=QString(tr("DakotaResultsSampling"));
 
     //
@@ -115,7 +121,6 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
     //
 
     QJsonArray resultsData;
-    int numEDP = theNames.count();
     for (int i=0; i<numEDP; i++) {
         QJsonObject edpData;
         edpData["name"]=theNames.at(i);

@@ -69,6 +69,8 @@ public:
     DakotaResults *getResults(void);
     RandomVariableInputWidget  *getParameters();
 
+    int getMaxNumParallelTasks(void);
+
 signals:
 
 public slots:

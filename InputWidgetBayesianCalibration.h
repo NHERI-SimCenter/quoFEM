@@ -61,6 +61,7 @@ public:
     explicit InputWidgetBayesianCalibration(QWidget *parent = 0);
     ~InputWidgetBayesianCalibration();
 
+    int getMaxNumParallelTasks(void);
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 

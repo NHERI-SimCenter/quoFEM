@@ -51,6 +51,7 @@ public:
     explicit InputWidgetDakotaMethod(QWidget *parent = 0);
     virtual ~InputWidgetDakotaMethod();
 
+    virtual int getMaxNumParallelTasks(void) =0;
     virtual bool outputToJSON(QJsonObject &rvObject) =0;
     virtual bool inputFromJSON(QJsonObject &rvObject) =0;
 

@@ -151,7 +151,7 @@ bool
 InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
 {
     this->clear();
-    qDebug() << jsonObject;
+
     if (jsonObject.contains("fem")) {
 
         QJsonObject fem = jsonObject["fem"].toObject();

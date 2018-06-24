@@ -55,7 +55,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
-    : QWidget(parent), theInterface(theInt)
+    : QWidget(parent), theInterface(theInt),maxParallel(1)
 {
     QGridLayout *layout = new QGridLayout();
     QLabel *nameLabel = new QLabel();
@@ -86,7 +86,7 @@ RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
     layout->addWidget(runtimeLabel,3,0);
 
     runtimeLineEdit = new QLineEdit();
-    runtimeLineEdit->setText("00:10:00");
+    runtimeLineEdit->setText("00:20:00");
     layout->addWidget(runtimeLineEdit,3,1);
 
     QLabel *appNameLabel = new QLabel();
@@ -120,12 +120,29 @@ RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
     connect(theInterface, SIGNAL(uploadDirectoryReturn(bool)), this, SLOT(uploadDirReturn(bool)));
     connect(this,SIGNAL(startJobCall(QJsonObject)),theInterface,SLOT(startJobCall(QJsonObject)));
     connect(theInterface,SIGNAL(startJobReturn(QString)), this, SLOT(startJobReturn(QString)));
+}
 
+void 
+RemoteJobCreator::setMaxNumParallelProcesses(int max) {
+  maxParallel = max;
+  qDebug() << "MAX SET: " << max;
+  numProcessorsLineEdit->setText("32");
+  if (numProcessorsLineEdit->text().toInt() > maxParallel)
+    numProcessorsLineEdit->setText(QString::number(max));
 }
 
 void
 RemoteJobCreator::pushButtonClicked(void)
 {
+  int numProcesses =numCPU_LineEdit->text().toInt() * numProcessorsLineEdit->text().toInt();
+  if (numProcesses > maxParallel) {
+    QString errorMsg = QString("ERROR - Too many Parallel Tasks Specified - max allowed from UQ Method is: " )
+            + QString::number(maxParallel);
+    emit errorMessage(errorMsg);
+    return;
+  }
+  qDebug() << "processors set (cpu * numProcesses): " << numProcesses << " max tasks: " << maxParallel;
+
     QDir theDirectory(directoryName);
     QString dirName = theDirectory.dirName();
 

@@ -118,6 +118,11 @@ InputWidgetCalibration::~InputWidgetCalibration()
 }
 
 
+int 
+InputWidgetCalibration::getMaxNumParallelTasks(void){
+  return 1;
+}
+
 void InputWidgetCalibration::clear(void)
 {
 

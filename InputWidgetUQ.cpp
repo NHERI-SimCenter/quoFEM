@@ -113,6 +113,16 @@ void InputWidgetUQ::clear(void)
 }
 
 
+int
+ InputWidgetUQ::getNumParallelTasks(void)
+{
+  if (dakotaMethod == 0)
+    return 0;
+    
+  return dakotaMethod->getMaxNumParallelTasks();
+}
+
+
 
 bool
 InputWidgetUQ::outputToJSON(QJsonObject &jsonObject)

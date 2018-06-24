@@ -62,6 +62,7 @@ public:
     explicit InputWidgetCalibration(QWidget *parent = 0);
     ~InputWidgetCalibration();
 
+    int getMaxNumParallelTasks(void);
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
