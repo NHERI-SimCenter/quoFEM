@@ -120,6 +120,10 @@ InputWidgetBayesianCalibration::~InputWidgetBayesianCalibration()
 
 }
 
+int 
+InputWidgetBayesianCalibration::getMaxNumParallelTasks(void){
+  return 1;
+}
 
 void InputWidgetBayesianCalibration::clear(void)
 {

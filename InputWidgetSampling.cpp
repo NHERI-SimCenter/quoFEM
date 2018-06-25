@@ -138,6 +138,10 @@ InputWidgetSampling::~InputWidgetSampling()
 
 }
 
+int 
+InputWidgetSampling::getMaxNumParallelTasks(void){
+  return numSamples->text().toInt();
+}
 
 void InputWidgetSampling::clear(void)
 {

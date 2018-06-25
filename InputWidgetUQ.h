@@ -64,6 +64,7 @@ public:
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
+    int getNumParallelTasks(void);
     int processResults(QString &filenameResults, QString &filenameTab);
 
     virtual DakotaResults *getResults(void);

@@ -275,6 +275,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(random,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(results,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(jobManager,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(jobCreator,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
 
     // login
     connect(loginButton,SIGNAL(clicked(bool)),this,SLOT(onLoginButtonClicked()));
@@ -474,21 +476,21 @@ void MainWindow::onRunButtonClicked() {
 
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
-   qDebug() << command;
+    qDebug() << command;
     proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
-    qDebug() << command;
 
-    //std::cerr << command << "\n";
 #else
-   QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
-            tmpDirectory + QString(" runningLocal");
+   QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+     tmpDirectory + QString(" runningLocal");
 
     //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
     //        tmpDirectory + QString(" runningLocal");
 
     proc->execute("bash", QStringList() << "-c" <<  command);
+
     qInfo() << command;
+
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
     proc->waitForStarted();
@@ -504,7 +506,7 @@ void MainWindow::onRunButtonClicked() {
 
    QDir dirToRemove(sourceDir);
    dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
-    //                                  // so to debug you can simply comment it
+                                    // so to debug you can simply comment it
 
     //
     // process the results
@@ -611,7 +613,6 @@ void MainWindow::onRemoteRunButtonClicked(){
     //
 
     QProcess *proc = new QProcess();
-qDebug() << "HELLO";
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     qDebug() << command;
@@ -619,7 +620,7 @@ qDebug() << "HELLO";
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
 
 #else
-    QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
+    QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     proc->execute("bash", QStringList() << "-c" <<  command);
     qDebug() << command;
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
@@ -634,6 +635,7 @@ qDebug() << "HELLO";
     jobCreator->hide();
     jobManager->hide();
     jobCreator->setInputDirectory(tDirectory);
+    jobCreator->setMaxNumParallelProcesses(uq->getNumParallelTasks());
     jobCreator->show();
 }
 
@@ -729,8 +731,8 @@ MainWindow::logoutReturn(bool ok){
 
 
 void MainWindow::onExitButtonClicked(){
-    RandomVariableInputWidget *theParameters = uq->getParameters();
-    QApplication::quit();
+  //RandomVariableInputWidget *theParameters = uq->getParameters();
+  QApplication::quit();
 }
 
 void MainWindow::onDakotaMethodChanged(void) {
@@ -863,7 +865,6 @@ void MainWindow::loadFile(const QString &fileName)
         return;
     }
 
-
     // given the json object, create the C++ objects
     //inputWidget->inputFromJSON(jsonObj);
     if (fem->inputFromJSON(jsonObj) != true)
@@ -872,6 +873,12 @@ void MainWindow::loadFile(const QString &fileName)
         return;
     if (random->inputFromJSON(jsonObj) != true)
         return;
+
+    qDebug() << "uq->getResults()";
+    DakotaResults *result=uq->getResults();
+    results->setResultWidget(result);
+    qDebug() << "results - inputFRomJSON";
+
     if (results->inputFromJSON(jsonObj) != true)
         return;
 
@@ -887,6 +894,8 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
     result->processResults(dakotaIN, dakotaTAB);
     results->setResultWidget(result);
     inputWidget->setSelection(QString("Results"));
+
+    errorMessage(" ");
 }
 
 void MainWindow::createActions() {

@@ -58,12 +58,14 @@ class RemoteJobCreator : public QWidget
 public:
     explicit RemoteJobCreator(AgaveCurl *, QWidget *parent = nullptr);
     void setInputDirectory(const QString & directoryName);
+    void setMaxNumParallelProcesses(int);
 
 signals:
    void getHomeDirCall(void);
    void uploadDirCall(const QString &local, const QString &remote);
    void startJobCall(QJsonObject theJob);
    void successfullJobStart(void);
+   void errorMessage(QString);
 
 public slots:
     void attemptLoginReturn(bool);
@@ -91,6 +93,7 @@ private:
 
     QString remoteHomeDirPath;
     QJsonObject theJob;
+    int maxParallel;
 };
 
 #endif // REMOTEJOBCREATOR_H

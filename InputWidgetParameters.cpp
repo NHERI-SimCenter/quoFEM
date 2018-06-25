@@ -67,7 +67,7 @@ InputWidgetParameters::outputToJSON(QJsonObject &jsonObject)
 bool
 InputWidgetParameters::inputFromJSON(QJsonObject &jsonObject)
 {   
-  qDebug() << "InputWidgetParameters::inputFromJSON";
+  //qDebug() << "InputWidgetParameters::inputFromJSON";
   if (theParameters != 0) 
     return theParameters->inputFromJSON(jsonObject);
   return true;
