@@ -107,7 +107,7 @@ EDP::isSelectedForRemoval(void)
 }
 
 bool EDP::outputToJSON(QJsonObject &jsonObject){
-    jsonObject["name"]=variableName->text();
+    jsonObject["name"]=variableName->text().simplified();
     if (resultsSet == true) {
         jsonObject["mean"]=mean->text().toDouble();
         jsonObject["stdDev"]=stdDev->text().toDouble();
@@ -117,7 +117,7 @@ bool EDP::outputToJSON(QJsonObject &jsonObject){
 
 bool EDP::inputFromJSON(QJsonObject &jsonObject){
     QJsonValue theMeanValue = jsonObject["name"];
-    variableName->setText(theMeanValue.toString());
+    variableName->setText(theMeanValue.toString().simplified());
 
     if (jsonObject.contains("mean")) {
         // add mean and stdDevl labels
