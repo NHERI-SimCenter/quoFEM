@@ -141,7 +141,7 @@ RemoteJobCreator::pushButtonClicked(void)
     emit errorMessage(errorMsg);
     return;
   }
-  qDebug() << "processors set (cpu * numProcesses): " << numProcesses << " max tasks: " << maxParallel;
+ // qDebug() << "processors set (cpu * numProcesses): " << numProcesses << " max tasks: " << maxParallel;
 
     QDir theDirectory(directoryName);
     QString dirName = theDirectory.dirName();

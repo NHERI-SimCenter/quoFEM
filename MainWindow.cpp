@@ -1035,15 +1035,13 @@ void MainWindow::about()
 {
     QString textAbout = "\
               This is the open-source uqFEM tool. It is an application intended to augment finite element applications with\
-              sampling and optimization methods. These methods will allow users to provide for example uncertainty\
-             quantification in the responses generated and parameter estimation in the input variables in calibration studies.\
+              sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
+             quantification in the structural responses and parameter estimation of input variables in calibration studies.\
              <p>\
-             Version 1 of this till utilizes the Dakota software to provide the UQ and optimization methods. Each of these\
-             methods will repeatedly invoke the Finite Element application on either locally on the users dekstp machine or remotely\
-             on HPC resources at the Texas Advanced Computing Center throgh the NHERI DesignSafe cyberinfrastructure.\
+             Version 1.0 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
+             will repeatedly invoke the finite element application either locally on the users dekstop machine or remotely\
+             on high performance computing resources at the Texas Advanced Computing Center through the NHERI DesignSafe cyberinfrastructure.\
              <p>\
-             The tool does not limit the capabilities provided by these applications, and as such, does not stop the user from doing\
-             stupid things.<p>\
             ";
 
             QMessageBox msgBox;
