@@ -332,6 +332,7 @@ MainWindow::~MainWindow()
 
     delete jobCreator;
     delete jobManager;
+    //    delete theRemoteInterface;
 }
 
 bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory)
