@@ -57,6 +57,8 @@ class RemoteJobManager;
 class QPushButton;
 class QLabel;
 class QThread;
+class QNetworkAccessManager;
+class QNetworkReply;
 
 class MainWindow : public QMainWindow
 {
@@ -135,6 +137,7 @@ signals:
     QPushButton *loginSubmitButton;   // submit button on login screen
 
     QThread *thread;
+    QNetworkAccessManager *manager;
 };
 
 #endif // MAINWINDOW_H
