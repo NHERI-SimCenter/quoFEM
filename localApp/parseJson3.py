@@ -675,34 +675,61 @@ if (femProgram == "OpenSees"):
 if (femProgram == "FEAPpv"):
 
     inputFile = femData["mainInput"];    
-    postprocessScript = femData["mainPostprocessScript"];    
-
-    f = io.open('feapname', 'w', newline='\n')
-    f.write(unicode('SimCenterIn.txt   \n'))
-    f.write(unicode('SimCenterOut.txt   \n'))
-    f.write(unicode('SimCenterR.txt   \n'))
-    f.write(unicode('SimCenterR.txt   \n'))
-    f.write(unicode('NONE   \n'))
-    f.write(unicode('\n'))
-    f.close()
+    postprocessScript = femData["mainPostprocessScript"];
     
-    os.chdir(path1)
-    f = io.open(fem_driver, 'w', newline='\n')
-    f.write(unicode(DakotaR))
-    f.write(unicode(' params.in '))
-    f.write(unicode(inputFile))
-    f.write(unicode(' SimCenterIn.txt --output-format=\'\%10.5f\'\n'))
-    f.write(unicode('echo y|'))
-    f.write(unicode(Feap))
-    f.write(unicode(' \n'))
-    f.write(unicode('python '))
-    f.write(unicode(postprocessScript))
-    for i in range(numResponses):
-        f.write(unicode(' '))
-        f.write(unicode(responseDescriptors[i]))
-                                   
-    f.write(unicode('\n'))
-    f.close()
+    if (sys.version_info > (3, 0)):
+        f = open('feapname', 'w')
+        f.write('SimCenterIn.txt   \n')
+        f.write('SimCenterOut.txt   \n')
+        f.write('SimCenterR.txt   \n')
+        f.write('SimCenterR.txt   \n')
+        f.write('NONE   \n')
+        f.write('\n')
+        f.close()
+        
+        os.chdir(path1)
+        f = open(fem_driver, 'w', newline='\n')
+        f.write(DakotaR)
+        f.write(' params.in ')
+        f.write(inputFile)
+        f.write(' SimCenterIn.txt --output-format=\'\%10.5f\'\n')
+        f.write('echo y|')
+        f.write(Feap)
+        f.write(' \n')
+        f.write('python ')
+        f.write("%s " % postprocessScript)
+        for i in range(numResponses):
+            f.write("%s " %responseDescriptors[i])                                   
+        f.write('\n')
+        f.close()
+        
+    else:     
+        f = io.open('feapname', 'w', newline='\n')
+        f.write(unicode('SimCenterIn.txt   \n'))
+        f.write(unicode('SimCenterOut.txt   \n'))
+        f.write(unicode('SimCenterR.txt   \n'))
+        f.write(unicode('SimCenterR.txt   \n'))
+        f.write(unicode('NONE   \n'))
+        f.write(unicode('\n'))
+        f.close()
+        
+        os.chdir(path1)
+        f = io.open(fem_driver, 'w', newline='\n')
+        f.write(unicode(DakotaR))
+        f.write(unicode(' params.in '))
+        f.write(unicode(inputFile))
+        f.write(unicode(' SimCenterIn.txt --output-format=\'\%10.5f\'\n'))
+        f.write(unicode('echo y|'))
+        f.write(unicode(Feap))
+        f.write(unicode(' \n'))
+        f.write(unicode('python '))
+        f.write(unicode(postprocessScript))
+        for i in range(numResponses):
+            f.write(unicode(' '))
+            f.write(unicode(responseDescriptors[i]))
+                                       
+        f.write(unicode('\n'))
+        f.close()
 
 os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
