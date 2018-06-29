@@ -127,15 +127,21 @@ AgaveCurl::~AgaveCurl()
     curl_slist_free_all(slist1);
     slist1 = NULL;
 
-  QFile file1 (uniqueFileName1);
-  file1.remove();
+    //
+    // remove temporary files
+    //
 
-  QFile file2 (uniqueFileName2);
-  file2.remove();
+    QFile file1 (uniqueFileName1);
+    file1.remove();
+    
+    QFile file2 (uniqueFileName2);
+    file2.remove();
 
-  //delete proc;
-  
-  curl_easy_cleanup(hnd);
+    //
+    // finally invoke cleanup
+    //
+
+    curl_easy_cleanup(hnd);
 }
 
 bool 

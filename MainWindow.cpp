@@ -317,19 +317,29 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->createActions();
 
+    //
+    // create QThread in which the Interface will work, move interface to it,
+    // connect slots to thread to quit and invoke interface destructor & start running
+    //
+
     thread = new QThread();
     theRemoteInterface->moveToThread(thread);
 
+    connect(thread, SIGNAL(finished()), theRemoteInterface, SLOT(deleteLater()));
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
     thread->start();
 
     //
+    // at startup make some URL calls to cleect tool stats
+    //
+
     manager = new QNetworkAccessManager(this);
 
     connect(manager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(replyFinished(QNetworkReply*)));
 
+    // send get to my simple counter
     manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/uqFEM/use.php")));
 
     //
@@ -356,20 +366,21 @@ MainWindow::MainWindow(QWidget *parent)
     requestParams += "&ec=uqFEM";   // event category
     requestParams += "&ea=start"; // event action
 
-    // send request via post method
+    // send post to google-analytics
     manager->post(request, requestParams.toStdString().c_str());
 }
 
 MainWindow::~MainWindow()
 {
-    // invoke destructor as AgaveCLI not a QObject
-    //delete theRemoteInterface;
+    //
+    // call quit on thread and deleteLater on interface
+    // -interface destructor called here
     thread->quit();
     theRemoteInterface->deleteLater();
 
+    // destroy objects we created
     delete jobCreator;
     delete jobManager;
-    //    delete theRemoteInterface;
     delete manager;
 }
 

@@ -42,6 +42,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QTime>
 #include <QTextStream>
 
+ // customMessgaeOutput code from web:
+ // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
+
 const QString logFilePath = "debug.log";
 bool logToFile = false;
 
@@ -74,28 +77,49 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
-    QByteArray envVar = qgetenv("QTDIR");       //  check if the app is ran in Qt Creator
+  //
+  // set up logging of output messages for user debugging
+  //
 
-       if (envVar.isEmpty())
-           logToFile = true;
+  // remove old log file
+  QFile debugFile("debug.log");
+  debugFile.remove();
 
-       qInstallMessageHandler(customMessageOutput);
+  QByteArray envVar = qgetenv("QTDIR");       //  check if the app is run in Qt Creator
+  
+  if (envVar.isEmpty())
+    logToFile = true;
+  
+  qInstallMessageHandler(customMessageOutput);
 
-    //qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+  // window scaling for mac
+  //qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
+  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+  //
+  // start Qt mainwindow per normal
+  //
 
-    QFile file(":/styleCommon/style.qss");
-    if(file.open(QFile::ReadOnly)) {
-       QString styleSheet = QLatin1String(file.readAll());
-       a.setStyleSheet(styleSheet);
-    }
+  QApplication a(argc, argv);
+  MainWindow w;
+  w.show();
+  
+  //
+  // deal with simcenter style sheets
+  //
 
-w.setStyleSheet("QLineEdit {background: #FFFFFF;}");
-w.setStyleSheet("QComboBox {background: #FFFFFF;} QLineEdit {background: #FFFFFF}");
+  QFile file(":/styleCommon/style.qss");
+  if(file.open(QFile::ReadOnly)) {
+    QString styleSheet = QLatin1String(file.readAll());
+    a.setStyleSheet(styleSheet);
+  }
+  
+  w.setStyleSheet("QLineEdit {background: #FFFFFF;}");
+  w.setStyleSheet("QComboBox {background: #FFFFFF;} QLineEdit {background: #FFFFFF}");
+  
+  //
+  // exe application event-loop
+  //
 
-   return a.exec();
+  return a.exec();
 }
