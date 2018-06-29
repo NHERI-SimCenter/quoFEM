@@ -85,7 +85,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RemoteJobCreator.h>
 #include <RemoteJobManager.h>
 #include <QThread>
-
+#include <QSettings>
 #include <QDesktopServices>
 
 /*
@@ -125,7 +125,20 @@ MainWindow::fatalMessage(const QString msg){
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), loggedIn(false)
 {
-   // theOneStaticMainWindow = this;
+    //
+    // user settings
+    //
+    QSettings settings("SimCenter", "uqFEM");
+    QVariant savedValue = settings.value("uuid");
+    QUuid uuid;
+    if (savedValue.isNull()) {
+        uuid = QUuid::createUuid();
+        settings.setValue("uuid",uuid);
+    } else
+        uuid =savedValue.toUuid();
+
+    qDebug() << "UUID: " << uuid.toString();
+
 
     //
     // create the interface, jobCreator and jobManager
@@ -356,7 +369,7 @@ MainWindow::MainWindow(QWidget *parent)
     // setup parameters of request
     QString requestParams;
     QString hostname = QHostInfo::localHostName() + "." + QHostInfo::localDomainName();
-    QUuid uuid = QUuid::createUuid();
+    //QUuid uuid = QUuid::createUuid();
     requestParams += "v=1"; // version of protocol
     requestParams += "&tid=UA-121636495-1"; // Google Analytics account
     requestParams += "&cid=" + uuid.toString(); // unique user identifier
