@@ -128,6 +128,7 @@ MainWindow::MainWindow(QWidget *parent)
     //
     // user settings
     //
+
     QSettings settings("SimCenter", "uqFEM");
     QVariant savedValue = settings.value("uuid");
     QUuid uuid;
@@ -136,8 +137,6 @@ MainWindow::MainWindow(QWidget *parent)
         settings.setValue("uuid",uuid);
     } else
         uuid =savedValue.toUuid();
-
-    qDebug() << "UUID: " << uuid.toString();
 
 
     //
