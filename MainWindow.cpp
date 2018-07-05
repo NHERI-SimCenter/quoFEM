@@ -374,7 +374,7 @@ MainWindow::MainWindow(QWidget *parent)
     requestParams += "&cid=" + uuid.toString(); // unique user identifier
     requestParams += "&t=event";  // hit type = event others pageview, exception
     requestParams += "&an=uqFEM"; // app name
-    requestParams += "&av=1.0.0"; // app version
+    requestParams += "&av=1.0.1"; // app version
     requestParams += "&ec=uqFEM";   // event category
     requestParams += "&ea=start"; // event action
 
@@ -1090,7 +1090,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 1.0.0 "));
+                       tr("Version 1.0.1 "));
 }
 
 void MainWindow::about()
