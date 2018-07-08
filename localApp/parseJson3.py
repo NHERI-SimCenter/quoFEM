@@ -155,7 +155,7 @@ for k in data["randomVariables"]:
         continuousDesignName.append(k["name"])
         continuousDesignLower.append(k["lowerbound"])
         continuousDesignUpper.append(k["upperbound"])
-        continuousDesignInitialPoint.append(k["initialpoint"])
+        continuousDesignInitialPoint.append(k["initialPoint"])
         numContinuousDesign += 1
     elif (k["distribution"] == "Weibull"):
         uncertainName.append(k["name"])
@@ -195,6 +195,7 @@ for k in data["randomVariables"]:
         normalUncertainMean.append(0.0)
         normalUncertainStdDev.append(1.0)
         numNormalUncertain += 1
+
 
 #
 # Write the dakota input file: dakota.in 
@@ -713,6 +714,7 @@ if (femProgram == "OpenSees-SingleScript"):
     os.chdir(path1)
 
     f = open(fem_driver, 'w')
+
     if(check_sampling_for_fem_driver==True and numUserDefUncertain>0):
         f.write("python UserDefinedTransformation.py \n")
     f.write(Perl)
