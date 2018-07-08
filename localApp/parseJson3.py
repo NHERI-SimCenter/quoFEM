@@ -4,6 +4,7 @@ import os
 import sys
 import stat
 import shutil
+import numpy as np
 from pprint import pprint
 
 inputArgs = sys.argv
@@ -14,30 +15,38 @@ path2 = inputArgs[2]
 exeDakota = inputArgs[3]
 
 if (sys.platform == 'darwin'):
-    OpenSees = '/Users/fmckenna/bin/OpenSees'
-    Feap = '/Users/fmckenna/bin/feappv'
-    Dakota = '/Users/fmckenna/dakota-6.7.0/bin/dakota'
-    DakotaR = '/Users/fmckenna/dakota-6.7.0/bin/dprepro'
+    OpenSeesPath = '/Users/fmckenna/bin/'
+    FeapPath = '/Users/fmckenna/bin/'
+    DakotaPath = '/Users/fmckenna/dakota-6.7.0/bin/'
+    OpenSeesPath = ' ' 
+    DakotaPath = ' '
+    Perl = ' '
     fem_driver = 'fem_driver'
     numCPUs = 8
 
 else:
-    OpenSees = 'C:\\Users\\SimCenter\\OpenSees\\Win64\\bin\\OpenSees.exe'
-    Feap = 'C:\\Users\\SimCenter\\feap\\Feappv41.exe'
-    Dakota = 'C:\\Users\\SimCenter\\dakota-6.7\\bin\\dakota.bat'
-    DakotaR = 'python C:\\Users\\SimCenter\\dakota-6.7\\bin\\dprepro'
+    OpenSeesPath = 'C:\\Users\\nikhil\\Downloads\\OpenSees2.5.0-x64\\'
+    DakotaPath = 'C:\\Users\\nikhil\\Desktop\\dakota-6.7-release-public-Windows.x86-UI\\bin\\'
+    Perl = 'C:\\Perl64\\bin\perl '
+    OpenSeesPath = ' '
+    # DakotaPath = ' '
+    Perl = 'perl '
     fem_driver = 'fem_driver.bat'
     numCPUs = 8
 
 if exeDakota in ['runningRemote']:
-    OpenSees = '/home1/00477/tg457427/bin/OpenSees'
-    Feap = '/home1/00477/tg457427/bin/feappv'
-    Dakota = 'dakota'
-    DakotaR = 'dprepro'
+    OpenSeesPath = '/home1/00477/tg457427/bin/'
+    FeapPath = '/home1/00477/tg457427/bin/'
     fem_driver = 'fem_driver'
+    DakotaPath = ' ' 
+    Perl = ' '
+
+print(OpenSeesPath)
+print(DakotaPath)
 
 os.chdir(path2)
 cwd = os.getcwd()
+#print cwd
 
 #
 # open file
@@ -105,8 +114,12 @@ betaUncertainLower =[];
 betaUncertainHigher =[];
 betaUncertainAlphas =[];
 
+print("-----------------")
+print(data)
+print("-----------------")
+
 for k in data["randomVariables"]:
-    if (k["distribution"] == 'Normal'):
+    if (k["distribution"] == "Normal"):
         uncertainName.append(k["name"])
         numUncertain += 1
         normalUncertainName.append(k["name"])
@@ -140,7 +153,7 @@ for k in data["randomVariables"]:
         continuousDesignName.append(k["name"])
         continuousDesignLower.append(k["lowerbound"])
         continuousDesignUpper.append(k["upperbound"])
-        continuousDesignInitialPoint.append(k["initialpoint"])
+        continuousDesignInitialPoint.append(k["initialPoint"])
         numContinuousDesign += 1
     elif (k["distribution"] == "Weibull"):
         uncertainName.append(k["name"])
@@ -173,9 +186,6 @@ for k in data["randomVariables"]:
         betaUncertainBetas.append(k["betas"])
         numBetaUncertain += 1
 
-#print("-----------------")
-#print(data)
-#print("-----------------")
 
 #
 # Write the dakota input file: dakota.in 
@@ -526,6 +536,30 @@ if (numWeibullUncertain > 0):
 
 f.write('\n\n')
 
+if (type == "Sampling"):
+
+    print(data["uncertain_correlation_matrix"])
+    print("The value of rows and colums is............................................................. ")
+    correlationMatrix=np.reshape(data["uncertain_correlation_matrix"],(numUncertain,numUncertain));
+
+    f.write("uncertain_correlation_matrix = ")
+
+    rows,cols = correlationMatrix.shape
+    print(correlationMatrix)
+
+    for i in range(0, rows):    
+        if(i==0):
+            row_string = ""
+        else:
+            row_string = "                               "
+        for j in range(0, cols):
+            row_string = row_string + "{0:.5f}".format(correlationMatrix[i,j]) + " "
+        row_string = row_string + "\n"
+            # print(row_string)
+        f.write(row_string)
+    
+f.write('\n\n')
+
 #
 # write out the interface data
 #
@@ -612,12 +646,13 @@ if (femProgram == "OpenSees-SingleScript"):
     os.chdir(path1)
 
     f = open(fem_driver, 'w')
-    f.write(DakotaR)
-    f.write(' params.in ')
+    f.write(Perl)
+    f.write(DakotaPath)
+    f.write('dprepro params.in ')
     f.write(inputFile)
     f.write(' SimCenterInput.tcl\n')
-    f.write(OpenSees)
-    f.write(' SimCenterInput.tcl >> ops.out\n')
+    f.write(OpenSeesPath)
+    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
     f.close()
 
 if (femProgram == "OpenSees"):
@@ -642,23 +677,22 @@ if (femProgram == "OpenSees"):
     f.close()
 
     f = open(fem_driver, 'w')
-    f.write(DakotaR)
-    f.write(' params.in SimCenterParams.template SimCenterParamIN.ops\n')
-    f.write(OpenSees)
-    f.write(' SimCenterInput.ops >> ops.out\n')
+    f.write(Perl)
+    f.write(DakotaPath)
+    f.write('dprepro params.in SimCenterParams.template SimCenterParamIN.ops\n')
+    f.write(OpenSeesPath)
+    f.write('OpenSees SimCenterInput.ops >> ops.out\n')
     #    f.write('dprepro params.in %s SimCenterInput.tcl\n' %inputFile)
     #    f.write(OpenSeesPath)
     #    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
     f.write('python ')
-    f.write("%s " % postprocessScript)
-    #    f.write(postprocessScript)
+    f.write(postprocessScript)
     for i in range(numResponses):
-        #        f.write(' ')
-        #        f.write(responseDescriptors[i])    
-        f.write("%s " %responseDescriptors[i])
+        f.write(' ')
+        f.write(responseDescriptors[i])    
     f.write('\n')
     f.close()
-	
+    
     os.chdir(path1)
     f = open(fem_driver, 'w')
     f.write(DakotaR)
@@ -666,10 +700,9 @@ if (femProgram == "OpenSees"):
     f.write(OpenSees)
     f.write(' SimCenterInput.ops >> ops.out\n')
     f.write('python ')
-    f.write("%s " % postprocessScript)
+    f.write(postprocessScript)
     for i in range(numResponses):
         f.write("%s " %responseDescriptors[i])    
-
     f.close()
 
 if (femProgram == "FEAPpv"):
@@ -733,7 +766,7 @@ if (femProgram == "FEAPpv"):
 
 os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
-command = Dakota + ' -input dakota.in -output dakota.out -error dakota.err'
+command = DakotaPath + 'dakota -input dakota.in -output dakota.out -error dakota.err'
 print(command)
 #os.popen("/Users/fmckenna/dakota-6.7.0/bin/dakota -input dakota.in -output dakota.out -error dakota.err").read()
 
