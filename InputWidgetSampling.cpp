@@ -200,6 +200,9 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
             samplingMethod->setCurrentIndex(index);
             return theEdpWidget->inputFromJSON(uq);
 
+            // initializing the correlation matrix here
+
+
         } else {
             emit sendErrorMessage("ERROR: Sampling Input Widget - no \"method\" ,\"samples\" or \"seed\" data");
             return false;
