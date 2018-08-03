@@ -49,6 +49,7 @@ DakotaResults::DakotaResults(QWidget *parent)
     : SimCenterWidget(parent), resultWidget(0)
 {
     layout = new QVBoxLayout();
+    layout->setContentsMargins(0,0,0,0);
     this->setLayout(layout);
     resultWidget = 0;
 }

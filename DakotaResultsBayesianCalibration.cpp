@@ -181,6 +181,7 @@ DakotaResultsBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0);
     summary->setLayout(summaryLayout);
 
     QJsonArray edpArray = jsonObject["summary"].toArray();
@@ -264,6 +265,8 @@ DakotaResultsBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 
     QWidget *widget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout(widget);
+    layout->setContentsMargins(0,0,0,0);
+    layout->setSpacing(3);
     layout->addWidget(chartView, 1);
     layout->addWidget(spreadsheet, 1);
 
@@ -337,6 +340,7 @@ int DakotaResultsBayesianCalibration::processResults(QString &filenameResults, Q
 
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0);
     summary->setLayout(summaryLayout);
 
     //
@@ -494,6 +498,8 @@ int DakotaResultsBayesianCalibration::processResults(QString &filenameResults, Q
 
     QWidget *widget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout(widget);
+    layout->setContentsMargins(0,0,0,0);
+    layout->setSpacing(3);
     layout->addWidget(chartView, 1);
     layout->addWidget(spreadsheet, 1);
 
@@ -665,6 +671,9 @@ QWidget *
 DakotaResultsBayesianCalibration::createResultParameterWidget(QString &name, double mean, double stdDev) {
     QWidget *edp = new QWidget;
     QHBoxLayout *edpLayout = new QHBoxLayout();
+
+    edpLayout->setContentsMargins(0,0,0,0);
+    edpLayout->setSpacing(3);
 
     edp->setLayout(edpLayout);
 

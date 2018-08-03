@@ -55,7 +55,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <string>
 
 #include <QWindow>
-#include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>

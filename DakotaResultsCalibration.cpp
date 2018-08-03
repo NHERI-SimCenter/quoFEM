@@ -178,6 +178,7 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
 
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0);
     summary->setLayout(summaryLayout);
 
     QJsonArray edpArray = jsonObject["summary"].toArray();
@@ -258,6 +259,8 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
 
     QWidget *widget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout(widget);
+    layout->setContentsMargins(0,0,0,0);
+    layout->setSpacing(3);
     layout->addWidget(chartView, 1);
     layout->addWidget(spreadsheet, 1);
 
@@ -331,6 +334,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
 
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0);
     summary->setLayout(summaryLayout);
 
     //
@@ -486,6 +490,8 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
 
     QWidget *widget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout(widget);
+    layout->setContentsMargins(0,0,0,0);
+    layout->setSpacing(3);
     layout->addWidget(chartView, 1);
     layout->addWidget(spreadsheet, 1);
 
@@ -657,6 +663,8 @@ QWidget *
 DakotaResultsCalibration::createResultParameterWidget(QString &name, double bestValue) {
     QWidget *edp = new QWidget;
     QHBoxLayout *edpLayout = new QHBoxLayout();
+    edpLayout->setContentsMargins(0,0,0,0);
+    edpLayout->setSpacing(3);
 
     edp->setLayout(edpLayout);
 
