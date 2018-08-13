@@ -151,6 +151,8 @@ RemoteJobCreator::pushButtonClicked(void)
     // upload directory under user & submit job
     //  NOTE: the job is actually submitted when the uploadDirectory returns
     pushButton->setEnabled(false);
+
+    directoryName.replace("\"","");
     emit uploadDirCall(directoryName, remoteHomeDirPath);
 }
 
