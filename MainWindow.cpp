@@ -534,6 +534,11 @@ void MainWindow::onRunButtonClicked() {
     // now invoke dakota, done via a python script in tool app dircetory
     //
 
+    // wrap paths with quotes:
+    pySCRIPT = "\"" + pySCRIPT + "\"";
+    tDirectory = "\"" + tDirectory + "\"";
+    tmpDirectory = "\"" + tmpDirectory + "\"";
+
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
@@ -673,6 +678,11 @@ void MainWindow::onRemoteRunButtonClicked(){
     //
     // now invoke dakota, done via a python script in tool app dircetory
     //
+
+    // wrap paths with quotes:
+    pySCRIPT = "\"" + pySCRIPT + "\"";
+    tDirectory = "\"" + tDirectory + "\"";
+    tmpDirectory = "\"" + tmpDirectory + "\"";
 
     QProcess *proc = new QProcess();
 #ifdef Q_OS_WIN
