@@ -963,12 +963,16 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 {
     errorMessage("Processing Results");
 
+    qDebug()<<"\Inside processResults widget and trying to proceed";
+
     DakotaResults *result=uq->getResults();
     result->processResults(dakotaIN, dakotaTAB);
     results->setResultWidget(result);
     inputWidget->setSelection(QString("Results"));
 
+
     errorMessage(" ");
+    qDebug()<<"\n the value of results is \n\n  "<<results;
 }
 
 void MainWindow::createActions() {
