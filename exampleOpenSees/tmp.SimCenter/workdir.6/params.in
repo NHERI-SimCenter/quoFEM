@@ -1,0 +1,14 @@
+                    { DAKOTA_VARS     =                      4 }
+                    { E  =  238047.7729726529 }
+                    { P  =  26428.20354024833 }
+                    { A1  =  219.4269945620005 }
+                    { A2  =  505.7010498713113 }
+                    { DAKOTA_FNS      =                      1 }
+                    { ASV_1:Node_3_Disp =                      1 }
+                    { DAKOTA_DER_VARS =                      4 }
+                    { DVV_1:E         =                      1 }
+                    { DVV_2:P         =                      2 }
+                    { DVV_3:A1        =                      3 }
+                    { DVV_4:A2        =                      4 }
+                    { DAKOTA_AN_COMPS =                      0 }
+                    { DAKOTA_EVAL_ID  =                      6 }
