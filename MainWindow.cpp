@@ -973,7 +973,6 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
     results->setResultWidget(result);
     inputWidget->setSelection(QString("Results"));
 
-
     errorMessage(" ");
     qDebug()<<"\n the value of results is \n\n  "<<results;
 }
