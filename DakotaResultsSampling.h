@@ -50,6 +50,7 @@ using namespace QtCharts;
 class QTextEdit;
 class QTabWidget;
 class MyTableWidget;
+class MainWindow;
 //class QChart;
 
 class DakotaResultsSampling : public DakotaResults
@@ -80,7 +81,8 @@ private:
    MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
    QChart *chart;
    QPushButton* save_spreadheet; // save the data from spreadsheet
-
+   QLabel *label;
+   QLabel *best_fit_instructions;
 
    int col1, col2;
    bool mLeft;

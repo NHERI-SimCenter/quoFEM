@@ -37,6 +37,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 
 #include "DakotaResultsSampling.h"
+#include "InputWidgetFEM.h"
+
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QApplication>
@@ -52,7 +54,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QAction>
 #include <QMenu>
 #include <QPushButton>
-
+#include <QProcess>
 
 #include <iostream>
 #include <sstream>
@@ -67,6 +69,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QGridLayout>
 #include <QLabel>
 
+#include <InputWidgetFEM.h>
+#include <InputWidgetUQ.h>
+#include <MainWindow.h>
+
+
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
@@ -79,6 +86,12 @@ using namespace QtCharts;
 #include <QXYSeries>
 
 #define NUM_DIVISIONS 10
+
+
+
+
+QLabel *best_fit_label_text;
+
 
 DakotaResultsSampling::DakotaResultsSampling(QWidget *parent)
     : DakotaResults(parent)
@@ -591,6 +604,9 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     //
 
 
+    best_fit_label_text = new QLabel();
+
+
     QLabel *label = new QLabel(this);
     //label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     label->setText("PLOTTING INSTRUCTIONS: \n\nFirst left click on a column cell plots the corresponding\ncolumn on Y-axis without changing"
@@ -634,8 +650,14 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
 
-    layout->addWidget(spreadsheet,2,0,2,0);
-    layout->addWidget(label,0,1,1,2);
+    layout->addWidget(spreadsheet,2,0,1,1);
+    layout->addWidget(best_fit_label_text,2,1,1,1,Qt::AlignTop);
+
+   // QLabel *best_fit_instructions=new QLabel(this);
+
+   // layout->addWidget(best_fit_instructions,1,1,Qt::AlignLeft);
+
+    layout->addWidget(label,0,1,1,1,Qt::AlignLeft);
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
@@ -695,8 +717,6 @@ DakotaResultsSampling::onSaveSpreadsheetClicked()
 
      //  qDebug()<<QDir::currentPath();
 
-
-
 }
 
 void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
@@ -704,6 +724,8 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
     mLeft = spreadsheet->wasLeftKeyPressed();
 
 
+
+  //  best_fit_instructions->clear();
     //see the file MyTableWiget.cpp in order to find the function wasLeftKeyPressed();
     //qDebug()<<"\n the value of mLeft       "<<mLeft;
     //qDebug()<<"\n I am inside the onSpreadsheetCellClicked routine  and I am exiting!!  ";
@@ -756,6 +778,8 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             series->append(itemX->text().toDouble(), itemY->text().toDouble());
         }
         chart->addSeries(series);
+        series->setName("Samples");
+
         QValueAxis *axisX = new QValueAxis();
         QValueAxis *axisY = new QValueAxis();
 
@@ -798,11 +822,11 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
         double xRange=maxX-minX;
         double yRange=maxY-minY;
 
-        qDebug()<<"\n the value of xRange is     ";
-        qDebug()<<xRange;
+      //  qDebug()<<"\n the value of xRange is     ";
+        //qDebug()<<xRange;
 
-        qDebug()<<"\n the value of yRange is     ";
-        qDebug()<<yRange;
+        //qDebug()<<"\n the value of yRange is     ";
+        //qDebug()<<yRange;
 
         // if the column is not the run number, i.e., 0 column, then adjust the x-axis differently
 
@@ -823,6 +847,8 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
         chart->setAxisX(axisX, series);
         chart->setAxisY(axisY, series);
+
+
 
     } else {
 
@@ -852,8 +878,9 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             } else if (value > max) {
                 max = value;
             }
-        }
-        if (mLeft == true) {
+         }
+
+            if (mLeft == true) {
 
             // frequency distribution
             double range = max-min;
@@ -880,9 +907,10 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
                 series->append(min+(i+1)*dRange, 0);
             }
 
-            delete [] dataValues;
 
             chart->addSeries(series);
+            series->setName("Histogram");
+
             QValueAxis *axisX = new QValueAxis();
             QValueAxis *axisY = new QValueAxis();
 
@@ -893,6 +921,199 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             axisX->setTickCount(NUM_DIVISIONS+1);
             chart->setAxisX(axisX, series);
             chart->setAxisY(axisY, series);
+
+            //calling external python script to find the best fit, generating the data and then plotting it.
+
+            // this will be done in the application directory
+
+            QString appDIR = qApp->applicationDirPath(); // this is where the .exe is and also the parseJson.py, and now the fit_distribution.py
+
+            qDebug()<<"\n the value of appDIR is    "<<appDIR;
+          //  exit(1);
+            QString data_input_file = appDIR +  QDir::separator() + QString("data_input.txt");
+            QString pySCRIPT_dist_fit =  appDIR +  QDir::separator() + QString("fit.py");
+
+            //QString tDirectory = appDIR + QDir::separator() + QString("tmp.distributionfit");
+            // dump the data into a file
+
+
+            //QDir mDir; // an object of the class
+            //mDir.mkdir(tDirectory);
+            //qDebug()<<"\n the value of tDirectory is  "<<pySCRIPT_dist_fit;
+
+            QFile file(data_input_file);
+            QTextStream stream(&file);
+
+            qDebug()<<"\n the data values are   \n";
+            if (file.open(QIODevice::ReadWrite))
+            {
+                    for(int i=0;i<rowCount;++i)
+                     {
+
+                        stream<<dataValues[i];
+                        stream<< endl;
+
+                        //qDebug()<<"\n the dataValues is"<<dataValues[i];
+                     }
+            }else {qDebug()<<"\n error in opening file data file for histogram fit  ";exit(1);}
+
+
+            delete [] dataValues;
+
+            QString file_fitted_path = appDIR +  QDir::separator() + QString("Best_fit.out");
+
+            QFile file_fitted_distribution(file_fitted_path);
+            if(!file_fitted_distribution.open(QIODevice::WriteOnly)) {
+                QMessageBox::information(0,"error",file.errorString());
+            }else
+            {
+
+            }
+            // make sure to check if Q_OS_WIN or Mac etc. else there will be a bug
+            //QString command = QString("python ") + pySCRIPT_dist_fit;
+            //QString command = QString(" python C:\\Users\\nikhil\\NHERI\\build-uqFEM-Desktop_Qt_5_11_0_MSVC2015_32bit-Release\\debug\\fit.py ");
+
+           QProcess process;
+
+           qDebug()<<"\n the pySCRIPT is        "<<pySCRIPT_dist_fit;
+
+           process.setWorkingDirectory(appDIR);
+           process.execute("python",QStringList()<<pySCRIPT_dist_fit);
+
+
+           QFile file_fitted_data("Best_fit.out");
+
+           if(!file_fitted_data.exists())
+           {
+            qDebug()<<"\n The file does not exist and hence exiting";
+            exit(1);
+
+           }
+
+
+           QLineSeries *series_best_fit = new QLineSeries();
+
+            series_best_fit->setName("Best Fit");
+
+           if(file_fitted_data.open(QIODevice::ReadOnly |QIODevice::Text ))
+           {
+
+               QTextStream txtStream(&file_fitted_data);
+               while(!txtStream.atEnd())
+           {
+                   QString line = txtStream.readLine();
+                 //  double first_value;
+                //   txtStream>>first_value;
+
+                  QStringList list2 = line.split(',', QString::SkipEmptyParts);
+                   double value1= list2[0].toDouble();
+                   double value2= list2[1].toDouble();
+
+                  series_best_fit->append(value1,value2);
+
+                  //chart->setAxisX(axisX, series_best_fit);
+                  //chart->setAxisY(axisY, series_best_fit);
+                //  chart->adjustSize();
+
+                // qDebug()<<"\n the line read is      "<<line;
+                // qDebug()<<"\n the value1 is         "<<value1;
+                // qDebug()<<"\n the value2 is         "<<value2;
+
+
+            }
+
+           file_fitted_data.close();
+
+           chart->addSeries(series_best_fit);
+           chart->legend()->setVisible(true);
+           chart->legend()->setAlignment(Qt::AlignTop);
+          // chart->setTitle("The best fit plot is");
+
+
+
+           QString best_fit_info_file = appDIR +  QDir::separator() + QString("data_fit_info.out");
+
+           QFile info_fit_file("data_fit_info.out");
+           QTextStream stream(&info_fit_file);
+
+           //QStringList message_fitting_info;
+
+           QString line_from_file="";
+           if (info_fit_file.open(QIODevice::ReadWrite))
+           {
+
+                while(!info_fit_file.atEnd())
+                {
+               line_from_file=line_from_file+info_fit_file.readLine();//+"\n";
+             //  qDebug()<<"\n the value of info_fit_file.readLine() is   "<<info_fit_file.readLine();
+             //  qDebug()<<"\n The value of line_from_file is    "<<line_from_file;
+             //   message_fitting_info<<info_fit_file.readLine();
+             //   message_fitting_info<<"\n";
+                }
+                //line_from_file=line_from_file+info_fit_file.readLine()+"\n";
+           }
+
+
+           best_fit_label_text->setText(line_from_file);
+
+           QFont f2("Helvetica [Cronyx]", 10, QFont::Normal);
+           best_fit_label_text->setFont(f2);
+
+
+
+
+           //msgBox.show();
+        //  msgBox.exec();
+
+      //     best_fit_instructions->setText("I am fitting the best fit info. here");
+
+           //qDebug()<<"\n\n\n I am about to exit from here   \n\n\n";
+           // exit(1);
+           }
+
+
+           //std::ifstream fitted_data_file("Best_fit.out");
+
+
+           //if(!fitted_data_file.exists)
+
+
+
+          // process.execute("python C:/Users/nikhil/NHERI/build-uqFEM-Desktop_Qt_5_11_0_MSVC2015_32bit-Release/debug\\fit.py");
+
+
+
+           // exit(1);
+            //qDebug()<<"\n   the value of pySCRIPT_dist_fit   is         "<<pySCRIPT_dist_fit;
+            //#ifdef Q_OS_WIN
+
+         //   QProcess process;
+
+         //String command = "notepad";
+         //process.execute("cmd", QStringList() << "/C" << command);
+         //process.start("cmd", QStringList(), QIODevice::ReadWrite);
+         //std::cerr << command << "\n";
+
+       //     process.waitForStarted();
+
+       //     qDebug()<<"process has been completed       ";
+   //         exit(1);
+/*
+
+
+    #else
+    QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+            tmpDirectory + QString(" runningLocal");
+
+    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+    //        tmpDirectory + QString(" runningLocal");
+
+    proc->execute("bash", QStringList() << "-c" <<  command);
+    qInfo() << command;
+    // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
+    #endif
+    proc->waitForStarted();
+*/
 
 
     } else {
@@ -920,6 +1141,7 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             axisX->setTickCount(NUM_DIVISIONS+1);
             chart->setAxisX(axisX, series);
             chart->setAxisY(axisY, series);
+            series->setName("Cumulative Frequency Distribution");
         }
 
 
