@@ -3,14 +3,14 @@ tabular_data
 tabular_data_file = 'dakotaTab.out'
 
 method,
-bayes_calibration dream
-chain_samples = 10
-
-seed = 519
+optpp_g_newton
+convergence_tolerance = 0.01
+max_iterations = 1000
 
 variables,
-uniform_uncertain = 2
-lower_bounds = 0.1 0.01 
+continuous_design = 2
+initial_point = 0.75 0.02 
+lower_bounds = 0.5 0.01 
 upper_bounds = 1 0.05 
 descriptors = 'roofFactor' 'dampRatio' 
 
@@ -29,8 +29,8 @@ aprepro
 
 responses, 
 calibration_terms = 2
-response_descriptors = 'Roof_Disp_3' 
-'Roof_Disp_4' 
+response_descriptors = 'Floor3' 
+'Floor4' 
 numerical_gradients
 no_hessians
 

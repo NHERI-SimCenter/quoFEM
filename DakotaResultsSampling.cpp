@@ -75,6 +75,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetUQ.h>
 #include <MainWindow.h>
 
+#include <InputWidgetFEM.h>
+#include <InputWidgetUQ.h>
+#include <MainWindow.h>
+
+
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
@@ -87,9 +92,7 @@ using namespace QtCharts;
 #include <QXYSeries>
 
 #define NUM_DIVISIONS 10
-
-
-
+ 
 QLabel *best_fit_label_text;
 
 
@@ -604,14 +607,12 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     //
     best_fit_label_text = new QLabel();
 
-
     QVBoxLayout *plotting_instructions_layout = new QVBoxLayout;
-
-
 
     QLabel *label = new QLabel();
 
     label->setStyleSheet("QLabel { background-color : white; color : gray; }");
+
 
     //label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     label->setText("PLOTTING INSTRUCTIONS:\n \n 1. First left click on a column cell plots \n "
@@ -685,6 +686,15 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
 
 
+    layout->addWidget(spreadsheet,2,0,1,1);
+    layout->addWidget(best_fit_label_text,2,1,1,1,Qt::AlignTop);
+
+   // QLabel *best_fit_instructions=new QLabel(this);
+
+   // layout->addWidget(best_fit_instructions,1,1,Qt::AlignLeft);
+
+    layout->addWidget(label,0,1,1,1,Qt::AlignLeft);
+
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
     //
@@ -750,8 +760,8 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
     mLeft = spreadsheet->wasLeftKeyPressed();
 
 
+
   //  best_fit_instructions->clear();
- 
     //see the file MyTableWiget.cpp in order to find the function wasLeftKeyPressed();
     //qDebug()<<"\n the value of mLeft       "<<mLeft;
     //qDebug()<<"\n I am inside the onSpreadsheetCellClicked routine  and I am exiting!!  ";
@@ -871,6 +881,8 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
         chart->setAxisX(axisX, series);
         chart->setAxisY(axisY, series);
+
+
 
     } else {
 
