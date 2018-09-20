@@ -36,6 +36,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
+// added and modified: padhye
+
+
 #include "DakotaResultsBayesianCalibration.h"
 #include <QJsonObject>
 #include <QJsonArray>
@@ -553,6 +556,63 @@ DakotaResultsBayesianCalibration::onSpreadsheetCellClicked(int row, int col)
 
         axisX->setTitleText(theHeadings.at(col1));
         axisY->setTitleText(theHeadings.at(col2));
+
+        // padhye adding ranges 8/25/2018
+        // finding the range for X and Y axis
+        // now the axes will look a bit clean.
+
+        double minX, maxX;
+        double minY, maxY;
+
+        for (int i=0; i<rowCount; i++) {
+
+            QTableWidgetItem *itemX = spreadsheet->item(i,col1);
+            QTableWidgetItem *itemY = spreadsheet->item(i,col2);
+
+            double value1 = itemX->text().toDouble();
+
+            double value2 = itemY->text().toDouble();
+
+
+            if (i == 0) {
+                minX=value1;
+                maxX=value1;
+                minY=value2;
+                maxY=value2;
+                        }
+            if(value1<minX){minX=value1;}
+            if(value1>maxX){maxX=value1;}
+
+            if(value2<minY){minY=value2;}
+            if(value2>maxY){maxY=value2;}
+
+        }
+
+        double xRange=maxX-minX;
+        double yRange=maxY-minY;
+
+      //  qDebug()<<"\n the value of xRange is     ";
+        //qDebug()<<xRange;
+
+        //qDebug()<<"\n the value of yRange is     ";
+        //qDebug()<<yRange;
+
+        // if the column is not the run number, i.e., 0 column, then adjust the x-axis differently
+
+        if(col1!=0)
+        {
+        axisX->setRange(minX - 0.01*xRange, maxX + 0.1*xRange);
+        }
+        else{
+
+        axisX->setRange(int (minX - 1), int (maxX +1));
+       // axisX->setTickCount(1);
+
+        }
+
+        // adjust y with some fine precision
+        axisY->setRange(minY - 0.1*yRange, maxY + 0.1*yRange);
+
 
         chart->setAxisX(axisX, series);
         chart->setAxisY(axisY, series);

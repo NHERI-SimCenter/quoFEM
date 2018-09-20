@@ -1,0 +1,14 @@
+                    { DAKOTA_VARS     =                      4 }
+                    { Ap              =  2.651851008484071e-01 }
+                    { An              =  3.965989959177556e+00 }
+                    { Bn              =  4.893243897190896e-01 }
+                    { beta            =  5.250180087401616e-01 }
+                    { DAKOTA_FNS      =                      1 }
+                    { ASV_1:error_mismatch =                      1 }
+                    { DAKOTA_DER_VARS =                      4 }
+                    { DVV_1:Ap        =                      1 }
+                    { DVV_2:An        =                      2 }
+                    { DVV_3:Bn        =                      3 }
+                    { DVV_4:beta      =                      4 }
+                    { DAKOTA_AN_COMPS =                      0 }
+                    { DAKOTA_EVAL_ID  =                      3 }
