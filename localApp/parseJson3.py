@@ -155,7 +155,7 @@ for k in data["randomVariables"]:
         continuousDesignName.append(k["name"])
         continuousDesignLower.append(k["lowerbound"])
         continuousDesignUpper.append(k["upperbound"])
-        continuousDesignInitialPoint.append(k["initialPoint"])
+        continuousDesignInitialPoint.append(k["initialpoint"])
         numContinuousDesign += 1
     elif (k["distribution"] == "Weibull"):
         uncertainName.append(k["name"])
@@ -195,7 +195,6 @@ for k in data["randomVariables"]:
         normalUncertainMean.append(0.0)
         normalUncertainStdDev.append(1.0)
         numNormalUncertain += 1
-
 
 #
 # Write the dakota input file: dakota.in 
@@ -771,6 +770,7 @@ if (femProgram == "OpenSees"):
     os.chdir(path1)
     f = open(fem_driver, 'w')
 
+
     # f.write(DakotaR)
     # f.write(' params.in SimCenterParams.template SimCenterParamIN.ops\n')
     # f.write(OpenSees)
@@ -839,6 +839,8 @@ if (femProgram == "FEAPpv"):
         
         os.chdir(path1)
         f = io.open(fem_driver, 'w', newline='\n')
+        if(check_sampling_for_fem_driver==True):
+            f.write("python UserDefinedTransformation.py\n")
         f.write(unicode(DakotaR))
         f.write(unicode(' params.in '))
         f.write(unicode(inputFile))
