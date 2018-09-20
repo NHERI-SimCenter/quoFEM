@@ -1,0 +1,4 @@
+
+Warning: Gradient/Hessian specification for a nongradient-based optimizer is ignored.
+
+Warning: coercing least squares data set into optimization data set.
