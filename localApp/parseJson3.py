@@ -114,6 +114,8 @@ betaUncertainLower =[];
 betaUncertainHigher =[];
 betaUncertainAlphas =[];
 
+numUserDefUncertain = 0;
+
 print("-----------------")
 print(data)
 print("-----------------")
@@ -153,7 +155,7 @@ for k in data["randomVariables"]:
         continuousDesignName.append(k["name"])
         continuousDesignLower.append(k["lowerbound"])
         continuousDesignUpper.append(k["upperbound"])
-        continuousDesignInitialPoint.append(k["initialPoint"])
+        continuousDesignInitialPoint.append(k["initialpoint"])
         numContinuousDesign += 1
     elif (k["distribution"] == "Weibull"):
         uncertainName.append(k["name"])
@@ -185,7 +187,14 @@ for k in data["randomVariables"]:
         betaUncertainAlphas.append(k["alphas"])
         betaUncertainBetas.append(k["betas"])
         numBetaUncertain += 1
-
+    elif (k["distribution"]=="UserDef"):
+        uncertainName.append(k["name"])
+        numUncertain += 1
+        numUserDefUncertain += 1
+        normalUncertainName.append(k["name"])
+        normalUncertainMean.append(0.0)
+        normalUncertainStdDev.append(1.0)
+        numNormalUncertain += 1
 
 #
 # Write the dakota input file: dakota.in 
@@ -230,6 +239,12 @@ if (type == "Sampling"):
     f.write('samples = ' '{}'.format(numSamples))
     f.write('\n');
     f.write('seed = ' '{}'.format(seed))
+    f.write('\n');
+    if "sobelov_indices" in data:
+        flag_sobelov=data["sobelov_indices"]
+        if (flag_sobelov == 1):
+            f.write("variance_based_decomp #interaction_order = 1")
+    f.write('\n');
 
     edps = samplingData["edps"];
     for edp in edps:
@@ -244,17 +259,45 @@ elif (type == "Calibration"):
     maxIterations = 10;
     convergenceTol = 1.0e-4
     method = calibrationData["method"];
-    if (method == "OPT++GaussNewton"):
-        method = 'optpp_g_newton'
-    else:
-        method = 'nl2sol'
-    f.write(method);
-    f.write('\n');
-    convergenceTol=calibrationData["convergenceTol"];
-    maxIter = calibrationData["maxIterations"];
-    f.write('convergence_tolerance = ' '{}'.format(convergenceTol))
-    f.write('\n');
-    f.write('max_iterations = ' '{}'.format(maxIter))
+    if (method == "OPT++GaussNewton" or method == "NL2SOL" or method == "ConjugateGradient"):
+        if(method == 'OPT++GaussNewton'):
+            method = 'optpp_g_newton'
+        elif(method == "NL2SOL"):
+            method = 'nl2sol'
+        elif(method == "ConjugateGradient"):
+            method = 'conmin_frcg'
+        f.write(method);
+        f.write('\n');
+        convergenceTol=calibrationData["convergenceTol"];
+        maxIter = calibrationData["maxIterations"];
+        f.write('convergence_tolerance = ' '{}'.format(convergenceTol))
+        f.write('\n');
+        f.write('max_iterations = ' '{}'.format(maxIter))
+
+    if(method == "ColinyPattern"):
+        print(uqData)
+        f.write('coliny_pattern_search\n');
+        f.write('max_iterations = '+str(uqData["calibrationMethodData"]["maxIterations"])+"\n")
+        f.write('max_function_evaluations = '+str(uqData["calibrationMethodData"]["maxFunEvals"])+"\n")
+        f.write('solution_target = '+str(uqData["calibrationMethodData"]["convergenceTol"])+"\n")
+        f.write('initial_delta = '+str(uqData["calibrationMethodData"]["initialDelta"])+"\n")
+        f.write('threshold_delta = '+str(uqData["calibrationMethodData"]["thresholdDelta"])+"\n")
+        f.write('exploratory_moves '+str(uqData["calibrationMethodData"]["patternMove"])+"\n")
+        f.write('contraction_factor = '+str(uqData["calibrationMethodData"]["contractionFactor"])+"\n")
+
+    if(method== "Coliny_EA"):
+        f.write('coliny_ea\n');
+        f.write('max_iterations = '+str(uqData["calibrationMethodData"]["maxIterations"])+"\n")
+        f.write('max_function_evaluations = '+str(uqData["calibrationMethodData"]["maxFunEvals"])+"\n")
+        f.write('seed = '+str(uqData["calibrationMethodData"]["seed"])+"\n")
+        f.write('population_size = '+str(uqData["calibrationMethodData"]["popSize"])+"\n")
+        f.write('fitness_type '+str(uqData["calibrationMethodData"]["fitnessType"])+"\n")
+        f.write('mutation_type '+str(uqData["calibrationMethodData"]["mutationType"])+"\n")
+        f.write('mutation_rate '+str(uqData["calibrationMethodData"]["mutationRate"])+"\n")
+        f.write('crossover_type '+str(uqData["calibrationMethodData"]["crossoverType"])+"\n")
+        f.write('crossover_rate '+str(uqData["calibrationMethodData"]["crossoverRate"])+"\n")
+        f.write('replacement_type '+str(uqData["calibrationMethodData"]["replacementType"])+" = "+str(uqData["calibrationMethodData"]["replacementValue"])+"\n")
+
 
     edps = calibrationData["edps"];
     for edp in edps:
@@ -537,26 +580,30 @@ if (numWeibullUncertain > 0):
 f.write('\n\n')
 
 if (type == "Sampling"):
+    print("\n Sampling method found, now procceeding\n")
 
-    print(data["uncertain_correlation_matrix"])
-    print("The value of rows and colums is............................................................. ")
-    correlationMatrix=np.reshape(data["uncertain_correlation_matrix"],(numUncertain,numUncertain));
+    if "uncertain_correlation_matrix" in data:
+        #print("\n\n\n\n I am inside the uncertain correlation name found \n\n\n\n\n")
+        #print("")
+        #print(data["uncertain_correlation_matrix"])
+        #print("The value of rows and colums is............................................................. ")
+        correlationMatrix=np.reshape(data["uncertain_correlation_matrix"],(numUncertain,numUncertain));
 
-    f.write("uncertain_correlation_matrix = ")
+        f.write("uncertain_correlation_matrix = ")
 
-    rows,cols = correlationMatrix.shape
-    print(correlationMatrix)
+        rows,cols = correlationMatrix.shape
+        print(correlationMatrix)
 
-    for i in range(0, rows):    
-        if(i==0):
-            row_string = ""
-        else:
-            row_string = "                               "
-        for j in range(0, cols):
-            row_string = row_string + "{0:.5f}".format(correlationMatrix[i,j]) + " "
-        row_string = row_string + "\n"
+        for i in range(0, rows):    
+            if(i==0):
+                row_string = ""
+            else:
+                row_string = "                               "
+            for j in range(0, cols):
+                row_string = row_string + "{0:.5f}".format(correlationMatrix[i,j]) + " "
+            row_string = row_string + "\n"
             # print(row_string)
-        f.write(row_string)
+            f.write(row_string)
     
 f.write('\n\n')
 
@@ -581,15 +628,21 @@ if (femProgram == "OpenSees" or femProgram == "OpenSees-2" or femProgram == "FEA
     f.write('results_file = \'results.out\' \n')
     f.write('work_directory directory_tag \n')
     f.write('copy_files = \'templatedir/*\' \n')
-#    f.write('named \'workdir\' file_save  directory_save \n')
-    f.write('named \'workdir\' \n')
+# if you uncomment below then you will have all the work directories    
+    f.write('named \'workdir\' file_save  directory_save \n')
+# if you uncomment below then temprorary files corresponding to different params.in won't saved. 
+# f.write('named \'workdir\' \n')
     f.write('aprepro \n')
     f.write('\n')
     
 # write out the responses
 # print(numResponses)
 
+check_sampling_for_fem_driver=False
+
 if (type == "Sampling"):
+
+    check_sampling_for_fem_driver=True
     f.write('responses, \n')
     f.write('response_functions = ' '{}'.format(numResponses))
     f.write('\n')
@@ -601,7 +654,7 @@ if (type == "Sampling"):
         f.write('\n')
     f.write('no_gradients\n')
     f.write('no_hessians\n\n')
-
+# here we modify this so that conjugate gradient, PatternColiny, and ant colony EA can work
 elif (type == "Calibration"):
     f.write('responses, \n')
     f.write('calibration_terms = ' '{}'.format(numResponses))
@@ -612,8 +665,18 @@ elif (type == "Calibration"):
         f.write(responseDescriptors[i])
         f.write('\' ')
         f.write('\n')
-    f.write('numerical_gradients\n')
-    f.write('no_hessians\n\n')
+
+    method = calibrationData["method"];
+    if (method == "OPT++GaussNewton" or method == "NL2SOL" or method == "ConjugateGradient" or method == "Coliny_EA" or method == "ColinyPattern"):
+        f.write('numerical_gradients\n')
+        f.write('no_hessians\n\n')
+
+    elif(method=="ConjugateGradient"):
+        f.write('numerical_gradients\n')
+        f.write('method_source dakota\n')
+        f.write('interval_type forward\n')    
+        f.write('fd_step_size = 1.e-5\n')
+        f.write('no_hessians')
 
 elif (type == "Bayesian Calibration"):
     f.write('responses, \n')
@@ -640,6 +703,9 @@ f.close()  # you can omit in most cases as the destructor will call it
 femInputFile = "";
 femPostprocessFile = "";
 
+# Frank check if we need to do something about fem_driver.bat under OpenSees-SingleScript
+# added by padhye 7/25/2018
+
 if (femProgram == "OpenSees-SingleScript"):
 
     inputFile = femData["mainInput"];    
@@ -647,6 +713,8 @@ if (femProgram == "OpenSees-SingleScript"):
     os.chdir(path1)
 
     f = open(fem_driver, 'w')
+    if(check_sampling_for_fem_driver==True and numUserDefUncertain>0):
+        f.write("python UserDefinedTransformation.py \n")
     f.write(Perl)
     f.write(DakotaPath)
     f.write('dprepro params.in ')
@@ -655,6 +723,8 @@ if (femProgram == "OpenSees-SingleScript"):
     f.write(OpenSeesPath)
     f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
     f.close()
+
+# adding our own script to handle user defined prob functions for OpenSees Sampling  
 
 if (femProgram == "OpenSees"):
 
@@ -678,6 +748,8 @@ if (femProgram == "OpenSees"):
     f.close()
 
     f = open(fem_driver, 'w')
+    if(check_sampling_for_fem_driver==True):
+        f.write("python UserDefinedTransformation.py\n")
     f.write(Perl)
     f.write(DakotaPath)
     f.write('dprepro params.in SimCenterParams.template SimCenterParamIN.ops\n')
@@ -696,10 +768,22 @@ if (femProgram == "OpenSees"):
     
     os.chdir(path1)
     f = open(fem_driver, 'w')
-    f.write(DakotaR)
-    f.write(' params.in SimCenterParams.template SimCenterParamIN.ops\n')
-    f.write(OpenSees)
-    f.write(' SimCenterInput.ops >> ops.out\n')
+
+    # f.write(DakotaR)
+    # f.write(' params.in SimCenterParams.template SimCenterParamIN.ops\n')
+    # f.write(OpenSees)
+    # f.write(' SimCenterInput.ops >> ops.out\n')
+
+    if(check_sampling_for_fem_driver==True):
+        f.write("python UserDefinedTransformation.py\n")
+    f.write(Perl)
+    f.write(DakotaPath)
+    f.write('dprepro params.in SimCenterParams.template SimCenterParamIN.ops\n')
+    f.write(OpenSeesPath)
+    f.write('OpenSees SimCenterInput.ops >> ops.out\n')
+    #    f.write('dprepro params.in %s SimCenterInput.tcl\n' %inputFile)
+    #    f.write(OpenSeesPath)
+    #    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
     f.write('python ')
     f.write(postprocessScript)
     for i in range(numResponses):
@@ -713,6 +797,8 @@ if (femProgram == "FEAPpv"):
     
     if (sys.version_info > (3, 0)):
         f = open('feapname', 'w')
+        if(check_sampling_for_fem_driver==True):
+            f.write("python UserDefinedTransformation.py\n")        
         f.write('SimCenterIn.txt   \n')
         f.write('SimCenterOut.txt   \n')
         f.write('SimCenterR.txt   \n')
@@ -739,6 +825,8 @@ if (femProgram == "FEAPpv"):
         
     else:     
         f = io.open('feapname', 'w', newline='\n')
+        if(check_sampling_for_fem_driver==True):
+            f.write("python UserDefinedTransformation.py\n")        
         f.write(unicode('SimCenterIn.txt   \n'))
         f.write(unicode('SimCenterOut.txt   \n'))
         f.write(unicode('SimCenterR.txt   \n'))
@@ -764,6 +852,27 @@ if (femProgram == "FEAPpv"):
                                        
         f.write(unicode('\n'))
         f.close()
+
+    # os.chdir(path1)
+    # f = open(fem_driver, 'w')
+    # if(check_sampling_for_fem_driver==True):
+    #     f.write("python UserDefinedTransformation.py\n")
+    # f.write(Perl)
+    # f.write(DakotaPath)
+    # f.write('dprepro params.in ')
+    # f.write(inputFile)
+    # f.write(' SimCenterIn.txt --output-format=\'\%10.5f\'\n')
+    # f.write('echo y|')
+    # f.write(FeapPath)
+    # f.write('feappv\n')
+    # f.write('python ')
+    # f.write(postprocessScript)
+    # for i in range(numResponses):
+    #     f.write(' ')
+    #     f.write(responseDescriptors[i])    
+                                   
+    # f.write('\n')
+    # f.close()
 
 os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
