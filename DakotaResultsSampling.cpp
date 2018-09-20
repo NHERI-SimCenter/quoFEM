@@ -121,7 +121,9 @@ void DakotaResultsSampling::clear(void)
     delete gen;
     delete res;
 }
- 
+
+
+
 static void merge_helper(double *input, int left, int right, double *scratch)
 {
     // if one element: done  else: recursive call and then merge
@@ -181,7 +183,6 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     //
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summaryLayout->setContentsMargins(0,0,0,0);
     summary->setLayout(summaryLayout);
 
     // //
@@ -1288,8 +1289,6 @@ QWidget *
 DakotaResultsSampling::createResultEDPWidget(QString &name, double mean, double stdDev) {
     QWidget *edp = new QWidget;
     QHBoxLayout *edpLayout = new QHBoxLayout();
-    edpLayout->setContentsMargins(0,0,0,0);
-    edpLayout->setSpacing(3);
 
     edp->setLayout(edpLayout);
 

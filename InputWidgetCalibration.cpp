@@ -142,6 +142,7 @@ InputWidgetCalibration::InputWidgetCalibration(QWidget *parent)
     this->setLayout(layout);
 }
 
+
 bool
 InputWidgetCalibration::outputToJSON(QJsonObject &jsonObject)
 {
