@@ -217,10 +217,13 @@ MainWindow::MainWindow(QWidget *parent)
     results = new DakotaResults();
 
     inputWidget = new SidebarWidgetSelection();
+
     inputWidget->addInputWidget(tr("FEM Selection"), fem);
     inputWidget->addInputWidget(tr("Method Selection"), uq);
     inputWidget->addInputWidget(tr("Input Variables"), random);
     inputWidget->addInputWidget(tr("Results"), results);
+
+    //inputWidget->setFont(QFont( "lucida", 20, QFont::Bold, TRUE ) );
 
     // let ubput widget know end of ptions, then set initial input to fem
     inputWidget->buildTreee();
