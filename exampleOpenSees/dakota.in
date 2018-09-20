@@ -5,7 +5,7 @@ tabular_data_file = 'dakotaTab.out'
 method,
 sampling
 sample_type = lhs
-samples = 400
+samples = 10
 seed = 981
 
 

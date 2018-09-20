@@ -559,8 +559,8 @@ DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
         QValueAxis *axisY = new QValueAxis();
 
         axisX->setTitleText(theHeadings.at(col1));
-        axisX->setLabelFormat("%e");
         axisY->setTitleText(theHeadings.at(col2));
+        axisY->setLabelFormat("%e");
 
         //padhye adding ranges 8/25/2018
         // finding the range for X and Y axis
@@ -669,6 +669,8 @@ DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
             chart->addSeries(series);
             QValueAxis *axisX = new QValueAxis();
             QValueAxis *axisY = new QValueAxis();
+            axisY->setLabelFormat("%.2f");
+
 
             axisX->setRange(min, max);
             axisY->setRange(0, maxPercent);
@@ -691,6 +693,8 @@ DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
             chart->addSeries(series);
             QValueAxis *axisX = new QValueAxis();
             QValueAxis *axisY = new QValueAxis();
+            axisY->setLabelFormat("%.2f");
+
 
             axisX->setRange(min, max);
             axisY->setRange(0, 1);
