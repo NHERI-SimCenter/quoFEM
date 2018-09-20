@@ -20,7 +20,6 @@ if(opt.shape[0]==ref.shape[0]):
 else:
     error = 1.0e10
 
-
 # Write to file so that Dakota can read the error
 text_file = open("results.out", "w")
 text_file.write("%f" % error)

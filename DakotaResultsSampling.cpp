@@ -581,6 +581,15 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     label->setStyleSheet("QLabel { background-color : white; color : gray; }");
 
+
+    QVBoxLayout *plotting_instructions_layout = new QVBoxLayout;
+
+
+
+    QLabel *label = new QLabel();
+
+    label->setStyleSheet("QLabel { background-color : white; color : gray; }");
+
     //label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     label->setText("PLOTTING INSTRUCTIONS:\n \n 1. First left click on a column cell plots \n "
                    "the corresponding column on Y-axis without \n changing the X-axis.\n\n "
@@ -651,14 +660,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     //plotting_instructions_layout->maximumSize(100);
     //layout->addLayout(plotting_instructions_layout,0,1,1,1,Qt::AlignLeft);
 
-    layout->addWidget(spreadsheet,2,0,1,1);
-    layout->addWidget(best_fit_label_text,2,1,1,1,Qt::AlignTop);
 
-   // QLabel *best_fit_instructions=new QLabel(this);
-
-   // layout->addWidget(best_fit_instructions,1,1,Qt::AlignLeft);
-
-    layout->addWidget(label,0,1,1,1,Qt::AlignLeft);
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
@@ -1031,7 +1033,7 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
            }
            best_fit_label_text->setText(line_from_file);
            best_fit_label_text->setStyleSheet("QLabel { background-color : white; color : gray; }");
- 
+
            QFont f2("Helvetica [Cronyx]", 10, QFont::Normal);
            best_fit_label_text->setFont(f2);
            //msgBox.show();

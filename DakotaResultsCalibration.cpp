@@ -559,52 +559,8 @@ DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
         QValueAxis *axisY = new QValueAxis();
 
         axisX->setTitleText(theHeadings.at(col1));
-        axisX->setLabelFormat("%e");
         axisY->setTitleText(theHeadings.at(col2));
         axisY->setLabelFormat("%e");
-
-        //padhye adding ranges 8/25/2018
-        // finding the range for X and Y axis
-        // now the axes will look a bit clean.
-
-
-        double minX, maxX;
-        double minY, maxY;
-
-        for (int i=0; i<rowCount; i++) {
-            QTableWidgetItem *itemX = spreadsheet->item(i,col1);
-            QTableWidgetItem *itemY = spreadsheet->item(i,col2);
-            double value1 = itemX->text().toDouble();
-            double value2 = itemY->text().toDouble();
-            if (i == 0) {
-                minX=value1;
-                maxX=value1;
-                minY=value2;
-                maxY=value2;
-                        }
-            if(value1<minX){minX=value1;}
-            if(value1>maxX){maxX=value1;}
-            if(value2<minY){minY=value2;}
-            if(value2>maxY){maxY=value2;}
-        }
-
-        double xRange=maxX-minX;
-        double yRange=maxY-minY;
-
-        if(col1!=0)
-        {
-        axisX->setRange(minX - 0.01*xRange, maxX + 0.1*xRange);
-        }
-        else{
-
-        axisX->setRange(int (minX - 1), int (maxX +1));
-       // axisX->setTickCount(1);
-
-        }
-
-        // adjust y with some fine precision
-        axisY->setRange(minY - 0.2*yRange, maxY + 0.2*yRange);
-
 
         //padhye adding ranges 8/25/2018
         // finding the range for X and Y axis
