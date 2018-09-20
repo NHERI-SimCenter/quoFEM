@@ -1,5 +1,7 @@
 // Written: fmckenna
 
+// added and modified: padhye
+
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -74,6 +76,7 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     QLabel *label1 = new QLabel();
     label1->setText(QString("Method"));
     samplingMethod = new QComboBox();
+    samplingMethod->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
     samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
     
@@ -203,6 +206,9 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
 
             samplingMethod->setCurrentIndex(index);
             return theEdpWidget->inputFromJSON(uq);
+
+            // initializing the correlation matrix here
+
 
         } else {
             emit sendErrorMessage("ERROR: Sampling Input Widget - no \"method\" ,\"samples\" or \"seed\" data");

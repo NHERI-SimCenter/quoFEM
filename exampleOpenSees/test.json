@@ -1,10 +1,10 @@
 {
     "fem": {
-        "dir": "/Users/fmckenna/NHERI/uqFEM/exampleOpenSees",
-        "inputFile": "/Users/fmckenna/NHERI/uqFEM/exampleOpenSees/TrussTemplate.tcl",
+        "dir": "C:/Users/nikhil/NHERI/uqFEM/exampleOpenSees",
+        "inputFile": "C:/Users/nikhil/NHERI/uqFEM/exampleOpenSees/TrussTemplate.tcl",
         "mainInput": "TrussTemplate.tcl",
         "mainPostprocessScript": "postprocess.py",
-        "postprocessScript": "/Users/fmckenna/NHERI/uqFEM/exampleOpenSees/postprocess.py",
+        "postprocessScript": "C:/Users/nikhil/NHERI/uqFEM/exampleOpenSees/postprocess.py",
         "program": "OpenSees"
     },
     "randomVariables": [
@@ -45,7 +45,7 @@
                 }
             ],
             "method": "LHS",
-            "samples": 100,
+            "samples": 10,
             "seed": 981
         },
         "uqType": "Sampling"

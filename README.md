@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1410699.svg)](https://doi.org/10.5281/zenodo.1410699)
+
 # uqFEM
 
 This is a SimCenter research application. It's purpose is to provide an application that will allow users to perform uncertainty  quantification and optimization methods utliizng existing finite element applictions. 

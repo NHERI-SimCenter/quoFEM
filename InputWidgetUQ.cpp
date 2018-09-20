@@ -70,6 +70,7 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     QSpacerItem *spacer = new QSpacerItem(50,10);
 
     uqSelection = new QComboBox();
+    uqSelection->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
     uqSelection->setMaximumWidth(200);
     uqSelection->setMinimumWidth(200);
 
