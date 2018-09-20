@@ -1,0 +1,44 @@
+environment
+tabular_data
+tabular_data_file = 'dakotaTab.out'
+
+method,
+coliny_ea
+max_iterations = 2
+max_function_evaluations = 20
+seed = 123
+population_size = 5
+fitness_type linear_rank
+mutation_type replace_uniform
+mutation_rate 0.9
+crossover_type two_point
+crossover_rate 0.9
+replacement_type elitist = 20
+
+
+variables,
+continuous_design = 4
+initial_point = 0.1 3.75 0.47 0.54 
+lower_bounds = 0 3.5 0.45 0.5 
+upper_bounds = 0.5 4 0.5 0.55 
+descriptors = 'Ap' 'An' 'Bn' 'beta' 
+
+
+
+
+interface,
+system # asynch evaluation_concurrency = 8
+analysis_driver = 'fem_driver' 
+parameters_file = 'params.in' 
+results_file = 'results.out' 
+work_directory directory_tag 
+copy_files = 'templatedir/*' 
+named 'workdir' file_save  directory_save 
+aprepro 
+
+responses, 
+calibration_terms = 1
+response_descriptors = 'error_mismatch' 
+numerical_gradients
+no_hessians
+
