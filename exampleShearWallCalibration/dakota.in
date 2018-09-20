@@ -4,8 +4,8 @@ tabular_data_file = 'dakotaTab.out'
 
 method,
 coliny_ea
-max_iterations = 2
-max_function_evaluations = 20
+max_iterations = 5
+max_function_evaluations = 5
 seed = 123
 population_size = 5
 fitness_type linear_rank

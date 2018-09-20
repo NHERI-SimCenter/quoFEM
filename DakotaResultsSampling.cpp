@@ -573,14 +573,40 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     best_fit_label_text = new QLabel();
 
 
-    QLabel *label = new QLabel(this);
+    QVBoxLayout *plotting_instructions_layout = new QVBoxLayout;
+
+
+
+    QLabel *label = new QLabel();
+
+    label->setStyleSheet("QLabel { background-color : white; color : gray; }");
+
     //label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    label->setText("PLOTTING INSTRUCTIONS: \n\nFirst left click on a column cell plots the corresponding\ncolumn on Y-axis without changing"
-                   " the X-axis.\n\n"
-       "A subsequent right click on the same column plots its\ncumulative probability distribution, and a "
-                   "subsequent\nleft click plots a histogram with best fit distribution.\n\n");
+    label->setText("PLOTTING INSTRUCTIONS:\n \n 1. First left click on a column cell plots \n "
+                   "the corresponding column on Y-axis without \n changing the X-axis.\n\n "
+                   "2. A subsequent right click on the same column plots its \n cumulative "
+                   "probability distribution, and a subsequent\nleft click plots a histogram with best fit distribution."
+                   );
     QFont f( "Helvetica [Cronyx]", 10, QFont::Normal);
     label->setFont(f);
+    label->setAlignment(Qt::AlignTop);
+
+    QLineEdit *plotting_instructions1 = new QLineEdit();
+    QLineEdit *plotting_instructions2 = new QLineEdit();
+
+    plotting_instructions1->setText("Plotting Instructions:\n");
+
+    plotting_instructions1->setText("First left click on a column");
+
+//    plotting_instructions->setText(instructions_text);
+
+
+    //variablenameLineEdit->(variable_name);
+    //plotting_instructions->setAlignment(Qt::AlignTrailing);
+
+
+    //\n\n"
+   //    "\n\n");
     //label->setAlignment(Qt::AlignBottom | Qt::AlignRight);
     //txt->setStandardButtons(QMessageBox->Save);
     //txt->icon(0);
@@ -602,12 +628,30 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
     layout->addWidget(spreadsheet,2,0,1,1);
     layout->addWidget(best_fit_label_text,2,1,1,1,Qt::AlignTop);
+    layout->addWidget(label,0,1,1,Qt::AlignTop);
+ //   layout->addWidget(plotting_instructions1,0,1,1,Qt::AlignTop);
+  //  layout->addWidget(plotting_instructions2,0,1,1,Qt::AlignTop);
+
+    //layout->setColumnMinimumWidth(1,250);
 
    // QLabel *best_fit_instructions=new QLabel(this);
 
    // layout->addWidget(best_fit_instructions,1,1,Qt::AlignLeft);
 
-    layout->addWidget(label,0,1,1,1,Qt::AlignLeft);
+    //layout->addWidget(label,0,1,1,1,Qt::AlignLeft);
+
+
+
+    //plotting_instructions_layout->addWidget(label);
+    //plotting_instructions_layout->addWidget(plotting_instructions);
+    //label->setMaximumWidth(200);
+    //plotting_instructions->setMaximumWidth(200);
+
+    //plotting_instructions_layout->setSizeConstraint(QLayout::SetDefaultConstraint);//SetMaximumSize(QSize(300,400));
+    //plotting_instructions_layout->maximumSize(100);
+    //layout->addLayout(plotting_instructions_layout,0,1,1,1,Qt::AlignLeft);
+
+
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
@@ -977,6 +1021,8 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
                 //line_from_file=line_from_file+info_fit_file.readLine()+"\n";
            }
            best_fit_label_text->setText(line_from_file);
+           best_fit_label_text->setStyleSheet("QLabel { background-color : white; color : gray; }");
+
            QFont f2("Helvetica [Cronyx]", 10, QFont::Normal);
            best_fit_label_text->setFont(f2);
            //msgBox.show();
