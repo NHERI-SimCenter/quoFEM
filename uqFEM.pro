@@ -47,7 +47,8 @@ SOURCES += main.cpp\
     RemoteJobCreator.cpp \
     MyTableWidget.cpp \
     RemoteJobManager.cpp \
-    AgaveCurl.cpp
+    AgaveCurl.cpp \
+    CustomizedItemModel.cpp
 
 HEADERS  += MainWindow.h \
     EDP.h \
@@ -70,6 +71,10 @@ HEADERS  += MainWindow.h \
     RemoteJobCreator.h \
     MyTableWidget.h \
     RemoteJobManager.h \
-    AgaveCurl.h
+    AgaveCurl.h \
+    CustomizedItemModel.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    styles.qrc
