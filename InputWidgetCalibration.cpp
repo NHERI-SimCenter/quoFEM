@@ -142,7 +142,7 @@ InputWidgetCalibration::InputWidgetCalibration(QWidget *parent)
     this->setLayout(layout);
 }
 
-int 
+int
 InputWidgetCalibration::getMaxNumParallelTasks(void){
   return 1;
 }
