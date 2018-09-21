@@ -72,7 +72,7 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
     QSpacerItem *spacer = new QSpacerItem(50,10);
 
     femSelection = new QComboBox();
-    femSelection->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
+    //femSelection->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
     femSelection->setMaximumWidth(100);
     femSelection->setMinimumWidth(100);
 
