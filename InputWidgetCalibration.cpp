@@ -142,6 +142,11 @@ InputWidgetCalibration::InputWidgetCalibration(QWidget *parent)
     this->setLayout(layout);
 }
 
+int
+InputWidgetCalibration::getMaxNumParallelTasks(void){
+  return 1;
+}
+
 
 bool
 InputWidgetCalibration::outputToJSON(QJsonObject &jsonObject)

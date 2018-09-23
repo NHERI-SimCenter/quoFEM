@@ -85,6 +85,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QDesktopServices>
 
+
+
+
 /*
 static
 MainWindow::MainWindow *theOneStaticMainWindow = 0;
@@ -148,7 +151,7 @@ MainWindow::MainWindow(QWidget *parent)
     QRect rec = QApplication::desktop()->screenGeometry();
 
     int height = 0.7*rec.height();
-    int width = 0.7*rec.width();
+    int width = 0.8*rec.width();
 
     this->resize(width, height);
 
