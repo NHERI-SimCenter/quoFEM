@@ -492,31 +492,45 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
                         {
                          QTableWidgetItem *item_index = spreadsheet->item(number_of_rows,colCount-(counter_col+1));
                           double value_item = item_index->text().toDouble();
-                          sd_value = (mean_value-value_item)*(mean_value-value_item);
+                          sd_value = sd_value+(mean_value-value_item)*(mean_value-value_item);
                         }
                             sd_value = sd_value/rowCount;
                             sd_value=sqrt(sd_value);
                  // QString  nameString(QString::fromStdString(word1));
                   //  theWidget = this->createResultEDPWidget(nameString,sd_value, sd_value);
                 //  qDebug()<<"\n the value of standard deviatio is     "<<sd_value;
+
+                   double kurtosis_value=0;
+                   for(int number_of_rows=0;number_of_rows<rowCount;++number_of_rows)
+                          {
+                          QTableWidgetItem *item_index = spreadsheet->item(number_of_rows,colCount-(counter_col+1));
+                          double value_item = item_index->text().toDouble();
+     kurtosis_value = (mean_value-value_item)*(mean_value-value_item)*(mean_value-value_item)*(mean_value-value_item);
+                           }
+                 kurtosis_value = kurtosis_value/rowCount;
+                 kurtosis_value = (kurtosis_value/(sd_value*sd_value*sd_value*sd_value))-3;
+                 //  QString  nameString(QString::fromStdString(word1));
+                 //  theWidget = this->createResultEDPWidget(nameString,sd_value, sd_value);
+                 //  qDebug()<<"\n the value of standard deviatio is     "<<sd_value;
+
                   QString variable_name = theHeadings.at(colCount-(counter_col+1));
                   variable_name.append("::");
                   variable_name.append("\t");
                   variable_name.append("Mean");
                   variable_name.append("  ");
                   variable_name.append(QString::number(mean_value));
-
-                  variable_name.append("  ");
-
+                  variable_name.append("         ");
                   variable_name.append("Std. Dev.");
-
-
-                  variable_name.append("\t");
-
+                  variable_name.append("  ");
                   variable_name.append(QString::number(sd_value));
 
-                  QLineEdit *variablenameLineEdit = new QLineEdit;
+                  variable_name.append("      ");
+                  variable_name.append("Kurtosis");
+                  variable_name.append("  ");
+                  variable_name.append(QString::number(kurtosis_value));
 
+
+                  QLineEdit *variablenameLineEdit = new QLineEdit;
                   variablenameLineEdit->setPlaceholderText(variable_name);
                   variablenameLineEdit->setReadOnly(true);
                   variablenameLineEdit->setAlignment(Qt::AlignTop);
@@ -534,6 +548,8 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
                     delete variablenameLineEdit;
                     edpLayout->addWidget(qle_list.at(counter_col));
+
+
 
 
                  }
