@@ -509,7 +509,7 @@ void MainWindow::onRunButtonClicked() {
    }
 
    QDir dirToRemove(sourceDir);
-   //dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
+   dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
     //                                  // so to debug you can simply comment it
 
     //
