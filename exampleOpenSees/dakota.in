@@ -7,7 +7,7 @@ sampling
 sample_type = lhs
 samples = 10
 seed = 981
-
+variance_based_decomp #interaction_order = 1
 
 
 variables,
