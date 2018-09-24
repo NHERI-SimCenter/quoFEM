@@ -18,7 +18,7 @@ if (sys.platform == 'darwin'):
     OpenSeesPath = '/Users/fmckenna/bin/'
     FeapPath = '/Users/fmckenna/bin/'
     DakotaPath = '/Users/fmckenna/dakota-6.7.0/bin/'
-    OpenSeesPath = ' ' 
+#    OpenSeesPath = ' ' 
     DakotaPath = ' '
     Perl = ' '
     fem_driver = 'fem_driver'
@@ -28,7 +28,7 @@ else:
     OpenSeesPath = 'C:\\Users\\nikhil\\Downloads\\OpenSees2.5.0-x64\\'
     DakotaPath = 'C:\\Users\\nikhil\\Desktop\\dakota-6.7-release-public-Windows.x86-UI\\bin\\'
     Perl = 'C:\\Perl64\\bin\perl '
-    OpenSeesPath = ' '
+ #   OpenSeesPath = ' '
     # DakotaPath = ' '
     Perl = 'perl '
     fem_driver = 'fem_driver.bat'
@@ -315,6 +315,8 @@ elif (type == "Bayesian Calibration"):
     method = samplingData["method"];
     if (method == "DREAM"):
         method = 'dream'
+    if(method == "QUESO"):
+        method = 'queso'
     chainSamples=samplingData["chain_samples"];
     seed = samplingData["seed"];
 
