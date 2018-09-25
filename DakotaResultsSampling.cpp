@@ -185,6 +185,8 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     QVBoxLayout *summaryLayout = new QVBoxLayout();
     summary->setLayout(summaryLayout);
 
+
+
     // //
     // in  to a QTextEdit we will place contents of Dakota more detailed output
     // //
@@ -221,7 +223,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
         while (std::getline(fileResults, haystack))
         {
-            qDebug()<<"\n   the value of haystack.find(needle)  "<<haystack.find(needle);
+            //qDebug()<<"\n   the value of haystack.find(needle)  "<<haystack.find(needle);
             //if (haystack.find(needle)==true){found_flag=1;}
             if (haystack.find(needle) != std::string::npos)
             {
@@ -431,7 +433,9 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
      //QWidget *theWidget = this->createResultEDPWidget(nameString, mean, stdDev);
      //summaryLayout->addWidget(theWidget);
 
-        std::ifstream fileResults("dakota.in");
+        QFileInfo outFileInfo(filenameResults);
+        QString inFileName = outFileInfo.absolutePath() + QDir::separator() + "dakota.in";
+        std::ifstream fileResults(inFileName.toStdString().c_str());
 
         //now look for "response_functions"
         const std::string needle3 = "response_functions";
