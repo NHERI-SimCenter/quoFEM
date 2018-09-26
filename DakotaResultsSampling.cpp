@@ -597,15 +597,6 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     label->setStyleSheet("QLabel { background-color : white; color : gray; }");
 
-
-    QVBoxLayout *plotting_instructions_layout = new QVBoxLayout;
-
-
-
-    QLabel *label = new QLabel();
-
-    label->setStyleSheet("QLabel { background-color : white; color : gray; }");
-
     //label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     label->setText("PLOTTING INSTRUCTIONS:\n \n 1. First left click on a column cell plots \n "
                    "the corresponding column on Y-axis without \n changing the X-axis.\n\n "
