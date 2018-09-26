@@ -147,7 +147,6 @@ InputWidgetCalibration::getMaxNumParallelTasks(void){
   return 1;
 }
 
-
 bool
 InputWidgetCalibration::outputToJSON(QJsonObject &jsonObject)
 {

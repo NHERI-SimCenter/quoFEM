@@ -80,7 +80,7 @@ private:
    QTextEdit  *dakotaText;
    MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
    QChart *chart;
-   QPushButton* save_spreadheet; // save the data from spreadsheet
+   QPushButton* save_spreadheet; // save the data from spreadsheet 
    QLabel *label;
    QLabel *best_fit_instructions;
 

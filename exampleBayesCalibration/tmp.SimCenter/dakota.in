@@ -4,7 +4,9 @@ tabular_data_file = 'dakotaTab.out'
 
 method,
 bayes_calibration dream
-chain_samples = 400
+
+chain_samples = 10
+
 seed = 519
 
 variables,

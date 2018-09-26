@@ -69,6 +69,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QLabel>
+#include <InputWidgetFEM.h>
+#include <InputWidgetUQ.h>
+#include <MainWindow.h>
 
 #include <InputWidgetFEM.h>
 #include <InputWidgetUQ.h>
@@ -87,9 +90,6 @@ using namespace QtCharts;
 #include <QXYSeries>
 
 #define NUM_DIVISIONS 10
-
-
-
 QLabel *best_fit_label_text;
 
 
@@ -121,8 +121,6 @@ void DakotaResultsSampling::clear(void)
     delete gen;
     delete res;
 }
-
-
 
 static void merge_helper(double *input, int left, int right, double *scratch)
 {
@@ -183,6 +181,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     //
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0);
     summary->setLayout(summaryLayout);
 
     // //
@@ -195,6 +194,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     //
     // open Dakota output file
     //
+
     //qDebug()<<"\n The filenameResults is        "<<filenameResults<<"\n\n\n";
     //qDebug()<<"\n The filenameTab is        "<<filenameTab<<"\n\n\n";
     //padhye 8/25/2018
@@ -262,6 +262,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
                 //
 
     // printing the haystack and seeing its effect
+
     //   qDebug()<<"\n\n    the value of the haystack is  \n    \n  "<<haystack.c_str();
             // The above string is simply the line after the the Kurtosis.
 
@@ -341,8 +342,8 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
                                 }
                             }
                         }
-
             }
+
 
     // close input file
     fileResults.close();
@@ -391,6 +392,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     while (std::getline(tabResults, inputLine)) {
         std::istringstream is(inputLine);
         int col=0;
+
         //qDebug()<<"\n the inputLine is        "<<inputLine.c_str();
 
         spreadsheet->insertRow(rowCount);
@@ -407,6 +409,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     }
     tabResults.close();
     // the above data is being read from dakotaTAB.out
+ 
     //qDebug()<<"\n  just finished printing    inputLine ";
     // rowCount;
 
@@ -587,6 +590,12 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     // into QWidget place chart and spreadsheet
     //
     best_fit_label_text = new QLabel();
+
+    QVBoxLayout *plotting_instructions_layout = new QVBoxLayout;
+
+    QLabel *label = new QLabel();
+
+    label->setStyleSheet("QLabel { background-color : white; color : gray; }");
 
 
     QVBoxLayout *plotting_instructions_layout = new QVBoxLayout;
@@ -813,8 +822,9 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
                 minX=value1;
                 maxX=value1;
                 minY=value2;
-                maxY=value2;
-                        }
+                maxY=value2;		
+	    }
+
             if(value1<minX){minX=value1;}
             if(value1>maxX){maxX=value1;}
 
@@ -958,6 +968,7 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
 
             delete [] dataValues;
+
 
             QString file_fitted_path = appDIR +  QDir::separator() + QString("Best_fit.out");
 
@@ -1305,6 +1316,8 @@ QWidget *
 DakotaResultsSampling::createResultEDPWidget(QString &name, double mean, double stdDev) {
     QWidget *edp = new QWidget;
     QHBoxLayout *edpLayout = new QHBoxLayout();
+    edpLayout->setContentsMargins(0,0,0,0);
+    edpLayout->setSpacing(3);
 
     edp->setLayout(edpLayout);
 
