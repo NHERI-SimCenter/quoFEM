@@ -335,11 +335,14 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         name1="dakota.json";
         name2="dakota.out";
         name3="dakotaTab.out";
+        QString name4="dakota.in";
+
 
         QStringList localFiles;
         localFiles.append(name1);
         localFiles.append(name2);
         localFiles.append(name3);
+        localFiles.append(name4);
 
         //
         // download data to temp files & then process them as normal
@@ -348,12 +351,14 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         QString dakotaJSON = archiveDir + QString("/templatedir/dakota.json");
         QString dakotaOUT = archiveDir + QString("/dakota.out");
         QString dakotaTAB = archiveDir + QString("/dakotaTab.out");
+        QString dakotaIN = archiveDir + QString("/dakota.in");
 
         // first download the input data & load it
         QStringList filesToDownload;
         filesToDownload.append(dakotaJSON);
         filesToDownload.append(dakotaOUT);
         filesToDownload.append(dakotaTAB);
+        filesToDownload.append(dakotaIN);
 
         emit downloadFiles(filesToDownload, localFiles);
      }

@@ -69,6 +69,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QLabel>
+#include <InputWidgetFEM.h>
+#include <InputWidgetUQ.h>
+#include <MainWindow.h>
 
 #include <InputWidgetFEM.h>
 #include <InputWidgetUQ.h>
@@ -183,6 +186,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     //
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0); // adding back
     summary->setLayout(summaryLayout);
 
 
