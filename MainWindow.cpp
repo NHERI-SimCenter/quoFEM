@@ -75,18 +75,18 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QUuid>
 #include <QLabel>
 #include <QLineEdit>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkReply>
-#include <QtNetwork/QNetworkRequest>
-#include <QHostInfo>
+
 
 //#include <AgaveCLI.h>
 #include <AgaveCurl.h>
 #include <RemoteJobCreator.h>
 #include <RemoteJobManager.h>
 #include <QThread>
-#include <QSettings>
+
 #include <QDesktopServices>
+
+
+
 
 /*
 static
@@ -125,19 +125,7 @@ MainWindow::fatalMessage(const QString msg){
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), loggedIn(false)
 {
-    //
-    // user settings
-    //
-
-    QSettings settings("SimCenter", "uqFEM");
-    QVariant savedValue = settings.value("uuid");
-    QUuid uuid;
-    if (savedValue.isNull()) {
-        uuid = QUuid::createUuid();
-        settings.setValue("uuid",uuid);
-    } else
-        uuid =savedValue.toUuid();
-
+   // theOneStaticMainWindow = this;
 
     //
     // create the interface, jobCreator and jobManager
@@ -163,7 +151,7 @@ MainWindow::MainWindow(QWidget *parent)
     QRect rec = QApplication::desktop()->screenGeometry();
 
     int height = 0.7*rec.height();
-    int width = 0.7*rec.width();
+    int width = 0.8*rec.width();
 
     this->resize(width, height);
 
@@ -217,10 +205,13 @@ MainWindow::MainWindow(QWidget *parent)
     results = new DakotaResults();
 
     inputWidget = new SidebarWidgetSelection();
+
     inputWidget->addInputWidget(tr("FEM Selection"), fem);
     inputWidget->addInputWidget(tr("Method Selection"), uq);
     inputWidget->addInputWidget(tr("Input Variables"), random);
     inputWidget->addInputWidget(tr("Results"), results);
+
+    //inputWidget->setFont(QFont( "lucida", 20, QFont::Bold, TRUE ) );
 
     // let ubput widget know end of ptions, then set initial input to fem
     inputWidget->buildTreee();
@@ -290,8 +281,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(random,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(results,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(jobManager,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(jobCreator,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
 
     // login
     connect(loginButton,SIGNAL(clicked(bool)),this,SLOT(onLoginButtonClicked()));
@@ -329,71 +318,24 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->createActions();
 
-    //
-    // create QThread in which the Interface will work, move interface to it,
-    // connect slots to thread to quit and invoke interface destructor & start running
-    //
-
     thread = new QThread();
     theRemoteInterface->moveToThread(thread);
 
-    connect(thread, SIGNAL(finished()), theRemoteInterface, SLOT(deleteLater()));
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
     thread->start();
 
-    //
-    // at startup make some URL calls to cleect tool stats
-    //
-
-    manager = new QNetworkAccessManager(this);
-
-    connect(manager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(replyFinished(QNetworkReply*)));
-
-    // send get to my simple counter
-    manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/uqFEM/use.php")));
-
-    //
-    // google analytics
-    // ref: https://developers.google.com/analytics/devguides/collection/protocol/v1/reference
-    //
-
-    QNetworkRequest request;
-    QUrl host("http://www.google-analytics.com/collect");
-    request.setUrl(host);
-    request.setHeader(QNetworkRequest::ContentTypeHeader,
-                      "application/x-www-form-urlencoded");
-
-    // setup parameters of request
-    QString requestParams;
-    QString hostname = QHostInfo::localHostName() + "." + QHostInfo::localDomainName();
-    //QUuid uuid = QUuid::createUuid();
-    requestParams += "v=1"; // version of protocol
-    requestParams += "&tid=UA-121636495-1"; // Google Analytics account
-    requestParams += "&cid=" + uuid.toString(); // unique user identifier
-    requestParams += "&t=event";  // hit type = event others pageview, exception
-    requestParams += "&an=uqFEM"; // app name
-    requestParams += "&av=1.0.1"; // app version
-    requestParams += "&ec=uqFEM";   // event category
-    requestParams += "&ea=start"; // event action
-
-    // send post to google-analytics
-    manager->post(request, requestParams.toStdString().c_str());
 }
 
 MainWindow::~MainWindow()
 {
-    //
-    // call quit on thread and deleteLater on interface
-    // -interface destructor called here
+    // invoke destructor as AgaveCLI not a QObject
+    //delete theRemoteInterface;
     thread->quit();
     theRemoteInterface->deleteLater();
 
-    // destroy objects we created
     delete jobCreator;
     delete jobManager;
-    delete manager;
 }
 
 bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory)
@@ -534,30 +476,25 @@ void MainWindow::onRunButtonClicked() {
     // now invoke dakota, done via a python script in tool app dircetory
     //
 
-    // wrap paths with quotes:
-    pySCRIPT = "\"" + pySCRIPT + "\"";
-    tDirectory = "\"" + tDirectory + "\"";
-    tmpDirectory = "\"" + tmpDirectory + "\"";
-
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
-    qDebug() << command;
+   qDebug() << command;
     proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
+    qDebug() << command;
 
+    //std::cerr << command << "\n";
 #else
-   QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
-     tmpDirectory + QString(" runningLocal");
+   QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+            tmpDirectory + QString(" runningLocal");
 
     //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
     //        tmpDirectory + QString(" runningLocal");
 
     proc->execute("bash", QStringList() << "-c" <<  command);
-
     qInfo() << command;
-
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
     proc->waitForStarted();
@@ -573,7 +510,7 @@ void MainWindow::onRunButtonClicked() {
 
    QDir dirToRemove(sourceDir);
    dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
-                                    // so to debug you can simply comment it
+    //                                  // so to debug you can simply comment it
 
     //
     // process the results
@@ -679,12 +616,8 @@ void MainWindow::onRemoteRunButtonClicked(){
     // now invoke dakota, done via a python script in tool app dircetory
     //
 
-    // wrap paths with quotes:
-    pySCRIPT = "\"" + pySCRIPT + "\"";
-    tDirectory = "\"" + tDirectory + "\"";
-    tmpDirectory = "\"" + tmpDirectory + "\"";
-
     QProcess *proc = new QProcess();
+qDebug() << "HELLO";
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     qDebug() << command;
@@ -692,7 +625,7 @@ void MainWindow::onRemoteRunButtonClicked(){
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
 
 #else
-    QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
+    QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     proc->execute("bash", QStringList() << "-c" <<  command);
     qDebug() << command;
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
@@ -707,7 +640,6 @@ void MainWindow::onRemoteRunButtonClicked(){
     jobCreator->hide();
     jobManager->hide();
     jobCreator->setInputDirectory(tDirectory);
-    jobCreator->setMaxNumParallelProcesses(uq->getNumParallelTasks());
     jobCreator->show();
 }
 
@@ -803,8 +735,8 @@ MainWindow::logoutReturn(bool ok){
 
 
 void MainWindow::onExitButtonClicked(){
-  //RandomVariableInputWidget *theParameters = uq->getParameters();
-  QApplication::quit();
+    RandomVariableInputWidget *theParameters = uq->getParameters();
+    QApplication::quit();
 }
 
 void MainWindow::onDakotaMethodChanged(void) {
@@ -937,6 +869,7 @@ void MainWindow::loadFile(const QString &fileName)
         return;
     }
 
+
     // given the json object, create the C++ objects
     //inputWidget->inputFromJSON(jsonObj);
     if (fem->inputFromJSON(jsonObj) != true)
@@ -945,12 +878,6 @@ void MainWindow::loadFile(const QString &fileName)
         return;
     if (random->inputFromJSON(jsonObj) != true)
         return;
-
-    qDebug() << "uq->getResults()";
-    DakotaResults *result=uq->getResults();
-    results->setResultWidget(result);
-    qDebug() << "results - inputFRomJSON";
-
     if (results->inputFromJSON(jsonObj) != true)
         return;
 
@@ -962,12 +889,16 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 {
     errorMessage("Processing Results");
 
+    qDebug()<<"\Inside processResults widget and trying to proceed";
+
     DakotaResults *result=uq->getResults();
     result->processResults(dakotaIN, dakotaTAB);
     results->setResultWidget(result);
     inputWidget->setSelection(QString("Results"));
 
-    errorMessage(" ");
+
+    qDebug()<<"\n the value of results is \n\n  "<<results;
+
 }
 
 void MainWindow::createActions() {
@@ -1100,20 +1031,22 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 1.0.1 "));
+                       tr("Version 1.0.0 "));
 }
 
 void MainWindow::about()
 {
     QString textAbout = "\
               This is the open-source uqFEM tool. It is an application intended to augment finite element applications with\
-              sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
-             quantification in the structural responses and parameter estimation of input variables in calibration studies.\
+              sampling and optimization methods. These methods will allow users to provide for example uncertainty\
+             quantification in the responses generated and parameter estimation in the input variables in calibration studies.\
              <p>\
-             Version 1.0 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
-             will repeatedly invoke the finite element application either locally on the users dekstop machine or remotely\
-             on high performance computing resources at the Texas Advanced Computing Center through the NHERI DesignSafe cyberinfrastructure.\
+             Version 1 of this till utilizes the Dakota software to provide the UQ and optimization methods. Each of these\
+             methods will repeatedly invoke the Finite Element application on either locally on the users dekstp machine or remotely\
+             on HPC resources at the Texas Advanced Computing Center throgh the NHERI DesignSafe cyberinfrastructure.\
              <p>\
+             The tool does not limit the capabilities provided by these applications, and as such, does not stop the user from doing\
+             stupid things.<p>\
             ";
 
             QMessageBox msgBox;

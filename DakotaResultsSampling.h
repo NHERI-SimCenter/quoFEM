@@ -41,11 +41,16 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <DakotaResults.h>
 #include <QtCharts/QChart>
+#include <QMessageBox>
+#include <QPushButton>
+
+
 using namespace QtCharts;
 
 class QTextEdit;
 class QTabWidget;
 class MyTableWidget;
+class MainWindow;
 //class QChart;
 
 class DakotaResultsSampling : public DakotaResults
@@ -66,12 +71,18 @@ signals:
 public slots:
    void clear(void);
    void onSpreadsheetCellClicked(int, int);
+   void onSaveSpreadsheetClicked();
+
+   // modified by padhye 08/25/2018
 
 private:
    QTabWidget *tabWidget;
    QTextEdit  *dakotaText;
-   MyTableWidget *spreadsheet;
+   MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
    QChart *chart;
+   QPushButton* save_spreadheet; // save the data from spreadsheet
+   QLabel *label;
+   QLabel *best_fit_instructions;
 
    int col1, col2;
    bool mLeft;

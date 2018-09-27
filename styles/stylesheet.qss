@@ -1,0 +1,65 @@
+/* ---   Styles for EE-UQ    --- */
+/* --- Written: charles.wang --- */
+
+QMainWindow, QDialog
+{
+	background: #222;
+}
+
+
+
+
+/* --- The menu buttons on the left --- */
+
+QTreeView#treeViewOnTheLeft{
+    background: rgb(79, 83, 89);
+
+    /* set the font properties*/
+    font-size:17px;
+    color: white;
+
+border-width:50px;
+}
+
+QTreeView#treeViewOnTheLeft::item:hover {
+    background: rgb(69, 187, 217);
+}
+
+QTreeView#treeViewOnTheLeft::item:selected:active{
+    background: rgb(63, 147, 168);
+}
+
+QTreeView#treeViewOnTheLeft::item:selected:!active {
+    background: rgb(63, 147, 168);
+}
+
+
+/* This overrides some features of QComboBox defined in styles.qss */
+QComboBox {
+    color:black; /* set color to be black, even item hovered */
+    border: 1px solid gray;
+    border-radius: 3px;
+    background-color: #E0E0E0;
+    padding: 1px 18px 1px 3px;
+    min-width: 6em;
+}
+
+
+
+/*
+QPushButton
+{
+	border-radius: 1px;
+	border: 0;
+	text-align: center;
+	font-size: inherit;
+	background: #FA5C5C;
+	color: #fff;
+	outline: 0;
+	text-decoration: none;
+	padding: 0 10px;
+	border-radius: 1px;
+	line-height: 35px;
+}
+*/
+

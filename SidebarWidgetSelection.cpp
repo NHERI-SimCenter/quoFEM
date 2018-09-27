@@ -50,6 +50,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDebug>
 #include <QModelIndex>
 
+#include "CustomizedItemModel.h"
+#include <QFile>
+
 void 
 SidebarWidgetSelection::addInputWidget(const QString &name, SimCenterWidget *theWidget){
     QStandardItem *item = new QStandardItem(name);
@@ -96,9 +99,27 @@ SidebarWidgetSelection::SidebarWidgetSelection(QWidget *parent)
     //
 
     treeView = new QTreeView();
-    standardModel = new QStandardItemModel ;
+    standardModel = new CustomizedItemModel; // QStandardItemModel ;
     rootNode = standardModel->invisibleRootItem();
     numWidgets = 0;
+
+    //
+    // customize the apperance of the menu on the left
+    //
+
+    treeView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff ); // hide the horizontal scroll bar
+    treeView->setObjectName("treeViewOnTheLeft");
+    treeView->setIndentation(0);
+
+    QFile file(":/styles/stylesheet.qss");
+    if(file.open(QFile::ReadOnly)) {
+        this->setStyleSheet(file.readAll());
+        file.close();
+        qDebug() << "Open Style File Successfully.";
+    }
+    else
+        qDebug() << "Open Style File Failed!";
+
 }
 
 SidebarWidgetSelection::~SidebarWidgetSelection()

@@ -1,0 +1,11 @@
+                    { DAKOTA_VARS     =                      2 }
+                    { roofFactor      =  7.746439725732088e-01 }
+                    { dampRatio       =  3.444473847812898e-02 }
+                    { DAKOTA_FNS      =                      2 }
+                    { ASV_1:Roof_Disp_3 =                      1 }
+                    { ASV_2:Roof_Disp_4 =                      1 }
+                    { DAKOTA_DER_VARS =                      2 }
+                    { DVV_1:roofFactor =                      1 }
+                    { DVV_2:dampRatio =                      2 }
+                    { DAKOTA_AN_COMPS =                      0 }
+                    { DAKOTA_EVAL_ID  =                    390 }
