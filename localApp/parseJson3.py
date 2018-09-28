@@ -14,11 +14,11 @@ path2 = inputArgs[2]
 exeDakota = inputArgs[3]
 
 if (sys.platform == 'darwin'):
-    OpenSeesPath = '/Users/fmckenna/bin/'
+    OpenSeesPath = '/Users/simcenter/Codes/OpenSees/bin/'
     FeapPath = '/Users/fmckenna/bin/'
-    DakotaPath = '/Users/fmckenna/dakota-6.7.0/bin/'
-#    OpenSeesPath = ' ' 
-    DakotaPath = ' '
+    DakotaPath = '/Users/simcenter/Applications/dakota-6.8.0.Darwin.x86_64/bin/'
+    #OpenSeesPath = ' ' 
+    #DakotaPath = ' '
     Perl = ' '
     fem_driver = 'fem_driver'
     numCPUs = 8
@@ -27,7 +27,7 @@ else:
     OpenSeesPath = 'C:\\Users\\nikhil\\Downloads\\OpenSees2.5.0-x64\\'
     DakotaPath = 'C:\\Users\\nikhil\\Desktop\\dakota-6.7-release-public-Windows.x86-UI\\bin\\'
     Perl = 'C:\\Perl64\\bin\perl '
- #   OpenSeesPath = ' '
+    #OpenSeesPath = ' '
     # DakotaPath = ' '
     Perl = 'perl '
     fem_driver = 'fem_driver.bat'
@@ -314,8 +314,6 @@ elif (type == "Bayesian Calibration"):
     method = samplingData["method"];
     if (method == "DREAM"):
         method = 'dream'
-    if(method == "QUESO"):
-        method = 'queso'
     chainSamples=samplingData["chain_samples"];
     seed = samplingData["seed"];
 
@@ -825,6 +823,7 @@ os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
 command = DakotaPath + 'dakota -input dakota.in -output dakota.out -error dakota.err'
 print(command)
+print("now execute command.\n")
 #os.popen("/Users/fmckenna/dakota-6.7.0/bin/dakota -input dakota.in -output dakota.out -error dakota.err").read()
 
 if exeDakota in ['runningLocal']:

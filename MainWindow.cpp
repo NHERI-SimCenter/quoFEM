@@ -535,30 +535,34 @@ void MainWindow::onRunButtonClicked() {
     // now invoke dakota, done via a python script in tool app dircetory
     //
 
-    // wrap paths with quotes:
-    pySCRIPT = "\"" + pySCRIPT + "\"";
-    tDirectory = "\"" + tDirectory + "\"";
-    tmpDirectory = "\"" + tmpDirectory + "\"";
+
 
     QProcess *proc = new QProcess();
 
+
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
-   qDebug() << command;
+    qDebug() << command;
     proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
     qDebug() << command;
 
     //std::cerr << command << "\n";
 #else
-   QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+
+    // wrap paths with quotes (dealing with spaces in the path);
+    pySCRIPT = "\"" + pySCRIPT + "\"";
+    tDirectory = "\"" + tDirectory + "\"";
+    tmpDirectory = "\"" + tmpDirectory + "\"";
+
+    QString command = QString("source $HOME/.bash_profile; source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
             tmpDirectory + QString(" runningLocal");
 
-    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
-    //        tmpDirectory + QString(" runningLocal");
+    qInfo() << QProcessEnvironment::systemEnvironment().value("PATH") << "\n";// system PATH
+    qInfo() << command;
 
     proc->execute("bash", QStringList() << "-c" <<  command);
-    qInfo() << command;
+
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
     proc->waitForStarted();
@@ -680,13 +684,9 @@ void MainWindow::onRemoteRunButtonClicked(){
     // now invoke dakota, done via a python script in tool app dircetory
     //
 
-    // wrap paths with quotes:
-    pySCRIPT = "\"" + pySCRIPT + "\"";
-    tDirectory = "\"" + tDirectory + "\"";
-    tmpDirectory = "\"" + tmpDirectory + "\"";
 
     QProcess *proc = new QProcess();
-qDebug() << "HELLO";
+    qDebug() << "HELLO";
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     qDebug() << command;
@@ -694,7 +694,11 @@ qDebug() << "HELLO";
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
 
 #else
-    QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
+    // wrap paths with quotes:
+    pySCRIPT = "\"" + pySCRIPT + "\"";
+    tDirectory = "\"" + tDirectory + "\"";
+    tmpDirectory = "\"" + tmpDirectory + "\"";
+    QString command = QString("source $HOME/.bashrc; source $HOME/.bash_profile; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     proc->execute("bash", QStringList() << "-c" <<  command);
     qDebug() << command;
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);

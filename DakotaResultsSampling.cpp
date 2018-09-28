@@ -977,12 +977,22 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
             }
             // make sure to check if Q_OS_WIN or Mac etc. else there will be a bug
-            //QString command = QString("python ") + pySCRIPT_dist_fit;
-            //QString command = QString(" python C:\\Users\\nikhil\\NHERI\\build-uqFEM-Desktop_Qt_5_11_0_MSVC2015_32bit-Release\\debug\\fit.py ");
-           QProcess process;
-          // qDebug()<<"\n the pySCRIPT is        "<<pySCRIPT_dist_fit;
-           process.setWorkingDirectory(appDIR);
-           process.execute("python",QStringList()<<pySCRIPT_dist_fit);
+            //QProcess process;
+            QProcess *process = new QProcess();
+            process->setWorkingDirectory(appDIR);
+
+           //pySCRIPT_dist_fit = QString("source $HOME/.bash_profile; source $HOME/.bashrc; python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
+
+#ifdef Q_OS_WIN
+           pySCRIPT_dist_fit = QString("python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
+           process->execute("cmd", QStringList() << "/C" << pySCRIPT_dist_fit);
+#else
+           pySCRIPT_dist_fit = QString("source $HOME/.bash_profile; source $HOME/.bashrc; python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
+           qDebug() << pySCRIPT_dist_fit;
+           process->execute("bash", QStringList() << "-c" <<  pySCRIPT_dist_fit);
+#endif
+
+
            QFile file_fitted_data("Best_fit.out");
            if(!file_fitted_data.exists())
            {
