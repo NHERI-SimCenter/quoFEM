@@ -233,7 +233,7 @@ MainWindow::MainWindow(QWidget *parent)
     // let ubput widget know end of ptions, then set initial input to fem
     inputWidget->buildTreee();
     inputWidget->setSelection(tr("FEM Selection"));
-
+    inputWidget->setMinimumWidth(600);
     // add selection widget to the central layout previosuly created
     layout->addWidget(inputWidget,1.0);
 
@@ -1163,7 +1163,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 1.0.1 "));
+                       tr("Version 1.1.0 "));
 }
 
 void MainWindow::about()
