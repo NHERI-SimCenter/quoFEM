@@ -180,16 +180,16 @@ static int mergesort(double *input, int size)
 
 int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab)
 {
+    emit sendStatusMessage(tr("Processing SampingResults"));
 
     //
     // get a Qwidget ready to place summary data, the EDP name, mean, stdDev into
     //
+
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
     summaryLayout->setContentsMargins(0,0,0,0); // adding back
     summary->setLayout(summaryLayout);
-
-
 
     // //
     // in  to a QTextEdit we will place contents of Dakota more detailed output
@@ -214,7 +214,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     std::ifstream fileResults(filenameResults.toStdString().c_str());
     if (!fileResults.is_open()) {
-        qDebug() << "Could not open file: " << filenameResults;
+        emit sendErrorMessage( QString("Could not open file: ") + filenameResults + QString(" Dakota did not start. Check error file in jobs archive in Data Depot"));
         return -1;
     }
 
@@ -225,130 +225,145 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     int found_flag=0;
 
-        while (std::getline(fileResults, haystack))
-        {
-            //qDebug()<<"\n   the value of haystack.find(needle)  "<<haystack.find(needle);
-            //if (haystack.find(needle)==true){found_flag=1;}
-            if (haystack.find(needle) != std::string::npos)
-            {
-                 found_flag=1;
-                 break;
-            }
-        }
-      //  qDebug()<<"\n the value of found_flag is    "<<found_flag;
-
-     // if found then do the standard processing.
-    if(found_flag==1)
+    while (std::getline(fileResults, haystack))
     {
-    //found_flag=0 means kurtosis not found, and you have to computer them.
-
-    // the idea is that once you have found the  keyword Kurtosis
-    // then from that line until end of the dakota.out you copy
-    // everything and flash it into the uqFEM.
-
-    //
-    // now copy line and every subsequent line into text editor
-    //  - also if still collecting sumary data, add each EDP's sumary info
-    //
-    dakotaText->append(haystack.c_str());
-    bool isSummaryDone = false;
-
-
-    // This is where you go until the end of the file to get all the data
-
-      while (std::getline(fileResults, haystack)) {
-        dakotaText->append(haystack.c_str());
-        if (isSummaryDone == false) {
-
-            if ( strlen(haystack.c_str()) == 0) {
-                isSummaryDone = true;
-            } else {
-                //
-                // add sumary info
-                //
-
-    // printing the haystack and seeing its effect
-    //   qDebug()<<"\n\n    the value of the haystack is  \n    \n  "<<haystack.c_str();
-            // The above string is simply the line after the the Kurtosis.
-
-        // qDebug()<<"\n\n    I just dumped the value of the haystack above  \n    \n  ";
-            std::istringstream iss(haystack);
-            std::string subs;
-            iss >> subs;
-            QString  nameString(QString::fromStdString(subs));  // name of the output
-            iss >> subs;
-            QString meanText(QString::fromStdString(subs));
-            double mean = meanText.toDouble();  // this is the mean value
-            iss >> subs;
-            QString stdDevText(QString::fromStdString(subs));
-            double stdDev = stdDevText.toDouble();  // this is std. deviation
-            QWidget *theWidget = this->createResultEDPWidget(nameString, mean, stdDev);
-            summaryLayout->addWidget(theWidget);
-            // end of summary widget
-            }
+        if (haystack.find(needle) != std::string::npos)
+        {
+            found_flag=1;
+            break;
         }
     }
 
-    }else if(found_flag==0)
-            {
-                fileResults.close();
-                std::ifstream fileResults(filenameResults.toStdString().c_str());
+    // if found then do the standard processing.
+    if(found_flag==1)
+    {
+        //found_flag=0 means kurtosis not found, and you have to computer them.
 
-                // reset the file counter
-              //  fileResults.seekg(0, fileResults.beg);
-                //now look for "Global sensitivity"
-                const std::string needle2 = "sensitivity";
-                while (std::getline(fileResults, haystack))
-                {
-                   // qDebug()<<"\n the value is  \n"<<haystack.c_str();
-                    //qDebug()<<"\n the haystack is   "<<haystack;
-                    //qDebug()<<"\n";
-       //             qDebug()<<"\n   the value of haystack.find(needle2)  "<<haystack.find(needle2);
-                    //if (haystack.find(needle)==true){found_flag=1;}
-                    if (haystack.find(needle2) != std::string::npos)
-                    {
-                         break;
-                    }
+        // the idea is that once you have found the  keyword Kurtosis
+        // then from that line until end of the dakota.out you copy
+        // everything and flash it into the uqFEM.
+
+        //
+        // now copy line and every subsequent line into text editor
+        //  - also if still collecting sumary data, add each EDP's sumary info
+        //
+        dakotaText->append(haystack.c_str());
+        bool isSummaryDone = false;
+
+        // This is where you go until the end of the file to get all the data
+
+        while (std::getline(fileResults, haystack)) {
+            dakotaText->append(haystack.c_str());
+            if (isSummaryDone == false) {
+
+                if ( strlen(haystack.c_str()) == 0) {
+                    isSummaryDone = true;
+                } else {
+                    //
+                    // add sumary info
+                    //
+
+                    // printing the haystack and seeing its effect
+                    //   qDebug()<<"\n\n    the value of the haystack is  \n    \n  "<<haystack.c_str();
+                    // The above string is simply the line after the the Kurtosis.
+
+                    // qDebug()<<"\n\n    I just dumped the value of the haystack above  \n    \n  ";
+                    std::istringstream iss(haystack);
+                    std::string subs;
+                    iss >> subs;
+                    QString  nameString(QString::fromStdString(subs));  // name of the output
+                    iss >> subs;
+                    QString meanText(QString::fromStdString(subs));
+                    double mean = meanText.toDouble();  // this is the mean value
+                    iss >> subs;
+                    QString stdDevText(QString::fromStdString(subs));
+                    double stdDev = stdDevText.toDouble();  // this is std. deviation
+                    QWidget *theWidget = this->createResultEDPWidget(nameString, mean, stdDev);
+                    summaryLayout->addWidget(theWidget);
+                    // end of summary widget
                 }
-
-                //dakotaText contains the information for the General Widget
-                dakotaText->append(haystack.c_str());
-                bool isSummaryDone = false;
-
-                // This is where you go until the end of the file to get all the data
-
-                  while (std::getline(fileResults, haystack))
-                  {
-                    dakotaText->append(haystack.c_str());
-                            //if (isSummaryDone == false)
-                            {
-
-                        //if (strlen(haystack.c_str()) == 0)
-                            {
-                          //          isSummaryDone = true;
-                            } //else
-                        {
-
-                                 // std::istringstream iss(haystack);
-                                 // std::string subs;
-                                 // iss >> subs;
-                                  //QString  nameString(QString::fromStdString(subs));  // name of the output
-                                 // iss >> subs;
-                                  //QString meanText(QString::fromStdString(subs));
-                                  //double mean = meanText.toDouble();  // this is the mean value
-                                  //iss >> subs;
-                                  //QString stdDevText(QString::fromStdString(subs));
-                                  //double stdDev = stdDevText.toDouble();  // this is std. deviation
-                                   //QWidget *theWidget = this->createResultEDPWidget(nameString, mean, stdDev);
-                                   //summaryLayout->addWidget(theWidget);
-                        // end of summary widget
-
-
-                                }
-                            }
-                        }
-
             }
+        }
+
+    }
+
+    //
+    // did not find regular statistics, close & reload and sea=rch again ..
+    // NEEDS TO BE REDONE so file not closed and reopened again
+    //
+
+    else if(found_flag==0) {
+        fileResults.close();
+        std::ifstream fileResults(filenameResults.toStdString().c_str());
+
+        // reset the file counter
+        //  fileResults.seekg(0, fileResults.beg);
+        //now look for "Global sensitivity"
+        const std::string needle2 = "sensitivity";
+        while (std::getline(fileResults, haystack))
+        {
+            // qDebug()<<"\n the value is  \n"<<haystack.c_str();
+            //qDebug()<<"\n the haystack is   "<<haystack;
+            //qDebug()<<"\n";
+            //             qDebug()<<"\n   the value of haystack.find(needle2)  "<<haystack.find(needle2);
+            //if (haystack.find(needle)==true){found_flag=1;}
+            if (haystack.find(needle2) != std::string::npos)
+            {
+                found_flag = 2;
+                break;
+            }
+        }
+
+        //
+        // if no data, dakota failed
+        //
+
+        if (found_flag == 0) {
+            emit sendErrorMessage(tr("ERROR: Dakota Failed to finish SUCCESFULLY. Go look at your job archive on DesignSafe"));
+            return -1;
+        } else {
+             emit sendErrorMessage(tr("UQ Sampling Results"));
+
+        }
+
+        //dakotaText contains the information for the General Widget
+        dakotaText->append(haystack.c_str());
+        bool isSummaryDone = false;
+
+        // This is where you go until the end of the file to get all the data
+
+        while (std::getline(fileResults, haystack))
+        {
+            dakotaText->append(haystack.c_str());
+            //if (isSummaryDone == false)
+            {
+
+                //if (strlen(haystack.c_str()) == 0)
+                {
+                    //          isSummaryDone = true;
+                } //else
+                {
+
+                    // std::istringstream iss(haystack);
+                    // std::string subs;
+                    // iss >> subs;
+                    //QString  nameString(QString::fromStdString(subs));  // name of the output
+                    // iss >> subs;
+                    //QString meanText(QString::fromStdString(subs));
+                    //double mean = meanText.toDouble();  // this is the mean value
+                    //iss >> subs;
+                    //QString stdDevText(QString::fromStdString(subs));
+                    //double stdDev = stdDevText.toDouble();  // this is std. deviation
+                    //QWidget *theWidget = this->createResultEDPWidget(nameString, mean, stdDev);
+                    //summaryLayout->addWidget(theWidget);
+                    // end of summary widget
+
+
+                }
+            }
+        }
+
+    }
 
     // close input file
     fileResults.close();
@@ -382,7 +397,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
         if (colCount > 1) {
             if (subs != " ") {
                 theHeadings << subs.c_str();
-        //qDebug()<<"\n the value of subs.c_str() is      "<<subs.c_str()<<"\n";
+                //qDebug()<<"\n the value of subs.c_str() is      "<<subs.c_str()<<"\n";
             }
         }
         colCount++;
@@ -418,7 +433,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     //if we did not compute mean and std. dev., due to sobelov indices so far, we will do so now
 
-    QHBoxLayout *edpLayout = new QHBoxLayout();
+    QVBoxLayout *edpLayout = new QVBoxLayout();
 
     QList<QLineEdit*> qle_list;
 
@@ -427,15 +442,15 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     {
 
 
-    //QString  nameString(QString::fromStdString(subs));  // name of the output
-    // iss >> subs;
-    //QString meanText(QString::fromStdString(subs));
-    //double mean = meanText.toDouble();  // this is the mean value
-    //iss >> subs;
-    //QString stdDevText(QString::fromStdString(subs));
-    //double stdDev = stdDevText.toDouble();  // this is std. deviation
-     //QWidget *theWidget = this->createResultEDPWidget(nameString, mean, stdDev);
-     //summaryLayout->addWidget(theWidget);
+        //QString  nameString(QString::fromStdString(subs));  // name of the output
+        // iss >> subs;
+        //QString meanText(QString::fromStdString(subs));
+        //double mean = meanText.toDouble();  // this is the mean value
+        //iss >> subs;
+        //QString stdDevText(QString::fromStdString(subs));
+        //double stdDev = stdDevText.toDouble();  // this is std. deviation
+        //QWidget *theWidget = this->createResultEDPWidget(nameString, mean, stdDev);
+        //summaryLayout->addWidget(theWidget);
 
         QFileInfo outFileInfo(filenameResults);
         QString inFileName = outFileInfo.absolutePath() + QDir::separator() + "dakota.in";
@@ -444,132 +459,132 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
         //now look for "response_functions"
         const std::string needle3 = "response_functions";
 
-                 while (std::getline(fileResults, haystack))
-                {
-                       //qDebug()<<"\n the value is  \n"<<haystack.c_str();
-                       //qDebug()<<"\n the haystack is   "<<haystack;
-                       //qDebug()<<"\n";
-                       //qDebug()<<"\n   the value of haystack.find(needle2)  "<<haystack.find(needle2);
-                       //if (haystack.find(needle)==true){found_flag=1;}
-                       if (haystack.find(needle3) != std::string::npos)
-                        {
-                            break;
-                        }
-                 }
-
-                 std::istringstream iss2(haystack);
-                 std::string word1;
-                 iss2 >> word1;
-                 QString string_number_of_responses(QString::fromStdString(word1));
-
-                 std::string word2;
-                 iss2 >> word2;
-                 QString string_equal_to(QString::fromStdString(word2));
-
-                 std::string word3;
-                 iss2 >> word3;
-                 QString value_number_of_responses(QString::fromStdString(word3));
-
-                 int value_no_of_variables = value_number_of_responses.toDouble();
-                 //qDebug()<<"\n the value of no variables is     "<<value_no_of_variables;
-                 //while(iss2 >> word) {
-                 //QString string_numberofvariables(QString::fromStdString(word));
-             //   qDebug()<<"\n The value of number of response functions    is   "<<value_no_of_variables;
-                // }
-            //    qDebug()<<"\n the value of rowCount is      "<<rowCount;
-
-                 for(int counter_col=0;counter_col<value_no_of_variables;++counter_col)
-                 {
-                    // compute the mean
-                    double sum_value=0;
-                    for(int number_of_rows=0;number_of_rows<rowCount;++number_of_rows)
-                        {
-                       //   qDebug()<<"\n The value of colCount     "<<colCount;
-                       //   qDebug()<<"\n The value of counter_col  "<<counter_col;
-                          QTableWidgetItem *item_index = spreadsheet->item(number_of_rows,colCount-(counter_col+1));
-                          double value_item = item_index->text().toDouble();
-                          sum_value=sum_value+value_item;
-                        }
-
-                    double mean_value=sum_value/rowCount;
-
-                  //  qDebug()<<"\n The   mean_value is   "<<mean_value;
-
-                    double sd_value=0;
-                    for(int number_of_rows=0;number_of_rows<rowCount;++number_of_rows)
-                        {
-                         QTableWidgetItem *item_index = spreadsheet->item(number_of_rows,colCount-(counter_col+1));
-                          double value_item = item_index->text().toDouble();
-                          sd_value = sd_value+(mean_value-value_item)*(mean_value-value_item);
-                        }
-                            sd_value = sd_value/rowCount;
-                            sd_value=sqrt(sd_value);
-                 // QString  nameString(QString::fromStdString(word1));
-                  //  theWidget = this->createResultEDPWidget(nameString,sd_value, sd_value);
-                //  qDebug()<<"\n the value of standard deviatio is     "<<sd_value;
-
-                   double kurtosis_value=0;
-                   for(int number_of_rows=0;number_of_rows<rowCount;++number_of_rows)
-                          {
-                          QTableWidgetItem *item_index = spreadsheet->item(number_of_rows,colCount-(counter_col+1));
-                          double value_item = item_index->text().toDouble();
-     kurtosis_value = (mean_value-value_item)*(mean_value-value_item)*(mean_value-value_item)*(mean_value-value_item);
-                           }
-                 kurtosis_value = kurtosis_value/rowCount;
-                 kurtosis_value = (kurtosis_value/(sd_value*sd_value*sd_value*sd_value))-3;
-                 //  QString  nameString(QString::fromStdString(word1));
-                 //  theWidget = this->createResultEDPWidget(nameString,sd_value, sd_value);
-                 //  qDebug()<<"\n the value of standard deviatio is     "<<sd_value;
-
-                  QString variable_name = theHeadings.at(colCount-(counter_col+1));
-                  variable_name.append("::");
-                  variable_name.append("\t");
-                  variable_name.append("Mean");
-                  variable_name.append("  ");
-                  variable_name.append(QString::number(mean_value));
-                  variable_name.append("         ");
-                  variable_name.append("Std. Dev.");
-                  variable_name.append("  ");
-                  variable_name.append(QString::number(sd_value));
-
-                  variable_name.append("      ");
-                  variable_name.append("Kurtosis");
-                  variable_name.append("  ");
-                  variable_name.append(QString::number(kurtosis_value));
-
-
-                  QLineEdit *variablenameLineEdit = new QLineEdit;
-                  variablenameLineEdit->setPlaceholderText(variable_name);
-                  variablenameLineEdit->setReadOnly(true);
-                  variablenameLineEdit->setAlignment(Qt::AlignTop);
-//                  QWidget *variablenameWidget = addLabeledLineEdit(QString("Name"), &variablenameLineEdit);
-
-  //                variablenameLineEdit->setText("Nodal Disp.");
-  //                variablenameLineEdit->setDisabled(true);
-                   //         theNames.append(name);
-
-                    qle_list.append(new QLineEdit());
-  //  qle_list.at(counter_col)->setObjectName(QString("lineEdit%1").arg(counter_col)); // It's easier to recognize an object by name
-
-                    qle_list.at(counter_col)->setText(variable_name);
-                    qle_list.at(counter_col)->setDisabled(true);
-
-                    delete variablenameLineEdit;
-                    edpLayout->addWidget(qle_list.at(counter_col));
-
-
-
-
-                 }
-                 //edpLayout->setAlignment(Qt::AlignCenter);
-
-                    summaryLayout->addLayout(edpLayout);
+        while (std::getline(fileResults, haystack))
+        {
+            //qDebug()<<"\n the value is  \n"<<haystack.c_str();
+            //qDebug()<<"\n the haystack is   "<<haystack;
+            //qDebug()<<"\n";
+            //qDebug()<<"\n   the value of haystack.find(needle2)  "<<haystack.find(needle2);
+            //if (haystack.find(needle)==true){found_flag=1;}
+            if (haystack.find(needle3) != std::string::npos)
+            {
+                break;
+            }
         }
 
+        std::istringstream iss2(haystack);
+        std::string word1;
+        iss2 >> word1;
+        QString string_number_of_responses(QString::fromStdString(word1));
 
-  summaryLayout->addStretch();
+        std::string word2;
+        iss2 >> word2;
+        QString string_equal_to(QString::fromStdString(word2));
 
-  //  exit(1);
+        std::string word3;
+        iss2 >> word3;
+        QString value_number_of_responses(QString::fromStdString(word3));
+
+        int value_no_of_variables = value_number_of_responses.toDouble();
+        //qDebug()<<"\n the value of no variables is     "<<value_no_of_variables;
+        //while(iss2 >> word) {
+        //QString string_numberofvariables(QString::fromStdString(word));
+        //   qDebug()<<"\n The value of number of response functions    is   "<<value_no_of_variables;
+        // }
+        //    qDebug()<<"\n the value of rowCount is      "<<rowCount;
+
+        for(int counter_col=0;counter_col<value_no_of_variables;++counter_col)
+        {
+            // compute the mean
+            double sum_value=0;
+            for(int number_of_rows=0;number_of_rows<rowCount;++number_of_rows)
+            {
+                //   qDebug()<<"\n The value of colCount     "<<colCount;
+                //   qDebug()<<"\n The value of counter_col  "<<counter_col;
+                QTableWidgetItem *item_index = spreadsheet->item(number_of_rows,colCount-(counter_col+1));
+                double value_item = item_index->text().toDouble();
+                sum_value=sum_value+value_item;
+            }
+
+            double mean_value=sum_value/rowCount;
+
+            //  qDebug()<<"\n The   mean_value is   "<<mean_value;
+
+            double sd_value=0;
+            for(int number_of_rows=0;number_of_rows<rowCount;++number_of_rows)
+            {
+                QTableWidgetItem *item_index = spreadsheet->item(number_of_rows,colCount-(counter_col+1));
+                double value_item = item_index->text().toDouble();
+                sd_value = sd_value+(mean_value-value_item)*(mean_value-value_item);
+            }
+            sd_value = sd_value/rowCount;
+            sd_value=sqrt(sd_value);
+            // QString  nameString(QString::fromStdString(word1));
+            //  theWidget = this->createResultEDPWidget(nameString,sd_value, sd_value);
+            //  qDebug()<<"\n the value of standard deviatio is     "<<sd_value;
+
+            double kurtosis_value=0;
+            for(int number_of_rows=0;number_of_rows<rowCount;++number_of_rows)
+            {
+                QTableWidgetItem *item_index = spreadsheet->item(number_of_rows,colCount-(counter_col+1));
+                double value_item = item_index->text().toDouble();
+                kurtosis_value = (mean_value-value_item)*(mean_value-value_item)*(mean_value-value_item)*(mean_value-value_item);
+            }
+            kurtosis_value = kurtosis_value/rowCount;
+            kurtosis_value = (kurtosis_value/(sd_value*sd_value*sd_value*sd_value))-3;
+            //  QString  nameString(QString::fromStdString(word1));
+            //  theWidget = this->createResultEDPWidget(nameString,sd_value, sd_value);
+            //  qDebug()<<"\n the value of standard deviatio is     "<<sd_value;
+
+            QString variable_name = theHeadings.at(colCount-(counter_col+1));
+            variable_name.append("::");
+            variable_name.append("\t");
+            variable_name.append("Mean");
+            variable_name.append("  ");
+            variable_name.append(QString::number(mean_value));
+            variable_name.append("         ");
+            variable_name.append("Std. Dev.");
+            variable_name.append("  ");
+            variable_name.append(QString::number(sd_value));
+
+            variable_name.append("      ");
+            variable_name.append("Kurtosis");
+            variable_name.append("  ");
+            variable_name.append(QString::number(kurtosis_value));
+
+
+            QLineEdit *variablenameLineEdit = new QLineEdit;
+            variablenameLineEdit->setPlaceholderText(variable_name);
+            variablenameLineEdit->setReadOnly(true);
+            variablenameLineEdit->setAlignment(Qt::AlignTop);
+            //                  QWidget *variablenameWidget = addLabeledLineEdit(QString("Name"), &variablenameLineEdit);
+
+            //                variablenameLineEdit->setText("Nodal Disp.");
+            //                variablenameLineEdit->setDisabled(true);
+            //         theNames.append(name);
+
+            qle_list.append(new QLineEdit());
+            //  qle_list.at(counter_col)->setObjectName(QString("lineEdit%1").arg(counter_col)); // It's easier to recognize an object by name
+
+            qle_list.at(counter_col)->setText(variable_name);
+            qle_list.at(counter_col)->setDisabled(true);
+
+            delete variablenameLineEdit;
+            edpLayout->addWidget(qle_list.at(counter_col));
+
+
+
+
+        }
+        //edpLayout->setAlignment(Qt::AlignCenter);
+
+        summaryLayout->addLayout(edpLayout);
+    }
+
+
+    summaryLayout->addStretch();
+
+    //  exit(1);
 
     // this is where we are connecting edit triggers
     spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -622,7 +637,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     plotting_instructions1->setText("First left click on a column");
 
-//    plotting_instructions->setText(instructions_text);
+    //    plotting_instructions->setText(instructions_text);
 
 
     //variablenameLineEdit->(variable_name);
@@ -630,13 +645,13 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
 
     //\n\n"
-   //    "\n\n");
+    //    "\n\n");
     //label->setAlignment(Qt::AlignBottom | Qt::AlignRight);
     //txt->setStandardButtons(QMessageBox->Save);
     //txt->icon(0);
     //txt->removeButton(0);
     //txt->setText("Left click on the column of the spreadsheet provides the distribution.\n \n Single right click provides"
-     //"the cumulative distribution. \n\n Two consecutive provide the distribution histogram and best fit ditribution. ");
+    //"the cumulative distribution. \n\n Two consecutive provide the distribution histogram and best fit ditribution. ");
     QWidget *widget = new QWidget();
     //  QVBoxLayout *layout = new QVBoxLayout(widget);    // this was originally done by frank
     //padhye changed to grid layout
@@ -653,14 +668,14 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     layout->addWidget(spreadsheet,2,0,1,1);
     layout->addWidget(best_fit_label_text,2,1,1,1,Qt::AlignTop);
     layout->addWidget(label,0,1,1,Qt::AlignTop);
- //   layout->addWidget(plotting_instructions1,0,1,1,Qt::AlignTop);
-  //  layout->addWidget(plotting_instructions2,0,1,1,Qt::AlignTop);
+    //   layout->addWidget(plotting_instructions1,0,1,1,Qt::AlignTop);
+    //  layout->addWidget(plotting_instructions2,0,1,1,Qt::AlignTop);
 
     //layout->setColumnMinimumWidth(1,250);
 
-   // QLabel *best_fit_instructions=new QLabel(this);
+    // QLabel *best_fit_instructions=new QLabel(this);
 
-   // layout->addWidget(best_fit_instructions,1,1,Qt::AlignLeft);
+    // layout->addWidget(best_fit_instructions,1,1,Qt::AlignLeft);
 
     //layout->addWidget(label,0,1,1,1,Qt::AlignLeft);
 
@@ -702,38 +717,38 @@ void
 DakotaResultsSampling::onSaveSpreadsheetClicked()
 {
 
-          int rowCount = spreadsheet->rowCount();
-          int columnCount = spreadsheet->columnCount();
+    int rowCount = spreadsheet->rowCount();
+    int columnCount = spreadsheet->columnCount();
 
-          QString fileName = QFileDialog::getSaveFileName(this,
-              tr("Save Data"), "",
-              tr("All Files (*)"));
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                    tr("Save Data"), "",
+                                                    tr("All Files (*)"));
 
-          QFile file(fileName);
-          if (file.open(QIODevice::ReadWrite))
-          {
-              QTextStream stream(&file);
-              for (int j=0; j<columnCount; j++)
-              {
-                 stream <<theHeadings.at(j)<<",\t";
-              }
-              stream <<endl;
-                for (int i=0; i<rowCount; i++)
-                    {
-                        for (int j=0; j<columnCount; j++)
-                           {
-                                QTableWidgetItem *item_value = spreadsheet->item(i,j);
-                                double value = item_value->text().toDouble();
-                                stream << value << ",\t";
-                               //     qDebug()<<value;
-                            }
-                        stream<<endl;
-                    }
-          }
+    QFile file(fileName);
+    if (file.open(QIODevice::ReadWrite))
+    {
+        QTextStream stream(&file);
+        for (int j=0; j<columnCount; j++)
+        {
+            stream <<theHeadings.at(j)<<",\t";
+        }
+        stream <<endl;
+        for (int i=0; i<rowCount; i++)
+        {
+            for (int j=0; j<columnCount; j++)
+            {
+                QTableWidgetItem *item_value = spreadsheet->item(i,j);
+                double value = item_value->text().toDouble();
+                stream << value << ",\t";
+                //     qDebug()<<value;
+            }
+            stream<<endl;
+        }
+    }
 
     //    QFileDialog::getOpenFileName( this, tr("Open Document"), QDir::currentPath(), tr("Document files (*.doc *.rtf);;All files (*.*)"), 0, QFileDialog::DontUseNativeDialog );
 
-     //  qDebug()<<QDir::currentPath();
+    //  qDebug()<<QDir::currentPath();
 
 }
 
@@ -741,7 +756,7 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 {
     mLeft = spreadsheet->wasLeftKeyPressed();
 
-  //  best_fit_instructions->clear();
+    //  best_fit_instructions->clear();
     //see the file MyTableWiget.cpp in order to find the function wasLeftKeyPressed();
     //qDebug()<<"\n the value of mLeft       "<<mLeft;
     //qDebug()<<"\n I am inside the onSpreadsheetCellClicked routine  and I am exiting!!  ";
@@ -763,12 +778,12 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
     if (mLeft == true) {
         oldCol= col2;   //
         //oldCol=0;   // padhye trying. I don't think it makes sense to use coldCol as col2, i.e., something that was
-                    // previously selected?
+        // previously selected?
         col2 = col; // col is the one that comes in te function, based on the click made after clicking
 
-    //    qDebug()<<"\n the value of oldcol is  "<<oldCol;
-    //    qDebug()<<"\n the value of col2 is    "<<col2;
-    //    qDebug()<<"\t the value of col is     "<<col;
+        //    qDebug()<<"\n the value of oldcol is  "<<oldCol;
+        //    qDebug()<<"\n the value of col2 is    "<<col2;
+        //    qDebug()<<"\t the value of col is     "<<col;
 
     } else {
         oldCol= col1;
@@ -822,7 +837,7 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
                 maxX=value1;
                 minY=value2;
                 maxY=value2;
-                        }
+            }
             if(value1<minX){minX=value1;}
             if(value1>maxX){maxX=value1;}
 
@@ -834,7 +849,7 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
         double xRange=maxX-minX;
         double yRange=maxY-minY;
 
-      //  qDebug()<<"\n the value of xRange is     ";
+        //  qDebug()<<"\n the value of xRange is     ";
         //qDebug()<<xRange;
 
         //qDebug()<<"\n the value of yRange is     ";
@@ -844,12 +859,12 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
         if(col1!=0)
         {
-        axisX->setRange(minX - 0.01*xRange, maxX + 0.1*xRange);
+            axisX->setRange(minX - 0.01*xRange, maxX + 0.1*xRange);
         }
         else{
 
-        axisX->setRange(int (minX - 1), int (maxX +1));
-       // axisX->setTickCount(1);
+            axisX->setRange(int (minX - 1), int (maxX +1));
+            // axisX->setTickCount(1);
 
         }
         // adjust y with some fine precision
@@ -885,9 +900,9 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             } else if (value > max) {
                 max = value;
             }
-         }
+        }
 
-            if (mLeft == true) {
+        if (mLeft == true) {
 
             // frequency distribution
             double range = max-min;
@@ -935,8 +950,8 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
             QString appDIR = qApp->applicationDirPath(); // this is where the .exe is and also the parseJson.py, and now the fit_distribution.py
 
-           // qDebug()<<"\n the value of appDIR is    "<<appDIR;
-          //  exit(1);
+            // qDebug()<<"\n the value of appDIR is    "<<appDIR;
+            //  exit(1);
             QString data_input_file = appDIR +  QDir::separator() + QString("data_input.txt");
             QString pySCRIPT_dist_fit =  appDIR +  QDir::separator() + QString("fit.py");
 
@@ -954,14 +969,14 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             //qDebug()<<"\n the data values are   \n";
             if (file.open(QIODevice::ReadWrite))
             {
-                    for(int i=0;i<rowCount;++i)
-                     {
+                for(int i=0;i<rowCount;++i)
+                {
 
-                        stream<<dataValues[i];
-                        stream<< endl;
+                    stream<<dataValues[i];
+                    stream<< endl;
 
-                        //qDebug()<<"\n the dataValues is"<<dataValues[i];
-                     }
+                    //qDebug()<<"\n the dataValues is"<<dataValues[i];
+                }
             }else {qDebug()<<"\n error in opening file data file for histogram fit  ";exit(1);}
 
 
@@ -981,108 +996,108 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             QProcess *process = new QProcess();
             process->setWorkingDirectory(appDIR);
 
-           //pySCRIPT_dist_fit = QString("source $HOME/.bash_profile; source $HOME/.bashrc; python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
+            //pySCRIPT_dist_fit = QString("source $HOME/.bash_profile; source $HOME/.bashrc; python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
 
 #ifdef Q_OS_WIN
-           pySCRIPT_dist_fit = QString("python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
-           process->execute("cmd", QStringList() << "/C" << pySCRIPT_dist_fit);
+            pySCRIPT_dist_fit = QString("python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
+            process->execute("cmd", QStringList() << "/C" << pySCRIPT_dist_fit);
 #else
-           pySCRIPT_dist_fit = QString("source $HOME/.bash_profile; source $HOME/.bashrc; python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
-           qDebug() << pySCRIPT_dist_fit;
-           process->execute("bash", QStringList() << "-c" <<  pySCRIPT_dist_fit);
+            pySCRIPT_dist_fit = QString("source $HOME/.bash_profile; source $HOME/.bashrc; python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
+            qDebug() << pySCRIPT_dist_fit;
+            process->execute("bash", QStringList() << "-c" <<  pySCRIPT_dist_fit);
 #endif
 
 
-           QFile file_fitted_data("Best_fit.out");
-           if(!file_fitted_data.exists())
-           {
-            qDebug()<<"\n The file does not exist and hence exiting";
-            exit(1);
+            QFile file_fitted_data("Best_fit.out");
+            if(!file_fitted_data.exists())
+            {
+                qDebug()<<"\n The file does not exist and hence exiting";
+                exit(1);
 
-           }
-           QLineSeries *series_best_fit = new QLineSeries();
-            series_best_fit->setName("Best Fit");
-           if(file_fitted_data.open(QIODevice::ReadOnly |QIODevice::Text ))
-           {
-
-               QTextStream txtStream(&file_fitted_data);
-               while(!txtStream.atEnd())
-           {
-                   QString line = txtStream.readLine();
-                 //  double first_value;
-                //   txtStream>>first_value;
-
-                  QStringList list2 = line.split(',', QString::SkipEmptyParts);
-                   double value1= list2[0].toDouble();
-                   double value2= list2[1].toDouble();
-
-                  series_best_fit->append(value1,value2);
-
-                  //chart->setAxisX(axisX, series_best_fit);
-                  //chart->setAxisY(axisY, series_best_fit);
-                //  chart->adjustSize();
-
-                // qDebug()<<"\n the line read is      "<<line;
-                // qDebug()<<"\n the value1 is         "<<value1;
-                // qDebug()<<"\n the value2 is         "<<value2;
             }
+            QLineSeries *series_best_fit = new QLineSeries();
+            series_best_fit->setName("Best Fit");
+            if(file_fitted_data.open(QIODevice::ReadOnly |QIODevice::Text ))
+            {
 
-           file_fitted_data.close();
-
-           chart->addSeries(series_best_fit);
-           chart->legend()->setVisible(true);
-           chart->legend()->setAlignment(Qt::AlignTop);
-          // chart->setTitle("The best fit plot is");
-           QString best_fit_info_file = appDIR +  QDir::separator() + QString("data_fit_info.out");
-
-           QFile info_fit_file("data_fit_info.out");
-           QTextStream stream(&info_fit_file);
-
-           //QStringList message_fitting_info;
-
-           QString line_from_file="";
-           if (info_fit_file.open(QIODevice::ReadWrite))
-           {
-
-                while(!info_fit_file.atEnd())
+                QTextStream txtStream(&file_fitted_data);
+                while(!txtStream.atEnd())
                 {
-               line_from_file=line_from_file+info_fit_file.readLine();//+"\n";
-             //  qDebug()<<"\n the value of info_fit_file.readLine() is   "<<info_fit_file.readLine();
-             //  qDebug()<<"\n The value of line_from_file is    "<<line_from_file;
-             //   message_fitting_info<<info_fit_file.readLine();
-             //   message_fitting_info<<"\n";
+                    QString line = txtStream.readLine();
+                    //  double first_value;
+                    //   txtStream>>first_value;
+
+                    QStringList list2 = line.split(',', QString::SkipEmptyParts);
+                    double value1= list2[0].toDouble();
+                    double value2= list2[1].toDouble();
+
+                    series_best_fit->append(value1,value2);
+
+                    //chart->setAxisX(axisX, series_best_fit);
+                    //chart->setAxisY(axisY, series_best_fit);
+                    //  chart->adjustSize();
+
+                    // qDebug()<<"\n the line read is      "<<line;
+                    // qDebug()<<"\n the value1 is         "<<value1;
+                    // qDebug()<<"\n the value2 is         "<<value2;
                 }
-                //line_from_file=line_from_file+info_fit_file.readLine()+"\n";
-           }
-           best_fit_label_text->setText(line_from_file);
-           best_fit_label_text->setStyleSheet("QLabel { background-color : white; color : gray; }");
 
-           QFont f2("Helvetica [Cronyx]", 10, QFont::Normal);
-           best_fit_label_text->setFont(f2);
-           //msgBox.show();
-            //  msgBox.exec();
+                file_fitted_data.close();
 
-          //     best_fit_instructions->setText("I am fitting the best fit info. here");
-           //qDebug()<<"\n\n\n I am about to exit from here   \n\n\n";
-           // exit(1);
-           }
-           //std::ifstream fitted_data_file("Best_fit.out");
-           //if(!fitted_data_file.exists)
-          // process.execute("python C:/Users/nikhil/NHERI/build-uqFEM-Desktop_Qt_5_11_0_MSVC2015_32bit-Release/debug\\fit.py");
-           // exit(1);
+                chart->addSeries(series_best_fit);
+                chart->legend()->setVisible(true);
+                chart->legend()->setAlignment(Qt::AlignTop);
+                // chart->setTitle("The best fit plot is");
+                QString best_fit_info_file = appDIR +  QDir::separator() + QString("data_fit_info.out");
+
+                QFile info_fit_file("data_fit_info.out");
+                QTextStream stream(&info_fit_file);
+
+                //QStringList message_fitting_info;
+
+                QString line_from_file="";
+                if (info_fit_file.open(QIODevice::ReadWrite))
+                {
+
+                    while(!info_fit_file.atEnd())
+                    {
+                        line_from_file=line_from_file+info_fit_file.readLine();//+"\n";
+                        //  qDebug()<<"\n the value of info_fit_file.readLine() is   "<<info_fit_file.readLine();
+                        //  qDebug()<<"\n The value of line_from_file is    "<<line_from_file;
+                        //   message_fitting_info<<info_fit_file.readLine();
+                        //   message_fitting_info<<"\n";
+                    }
+                    //line_from_file=line_from_file+info_fit_file.readLine()+"\n";
+                }
+                best_fit_label_text->setText(line_from_file);
+                best_fit_label_text->setStyleSheet("QLabel { background-color : white; color : gray; }");
+
+                QFont f2("Helvetica [Cronyx]", 10, QFont::Normal);
+                best_fit_label_text->setFont(f2);
+                //msgBox.show();
+                //  msgBox.exec();
+
+                //     best_fit_instructions->setText("I am fitting the best fit info. here");
+                //qDebug()<<"\n\n\n I am about to exit from here   \n\n\n";
+                // exit(1);
+            }
+            //std::ifstream fitted_data_file("Best_fit.out");
+            //if(!fitted_data_file.exists)
+            // process.execute("python C:/Users/nikhil/NHERI/build-uqFEM-Desktop_Qt_5_11_0_MSVC2015_32bit-Release/debug\\fit.py");
+            // exit(1);
             //qDebug()<<"\n   the value of pySCRIPT_dist_fit   is         "<<pySCRIPT_dist_fit;
             //#ifdef Q_OS_WIN
-         //   QProcess process;
-         //String command = "notepad";
-         //process.execute("cmd", QStringList() << "/C" << command);
-         //process.start("cmd", QStringList(), QIODevice::ReadWrite);
-         //std::cerr << command << "\n";
+            //   QProcess process;
+            //String command = "notepad";
+            //process.execute("cmd", QStringList() << "/C" << command);
+            //process.start("cmd", QStringList(), QIODevice::ReadWrite);
+            //std::cerr << command << "\n";
 
-       //     process.waitForStarted();
+            //     process.waitForStarted();
 
-       //     qDebug()<<"process has been completed       ";
-   //         exit(1);
-/*
+            //     qDebug()<<"process has been completed       ";
+            //         exit(1);
+            /*
     #else
     QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
             tmpDirectory + QString(" runningLocal");
@@ -1094,12 +1109,12 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
     #endif
     proc->waitForStarted();
 */
-    } else {
+        } else {
             // cumulative distribution
             mergesort(dataValues, rowCount);
             for (int i=0; i<rowCount; i++) {
                 series->append(dataValues[i], 1.0*i/rowCount);
-                   //qDebug()<<"\n the dataValues[i] and rowCount is     "<<dataValues[i]<<"\t"<<rowCount<<"";
+                //qDebug()<<"\n the dataValues[i] and rowCount is     "<<dataValues[i]<<"\t"<<rowCount<<"";
             }
             delete [] dataValues;
             chart->addSeries(series);
@@ -1127,8 +1142,8 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
     bool result = true;
 
     jsonObject["resultType"]=QString(tr("DakotaResultsSampling"));
-   // qDebug()<<"\n \n I am inside the Dakota Sampling    \n    ";
-   // qDebug()<<"\n \n the value of resultType is     "<<jsonObject["resultType"]<<"\n \n";
+    // qDebug()<<"\n \n I am inside the Dakota Sampling    \n    ";
+    // qDebug()<<"\n \n the value of resultType is     "<<jsonObject["resultType"]<<"\n \n";
     //qDebug()<<"\n \n  \n \n the value of jsonObject is \n\n\n    ";
     //qDebug()<<jsonObject<<"\n\n";
 
@@ -1145,15 +1160,15 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
         edpData["stdDev"]=theStdDevs.at(i);
         resultsData.append(edpData);
 
-//        qDebug()<<"\the value of edpData is     \n";
-//        qDebug()<<edpData<<"\n  ";
-//        qDebug()<<edpData["name"]<<edpData["mean"]<<"\n";
+        //        qDebug()<<"\the value of edpData is     \n";
+        //        qDebug()<<edpData<<"\n  ";
+        //        qDebug()<<edpData["name"]<<edpData["mean"]<<"\n";
 
     }
 
-  //  qDebug()<<"\n I am exiting here     ";
+    //  qDebug()<<"\n I am exiting here     ";
 
-//    exit(1);
+    //    exit(1);
 
 
     jsonObject["summary"]=resultsData;

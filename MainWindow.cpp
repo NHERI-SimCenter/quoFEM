@@ -1021,15 +1021,19 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 {
     errorMessage("Processing Results");
 
-    qDebug()<<"\Inside processResults widget and trying to proceed";
+    //qDebug()<<"\Inside processResults widget and trying to proceed";
 
     DakotaResults *result=uq->getResults();
+    connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
+    connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(errorMessage(QString)));
+
+    //connect(result,SLOT(sendE))
     result->processResults(dakotaIN, dakotaTAB);
     results->setResultWidget(result);
     inputWidget->setSelection(QString("Results"));
 
-    errorMessage(" ");// adding back
-    qDebug()<<"\n the value of results is \n\n  "<<results;
+   // errorMessage(" ");// adding back
+   // qDebug()<<"\n the value of results is \n\n  "<<results;
 
 }
 
