@@ -94,7 +94,7 @@ RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
     layout->addWidget(appNameLabel,4,0);
 
     appLineEdit = new QLineEdit();
-    appLineEdit->setText("dakota-6.6.0u1");
+    appLineEdit->setText("simcenter-dakota-1.0.0u1");
     //appLineEdit->setText("Dakota-6.6.0.0u1");
     layout->addWidget(appLineEdit,4,1);
 

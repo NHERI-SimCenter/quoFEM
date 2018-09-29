@@ -25,6 +25,7 @@ win32:LIBS += ../libCurl-7.59.0/lib/libcurl.lib
 
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/Common/Common.pri)
+include(./MiniZip/MiniZip.pri)
 
 SOURCES += main.cpp\
         MainWindow.cpp \

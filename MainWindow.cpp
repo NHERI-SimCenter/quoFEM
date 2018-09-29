@@ -36,6 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
+#include <ZipUtils.h>
 #include <QTreeView>
 #include <QStandardItemModel>
 #include <QItemSelectionModel>
@@ -132,6 +133,7 @@ MainWindow::MainWindow(QWidget *parent)
     // user settings
     //
 
+    /*
     QSettings settings("SimCenter", "uqFEM");
     QVariant savedValue = settings.value("uuid");
     QUuid uuid;
@@ -140,6 +142,7 @@ MainWindow::MainWindow(QWidget *parent)
         settings.setValue("uuid",uuid);
     } else
         uuid =savedValue.toUuid();
+    */
 
     //
     // create the interface, jobCreator and jobManager
@@ -368,7 +371,7 @@ MainWindow::MainWindow(QWidget *parent)
     // setup parameters of request
     QString requestParams;
     QString hostname = QHostInfo::localHostName() + "." + QHostInfo::localDomainName();
-    //QUuid uuid = QUuid::createUuid();
+    QUuid uuid = QUuid::createUuid();
     requestParams += "v=1"; // version of protocol
     requestParams += "&tid=UA-121636495-1"; // Google Analytics account
     requestParams += "&cid=" + uuid.toString(); // unique user identifier
@@ -462,8 +465,16 @@ void MainWindow::onRunButtonClicked() {
 
     QFileInfo fileInfo(mainInput);
     QDir fileDir = fileInfo.absolutePath();
+
+
     QString fileName =fileInfo.fileName();
     QString path = fileDir.absolutePath();// + QDir::separator();
+
+    if (! fileDir.exists()) {
+      errorMessage(QString("Directory ") + path + QString(" specified does not exist!"));
+      return;
+    }
+    
 
     //
     // given path to input file we are going to create temporary directory below it
@@ -490,6 +501,7 @@ void MainWindow::onRunButtonClicked() {
                                   file.errorString()));
         return;
     }
+
     QJsonObject json;
     inputWidget->outputToJSON(json);
     QJsonDocument doc(json);
@@ -508,8 +520,18 @@ void MainWindow::onRunButtonClicked() {
   //    QDir::separator() + QString("localApp");
 
     //
-    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
+    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseDAKOTA.py");
     QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter");
+
+    //
+    // check the python script exists
+    //
+
+    QFile pyDAKOTA(pySCRIPT);
+    if (! pyDAKOTA.exists()) {
+      errorMessage("Dakota script does not exist, the parseDAKOTA.py script was not found in exe folder! .. download application again");
+      return;
+    }
 
     // remove current results widget
 
@@ -578,11 +600,17 @@ void MainWindow::onRunButtonClicked() {
 
    QDir dirToRemove(sourceDir);
    dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
-    //                                  // so to debug you can simply comment it
+                                    // so to debug you can simply comment it
 
     //
     // process the results
     //
+   QDir desitinationDIR(destinationDir);
+
+    if (! desitinationDIR.exists("dakota.out")) {
+      errorMessage("Dakota did not run, check the path you provided in parseDakota or contact us");
+      return;
+    }
 
     QString filenameOUT = destinationDir + tr("dakota.out");
     QString filenameTAB = destinationDir + tr("dakotaTab.out");
@@ -647,7 +675,7 @@ void MainWindow::onRemoteRunButtonClicked(){
     file.close();
 
     //
-    // now use the applications parseJSON file to run dakota and produce output files:
+    // now use the applications parseDAKOTA file to run dakota and produce output files:
     //    dakota.in dakota.out dakotaTab.out dakota.err
     //
 
@@ -658,8 +686,14 @@ void MainWindow::onRemoteRunButtonClicked(){
    //   QDir::separator() + QString("localApp");
 
     //
-    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
+    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseDAKOTA.py");
     QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter") + strUnique;
+
+    QFile pyDAKOTA(pySCRIPT);
+    if (! pyDAKOTA.exists()) {
+      errorMessage("Dakota script does not exist, the parseDAKOTA.py script was not found in exe folder! .. download application again");
+      return;
+    }
 
     // remove current results widget
     results->setResultWidget(0);
@@ -686,7 +720,7 @@ void MainWindow::onRemoteRunButtonClicked(){
 
 
     QProcess *proc = new QProcess();
-    qDebug() << "HELLO";
+
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     qDebug() << command;
@@ -704,6 +738,20 @@ void MainWindow::onRemoteRunButtonClicked(){
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
     proc->waitForStarted();
+
+
+    //
+    // in tmpDirectory we will zip up current template dir and then remove before sending (doone to reduce number of sends)
+    //
+
+    QString tDirectory2 = path + QDir::separator() + QString("tmp.SimCenter") + strUnique;
+    QString templateDIR(tDirectory2 + QDir::separator() + QString("templatedir"));
+    QString zipFile(tDirectory2 + QDir::separator() + QString("templatedir.zip"));
+    ZipUtils::ZipFolder(QDir(templateDIR), zipFile);
+    qDebug() << "ZIP DIR: " << templateDIR;
+    qDebug() << "ZIP FILE: " << zipFile;
+    QDir dirToRemove(templateDIR);
+    dirToRemove.removeRecursively();
 
     //
     // when setup is complete, pop open the jobCreateor Widget which will allow user

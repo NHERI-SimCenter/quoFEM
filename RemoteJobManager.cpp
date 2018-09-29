@@ -348,7 +348,7 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         // download data to temp files & then process them as normal
         //
 
-        QString dakotaJSON = archiveDir + QString("/templatedir/dakota.json");
+        QString dakotaJSON = archiveDir + QString("/dakota.json");
         QString dakotaOUT = archiveDir + QString("/dakota.out");
         QString dakotaTAB = archiveDir + QString("/dakotaTab.out");
         QString dakotaIN = archiveDir + QString("/dakota.in");
