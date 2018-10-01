@@ -91,6 +91,7 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
     //femSelection->addItem(tr("OpenSees"));
     femSelection->addItem(tr("OpenSees"));
     femSelection->addItem(tr("FEAPpv"));
+	femSelection->addItem(tr("MixedDriver"));
 
     connect(femSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(femProgramChanged(QString)));
 
@@ -151,7 +152,7 @@ bool
 InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
 {
     this->clear();
-
+    qDebug() << jsonObject;
     if (jsonObject.contains("fem")) {
 
         QJsonObject fem = jsonObject["fem"].toObject();
@@ -301,7 +302,47 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         femLayout->setMargin(0);
         femLayout->addStretch();
         femSpecific->setLayout(femLayout);
-    }
+    } else if (arg1 == QString("MixedDriver")) {
+
+        QVBoxLayout *femLayout = new QVBoxLayout();
+        QLabel *label1 = new QLabel();
+        label1->setText("Input Script");
+        QLabel *label2 = new QLabel();
+        label2->setText("Postprocess Script");
+
+        QHBoxLayout *fileName1Layout = new QHBoxLayout();
+        file1 = new QLineEdit;
+        QPushButton *chooseFile1 = new QPushButton();
+        chooseFile1->setText(tr("Choose"));
+        connect(chooseFile1,SIGNAL(clicked()),this,SLOT(chooseFileName1()));
+
+        fileName1Layout->addWidget(file1);
+        fileName1Layout->addWidget(chooseFile1);
+        fileName1Layout->addStretch();
+
+        QHBoxLayout *fileName2Layout = new QHBoxLayout();
+        file2 = new QLineEdit;
+        QPushButton *chooseFile2 = new QPushButton();
+        chooseFile2->setText(tr("Choose"));
+        connect(chooseFile2,SIGNAL(clicked()),this,SLOT(chooseFileName2()));
+        fileName2Layout->addWidget(file2);
+        fileName2Layout->addWidget(chooseFile2);
+        fileName2Layout->addStretch();
+
+        fileName1Layout->setSpacing(10);
+        fileName1Layout->setMargin(0);
+        fileName2Layout->setSpacing(10);
+        fileName2Layout->setMargin(0);
+
+        femLayout->addWidget(label1);
+        femLayout->addLayout(fileName1Layout);
+        femLayout->addWidget(label2);
+        femLayout->addLayout(fileName2Layout);
+        femLayout->setSpacing(10);
+        femLayout->setMargin(0);
+        femLayout->addStretch();
+        femSpecific->setLayout(femLayout);
+	}
     // femSpecific->addStretch();
 
     //layout->addWidget(femSpecific);
@@ -320,6 +361,9 @@ int InputWidgetFEM::setFilename1(QString name1){
         varNamesAndValues = theParser.getVariables(fileName1);
     }  else if (pName == "FEAPpv") {
         FEAPpvParser theParser;
+        varNamesAndValues = theParser.getVariables(fileName1);
+    }  else if (pName == "MixedDriver") {
+        OpenSeesParser theParser;
         varNamesAndValues = theParser.getVariables(fileName1);
     }
     // qDebug() << "VARNAMESANDVALUES: " << varNamesAndValues;
@@ -344,6 +388,9 @@ InputWidgetFEM::specialCopyMainInput(QString fileName, QStringList varNames) {
             theParser.writeFile(file1->text(), fileName,varNames);
         }  else if (pName == "FEAPpv") {
             FEAPpvParser theParser;
+            theParser.writeFile(file1->text(), fileName,varNames);
+        }  else if (pName == "MixedDriver") {
+            OpenSeesParser theParser;
             theParser.writeFile(file1->text(), fileName,varNames);
         }
     }
