@@ -72,7 +72,7 @@ RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
 
     numCPU_LineEdit = new QLineEdit();
     numCPU_LineEdit->setText("1");
-    numCPU_LineEdit->setToolTip(tr("Total # of nodes to use (each node can run many processors)"));
+    numCPU_LineEdit->setToolTip(tr("Total # of nodes to use (each node has many cores"));
     layout->addWidget(numCPU_LineEdit,1,1);
 
     QLabel *numProcessorsLabel = new QLabel();
