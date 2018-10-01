@@ -18,11 +18,13 @@ INCLUDEPATH += ../SimCenterCommon/RandomVariables
 # INCLUDEPATH += ../simcenterAgave/interface
 
 macos:LIBS += /usr/lib/libcurl.dylib
-#win32:INCLUDEPATH += "c:\Users\SimCenter\libCurl-7.59.0\include"
-#win32:LIBS += C:\Users\SimCenter\libCurl-7.59.0/lib/libcurl.lib
-win32:INCLUDEPATH+=../libCurl-7.59.0/include
-win32:LIBS += ../libCurl-7.59.0/lib/libcurl.lib
 
+win32:INCLUDEPATH+=../curl-7.59.0/builds/libcurl-vc-x64-release-static-ssl-static-ipv6-sspi/include
+win32:LIBS += ../curl-7.59.0/builds/libcurl-vc-x64-release-static-ssl-static-ipv6-sspi/lib/libcurl_a.lib
+# win32:LIBS += C:/Qt/build_msvc_static/lib/Qt5Network.lib
+win32:LIBS += ../OpenSSL/lib/libeay32.lib
+win32:LIBS += ../OpenSSL/lib/ssleay32.lib
+win32:LIBS += wldap32.lib Normaliz.lib
 
 win32 {
     RC_ICONS = icons/NHERI-UQFEM-Icon.ico
@@ -34,7 +36,9 @@ win32 {
 
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/Common/Common.pri)
-include(./MiniZip/MiniZip.pri)
+# include(./MiniZip/MiniZip.pri)
+
+DEFINES += CURL_STATICLIB
 
 SOURCES += main.cpp\
         MainWindow.cpp \
