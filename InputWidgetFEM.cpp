@@ -72,9 +72,10 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
     QSpacerItem *spacer = new QSpacerItem(50,10);
 
     femSelection = new QComboBox();
+    //femSelection->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
     femSelection->setMaximumWidth(100);
     femSelection->setMinimumWidth(100);
-
+    femSelection->setToolTip(tr("Remote Application to Run"));
     titleLayout->addWidget(textFEM);
     titleLayout->addItem(spacer);
     titleLayout->addWidget(femSelection);
@@ -238,9 +239,16 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         fileName1Layout->addWidget(chooseFile1);
         fileName1Layout->addStretch();
 
+        file1->setToolTip(tr("Name of FEAPpv input file"));
+        chooseFile1->setToolTip(tr("Push to choose a file from your file system"));
+
         QHBoxLayout *fileName2Layout = new QHBoxLayout();
         file2 = new QLineEdit;
         QPushButton *chooseFile2 = new QPushButton();
+
+        file2->setToolTip(tr("Name of Python script that will process FEAPpv output file for UQ engine"));
+        chooseFile2->setToolTip(tr("Push to choose a file from your file system"));
+
         chooseFile2->setText(tr("Choose"));
         connect(chooseFile2,SIGNAL(clicked()),this,SLOT(chooseFileName2()));
         fileName2Layout->addWidget(file2);
@@ -276,6 +284,9 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         chooseFile1->setText(tr("Choose"));
         connect(chooseFile1,SIGNAL(clicked()),this,SLOT(chooseFileName1()));
 
+        file1->setToolTip(tr("Name of OpenSees main input script. Note all scripts OpenSees uses must be in the directory or directories below this file"));
+        chooseFile1->setToolTip(tr("Push to choose a file from your file system"));
+
         fileName1Layout->addWidget(file1);
         fileName1Layout->addWidget(chooseFile1);
         fileName1Layout->addStretch();
@@ -283,6 +294,10 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         QHBoxLayout *fileName2Layout = new QHBoxLayout();
         file2 = new QLineEdit;
         QPushButton *chooseFile2 = new QPushButton();
+
+        file2->setToolTip(tr("Name of Python script that will process OpenSees output files for UQ engine"));
+        chooseFile2->setToolTip(tr("Push to choose a file from your file system"));
+
         chooseFile2->setText(tr("Choose"));
         connect(chooseFile2,SIGNAL(clicked()),this,SLOT(chooseFileName2()));
         fileName2Layout->addWidget(file2);

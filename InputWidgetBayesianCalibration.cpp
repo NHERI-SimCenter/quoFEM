@@ -71,6 +71,7 @@ InputWidgetBayesianCalibration::InputWidgetBayesianCalibration(QWidget *parent)
     label1->setText(QString("Method"));
     calibrationMethod = new QComboBox();
     calibrationMethod->addItem(tr("DREAM"));
+   // calibrationMethod->addItem(tr("QUESO"));
     
     methodLayout->addWidget(label1);
     methodLayout->addWidget(calibrationMethod);

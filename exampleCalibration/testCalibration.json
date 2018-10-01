@@ -1,10 +1,10 @@
 {
     "fem": {
-        "dir": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleCalibration",
-        "inputFile": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleCalibration\\mdofHarmonicTemplate.tcl",
+        "dir": "/Users/simcenter/Codes/SimCenter/uqFEM/exampleCalibration",
+        "inputFile": "/Users/simcenter/Codes/SimCenter/uqFEM/exampleCalibration/mdofHarmonicTemplate.tcl",
         "mainInput": "mdofHarmonicTemplate.tcl",
         "mainPostprocessScript": "postprocess.py",
-        "postprocessScript": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleCalibration\\postprocess.py",
+        "postprocessScript": "/Users/simcenter/Codes/SimCenter/uqFEM/exampleCalibration/postprocess.py",
         "program": "OpenSees"
     },
     "randomVariables": [

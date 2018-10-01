@@ -39,6 +39,7 @@ moc*
 
 # QT
 uqFEM.pro.user
+.qmake.stash
 
 # application
 *.tmp

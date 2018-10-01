@@ -1,10 +1,10 @@
 {
     "fem": {
-        "dir": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleBayesCalibration",
-        "inputFile": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleBayesCalibration\\mdofHarmonicTemplate.tcl",
+        "dir": "/Users/simcenter/Codes/SimCenter/uqFEM/exampleBayesCalibration",
+        "inputFile": "/Users/simcenter/Codes/SimCenter/uqFEM/exampleBayesCalibration/mdofHarmonicTemplate.tcl",
         "mainInput": "mdofHarmonicTemplate.tcl",
         "mainPostprocessScript": "postprocess.py",
-        "postprocessScript": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleBayesCalibration\\postprocess.py",
+        "postprocessScript": "/Users/simcenter/Codes/SimCenter/uqFEM/exampleBayesCalibration/postprocess.py",
         "program": "OpenSees"
     },
     "randomVariables": [

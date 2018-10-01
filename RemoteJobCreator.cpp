@@ -59,34 +59,38 @@ RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
 {
     QGridLayout *layout = new QGridLayout();
     QLabel *nameLabel = new QLabel();
-    nameLabel->setText(QString("job Name:"));
+    nameLabel->setText(QString("Job Name:"));
     layout->addWidget(nameLabel, 0,0);
 
     nameLineEdit = new QLineEdit();
+    nameLineEdit->setToolTip(tr("A meaningful name to provide for you to remember run later (days and weeks from now)"));
     layout->addWidget(nameLineEdit,0,1);
 
     QLabel *numCPU_Label = new QLabel();
-    numCPU_Label->setText(QString("num Nodes:"));
+    numCPU_Label->setText(QString("Num Nodes:"));    
     layout->addWidget(numCPU_Label,1,0);
 
     numCPU_LineEdit = new QLineEdit();
     numCPU_LineEdit->setText("1");
+    numCPU_LineEdit->setToolTip(tr("Total # of nodes to use (each node has many cores"));
     layout->addWidget(numCPU_LineEdit,1,1);
 
     QLabel *numProcessorsLabel = new QLabel();
-    numProcessorsLabel->setText(QString("num Processors:"));
+    numProcessorsLabel->setText(QString("Num Processors:"));
     layout->addWidget(numProcessorsLabel,2,0);
 
     numProcessorsLineEdit = new QLineEdit();
     numProcessorsLineEdit->setText("32");
+    numProcessorsLineEdit->setToolTip(tr("Total # of Processes to Start"));
     layout->addWidget(numProcessorsLineEdit,2,1);
 
     QLabel *runtimeLabel = new QLabel();
-    runtimeLabel->setText(QString("max Run Time:"));
+    runtimeLabel->setText(QString("Max Run Time:"));
     layout->addWidget(runtimeLabel,3,0);
 
     runtimeLineEdit = new QLineEdit();
     runtimeLineEdit->setText("00:20:00");
+    runtimeLineEdit->setToolTip(tr("Run time Limit on running Job hours:Min:Sec. Job will be stopped if while running it exceeds this"));;
     layout->addWidget(runtimeLineEdit,3,1);
 
     QLabel *appNameLabel = new QLabel();
@@ -94,12 +98,14 @@ RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
     layout->addWidget(appNameLabel,4,0);
 
     appLineEdit = new QLineEdit();
-    appLineEdit->setText("dakota-6.6.0u1");
+    appLineEdit->setText("simcenter-dakota-1.0.0u1");
+    appLineEdit->setToolTip(tr("Name of Agave App to run. Do not edit unless you really know what you are doing!"));
     //appLineEdit->setText("Dakota-6.6.0.0u1");
     layout->addWidget(appLineEdit,4,1);
 
     pushButton = new QPushButton();
     pushButton->setText("Submit");
+    pushButton->setToolTip(tr("Press to launch job on remote machine. After pressing, window closes when Job Starts"));
     layout->addWidget(pushButton,5,1);
 
     this->setLayout(layout);
@@ -125,7 +131,6 @@ RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
 void 
 RemoteJobCreator::setMaxNumParallelProcesses(int max) {
   maxParallel = max;
-  qDebug() << "MAX SET: " << max;
   numProcessorsLineEdit->setText("32");
   if (numProcessorsLineEdit->text().toInt() > maxParallel)
     numProcessorsLineEdit->setText(QString::number(max));
@@ -134,7 +139,7 @@ RemoteJobCreator::setMaxNumParallelProcesses(int max) {
 void
 RemoteJobCreator::pushButtonClicked(void)
 {
-  int numProcesses =numCPU_LineEdit->text().toInt() * numProcessorsLineEdit->text().toInt();
+  int numProcesses = numProcessorsLineEdit->text().toInt();
   if (numProcesses > maxParallel) {
     QString errorMsg = QString("ERROR - Too many Parallel Tasks Specified - max allowed from UQ Method is: " )
             + QString::number(maxParallel);
