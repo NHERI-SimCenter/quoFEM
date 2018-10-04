@@ -239,8 +239,8 @@ if (type == "Sampling"):
     f.write('\n');
     f.write('seed = ' '{}'.format(seed))
     f.write('\n');
-    if "sobelov_indices" in data:
-        flag_sobelov=data["sobelov_indices"]
+    if "sobelov_indices" in samplingData:
+        flag_sobelov=samplingData["sobelov_indices"]
         if (flag_sobelov == 1):
             f.write("variance_based_decomp #interaction_order = 1")
     f.write('\n');
