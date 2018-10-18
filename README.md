@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1410699.svg)](https://doi.org/10.5281/zenodo.1410699)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1439497.svg)](https://doi.org/10.5281/zenodo.1439497)
 
 # uqFEM
 
