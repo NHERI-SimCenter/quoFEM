@@ -1,10 +1,10 @@
 {
     "fem": {
-        "dir": "/Users/simcenter/Codes/SimCenter/uqFEM/exampleOpenSees",
-        "inputFile": "/Users/simcenter/Codes/SimCenter/uqFEM/exampleOpenSees/TrussTemplate.tcl",
+        "dir": "C:/Users/nikhil/NHERI/uqFEM/exampleOpenSees",
+        "inputFile": "C:/Users/nikhil/NHERI/uqFEM/exampleOpenSees/TrussTemplate.tcl",
         "mainInput": "TrussTemplate.tcl",
         "mainPostprocessScript": "postprocess.py",
-        "postprocessScript": "/Users/simcenter/Codes/SimCenter/uqFEM/exampleOpenSees/postprocess.py",
+        "postprocessScript": "C:/Users/nikhil/NHERI/uqFEM/exampleOpenSees/postprocess.py",
         "program": "OpenSees"
     },
     "randomVariables": [
