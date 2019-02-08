@@ -1,0 +1,34 @@
+environment
+tabular_data
+tabular_data_file = 'dakotaTab.out'
+
+method,
+bayes_calibration dream
+chain_samples = 1000
+seed = 941
+
+variables,
+uniform_uncertain = 4
+lower_bounds = 0.5 0 3.5 0.45 
+upper_bounds = 0.55 0.5 4 0.5 
+descriptors = 'beta' 'Ap' 'An' 'Bn' 
+
+
+
+
+interface,
+system # asynch evaluation_concurrency = 8
+analysis_driver = 'fem_driver' 
+parameters_file = 'params.in' 
+results_file = 'results.out' 
+work_directory directory_tag 
+copy_files = 'templatedir/*' 
+named 'workdir' file_save  directory_save 
+aprepro 
+
+responses, 
+calibration_terms = 1
+response_descriptors = 'error_mismatch' 
+numerical_gradients
+no_hessians
+

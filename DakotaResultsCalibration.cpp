@@ -36,6 +36,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
+// added and modified: padhye
+
+
 #include "DakotaResultsCalibration.h"
 #include <QJsonObject>
 #include <QJsonArray>
@@ -70,6 +73,7 @@ using namespace QtCharts;
 
 #include <QXYSeries>
 #define NUM_DIVISIONS 10
+
 
 DakotaResultsCalibration::DakotaResultsCalibration(QWidget *parent)
     : DakotaResults(parent)
@@ -178,6 +182,7 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
 
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0);
     summary->setLayout(summaryLayout);
 
     QJsonArray edpArray = jsonObject["summary"].toArray();
@@ -258,6 +263,8 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
 
     QWidget *widget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout(widget);
+    layout->setContentsMargins(0,0,0,0);
+    layout->setSpacing(3);
     layout->addWidget(chartView, 1);
     layout->addWidget(spreadsheet, 1);
 
@@ -331,6 +338,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
 
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0);
     summary->setLayout(summaryLayout);
 
     //
@@ -352,10 +360,10 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
         return -1;
     }
 
-    // now ignore every line until Kurtosis found
+    // now ignore every line until Best Parameters
 
     const std::string needle = "Best parameters          =";
-    const std::string needle2 = "Best residual terms =";
+    const std::string needle2 = "Best residual term";
     std::string haystack;
 
     while (std::getline(fileResults, haystack)) {
@@ -486,6 +494,8 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
 
     QWidget *widget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout(widget);
+    layout->setContentsMargins(0,0,0,0);
+    layout->setSpacing(3);
     layout->addWidget(chartView, 1);
     layout->addWidget(spreadsheet, 1);
 
@@ -544,11 +554,56 @@ DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
             series->append(itemX->text().toDouble(), itemY->text().toDouble());
         }
         chart->addSeries(series);
+
         QValueAxis *axisX = new QValueAxis();
         QValueAxis *axisY = new QValueAxis();
 
         axisX->setTitleText(theHeadings.at(col1));
         axisY->setTitleText(theHeadings.at(col2));
+        axisY->setLabelFormat("%e");
+
+        //padhye adding ranges 8/25/2018
+        // finding the range for X and Y axis
+        // now the axes will look a bit clean.
+
+
+        double minX, maxX;
+        double minY, maxY;
+
+        for (int i=0; i<rowCount; i++) {
+            QTableWidgetItem *itemX = spreadsheet->item(i,col1);
+            QTableWidgetItem *itemY = spreadsheet->item(i,col2);
+            double value1 = itemX->text().toDouble();
+            double value2 = itemY->text().toDouble();
+            if (i == 0) {
+                minX=value1;
+                maxX=value1;
+                minY=value2;
+                maxY=value2;
+                        }
+            if(value1<minX){minX=value1;}
+            if(value1>maxX){maxX=value1;}
+            if(value2<minY){minY=value2;}
+            if(value2>maxY){maxY=value2;}
+        }
+
+        double xRange=maxX-minX;
+        double yRange=maxY-minY;
+
+        if(col1!=0)
+        {
+        axisX->setRange(minX - 0.01*xRange, maxX + 0.1*xRange);
+        }
+        else{
+
+        axisX->setRange(int (minX - 1), int (maxX +1));
+       // axisX->setTickCount(1);
+
+        }
+
+        // adjust y with some fine precision
+        axisY->setRange(minY - 0.2*yRange, maxY + 0.2*yRange);
+
 
         chart->setAxisX(axisX, series);
         chart->setAxisY(axisY, series);
@@ -614,6 +669,8 @@ DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
             chart->addSeries(series);
             QValueAxis *axisX = new QValueAxis();
             QValueAxis *axisY = new QValueAxis();
+            axisY->setLabelFormat("%.2f");
+
 
             axisX->setRange(min, max);
             axisY->setRange(0, maxPercent);
@@ -636,6 +693,8 @@ DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
             chart->addSeries(series);
             QValueAxis *axisX = new QValueAxis();
             QValueAxis *axisY = new QValueAxis();
+            axisY->setLabelFormat("%.2f");
+
 
             axisX->setRange(min, max);
             axisY->setRange(0, 1);
@@ -657,6 +716,8 @@ QWidget *
 DakotaResultsCalibration::createResultParameterWidget(QString &name, double bestValue) {
     QWidget *edp = new QWidget;
     QHBoxLayout *edpLayout = new QHBoxLayout();
+    edpLayout->setContentsMargins(0,0,0,0);
+    edpLayout->setSpacing(3);
 
     edp->setLayout(edpLayout);
 

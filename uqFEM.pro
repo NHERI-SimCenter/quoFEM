@@ -11,20 +11,30 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = uqFEM
 TEMPLATE = app
 
-VERSION=1.0.1
+VERSION=1.1.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 INCLUDEPATH += ../SimCenterCommon/RandomVariables
 # INCLUDEPATH += ../simcenterAgave/interface
 
 macos:LIBS += /usr/lib/libcurl.dylib
-win32:INCLUDEPATH += "c:\Users\SimCenter\libCurl-7.59.0\include"
-win32:LIBS += C:\Users\SimCenter\libCurl-7.59.0/lib/libcurl.lib
-#win32:INCLUDEPATH+=../libCurl-7.59.0/include
-#win32:LIBS += ../libCurl-7.59.0/lib/libcurl.lib
+#win32:INCLUDEPATH += "c:\Users\SimCenter\libCurl-7.59.0\include"
+#win32:LIBS += C:\Users\SimCenter\libCurl-7.59.0/lib/libcurl.lib
+win32:INCLUDEPATH+=../libCurl-7.59.0/include
+win32:LIBS += ../libCurl-7.59.0/lib/libcurl.lib
+
+
+win32 {
+    RC_ICONS = icons/NHERI-UQFEM-Icon.ico
+} else {
+    mac {
+    ICON = icons/NHERI-UQFEM-Icon.icns
+    }
+}
 
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/Common/Common.pri)
+include(./MiniZip/MiniZip.pri)
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -47,7 +57,8 @@ SOURCES += main.cpp\
     RemoteJobCreator.cpp \
     MyTableWidget.cpp \
     RemoteJobManager.cpp \
-    AgaveCurl.cpp
+    AgaveCurl.cpp \
+    CustomizedItemModel.cpp
 
 HEADERS  += MainWindow.h \
     EDP.h \
@@ -70,6 +81,10 @@ HEADERS  += MainWindow.h \
     RemoteJobCreator.h \
     MyTableWidget.h \
     RemoteJobManager.h \
-    AgaveCurl.h
+    AgaveCurl.h \
+    CustomizedItemModel.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    styles.qrc

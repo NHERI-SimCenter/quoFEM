@@ -1,10 +1,10 @@
 {
     "fem": {
-        "dir": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleFEAP",
-        "inputFile": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleFEAP\\TrussTemplate.txt",
+        "dir": "/Users/simcenter/Codes/SimCenter/uqFEM/exampleFEAP",
+        "inputFile": "/Users/simcenter/Codes/SimCenter/uqFEM/TrussTemplate.txt",
         "mainInput": "TrussTemplate.txt",
         "mainPostprocessScript": "postprocess.py",
-        "postprocessScript": "C:\\Users\\nikhil\\NHERI\\uqFEM\\exampleFEAP\\postprocess.py",
+        "postprocessScript": "/Users/simcenter/Codes/SimCenter/uqFEM/postprocess.py",
         "program": "FEAPpv"
     },
     "randomVariables": [

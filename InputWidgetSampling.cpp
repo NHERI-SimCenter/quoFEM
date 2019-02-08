@@ -1,5 +1,7 @@
 // Written: fmckenna
 
+// added and modified: padhye
+
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -62,7 +64,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 InputWidgetSampling::InputWidgetSampling(QWidget *parent)
-    : InputWidgetDakotaMethod(parent),uqSpecific(0)
+: InputWidgetDakotaMethod(parent),uqSpecific(0)
 {
     layout = new QVBoxLayout();
 
@@ -74,6 +76,7 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     QLabel *label1 = new QLabel();
     label1->setText(QString("Method"));
     samplingMethod = new QComboBox();
+    samplingMethod->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
     samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
     
@@ -112,6 +115,12 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     
     seedLayout->addWidget(label3);
     seedLayout->addWidget(randomSeed);
+
+
+    // add a checkbox for Sobolev index
+    sobolevCheckBox =new QCheckBox("Sobolev Index");
+    connect(sobolevCheckBox,SIGNAL(clicked(bool)),this,SLOT(setSobolevFlag(bool)));
+    flagForSobolevIndices=0;
     
     //
     // create main layout and add previously created layouts to it
@@ -121,7 +130,9 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     mLayout->addLayout(methodLayout);
     mLayout->addLayout(samplesLayout);
     mLayout->addLayout(seedLayout);
-    mLayout->addStretch();
+    mLayout->addStretch(1);
+    mLayout->addWidget(sobolevCheckBox);
+    mLayout->addStretch(5);
 
     layout->addLayout(mLayout);
 
@@ -164,6 +175,8 @@ InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
     uq["method"]=samplingMethod->currentText();
     uq["samples"]=numSamples->text().toInt();
     uq["seed"]=randomSeed->text().toDouble();
+    if (flagForSobolevIndices == 1)
+      uq["sobelov_indices"]=flagForSobolevIndices;
     result = theEdpWidget->outputToJSON(uq);
     jsonObject["samplingMethodData"]=uq;
     return result;
@@ -192,6 +205,17 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
             QString method =uq["method"].toString();
             int samples=uq["samples"].toInt();
             double seed=uq["seed"].toDouble();
+            if (uq.contains("sobolev_indices") && uq.contains("samples")) {
+                flagForSobolevIndices = uq["sobolev_indices"].toInt();
+                sobolevCheckBox->setChecked(true);
+                // set the sobolevFlag
+            }
+
+            else {
+                flagForSobolevIndices = 0;
+                sobolevCheckBox->setChecked(false);
+            }
+		
 
             numSamples->setText(QString::number(samples));
             randomSeed->setText(QString::number(seed));
@@ -203,6 +227,9 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
 
             samplingMethod->setCurrentIndex(index);
             return theEdpWidget->inputFromJSON(uq);
+
+            // initializing the correlation matrix here
+
 
         } else {
             emit sendErrorMessage("ERROR: Sampling Input Widget - no \"method\" ,\"samples\" or \"seed\" data");
@@ -238,4 +265,11 @@ RandomVariableInputWidget *
 InputWidgetSampling::getParameters(void) {
     QString classType("Uncertain");
   return new RandomVariableInputWidget(classType);
+}
+
+void InputWidgetSampling::setSobolevFlag(bool value) {
+    if(value) {
+      flagForSobolevIndices=1;
+    }
+    return;
 }
