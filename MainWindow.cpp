@@ -59,7 +59,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetUQ.h>
 #include <DakotaResults.h>
 #include <InputWidgetParameters.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 #include <DakotaResultsSampling.h>
 
@@ -880,7 +880,7 @@ MainWindow::logoutReturn(bool ok){
 
 
 void MainWindow::onExitButtonClicked(){
-    RandomVariableInputWidget *theParameters = uq->getParameters();
+    RandomVariablesContainer *theParameters = uq->getParameters();
     QApplication::quit();
 }
 

@@ -53,7 +53,7 @@ class QCheckBox;
 
 
 class InputWidgetEDP;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class InputWidgetSampling : public InputWidgetDakotaMethod
 {
@@ -68,7 +68,7 @@ public:
     int processResults(QString &filenameResults, QString &filenameTab);
 
     DakotaResults *getResults(void);
-    RandomVariableInputWidget  *getParameters();
+    RandomVariablesContainer  *getParameters();
 
     int getMaxNumParallelTasks(void);
 
@@ -93,7 +93,7 @@ private:
     QComboBox   *uqSelection;
     QWidget     *uqSpecific;
 
-    RandomVariableInputWidget *theParameters;
+    RandomVariablesContainer *theParameters;
     InputWidgetEDP *theEdpWidget;
     DakotaSamplingResults *results;
 

@@ -54,7 +54,7 @@ class BraceInputWidget;
 class WallInputWidget;
 class SteelInputWidget;
 class ConcreteInputWidget;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class SidebarWidgetSelection : public QWidget
 {

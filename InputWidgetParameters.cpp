@@ -42,7 +42,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "InputWidgetParameters.h"
 #include <QVBoxLayout>
 #include <QJsonObject>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 #include <QMessageBox>
 #include <QDebug>
 
@@ -77,7 +77,7 @@ InputWidgetParameters::inputFromJSON(QJsonObject &jsonObject)
 }
 
 void
-InputWidgetParameters::setParametersWidget(RandomVariableInputWidget *param) {
+InputWidgetParameters::setParametersWidget(RandomVariablesContainer *param) {
 
     if (theParameters != 0) {
         layout->removeWidget(theParameters);
