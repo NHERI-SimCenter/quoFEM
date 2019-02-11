@@ -40,7 +40,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "InputWidgetBayesianCalibration.h"
 #include <DakotaResultsBayesianCalibration.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 
 #include <QPushButton>
@@ -188,8 +188,8 @@ InputWidgetBayesianCalibration::getResults(void) {
   return new DakotaResultsBayesianCalibration();
 }
 
-RandomVariableInputWidget *
+RandomVariablesContainer *
 InputWidgetBayesianCalibration::getParameters(void) {
   QString classType("Uncertain");
-  return new RandomVariableInputWidget(classType);
+  return new RandomVariablesContainer(classType);
 }

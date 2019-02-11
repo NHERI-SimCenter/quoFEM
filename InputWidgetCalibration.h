@@ -54,7 +54,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 class DakotaCalibrationResults;
 class DakotaResults;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 
 class InputWidgetEDP;
@@ -73,7 +73,7 @@ public:
     int processResults(QString &filenameResults, QString &filenameTab);
     DakotaResults *getResults(void);
 
-    RandomVariableInputWidget *getParameters();
+    RandomVariablesContainer *getParameters();
 
 signals:
 
@@ -143,7 +143,7 @@ private:
     QLineEdit   *maxIterations;
     QLineEdit   *convergenceTol;
 
-    RandomVariableInputWidget *theParameters;
+    RandomVariablesContainer *theParameters;
     InputWidgetEDP *theEdpWidget;
     DakotaCalibrationResults *results;
 };

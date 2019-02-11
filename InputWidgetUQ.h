@@ -52,7 +52,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 class SimCenterWidget;
 class InputWidgetDakotaMethod;
 class DakotaResults;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class InputWidgetUQ : public SimCenterWidget
 {
@@ -68,7 +68,7 @@ public:
     int processResults(QString &filenameResults, QString &filenameTab);
 
     virtual DakotaResults *getResults(void);
-    virtual RandomVariableInputWidget  *getParameters();
+    virtual RandomVariablesContainer  *getParameters();
 
 signals:
 
