@@ -14,9 +14,9 @@ path2 = inputArgs[2]
 exeDakota = inputArgs[3]
 
 if (sys.platform == 'darwin'):
-    OpenSeesPath = '/Users/simcenter/Codes/OpenSees/bin/'
+    OpenSeesPath = '/Users/fmckenna/bin/'
     FeapPath = '/Users/fmckenna/bin/'
-    DakotaPath = '/Users/simcenter/Applications/dakota-6.8.0.Darwin.x86_64/bin/'
+    DakotaPath = '/Users/fmckenna/dakota-6.8.0/bin/'
     #OpenSeesPath = ' ' 
     #DakotaPath = ' '
     Perl = ' '
@@ -239,8 +239,8 @@ if (type == "Sampling"):
     f.write('\n');
     f.write('seed = ' '{}'.format(seed))
     f.write('\n');
-    if "sobelov_indices" in data:
-        flag_sobelov=data["sobelov_indices"]
+    if "sobelov_indices" in samplingData:
+        flag_sobelov=samplingData["sobelov_indices"]
         if (flag_sobelov == 1):
             f.write("variance_based_decomp #interaction_order = 1")
     f.write('\n');
@@ -763,26 +763,27 @@ if (femProgram == "OpenSees"):
         f.write(responseDescriptors[i])    
     f.write('\n')
     f.close()
-    
-    os.chdir(path1)
-    f = open(fem_driver, 'w')
-    if(check_sampling_for_fem_driver==True):
-        f.write("python UserDefinedTransformation.py\n")
-    f.write(Perl)
-    f.write(DakotaPath)
-    f.write('dprepro params.in SimCenterParams.template SimCenterParamIN.ops\n')
-    f.write(OpenSeesPath)
-    f.write('OpenSees SimCenterInput.ops >> ops.out\n')
-    #    f.write('dprepro params.in %s SimCenterInput.tcl\n' %inputFile)
-    #    f.write(OpenSeesPath)
-    #    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
-    f.write('python ')
-    f.write(postprocessScript)
-    for i in range(numResponses):
-        f.write(' ')
-        f.write(responseDescriptors[i])    
-    f.write('\n')
-    f.close()
+
+    if exeDakota in ['runningLocal']:    
+        os.chdir(path1)
+        f = open(fem_driver, 'w')
+        if(check_sampling_for_fem_driver==True):
+            f.write("python UserDefinedTransformation.py\n")
+        f.write(Perl)
+        f.write(DakotaPath)
+        f.write('dprepro params.in SimCenterParams.template SimCenterParamIN.ops\n')
+        f.write(OpenSeesPath)
+        f.write('OpenSees SimCenterInput.ops >> ops.out\n')
+        #    f.write('dprepro params.in %s SimCenterInput.tcl\n' %inputFile)
+        #    f.write(OpenSeesPath)
+        #    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
+        f.write('python ')
+        f.write(postprocessScript)
+        for i in range(numResponses):
+            f.write(' ')
+            f.write(responseDescriptors[i])    
+        f.write('\n')
+        f.close()
 
 if (femProgram == "FEAPpv"):
 
@@ -797,29 +798,31 @@ if (femProgram == "FEAPpv"):
     f.write('NONE   \n')
     f.write('\n')
     f.close()
-    
-    os.chdir(path1)
-    f = open(fem_driver, 'w')
-    if(check_sampling_for_fem_driver==True):
-        f.write("python UserDefinedTransformation.py\n")
-    f.write(Perl)
-    f.write(DakotaPath)
-    f.write('dprepro params.in ')
-    f.write(inputFile)
-    f.write(' SimCenterIn.txt --output-format=\'\%10.5f\'\n')
-    f.write('echo y|')
-    f.write(FeapPath)
-    f.write('feappv\n')
-    f.write('python ')
-    f.write(postprocessScript)
-    for i in range(numResponses):
-        f.write(' ')
-        f.write(responseDescriptors[i])    
-                                   
-    f.write('\n')
-    f.close()
 
-os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
+    if exeDakota in ['runningLocal']:        
+        os.chdir(path1)
+        f = open(fem_driver, 'w')
+        if(check_sampling_for_fem_driver==True):
+            f.write("python UserDefinedTransformation.py\n")
+        f.write(Perl)
+        f.write(DakotaPath)
+        f.write('dprepro params.in ')
+        f.write(inputFile)
+        f.write(' SimCenterIn.txt --output-format=\'\%10.5f\'\n')
+        f.write('echo y|')
+        f.write(FeapPath)
+        f.write('feappv\n')
+        f.write('python ')
+        f.write(postprocessScript)
+        for i in range(numResponses):
+            f.write(' ')
+            f.write(responseDescriptors[i])    
+            
+        f.write('\n')
+        f.close()
+
+if exeDakota in ['runningLocal']:        
+    os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
 command = DakotaPath + 'dakota -input dakota.in -output dakota.out -error dakota.err'
 print(command)

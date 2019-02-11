@@ -36,6 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
+#include <ZipUtils.h>
 #include <QTreeView>
 #include <QStandardItemModel>
 #include <QItemSelectionModel>
@@ -132,6 +133,7 @@ MainWindow::MainWindow(QWidget *parent)
     // user settings
     //
 
+    /*
     QSettings settings("SimCenter", "uqFEM");
     QVariant savedValue = settings.value("uuid");
     QUuid uuid;
@@ -140,6 +142,7 @@ MainWindow::MainWindow(QWidget *parent)
         settings.setValue("uuid",uuid);
     } else
         uuid =savedValue.toUuid();
+    */
 
     //
     // create the interface, jobCreator and jobManager
@@ -230,7 +233,7 @@ MainWindow::MainWindow(QWidget *parent)
     // let ubput widget know end of ptions, then set initial input to fem
     inputWidget->buildTreee();
     inputWidget->setSelection(tr("FEM Selection"));
-
+    inputWidget->setMinimumWidth(600);
     // add selection widget to the central layout previosuly created
     layout->addWidget(inputWidget,1.0);
 
@@ -267,20 +270,24 @@ MainWindow::MainWindow(QWidget *parent)
 
     loginWindow = new QWidget();
     QGridLayout *loginLayout = new QGridLayout();
+    SectionTitle *info=new SectionTitle();
+    info->setText(tr("DesignSafe User Account Info:"));
+
     QLabel *nameLabel = new QLabel();
-    nameLabel->setText("username:");
+    nameLabel->setText("Username:");
     QLabel *passwordLabel = new QLabel();
-    passwordLabel->setText("password:");
+    passwordLabel->setText("Password:");
     nameLineEdit = new QLineEdit();
     passwordLineEdit = new QLineEdit();
     passwordLineEdit->setEchoMode(QLineEdit::Password);
     loginSubmitButton = new QPushButton();
     loginSubmitButton->setText("Login");
-    loginLayout->addWidget(nameLabel,0,0);
-    loginLayout->addWidget(nameLineEdit,0,1);
-    loginLayout->addWidget(passwordLabel,1,0);
-    loginLayout->addWidget(passwordLineEdit,1,1);
-    loginLayout->addWidget(loginSubmitButton,2,2);
+    loginLayout->addWidget(info,0,0,2,2,Qt::AlignBottom);
+    loginLayout->addWidget(nameLabel,2,0);
+    loginLayout->addWidget(nameLineEdit,2,1);
+    loginLayout->addWidget(passwordLabel,3,0);
+    loginLayout->addWidget(passwordLineEdit,3,1);
+    loginLayout->addWidget(loginSubmitButton,4,2);
     loginWindow->setLayout(loginLayout);
 
     //
@@ -291,12 +298,31 @@ MainWindow::MainWindow(QWidget *parent)
     connect(theRemoteInterface,SIGNAL(errorMessage(QString)), this, SLOT(errorMessage(QString)));
     connect(theRemoteInterface,SIGNAL(statusMessage(QString)), this, SLOT(errorMessage(QString)));
     connect(theRemoteInterface,SIGNAL(fatalMessage(QString)), this, SLOT(fatalMessage(QString)));
+
     connect(fem,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(fem,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(fem,SIGNAL(sendStatusMessage(QString)),this,SLOT(fatalMessage(QString)));
+
     connect(random,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(random,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(random,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
     connect(results,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(results,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(results,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
     connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(jobManager,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));// adding back
-    connect(jobCreator,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));// adding back
+    connect(uq,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(uq,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
+    connect(jobManager,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(jobManager,SIGNAL(statusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(jobManager,SIGNAL(fatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
+    connect(jobCreator,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(jobCreator,SIGNAL(statusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(jobCreator,SIGNAL(fatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
 
     // login
     connect(loginButton,SIGNAL(clicked(bool)),this,SLOT(onLoginButtonClicked()));
@@ -368,7 +394,7 @@ MainWindow::MainWindow(QWidget *parent)
     // setup parameters of request
     QString requestParams;
     QString hostname = QHostInfo::localHostName() + "." + QHostInfo::localDomainName();
-    //QUuid uuid = QUuid::createUuid();
+    QUuid uuid = QUuid::createUuid();
     requestParams += "v=1"; // version of protocol
     requestParams += "&tid=UA-121636495-1"; // Google Analytics account
     requestParams += "&cid=" + uuid.toString(); // unique user identifier
@@ -462,8 +488,16 @@ void MainWindow::onRunButtonClicked() {
 
     QFileInfo fileInfo(mainInput);
     QDir fileDir = fileInfo.absolutePath();
+
+
     QString fileName =fileInfo.fileName();
     QString path = fileDir.absolutePath();// + QDir::separator();
+
+    if (! fileDir.exists()) {
+      errorMessage(QString("Directory ") + path + QString(" specified does not exist!"));
+      return;
+    }
+    
 
     //
     // given path to input file we are going to create temporary directory below it
@@ -490,6 +524,7 @@ void MainWindow::onRunButtonClicked() {
                                   file.errorString()));
         return;
     }
+
     QJsonObject json;
     inputWidget->outputToJSON(json);
     QJsonDocument doc(json);
@@ -508,8 +543,18 @@ void MainWindow::onRunButtonClicked() {
   //    QDir::separator() + QString("localApp");
 
     //
-    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
+    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseDAKOTA.py");
     QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter");
+
+    //
+    // check the python script exists
+    //
+
+    QFile pyDAKOTA(pySCRIPT);
+    if (! pyDAKOTA.exists()) {
+      errorMessage("Dakota script does not exist, the parseDAKOTA.py script was not found in exe folder! .. download application again");
+      return;
+    }
 
     // remove current results widget
 
@@ -578,11 +623,17 @@ void MainWindow::onRunButtonClicked() {
 
    QDir dirToRemove(sourceDir);
    dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
-    //                                  // so to debug you can simply comment it
+                                    // so to debug you can simply comment it
 
     //
     // process the results
     //
+   QDir desitinationDIR(destinationDir);
+
+    if (! desitinationDIR.exists("dakota.out")) {
+      errorMessage("Dakota did not run, check the path you provided in parseDakota or contact us");
+      return;
+    }
 
     QString filenameOUT = destinationDir + tr("dakota.out");
     QString filenameTAB = destinationDir + tr("dakotaTab.out");
@@ -647,7 +698,7 @@ void MainWindow::onRemoteRunButtonClicked(){
     file.close();
 
     //
-    // now use the applications parseJSON file to run dakota and produce output files:
+    // now use the applications parseDAKOTA file to run dakota and produce output files:
     //    dakota.in dakota.out dakotaTab.out dakota.err
     //
 
@@ -658,8 +709,14 @@ void MainWindow::onRemoteRunButtonClicked(){
    //   QDir::separator() + QString("localApp");
 
     //
-    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
+    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseDAKOTA.py");
     QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter") + strUnique;
+
+    QFile pyDAKOTA(pySCRIPT);
+    if (! pyDAKOTA.exists()) {
+      errorMessage("Dakota script does not exist, the parseDAKOTA.py script was not found in exe folder! .. download application again");
+      return;
+    }
 
     // remove current results widget
     results->setResultWidget(0);
@@ -686,7 +743,7 @@ void MainWindow::onRemoteRunButtonClicked(){
 
 
     QProcess *proc = new QProcess();
-    qDebug() << "HELLO";
+
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     qDebug() << command;
@@ -704,6 +761,20 @@ void MainWindow::onRemoteRunButtonClicked(){
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
     proc->waitForStarted();
+
+
+    //
+    // in tmpDirectory we will zip up current template dir and then remove before sending (doone to reduce number of sends)
+    //
+
+    QString tDirectory2 = path + QDir::separator() + QString("tmp.SimCenter") + strUnique;
+    QString templateDIR(tDirectory2 + QDir::separator() + QString("templatedir"));
+    QString zipFile(tDirectory2 + QDir::separator() + QString("templatedir.zip"));
+    ZipUtils::ZipFolder(QDir(templateDIR), zipFile);
+    qDebug() << "ZIP DIR: " << templateDIR;
+    qDebug() << "ZIP FILE: " << zipFile;
+    QDir dirToRemove(templateDIR);
+    dirToRemove.removeRecursively();
 
     //
     // when setup is complete, pop open the jobCreateor Widget which will allow user
@@ -973,15 +1044,19 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 {
     errorMessage("Processing Results");
 
-    qDebug()<<"\Inside processResults widget and trying to proceed";
+    //qDebug()<<"\Inside processResults widget and trying to proceed";
 
     DakotaResults *result=uq->getResults();
+    connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
+    connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(errorMessage(QString)));
+
+    //connect(result,SLOT(sendE))
     result->processResults(dakotaIN, dakotaTAB);
     results->setResultWidget(result);
     inputWidget->setSelection(QString("Results"));
 
-    errorMessage(" ");// adding back
-    qDebug()<<"\n the value of results is \n\n  "<<results;
+   // errorMessage(" ");// adding back
+   // qDebug()<<"\n the value of results is \n\n  "<<results;
 
 }
 
@@ -993,11 +1068,12 @@ void MainWindow::createActions() {
 
     //QToolBar *fileToolBar = addToolBar(tr("File"));
 
-    QAction *newAction = new QAction(tr("&New"), this);
-    newAction->setShortcuts(QKeySequence::New);
-    newAction->setStatusTip(tr("Create a new file"));
-    connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
-    fileMenu->addAction(newAction);
+    //    QAction *newAction = new QAction(tr("&New"), this);
+    //newAction->setShortcuts(QKeySequence::New);
+    //newAction->setStatusTip(tr("Create a new file"));
+    //    connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
+    //fileMenu->addAction(newAction);
+
     //fileToolBar->addAction(newAction);
 
     QAction *openAction = new QAction(tr("&Open"), this);
@@ -1115,7 +1191,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 1.0.1 "));
+                       tr("Version 1.1.0 "));
 }
 
 void MainWindow::about()
