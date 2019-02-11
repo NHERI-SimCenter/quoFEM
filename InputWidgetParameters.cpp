@@ -42,7 +42,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "InputWidgetParameters.h"
 #include <QVBoxLayout>
 #include <QJsonObject>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 #include <QMessageBox>
 #include <QDebug>
 
@@ -77,7 +77,7 @@ InputWidgetParameters::inputFromJSON(QJsonObject &jsonObject)
 }
 
 void
-InputWidgetParameters::setParametersWidget(RandomVariableInputWidget *param) {
+InputWidgetParameters::setParametersWidget(RandomVariablesContainer *param) {
 
     if (theParameters != 0) {
         layout->removeWidget(theParameters);
@@ -88,7 +88,7 @@ InputWidgetParameters::setParametersWidget(RandomVariableInputWidget *param) {
     if (param != 0) {
         layout->addWidget(param);
         theParameters = param;
-        theParameters->setInitialConstantRVs(varNamesAndValues);
+        theParameters->addConstantRVs(varNamesAndValues);
     //    connect(this,SLOT(errorMessage(QString)),param,SIGNAL(sendErrorMessage(QString)));
         connect(param,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     }
@@ -97,7 +97,7 @@ InputWidgetParameters::setParametersWidget(RandomVariableInputWidget *param) {
 void
 InputWidgetParameters::setInitialVarNamesAndValues(QStringList theList){
     varNamesAndValues=theList;
-    theParameters->setInitialConstantRVs(varNamesAndValues);
+    theParameters->addConstantRVs(varNamesAndValues);
 }
 
 QStringList

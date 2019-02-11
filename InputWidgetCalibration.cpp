@@ -56,7 +56,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <sstream>
 #include <fstream>
 #include <time.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 
 //QComboBox::down-arrow{
@@ -599,8 +599,8 @@ InputWidgetCalibration::getResults(void) {
   return new DakotaResultsCalibration();
 }
 
-RandomVariableInputWidget *
+RandomVariablesContainer *
 InputWidgetCalibration::getParameters(void) {
   QString classType("Design");
-  return new RandomVariableInputWidget(classType);
+  return new RandomVariablesContainer(classType);
 }

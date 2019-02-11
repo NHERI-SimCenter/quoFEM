@@ -42,7 +42,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SimCenterWidget.h>
 
 class DakotaResults;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class InputWidgetDakotaMethod : public SimCenterWidget
 {
@@ -56,7 +56,7 @@ public:
     virtual bool inputFromJSON(QJsonObject &rvObject) =0;
 
     virtual int processResults(QString &filenameResults, QString &filenameTab) =0;
-    virtual RandomVariableInputWidget *getParameters() = 0;
+    virtual RandomVariablesContainer *getParameters() = 0;
     virtual DakotaResults *getResults(void) =0;
     void clear(void);
 

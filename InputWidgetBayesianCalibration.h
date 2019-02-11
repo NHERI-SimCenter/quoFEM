@@ -52,7 +52,7 @@ class DakotaResults;
 
 
 class InputWidgetEDP;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class InputWidgetBayesianCalibration : public InputWidgetDakotaMethod
 {
@@ -68,7 +68,7 @@ public:
     int processResults(QString &filenameResults, QString &filenameTab);
 
     DakotaResults *getResults(void);
-    RandomVariableInputWidget  *getParameters();
+    RandomVariablesContainer  *getParameters();
 
 signals:
 
@@ -87,7 +87,7 @@ private:
     QComboBox   *uqSelection;
     QWidget     *uqSpecific;
 
-    RandomVariableInputWidget *theParameters;
+    RandomVariablesContainer *theParameters;
     InputWidgetEDP *theEdpWidget;
     DakotaResultsBayesianCalibration *results;
 };

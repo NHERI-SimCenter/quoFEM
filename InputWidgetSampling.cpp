@@ -42,7 +42,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "InputWidgetSampling.h"
 #include <DakotaResultsSampling.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 
 #include <QPushButton>
@@ -261,10 +261,10 @@ InputWidgetSampling::getResults(void) {
     return new DakotaResultsSampling();
 }
 
-RandomVariableInputWidget *
+RandomVariablesContainer *
 InputWidgetSampling::getParameters(void) {
     QString classType("Uncertain");
-  return new RandomVariableInputWidget(classType);
+  return new RandomVariablesContainer(classType);
 }
 
 void InputWidgetSampling::setSobolevFlag(bool value) {

@@ -6,21 +6,17 @@ method,
 sampling
 sample_type = lhs
 samples = 10
-seed = 981
+seed = 159
 
 
 
 variables,
-normal_uncertain = 4
-means = 205000 25000 250 500 
-std_deviations = 25000 2500 25 50 
-descriptors = 'E' 'P' 'A1' 'A2' 
+normal_uncertain = 1
+means = 2500 
+std_deviations = 1500 
+descriptors = 'E' 
 
 
-uncertain_correlation_matrix = 1.00000 0.00000 0.00000 0.00000 
-                               0.00000 1.00000 0.00000 0.00000 
-                               0.00000 0.00000 1.00000 0.00000 
-                               0.00000 0.00000 0.00000 1.00000 
 
 
 interface,
