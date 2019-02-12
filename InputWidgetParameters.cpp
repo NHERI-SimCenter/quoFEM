@@ -88,7 +88,7 @@ InputWidgetParameters::setParametersWidget(RandomVariablesContainer *param) {
     if (param != 0) {
         layout->addWidget(param);
         theParameters = param;
-        theParameters->setInitialConstantRVs(varNamesAndValues);
+        theParameters->addConstantRVs(varNamesAndValues);
     //    connect(this,SLOT(errorMessage(QString)),param,SIGNAL(sendErrorMessage(QString)));
         connect(param,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     }
@@ -97,7 +97,7 @@ InputWidgetParameters::setParametersWidget(RandomVariablesContainer *param) {
 void
 InputWidgetParameters::setInitialVarNamesAndValues(QStringList theList){
     varNamesAndValues=theList;
-    theParameters->setInitialConstantRVs(varNamesAndValues);
+    theParameters->addConstantRVs(varNamesAndValues);
 }
 
 QStringList
