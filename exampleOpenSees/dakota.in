@@ -5,28 +5,24 @@ tabular_data_file = 'dakotaTab.out'
 method,
 sampling
 sample_type = lhs
-samples = 10
-seed = 159
-
-
+samples = 100
+seed = 981
 
 variables,
-normal_uncertain = 1
-means = 2500 
-std_deviations = 1500 
-descriptors = 'E' 
-
-
+normal_uncertain = 4
+means = 205000 25000 250 500 
+std_deviations = 25000 2500 25 50 
+descriptors = 'E' 'P' 'A1' 'A2' 
 
 
 interface,
-system # asynch evaluation_concurrency = 8
+fork asynchronous evaluation_concurrency = 8
 analysis_driver = 'fem_driver' 
 parameters_file = 'params.in' 
 results_file = 'results.out' 
 work_directory directory_tag 
 copy_files = 'templatedir/*' 
-named 'workdir' file_save  directory_save 
+named 'workdir' 
 aprepro 
 
 responses, 
