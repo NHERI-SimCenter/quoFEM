@@ -999,8 +999,12 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             //pySCRIPT_dist_fit = QString("source $HOME/.bash_profile; source $HOME/.bashrc; python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
 
 #ifdef Q_OS_WIN
-            pySCRIPT_dist_fit = QString("python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
-            process->execute("cmd", QStringList() << "/C" << pySCRIPT_dist_fit);
+
+            QStringList args{pySCRIPT_dist_fit, data_input_file};
+            process->execute("python", args);
+
+            //pySCRIPT_dist_fit = QString("python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
+            //process->execute("cmd", QStringList() << "/C" << pySCRIPT_dist_fit);
 #else
             pySCRIPT_dist_fit = QString("source $HOME/.bash_profile; source $HOME/.bashrc; python ") + pySCRIPT_dist_fit + QString(" ") + data_input_file;
             qDebug() << pySCRIPT_dist_fit;

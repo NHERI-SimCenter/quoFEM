@@ -586,11 +586,18 @@ void MainWindow::onRunButtonClicked() {
 
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
-    qDebug() << command;
-    proc->execute("cmd", QStringList() << "/C" << command);
+
+    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
+    qDebug() << "Executing parseDAKOTA.py... " << args;
+    proc->execute("python", args);
+    qDebug() << "Executing parseDAKOTA.py... - SUCCESSFUL" ;
+
+
+    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
+    //qDebug() << command;
+    //proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
-    qDebug() << command;
+    //qDebug() << command;
 
     //std::cerr << command << "\n";
 #else
@@ -745,9 +752,14 @@ void MainWindow::onRemoteRunButtonClicked(){
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
-    qDebug() << command;
-    proc->execute("cmd", QStringList() << "/C" << command);
+
+    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningRemote"};
+    qDebug() << args;
+    proc->execute("python", args);
+
+    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
+    //qDebug() << command;
+    //proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
 
 #else
