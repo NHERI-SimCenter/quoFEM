@@ -1,340 +1,271 @@
+import io
 import json
 import os
 import sys
 import stat
 import shutil
-import numpy as np
 from pprint import pprint
 
 inputArgs = sys.argv
 #print inputArgs
 
-path1 = inputArgs[1]
-path2 = inputArgs[2]
-exeDakota = inputArgs[3]
+workdir_main = inputArgs[1]
+workdir_temp = inputArgs[2]
+run_type = inputArgs[3]
 
-if (sys.platform == 'darwin'):
-    OpenSeesPath = '/Users/fmckenna/bin/'
-    FeapPath = '/Users/fmckenna/bin/'
-    DakotaPath = '/Users/fmckenna/dakota-6.8.0/bin/'
-    #OpenSeesPath = ' ' 
-    #DakotaPath = ' '
-    Perl = ' '
+# Replace the PATH TO strings with the path to the given executable in your 
+# computer. The 'darwin' part corresponds to Mac, the 'else' clause corresponds 
+# to Windows. You only need the path to either Feap or OpenSees depending on 
+# which one you plan to use for the analysis. 
+
+# run on local computer
+if run_type in ['runningLocal',]:
+    # MAC
+    if (sys.platform == 'darwin'):
+        OpenSees = 'PATH TO OpenSees'
+        Feap = 'PATH TO feappv'
+        Dakota = 'PATH TO dakota'
+        DakotaR = 'PATH TO dprepro'
+        fem_driver = 'fem_driver'
+        numCPUs = 4
+
+    # Windows
+    else:
+        OpenSees = 'OpenSees'
+        Feap = 'C:\\Users\\SimCenter\\feap\\Feappv41.exe'
+        Dakota = 'dakota'
+        DakotaR = 'perl "C:/Adam/Dakota test/bin/dprepro"'
+        fem_driver = 'fem_driver.bat'
+        numCPUs = 4
+
+# Stampede @ DesignSafe, DON'T EDIT
+elif run_type in ['runningRemote',]:
+    OpenSees = '/home1/00477/tg457427/bin/OpenSees'
+    Feap = '/home1/00477/tg457427/bin/feappv'
+    Dakota = 'dakota'
+    DakotaR = 'dprepro'
     fem_driver = 'fem_driver'
-    numCPUs = 8
 
-else:
-    OpenSeesPath = 'C:\\Users\\nikhil\\Downloads\\OpenSees2.5.0-x64\\'
-    DakotaPath = 'C:\\Users\\nikhil\\Desktop\\dakota-6.7-release-public-Windows.x86-UI\\bin\\'
-    Perl = 'C:\\Perl64\\bin\perl '
-    #OpenSeesPath = ' '
-    # DakotaPath = ' '
-    Perl = 'perl '
-    fem_driver = 'fem_driver.bat'
-    numCPUs = 8
-
-if exeDakota in ['runningRemote']:
-    OpenSeesPath = '/home1/00477/tg457427/bin/'
-    FeapPath = '/home1/00477/tg457427/bin/'
-    fem_driver = 'fem_driver'
-    DakotaPath = ' ' 
-    Perl = ' '
-
-print(OpenSeesPath)
-print(DakotaPath)
-
-os.chdir(path2)
+# change workdir to the templatedir
+os.chdir(workdir_temp)
 cwd = os.getcwd()
-#print cwd
 
-#
-# open file
-#
 
+# open the dakota json file
 with open('dakota.json') as data_file:    
     data = json.load(data_file)
 
-uqData = data["uqMethod"];
-femData = data["fem"];
+uq_data = data["uqMethod"]
+fem_data = data["fem"]
+rnd_data = data["randomVariables"]
 
-#with open('data.txt', 'w') as outfile:  
-#    json.dump(data, outfile)
-#print data["method"]
-
-# 
 # parse the Random Variables
-#
-numUncertain = 0;
-uncertainName = [];
 
-numNormalUncertain = 0;
-normalUncertainName=[];
-normalUncertainMean =[];
-normalUncertainStdDev =[];
+numUncertain = 0
+uncertainName = []
 
-numLognormalUncertain = 0;
-lognormalUncertainName=[];
-lognormalUncertainMean =[];
-lognormalUncertainStdDev =[];
+numNormalUncertain = 0
+normalUncertainName=[]
+normalUncertainMean =[]
+normalUncertainStdDev =[]
 
-numUniformUncertain = 0;
-uniformUncertainName=[];
-uniformUncertainLower =[];
-uniformUncertainUpper =[];
+numLognormalUncertain = 0
+lognormalUncertainName=[]
+lognormalUncertainMean =[]
+lognormalUncertainStdDev =[]
 
-numContinuousDesign = 0;
-continuousDesignName=[];
-continuousDesignLower =[];
-continuousDesignUpper =[];
-continuousDesignInitialPoint =[];
+numUniformUncertain = 0
+uniformUncertainName=[]
+uniformUncertainLower =[]
+uniformUncertainUpper =[]
 
-numConstantState = 0;
-constantStateName=[];
-constantStateValue =[];
+numContinuousDesign = 0
+continuousDesignName=[]
+continuousDesignLower =[]
+continuousDesignUpper =[]
+continuousDesignInitialPoint =[]
 
-numWeibullUncertain = 0;
-weibullUncertainName=[];
-weibullUncertainAlphas =[];
-weibullUncertainBetas =[];
+numConstantState = 0
+constantStateName=[]
+constantStateValue =[]
 
-numGammaUncertain = 0;
-gammaUncertainName=[];
-gammaUncertainAlphas =[];
-gammaUncertainBetas =[];
+numWeibullUncertain = 0
+weibullUncertainName=[]
+weibullUncertainAlphas =[]
+weibullUncertainBetas =[]
 
-numGumbellUncertain = 0;
-gumbellUncertainName=[];
-gumbellUncertainAlphas =[];
-gumbellUncertainBetas =[];
+numGammaUncertain = 0
+gammaUncertainName=[]
+gammaUncertainAlphas =[]
+gammaUncertainBetas =[]
 
-numBetaUncertain = 0;
-betaUncertainName=[];
-betaUncertainLower =[];
-betaUncertainHigher =[];
-betaUncertainAlphas =[];
+numGumbellUncertain = 0
+gumbellUncertainName=[]
+gumbellUncertainAlphas =[]
+gumbellUncertainBetas =[]
 
-numUserDefUncertain = 0;
+numBetaUncertain = 0
+betaUncertainName=[]
+betaUncertainLower =[]
+betaUncertainHigher =[]
+betaUncertainAlphas =[]
 
-print("-----------------")
-print(data)
-print("-----------------")
-
-for k in data["randomVariables"]:
-    if (k["distribution"] == "Normal"):
-        uncertainName.append(k["name"])
+for rnd_var in rnd_data:
+    if (rnd_var["distribution"] == 'Normal'):
+        uncertainName.append(rnd_var["name"])
         numUncertain += 1
-        normalUncertainName.append(k["name"])
-        normalUncertainMean.append(k["mean"])
-        normalUncertainStdDev.append(k["stdDev"])
+        normalUncertainName.append(rnd_var["name"])
+        normalUncertainMean.append(rnd_var["mean"])
+        normalUncertainStdDev.append(rnd_var["stdDev"])
         numNormalUncertain += 1
-    elif (k["distribution"] == "Lognormal"):
-        uncertainName.append(k["name"])
+    elif (rnd_var["distribution"] == "Lognormal"):
+        uncertainName.append(rnd_var["name"])
         numUncertain += 1
-        lognormalUncertainName.append(k["name"])
-        lognormalUncertainMean.append(k["mean"])
-        lognormalUncertainStdDev.append(k["stdDev"])
+        lognormalUncertainName.append(rnd_var["name"])
+        lognormalUncertainMean.append(rnd_var["mean"])
+        lognormalUncertainStdDev.append(rnd_var["stdDev"])
         numLognormalUncertain += 1
-    elif (k["distribution"] == "Constant"):
-        uncertainName.append(k["name"])
+    elif (rnd_var["distribution"] == "Constant"):
+        uncertainName.append(rnd_var["name"])
         numUncertain += 1
-        constantStateName.append(k["name"])
-        constantStateValue.append(k["value"])
+        constantStateName.append(rnd_var["name"])
+        constantStateValue.append(rnd_var["value"])
         numConstantState += 1
-    elif (k["distribution"] == "Uniform"):
-        uncertainName.append(k["name"])
+    elif (rnd_var["distribution"] == "Uniform"):
+        uncertainName.append(rnd_var["name"])
         numUncertain += 1
         print("Hellooo,, Setting lower upper bounds...")
-        uniformUncertainName.append(k["name"])
-        uniformUncertainLower.append(k["lowerbound"])
-        uniformUncertainUpper.append(k["upperbound"])
+        uniformUncertainName.append(rnd_var["name"])
+        uniformUncertainLower.append(rnd_var["lowerbound"])
+        uniformUncertainUpper.append(rnd_var["upperbound"])
         numUniformUncertain += 1
-    elif (k["distribution"] == "ContinuousDesign"):
-        uncertainName.append(k["name"])
+    elif (rnd_var["distribution"] == "ContinuousDesign"):
+        uncertainName.append(rnd_var["name"])
         numUncertain += 1
-        continuousDesignName.append(k["name"])
-        continuousDesignLower.append(k["lowerbound"])
-        continuousDesignUpper.append(k["upperbound"])
-        continuousDesignInitialPoint.append(k["initialpoint"])
+        continuousDesignName.append(rnd_var["name"])
+        continuousDesignLower.append(rnd_var["lowerbound"])
+        continuousDesignUpper.append(rnd_var["upperbound"])
+        continuousDesignInitialPoint.append(rnd_var["initialpoint"])
         numContinuousDesign += 1
-    elif (k["distribution"] == "Weibull"):
-        uncertainName.append(k["name"])
+    elif (rnd_var["distribution"] == "Weibull"):
+        uncertainName.append(rnd_var["name"])
         numUncertain += 1
-        weibullUncertainName.append(k["name"])
-        weibullUncertainAlphas.append(k["scaleparam"])
-        weibullUncertainBetas.append(k["shapeparam"])
+        weibullUncertainName.append(rnd_var["name"])
+        weibullUncertainAlphas.append(rnd_var["scaleparam"])
+        weibullUncertainBetas.append(rnd_var["shapeparam"])
         numWeibullUncertain += 1
-    elif (k["distribution"] == "Gamma"):
-        uncertainName.append(k["name"])
+    elif (rnd_var["distribution"] == "Gamma"):
+        uncertainName.append(rnd_var["name"])
         numUncertain += 1
-        gammaUncertainName.append(k["name"])
-        gammaUncertainAlphas.append(k["alphas"])
-        gammaUncertainBetas.append(k["betas"])
+        gammaUncertainName.append(rnd_var["name"])
+        gammaUncertainAlphas.append(rnd_var["alphas"])
+        gammaUncertainBetas.append(rnd_var["betas"])
         numGammaUncertain += 1
-    elif (k["distribution"] == "Gumbell"):
-        uncertainName.append(k["name"])
+    elif (rnd_var["distribution"] == "Gumbell"):
+        uncertainName.append(rnd_var["name"])
         numUncertain += 1
-        gumbellUncertainName.append(k["name"])
-        gumbellUncertainAlphas.append(k["alphas"])
-        gumbellUncertainBetas.append(k["betas"])
+        gumbellUncertainName.append(rnd_var["name"])
+        gumbellUncertainAlphas.append(rnd_var["alphas"])
+        gumbellUncertainBetas.append(rnd_var["betas"])
         numGumbellUncertain += 1
-    elif (k["distribution"] == "Beta"):
-        uncertainName.append(k["name"])
+    elif (rnd_var["distribution"] == "Beta"):
+        uncertainName.append(rnd_var["name"])
         numUncertain += 1
-        betaUncertainName.append(k["name"])
-        betaUncertainLower.append(k["upperBounds"])
-        betaUncertainUpper.append(k["lowerBounds"])
-        betaUncertainAlphas.append(k["alphas"])
-        betaUncertainBetas.append(k["betas"])
+        betaUncertainName.append(rnd_var["name"])
+        betaUncertainLower.append(rnd_var["upperBounds"])
+        betaUncertainUpper.append(rnd_var["lowerBounds"])
+        betaUncertainAlphas.append(rnd_var["alphas"])
+        betaUncertainBetas.append(rnd_var["betas"])
         numBetaUncertain += 1
-    elif (k["distribution"]=="UserDef"):
-        uncertainName.append(k["name"])
-        numUncertain += 1
-        numUserDefUncertain += 1
-        normalUncertainName.append(k["name"])
-        normalUncertainMean.append(0.0)
-        normalUncertainStdDev.append(1.0)
-        numNormalUncertain += 1
 
-#
 # Write the dakota input file: dakota.in 
-#
 
 f = open('../dakota.in', 'w')
 
-#
 # write out the env data
-#
 
-f.write("environment\n")
-f.write("tabular_data\n")
-f.write("tabular_data_file = \'dakotaTab.out\'\n\n")
+#f.write("environment\n")
+#f.write("tabular_data\n")
+#f.write("tabular_data_file = \'dakotaTab.out\'\n\n")
 
-#
-# write out the methods data
-#
+f.write(
+"""environment
+tabular_data
+tabular_data_file = 'dakotaTab.out'
 
-f.write('method,\n')
+method,
+""")
 
-uqData = data["uqMethod"];
-type = uqData["uqType"];
+# write out the method data
 
-numResponses=0;
-responseDescriptors=[];
+uq_method = uq_data["uqType"]
 
-if (type == "Sampling"):
-    samplingData = uqData["samplingMethodData"];
-    numSamples = 0;
-    seed = 0;    
-    f.write('sampling\n');
-    method = samplingData["method"];
-    if (method == "Monte Carlo"):
-        method = 'random'
-    else:
-        method = 'lhs'
-    numSamples=samplingData["samples"];
-    seed = samplingData["seed"];
-    f.write('sample_type = ' '{}'.format(method))
-    f.write('\n');
-    f.write('samples = ' '{}'.format(numSamples))
-    f.write('\n');
-    f.write('seed = ' '{}'.format(seed))
-    f.write('\n');
-    if "sobelov_indices" in samplingData:
-        flag_sobelov=samplingData["sobelov_indices"]
-        if (flag_sobelov == 1):
-            f.write("variance_based_decomp #interaction_order = 1")
-    f.write('\n');
+numResponses=0
+responseDescriptors=[]
 
-    edps = samplingData["edps"];
+if uq_method == "Sampling":
+    samplingData = uq_data["samplingMethodData"]
+    method = samplingData["method"]
+    numSamples=samplingData["samples"]
+    seed = samplingData["seed"]
+
+    f.write(
+"""sampling
+sample_type = {sample_type}
+samples = {samples}
+seed = {seed}
+
+""".format(
+    sample_type = 'random' if method == 'Monte Carlo' else 'lhs',
+    samples = numSamples,
+    seed = seed))
+
+    edps = samplingData["edps"]
     for edp in edps:
-        responseDescriptors.append(edp["name"]);
-        numResponses += 1;
+        responseDescriptors.append(edp["name"])
+        numResponses += 1
 
+elif uq_method == 'Calibration':
+    calibrationData = uq_data["calibrationMethodData"]
+    convergenceTol=calibrationData["convergenceTol"]
+    maxIter = calibrationData["maxIterations"]
+    method = calibrationData["method"]
 
-    f.write('\n\n')
+    f.write(
+"""{method_type}
+convergence_tolerance = {convTol}
+max_iterations = {maxIter}
 
-elif (type == "Calibration"):
-    calibrationData = uqData["calibrationMethodData"];
-    maxIterations = 10;
-    convergenceTol = 1.0e-4
-    method = calibrationData["method"];
-    if (method == "OPT++GaussNewton" or method == "NL2SOL" or method == "ConjugateGradient"):
-        if(method == 'OPT++GaussNewton'):
-            method = 'optpp_g_newton'
-        elif(method == "NL2SOL"):
-            method = 'nl2sol'
-        elif(method == "ConjugateGradient"):
-            method = 'conmin_frcg'
-        f.write(method);
-        f.write('\n');
-        convergenceTol=calibrationData["convergenceTol"];
-        maxIter = calibrationData["maxIterations"];
-        f.write('convergence_tolerance = ' '{}'.format(convergenceTol))
-        f.write('\n');
-        f.write('max_iterations = ' '{}'.format(maxIter))
+""".format(
+    method_type = 'optpp_g_newton' if method == 'OPT++GaussNewton' else 'nl2sol',
+    convTol = convergenceTol,
+    maxIter = maxIter))
 
-    if(method == "ColinyPattern"):
-        print(uqData)
-        f.write('coliny_pattern_search\n');
-        f.write('max_iterations = '+str(uqData["calibrationMethodData"]["maxIterations"])+"\n")
-        f.write('max_function_evaluations = '+str(uqData["calibrationMethodData"]["maxFunEvals"])+"\n")
-        f.write('solution_target = '+str(uqData["calibrationMethodData"]["convergenceTol"])+"\n")
-        f.write('initial_delta = '+str(uqData["calibrationMethodData"]["initialDelta"])+"\n")
-        f.write('threshold_delta = '+str(uqData["calibrationMethodData"]["thresholdDelta"])+"\n")
-        f.write('exploratory_moves '+str(uqData["calibrationMethodData"]["patternMove"])+"\n")
-        f.write('contraction_factor = '+str(uqData["calibrationMethodData"]["contractionFactor"])+"\n")
-
-    if(method== "Coliny_EA"):
-        f.write('coliny_ea\n');
-        f.write('max_iterations = '+str(uqData["calibrationMethodData"]["maxIterations"])+"\n")
-        f.write('max_function_evaluations = '+str(uqData["calibrationMethodData"]["maxFunEvals"])+"\n")
-        f.write('seed = '+str(uqData["calibrationMethodData"]["seed"])+"\n")
-        f.write('population_size = '+str(uqData["calibrationMethodData"]["popSize"])+"\n")
-        f.write('fitness_type '+str(uqData["calibrationMethodData"]["fitnessType"])+"\n")
-        f.write('mutation_type '+str(uqData["calibrationMethodData"]["mutationType"])+"\n")
-        f.write('mutation_rate '+str(uqData["calibrationMethodData"]["mutationRate"])+"\n")
-        f.write('crossover_type '+str(uqData["calibrationMethodData"]["crossoverType"])+"\n")
-        f.write('crossover_rate '+str(uqData["calibrationMethodData"]["crossoverRate"])+"\n")
-        f.write('replacement_type '+str(uqData["calibrationMethodData"]["replacementType"])+" = "+str(uqData["calibrationMethodData"]["replacementValue"])+"\n")
-
-
-    edps = calibrationData["edps"];
+    edps = calibrationData["edps"]
     for edp in edps:
-        responseDescriptors.append(edp["name"]);
-        numResponses += 1;
+        responseDescriptors.append(edp["name"])
+        numResponses += 1
 
+elif uq_method == 'Bayesian_Calibration':
+    samplingData = uq_data["bayesian_calibration_method_data"]
+    chainSamples=samplingData["chain_samples"]
+    seed = samplingData["seed"]
 
-    f.write('\n\n')
+    f.write(
+"""bayes_calibration dream
+chain_samples = {chainSamples}
+seed = {seed}
 
-elif (type == "Bayesian Calibration"):
-    samplingData = uqData["bayesian_calibration_method_data"];
-    chainSamples = 0;
-    seed = 0;    
+""".format(
+    chainSamples = chainSamples,
+    seed = seed))
 
-    method = samplingData["method"];
-    if (method == "DREAM"):
-        method = 'dream'
-    chainSamples=samplingData["chain_samples"];
-    seed = samplingData["seed"];
-
-    f.write('bayes_calibration ' '{}'.format(method))
-    f.write('\n');
-    f.write('chain_samples = ' '{}'.format(chainSamples))
-    f.write('\n');
-    f.write('seed = ' '{}'.format(seed))
-
-    edps = samplingData["edps"];
+    edps = samplingData["edps"]
     for edp in edps:
-        responseDescriptors.append(edp["name"]);
-        numResponses += 1;
+        responseDescriptors.append(edp["name"])
+        numResponses += 1
 
-
-    f.write('\n\n')
-
-
-#
-# write out the variable data
-#
+# write out the variable data // shall be replaced to make human-readable
 
 f.write('variables,\n')
 
@@ -576,260 +507,195 @@ if (numWeibullUncertain > 0):
         f.write('\' ')
     f.write('\n')
 
-f.write('\n\n')
+f.write('\n')
 
-if (type == "Sampling"):
-    print("\n Sampling method found, now procceeding\n")
-
-    if "uncertain_correlation_matrix" in data:
-        #print("\n\n\n\n I am inside the uncertain correlation name found \n\n\n\n\n")
-        #print("")
-        #print(data["uncertain_correlation_matrix"])
-        #print("The value of rows and colums is............................................................. ")
-        correlationMatrix=np.reshape(data["uncertain_correlation_matrix"],(numUncertain,numUncertain));
-
-        f.write("uncertain_correlation_matrix = ")
-
-        rows,cols = correlationMatrix.shape
-        print(correlationMatrix)
-
-        for i in range(0, rows):    
-            if(i==0):
-                row_string = ""
-            else:
-                row_string = "                               "
-            for j in range(0, cols):
-                row_string = row_string + "{0:.5f}".format(correlationMatrix[i,j]) + " "
-            row_string = row_string + "\n"
-            # print(row_string)
-            f.write(row_string)
-    
-f.write('\n\n')
-
-#
 # write out the interface data
-#
 
+femProgram = fem_data["program"]
 
-femProgram = femData["program"];
-
-if (femProgram == "OpenSees" or femProgram == "OpenSees-2" or femProgram == "FEAPpv"):
+if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
     f.write('interface,\n')
     #f.write('system # asynch evaluation_concurrency = 8')
     #f.write('fork asynchronous evaluation_concurrency = ' '{}'.format(numCPUs))
-    if exeDakota in ['runningLocal']:
-        f.write('system # asynch evaluation_concurrency = 8')
+    if run_type in ['runningLocal',]:
+        f.write("fork asynchronous evaluation_concurrency = %d" % numCPUs)
     else:
-        f.write('fork \n asynchronous')
+        f.write('fork asynchronous')
     f.write('\nanalysis_driver = \'fem_driver\' \n')
     f.write('parameters_file = \'params.in\' \n')
     f.write('results_file = \'results.out\' \n')
     f.write('work_directory directory_tag \n')
     f.write('copy_files = \'templatedir/*\' \n')
-# if you uncomment below then you will have all the work directories    
-    f.write('named \'workdir\' file_save  directory_save \n')
-# if you uncomment below then temprorary files corresponding to different params.in won't saved. 
-# f.write('named \'workdir\' \n')
+#    f.write('named \'workdir\' file_save  directory_save \n')
+    f.write('named \'workdir\' \n')
     f.write('aprepro \n')
     f.write('\n')
     
 # write out the responses
-# print(numResponses)
 
-check_sampling_for_fem_driver=False
+if uq_method == "Sampling":
+    f.write(
+"""responses,
+response_functions = {numResponses}
+response_descriptors = {responseDescriptors}
+no_gradients
+no_hessians
 
-if (type == "Sampling"):
+""".format(
+    numResponses = numResponses,
+    responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
-    check_sampling_for_fem_driver=True
-    f.write('responses, \n')
-    f.write('response_functions = ' '{}'.format(numResponses))
-    f.write('\n')
-    f.write('response_descriptors = ')    
-    for i in range(numResponses):
-        f.write('\'')
-        f.write(responseDescriptors[i])
-        f.write('\' ')
-        f.write('\n')
-    f.write('no_gradients\n')
-    f.write('no_hessians\n\n')
-# here we modify this so that conjugate gradient, PatternColiny, and ant colony EA can work
-elif (type == "Calibration"):
-    f.write('responses, \n')
-    f.write('calibration_terms = ' '{}'.format(numResponses))
-    f.write('\n')
-    f.write('response_descriptors = ')    
-    for i in range(numResponses):
-        f.write('\'')
-        f.write(responseDescriptors[i])
-        f.write('\' ')
-        f.write('\n')
+elif uq_method == "Calibration":
+    f.write(
+"""responses,
+calibration_terms = {numResponses}
+response_descriptors = {responseDescriptors}
+numerical_gradients
+no_hessians
 
-    method = calibrationData["method"];
-    if (method == "OPT++GaussNewton" or method == "NL2SOL" or method == "ConjugateGradient" or method == "Coliny_EA" or method == "ColinyPattern"):
-        f.write('numerical_gradients\n')
-        f.write('no_hessians\n\n')
+""".format(
+    numResponses = numResponses,
+    responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
-    elif(method=="ConjugateGradient"):
-        f.write('numerical_gradients\n')
-        f.write('method_source dakota\n')
-        f.write('interval_type forward\n')    
-        f.write('fd_step_size = 1.e-5\n')
-        f.write('no_hessians')
+elif uq_method == "Bayesian Calibration":
+    f.write(
+"""responses,
+calibration_terms = {numResponses}
+response_descriptors = {responseDescriptors}
+numerical_gradients
+no_hessians
 
-elif (type == "Bayesian Calibration"):
-    f.write('responses, \n')
-    f.write('calibration_terms = ' '{}'.format(numResponses))
-    f.write('\n')
-    f.write('response_descriptors = ')    
-    for i in range(numResponses):
-        f.write('\'')
-        f.write(responseDescriptors[i])
-        f.write('\' ')
-        f.write('\n')
-    f.write('numerical_gradients\n')
-    f.write('no_hessians\n\n')
+""".format(
+    numResponses = numResponses,
+    responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
 f.close()  # you can omit in most cases as the destructor will call it
 
+# prepare the workflow driver file for dakota
 
-#print('params.in')
-
-#
 # if OpenSees, Write the OpenSees file for dprepo
-#
-
-femInputFile = "";
-femPostprocessFile = "";
-
-# Frank check if we need to do something about fem_driver.bat under OpenSees-SingleScript
-# added by padhye 7/25/2018
-
 if (femProgram == "OpenSees-SingleScript"):
 
-    inputFile = femData["mainInput"];    
+    model_file = fem_data["mainInput"]    
 
-    os.chdir(path1)
+    os.chdir(workdir_main)
 
     f = open(fem_driver, 'w')
-    if(check_sampling_for_fem_driver==True and numUserDefUncertain>0):
-        f.write("python UserDefinedTransformation.py \n")
-    f.write(Perl)
-    f.write(DakotaPath)
-    f.write('dprepro params.in ')
-    f.write(inputFile)
+    f.write(DakotaR)
+    f.write(' params.in ')
+    f.write(model_file)
     f.write(' SimCenterInput.tcl\n')
-    f.write(OpenSeesPath)
-    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
+    f.write(OpenSees)
+    f.write(' SimCenterInput.tcl >> ops.out\n')
     f.close()
-
-# adding our own script to handle user defined prob functions for OpenSees Sampling  
 
 if (femProgram == "OpenSees"):
 
-    inputFile = femData["mainInput"];    
-    postprocessScript = femData["mainPostprocessScript"];    
+    model_file = fem_data["mainInput"]    
+    postprocessScript = fem_data["mainPostprocessScript"]    
 
-    f = open('SimCenterParams.template', 'w')
-    for i in range(numUncertain):
-        f.write('set ')
-        f.write(uncertainName[i])
-        f.write(' {')
-        f.write(uncertainName[i])
-        f.write('}\n')
-    f.close()
+    with open('SimCenterParams.template', 'w') as f:
+        for rnd_name in uncertainName:
+            f.write('set {rnd_name} {{{rnd_name}}}\n'.format(rnd_name=rnd_name))
 
-    f = open('SimCenterInput.ops', 'w')
-    f.write('source SimCenterParamIN.ops \n')
-    f.write('source ')
-    f.write(inputFile)
-    f.write(' \n')
-    f.close()
+    with open('SimCenterInput.ops', 'w') as f:
+        f.write(
+"""source SimCenterParamIN.ops
+source {model_file}
+""".format(model_file=model_file))
 
-    f = open(fem_driver, 'w')
-    if(check_sampling_for_fem_driver==True):
-        f.write("python UserDefinedTransformation.py\n")
-    f.write(Perl)
-    f.write(DakotaPath)
-    f.write('dprepro params.in SimCenterParams.template SimCenterParamIN.ops\n')
-    f.write(OpenSeesPath)
-    f.write('OpenSees SimCenterInput.ops >> ops.out\n')
-    #    f.write('dprepro params.in %s SimCenterInput.tcl\n' %inputFile)
-    #    f.write(OpenSeesPath)
-    #    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
-    f.write('python ')
-    f.write(postprocessScript)
-    for i in range(numResponses):
-        f.write(' ')
-        f.write(responseDescriptors[i])    
-    f.write('\n')
-    f.close()
-
-    if exeDakota in ['runningLocal']:    
-        os.chdir(path1)
-        f = open(fem_driver, 'w')
-        if(check_sampling_for_fem_driver==True):
-            f.write("python UserDefinedTransformation.py\n")
-        f.write(Perl)
-        f.write(DakotaPath)
-        f.write('dprepro params.in SimCenterParams.template SimCenterParamIN.ops\n')
-        f.write(OpenSeesPath)
-        f.write('OpenSees SimCenterInput.ops >> ops.out\n')
-        #    f.write('dprepro params.in %s SimCenterInput.tcl\n' %inputFile)
-        #    f.write(OpenSeesPath)
-        #    f.write('OpenSees SimCenterInput.tcl >> ops.out\n')
-        f.write('python ')
-        f.write(postprocessScript)
-        for i in range(numResponses):
-            f.write(' ')
-            f.write(responseDescriptors[i])    
-        f.write('\n')
-        f.close()
+    with open(fem_driver, 'w') as f:
+        f.write(
+"""{DakotaR} params.in SimCenterParams.template SimCenterParamIN.ops
+{OpenSees} SimCenterInput.ops >> ops.out
+python {postprocessScript} {responseDescriptors}
+""".format(
+    DakotaR = DakotaR,
+    OpenSees = OpenSees,
+    postprocessScript = postprocessScript,
+    responseDescriptors = ' '.join(responseDescriptors)))
+	
+    os.chdir(workdir_main)
+    
+    # this file seems identical to the previous fem_driver, so it would be easier to just copy it
+    with open(fem_driver, 'w') as f:
+        f.write(
+"""{DakotaR} params.in SimCenterParams.template SimCenterParamIN.ops
+{OpenSees} SimCenterInput.ops >> ops.out
+python {postprocessScript} {responseDescriptors}
+""".format(
+    DakotaR = DakotaR,
+    OpenSees = OpenSees,
+    postprocessScript = postprocessScript,
+    responseDescriptors = ' '.join(responseDescriptors)))
 
 if (femProgram == "FEAPpv"):
 
-    inputFile = femData["mainInput"];    
-    postprocessScript = femData["mainPostprocessScript"];    
-
-    f = open('feapname', 'w')
-    f.write('SimCenterIn.txt   \n')
-    f.write('SimCenterOut.txt   \n')
-    f.write('SimCenterR.txt   \n')
-    f.write('SimCenterR.txt   \n')
-    f.write('NONE   \n')
-    f.write('\n')
-    f.close()
-
-    if exeDakota in ['runningLocal']:        
-        os.chdir(path1)
-        f = open(fem_driver, 'w')
-        if(check_sampling_for_fem_driver==True):
-            f.write("python UserDefinedTransformation.py\n")
-        f.write(Perl)
-        f.write(DakotaPath)
-        f.write('dprepro params.in ')
+    inputFile = fem_data["mainInput"]    
+    postprocessScript = fem_data["mainPostprocessScript"]
+    
+    if (sys.version_info > (3, 0)):
+        f = open('feapname', 'w')
+        f.write('SimCenterIn.txt   \n')
+        f.write('SimCenterOut.txt   \n')
+        f.write('SimCenterR.txt   \n')
+        f.write('SimCenterR.txt   \n')
+        f.write('NONE   \n')
+        f.write('\n')
+        f.close()
+        
+        os.chdir(workdir_main)
+        f = open(fem_driver, 'w', newline='\n')
+        f.write(DakotaR)
+        f.write(' params.in ')
         f.write(inputFile)
         f.write(' SimCenterIn.txt --output-format=\'\%10.5f\'\n')
         f.write('echo y|')
-        f.write(FeapPath)
-        f.write('feappv\n')
+        f.write(Feap)
+        f.write(' \n')
         f.write('python ')
-        f.write(postprocessScript)
+        f.write("%s " % postprocessScript)
         for i in range(numResponses):
-            f.write(' ')
-            f.write(responseDescriptors[i])    
-            
+            f.write("%s " %responseDescriptors[i])                                   
         f.write('\n')
         f.close()
+        
+    else:     
+        f = io.open('feapname', 'w', newline='\n')
+        f.write(unicode('SimCenterIn.txt   \n'))
+        f.write(unicode('SimCenterOut.txt   \n'))
+        f.write(unicode('SimCenterR.txt   \n'))
+        f.write(unicode('SimCenterR.txt   \n'))
+        f.write(unicode('NONE   \n'))
+        f.write(unicode('\n'))
+        f.close()
+        
+        os.chdir(workdir_main)
+        f = io.open(fem_driver, 'w', newline='\n')
+        f.write(unicode(DakotaR))
+        f.write(unicode(' params.in '))
+        f.write(unicode(inputFile))
+        f.write(unicode(' SimCenterIn.txt --output-format=\'\%10.5f\'\n'))
+        f.write(unicode('echo y|'))
+        f.write(unicode(Feap))
+        f.write(unicode(' \n'))
+        f.write(unicode('python '))
+        f.write(unicode(postprocessScript))
+        for i in range(numResponses):
+            f.write(unicode(' '))
+            f.write(unicode(responseDescriptors[i]))
+                                       
+        f.write(unicode('\n'))
+        f.close()
 
-if exeDakota in ['runningLocal']:        
-    os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
-command = DakotaPath + 'dakota -input dakota.in -output dakota.out -error dakota.err'
+os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
+
+command = Dakota + ' -input dakota.in -output dakota.out -error dakota.err'
 print(command)
-print("now execute command.\n")
 #os.popen("/Users/fmckenna/dakota-6.7.0/bin/dakota -input dakota.in -output dakota.out -error dakota.err").read()
 
-if exeDakota in ['runningLocal']:
+if run_type in ['runningLocal']:
     os.popen(command).read()
 
 
