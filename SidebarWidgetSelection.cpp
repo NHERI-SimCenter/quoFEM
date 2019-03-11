@@ -111,15 +111,6 @@ SidebarWidgetSelection::SidebarWidgetSelection(QWidget *parent)
     treeView->setObjectName("treeViewOnTheLeft");
     treeView->setIndentation(0);
 
-    QFile file(":/styles/stylesheet.qss");
-    if(file.open(QFile::ReadOnly)) {
-        this->setStyleSheet(file.readAll());
-        file.close();
-        qDebug() << "Open Style File Successfully.";
-    }
-    else
-        qDebug() << "Open Style File Failed!";
-
 }
 
 SidebarWidgetSelection::~SidebarWidgetSelection()

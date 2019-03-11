@@ -58,13 +58,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <time.h>
 #include <RandomVariablesContainer.h>
 
-
-//QComboBox::down-arrow{
-//    image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;);
-//}
-
-
-
 InputWidgetCalibration::InputWidgetCalibration(QWidget *parent)
     : InputWidgetDakotaMethod(parent)
 {
@@ -78,27 +71,18 @@ InputWidgetCalibration::InputWidgetCalibration(QWidget *parent)
     label1->setMaximumWidth(100);
     label1->setMinimumWidth(100);
     calibrationMethod = new QComboBox();
+
     calibrationMethod->addItem(tr("OPT++GaussNewton"));
     calibrationMethod->addItem(tr("NL2SOL"));
-    calibrationMethod->setMaximumWidth(250);
-    calibrationMethod->setMinimumWidth(100);
-    calibrationMethod->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
-    //calibrationMethod->setStyleSheet("QComboBox::down-arrow {image: url(:/images//pulldownarrow.PNG);heigth:50px;width:100px;}");
-
-    //calibrationMethod->setStyleSheet("QComboBox::down-arrow {image: url(:/imagesCommon/pulldownarrow.png);heigth:105px;width:100px;}");
-
-
-
     calibrationMethod->addItem(tr("ColinyPattern"));
     calibrationMethod->addItem(tr("ConjugateGradient"));
     calibrationMethod->addItem(tr("Coliny_EA"));
+
+    calibrationMethod->setMaximumWidth(250);
+    calibrationMethod->setMinimumWidth(100);
     
     methodLayout->addWidget(label1);
     methodLayout->addWidget(calibrationMethod);
-    
-
-    // padhye, connecting this combobox method
-    //connect(calibrationMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(comboboxItemChanged(QString)));
 
     connect(calibrationMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(comboboxItemChanged(QString)));
 
@@ -210,7 +194,6 @@ if (value=="ColinyPattern" && colony_pattern_flag!=1)
 
     exploratory_moves = new QComboBox;
 
-    exploratory_moves->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
     label2_initial_step_size = new QLabel();
     label_final_step_size_value = new QLabel();
     label_contraction_factor = new QLabel();
@@ -264,38 +247,38 @@ if (value=="ColinyPattern" && colony_pattern_flag!=1)
 }else
     {
 
-         if(colony_pattern_flag==1)
-            {
+     if(colony_pattern_flag==1)
+        {
 
-                    ColonyPatternLayout->removeWidget(label2_initial_step_size);
-                    ColonyPatternLayout->removeWidget(initial_step_size_value);
+            ColonyPatternLayout->removeWidget(label2_initial_step_size);
+            ColonyPatternLayout->removeWidget(initial_step_size_value);
 
-                    ColonyPatternLayout->removeWidget(final_step_size_value);
-                    ColonyPatternLayout->removeWidget(contraction_factor);
-                    ColonyPatternLayout->removeWidget(max_function_evals_ColonyPattern);
-                    ColonyPatternLayout->removeWidget(exploratory_moves);
-                    ColonyPatternLayout->removeWidget(label_final_step_size_value);
-                    ColonyPatternLayout->removeWidget(label_contraction_factor);
-                    ColonyPatternLayout->removeWidget(label_max_function_evals_ColonyPattern);
-                    ColonyPatternLayout->removeWidget(label_exploratory_moves);
-
-
-                    TestingLayout->removeItem(ColonyPatternLayout);
-                    delete ColonyPatternLayout;
-                    delete initial_step_size_value;
-                    delete label2_initial_step_size;
-                    delete final_step_size_value;
-                    delete contraction_factor;
-                    delete max_function_evals_ColonyPattern;
-                    delete exploratory_moves;
-                    delete label_final_step_size_value;
-                    delete label_contraction_factor;
-                    delete label_max_function_evals_ColonyPattern;
-                    delete label_exploratory_moves;
+            ColonyPatternLayout->removeWidget(final_step_size_value);
+            ColonyPatternLayout->removeWidget(contraction_factor);
+            ColonyPatternLayout->removeWidget(max_function_evals_ColonyPattern);
+            ColonyPatternLayout->removeWidget(exploratory_moves);
+            ColonyPatternLayout->removeWidget(label_final_step_size_value);
+            ColonyPatternLayout->removeWidget(label_contraction_factor);
+            ColonyPatternLayout->removeWidget(label_max_function_evals_ColonyPattern);
+            ColonyPatternLayout->removeWidget(label_exploratory_moves);
 
 
-                    colony_pattern_flag=0;
-            }
+            TestingLayout->removeItem(ColonyPatternLayout);
+            delete ColonyPatternLayout;
+            delete initial_step_size_value;
+            delete label2_initial_step_size;
+            delete final_step_size_value;
+            delete contraction_factor;
+            delete max_function_evals_ColonyPattern;
+            delete exploratory_moves;
+            delete label_final_step_size_value;
+            delete label_contraction_factor;
+            delete label_max_function_evals_ColonyPattern;
+            delete label_exploratory_moves;
+
+
+            colony_pattern_flag=0;
+        }
 
     }
 
@@ -319,12 +302,10 @@ if (value=="Coliny_EA" && colony_EA_flag!=1)
      pop_sizeColonyEA->setText(tr("100"));
 
      fitness_typeColonyEA = new QComboBox;
-     fitness_typeColonyEA->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
      fitness_typeColonyEA->addItem(tr("linear_rank"));
      fitness_typeColonyEA->addItem(tr("merit_function"));
 
      mutation_typeColonyEA = new QComboBox;
-     mutation_typeColonyEA->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
      mutation_typeColonyEA->addItem(tr("replace_uniform"));
      mutation_typeColonyEA->addItem(tr("offset_normal"));
      mutation_typeColonyEA->addItem(tr("offset_cauchy"));
@@ -335,7 +316,6 @@ if (value=="Coliny_EA" && colony_EA_flag!=1)
      mutation_rateColonyEA->setText(tr("0.9"));
 
      crossover_typeColonyEA = new QComboBox;
-     crossover_typeColonyEA->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
      crossover_typeColonyEA->addItem(tr("two_point"));
      crossover_typeColonyEA->addItem(tr("blend"));
      crossover_typeColonyEA->addItem(tr("uniform"));
@@ -344,7 +324,6 @@ if (value=="Coliny_EA" && colony_EA_flag!=1)
      crossover_rateColonyEA->setText(tr("0.9"));
 
      replacement_typeColonyEA = new QComboBox;
-     replacement_typeColonyEA->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
      replacement_typeColonyEA->addItem(tr("elitist"));
      replacement_typeColonyEA->addItem(tr("roulette_wheel"));
      replacement_typeColonyEA->addItem(tr("unique_roulette_wheel"));
@@ -356,10 +335,8 @@ if (value=="Coliny_EA" && colony_EA_flag!=1)
     label_max_function_evals_ColonyEA = new QLabel();
     label_max_function_evals_ColonyEA->setText(QString("Fun. Evals."));
 
-
     label_seed_ColonyEA = new QLabel();
     label_seed_ColonyEA->setText("Seed");
-
 
     label_pop_sizeColonyEA = new QLabel();
     label_pop_sizeColonyEA->setText("Pop Size");
