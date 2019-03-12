@@ -499,7 +499,20 @@ void MainWindow::onRunButtonClicked() {
     //
     // given path to input file we are going to create temporary directory below it
     // and copy all files from this input file directory to the new subdirectory
-    //
+    //  
+
+    // first, delete the tmp.SimCenter directory if it already exists ...
+    QString tmpSimCenterDirectoryName = path + QDir::separator() + QString("tmp.SimCenter");
+    QDir tmpSimCenterDirectory(tmpSimCenterDirectoryName);
+    if(tmpSimCenterDirectory.exists()) {
+        tmpSimCenterDirectory.removeRecursively();
+    }
+    // .. and delete the dakotaTab from the previous run if they are in the main folder
+    QString dakotaTabFileName = path + QDir::separator() + QString("dakotaTab.out");
+    QFile DakotaTabFile(dakotaTabFileName);
+    if (DakotaTabFile.exists()) {
+        DakotaTabFile.remove();
+    }
 
     QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
     qDebug() << "creating the temp directory and copying files there... " << tmpDirectory;
@@ -633,8 +646,9 @@ void MainWindow::onRunButtonClicked() {
        QFile::copy(sourceDir + copy, destinationDir + copy);
    }
 
-   QDir dirToRemove(sourceDir);
-   dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
+   //DEBUG
+   //QDir dirToRemove(sourceDir);
+   //dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
                                     // so to debug you can simply comment it
 
     //
