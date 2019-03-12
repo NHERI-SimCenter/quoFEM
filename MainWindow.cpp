@@ -439,8 +439,6 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
     {
         return false;
     }
-
-
     else if(destinationDirectory.exists() && overWriteDirectory)
     {
         destinationDirectory.removeRecursively();
@@ -448,12 +446,11 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
 
     originDirectory.mkpath(destinationDir);
 
-    foreach (QString directoryName, originDirectory.entryList(QDir::Dirs | \
-                                                              QDir::NoDotAndDotDot))
+    foreach (QString directoryName,
+             originDirectory.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
     {
         if (directoryName != QString("tmp.SimCenter")) {
         QString destinationPath = destinationDir + "/" + directoryName;
-        originDirectory.mkpath(destinationPath);
         copyPath(sourceDir + "/" + directoryName, destinationPath, overWriteDirectory);
         }
     }
