@@ -489,15 +489,15 @@ void MainWindow::onRunButtonClicked() {
     QFileInfo fileInfo(mainInput);
     QDir fileDir = fileInfo.absolutePath();
 
-
     QString fileName =fileInfo.fileName();
     QString path = fileDir.absolutePath();// + QDir::separator();
 
+    qDebug() << "workdir set to " << fileDir;
     if (! fileDir.exists()) {
       errorMessage(QString("Directory ") + path + QString(" specified does not exist!"));
       return;
     }
-    
+    qDebug() << "workdir exists ";
 
     //
     // given path to input file we are going to create temporary directory below it
@@ -505,17 +505,22 @@ void MainWindow::onRunButtonClicked() {
     //
 
     QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
+    qDebug() << "creating the temp directory and copying files there... " << tmpDirectory;
     copyPath(path, tmpDirectory, false);
+    qDebug() << "creating the temp directory and copying files there...  - SUCCESSFUL";
 
     // special copy the of the main script to set up lines containg parameters for dakota
     QString mainScriptTmp = tmpDirectory + QDir::separator() + fileName;
+    qDebug() << "creating a special copy of the main FE model script... " << mainScriptTmp;
     fem->specialCopyMainInput(mainScriptTmp, random->getParametereNames());
+    qDebug() << "creating a special copy of the main FE model script...  - SUCCESSFUL";
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
     //
 
     QString filenameTMP = tmpDirectory + QDir::separator() + tr("dakota.json");
 
+    qDebug() << "creating dakota input at " << filenameTMP;
     QFile file(filenameTMP);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Application"),
@@ -530,6 +535,8 @@ void MainWindow::onRunButtonClicked() {
     QJsonDocument doc(json);
     file.write(doc.toJson());
     file.close();
+
+    qDebug() << "creating dakota input - SUCCESSFUL";
 
     //
     // now use the applications parseJSON file to run dakota and produce output files:
@@ -586,11 +593,18 @@ void MainWindow::onRunButtonClicked() {
 
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
-    qDebug() << command;
-    proc->execute("cmd", QStringList() << "/C" << command);
+
+    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
+    qDebug() << "Executing parseDAKOTA.py... " << args;
+    proc->execute("python", args);
+    qDebug() << "Executing parseDAKOTA.py... - SUCCESSFUL" ;
+
+
+    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
+    //qDebug() << command;
+    //proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
-    qDebug() << command;
+    //qDebug() << command;
 
     //std::cerr << command << "\n";
 #else
@@ -610,6 +624,7 @@ void MainWindow::onRunButtonClicked() {
 
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
+
     proc->waitForStarted();
 
     //
@@ -745,9 +760,14 @@ void MainWindow::onRemoteRunButtonClicked(){
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
-    qDebug() << command;
-    proc->execute("cmd", QStringList() << "/C" << command);
+
+    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningRemote"};
+    qDebug() << args;
+    proc->execute("python", args);
+
+    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
+    //qDebug() << command;
+    //proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
 
 #else

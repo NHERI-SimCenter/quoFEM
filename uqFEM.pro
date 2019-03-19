@@ -18,10 +18,10 @@ INCLUDEPATH += ../SimCenterCommon/RandomVariables
 # INCLUDEPATH += ../simcenterAgave/interface
 
 macos:LIBS += /usr/lib/libcurl.dylib
-#win32:INCLUDEPATH += "c:\Users\SimCenter\libCurl-7.59.0\include"
-#win32:LIBS += C:\Users\SimCenter\libCurl-7.59.0/lib/libcurl.lib
-win32:INCLUDEPATH+=../libCurl-7.59.0/include
-win32:LIBS += ../libCurl-7.59.0/lib/libcurl.lib
+win32:INCLUDEPATH += "C:/Adam/Qt/curl/include"
+win32:LIBS += C:/Adam/Qt/curl/lib/libcurl.lib
+#win32:INCLUDEPATH+=../libCurl-7.59.0/include
+#win32:LIBS += ../libCurl-7.59.0/lib/libcurl.lib
 
 
 win32 {
