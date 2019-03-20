@@ -74,9 +74,11 @@ InputWidgetCalibration::InputWidgetCalibration(QWidget *parent)
 
     calibrationMethod->addItem(tr("OPT++GaussNewton"));
     calibrationMethod->addItem(tr("NL2SOL"));
-    calibrationMethod->addItem(tr("ColinyPattern"));
-    calibrationMethod->addItem(tr("ConjugateGradient"));
-    calibrationMethod->addItem(tr("Coliny_EA"));
+
+    // The methods below are not yet handled by parseDAKOTA.py
+    //calibrationMethod->addItem(tr("ColinyPattern"));
+    //calibrationMethod->addItem(tr("ConjugateGradient"));
+    //calibrationMethod->addItem(tr("Coliny_EA"));
 
     calibrationMethod->setMaximumWidth(250);
     calibrationMethod->setMinimumWidth(100);
