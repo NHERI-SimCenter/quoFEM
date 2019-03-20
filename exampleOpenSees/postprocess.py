@@ -1,56 +1,69 @@
 #!/usr/bin/python
 
-# written: fmk 01/18
+# written: fmk, adamzs 01/18
+
+# import functions for Python 2.X support
+from __future__ import division, print_function
+import sys
+if sys.version.startswith('2'): 
+    range=xrange
+    string_types = basestring
+else:
+    string_types = str
 
 import sys
 import re
 
-#print 'Number of arguments:', len(sys.argv), 'arguments.'
-#print 'Argument List:', str(sys.argv)
+def process_results(response):
 
-inputArgs = sys.argv
-#outFile = open('results.out','w')
+    #print 'Number of arguments:', len(sys.argv), 'arguments.'
+    #print 'Argument List:', str(sys.argv)
 
-#
-# process output file "SimCenterOut.txt" for nodal displacements
-#
+    inputArgs = response
+    #outFile = open('results.out','w')
 
-with open ('node.out', 'rt') as inFile:
-    line = inFile.readline()
-    print(line)
-    print(line.split())
-    displ = line.split()
-    numNode = len(displ)
+    #
+    # process output file "SimCenterOut.txt" for nodal displacements
+    #
 
-print(numNode)
+    with open ('node.out', 'rt') as inFile:
+        line = inFile.readline()
+        print(line)
+        print(line.split())
+        displ = line.split()
+        numNode = len(displ)
 
-inFile.close
+    print(numNode)
 
-#
-# now process the input args and write the results file
-#
+    inFile.close
 
-outFile = open('results.out','w')
+    # now process the input args and write the results file
 
-#
-# note for now assuming no ERROR in user data
-#
-for i in inputArgs[1:]:
-    theList=i.split('_')
+    outFile = open('results.out','w')
 
-    if (theList[0] == 'Node'):
-        nodeTag = int(theList[1])
+    # note for now assuming no ERROR in user data
+    for i in inputArgs:
+        print(i)
+        theList=i.split('_')
+        print(theList)
+        if (theList[0] == "Node"):
+            nodeTag = int(theList[1])
+            print(nodeTag)
 
-        if (nodeTag > 0 and nodeTag <= numNode):
-            if (theList[2] == 'Disp'):
-                nodeDisp = displ[nodeTag-1]
-                outFile.write(nodeDisp)
-                outFile.write(' ')
+            if (nodeTag > 0 and nodeTag <= numNode):
+                print(theList[2])
+                if (theList[2] == "Disp"):
+                    nodeDisp = displ[nodeTag-1]
+                    print(nodeDisp)
+                    outFile.write(nodeDisp)
+                    outFile.write(' ')
+                else:
+                    print('NOTDISP')
+                    outFile.write('0. ')
             else:
                 outFile.write('0. ')
         else:
+            print(theList[0])
             outFile.write('0. ')
-    else:
-        outFile.write('0. ')
 
-outFile.close
+    outFile.close

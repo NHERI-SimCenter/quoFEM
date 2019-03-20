@@ -1,28 +1,27 @@
 #!/usr/bin/python
 
-# written: fmk 01/18
+# written: adamzs
 
-import numpy
-import math
+# import functions for Python 2.X support
+from __future__ import division, print_function
+import sys
+if sys.version.startswith('2'): 
+    range=xrange
+    string_types = basestring
+else:
+    string_types = str
 
-desiredData = numpy.loadtxt("wanted.txt")
-currentData = numpy.loadtxt("node.txt")
-diff = currentData - desiredData;
-numRows = diff.shape[0]
-print(diff[0,1])
+import numpy as np
 
-val1 = 0
-val2 = 0
-for j in range(0, numRows-1):
-    val1 = val1 + diff[j,1]*diff[j,1]
-    val2 = val2 + diff[j,2]*diff[j,2]
+def process_results(response):
+	target_data = (np.loadtxt("target.txt")).T
+	current_data = (np.loadtxt("node.txt")).T
+	
+	diff = (current_data - target_data)**2.
 
-val1 = math.sqrt(val1);
-val2 = math.sqrt(val2);
+	__, val1, val2 = [np.sqrt(np.sum(v)) for v in diff]
 
-#result = math.sqrt(val1) + math.sqrt(val2)
-#print("%.3f %.3f" % (val1,val2))
+	print(val1, val2)
 
-outFile = open('results.out','w')
-outFile.write("%.3f %.3f" % (val1,val2))
-outFile.close
+	with open('results.out', 'wb') as f:
+		f.write("{:.6f} {:.6f}".format(val1, val2).encode('utf8'))
