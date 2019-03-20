@@ -450,7 +450,7 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
              originDirectory.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
     {
         if (directoryName != QString("tmp.SimCenter")) {
-        QString destinationPath = destinationDir + "/" + directoryName;
+        QString destinationPath = destinationDir + "/" + directoryName;        
         copyPath(sourceDir + "/" + directoryName, destinationPath, overWriteDirectory);
         }
     }
@@ -516,7 +516,7 @@ void MainWindow::onRunButtonClicked() {
 
     QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
     qDebug() << "creating the temp directory and copying files there... " << tmpDirectory;
-    copyPath(path, tmpDirectory, false);
+    copyPath(path, tmpDirectory, true);
     qDebug() << "creating the temp directory and copying files there...  - SUCCESSFUL";
 
     // special copy the of the main script to set up lines containg parameters for dakota
