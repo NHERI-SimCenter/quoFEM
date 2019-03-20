@@ -1,13 +1,20 @@
-import io
+# written: fmk, adamzs
+
+# import functions for Python 2.X support
+from __future__ import division, print_function
+import sys
+if sys.version.startswith('2'): 
+    range=xrange
+    string_types = basestring
+else:
+    string_types = str
+
 import json
 import os
 import sys
-import stat
-import shutil
-from pprint import pprint
+from subprocess import Popen, PIPE
 
 inputArgs = sys.argv
-#print inputArgs
 
 workdir_main = inputArgs[1]
 workdir_temp = inputArgs[2]
@@ -25,31 +32,24 @@ if run_type in ['runningLocal',]:
         OpenSees = 'PATH TO OpenSees'
         Feap = 'PATH TO feappv'
         Dakota = 'PATH TO dakota'
-        DakotaR = 'PATH TO dprepro'
-        fem_driver = 'fem_driver'
-        numCPUs = 4
+        numCPUs = 1
 
     # Windows
     else:
         OpenSees = 'OpenSees'
-        Feap = 'C:\\Users\\SimCenter\\feap\\Feappv41.exe'
+        Feap = 'PATH TO Feappv41.exe'
         Dakota = 'dakota'
-        DakotaR = 'perl "C:/Adam/Dakota test/bin/dprepro"'
-        fem_driver = 'fem_driver.bat'
-        numCPUs = 4
+        numCPUs = 1
 
 # Stampede @ DesignSafe, DON'T EDIT
 elif run_type in ['runningRemote',]:
     OpenSees = '/home1/00477/tg457427/bin/OpenSees'
     Feap = '/home1/00477/tg457427/bin/feappv'
     Dakota = 'dakota'
-    DakotaR = 'dprepro'
-    fem_driver = 'fem_driver'
 
 # change workdir to the templatedir
 os.chdir(workdir_temp)
 cwd = os.getcwd()
-
 
 # open the dakota json file
 with open('dakota.json') as data_file:    
@@ -521,10 +521,10 @@ if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
         dakota_input += ("fork asynchronous evaluation_concurrency = %d" % numCPUs)
     else:
         dakota_input += ('fork asynchronous')
-    dakota_input += ('\nanalysis_driver = \'fem_driver\' \n')
+    dakota_input += ('\nanalysis_driver = \'python analysis_driver.py\' \n')
     dakota_input += ('parameters_file = \'params.in\' \n')
     dakota_input += ('results_file = \'results.out\' \n')
-    dakota_input += ('work_directory directory_tag \n')
+    dakota_input += ('work_directory directory_tag directory_save\n')
     dakota_input += ('copy_files = \'templatedir/*\' \n')
 #    dakota_input += ('named \'workdir\' file_save  directory_save \n')
     dakota_input += ('named \'workdir\' \n')
@@ -592,46 +592,55 @@ if (femProgram == "OpenSees-SingleScript"):
     with open(fem_driver, 'wb') as f: 
         f.write(fem_driver_script.encode('utf8'))
 
-if (femProgram == "OpenSees"):
-
-    model_file = fem_data["mainInput"]    
-    postprocessScript = fem_data["mainPostprocessScript"]    
-
-    SCParams_template_script = ""
-    for rnd_name in uncertainName:
-        SCParams_template_script += (
-            'set {rnd_name} {{{rnd_name}}}\n'.format(rnd_name=rnd_name))
-
-    with open('SimCenterParams.template', 'wb') as f:
-        f.write(SCParams_template_script.encode('utf8'))
-        
+if (femProgram == "OpenSees"):       
 
     SCInput_ops_script = (
-"""source SimCenterParamIN.ops
+'''source SimCenterParamIN.ops
 source {model_file}
-""".format(model_file=model_file))
+'''.format(model_file=fem_data["mainInput"]))
 
     with open('SimCenterInput.ops', 'wb') as f:
         f.write(SCInput_ops_script.encode('utf8'))
         
+    analysis_driver_script =(
+'''
+import dakota.interfacing as di 
+import subprocess  
+from {postprocess} import process_results
 
-    fem_driver_script = (
-"""{DakotaR} params.in SimCenterParams.template SimCenterParamIN.ops
-{OpenSees} SimCenterInput.ops >> ops.out
-python {postprocessScript} {responseDescriptors}
-""".format(
-    DakotaR = DakotaR,
-    OpenSees = OpenSees,
-    postprocessScript = postprocessScript,
-    responseDescriptors = ' '.join(responseDescriptors)))
+# parse the Dakota parameters file
+params, results = di.read_parameters_file()
 
-    with open(fem_driver, 'wb') as f:
-        f.write(fem_driver_script.encode('utf8'))
-    
+# prepare the inputs for OpenSEES
+params_in = ""
+'''.format(postprocess = fem_data["mainPostprocessScript"][:-3]))
+
+    for rnd_name in uncertainName:
+        analysis_driver_script += (
+            """params_in += "set {rnd_name} {{}}\\n".format(params['{rnd_name}'])\n""".format(rnd_name = rnd_name))
+
+    analysis_driver_script += (
+'''
+with open('SimCenterParamIN.ops','wb') as f:
+    f.write(params_in.encode('utf8'))
+
+# run the simulation
+OPS_command = "{OpenSees} SimCenterInput.ops >> ops.out"
+result = subprocess.check_output(OPS_command, stderr=subprocess.STDOUT, 
+    shell=True)
+
+# process the results
+process_results(response = [{responseDescriptors}])
+'''.format(OpenSees = OpenSees,
+           responseDescriptors = ', '.join(['"{}"'.format(rd) for rd in responseDescriptors])))
+
+    with open('analysis_driver.py','wb') as f:
+        f.write(analysis_driver_script.encode('utf8'))
+
     os.chdir(workdir_main)
     
-    with open(fem_driver, 'wb') as f:
-        f.write(fem_driver_script.encode('utf8'))
+    with open('analysis_driver.py', 'wb') as f:
+        f.write(analysis_driver_script.encode('utf8'))
 
 if (femProgram == "FEAPpv"):
 
@@ -665,7 +674,7 @@ if (femProgram == "FEAPpv"):
         f.close()
         
     else:     
-        f = io.open('feapname', 'wb')
+        f = open('feapname', 'wb')
         f.write(unicode('SimCenterIn.txt   \n'))
         f.write(unicode('SimCenterOut.txt   \n'))
         f.write(unicode('SimCenterR.txt   \n'))
@@ -675,7 +684,7 @@ if (femProgram == "FEAPpv"):
         f.close()
         
         os.chdir(workdir_main)
-        f = io.open(fem_driver, 'wb')
+        f = open(fem_driver, 'wb')
         f.write(unicode(DakotaR))
         f.write(unicode(' params.in '))
         f.write(unicode(inputFile))
@@ -692,16 +701,13 @@ if (femProgram == "FEAPpv"):
         f.write(unicode('\n'))
         f.close()
 
-
-os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
-
 command = Dakota + ' -input dakota.in -output dakota.out -error dakota.err'
 print(command)
-#os.popen("/Users/fmckenna/dakota-6.7.0/bin/dakota -input dakota.in -output dakota.out -error dakota.err").read()
 
 if run_type in ['runningLocal']:
-    os.popen(command).read()
-
+    p = Popen(command, stdout=PIPE, stderr=PIPE, shell=True)
+    for line in p.stdout:
+        print(str(line))
 
 
 
