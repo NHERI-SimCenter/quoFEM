@@ -100,26 +100,20 @@ int main(int argc, char *argv[])
   // start Qt mainwindow per normal
   //
 
-  QApplication a(argc, argv);
+  QApplication app(argc, argv);
   MainWindow w;
   w.show();
   
-  //
-  // deal with simcenter style sheets
-  //
-
-  QFile file(":/styleCommon/style.qss");
+  // load SimCenter style sheet
+  QFile file(":/styleCommon/common_style.qss");
   if(file.open(QFile::ReadOnly)) {
-    QString styleSheet = QLatin1String(file.readAll());
-    a.setStyleSheet(styleSheet);
+      app.setStyleSheet(file.readAll());
+      file.close();
   }
-  
-  w.setStyleSheet("QLineEdit {background: #FFFFFF;}");
-  w.setStyleSheet("QComboBox {background: #FFFFFF;} QLineEdit {background: #FFFFFF}");
   
   //
   // exe application event-loop
   //
 
-  return a.exec();
+  return app.exec();
 }
