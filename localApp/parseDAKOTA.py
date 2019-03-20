@@ -180,7 +180,7 @@ for rnd_var in rnd_data:
 
 # Write the dakota input file: dakota.in 
 
-f = open('../dakota.in', 'w')
+dakota_input = ""
 
 # write out the env data
 
@@ -188,7 +188,7 @@ f = open('../dakota.in', 'w')
 #f.write("tabular_data\n")
 #f.write("tabular_data_file = \'dakotaTab.out\'\n\n")
 
-f.write(
+dakota_input += (
 """environment
 tabular_data
 tabular_data_file = 'dakotaTab.out'
@@ -209,7 +209,7 @@ if uq_method == "Sampling":
     numSamples=samplingData["samples"]
     seed = samplingData["seed"]
 
-    f.write(
+    dakota_input += (
 """sampling
 sample_type = {sample_type}
 samples = {samples}
@@ -231,7 +231,7 @@ elif uq_method == 'Calibration':
     maxIter = calibrationData["maxIterations"]
     method = calibrationData["method"]
 
-    f.write(
+    dakota_input += (
 """{method_type}
 convergence_tolerance = {convTol}
 max_iterations = {maxIter}
@@ -251,7 +251,7 @@ elif uq_method == 'Bayesian_Calibration':
     chainSamples=samplingData["chain_samples"]
     seed = samplingData["seed"]
 
-    f.write(
+    dakota_input += (
 """bayes_calibration dream
 chain_samples = {chainSamples}
 seed = {seed}
@@ -267,274 +267,274 @@ seed = {seed}
 
 # write out the variable data // shall be replaced to make human-readable
 
-f.write('variables,\n')
+dakota_input += ('variables,\n')
 
 if (numNormalUncertain > 0):
-    f.write('normal_uncertain = ' '{}'.format(numNormalUncertain))
-    f.write('\n')
-    f.write('means = ')
+    dakota_input += ('normal_uncertain = ' '{}'.format(numNormalUncertain))
+    dakota_input += ('\n')
+    dakota_input += ('means = ')
     for i in range(numNormalUncertain):
-        f.write('{}'.format(normalUncertainMean[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(normalUncertainMean[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('std_deviations = ')
+    dakota_input += ('std_deviations = ')
     for i in range(numNormalUncertain):
-        f.write('{}'.format(normalUncertainStdDev[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(normalUncertainStdDev[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
     
-    f.write('descriptors = ')    
+    dakota_input += ('descriptors = ')    
     for i in range(numNormalUncertain):
-        f.write('\'')
-        f.write(normalUncertainName[i])
-        f.write('\' ')
-    f.write('\n')
+        dakota_input += ('\'')
+        dakota_input += (normalUncertainName[i])
+        dakota_input += ('\' ')
+    dakota_input += ('\n')
 
 if (numLognormalUncertain > 0):
-    f.write('lognormal_uncertain = ' '{}'.format(numLognormalUncertain))
-    f.write('\n')
-    f.write('means = ')
+    dakota_input += ('lognormal_uncertain = ' '{}'.format(numLognormalUncertain))
+    dakota_input += ('\n')
+    dakota_input += ('means = ')
     for i in range(numLognormalUncertain):
-        f.write('{}'.format(lognormalUncertainMean[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(lognormalUncertainMean[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('std_deviations = ')
+    dakota_input += ('std_deviations = ')
     for i in range(numLognormalUncertain):
-        f.write('{}'.format(lognormalUncertainStdDev[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(lognormalUncertainStdDev[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
     
-    f.write('descriptors = ')    
+    dakota_input += ('descriptors = ')    
     for i in range(numLognormalUncertain):
-        f.write('\'')
-        f.write(lognormalUncertainName[i])
-        f.write('\' ')
-    f.write('\n')
+        dakota_input += ('\'')
+        dakota_input += (lognormalUncertainName[i])
+        dakota_input += ('\' ')
+    dakota_input += ('\n')
 
 if (numUniformUncertain > 0):
-    f.write('uniform_uncertain = ' '{}'.format(numUniformUncertain))
-    f.write('\n')
-    f.write('lower_bounds = ')
+    dakota_input += ('uniform_uncertain = ' '{}'.format(numUniformUncertain))
+    dakota_input += ('\n')
+    dakota_input += ('lower_bounds = ')
     for i in range(numUniformUncertain):
-        f.write('{}'.format(uniformUncertainLower[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(uniformUncertainLower[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('upper_bounds = ')
+    dakota_input += ('upper_bounds = ')
     for i in range(numUniformUncertain):
-        f.write('{}'.format(uniformUncertainUpper[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(uniformUncertainUpper[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
     
-    f.write('descriptors = ')    
+    dakota_input += ('descriptors = ')    
     for i in range(numUniformUncertain):
-        f.write('\'')
-        f.write(uniformUncertainName[i])
-        f.write('\' ')
-    f.write('\n')
+        dakota_input += ('\'')
+        dakota_input += (uniformUncertainName[i])
+        dakota_input += ('\' ')
+    dakota_input += ('\n')
 
 
 if (numContinuousDesign > 0):
-    f.write('continuous_design = ' '{}'.format(numContinuousDesign))
-    f.write('\n')
+    dakota_input += ('continuous_design = ' '{}'.format(numContinuousDesign))
+    dakota_input += ('\n')
 
-    f.write('initial_point = ')
+    dakota_input += ('initial_point = ')
     for i in range(numContinuousDesign):
-        f.write('{}'.format(continuousDesignInitialPoint[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(continuousDesignInitialPoint[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('lower_bounds = ')
+    dakota_input += ('lower_bounds = ')
     for i in range(numContinuousDesign):
-        f.write('{}'.format(continuousDesignLower[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(continuousDesignLower[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('upper_bounds = ')
+    dakota_input += ('upper_bounds = ')
     for i in range(numContinuousDesign):
-        f.write('{}'.format(continuousDesignUpper[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(continuousDesignUpper[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
     
-    f.write('descriptors = ')    
+    dakota_input += ('descriptors = ')    
     for i in range(numContinuousDesign):
-        f.write('\'')
-        f.write(continuousDesignName[i])
-        f.write('\' ')
-    f.write('\n')
+        dakota_input += ('\'')
+        dakota_input += (continuousDesignName[i])
+        dakota_input += ('\' ')
+    dakota_input += ('\n')
 
 
 numCState = 0
 if (numCState > 0):
-    f.write('discrete_state_range = ' '{}'.format(numConstantState))
-    f.write('\n')
+    dakota_input += ('discrete_state_range = ' '{}'.format(numConstantState))
+    dakota_input += ('\n')
 
-    f.write('initial_state = ')
+    dakota_input += ('initial_state = ')
     for i in range(numConstantState):
-        f.write('{}'.format(constantStateValue[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(constantStateValue[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('descriptors = ')    
+    dakota_input += ('descriptors = ')    
     for i in range(numConstantState):
-        f.write('\'')
-        f.write(constantStateName[i])
-        f.write('\' ')
-    f.write('\n')
+        dakota_input += ('\'')
+        dakota_input += (constantStateName[i])
+        dakota_input += ('\' ')
+    dakota_input += ('\n')
 
 if (numConstantState > 0):
-    f.write('discrete_design_set\nreal = ' '{}'.format(numConstantState))
-    f.write('\n')
+    dakota_input += ('discrete_design_set\nreal = ' '{}'.format(numConstantState))
+    dakota_input += ('\n')
 
-    f.write('num_set_values = ')
+    dakota_input += ('num_set_values = ')
     for i in range(numConstantState):
-        f.write('{}'.format(1))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(1))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('set_values = ')
+    dakota_input += ('set_values = ')
     for i in range(numConstantState):
-        f.write('{}'.format(constantStateValue[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(constantStateValue[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('descriptors = ')    
+    dakota_input += ('descriptors = ')    
     for i in range(numConstantState):
-        f.write('\'')
-        f.write(constantStateName[i])
-        f.write('\' ')
-    f.write('\n')
+        dakota_input += ('\'')
+        dakota_input += (constantStateName[i])
+        dakota_input += ('\' ')
+    dakota_input += ('\n')
 
 if (numBetaUncertain > 0):
-    f.write('beta_uncertain = ' '{}'.format(numBetaUncertain))
-    f.write('\n')
-    f.write('alphas = ')
+    dakota_input += ('beta_uncertain = ' '{}'.format(numBetaUncertain))
+    dakota_input += ('\n')
+    dakota_input += ('alphas = ')
     for i in range(numBetaUncertain):
-        f.write('{}'.format(betaUncertainAlphas[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(betaUncertainAlphas[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('betas = ')
+    dakota_input += ('betas = ')
     for i in range(numBetaUncertain):
-        f.write('{}'.format(betaUncertainBetas[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(betaUncertainBetas[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('lower_bounds = ')
+    dakota_input += ('lower_bounds = ')
     for i in range(numBetaUncertain):
-        f.write('{}'.format(betaUncertainLower[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(betaUncertainLower[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('upper_bounds = ')
+    dakota_input += ('upper_bounds = ')
     for i in range(numBetaUncertain):
-        f.write('{}'.format(betaUncertainHigher[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(betaUncertainHigher[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
     
-    f.write('descriptors = ')    
+    dakota_input += ('descriptors = ')    
     for i in range(numBetaUncertain):
-        f.write('\'')
-        f.write(betaUncertainName[i])
-        f.write('\' ')
-    f.write('\n')
+        dakota_input += ('\'')
+        dakota_input += (betaUncertainName[i])
+        dakota_input += ('\' ')
+    dakota_input += ('\n')
 
 if (numGammaUncertain > 0):
-    f.write('gamma_uncertain = ' '{}'.format(numGammaUncertain))
-    f.write('\n')
-    f.write('alphas = ')
+    dakota_input += ('gamma_uncertain = ' '{}'.format(numGammaUncertain))
+    dakota_input += ('\n')
+    dakota_input += ('alphas = ')
     for i in range(numGammaUncertain):
-        f.write('{}'.format(gammaUncertainAlphas[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(gammaUncertainAlphas[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('betas = ')
+    dakota_input += ('betas = ')
     for i in range(numGammaUncertain):
-        f.write('{}'.format(gammaUncertainBetas[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(gammaUncertainBetas[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
     
-    f.write('descriptors = ')    
+    dakota_input += ('descriptors = ')    
     for i in range(numGammaUncertain):
-        f.write('\'')
-        f.write(gammaUncertainName[i])
-        f.write('\' ')
-    f.write('\n')
+        dakota_input += ('\'')
+        dakota_input += (gammaUncertainName[i])
+        dakota_input += ('\' ')
+    dakota_input += ('\n')
 
 if (numGumbellUncertain > 0):
-    f.write('gamma_uncertain = ' '{}'.format(numGumbellUncertain))
-    f.write('\n')
-    f.write('alphas = ')
+    dakota_input += ('gamma_uncertain = ' '{}'.format(numGumbellUncertain))
+    dakota_input += ('\n')
+    dakota_input += ('alphas = ')
     for i in range(numGumbellUncertain):
-        f.write('{}'.format(gumbellUncertainAlphas[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(gumbellUncertainAlphas[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('betas = ')
+    dakota_input += ('betas = ')
     for i in range(numGumbellUncertain):
-        f.write('{}'.format(gumbellUncertainBetas[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(gumbellUncertainBetas[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
     
-    f.write('descriptors = ')    
+    dakota_input += ('descriptors = ')    
     for i in range(numGumbellUncertain):
-        f.write('\'')
-        f.write(gumbellUncertainName[i])
-        f.write('\' ')
-    f.write('\n')
+        dakota_input += ('\'')
+        dakota_input += (gumbellUncertainName[i])
+        dakota_input += ('\' ')
+    dakota_input += ('\n')
 
 if (numWeibullUncertain > 0):
-    f.write('weibull_uncertain = ' '{}'.format(numWeibullUncertain))
-    f.write('\n')
-    f.write('alphas = ')
+    dakota_input += ('weibull_uncertain = ' '{}'.format(numWeibullUncertain))
+    dakota_input += ('\n')
+    dakota_input += ('alphas = ')
     for i in range(numWeibullUncertain):
-        f.write('{}'.format(weibullUncertainAlphas[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(weibullUncertainAlphas[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
 
-    f.write('betas = ')
+    dakota_input += ('betas = ')
     for i in range(numWeibullUncertain):
-        f.write('{}'.format(weibullUncertainBetas[i]))
-        f.write(' ')
-    f.write('\n')
+        dakota_input += ('{}'.format(weibullUncertainBetas[i]))
+        dakota_input += (' ')
+    dakota_input += ('\n')
     
-    f.write('descriptors = ')    
+    dakota_input += ('descriptors = ')    
     for i in range(numWeibullUncertain):
-        f.write('\'')
-        f.write(weibullUncertainName[i])
-        f.write('\' ')
-    f.write('\n')
+        dakota_input += ('\'')
+        dakota_input += (weibullUncertainName[i])
+        dakota_input += ('\' ')
+    dakota_input += ('\n')
 
-f.write('\n')
+dakota_input += ('\n')
 
 # write out the interface data
 
 femProgram = fem_data["program"]
 
 if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
-    f.write('interface,\n')
-    #f.write('system # asynch evaluation_concurrency = 8')
-    #f.write('fork asynchronous evaluation_concurrency = ' '{}'.format(numCPUs))
+    dakota_input += ('interface,\n')
+    #dakota_input += ('system # asynch evaluation_concurrency = 8')
+    #dakota_input += ('fork asynchronous evaluation_concurrency = ' '{}'.format(numCPUs))
     if run_type in ['runningLocal',]:
-        f.write("fork asynchronous evaluation_concurrency = %d" % numCPUs)
+        dakota_input += ("fork asynchronous evaluation_concurrency = %d" % numCPUs)
     else:
-        f.write('fork asynchronous')
-    f.write('\nanalysis_driver = \'fem_driver\' \n')
-    f.write('parameters_file = \'params.in\' \n')
-    f.write('results_file = \'results.out\' \n')
-    f.write('work_directory directory_tag \n')
-    f.write('copy_files = \'templatedir/*\' \n')
-#    f.write('named \'workdir\' file_save  directory_save \n')
-    f.write('named \'workdir\' \n')
-    f.write('aprepro \n')
-    f.write('\n')
+        dakota_input += ('fork asynchronous')
+    dakota_input += ('\nanalysis_driver = \'fem_driver\' \n')
+    dakota_input += ('parameters_file = \'params.in\' \n')
+    dakota_input += ('results_file = \'results.out\' \n')
+    dakota_input += ('work_directory directory_tag \n')
+    dakota_input += ('copy_files = \'templatedir/*\' \n')
+#    dakota_input += ('named \'workdir\' file_save  directory_save \n')
+    dakota_input += ('named \'workdir\' \n')
+    dakota_input += ('aprepro \n')
+    dakota_input += ('\n')
     
 # write out the responses
 
 if uq_method == "Sampling":
-    f.write(
+    dakota_input += (
 """responses,
 response_functions = {numResponses}
 response_descriptors = {responseDescriptors}
@@ -546,7 +546,7 @@ no_hessians
     responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
 elif uq_method == "Calibration":
-    f.write(
+    dakota_input += (
 """responses,
 calibration_terms = {numResponses}
 response_descriptors = {responseDescriptors}
@@ -558,7 +558,7 @@ no_hessians
     responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
 elif uq_method == "Bayesian Calibration":
-    f.write(
+    dakota_input += (
 """responses,
 calibration_terms = {numResponses}
 response_descriptors = {responseDescriptors}
@@ -569,7 +569,8 @@ no_hessians
     numResponses = numResponses,
     responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
-f.close()  # you can omit in most cases as the destructor will call it
+with open('../dakota.in', 'wb') as f:
+    f.write(dakota_input.encode('utf8'))
 
 # prepare the workflow driver file for dakota
 
@@ -580,32 +581,41 @@ if (femProgram == "OpenSees-SingleScript"):
 
     os.chdir(workdir_main)
 
-    f = open(fem_driver, 'w')
-    f.write(DakotaR)
-    f.write(' params.in ')
-    f.write(model_file)
-    f.write(' SimCenterInput.tcl\n')
-    f.write(OpenSees)
-    f.write(' SimCenterInput.tcl >> ops.out\n')
-    f.close()
+    fem_driver_script = ""
+    fem_driver_script += (DakotaR)
+    fem_driver_script += (' params.in ')
+    fem_driver_script += (model_file)
+    fem_driver_script += (' SimCenterInput.tcl\n')
+    fem_driver_script += (OpenSees)
+    fem_driver_script += (' SimCenterInput.tcl >> ops.out\n')
+
+    with open(fem_driver, 'wb') as f: 
+        f.write(fem_driver_script.encode('utf8'))
 
 if (femProgram == "OpenSees"):
 
     model_file = fem_data["mainInput"]    
     postprocessScript = fem_data["mainPostprocessScript"]    
 
-    with open('SimCenterParams.template', 'w') as f:
-        for rnd_name in uncertainName:
-            f.write('set {rnd_name} {{{rnd_name}}}\n'.format(rnd_name=rnd_name))
+    SCParams_template_script = ""
+    for rnd_name in uncertainName:
+        SCParams_template_script += (
+            'set {rnd_name} {{{rnd_name}}}\n'.format(rnd_name=rnd_name))
 
-    with open('SimCenterInput.ops', 'w') as f:
-        f.write(
+    with open('SimCenterParams.template', 'wb') as f:
+        f.write(SCParams_template_script.encode('utf8'))
+        
+
+    SCInput_ops_script = (
 """source SimCenterParamIN.ops
 source {model_file}
 """.format(model_file=model_file))
 
-    with open(fem_driver, 'w') as f:
-        f.write(
+    with open('SimCenterInput.ops', 'wb') as f:
+        f.write(SCInput_ops_script.encode('utf8'))
+        
+
+    fem_driver_script = (
 """{DakotaR} params.in SimCenterParams.template SimCenterParamIN.ops
 {OpenSees} SimCenterInput.ops >> ops.out
 python {postprocessScript} {responseDescriptors}
@@ -614,20 +624,14 @@ python {postprocessScript} {responseDescriptors}
     OpenSees = OpenSees,
     postprocessScript = postprocessScript,
     responseDescriptors = ' '.join(responseDescriptors)))
-	
+
+    with open(fem_driver, 'wb') as f:
+        f.write(fem_driver_script.encode('utf8'))
+    
     os.chdir(workdir_main)
     
-    # this file seems identical to the previous fem_driver, so it would be easier to just copy it
-    with open(fem_driver, 'w') as f:
-        f.write(
-"""{DakotaR} params.in SimCenterParams.template SimCenterParamIN.ops
-{OpenSees} SimCenterInput.ops >> ops.out
-python {postprocessScript} {responseDescriptors}
-""".format(
-    DakotaR = DakotaR,
-    OpenSees = OpenSees,
-    postprocessScript = postprocessScript,
-    responseDescriptors = ' '.join(responseDescriptors)))
+    with open(fem_driver, 'wb') as f:
+        f.write(fem_driver_script.encode('utf8'))
 
 if (femProgram == "FEAPpv"):
 
@@ -635,7 +639,7 @@ if (femProgram == "FEAPpv"):
     postprocessScript = fem_data["mainPostprocessScript"]
     
     if (sys.version_info > (3, 0)):
-        f = open('feapname', 'w')
+        f = open('feapname', 'wb')
         f.write('SimCenterIn.txt   \n')
         f.write('SimCenterOut.txt   \n')
         f.write('SimCenterR.txt   \n')
@@ -645,7 +649,7 @@ if (femProgram == "FEAPpv"):
         f.close()
         
         os.chdir(workdir_main)
-        f = open(fem_driver, 'w', newline='\n')
+        f = open(fem_driver, 'wb')
         f.write(DakotaR)
         f.write(' params.in ')
         f.write(inputFile)
@@ -661,7 +665,7 @@ if (femProgram == "FEAPpv"):
         f.close()
         
     else:     
-        f = io.open('feapname', 'w', newline='\n')
+        f = io.open('feapname', 'wb')
         f.write(unicode('SimCenterIn.txt   \n'))
         f.write(unicode('SimCenterOut.txt   \n'))
         f.write(unicode('SimCenterR.txt   \n'))
@@ -671,7 +675,7 @@ if (femProgram == "FEAPpv"):
         f.close()
         
         os.chdir(workdir_main)
-        f = io.open(fem_driver, 'w', newline='\n')
+        f = io.open(fem_driver, 'wb')
         f.write(unicode(DakotaR))
         f.write(unicode(' params.in '))
         f.write(unicode(inputFile))
