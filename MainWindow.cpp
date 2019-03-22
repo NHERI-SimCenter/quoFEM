@@ -449,9 +449,9 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
     foreach (QString directoryName,
              originDirectory.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
     {
-        if (directoryName != QString("tmp.SimCenter")) {
-        QString destinationPath = destinationDir + "/" + directoryName;        
-        copyPath(sourceDir + "/" + directoryName, destinationPath, overWriteDirectory);
+        if (!directoryName.startsWith(QString("tmp.SimCenter"))) {
+            QString destinationPath = destinationDir + "/" + directoryName;
+            copyPath(sourceDir + "/" + directoryName, destinationPath, overWriteDirectory);
         }
     }
 
@@ -697,7 +697,7 @@ void MainWindow::onRemoteRunButtonClicked(){
     strUnique = strUnique.mid(1,36);
 
     QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + strUnique + QDir::separator() + QString("templatedir");
-    copyPath(path, tmpDirectory, false);
+    copyPath(path, tmpDirectory, true);
 
     // special copy the of the main script to set up lines containg parameters for dakota
     QString mainScriptTmp = tmpDirectory + QDir::separator() + fileName;
