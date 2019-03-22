@@ -604,6 +604,13 @@ source {model_file}
         
     analysis_driver_script =(
 '''
+import os, sys
+
+if 'TACC_DAKOTA_DIR' in os.environ:
+    dakota_dir = os.environ['TACC_DAKOTA_DIR']
+    dakota_py_dir = dakota_dir+'/share/dakota/Python'
+    sys.path.append(dakota_py_dir)
+
 import dakota.interfacing as di 
 import subprocess  
 from {postprocess} import process_results
