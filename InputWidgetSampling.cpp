@@ -63,11 +63,15 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <time.h>
 
 
+#include <QStackedWidget>
+#include <MonteCarloInputWidget.h>
+#include <LatinHypercubeINputWidget.h>
+
 InputWidgetSampling::InputWidgetSampling(QWidget *parent)
 : InputWidgetDakotaMethod(parent),uqSpecific(0)
 {
     layout = new QVBoxLayout();
-
+    mLayout = new QVBoxLayout();
     //
     // create layout for selection box for method type to layout
     //
@@ -76,71 +80,247 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     QLabel *label1 = new QLabel();
     label1->setText(QString("Method"));
     samplingMethod = new QComboBox();
+    samplingMethod->setMaximumWidth(200);
+    samplingMethod->setMinimumWidth(200);
     samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
-    
+
+    /*
+    samplingMethod->addItem(tr("Multilevel Monte Carlo"));
+    samplingMethod->addItem(tr("Importance Sampling"));
+    samplingMethod->addItem(tr("Quadrature"));
+    samplingMethod->addItem(tr("Sparse Grid Quadrature"));
+    samplingMethod->addItem(tr("Surrogate - Polynomial Chaos"));
+    samplingMethod->addItem(tr("Surrogate - Gaussian Process"));
+    */
+
     methodLayout->addWidget(label1);
     methodLayout->addWidget(samplingMethod);
-    
-    //
-    // create layout label and entry for # samples
-    //
 
-    QVBoxLayout *samplesLayout= new QVBoxLayout;
-    QLabel *label2 = new QLabel();
-    label2->setText(QString("# Samples"));
-    numSamples = new QLineEdit();
-    numSamples->setText(tr("10"));
-    numSamples->setMaximumWidth(100);
-    numSamples->setMinimumWidth(100);
-    
-    samplesLayout->addWidget(label2);
-    samplesLayout->addWidget(numSamples);
-    
-    //
-    // create label and entry for seed to layout
-    //
-
-    QVBoxLayout *seedLayout= new QVBoxLayout;
-    QLabel *label3 = new QLabel();
-    label3->setText(QString("Seed"));
-    srand(time(NULL));
-    int randomNumber = rand() % 1000 + 1;
-
-    randomSeed = new QLineEdit();
-    randomSeed->setText(QString::number(randomNumber));
-    randomSeed->setMaximumWidth(100);
-    randomSeed->setMinimumWidth(100);
-    
-    seedLayout->addWidget(label3);
-    seedLayout->addWidget(randomSeed);
-
-
-    // add a checkbox for Sobolev index
-    sobolevCheckBox =new QCheckBox("Sobolev Index");
-    connect(sobolevCheckBox,SIGNAL(clicked(bool)),this,SLOT(setSobolevFlag(bool)));
-    flagForSobolevIndices=0;
-    
-    //
-    // create main layout and add previously created layouts to it
-    //
-
-    QHBoxLayout *mLayout = new QHBoxLayout();
     mLayout->addLayout(methodLayout);
-    mLayout->addLayout(samplesLayout);
-    mLayout->addLayout(seedLayout);
     mLayout->addStretch(1);
-    mLayout->addWidget(sobolevCheckBox);
-    mLayout->addStretch(5);
 
+    //
+    // qstacked widget to hold all widgets
+    //
+
+    theStackedWidget = new QStackedWidget();
+    theLHS = new LatinHypercubeInputWidget();
+
+
+    theStackedWidget->addWidget(theLHS);
+    theMC = new MonteCarloInputWidget();
+    theStackedWidget->addWidget(theMC);
+
+    // set current widget to index 0
+    theCurrentMethod = theLHS;
+
+
+    mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);
 
     // finally add the EDP layout & set widget layout
-
     theEdpWidget = new InputWidgetEDP();
     layout->addWidget(theEdpWidget,1);
 
     this->setLayout(layout);
+
+    connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
+}
+
+void InputWidgetSampling::onTextChanged(QString text)
+{
+  if (text=="Latin Hypercube Sampling") {
+    theStackedWidget->setCurrentIndex(0);
+    theCurrentMethod = theLHS;
+  }
+  else if (text=="Monte Carlo Sampling") {
+    theStackedWidget->setCurrentIndex(1);
+    theCurrentMethod = theMC;  
+  }
+    /*
+    } else if (text=="Quadrature") {
+
+        // create layout label and entry for dimension
+        QVBoxLayout *dimLayout= new QVBoxLayout;
+        QLabel *label2 = new QLabel();
+        label2->setText(QString("Dimension"));
+        numSamples = new QLineEdit();
+        numSamples->setMaximumWidth(100);
+        numSamples->setMinimumWidth(100);
+        dimLayout->addWidget(label2);
+        dimLayout->addWidget(numSamples);
+
+        mLayout->addLayout(dimLayout);
+        mLayout->addStretch(1);
+
+        // create label and entry for level
+        QVBoxLayout *levelLayout= new QVBoxLayout;
+        QLabel *label3 = new QLabel();
+        label3->setText(QString("Level"));
+        srand(time(NULL));
+        randomSeed = new QLineEdit();
+        randomSeed->setMaximumWidth(100);
+        randomSeed->setMinimumWidth(100);
+        levelLayout->addWidget(label3);
+        levelLayout->addWidget(randomSeed);
+
+        mLayout->addLayout(levelLayout);
+        mLayout->addStretch(1);
+
+    } else if (text=="Sparse Grid Quadrature") {
+
+        // create layout label and entry for dimension
+        QVBoxLayout *dimLayout= new QVBoxLayout;
+        QLabel *label2 = new QLabel();
+        label2->setText(QString("Dimension"));
+        numSamples = new QLineEdit();
+        numSamples->setMaximumWidth(100);
+        numSamples->setMinimumWidth(100);
+        dimLayout->addWidget(label2);
+        dimLayout->addWidget(numSamples);
+
+        mLayout->addLayout(dimLayout);
+        mLayout->addStretch(1);
+
+        // create label and entry for level
+        QVBoxLayout *levelLayout= new QVBoxLayout;
+        QLabel *label3 = new QLabel();
+        label3->setText(QString("Level"));
+        srand(time(NULL));
+        randomSeed = new QLineEdit();
+        randomSeed->setMaximumWidth(100);
+        randomSeed->setMinimumWidth(100);
+        levelLayout->addWidget(label3);
+        levelLayout->addWidget(randomSeed);
+
+        mLayout->addLayout(levelLayout);
+        mLayout->addStretch(1);
+
+    } else if (text=="Surrogate - Polynomial Chaos") {
+
+        // create layout label and entry for dimension
+        QVBoxLayout *dimLayout= new QVBoxLayout;
+        QLabel *label2 = new QLabel();
+        label2->setText(QString("Dimension"));
+        numSamples = new QLineEdit();
+        numSamples->setMaximumWidth(100);
+        numSamples->setMinimumWidth(100);
+        dimLayout->addWidget(label2);
+        dimLayout->addWidget(numSamples);
+
+        mLayout->addLayout(dimLayout);
+        mLayout->addStretch(1);
+
+        // create label and entry for level
+        QVBoxLayout *chaosLayout= new QVBoxLayout;
+        QLabel *label3 = new QLabel();
+        label3->setText(QString("Pol. chaos order"));
+        srand(time(NULL));
+        randomSeed = new QLineEdit();
+        randomSeed->setMaximumWidth(100);
+        randomSeed->setMinimumWidth(100);
+        chaosLayout->addWidget(label3);
+        chaosLayout->addWidget(randomSeed);
+
+        mLayout->addLayout(chaosLayout);
+        mLayout->addStretch(1);
+
+    } else if (text=="Surrogate - Gaussian Process") {
+
+        // create layout label and entry for dimension
+        QVBoxLayout *covKLayout= new QVBoxLayout;
+        QLabel *label2 = new QLabel();
+        label2->setText(QString("Cov Kernel Type"));
+        numSamples = new QLineEdit();
+        numSamples->setMaximumWidth(100);
+        numSamples->setMinimumWidth(100);
+        covKLayout->addWidget(label2);
+        covKLayout->addWidget(numSamples);
+
+        mLayout->addLayout(covKLayout);
+        mLayout->addStretch(1);
+
+
+        // create label and entry for level
+        QVBoxLayout *corrLayout= new QVBoxLayout;
+        QLabel *label3 = new QLabel();
+        label3->setText(QString("Correlation length"));
+        srand(time(NULL));
+        randomSeed = new QLineEdit();
+        randomSeed->setMaximumWidth(100);
+        randomSeed->setMinimumWidth(100);
+        corrLayout->addWidget(label3);
+        corrLayout->addWidget(randomSeed);
+
+        mLayout->addLayout(corrLayout);
+        mLayout->addStretch(1);
+
+    } else if (text=="Importance Sampling") {
+
+        // create layout label and entry for # samples
+        QVBoxLayout *samplesLayout= new QVBoxLayout;
+        QLabel *label2 = new QLabel();
+        label2->setText(QString("# Samples"));
+        numSamples = new QLineEdit();
+        numSamples->setText(tr("1000"));
+        numSamples->setMaximumWidth(100);
+        numSamples->setMinimumWidth(100);
+        samplesLayout->addWidget(label2);
+        samplesLayout->addWidget(numSamples);
+
+        mLayout->addLayout(samplesLayout);
+        mLayout->addStretch(1);
+
+        // create label and entry for seed to layout
+        QVBoxLayout *seedLayout= new QVBoxLayout;
+        QLabel *label3 = new QLabel();
+        label3->setText(QString("Seed"));
+        srand(time(NULL));
+        int randomNumber = rand() % 1000 + 1;
+        randomSeed = new QLineEdit();
+        randomSeed->setText(QString::number(randomNumber));
+        randomSeed->setMaximumWidth(100);
+        randomSeed->setMinimumWidth(100);
+        seedLayout->addWidget(label3);
+        seedLayout->addWidget(randomSeed);
+
+        mLayout->addLayout(seedLayout);
+        mLayout->addStretch(1);
+
+    } else if (text=="Multilevel Monte Carlo") {
+
+        // create layout label and entry for # samples
+        QVBoxLayout *samplesLayout= new QVBoxLayout;
+        QLabel *label2 = new QLabel();
+        label2->setText(QString("# Samples"));
+        numSamples = new QLineEdit();
+        numSamples->setText(tr("1000"));
+        numSamples->setMaximumWidth(100);
+        numSamples->setMinimumWidth(100);
+        samplesLayout->addWidget(label2);
+        samplesLayout->addWidget(numSamples);
+
+        mLayout->addLayout(samplesLayout);
+        mLayout->addStretch(1);
+
+        // create label and entry for seed to layout
+        QVBoxLayout *seedLayout= new QVBoxLayout;
+        QLabel *label3 = new QLabel();
+        label3->setText(QString("Seed"));
+        srand(time(NULL));
+        int randomNumber = rand() % 1000 + 1;
+        randomSeed = new QLineEdit();
+        randomSeed->setText(QString::number(randomNumber));
+        randomSeed->setMaximumWidth(100);
+        randomSeed->setMinimumWidth(100);
+        seedLayout->addWidget(label3);
+        seedLayout->addWidget(randomSeed);
+
+        mLayout->addLayout(seedLayout);
+        mLayout->addStretch(1);
+    }
+    */
 }
 
 InputWidgetSampling::~InputWidgetSampling()
@@ -164,85 +344,33 @@ InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
-    //note method will always return true as initial values set
-
-    //
-    // in a json object we will place the values and then add object to input
-    //
-
     QJsonObject uq;
     uq["method"]=samplingMethod->currentText();
-    uq["samples"]=numSamples->text().toInt();
-    uq["seed"]=randomSeed->text().toDouble();
-    if (flagForSobolevIndices == 1)
-      uq["sobelov_indices"]=flagForSobolevIndices;
-    result = theEdpWidget->outputToJSON(uq);
+    theCurrentMethod->outputToJSON(uq);
     jsonObject["samplingMethodData"]=uq;
-    return result;
+
+    return true;
 }
 
 
 bool
 InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
 {
-    bool result = false;
-    this->clear();
-
-    //
-    // get sampleingMethodData, if not present it's an error
-
-    if (jsonObject.contains("samplingMethodData")) {
-        QJsonObject uq = jsonObject["samplingMethodData"].toObject();
-
-        //
-        // get method, #sample and seed, if not present an error
-        // given method, set selection box to point to it and finnally input the EDPs
-        //
-
-        if (uq.contains("method") && uq.contains("samples") && uq.contains("seed")) {
-
-            QString method =uq["method"].toString();
-            int samples=uq["samples"].toInt();
-            double seed=uq["seed"].toDouble();
-            if (uq.contains("sobolev_indices") && uq.contains("samples")) {
-                flagForSobolevIndices = uq["sobolev_indices"].toInt();
-                sobolevCheckBox->setChecked(true);
-                // set the sobolevFlag
-            }
-
-            else {
-                flagForSobolevIndices = 0;
-                sobolevCheckBox->setChecked(false);
-            }
-		
-
-            numSamples->setText(QString::number(samples));
-            randomSeed->setText(QString::number(seed));
-            int index = samplingMethod->findText(method);
-            if (index == -1) {
-                emit sendErrorMessage("ERROR: Sampling Input Widget - \"samplingMethodData\" invalid type .. keeping current");
-                return false;
-            }
-
-            samplingMethod->setCurrentIndex(index);
-            return theEdpWidget->inputFromJSON(uq);
-
-            // initializing the correlation matrix here
-
-
-        } else {
-            emit sendErrorMessage("ERROR: Sampling Input Widget - no \"method\" ,\"samples\" or \"seed\" data");
-            return false;
-        }
-
-    } else {
-        emit sendErrorMessage("ERROR: Sampling Input Widget - no \"samplingMethodData\" input");
-        return false;
+  bool result = false;
+  this->clear();
+  
+  //
+  // get sampleingMethodData, if not present it's an error
+  
+  if (jsonObject.contains("samplingMethodData")) {
+    QJsonObject uq = jsonObject["samplingMethodData"].toObject();
+    if (uq.contains("method")) {
+      QString method =uq["method"].toString();
+      this->uqSelectionChanged(method);
+      theCurrentMethod->inputFromJSON(uq);
     }
-
-    // should never get here .. if do my logic is screwy and need to return a false
-    emit sendErrorMessage("ERROR - faulty logic - contact code developers");
-    return result;
+  }
+  return result;
 }
 
 void InputWidgetSampling::uqSelectionChanged(const QString &arg1)
@@ -264,11 +392,4 @@ RandomVariablesContainer *
 InputWidgetSampling::getParameters(void) {
     QString classType("Uncertain");
   return new RandomVariablesContainer(classType);
-}
-
-void InputWidgetSampling::setSobolevFlag(bool value) {
-    if(value) {
-      flagForSobolevIndices=1;
-    }
-    return;
 }

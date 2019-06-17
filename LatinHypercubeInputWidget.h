@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGET_SAMPLING_H
-#define INPUTWIDGET_SAMPLING_H
+#ifndef LATIN_HYPERCUBE_H
+#define LATIN_HYPERCUBE_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,72 +39,23 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <InputWidgetDakotaMethod.h>
+#include <SimCenterWidget.h>
+class QLineEdit;
 
-#include "EDP.h"
-#include <QGroupBox>
-#include <QVector>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QPushButton>
-
-class DakotaSamplingResults;
-class DakotaResults;
-class QCheckBox;
-class InputWidgetEDP;
-class RandomVariablesContainer;
-class QStackedWidget;
-class SimCenterWidget;
-
-class InputWidgetSampling : public InputWidgetDakotaMethod
+class LatinHypercubeInputWidget : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetSampling(QWidget *parent = 0);
-    ~InputWidgetSampling();
+    explicit LatinHypercubeInputWidget(QWidget *parent = 0);
+    ~LatinHypercubeInputWidget();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
-
-    int processResults(QString &filenameResults, QString &filenameTab);
-
-    DakotaResults *getResults(void);
-    RandomVariablesContainer  *getParameters();
-
-    int getMaxNumParallelTasks(void);
-
-    QVBoxLayout *mLayout;
-
-signals:
-
-public slots:
-   void clear(void);
-   void uqSelectionChanged(const QString &arg1);
-   //void setSobolevFlag(bool);// added by padhye for sobolev indices
-   void onTextChanged(QString);
- //  void uqMethodChanged(const QString &arg1);
+    void clear(void);
 
 private:
-    QVBoxLayout *layout;
-    QWidget     *methodSpecific;
-    QComboBox   *samplingMethod;
-    QLineEdit   *numSamples;
-    QLineEdit   *randomSeed;
-    //    QPushButton *run;
-    QCheckBox *sobolevCheckBox;
-    //int flagForSobolevIndices;
-
-    QComboBox   *uqSelection;
-    QWidget     *uqSpecific;
-
-    RandomVariablesContainer *theParameters;
-    InputWidgetEDP *theEdpWidget;
-    DakotaSamplingResults *results;
-
-    QStackedWidget *theStackedWidget;
-    SimCenterWidget *theCurrentMethod;
-    SimCenterWidget *theMC;
-    SimCenterWidget *theLHS;
+    QLineEdit *randomSeed;
+    QLineEdit *numSamples;
 };
 
-#endif // INPUTWIDGET_SAMPLING_H
+#endif // LATIN_HYPERCUBE_H
