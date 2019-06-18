@@ -51,6 +51,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QAction>
 #include <QMenu>
 #include <QApplication>
+#include <SimCenterPreferences.h>
+#include <QSettings>
 
 #include "SidebarWidgetSelection.h"
 
@@ -91,27 +93,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 
-
-/*
-static
-MainWindow::MainWindow *theOneStaticMainWindow = 0;
-
-void
-MainWindow::errorMessage(const QString msg){
-    //qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-    theOneStaticMainWindow->errorLabel->setText(msg);
-    qDebug() << "ERROR MESSAGE" << msg;
-}
-
-void warningMessage(const QStringList &msg){
-
-}
-void updateMessage(const QStringList &msg)
-{
-
-}
-*/
-
 void
 MainWindow::errorMessage(const QString msg){
     //qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
@@ -149,9 +130,10 @@ MainWindow::MainWindow(QWidget *parent)
     //
     QString tenant("designsafe");
     QString storage("agave://designsafe.storage.default/");
+    QString dirName("uqFEM");
 
     //theRemoteInterface = new AgaveCLI(tenant, storage, this);
-    theRemoteInterface =  new AgaveCurl(tenant, storage);
+    theRemoteInterface =  new AgaveCurl(tenant, storage, &dirName);
     jobCreator = new RemoteJobCreator(theRemoteInterface);
     jobManager = new RemoteJobManager(theRemoteInterface, this);
 
@@ -380,34 +362,17 @@ MainWindow::MainWindow(QWidget *parent)
     // send get to my simple counter
     manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/uqFEM/use.php")));
 
-    //
-    // google analytics
-    // ref: https://developers.google.com/analytics/devguides/collection/protocol/v1/reference
-    //
+    QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    workingDirectory = workingDir.filePath(QCoreApplication::applicationName());
+    qDebug() << "WORKING: " << workingDirectory;
 
-    QNetworkRequest request;
-    QUrl host("http://www.google-analytics.com/collect");
-    request.setUrl(host);
-    request.setHeader(QNetworkRequest::ContentTypeHeader,
-                      "application/x-www-form-urlencoded");
-
-    // setup parameters of request
-    QString requestParams;
-    QString hostname = QHostInfo::localHostName() + "." + QHostInfo::localDomainName();
-    QUuid uuid = QUuid::createUuid();
-    requestParams += "v=1"; // version of protocol
-    requestParams += "&tid=UA-121636495-1"; // Google Analytics account
-    requestParams += "&cid=" + uuid.toString(); // unique user identifier
-    requestParams += "&t=event";  // hit type = event others pageview, exception
-    requestParams += "&an=uqFEM"; // app name
-    requestParams += "&av=1.0.1"; // app version
-    requestParams += "&ec=uqFEM";   // event category
-    requestParams += "&ea=start"; // event action
-
-    // send post to google-analytics
-    manager->post(request, requestParams.toStdString().c_str());
-    // adding back ---
-
+    // create a temporrary directory to work in
+    QDir dirWork(workingDirectory);
+    if (!dirWork.exists())
+      if (!dirWork.mkpath(workingDirectory)) {
+	emit errorMessage(QString("Could not create Working Dir: ") + workingDirectory + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
+	return;
+      }
 }
 
 MainWindow::~MainWindow()
@@ -490,6 +455,7 @@ void MainWindow::onRunButtonClicked() {
     QString path = fileDir.absolutePath();// + QDir::separator();
 
     qDebug() << "workdir set to " << fileDir;
+
     if (! fileDir.exists()) {
       errorMessage(QString("Directory ") + path + QString(" specified does not exist!"));
       return;
@@ -502,28 +468,25 @@ void MainWindow::onRunButtonClicked() {
     //  
 
     // first, delete the tmp.SimCenter directory if it already exists ...
-    QString tmpSimCenterDirectoryName = path + QDir::separator() + QString("tmp.SimCenter");
+    QString tmpSimCenterDirectoryName = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
     QDir tmpSimCenterDirectory(tmpSimCenterDirectoryName);
     if(tmpSimCenterDirectory.exists()) {
         tmpSimCenterDirectory.removeRecursively();
     }
-    // .. and delete the dakotaTab from the previous run if they are in the main folder
-    QString dakotaTabFileName = path + QDir::separator() + QString("dakotaTab.out");
-    QFile DakotaTabFile(dakotaTabFileName);
-    if (DakotaTabFile.exists()) {
-        DakotaTabFile.remove();
-    }
 
-    QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
+    QString tmpDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
     qDebug() << "creating the temp directory and copying files there... " << tmpDirectory;
     copyPath(path, tmpDirectory, true);
     qDebug() << "creating the temp directory and copying files there...  - SUCCESSFUL";
 
     // special copy the of the main script to set up lines containg parameters for dakota
+
+    //    QString mainScriptTmp = workingDirectory + QDir::separator() + fileName;
     QString mainScriptTmp = tmpDirectory + QDir::separator() + fileName;
     qDebug() << "creating a special copy of the main FE model script... " << mainScriptTmp;
     fem->specialCopyMainInput(mainScriptTmp, random->getParametereNames());
     qDebug() << "creating a special copy of the main FE model script...  - SUCCESSFUL";
+
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
     //
@@ -546,8 +509,6 @@ void MainWindow::onRunButtonClicked() {
     file.write(doc.toJson());
     file.close();
 
-    qDebug() << "creating dakota input - SUCCESSFUL";
-
     //
     // now use the applications parseJSON file to run dakota and produce output files:
     //    dakota.in dakota.out dakotaTab.out dakota.err
@@ -556,12 +517,12 @@ void MainWindow::onRunButtonClicked() {
     QString homeDIR = QDir::homePath();
     QString appDIR = qApp->applicationDirPath();
 
-  //   appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
-  //    QDir::separator() + QString("localApp");
+    //   appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
+    //    QDir::separator() + QString("localApp");
 
     //
     QString pySCRIPT = appDIR +  QDir::separator() + QString("parseDAKOTA.py");
-    QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter");
+    QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
 
     //
     // check the python script exists
@@ -578,37 +539,23 @@ void MainWindow::onRunButtonClicked() {
     results->setResultWidget(0);
 
     //
-    // want to first remove old dakota files from the current directory
-    //
-
-    QString sourceDir = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator();
-    QString destinationDir = path + QDir::separator();
-
-    QStringList files;
-    files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
-
-    for (int i = 0; i < files.size(); i++) {
-        QString copy = files.at(i);
-        QFile file(destinationDir + copy);
-        file.remove();
-    }
-
-    //
     // now invoke dakota, done via a python script in tool app dircetory
     //
 
-
-
     QProcess *proc = new QProcess();
 
+    QString python("python");
+    QSettings settings("SimCenter", "Common"); 
+    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    if (pythonLocationVariant.isValid()) 
+      python = pythonLocationVariant.toString();
 
 #ifdef Q_OS_WIN
 
     QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
     qDebug() << "Executing parseDAKOTA.py... " << args;
-    proc->execute("python", args);
+    proc->execute(python, args);
     qDebug() << "Executing parseDAKOTA.py... - SUCCESSFUL" ;
-
 
     //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
     //qDebug() << command;
@@ -624,12 +571,12 @@ void MainWindow::onRunButtonClicked() {
     tDirectory = "\"" + tDirectory + "\"";
     tmpDirectory = "\"" + tmpDirectory + "\"";
 
-    QString command = QString("source $HOME/.bash_profile; source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+    QString command = QString("source $HOME/.bash_profile; source $HOME/.bashrc; \"") + python + QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
             tmpDirectory + QString(" runningLocal");
 
     qInfo() << QProcessEnvironment::systemEnvironment().value("PATH") << "\n";// system PATH
     qInfo() << command;
-
+    
     proc->execute("bash", QStringList() << "-c" <<  command);
 
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
@@ -637,32 +584,9 @@ void MainWindow::onRunButtonClicked() {
 
     proc->waitForStarted();
 
-    //
-    // now copy results file from tmp.SimCenter directory and remove tmp directory
-    //
 
-   for (int i = 0; i < files.size(); i++) {
-       QString copy = files.at(i);
-       QFile::copy(sourceDir + copy, destinationDir + copy);
-   }
-
-   //DEBUG
-   //QDir dirToRemove(sourceDir);
-   //dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
-                                    // so to debug you can simply comment it
-
-    //
-    // process the results
-    //
-   QDir desitinationDIR(destinationDir);
-
-    if (! desitinationDIR.exists("dakota.out")) {
-      errorMessage("Dakota did not run, check the path you provided in parseDakota or contact us");
-      return;
-    }
-
-    QString filenameOUT = destinationDir + tr("dakota.out");
-    QString filenameTAB = destinationDir + tr("dakotaTab.out");
+    QString filenameOUT = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota.out");
+    QString filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
 
     this->processResults(filenameOUT, filenameTAB);
 }
@@ -696,7 +620,7 @@ void MainWindow::onRemoteRunButtonClicked(){
     QString strUnique = uniqueName.toString();
     strUnique = strUnique.mid(1,36);
 
-    QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + strUnique + QDir::separator() + QString("templatedir");
+    QString tmpDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + strUnique + QDir::separator() + QString("templatedir");
     copyPath(path, tmpDirectory, true);
 
     // special copy the of the main script to set up lines containg parameters for dakota
@@ -736,7 +660,7 @@ void MainWindow::onRemoteRunButtonClicked(){
 
     //
     QString pySCRIPT = appDIR +  QDir::separator() + QString("parseDAKOTA.py");
-    QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter") + strUnique;
+    QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + strUnique;
 
     QFile pyDAKOTA(pySCRIPT);
     if (! pyDAKOTA.exists()) {
@@ -751,8 +675,8 @@ void MainWindow::onRemoteRunButtonClicked(){
     // want to first remove old dakota files from the current directory
     //
 
-    QString sourceDir = path + QDir::separator() + QString("tmp.SimCenter") + strUnique + QDir::separator();
-    QString destinationDir = path + QDir::separator();
+    QString sourceDir = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + strUnique + QDir::separator();
+    QString destinationDir = workingDirectory + QDir::separator();
 
     QStringList files;
     files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
@@ -770,11 +694,18 @@ void MainWindow::onRemoteRunButtonClicked(){
 
     QProcess *proc = new QProcess();
 
+    QString python("python");
+    QSettings settings("SimCenter", "Common"); 
+    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    if (pythonLocationVariant.isValid()) 
+      python = pythonLocationVariant.toString();
+
+
 #ifdef Q_OS_WIN
 
     QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningRemote"};
     qDebug() << args;
-    proc->execute("python", args);
+    proc->execute(python, args);
 
     //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     //qDebug() << command;
@@ -786,19 +717,18 @@ void MainWindow::onRemoteRunButtonClicked(){
     pySCRIPT = "\"" + pySCRIPT + "\"";
     tDirectory = "\"" + tDirectory + "\"";
     tmpDirectory = "\"" + tmpDirectory + "\"";
-    QString command = QString("source $HOME/.bashrc; source $HOME/.bash_profile; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
+    QString command = QString("source $HOME/.bashrc; source $HOME/.bash_profile; \"") + python +QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     proc->execute("bash", QStringList() << "-c" <<  command);
     qDebug() << command;
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
     proc->waitForStarted();
 
-
     //
     // in tmpDirectory we will zip up current template dir and then remove before sending (doone to reduce number of sends)
     //
 
-    QString tDirectory2 = path + QDir::separator() + QString("tmp.SimCenter") + strUnique;
+    QString tDirectory2 = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + strUnique;
     QString templateDIR(tDirectory2 + QDir::separator() + QString("templatedir"));
     QString zipFile(tDirectory2 + QDir::separator() + QString("templatedir.zip"));
     ZipUtils::ZipFolder(QDir(templateDIR), zipFile);
@@ -1137,14 +1067,17 @@ void MainWindow::createActions() {
     fileMenu->addAction(exitAction);
 
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
-    QAction *infoAct = helpMenu->addAction(tr("&About"), this, &MainWindow::about);
+    QAction *versionAct = helpMenu->addAction(tr("&Version"), this, &MainWindow::version);
+    QAction *aboutAct = helpMenu->addAction(tr("&About"), this, &MainWindow::about);
+    QAction *preferencesAct = helpMenu->addAction(tr("&Preferences"), this, &MainWindow::preferences);
+    //aboutAct->setStatusTip(tr("Show the application's About box"));
+    QAction *manualAct = helpMenu->addAction(tr("&Manual"), this, &MainWindow::manual);
     QAction *submitAct = helpMenu->addAction(tr("&Provide Feedback"), this, &MainWindow::submitFeedback);
-    //aboutAct->setStatusTip(tr("Show the application's About box"));
-    QAction *aboutAct = helpMenu->addAction(tr("&Version"), this, &MainWindow::version);
-    //aboutAct->setStatusTip(tr("Show the application's About box"));
+    QAction *submitFeature = helpMenu->addAction(tr("&Submit Feature Request"), this, &MainWindow::submitFeatureRequest);
+    QAction *citeAct = helpMenu->addAction(tr("&How to Cite"), this, &MainWindow::cite);
     QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindow::copyright);
-    //aboutAct->setStatusTip(tr("Show the application's About box"));
 
+    thePreferences = new SimCenterPreferences(this);
 }
 
 
@@ -1222,7 +1155,12 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 1.1.0 "));
+                       tr("Version 1.1.1 "));
+}
+
+void MainWindow::preferences()
+{
+  thePreferences->show();
 }
 
 void MainWindow::about()
@@ -1248,7 +1186,30 @@ void MainWindow::about()
 
 void MainWindow::submitFeedback()
 {
-   // QDesktopServices::openUrl(QUrl("https://github.com/NHERI-SimCenter/MDOF/issues", QUrl::TolerantMode));
- QDesktopServices::openUrl(QUrl("https://www.designsafe-ci.org/help/new-ticket/", QUrl::TolerantMode));
+  QString feedbackURL = QString("https://docs.google.com/forms/d/e/1FAIpQLSfh20kBxDmvmHgz9uFwhkospGLCeazZzL770A2GuYZ2KgBZBA/viewform");
+
+    QDesktopServices::openUrl(QUrl(feedbackURL, QUrl::TolerantMode));
 }
 
+void MainWindow::submitFeatureRequest()
+{
+  QString featureRequestURL = QString("https://docs.google.com/forms/d/e/1FAIpQLScTLkSwDjPNzH8wx8KxkyhoIT7AI9KZ16Wg9TuW1GOhSYFOag/viewform");
+    QDesktopServices::openUrl(QUrl(featureRequestURL, QUrl::TolerantMode));
+}
+
+void MainWindow::manual()
+{
+  QString featureRequestURL = QString("https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community//SimCenter/Software/uqFEM");
+    QDesktopServices::openUrl(QUrl(featureRequestURL, QUrl::TolerantMode));
+}
+
+void MainWindow::cite()
+{
+  QString citeText = QString("Frank McKenna, Nikhil Padhye, Charles Wang, Peter Mackenzie-Helnwein, & Michael Gardner. (2018, October 1). NHERI-SimCenter/uqFEM: Release V1.1.0 (Version v1.1.0). Zenodo. http://doi.org/10.5281/zenodo.1439497");  
+    QMessageBox msgBox;
+    QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    msgBox.setText(citeText);
+    QGridLayout *layout = (QGridLayout*)msgBox.layout();
+    layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
+    msgBox.exec();
+}

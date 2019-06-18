@@ -59,6 +59,7 @@ class QLabel;
 class QThread;
 class QNetworkAccessManager;
 class QNetworkReply;
+class SimCenterPreferences;
 
 class MainWindow : public QMainWindow
 {
@@ -103,11 +104,14 @@ signals:
     void loadFile(const QString &fileName);
     void processResults(QString &filename1, QString & filename2);
 
-
     void about();
+    void manual();
     void submitFeedback();
+    void submitFeatureRequest();
     void version();
+    void preferences();
     void copyright();
+    void cite();
 
  private:
     void setCurrentFile(const QString &fileName);
@@ -138,6 +142,9 @@ signals:
 
     QThread *thread;
     QNetworkAccessManager *manager;
+
+    SimCenterPreferences *thePreferences;
+    QString workingDirectory;
 };
 
 #endif // MAINWINDOW_H

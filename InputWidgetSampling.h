@@ -92,7 +92,7 @@ private:
     QLineEdit   *randomSeed;
     //    QPushButton *run;
     QCheckBox *sobolevCheckBox;
-    //int flagForSobolevIndices;
+    int flagForSobolevIndices;
 
     QComboBox   *uqSelection;
     QWidget     *uqSpecific;
