@@ -1,6 +1,3 @@
-#ifndef INPUTWIDGET_SAMPLING_H
-#define INPUTWIDGET_SAMPLING_H
-
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -20,7 +17,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -37,74 +34,15 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
+#include <RemoteService.h>
 
-#include <InputWidgetDakotaMethod.h>
-
-#include "EDP.h"
-#include <QGroupBox>
-#include <QVector>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QPushButton>
-
-class DakotaSamplingResults;
-class DakotaResults;
-class QCheckBox;
-class InputWidgetEDP;
-class RandomVariablesContainer;
-class QStackedWidget;
-class UQ_MethodInputWidget;
-
-class InputWidgetSampling : public InputWidgetDakotaMethod
+RemoteService::RemoteService(QObject *parent)
+:QObject(parent)
 {
-    Q_OBJECT
-public:
-    explicit InputWidgetSampling(QWidget *parent = 0);
-    ~InputWidgetSampling();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
+}
 
-    int processResults(QString &filenameResults, QString &filenameTab);
+RemoteService::~RemoteService()
+{
 
-    DakotaResults *getResults(void);
-    RandomVariablesContainer  *getParameters();
-
-    int getMaxNumParallelTasks(void);
-
-    QVBoxLayout *mLayout;
-
-signals:
-
-public slots:
-   void clear(void);
-   void uqSelectionChanged(const QString &arg1);
-   //void setSobolevFlag(bool);// added by padhye for sobolev indices
-   void onTextChanged(QString);
- //  void uqMethodChanged(const QString &arg1);
-
-private:
-    QVBoxLayout *layout;
-    QWidget     *methodSpecific;
-    QComboBox   *samplingMethod;
-    QLineEdit   *numSamples;
-    QLineEdit   *randomSeed;
-    //    QPushButton *run;
-    QCheckBox *sobolevCheckBox;
-    int flagForSobolevIndices;
-
-    QComboBox   *uqSelection;
-    QWidget     *uqSpecific;
-
-    RandomVariablesContainer *theParameters;
-    InputWidgetEDP *theEdpWidget;
-    DakotaSamplingResults *results;
-
-    QStackedWidget *theStackedWidget;
-    UQ_MethodInputWidget *theCurrentMethod;
-    UQ_MethodInputWidget *theMC;
-    UQ_MethodInputWidget *theLHS;
-};
-
-#endif // INPUTWIDGET_SAMPLING_H
+}

@@ -60,6 +60,7 @@ SOURCES += main.cpp\
     AgaveCurl.cpp \
     RemoteService.cpp \
     CustomizedItemModel.cpp \
+    UQ_MethodInputWidget.cpp \
     MonteCarloInputWidget.cpp \
     LatinHypercubeInputWidget.cpp
 
@@ -87,6 +88,7 @@ HEADERS  += MainWindow.h \
     RemoteJobManager.h \
     AgaveCurl.h \
     RemoteService.h \
+    UQ_MethodInputWidget.h \
     MonteCarloInputWidget.h \
     LatinHypercubeInputWidget.h \
     CustomizedItemModel.h

@@ -65,7 +65,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QStackedWidget>
 #include <MonteCarloInputWidget.h>
-#include <LatinHypercubeINputWidget.h>
+#include <LatinHypercubeInputWidget.h>
 
 InputWidgetSampling::InputWidgetSampling(QWidget *parent)
 : InputWidgetDakotaMethod(parent),uqSpecific(0)
@@ -337,7 +337,7 @@ InputWidgetSampling::~InputWidgetSampling()
 
 int 
 InputWidgetSampling::getMaxNumParallelTasks(void){
-  return 10;
+  return theCurrentMethod->getNumberTasks();
 }
 
 void InputWidgetSampling::clear(void)

@@ -39,10 +39,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterWidget.h>
+#include <UQ_MethodInputWidget.h>
 class QLineEdit;
 
-class LatinHypercubeInputWidget : public SimCenterWidget
+class LatinHypercubeInputWidget : public UQ_MethodInputWidget
 {
     Q_OBJECT
 public:
@@ -52,6 +52,8 @@ public:
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
     void clear(void);
+
+    int getNumberTasks(void);
 
 private:
     QLineEdit *randomSeed;

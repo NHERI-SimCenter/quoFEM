@@ -37,7 +37,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 
 #include <LatinHypercubeInputWidget.h>
-#include <SimCenterWidget.h>
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include <QLabel>
@@ -45,7 +44,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QJsonObject>
 
 LatinHypercubeInputWidget::LatinHypercubeInputWidget(QWidget *parent) 
-: SimCenterWidget(parent)
+: UQ_MethodInputWidget(parent)
 {
 
   QVBoxLayout *mLayout = new QVBoxLayout();
@@ -129,3 +128,8 @@ LatinHypercubeInputWidget::clear(void)
 }
 
 
+int
+LatinHypercubeInputWidget::getNumberTasks()
+{
+  return numSamples->text().toInt();
+}
