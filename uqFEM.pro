@@ -58,6 +58,7 @@ SOURCES += main.cpp\
     MyTableWidget.cpp \
     RemoteJobManager.cpp \
     AgaveCurl.cpp \
+    RemoteService.cpp \
     CustomizedItemModel.cpp \
     MonteCarloInputWidget.cpp \
     LatinHypercubeInputWidget.cpp
@@ -85,6 +86,7 @@ HEADERS  += MainWindow.h \
     MyTableWidget.h \
     RemoteJobManager.h \
     AgaveCurl.h \
+    RemoteService.h \
     MonteCarloInputWidget.h \
     LatinHypercubeInputWidget.h \
     CustomizedItemModel.h
