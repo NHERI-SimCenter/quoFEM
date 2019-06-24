@@ -22,7 +22,7 @@ win32:INCLUDEPATH += "C:/Adam/Qt/curl/include"
 win32:LIBS += C:/Adam/Qt/curl/lib/libcurl.lib
 #win32:INCLUDEPATH+=../libCurl-7.59.0/include
 #win32:LIBS += ../libCurl-7.59.0/lib/libcurl.lib
-
+linux:LIBS += /usr/lib/x86_64-linux-gnu/libcurl.so
 
 win32 {
     RC_ICONS = icons/NHERI-UQFEM-Icon.ico
