@@ -131,7 +131,6 @@ signals:
     RemoteJobCreator *jobCreator;
     RemoteJobManager *jobManager;
 
-
     bool loggedIn;
     QWidget *loginWindow;            // popup window for when login clicked
     QLineEdit *nameLineEdit;         // username line edit

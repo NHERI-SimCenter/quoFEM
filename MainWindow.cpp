@@ -62,6 +62,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <DakotaResults.h>
 #include <InputWidgetParameters.h>
 #include <RandomVariablesContainer.h>
+#include <GoogleAnalytics.h>
 
 #include <DakotaResultsSampling.h>
 
@@ -373,6 +374,17 @@ MainWindow::MainWindow(QWidget *parent)
 	emit errorMessage(QString("Could not create Working Dir: ") + workingDirectory + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
 	return;
       }
+
+    QSettings settings("SimCenter", "Common");
+    QVariant  loginName = settings.value("loginAgave");
+    QVariant  loginPassword = settings.value("passwordAgave");
+    if (loginName.isValid()) {
+        nameLineEdit->setText(loginName.toString());      
+    }
+    if (loginPassword.isValid()) {
+        passwordLineEdit->setText(loginPassword.toString());      
+    }
+
 }
 
 MainWindow::~MainWindow()
@@ -440,6 +452,9 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
 void MainWindow::onRunButtonClicked() {
 
     errorMessage("");
+
+    GoogleAnalytics::ReportLocalRun();
+
 
     //
     // get program & input file from fem widget
@@ -598,6 +613,8 @@ void MainWindow::onRemoteRunButtonClicked(){
           errorMessage("ERROR - You Need to Login");
           return;
     }
+
+    GoogleAnalytics::ReportDesignSafeRun();
 
     //
     // get program & input file from fem widget
@@ -805,6 +822,11 @@ MainWindow::attemptLoginReturn(bool ok){
         loginWindow->hide();
         loggedIn = true;
         loginButton->setText("Logout");
+
+	QSettings settings("SimCenter", "Common");
+	settings.setValue("loginAgave", nameLineEdit->text());
+	settings.setValue("passwordAgave", passwordLineEdit->text());
+
         //this->enableButtons();
 
         //theJobManager->up
@@ -1077,7 +1099,7 @@ void MainWindow::createActions() {
     QAction *citeAct = helpMenu->addAction(tr("&How to Cite"), this, &MainWindow::cite);
     QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindow::copyright);
 
-    thePreferences = new SimCenterPreferences(this);
+    thePreferences = SimCenterPreferences::getInstance();
 }
 
 
@@ -1170,7 +1192,7 @@ void MainWindow::about()
               sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
              quantification in the structural responses and parameter estimation of input variables in calibration studies.\
              <p>\
-             Version 1.0 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
+             Version 1 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
              will repeatedly invoke the finite element application either locally on the users dekstop machine or remotely\
              on high performance computing resources at the Texas Advanced Computing Center through the NHERI DesignSafe cyberinfrastructure.\
              <p>\
