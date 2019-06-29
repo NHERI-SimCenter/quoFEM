@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = uqFEM
 TEMPLATE = app
 
-VERSION=1.1.0
+VERSION=1.1.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 INCLUDEPATH += ../SimCenterCommon/RandomVariables
