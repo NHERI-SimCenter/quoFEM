@@ -29,15 +29,15 @@ run_type = inputArgs[3]
 if run_type in ['runningLocal',]:
     # MAC
     if (sys.platform == 'darwin'):
-        OpenSees = 'PATH TO OpenSees'
-        Feap = 'PATH TO feappv'
-        Dakota = 'PATH TO dakota'
+        OpenSees = 'OpenSees'
+        Feap = 'feappv'
+        Dakota = 'dakota'
         numCPUs = 1
 
     # Windows
     else:
         OpenSees = 'OpenSees'
-        Feap = 'PATH TO Feappv41.exe'
+        Feap = 'Feappv41.exe'
         Dakota = 'dakota'
         numCPUs = 1
 

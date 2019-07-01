@@ -54,7 +54,7 @@ MonteCarloInputWidget::MonteCarloInputWidget(QWidget *parent)
   QLabel *label2 = new QLabel();
   label2->setText(QString("# Samples"));
   numSamples = new QLineEdit();
-  numSamples->setText(tr("1000"));
+  numSamples->setText(tr("10"));
   numSamples->setMaximumWidth(100);
   numSamples->setMinimumWidth(100);
   numSamples->setValidator(new QIntValidator);  
