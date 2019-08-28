@@ -204,26 +204,72 @@ numResponses=0
 responseDescriptors=[]
 
 if uq_method == "Sampling":
+    
     samplingData = uq_data["samplingMethodData"]
     method = samplingData["method"]
-    numSamples=samplingData["samples"]
-    seed = samplingData["seed"]
+    
+    if method == "Importance Sampling":
+        numSamples=samplingData["samples"]
+        seed = samplingData["seed"]
+        imp_sams_arg = samplingData["ismethod"]
 
-    dakota_input += (
-"""sampling
-sample_type = {sample_type}
-samples = {samples}
-seed = {seed}
+        dakota_input += (
+    """importance_sampling
+    {ismethod}
+    samples = {samples}
+    seed = {seed}
+    
+    """.format(
+        ismethod = imp_sams_arg,
+        samples = numSamples,
+        seed = seed))
+    
+        edps = samplingData["edps"]
+        for edp in edps:
+            responseDescriptors.append(edp["name"])
+            numResponses += 1
 
-""".format(
-    sample_type = 'random' if method == 'Monte Carlo' else 'lhs',
-    samples = numSamples,
-    seed = seed))
+    elif method == "Monte Carlo":
+        numSamples=samplingData["samples"]
+        seed = samplingData["seed"]
 
-    edps = samplingData["edps"]
-    for edp in edps:
-        responseDescriptors.append(edp["name"])
-        numResponses += 1
+        dakota_input += (
+    """sampling
+    sample_type = {sample_type}
+    samples = {samples}
+    seed = {seed}
+    
+    """.format(
+        sample_type = 'random',
+        samples = numSamples,
+        seed = seed))
+    
+        edps = samplingData["edps"]
+        for edp in edps:
+            responseDescriptors.append(edp["name"])
+            numResponses += 1
+
+    elif method == "LHS":
+        numSamples=samplingData["samples"]
+        seed = samplingData["seed"]        
+
+        dakota_input += (
+    """sampling
+    sample_type = {sample_type}
+    samples = {samples}
+    seed = {seed}
+    
+    """.format(
+        sample_type = 'lhs' ,
+        samples = numSamples,
+        seed = seed))
+    
+        edps = samplingData["edps"]
+        for edp in edps:
+            responseDescriptors.append(edp["name"])
+            numResponses += 1
+
+
 
 elif uq_method == 'Calibration':
     calibrationData = uq_data["calibrationMethodData"]
@@ -534,16 +580,46 @@ if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
 # write out the responses
 
 if uq_method == "Sampling":
-    dakota_input += (
-"""responses,
-response_functions = {numResponses}
-response_descriptors = {responseDescriptors}
-no_gradients
-no_hessians
+    
+    samplingData = uq_data["samplingMethodData"]
+    method = samplingData["method"]
+    
+    if method == "Monte Carlo":       
+        dakota_input += (
+    """responses,
+    response_functions = {numResponses}
+    response_descriptors = {responseDescriptors}
+    no_gradients
+    no_hessians
+    
+    """.format(
+        numResponses = numResponses,
+        responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
+    
+    elif method == "LHS":
+        dakota_input += (
+    """responses,
+    response_functions = {numResponses}
+    response_descriptors = {responseDescriptors}
+    no_gradients
+    no_hessians
+    
+    """.format(
+        numResponses = numResponses,
+        responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
-""".format(
-    numResponses = numResponses,
-    responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
+    elif method == "Importance Sampling":
+        dakota_input += (
+    """responses,
+    response_functions = {numResponses}
+    response_descriptors = {responseDescriptors}
+    no_gradients
+    no_hessians
+    
+    """.format(
+        numResponses = numResponses,
+        responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
+        
 
 elif uq_method == "Calibration":
     dakota_input += (
