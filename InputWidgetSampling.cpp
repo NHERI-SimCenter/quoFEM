@@ -66,6 +66,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStackedWidget>
 #include <MonteCarloInputWidget.h>
 #include <LatinHypercubeInputWidget.h>
+#include <ImportanceSamplingInputWidget.h>
 
 InputWidgetSampling::InputWidgetSampling(QWidget *parent)
 : InputWidgetDakotaMethod(parent),uqSpecific(0)
@@ -84,6 +85,7 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     samplingMethod->setMinimumWidth(200);
     samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
+    samplingMethod->addItem(tr("Importance Sampling"));
 
     /*
     samplingMethod->addItem(tr("Multilevel Monte Carlo"));
@@ -105,12 +107,15 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     //
 
     theStackedWidget = new QStackedWidget();
+
     theLHS = new LatinHypercubeInputWidget();
-
-
     theStackedWidget->addWidget(theLHS);
+
     theMC = new MonteCarloInputWidget();
     theStackedWidget->addWidget(theMC);
+
+    theIS = new ImportanceSamplingInputWidget();
+    theStackedWidget->addWidget(theIS);
 
     // set current widget to index 0
     theCurrentMethod = theLHS;
@@ -137,13 +142,17 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
 
 void InputWidgetSampling::onTextChanged(QString text)
 {
-  if (text=="Latin Hypercube Sampling") {
+  if (text=="LHS") {
     theStackedWidget->setCurrentIndex(0);
     theCurrentMethod = theLHS;
   }
-  else if (text=="Monte Carlo Sampling") {
+  else if (text=="Monte Carlo") {
     theStackedWidget->setCurrentIndex(1);
     theCurrentMethod = theMC;  
+  }
+  else if (text=="Importance Sampling") {
+    theStackedWidget->setCurrentIndex(2);
+    theCurrentMethod = theIS;
   }
     /*
     } else if (text=="Quadrature") {
