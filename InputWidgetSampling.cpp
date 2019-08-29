@@ -1,6 +1,3 @@
-// Written: fmckenna
-
-// added and modified: padhye
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -38,8 +35,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
-
 #include "InputWidgetSampling.h"
 #include <DakotaResultsSampling.h>
 #include <RandomVariablesContainer.h>
@@ -67,6 +62,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <MonteCarloInputWidget.h>
 #include <LatinHypercubeInputWidget.h>
 #include <ImportanceSamplingInputWidget.h>
+#include <GaussianProcessInputWidget.h>
 
 InputWidgetSampling::InputWidgetSampling(QWidget *parent)
 : InputWidgetDakotaMethod(parent),uqSpecific(0)
@@ -86,6 +82,7 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
     samplingMethod->addItem(tr("Importance Sampling"));
+    samplingMethod->addItem(tr("Gaussian Process Regression"));
 
     /*
     samplingMethod->addItem(tr("Multilevel Monte Carlo"));
@@ -116,6 +113,9 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
 
     theIS = new ImportanceSamplingInputWidget();
     theStackedWidget->addWidget(theIS);
+
+    theGP = new GaussianProcessInputWidget();
+    theStackedWidget->addWidget(theGP);
 
     // set current widget to index 0
     theCurrentMethod = theLHS;
@@ -154,37 +154,12 @@ void InputWidgetSampling::onTextChanged(QString text)
     theStackedWidget->setCurrentIndex(2);
     theCurrentMethod = theIS;
   }
+  else if (text=="Gaussian Process Regression") {
+    theStackedWidget->setCurrentIndex(3);
+    theCurrentMethod = theGP;
+  }
     /*
     } else if (text=="Quadrature") {
-
-        // create layout label and entry for dimension
-        QVBoxLayout *dimLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("Dimension"));
-        numSamples = new QLineEdit();
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-        dimLayout->addWidget(label2);
-        dimLayout->addWidget(numSamples);
-
-        mLayout->addLayout(dimLayout);
-        mLayout->addStretch(1);
-
-        // create label and entry for level
-        QVBoxLayout *levelLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Level"));
-        srand(time(NULL));
-        randomSeed = new QLineEdit();
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-        levelLayout->addWidget(label3);
-        levelLayout->addWidget(randomSeed);
-
-        mLayout->addLayout(levelLayout);
-        mLayout->addStretch(1);
-
-    } else if (text=="Sparse Grid Quadrature") {
 
         // create layout label and entry for dimension
         QVBoxLayout *dimLayout= new QVBoxLayout;
@@ -242,69 +217,7 @@ void InputWidgetSampling::onTextChanged(QString text)
         mLayout->addLayout(chaosLayout);
         mLayout->addStretch(1);
 
-    } else if (text=="Surrogate - Gaussian Process") {
-
-        // create layout label and entry for dimension
-        QVBoxLayout *covKLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("Cov Kernel Type"));
-        numSamples = new QLineEdit();
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-        covKLayout->addWidget(label2);
-        covKLayout->addWidget(numSamples);
-
-        mLayout->addLayout(covKLayout);
-        mLayout->addStretch(1);
-
-
-        // create label and entry for level
-        QVBoxLayout *corrLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Correlation length"));
-        srand(time(NULL));
-        randomSeed = new QLineEdit();
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-        corrLayout->addWidget(label3);
-        corrLayout->addWidget(randomSeed);
-
-        mLayout->addLayout(corrLayout);
-        mLayout->addStretch(1);
-
-    } else if (text=="Importance Sampling") {
-
-        // create layout label and entry for # samples
-        QVBoxLayout *samplesLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("# Samples"));
-        numSamples = new QLineEdit();
-        numSamples->setText(tr("1000"));
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-        samplesLayout->addWidget(label2);
-        samplesLayout->addWidget(numSamples);
-
-        mLayout->addLayout(samplesLayout);
-        mLayout->addStretch(1);
-
-        // create label and entry for seed to layout
-        QVBoxLayout *seedLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Seed"));
-        srand(time(NULL));
-        int randomNumber = rand() % 1000 + 1;
-        randomSeed = new QLineEdit();
-        randomSeed->setText(QString::number(randomNumber));
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-        seedLayout->addWidget(label3);
-        seedLayout->addWidget(randomSeed);
-
-        mLayout->addLayout(seedLayout);
-        mLayout->addStretch(1);
-
-    } else if (text=="Multilevel Monte Carlo") {
+    }  else if (text=="Multilevel Monte Carlo") {
 
         // create layout label and entry for # samples
         QVBoxLayout *samplesLayout= new QVBoxLayout;
@@ -392,15 +305,15 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
       theCurrentMethod->inputFromJSON(uq);
   std::cerr << "sobolev";
       if (uq.contains("sobolev_indices") && uq.contains("samples")) {
-	std::cerr << "HELLO SOBOLEV\n";
-	flagForSobolevIndices = uq["sobolev_indices"].toInt();
-	sobolevCheckBox->setChecked(true);
-	// set the sobolevFlag
+    std::cerr << "HELLO SOBOLEV\n";
+    flagForSobolevIndices = uq["sobolev_indices"].toInt();
+    sobolevCheckBox->setChecked(true);
+    // set the sobolevFlag
       }
       else {
-	std::cerr << "HELLO NO SOBOLEV\n";
-	flagForSobolevIndices = 0;
-	sobolevCheckBox->setChecked(false);
+    std::cerr << "HELLO NO SOBOLEV\n";
+    flagForSobolevIndices = 0;
+    sobolevCheckBox->setChecked(false);
       }
 
       result = theEdpWidget->inputFromJSON(uq);
