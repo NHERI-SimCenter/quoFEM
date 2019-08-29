@@ -97,7 +97,7 @@ private:
     QComboBox   *uqSelection;
     QWidget     *uqSpecific;
 
-    RandomVariablesContainer *theParameters;
+    RandomVariablesContainer *theRandomVariables;
     InputWidgetEDP *theEdpWidget;
     DakotaSamplingResults *results;
 

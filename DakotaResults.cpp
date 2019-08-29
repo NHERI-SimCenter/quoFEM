@@ -44,9 +44,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <DakotaResultsSampling.h>
 #include <QMessageBox>
 #include <QDebug>
+#include <RandomVariablesContainer.h>
 
 DakotaResults::DakotaResults(QWidget *parent)
-    : SimCenterWidget(parent), resultWidget(0)
+: SimCenterWidget(parent), resultWidget(0)
 {
     layout = new QVBoxLayout();
     layout->setContentsMargins(0,0,0,0);
@@ -93,13 +94,14 @@ DakotaResults::inputFromJSON(QJsonObject &jsonObject)
 
         // NOTE: this is kinda kludgy, this class need to know what subclasses enter here
         // so that we can create object of correct type .. this should be done by this class
+	/*
         if (resultType == QString("DakotaResultsSampling")) {
             newResultWidget = new DakotaResultsSampling();
             result = newResultWidget->inputFromJSON(uq);
             this->setResultWidget(newResultWidget);
             result = true;
         }
-
+	*/
     } else {
         emit sendErrorMessage("ERROR: Dakota Results - no \"uqResults\" entry");
         return false;

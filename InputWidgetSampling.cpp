@@ -421,11 +421,12 @@ int InputWidgetSampling::processResults(QString &filenameResults, QString &filen
 
 DakotaResults *
 InputWidgetSampling::getResults(void) {
-    return new DakotaResultsSampling();
+    return new DakotaResultsSampling(theRandomVariables);
 }
 
 RandomVariablesContainer *
 InputWidgetSampling::getParameters(void) {
-    QString classType("Uncertain");
-  return new RandomVariablesContainer(classType);
+  QString classType("Uncertain");
+  theRandomVariables =  new RandomVariablesContainer(classType);
+  return theRandomVariables;
 }
