@@ -37,8 +37,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
-
 #include <InputWidgetDakotaMethod.h>
 
 #include "EDP.h"
@@ -106,6 +104,7 @@ private:
     UQ_MethodInputWidget *theMC;
     UQ_MethodInputWidget *theLHS;
     UQ_MethodInputWidget *theIS;
+    UQ_MethodInputWidget *theGP;
 };
 
 #endif // INPUTWIDGET_SAMPLING_H

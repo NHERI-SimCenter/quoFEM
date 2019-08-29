@@ -63,7 +63,8 @@ SOURCES += main.cpp\
     UQ_MethodInputWidget.cpp \
     MonteCarloInputWidget.cpp \
     LatinHypercubeInputWidget.cpp \
-    ImportanceSamplingInputWidget.cpp
+    ImportanceSamplingInputWidget.cpp \
+    GaussianProcessInputWidget.cpp
 
 
 HEADERS  += MainWindow.h \
@@ -93,7 +94,8 @@ HEADERS  += MainWindow.h \
     MonteCarloInputWidget.h \
     LatinHypercubeInputWidget.h \
     CustomizedItemModel.h \
-    ImportanceSamplingInputWidget.h
+    ImportanceSamplingInputWidget.h \
+    GaussianProcessInputWidget.h
 
 FORMS    += mainwindow.ui
 
