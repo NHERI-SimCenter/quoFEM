@@ -63,6 +63,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <LatinHypercubeInputWidget.h>
 #include <ImportanceSamplingInputWidget.h>
 #include <GaussianProcessInputWidget.h>
+#include <PCEInputWidget.h>
 
 InputWidgetSampling::InputWidgetSampling(QWidget *parent)
 : InputWidgetDakotaMethod(parent),uqSpecific(0)
@@ -83,6 +84,7 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     samplingMethod->addItem(tr("Monte Carlo"));
     samplingMethod->addItem(tr("Importance Sampling"));
     samplingMethod->addItem(tr("Gaussian Process Regression"));
+    samplingMethod->addItem(tr("Polynomial Chaos Expansion"));
 
     /*
     samplingMethod->addItem(tr("Multilevel Monte Carlo"));
@@ -116,6 +118,9 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
 
     theGP = new GaussianProcessInputWidget();
     theStackedWidget->addWidget(theGP);
+
+    thePCE = new PCEInputWidget();
+    theStackedWidget->addWidget(thePCE);
 
     // set current widget to index 0
     theCurrentMethod = theLHS;
@@ -157,6 +162,10 @@ void InputWidgetSampling::onTextChanged(QString text)
   else if (text=="Gaussian Process Regression") {
     theStackedWidget->setCurrentIndex(3);
     theCurrentMethod = theGP;
+  }
+  else if (text=="Polynomial Chaos Expansion") {
+    theStackedWidget->setCurrentIndex(4);
+    theCurrentMethod = thePCE;
   }
     /*
     } else if (text=="Quadrature") {

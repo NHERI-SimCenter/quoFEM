@@ -105,6 +105,7 @@ private:
     UQ_MethodInputWidget *theLHS;
     UQ_MethodInputWidget *theIS;
     UQ_MethodInputWidget *theGP;
+    UQ_MethodInputWidget *thePCE;
 };
 
 #endif // INPUTWIDGET_SAMPLING_H

@@ -64,7 +64,8 @@ SOURCES += main.cpp\
     MonteCarloInputWidget.cpp \
     LatinHypercubeInputWidget.cpp \
     ImportanceSamplingInputWidget.cpp \
-    GaussianProcessInputWidget.cpp
+    GaussianProcessInputWidget.cpp \
+    PCEInputWidget.cpp
 
 
 HEADERS  += MainWindow.h \
@@ -95,7 +96,8 @@ HEADERS  += MainWindow.h \
     LatinHypercubeInputWidget.h \
     CustomizedItemModel.h \
     ImportanceSamplingInputWidget.h \
-    GaussianProcessInputWidget.h
+    GaussianProcessInputWidget.h \
+    PCEInputWidget.h
 
 FORMS    += mainwindow.ui
 
