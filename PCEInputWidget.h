@@ -5,6 +5,8 @@
 #include <QLineEdit>
 #include <QComboBox>
 
+class QGridLayout;
+
 class PCEInputWidget : public UQ_MethodInputWidget
 {
     Q_OBJECT
@@ -14,6 +16,7 @@ public:
 signals:
 
 public slots:
+    void dataMethodChanged(int);
 
 
 public:
@@ -26,7 +29,9 @@ public:
 private:
     QLineEdit *randomSeed;
     QLineEdit *numSamples;
+    QLineEdit *level;
     QComboBox* dataMethod;
+    QGridLayout *layout;
 
 };
 
