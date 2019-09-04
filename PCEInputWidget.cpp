@@ -40,8 +40,8 @@ PCEInputWidget::PCEInputWidget(QWidget *parent) : UQ_MethodInputWidget(parent)
     level = new QLineEdit();
     level->setText(tr("5"));
     level->setValidator(new QIntValidator);
-    level->setToolTip("Specify the number of levels");
-    layout->addWidget(new QLabel("# Levels"), 3, 0);
+    level->setToolTip("Specify the quadrature levels");
+    layout->addWidget(new QLabel("Quadrature Level"), 3, 0);
     layout->addWidget(level, 3, 1);
 
     layout->itemAtPosition(3,0)->widget()->hide();

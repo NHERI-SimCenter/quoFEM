@@ -29,9 +29,9 @@ ImportanceSamplingInputWidget::ImportanceSamplingInputWidget(QWidget *parent) : 
 
     layout->addWidget(new QLabel("Method"), 2, 0);
     isMethod = new QComboBox();
-    isMethod->addItem("import");
-    isMethod->addItem("adapt_import");
-    isMethod->addItem("mm_adapt_import");
+    isMethod->addItem("Basic Sampling", "import");
+    isMethod->addItem("Adaptive Sampling", "adapt_import");
+    isMethod->addItem("Multimodal Adaptive Sampling", "mm_adapt_import");
     layout->addWidget(isMethod);
     layout->setRowStretch(3, 1);
     layout->setColumnStretch(2, 1);
@@ -45,7 +45,7 @@ bool ImportanceSamplingInputWidget::outputToJSON(QJsonObject &jsonObject)
     bool result = true;
     jsonObject["samples"]=numSamples->text().toInt();
     jsonObject["seed"]=randomSeed->text().toDouble();
-    jsonObject["ismethod"]=isMethod->currentText();
+    jsonObject["ismethod"]=isMethod->currentData().toString();
     return result;
 }
 
