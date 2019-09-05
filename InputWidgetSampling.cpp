@@ -137,12 +137,6 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
 
     connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
 
-  // add a checkbox for Sobolev index
-  qDebug() << "Creating Sobolev\n";
-  sobolevCheckBox =new QCheckBox("Sobolev Index");
-  connect(sobolevCheckBox,SIGNAL(clicked(bool)),this,SLOT(setSobolevFlag(bool)));
-  flagForSobolevIndices=0;
-
 }
 
 void InputWidgetSampling::onTextChanged(QString text)
@@ -286,9 +280,6 @@ InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
     uq["method"]=samplingMethod->currentText();
     theCurrentMethod->outputToJSON(uq);
 
-
-    if (flagForSobolevIndices == 1)
-      uq["sobelov_indices"]=flagForSobolevIndices;
     result = theEdpWidget->outputToJSON(uq);
 
     jsonObject["samplingMethodData"]=uq;
@@ -312,22 +303,11 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
       QString method =uq["method"].toString();
       this->uqSelectionChanged(method);
       theCurrentMethod->inputFromJSON(uq);
-  std::cerr << "sobolev";
-      if (uq.contains("sobolev_indices") && uq.contains("samples")) {
-    std::cerr << "HELLO SOBOLEV\n";
-    flagForSobolevIndices = uq["sobolev_indices"].toInt();
-    sobolevCheckBox->setChecked(true);
-    // set the sobolevFlag
-      }
-      else {
-    std::cerr << "HELLO NO SOBOLEV\n";
-    flagForSobolevIndices = 0;
-    sobolevCheckBox->setChecked(false);
-      }
 
       result = theEdpWidget->inputFromJSON(uq);
     }
   }
+  
   return result;
 }
 

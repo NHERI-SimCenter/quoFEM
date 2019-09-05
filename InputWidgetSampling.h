@@ -78,7 +78,6 @@ signals:
 public slots:
    void clear(void);
    void uqSelectionChanged(const QString &arg1);
-   //void setSobolevFlag(bool);// added by padhye for sobolev indices
    void onTextChanged(QString);
  //  void uqMethodChanged(const QString &arg1);
 
@@ -89,8 +88,6 @@ private:
     QLineEdit   *numSamples;
     QLineEdit   *randomSeed;
     //    QPushButton *run;
-    QCheckBox *sobolevCheckBox;
-    int flagForSobolevIndices;
 
     QComboBox   *uqSelection;
     QWidget     *uqSpecific;
