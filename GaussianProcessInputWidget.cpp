@@ -3,18 +3,22 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QJsonObject>
+#include <QGroupBox>
 
 GaussianProcessInputWidget::GaussianProcessInputWidget(QWidget *parent) : UQ_MethodInputWidget(parent)
 {
-    auto layout = new QGridLayout();
+    //auto layout = new QGridLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
 
     // create layout label and entry for # samples
+    QGroupBox *trainingDataGroup = new QGroupBox("Training Data");
+    QGridLayout * trainingDataLayout = new QGridLayout();
     numSamples = new QLineEdit();
     numSamples->setText(tr("10"));
     numSamples->setValidator(new QIntValidator);
     numSamples->setToolTip("Specify the number of samples");
-    layout->addWidget(new QLabel("Data"), 0, 0);
-    layout->addWidget(numSamples, 0, 1);
+    trainingDataLayout->addWidget(new QLabel("Data"), 0, 0);
+    trainingDataLayout->addWidget(numSamples, 0, 1);
 
     // create label and entry for seed to layout
     srand(time(NULL));
@@ -23,17 +27,22 @@ GaussianProcessInputWidget::GaussianProcessInputWidget(QWidget *parent) : UQ_Met
     randomSeed->setText(QString::number(randomNumber));
     randomSeed->setValidator(new QIntValidator);
     randomSeed->setToolTip("Set the seed");
-    layout->addWidget(new QLabel("Seed"), 1, 0);
-    layout->addWidget(randomSeed, 1, 1);
+    trainingDataLayout->addWidget(new QLabel("Seed"), 1, 0);
+    trainingDataLayout->addWidget(randomSeed, 1, 1);
 
-    layout->addWidget(new QLabel("Method for Data Generation"), 2, 0);
+    trainingDataLayout->addWidget(new QLabel("Method for Data Generation"), 2, 0);
     dataMethod = new QComboBox();
     dataMethod->addItem("LHS");
     dataMethod->addItem("Monte Carlo");
     dataMethod->addItem("Other");
-    layout->addWidget(dataMethod);
-    layout->setRowStretch(3, 1);
-    layout->setColumnStretch(2, 1);
+    trainingDataLayout->addWidget(dataMethod,2,1);
+    trainingDataGroup->setLayout(trainingDataLayout);
+
+    layout->addWidget(trainingDataGroup);
+    layout->addStretch();
+
+    //layout->setRowStretch(3, 1);
+    //layout->setColumnStretch(2, 1);
 
     this->setLayout(layout);
 }
