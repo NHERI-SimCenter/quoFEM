@@ -1,4 +1,4 @@
-# written: fmk, adamzs
+# written: UQ team @ SimCenter
 
 # import functions for Python 2.X support
 from __future__ import division, print_function
@@ -109,6 +109,7 @@ betaUncertainName=[]
 betaUncertainLower =[]
 betaUncertainHigher =[]
 betaUncertainAlphas =[]
+betaUncertainBetas = []
 
 for rnd_var in rnd_data:
     if (rnd_var["distribution"] == 'Normal'):
@@ -172,29 +173,13 @@ for rnd_var in rnd_data:
         uncertainName.append(rnd_var["name"])
         numUncertain += 1
         betaUncertainName.append(rnd_var["name"])
-        betaUncertainLower.append(rnd_var["upperBounds"])
-        betaUncertainUpper.append(rnd_var["lowerBounds"])
+        betaUncertainHigher.append(rnd_var["upperBounds"])
+        betaUncertainLower.append(rnd_var["lowerBounds"])
         betaUncertainAlphas.append(rnd_var["alphas"])
         betaUncertainBetas.append(rnd_var["betas"])
         numBetaUncertain += 1
 
 # Write the dakota input file: dakota.in 
-
-dakota_input = ""
-
-# write out the env data
-
-#f.write("environment\n")
-#f.write("tabular_data\n")
-#f.write("tabular_data_file = \'dakotaTab.out\'\n\n")
-
-dakota_input += (
-"""environment
-tabular_data
-tabular_data_file = 'dakotaTab.out'
-
-method,
-""")
 
 # write out the method data
 
@@ -207,6 +192,17 @@ if uq_method == "Sampling":
     
     samplingData = uq_data["samplingMethodData"]
     method = samplingData["method"]
+    
+    # write out the env data
+    dakota_input = ""
+    
+    dakota_input += (
+    """environment
+    tabular_data
+    tabular_data_file = 'dakotaTab.out'
+    
+    method,
+    """)
     
     if method == "Importance Sampling":
         numSamples=samplingData["samples"]
@@ -270,12 +266,63 @@ if uq_method == "Sampling":
             numResponses += 1
 
 
+    elif method == "Gaussian Process Regression":
+        train_samples = samplingData["samples"]
+        gpr_seed = samplingData["seed"]
+        train_method = samplingData["dataMethod"]
+        
+        # write out the env data
+        dakota_input = ""
+        
+        dakota_input += (
+        """environment
+method_pointer = 'EvalSurrogate'
+tabular_data
+tabular_data_file = 'dakotaTab.out'
+custom_annotated header eval_id
+        
+method
+id_method = 'EvalSurrogate'
+model_pointer = 'SurrogateModel'
+        
+sampling
+samples = 1000
+seed = 999
+sample_type lhs
+        
+model
+id_model = 'SurrogateModel'
+surrogate global
+dace_method_pointer = 'DesignMethod'
+gaussian_process surfpack
+export_model
+filename_prefix = 'dak_gp_model'
+formats
+text_archive
+        
+""")
+
+        edps = samplingData["edps"]
+        for edp in edps:
+            responseDescriptors.append(edp["name"])
+            numResponses += 1
 
 elif uq_method == 'Calibration':
     calibrationData = uq_data["calibrationMethodData"]
     convergenceTol=calibrationData["convergenceTol"]
     maxIter = calibrationData["maxIterations"]
     method = calibrationData["method"]
+
+    # write out the env data
+    dakota_input = ""
+    
+    dakota_input += (
+    """environment
+    tabular_data
+    tabular_data_file = 'dakotaTab.out'
+    
+    method,
+    """)
 
     dakota_input += (
 """{method_type}
@@ -296,6 +343,17 @@ elif uq_method == 'Bayesian_Calibration':
     samplingData = uq_data["bayesian_calibration_method_data"]
     chainSamples=samplingData["chain_samples"]
     seed = samplingData["seed"]
+
+    # write out the env data
+    dakota_input = ""
+    
+    dakota_input += (
+    """environment
+    tabular_data
+    tabular_data_file = 'dakotaTab.out'
+    
+    method,
+    """)
 
     dakota_input += (
 """bayes_calibration dream
@@ -555,12 +613,50 @@ if (numWeibullUncertain > 0):
 
 dakota_input += ('\n')
 
+
+if uq_method == "Sampling":
+    
+    samplingData = uq_data["samplingMethodData"]
+    method = samplingData["method"]
+    
+    if method == "Gaussian Process Regression":
+        
+        train_samples = samplingData["samples"]
+        gpr_seed = samplingData["seed"]
+        train_method = samplingData["dataMethod"]
+
+        dakota_input += (
+        """method
+id_method = 'DesignMethod'
+model_pointer = 'SimulationModel'
+sampling
+seed = {setseed}
+sample_type {settype}
+samples = {setsamples}
+        
+model
+id_model = 'SimulationModel'
+single
+interface_pointer = 'SimulationInterface'
+        
+""").format(
+    setseed = gpr_seed,
+    settype = train_method,
+    setsamples = train_samples
+    )
+        
+
 # write out the interface data
 
 femProgram = fem_data["program"]
 
 if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
     dakota_input += ('interface,\n')
+    if uq_method == "Sampling":
+        samplingData = uq_data["samplingMethodData"]
+        method = samplingData["method"]
+        if method == "Gaussian Process Regression":
+            dakota_input += ('id_interface = \'SimulationInterface\',\n')
     #dakota_input += ('system # asynch evaluation_concurrency = 8')
     #dakota_input += ('fork asynchronous evaluation_concurrency = ' '{}'.format(numCPUs))
     if run_type in ['runningLocal',]:
@@ -609,6 +705,18 @@ if uq_method == "Sampling":
         responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
     elif method == "Importance Sampling":
+        dakota_input += (
+    """responses,
+    response_functions = {numResponses}
+    response_descriptors = {responseDescriptors}
+    no_gradients
+    no_hessians
+    
+    """.format(
+        numResponses = numResponses,
+        responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
+
+    elif method == "Gaussian Process Regression":
         dakota_input += (
     """responses,
     response_functions = {numResponses}
