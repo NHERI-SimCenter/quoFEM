@@ -271,6 +271,10 @@ if uq_method == "Sampling":
         gpr_seed = samplingData["seed"]
         train_method = samplingData["dataMethod"]
         
+        train_samples2 = samplingData["samples2"]
+        gpr_seed2 = samplingData["seed2"]
+        train_method2 = samplingData["dataMethod2"]
+        
         # write out the env data
         dakota_input = ""
         
@@ -286,9 +290,9 @@ id_method = 'EvalSurrogate'
 model_pointer = 'SurrogateModel'
         
 sampling
-samples = 1000
-seed = 999
-sample_type lhs
+samples = {no_surr_sams}
+seed = {surr_seed}
+sample_type {surr_sams_type}
         
 model
 id_model = 'SurrogateModel'
@@ -300,7 +304,10 @@ filename_prefix = 'dak_gp_model'
 formats
 text_archive
         
-""")
+""").format(
+        no_surr_sams = train_samples2,
+        surr_seed = gpr_seed2,
+        surr_sams_type = train_method2)
 
         edps = samplingData["edps"]
         for edp in edps:

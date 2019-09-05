@@ -27,7 +27,9 @@ private:
     QLineEdit *randomSeed;
     QLineEdit *numSamples;
     QComboBox* dataMethod;
-
+    QLineEdit *randomSeed2;
+    QLineEdit *numSamples2;
+    QComboBox* dataMethod2;
 };
 
 #endif // GAUSSIANPROCESSINPUTWIDGET
