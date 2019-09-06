@@ -873,11 +873,6 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
         edpData["mean"]=theMeans.at(i);
         edpData["stdDev"]=theStdDevs.at(i);
         resultsData.append(edpData);
-
-        //        qDebug()<<"\the value of edpData is     \n";
-        //        qDebug()<<edpData<<"\n  ";
-        //        qDebug()<<edpData["name"]<<edpData["mean"]<<"\n";
-
     }
 
     //  qDebug()<<"\n I am exiting here     ";
@@ -887,9 +882,6 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
 
     jsonObject["summary"]=resultsData;
 
-
-    // add general data
-    jsonObject["general"]=dakotaText->toPlainText();
 
     //
     // add spreadsheet data
@@ -967,14 +959,6 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     }
     summaryLayout->addStretch();
 
-    //
-    // into a QTextEdit place more detailed Dakota text
-    //
-
-    dakotaText = new QTextEdit();
-    dakotaText->setReadOnly(true); // make it so user cannot edit the contents
-    QJsonValue theValue = jsonObject["general"];
-    dakotaText->setText(theValue.toString());
 
     //
     // into a spreadsheet place all the data returned
@@ -1038,7 +1022,6 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     //
 
     tabWidget->addTab(summary,tr("Summmary"));
-    tabWidget->addTab(dakotaText, tr("General"));
     tabWidget->addTab(widget, tr("Data Values"));
 
     tabWidget->adjustSize();

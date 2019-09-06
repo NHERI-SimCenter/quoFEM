@@ -80,7 +80,7 @@ public slots:
 private:
    RandomVariablesContainer *theRVs;
    QTabWidget *tabWidget;
-   QTextEdit  *dakotaText;
+
    MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
    QChart *chart;
    QPushButton* save_spreadheet; // save the data from spreadsheet
