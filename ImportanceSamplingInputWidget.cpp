@@ -13,7 +13,7 @@ ImportanceSamplingInputWidget::ImportanceSamplingInputWidget(QWidget *parent) : 
     numSamples->setValidator(new QIntValidator);
     numSamples->setToolTip("Specify the number of samples");
 
-    layout->addWidget(new QLabel("Samples"), 0, 0);
+    layout->addWidget(new QLabel("# Samples"), 0, 0);
     layout->addWidget(numSamples, 0, 1);
 
     // create label and entry for seed to layout

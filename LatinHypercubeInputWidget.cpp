@@ -46,49 +46,31 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 LatinHypercubeInputWidget::LatinHypercubeInputWidget(QWidget *parent) 
 : UQ_MethodInputWidget(parent)
 {
+    auto layout = new QGridLayout();
 
-  QVBoxLayout *mLayout = new QVBoxLayout();
+    // create layout label and entry for # samples
+    numSamples = new QLineEdit();
+    numSamples->setText(tr("10"));
+    numSamples->setValidator(new QIntValidator);
+    numSamples->setToolTip("Specify the number of samples");
 
-  // create layout label and entry for # samples
-  QVBoxLayout *samplesLayout= new QVBoxLayout;
-  QLabel *label2 = new QLabel();
-  label2->setText(QString("# Samples"));
-  numSamples = new QLineEdit();
-  numSamples->setText(tr("10"));
-  numSamples->setMaximumWidth(100);
-  numSamples->setMinimumWidth(100);
-  numSamples->setValidator(new QIntValidator);  
-  numSamples->setToolTip("Some text about num samples");
+    layout->addWidget(new QLabel("# Samples"), 0, 0);
+    layout->addWidget(numSamples, 0, 1);
 
-  samplesLayout->addWidget(label2);
-  samplesLayout->addWidget(numSamples);
+    // create label and entry for seed to layout
+    srand(time(NULL));
+    int randomNumber = rand() % 1000 + 1;
+    randomSeed = new QLineEdit();
+    randomSeed->setText(QString::number(randomNumber));
+    randomSeed->setValidator(new QIntValidator);
+    randomSeed->setToolTip("Set the seed");
 
+    layout->addWidget(new QLabel("Seed"), 1, 0);
+    layout->addWidget(randomSeed, 1, 1);
 
-  mLayout->addLayout(samplesLayout);
-  mLayout->addStretch(1);
-  
-  // create label and entry for seed to layout
-  QVBoxLayout *seedLayout= new QVBoxLayout;
-  QLabel *label3 = new QLabel();
-  label3->setText(QString("Seed"));
-  srand(time(NULL));
-  int randomNumber = rand() % 1000 + 1;
-  randomSeed = new QLineEdit();
-  randomSeed->setText(QString::number(randomNumber));
-  randomSeed->setMaximumWidth(100);
-  randomSeed->setMinimumWidth(100);
-  randomSeed->setValidator(new QIntValidator);    
-  randomSeed->setToolTip("Some text about seed");
-
-  seedLayout->addWidget(label3);
-  seedLayout->addWidget(randomSeed);
-
-
-
-  mLayout->addLayout(seedLayout);
-  mLayout->addStretch(1);
-
-  this->setLayout(mLayout);
+    layout->setRowStretch(2, 1);
+    layout->setColumnStretch(2, 1);
+    this->setLayout(layout);
 }
 
 LatinHypercubeInputWidget::~LatinHypercubeInputWidget()
