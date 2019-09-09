@@ -52,6 +52,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetSampling.h>
 #include <InputWidgetCalibration.h>
 #include <InputWidgetBayesianCalibration.h>
+#include <InputWidgetReliability.h>
 
 
 InputWidgetUQ::InputWidgetUQ(QWidget *parent)
@@ -88,6 +89,7 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     uqSelection->addItem(tr("Sampling"));
     uqSelection->addItem(tr("Calibration"));
     uqSelection->addItem(tr("Bayesian Calibration"));
+    uqSelection->addItem(tr("Reliability"));
 
     connect(uqSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(uqSelectionChanged(QString)));
 
@@ -201,6 +203,10 @@ void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
         delete dakotaMethod;
         dakotaMethod = new InputWidgetSampling();
 
+    } else if (arg1 == QString("Reliability")) {
+        delete dakotaMethod;
+        dakotaMethod = new InputWidgetReliability();
+    
     } else if (arg1 == QString("Calibration")) {
         delete dakotaMethod;
         dakotaMethod = new InputWidgetCalibration();
