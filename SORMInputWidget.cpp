@@ -36,14 +36,14 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <FORMInputWidget.h>
+#include <SORMInputWidget.h>
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QValidator>
 #include <QJsonObject>
 
-FORMInputWidget::FORMInputWidget(QWidget *parent) 
+SORMInputWidget::SORMInputWidget(QWidget *parent) 
 : UQ_MethodInputWidget(parent)
 {
 
@@ -89,13 +89,13 @@ FORMInputWidget::FORMInputWidget(QWidget *parent)
   this->setLayout(mLayout);
 }
 
-FORMInputWidget::~FORMInputWidget()
+SORMInputWidget::~SORMInputWidget()
 {
 
 }
 
 bool
-FORMInputWidget::outputToJSON(QJsonObject &jsonObj){
+SORMInputWidget::outputToJSON(QJsonObject &jsonObj){
 
     bool result = true;
     jsonObj["reliability_Scheme"]=reliabilityScheme->currentText();
@@ -104,13 +104,13 @@ FORMInputWidget::outputToJSON(QJsonObject &jsonObj){
 }
 
 bool
-FORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
+SORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
 
 
 }
 
 void
-FORMInputWidget::clear(void)
+SORMInputWidget::clear(void)
 {
 
 }
@@ -118,7 +118,7 @@ FORMInputWidget::clear(void)
 
 
 int
-FORMInputWidget::getNumberTasks()
+SORMInputWidget::getNumberTasks()
 {
 
 }

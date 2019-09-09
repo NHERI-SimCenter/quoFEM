@@ -67,7 +67,8 @@ SOURCES += main.cpp\
     GaussianProcessInputWidget.cpp \
     PCEInputWidget.cpp \ 
     InputWidgetReliability.cpp \
-    FORMInputWidget.cpp 
+    FORMInputWidget.cpp \
+    SORMInputWidget.cpp
 
 
 HEADERS  += MainWindow.h \
@@ -101,7 +102,8 @@ HEADERS  += MainWindow.h \
     GaussianProcessInputWidget.h \
     PCEInputWidget.h \
     InputWidgetReliability.h \
-    FORMInputWidget.h 
+    FORMInputWidget.h \
+    SORMInputWidget.h
 
 FORMS    += mainwindow.ui
 

@@ -39,6 +39,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 #include <UQ_MethodInputWidget.h>
+#include <QComboBox>
+
 class QLineEdit;
 
 class FORMInputWidget : public UQ_MethodInputWidget
@@ -55,8 +57,8 @@ public:
     int getNumberTasks(void);
 
 private:
-    QLineEdit *mppMethod;
-    QLineEdit *reliabilityScheme;
+    QComboBox *mppMethod;
+    QComboBox *reliabilityScheme;
 };
 
 #endif // FORM_INPUT_WIDGET_H

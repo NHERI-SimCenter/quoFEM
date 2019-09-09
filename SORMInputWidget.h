@@ -1,3 +1,6 @@
+#ifndef SORM_INPUT_WIDGET_H
+#define SORM_INPUT_WIDGET_H
+
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -34,91 +37,28 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
 
-#include <FORMInputWidget.h>
-#include <QLineEdit>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QValidator>
-#include <QJsonObject>
+#include <UQ_MethodInputWidget.h>
+#include <QComboBox>
 
-FORMInputWidget::FORMInputWidget(QWidget *parent) 
-: UQ_MethodInputWidget(parent)
+class QLineEdit;
+
+class SORMInputWidget : public UQ_MethodInputWidget
 {
+    Q_OBJECT
+public:
+    explicit SORMInputWidget(QWidget *parent = 0);
+    ~SORMInputWidget();
 
-  QVBoxLayout *mLayout = new QVBoxLayout();
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
+    void clear(void);
 
-  // create layout label and entry for # samples
-  QVBoxLayout *samplesLayout= new QVBoxLayout;
-  QLabel *label2 = new QLabel();
-  label2->setText(QString("Reliability Scheme"));
-  reliabilityScheme = new QComboBox();
-  reliabilityScheme->setMaximumWidth(100);
-  reliabilityScheme->setMinimumWidth(100);
-  reliabilityScheme->addItem(tr("Local"));
-  reliabilityScheme->addItem(tr("Global"));  
-  reliabilityScheme->setToolTip("Set reliability scheme:  local vs global");
+    int getNumberTasks(void);
 
-  samplesLayout->addWidget(label2);
-  samplesLayout->addWidget(reliabilityScheme);
+private:
+    QComboBox *mppMethod;
+    QComboBox *reliabilityScheme;
+};
 
-  mLayout->addLayout(samplesLayout);
-  mLayout->addStretch(1);
-  
-  // create label and entry for seed to layout
-  QVBoxLayout *seedLayout= new QVBoxLayout;
-  QLabel *label3 = new QLabel();
-  label3->setText(QString("MPP Search Method"));
-  mppMethod = new QComboBox();
-  mppMethod->setMaximumWidth(100);
-  mppMethod->setMinimumWidth(100);
-  mppMethod->addItem(tr("no_approx"));
-  mppMethod->addItem(tr("x_taylor_mean"));
-  mppMethod->addItem(tr("u_taylor_mean"));   
-  mppMethod->setToolTip("Set the search method for the Most Probable Point");
-
-  seedLayout->addWidget(label3);
-  seedLayout->addWidget(mppMethod);
-
-
-
-  mLayout->addLayout(seedLayout);
-  mLayout->addStretch(1);
-
-  this->setLayout(mLayout);
-}
-
-FORMInputWidget::~FORMInputWidget()
-{
-
-}
-
-bool
-FORMInputWidget::outputToJSON(QJsonObject &jsonObj){
-
-    bool result = true;
-    jsonObj["reliability_Scheme"]=reliabilityScheme->currentText();
-    jsonObj["mpp_Method"]=mppMethod->currentText();
-    return result;    
-}
-
-bool
-FORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
-
-
-}
-
-void
-FORMInputWidget::clear(void)
-{
-
-}
-
-
-
-int
-FORMInputWidget::getNumberTasks()
-{
-
-}
+#endif // SORM_INPUT_WIDGET_H

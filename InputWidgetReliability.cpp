@@ -60,6 +60,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QStackedWidget>
 #include <FORMInputWidget.h>
+#include <SORMInputWidget.h>
 
 InputWidgetReliability::InputWidgetReliability(QWidget *parent)
 : InputWidgetDakotaMethod(parent),uqSpecific(0)
