@@ -135,7 +135,6 @@ for rnd_var in rnd_data:
     elif (rnd_var["distribution"] == "Uniform"):
         uncertainName.append(rnd_var["name"])
         numUncertain += 1
-        print("Hellooo,, Setting lower upper bounds...")
         uniformUncertainName.append(rnd_var["name"])
         uniformUncertainLower.append(rnd_var["lowerbound"])
         uniformUncertainUpper.append(rnd_var["upperbound"])
@@ -313,6 +312,55 @@ text_archive
         for edp in edps:
             responseDescriptors.append(edp["name"])
             numResponses += 1
+
+
+elif uq_method == 'Reliability':
+
+    sampling_data = uq_data["samplingMethodData"]
+    rel_method = sampling_data["method"]       # [FORM, SORM]
+    mpp_method = sampling_data["mpp_Method"]      # [no_approx, ...]
+    rel_scheme = sampling_data["reliability_Scheme"]      # [local, global]
+
+    edps = sampling_data["edps"]
+    for edp in edps:
+        responseDescriptors.append(edp["name"])
+        numResponses += 1
+    
+    write_order = ""    
+    if rel_method == "FORM":
+        write_order = "first_order"
+    elif rel_method == "SORM":
+        write_order = "second_order"
+
+    write_scheme = ""
+    if rel_scheme == "Local":
+        write_scheme = "local_reliability"
+    elif rel_scheme == "Global":
+        write_scheme = "global_reliability"
+
+    # write out the env data
+    dakota_input = ""    
+        
+    dakota_input += (
+    """environment
+output_file 'dakotaTab.out'
+
+method
+{set_reliability_scheme}
+mpp_search {mpp_search_method}
+integration {set_reliability_order}
+probability_levels = .02 .04 .06  .08 .10 
+ .12 .14 .16 .18 .20 .22 .24 .26 .28 .30
+ .32 .34 .36 .38 .40 .42 .44 .46 .48 .50
+ .52 .54 .56 .58 .60 .62 .64 .66 .68 .70
+ .72 .74 .76 .78 .80 .82 .84 .86 .88 .90
+ .92 .94 .96 .98 
+
+""").format(
+    mpp_search_method = mpp_method,
+    set_reliability_order = write_order,
+    set_reliability_scheme = write_scheme)
+
 
 elif uq_method == 'Calibration':
     calibrationData = uq_data["calibrationMethodData"]
@@ -734,6 +782,24 @@ if uq_method == "Sampling":
     """.format(
         numResponses = numResponses,
         responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
+
+
+elif uq_method == 'Reliability':
+       
+    # write out the env data
+    dakota_input += (
+    """responses,
+response_functions = {numResponses}
+response_descriptors = {responseDescriptors}
+numerical_gradients
+method_source dakota
+interval_type central
+fd_step_size = 1.e-4
+no_hessians
+    
+    """.format(
+        numResponses = numResponses,
+        responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))  
         
 
 elif uq_method == "Calibration":
