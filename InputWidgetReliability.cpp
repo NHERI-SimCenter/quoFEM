@@ -73,7 +73,7 @@ InputWidgetReliability::InputWidgetReliability(QWidget *parent)
 
     QVBoxLayout *methodLayout= new QVBoxLayout;
     QLabel *label1 = new QLabel();
-    label1->setText(QString("Integration Order"));
+    label1->setText(QString("Reliability Order"));
     samplingMethod = new QComboBox();
     samplingMethod->setMaximumWidth(200);
     samplingMethod->setMinimumWidth(200);
