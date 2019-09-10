@@ -65,7 +65,10 @@ SOURCES += main.cpp\
     LatinHypercubeInputWidget.cpp \
     ImportanceSamplingInputWidget.cpp \
     GaussianProcessInputWidget.cpp \
-    PCEInputWidget.cpp
+    PCEInputWidget.cpp \ 
+    InputWidgetReliability.cpp \
+    FORMInputWidget.cpp \
+    SORMInputWidget.cpp
 
 
 HEADERS  += MainWindow.h \
@@ -97,7 +100,10 @@ HEADERS  += MainWindow.h \
     CustomizedItemModel.h \
     ImportanceSamplingInputWidget.h \
     GaussianProcessInputWidget.h \
-    PCEInputWidget.h
+    PCEInputWidget.h \
+    InputWidgetReliability.h \
+    FORMInputWidget.h \
+    SORMInputWidget.h
 
 FORMS    += mainwindow.ui
 
