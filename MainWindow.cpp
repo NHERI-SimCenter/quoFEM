@@ -131,7 +131,7 @@ MainWindow::MainWindow(QWidget *parent)
     //
     QString tenant("designsafe");
     QString storage("agave://designsafe.storage.default/");
-    QString dirName("uqFEM");
+    QString dirName("quoFEM");
 
     //theRemoteInterface = new AgaveCLI(tenant, storage, this);
     theRemoteInterface =  new AgaveCurl(tenant, storage, &dirName);
@@ -161,7 +161,7 @@ MainWindow::MainWindow(QWidget *parent)
     //
 
     HeaderWidget *header = new HeaderWidget();
-    header->setHeadingText(tr("uqFEM Application"));
+    header->setHeadingText(tr("quoFEM Application"));
     layout->addWidget(header);
 
     // place a location for messages;
@@ -1188,7 +1188,7 @@ void MainWindow::preferences()
 void MainWindow::about()
 {
     QString textAbout = "\
-              This is the open-source uqFEM tool. It is an application intended to augment finite element applications with\
+              This is the open-source quoFEM tool. It is an application intended to augment finite element applications with\
               sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
              quantification in the structural responses and parameter estimation of input variables in calibration studies.\
              <p>\

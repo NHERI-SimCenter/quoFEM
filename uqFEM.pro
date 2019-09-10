@@ -25,10 +25,10 @@ win32:LIBS += C:/Adam/Qt/curl/lib/libcurl.lib
 linux:LIBS += /usr/lib/x86_64-linux-gnu/libcurl.so
 
 win32 {
-    RC_ICONS = icons/NHERI-UQFEM-Icon.ico
+    RC_ICONS = icons/NHERI-quoFEM-Icon.ico
 } else {
     mac {
-    ICON = icons/NHERI-UQFEM-Icon.icns
+    ICON = icons/NHERI-quoFEM-Icon.icns
     }
 }
 
