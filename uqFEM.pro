@@ -8,10 +8,10 @@ QT       += core gui charts concurrent network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = uqFEM
+TARGET = quoFEM
 TEMPLATE = app
 
-VERSION=1.1.1
+VERSION=2.0.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 INCLUDEPATH += ../SimCenterCommon/RandomVariables
