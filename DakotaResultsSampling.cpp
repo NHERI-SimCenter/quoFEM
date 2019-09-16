@@ -38,7 +38,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // added and modified: padhye
 
 #include "DakotaResultsSampling.h"
-#include "InputWidgetFEM.h"
+//#include "InputWidgetFEM.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -69,11 +69,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QLabel>
-#include <InputWidgetFEM.h>
+//#include <InputWidgetFEM.h>
 #include <InputWidgetUQ.h>
 #include <MainWindow.h>
 
-#include <InputWidgetFEM.h>
+//#include <InputWidgetFEM.h>
 #include <InputWidgetUQ.h>
 #include <MainWindow.h>
 
@@ -116,14 +116,16 @@ DakotaResultsSampling::~DakotaResultsSampling()
 
 void DakotaResultsSampling::clear(void)
 {
-    QWidget *res=tabWidget->widget(0);
-    QWidget *gen=tabWidget->widget(0);
-    QWidget *dat=tabWidget->widget(0);
+    // delete any existing widgets
+    int count = tabWidget->count();
+    if (count > 0) {
+        for (int i=0; i<count; i++) {
+            QWidget *theWidget = tabWidget->widget(count);
+            delete theWidget;
+        }
+    }
 
     tabWidget->clear();
-    delete dat;
-    delete gen;
-    delete res;
 }
 
 
@@ -183,6 +185,11 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 {
     emit sendStatusMessage(tr("Processing SampingResults"));
 
+    this->clear();
+    mLeft = true;
+    col1 = 0;
+    col2 = 0;
+
     //
     // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
     //
@@ -215,20 +222,29 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     std::istringstream iss(inputLine);
     int colCount = 0;
     theHeadings << "Run #";
-    do
-    {
+    bool includesInterface = false;
+    do {
         std::string subs;
         iss >> subs;
-        if (colCount > 1) {
+        qDebug() << "subs: " << QString(subs.c_str());
+        if (colCount > 0) {
             if (subs != " ") {
-                theHeadings << subs.c_str();
-                //qDebug()<<"\n the value of subs.c_str() is      "<<subs.c_str()<<"\n";
+                if (subs != "interface")
+                    theHeadings << subs.c_str();
+                else
+                    includesInterface = true;
             }
         }
         colCount++;
     } while (iss);
 
-    colCount = colCount-2;
+    if (includesInterface == true)
+        colCount = colCount-2;
+    else
+        colCount = colCount -1;
+
+    qDebug() << "colCount: " << colCount << " " << includesInterface;
+
     spreadsheet->setColumnCount(colCount);
     spreadsheet->setHorizontalHeaderLabels(theHeadings);
 
@@ -244,7 +260,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
         for (int i=0; i<colCount+2; i++) {
             std::string data;
             is >> data;
-            if (i != 1) {
+            if ((includesInterface == true && i != 1) || (includesInterface == false)) {
                 QModelIndex index = spreadsheet->model()->index(rowCount, col);
                 spreadsheet->model()->setData(index, data.c_str());
                 col++;
@@ -260,7 +276,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     //
 
 
-    for (int col = theRVs->getNumRandomVariables() +1; col<colCount; ++col) { // +1 for first col which is nit an RV
+    for (int col = theRVs->getNumRandomVariables()+1; col<colCount; ++col) { // +1 for first col which is nit an RV
         // compute the mean
         double sum_value=0;
         for(int row=0;row<rowCount;++row) {
@@ -317,111 +333,31 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     QChartView *chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->chart()->legend()->hide();
-    //
-    // into QWidget place chart and spreadsheet
-    //
-    best_fit_label_text = new QLabel();
 
 
-    QVBoxLayout *plotting_instructions_layout = new QVBoxLayout;
-
-
-    QLabel *label = new QLabel();
-
-    label->setStyleSheet("QLabel { background-color : white; color : gray; }");
-
-    //label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    label->setText("PLOTTING INSTRUCTIONS:\n \n 1. First left click on a column cell plots \n "
-                   "the corresponding column on Y-axis without \n changing the X-axis.\n\n "
-                   "2. A subsequent right click on the same column plots its \n cumulative "
-                   "probability distribution, and a subsequent\nleft click plots a histogram with best fit distribution."
-                   );
-    QFont f( "Helvetica [Cronyx]", 10, QFont::Normal);
-    label->setFont(f);
-    label->setAlignment(Qt::AlignTop);
-
-    QLineEdit *plotting_instructions1 = new QLineEdit();
-    QLineEdit *plotting_instructions2 = new QLineEdit();
-
-    plotting_instructions1->setText("Plotting Instructions:\n");
-
-    plotting_instructions1->setText("First left click on a column");
-
-    //    plotting_instructions->setText(instructions_text);
-
-
-    //variablenameLineEdit->(variable_name);
-    //plotting_instructions->setAlignment(Qt::AlignTrailing);
-
-
-    //\n\n"
-    //    "\n\n");
-    //label->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-    //txt->setStandardButtons(QMessageBox->Save);
-    //txt->icon(0);
-    //txt->removeButton(0);
-    //txt->setText("Left click on the column of the spreadsheet provides the distribution.\n \n Single right click provides"
-    //"the cumulative distribution. \n\n Two consecutive provide the distribution histogram and best fit ditribution. ");
     QWidget *widget = new QWidget();
-    //  QVBoxLayout *layout = new QVBoxLayout(widget);    // this was originally done by frank
-    //padhye changed to grid layout
     QGridLayout *layout = new QGridLayout(widget);
     QPushButton* save_spreadsheet = new QPushButton();
     save_spreadsheet->setText("Save Data");
     save_spreadsheet->setToolTip(tr("Save data into file in a CSV format"));
     save_spreadsheet->resize(30,30);
     connect(save_spreadsheet,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetClicked()));
-    //QMenu *fileMenu = new QMenu(spreadsheet);
-    //fileMenu->addMenu("File");
+
     layout->addWidget(chartView, 0,0,1,1);
     layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
     layout->addWidget(spreadsheet,2,0,1,1);
-    layout->addWidget(best_fit_label_text,2,1,1,1,Qt::AlignTop);
-    layout->addWidget(label,0,1,1,Qt::AlignTop);
-    //   layout->addWidget(plotting_instructions1,0,1,1,Qt::AlignTop);
-    //  layout->addWidget(plotting_instructions2,0,1,1,Qt::AlignTop);
-
-    //layout->setColumnMinimumWidth(1,250);
-
-    // QLabel *best_fit_instructions=new QLabel(this);
-
-    // layout->addWidget(best_fit_instructions,1,1,Qt::AlignLeft);
-
-    //layout->addWidget(label,0,1,1,1,Qt::AlignLeft);
-
-
-
-    //plotting_instructions_layout->addWidget(label);
-    //plotting_instructions_layout->addWidget(plotting_instructions);
-    //label->setMaximumWidth(200);
-    //plotting_instructions->setMaximumWidth(200);
-
-    //plotting_instructions_layout->setSizeConstraint(QLayout::SetDefaultConstraint);//SetMaximumSize(QSize(300,400));
-    //plotting_instructions_layout->maximumSize(100);
-    //layout->addLayout(plotting_instructions_layout,0,1,1,1,Qt::AlignLeft);
-
-
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
     //
 
     tabWidget->addTab(summary,tr("Summary"));
-    //    tabWidget->addTab(dakotaText, tr("General"));
     tabWidget->addTab(widget, tr("Data Values"));
-
     tabWidget->adjustSize();
 
     return 0;
 }
 
-//padhye 8/15/2018, this is where we are setting signals to click on the spread sheet and
-//then deciding what to plot.
-
-// if the the spreadsheet is clicked anywhere, then corresponding to the cell cliked
-// we emit a signal and come here. Otherwise it won't come here.
-
-// by the way, the code will come to this routine for the default plot.
 
 void
 DakotaResultsSampling::onSaveSpreadsheetClicked()

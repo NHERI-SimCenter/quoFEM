@@ -293,7 +293,7 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
 {
   bool result = false;
   this->clear();
-  std::cerr << "STARTED";
+
   //
   // get sampleingMethodData, if not present it's an error
   
