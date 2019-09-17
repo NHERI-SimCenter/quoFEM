@@ -44,6 +44,7 @@ SOURCES += main.cpp\
         InputWidgetFEM.cpp \
         InputWidgetUQ.cpp \
         InputWidgetSampling.cpp \
+        InputWidgetSensitivity.cpp \
         DakotaResults.cpp \
         DakotaResultsSampling.cpp \
         DakotaResultsCalibration.cpp \
@@ -78,6 +79,7 @@ HEADERS  += MainWindow.h \
     SidebarWidgetSelection.h \
     InputWidgetUQ.h \
     InputWidgetSampling.h \
+    InputWidgetSensitivity.h \
     DakotaResults.h \
     DakotaResultsSampling.h \
     InputWidgetCalibration.h \
