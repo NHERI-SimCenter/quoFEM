@@ -12,6 +12,7 @@ else:
 import json
 import os
 import sys
+import numpy as np
 from subprocess import Popen, PIPE
 
 inputArgs = sys.argv
@@ -665,6 +666,30 @@ if (numWeibullUncertain > 0):
         dakota_input += (weibullUncertainName[i])
         dakota_input += ('\' ')
     dakota_input += ('\n')
+
+
+if (uq_method == "Reliability"): 
+    # set correlation matrix of random input
+    
+    if "correlationMatrix" in data:
+        
+        data["correlationMatrix"]
+        correlationMatrix=np.reshape(data["correlationMatrix"],(numUncertain,numUncertain))
+        
+        dakota_input += ("uncertain_correlation_matrix = ")
+        rows,cols = correlationMatrix.shape
+        
+        for i in range(0,rows):
+            if (i==0):
+                row_string = ""
+            else:
+                row_string = "                               "
+            for j in range(0,cols):
+                row_string = row_string + "{0:.5f}".format(correlationMatrix[i,j]) + " "
+            row_string = row_string + "\n"
+            dakota_input += (row_string)
+            
+# if (uq_method == "Sampling") -> use rank matrix instead of correlation
 
 dakota_input += ('\n')
 
