@@ -8,10 +8,10 @@ QT       += core gui charts concurrent network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = uqFEM
+TARGET = quoFEM
 TEMPLATE = app
 
-VERSION=1.1.0
+VERSION=2.0.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 INCLUDEPATH += ../SimCenterCommon/RandomVariables
@@ -22,13 +22,13 @@ win32:INCLUDEPATH += "C:/Adam/Qt/curl/include"
 win32:LIBS += C:/Adam/Qt/curl/lib/libcurl.lib
 #win32:INCLUDEPATH+=../libCurl-7.59.0/include
 #win32:LIBS += ../libCurl-7.59.0/lib/libcurl.lib
-
+linux:LIBS += /usr/lib/x86_64-linux-gnu/libcurl.so
 
 win32 {
-    RC_ICONS = icons/NHERI-UQFEM-Icon.ico
+    RC_ICONS = icons/NHERI-quoFEM-Icon.ico
 } else {
     mac {
-    ICON = icons/NHERI-UQFEM-Icon.icns
+    ICON = icons/NHERI-quoFEM-Icon.icns
     }
 }
 
@@ -44,6 +44,7 @@ SOURCES += main.cpp\
         InputWidgetFEM.cpp \
         InputWidgetUQ.cpp \
         InputWidgetSampling.cpp \
+        InputWidgetSensitivity.cpp \
         DakotaResults.cpp \
         DakotaResultsSampling.cpp \
         DakotaResultsCalibration.cpp \
@@ -58,7 +59,18 @@ SOURCES += main.cpp\
     MyTableWidget.cpp \
     RemoteJobManager.cpp \
     AgaveCurl.cpp \
-    CustomizedItemModel.cpp
+    RemoteService.cpp \
+    CustomizedItemModel.cpp \
+    UQ_MethodInputWidget.cpp \
+    MonteCarloInputWidget.cpp \
+    LatinHypercubeInputWidget.cpp \
+    ImportanceSamplingInputWidget.cpp \
+    GaussianProcessInputWidget.cpp \
+    PCEInputWidget.cpp \ 
+    InputWidgetReliability.cpp \
+    FORMInputWidget.cpp \
+    SORMInputWidget.cpp
+
 
 HEADERS  += MainWindow.h \
     EDP.h \
@@ -67,6 +79,7 @@ HEADERS  += MainWindow.h \
     SidebarWidgetSelection.h \
     InputWidgetUQ.h \
     InputWidgetSampling.h \
+    InputWidgetSensitivity.h \
     DakotaResults.h \
     DakotaResultsSampling.h \
     InputWidgetCalibration.h \
@@ -82,7 +95,17 @@ HEADERS  += MainWindow.h \
     MyTableWidget.h \
     RemoteJobManager.h \
     AgaveCurl.h \
-    CustomizedItemModel.h
+    RemoteService.h \
+    UQ_MethodInputWidget.h \
+    MonteCarloInputWidget.h \
+    LatinHypercubeInputWidget.h \
+    CustomizedItemModel.h \
+    ImportanceSamplingInputWidget.h \
+    GaussianProcessInputWidget.h \
+    PCEInputWidget.h \
+    InputWidgetReliability.h \
+    FORMInputWidget.h \
+    SORMInputWidget.h
 
 FORMS    += mainwindow.ui
 

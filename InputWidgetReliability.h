@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGET_SAMPLING_H
-#define INPUTWIDGET_SAMPLING_H
+#ifndef INPUTWIDGET_RELIABILITY_H
+#define INPUTWIDGET_RELIABILITY_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -54,12 +54,12 @@ class RandomVariablesContainer;
 class QStackedWidget;
 class UQ_MethodInputWidget;
 
-class InputWidgetSampling : public InputWidgetDakotaMethod
+class InputWidgetReliability : public InputWidgetDakotaMethod
 {
     Q_OBJECT
 public:
-    explicit InputWidgetSampling(QWidget *parent = 0);
-    ~InputWidgetSampling();
+    explicit InputWidgetReliability(QWidget *parent = 0);
+    ~InputWidgetReliability();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
@@ -98,11 +98,8 @@ private:
 
     QStackedWidget *theStackedWidget;
     UQ_MethodInputWidget *theCurrentMethod;
-    UQ_MethodInputWidget *theMC;
-    UQ_MethodInputWidget *theLHS;
-    UQ_MethodInputWidget *theIS;
-    UQ_MethodInputWidget *theGP;
-    UQ_MethodInputWidget *thePCE;
+    UQ_MethodInputWidget *theFORM;
+    UQ_MethodInputWidget *theSORM;
 };
 
-#endif // INPUTWIDGET_SAMPLING_H
+#endif // INPUTWIDGET_RELIABILITY_H

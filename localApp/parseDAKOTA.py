@@ -1,4 +1,4 @@
-# written: fmk, adamzs
+# written: UQ team @ SimCenter
 
 # import functions for Python 2.X support
 from __future__ import division, print_function
@@ -12,6 +12,7 @@ else:
 import json
 import os
 import sys
+import numpy as np
 from subprocess import Popen, PIPE
 
 inputArgs = sys.argv
@@ -29,15 +30,15 @@ run_type = inputArgs[3]
 if run_type in ['runningLocal',]:
     # MAC
     if (sys.platform == 'darwin'):
-        OpenSees = 'PATH TO OpenSees'
-        Feap = 'PATH TO feappv'
-        Dakota = 'PATH TO dakota'
+        OpenSees = 'OpenSees'
+        Feap = 'feappv'
+        Dakota = 'dakota'
         numCPUs = 1
 
     # Windows
     else:
         OpenSees = 'OpenSees'
-        Feap = 'PATH TO Feappv41.exe'
+        Feap = 'Feappv41.exe'
         Dakota = 'dakota'
         numCPUs = 1
 
@@ -109,6 +110,7 @@ betaUncertainName=[]
 betaUncertainLower =[]
 betaUncertainHigher =[]
 betaUncertainAlphas =[]
+betaUncertainBetas = []
 
 for rnd_var in rnd_data:
     if (rnd_var["distribution"] == 'Normal'):
@@ -134,7 +136,6 @@ for rnd_var in rnd_data:
     elif (rnd_var["distribution"] == "Uniform"):
         uncertainName.append(rnd_var["name"])
         numUncertain += 1
-        print("Hellooo,, Setting lower upper bounds...")
         uniformUncertainName.append(rnd_var["name"])
         uniformUncertainLower.append(rnd_var["lowerbound"])
         uniformUncertainUpper.append(rnd_var["upperbound"])
@@ -172,29 +173,13 @@ for rnd_var in rnd_data:
         uncertainName.append(rnd_var["name"])
         numUncertain += 1
         betaUncertainName.append(rnd_var["name"])
-        betaUncertainLower.append(rnd_var["upperBounds"])
-        betaUncertainUpper.append(rnd_var["lowerBounds"])
+        betaUncertainHigher.append(rnd_var["upperBounds"])
+        betaUncertainLower.append(rnd_var["lowerBounds"])
         betaUncertainAlphas.append(rnd_var["alphas"])
         betaUncertainBetas.append(rnd_var["betas"])
         numBetaUncertain += 1
 
 # Write the dakota input file: dakota.in 
-
-dakota_input = ""
-
-# write out the env data
-
-#f.write("environment\n")
-#f.write("tabular_data\n")
-#f.write("tabular_data_file = \'dakotaTab.out\'\n\n")
-
-dakota_input += (
-"""environment
-tabular_data
-tabular_data_file = 'dakotaTab.out'
-
-method,
-""")
 
 # write out the method data
 
@@ -204,32 +189,196 @@ numResponses=0
 responseDescriptors=[]
 
 if uq_method == "Sampling":
+    
     samplingData = uq_data["samplingMethodData"]
     method = samplingData["method"]
-    numSamples=samplingData["samples"]
-    seed = samplingData["seed"]
-
+    
+    # write out the env data
+    dakota_input = ""
+    
     dakota_input += (
-"""sampling
-sample_type = {sample_type}
-samples = {samples}
-seed = {seed}
+    """environment
+    tabular_data
+    tabular_data_file = 'dakotaTab.out'
+    
+    method,
+    """)
+    
+    if method == "Importance Sampling":
+        numSamples=samplingData["samples"]
+        seed = samplingData["seed"]
+        imp_sams_arg = samplingData["ismethod"]
 
-""".format(
-    sample_type = 'random' if method == 'Monte Carlo' else 'lhs',
-    samples = numSamples,
-    seed = seed))
+        dakota_input += (
+    """importance_sampling
+    {ismethod}
+    samples = {samples}
+    seed = {seed}
+    
+    """.format(
+        ismethod = imp_sams_arg,
+        samples = numSamples,
+        seed = seed))
+    
+        edps = samplingData["edps"]
+        for edp in edps:
+            responseDescriptors.append(edp["name"])
+            numResponses += 1
 
-    edps = samplingData["edps"]
+    elif method == "Monte Carlo":
+        numSamples=samplingData["samples"]
+        seed = samplingData["seed"]
+
+        dakota_input += (
+    """sampling
+    sample_type = {sample_type}
+    samples = {samples}
+    seed = {seed}
+    
+    """.format(
+        sample_type = 'random',
+        samples = numSamples,
+        seed = seed))
+    
+        edps = samplingData["edps"]
+        for edp in edps:
+            responseDescriptors.append(edp["name"])
+            numResponses += 1
+
+    elif method == "LHS":
+        numSamples=samplingData["samples"]
+        seed = samplingData["seed"]        
+
+        dakota_input += (
+    """sampling
+    sample_type = {sample_type}
+    samples = {samples}
+    seed = {seed}
+    
+    """.format(
+        sample_type = 'lhs' ,
+        samples = numSamples,
+        seed = seed))
+    
+        edps = samplingData["edps"]
+        for edp in edps:
+            responseDescriptors.append(edp["name"])
+            numResponses += 1
+
+
+    elif method == "Gaussian Process Regression":
+        train_samples = samplingData["samples"]
+        gpr_seed = samplingData["seed"]
+        train_method = samplingData["dataMethod"]
+        
+        train_samples2 = samplingData["samples2"]
+        gpr_seed2 = samplingData["seed2"]
+        train_method2 = samplingData["dataMethod2"]
+        
+        # write out the env data
+        dakota_input = ""
+        
+        dakota_input += (
+        """environment
+method_pointer = 'EvalSurrogate'
+tabular_data
+tabular_data_file = 'dakotaTab.out'
+custom_annotated header eval_id
+        
+method
+id_method = 'EvalSurrogate'
+model_pointer = 'SurrogateModel'
+        
+sampling
+samples = {no_surr_sams}
+seed = {surr_seed}
+sample_type {surr_sams_type}
+        
+model
+id_model = 'SurrogateModel'
+surrogate global
+dace_method_pointer = 'DesignMethod'
+gaussian_process surfpack
+export_model
+filename_prefix = 'dak_gp_model'
+formats
+text_archive
+        
+""").format(
+        no_surr_sams = train_samples2,
+        surr_seed = gpr_seed2,
+        surr_sams_type = train_method2)
+
+        edps = samplingData["edps"]
+        for edp in edps:
+            responseDescriptors.append(edp["name"])
+            numResponses += 1
+
+
+elif uq_method == 'Reliability':
+
+    sampling_data = uq_data["samplingMethodData"]
+    rel_method = sampling_data["method"]       # [FORM, SORM]
+    mpp_method = sampling_data["mpp_Method"]      # [no_approx, ...]
+    rel_scheme = sampling_data["reliability_Scheme"]      # [local, global]
+
+    edps = sampling_data["edps"]
     for edp in edps:
         responseDescriptors.append(edp["name"])
         numResponses += 1
+    
+    write_order = ""    
+    if rel_method == "FORM":
+        write_order = "first_order"
+    elif rel_method == "SORM":
+        write_order = "second_order"
+
+    write_scheme = ""
+    if rel_scheme == "Local":
+        write_scheme = "local_reliability"
+    elif rel_scheme == "Global":
+        write_scheme = "global_reliability"
+
+    # write out the env data
+    dakota_input = ""    
+        
+    dakota_input += (
+    """environment
+output_file 'dakotaTab.out'
+
+method
+{set_reliability_scheme}
+mpp_search {mpp_search_method}
+integration {set_reliability_order}
+probability_levels = .02 .04 .06  .08 .10 
+ .12 .14 .16 .18 .20 .22 .24 .26 .28 .30
+ .32 .34 .36 .38 .40 .42 .44 .46 .48 .50
+ .52 .54 .56 .58 .60 .62 .64 .66 .68 .70
+ .72 .74 .76 .78 .80 .82 .84 .86 .88 .90
+ .92 .94 .96 .98 
+
+""").format(
+    mpp_search_method = mpp_method,
+    set_reliability_order = write_order,
+    set_reliability_scheme = write_scheme)
+
 
 elif uq_method == 'Calibration':
     calibrationData = uq_data["calibrationMethodData"]
     convergenceTol=calibrationData["convergenceTol"]
     maxIter = calibrationData["maxIterations"]
     method = calibrationData["method"]
+
+    # write out the env data
+    dakota_input = ""
+    
+    dakota_input += (
+    """environment
+    tabular_data
+    tabular_data_file = 'dakotaTab.out'
+    
+    method,
+    """)
 
     dakota_input += (
 """{method_type}
@@ -250,6 +399,17 @@ elif uq_method == 'Bayesian_Calibration':
     samplingData = uq_data["bayesian_calibration_method_data"]
     chainSamples=samplingData["chain_samples"]
     seed = samplingData["seed"]
+
+    # write out the env data
+    dakota_input = ""
+    
+    dakota_input += (
+    """environment
+    tabular_data
+    tabular_data_file = 'dakotaTab.out'
+    
+    method,
+    """)
 
     dakota_input += (
 """bayes_calibration dream
@@ -507,7 +667,64 @@ if (numWeibullUncertain > 0):
         dakota_input += ('\' ')
     dakota_input += ('\n')
 
+
+if (uq_method == "Reliability"): 
+    # set correlation matrix of random input
+    
+    if "correlationMatrix" in data:
+        
+        data["correlationMatrix"]
+        correlationMatrix=np.reshape(data["correlationMatrix"],(numUncertain,numUncertain))
+        
+        dakota_input += ("uncertain_correlation_matrix = ")
+        rows,cols = correlationMatrix.shape
+        
+        for i in range(0,rows):
+            if (i==0):
+                row_string = ""
+            else:
+                row_string = "                               "
+            for j in range(0,cols):
+                row_string = row_string + "{0:.5f}".format(correlationMatrix[i,j]) + " "
+            row_string = row_string + "\n"
+            dakota_input += (row_string)
+            
+# if (uq_method == "Sampling") -> use rank matrix instead of correlation
+
 dakota_input += ('\n')
+
+
+if uq_method == "Sampling":
+    
+    samplingData = uq_data["samplingMethodData"]
+    method = samplingData["method"]
+    
+    if method == "Gaussian Process Regression":
+        
+        train_samples = samplingData["samples"]
+        gpr_seed = samplingData["seed"]
+        train_method = samplingData["dataMethod"]
+
+        dakota_input += (
+        """method
+id_method = 'DesignMethod'
+model_pointer = 'SimulationModel'
+sampling
+seed = {setseed}
+sample_type {settype}
+samples = {setsamples}
+        
+model
+id_model = 'SimulationModel'
+single
+interface_pointer = 'SimulationInterface'
+        
+""").format(
+    setseed = gpr_seed,
+    settype = train_method,
+    setsamples = train_samples
+    )
+        
 
 # write out the interface data
 
@@ -515,6 +732,11 @@ femProgram = fem_data["program"]
 
 if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
     dakota_input += ('interface,\n')
+    if uq_method == "Sampling":
+        samplingData = uq_data["samplingMethodData"]
+        method = samplingData["method"]
+        if method == "Gaussian Process Regression":
+            dakota_input += ('id_interface = \'SimulationInterface\',\n')
     #dakota_input += ('system # asynch evaluation_concurrency = 8')
     #dakota_input += ('fork asynchronous evaluation_concurrency = ' '{}'.format(numCPUs))
     if run_type in ['runningLocal',]:
@@ -534,16 +756,76 @@ if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
 # write out the responses
 
 if uq_method == "Sampling":
+    
+    samplingData = uq_data["samplingMethodData"]
+    method = samplingData["method"]
+    
+    if method == "Monte Carlo":       
+        dakota_input += (
+    """responses,
+    response_functions = {numResponses}
+    response_descriptors = {responseDescriptors}
+    no_gradients
+    no_hessians
+    
+    """.format(
+        numResponses = numResponses,
+        responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
+    
+    elif method == "LHS":
+        dakota_input += (
+    """responses,
+    response_functions = {numResponses}
+    response_descriptors = {responseDescriptors}
+    no_gradients
+    no_hessians
+    
+    """.format(
+        numResponses = numResponses,
+        responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
+
+    elif method == "Importance Sampling":
+        dakota_input += (
+    """responses,
+    response_functions = {numResponses}
+    response_descriptors = {responseDescriptors}
+    no_gradients
+    no_hessians
+    
+    """.format(
+        numResponses = numResponses,
+        responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
+
+    elif method == "Gaussian Process Regression":
+        dakota_input += (
+    """responses,
+    response_functions = {numResponses}
+    response_descriptors = {responseDescriptors}
+    no_gradients
+    no_hessians
+    
+    """.format(
+        numResponses = numResponses,
+        responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
+
+
+elif uq_method == 'Reliability':
+       
+    # write out the env data
     dakota_input += (
-"""responses,
+    """responses,
 response_functions = {numResponses}
 response_descriptors = {responseDescriptors}
-no_gradients
+numerical_gradients
+method_source dakota
+interval_type central
+fd_step_size = 1.e-4
 no_hessians
-
-""".format(
-    numResponses = numResponses,
-    responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
+    
+    """.format(
+        numResponses = numResponses,
+        responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))  
+        
 
 elif uq_method == "Calibration":
     dakota_input += (

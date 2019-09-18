@@ -1,4 +1,3 @@
-
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -35,7 +34,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-#include "InputWidgetSampling.h"
+#include "InputWidgetSensitivity.h"
 #include <DakotaResultsSampling.h>
 #include <RandomVariablesContainer.h>
 
@@ -61,11 +60,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStackedWidget>
 #include <MonteCarloInputWidget.h>
 #include <LatinHypercubeInputWidget.h>
-#include <ImportanceSamplingInputWidget.h>
-#include <GaussianProcessInputWidget.h>
-#include <PCEInputWidget.h>
 
-InputWidgetSampling::InputWidgetSampling(QWidget *parent)
+InputWidgetSensitivity::InputWidgetSensitivity(QWidget *parent)
 : InputWidgetDakotaMethod(parent),uqSpecific(0)
 {
     layout = new QVBoxLayout();
@@ -82,13 +78,13 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     samplingMethod->setMinimumWidth(200);
     samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
-    samplingMethod->addItem(tr("Importance Sampling"));
-    samplingMethod->addItem(tr("Gaussian Process Regression"));
-    samplingMethod->addItem(tr("Polynomial Chaos Expansion"));
 
     /*
+    samplingMethod->addItem(tr("Importance Sensitivity"));
+    samplingMethod->addItem(tr("Gaussian Process Regression"));
+    samplingMethod->addItem(tr("Polynomial Chaos Expansion"));
     samplingMethod->addItem(tr("Multilevel Monte Carlo"));
-    samplingMethod->addItem(tr("Importance Sampling"));
+    samplingMethod->addItem(tr("Importance Sensitivity"));
     samplingMethod->addItem(tr("Quadrature"));
     samplingMethod->addItem(tr("Sparse Grid Quadrature"));
     samplingMethod->addItem(tr("Surrogate - Polynomial Chaos"));
@@ -113,18 +109,8 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     theMC = new MonteCarloInputWidget();
     theStackedWidget->addWidget(theMC);
 
-    theIS = new ImportanceSamplingInputWidget();
-    theStackedWidget->addWidget(theIS);
-
-    theGP = new GaussianProcessInputWidget();
-    theStackedWidget->addWidget(theGP);
-
-    thePCE = new PCEInputWidget();
-    theStackedWidget->addWidget(thePCE);
-
     // set current widget to index 0
     theCurrentMethod = theLHS;
-
 
     mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);
@@ -139,7 +125,7 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
 
 }
 
-void InputWidgetSampling::onTextChanged(QString text)
+void InputWidgetSensitivity::onTextChanged(QString text)
 {
   if (text=="LHS") {
     theStackedWidget->setCurrentIndex(0);
@@ -149,130 +135,26 @@ void InputWidgetSampling::onTextChanged(QString text)
     theStackedWidget->setCurrentIndex(1);
     theCurrentMethod = theMC;  
   }
-  else if (text=="Importance Sampling") {
-    theStackedWidget->setCurrentIndex(2);
-    theCurrentMethod = theIS;
-  }
-  else if (text=="Gaussian Process Regression") {
-    theStackedWidget->setCurrentIndex(3);
-    theCurrentMethod = theGP;
-  }
-  else if (text=="Polynomial Chaos Expansion") {
-    theStackedWidget->setCurrentIndex(4);
-    theCurrentMethod = thePCE;
-  }
-    /*
-    } else if (text=="Quadrature") {
-
-        // create layout label and entry for dimension
-        QVBoxLayout *dimLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("Dimension"));
-        numSamples = new QLineEdit();
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-        dimLayout->addWidget(label2);
-        dimLayout->addWidget(numSamples);
-
-        mLayout->addLayout(dimLayout);
-        mLayout->addStretch(1);
-
-        // create label and entry for level
-        QVBoxLayout *levelLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Level"));
-        srand(time(NULL));
-        randomSeed = new QLineEdit();
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-        levelLayout->addWidget(label3);
-        levelLayout->addWidget(randomSeed);
-
-        mLayout->addLayout(levelLayout);
-        mLayout->addStretch(1);
-
-    } else if (text=="Surrogate - Polynomial Chaos") {
-
-        // create layout label and entry for dimension
-        QVBoxLayout *dimLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("Dimension"));
-        numSamples = new QLineEdit();
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-        dimLayout->addWidget(label2);
-        dimLayout->addWidget(numSamples);
-
-        mLayout->addLayout(dimLayout);
-        mLayout->addStretch(1);
-
-        // create label and entry for level
-        QVBoxLayout *chaosLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Pol. chaos order"));
-        srand(time(NULL));
-        randomSeed = new QLineEdit();
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-        chaosLayout->addWidget(label3);
-        chaosLayout->addWidget(randomSeed);
-
-        mLayout->addLayout(chaosLayout);
-        mLayout->addStretch(1);
-
-    }  else if (text=="Multilevel Monte Carlo") {
-
-        // create layout label and entry for # samples
-        QVBoxLayout *samplesLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("# Samples"));
-        numSamples = new QLineEdit();
-        numSamples->setText(tr("1000"));
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-        samplesLayout->addWidget(label2);
-        samplesLayout->addWidget(numSamples);
-
-        mLayout->addLayout(samplesLayout);
-        mLayout->addStretch(1);
-
-        // create label and entry for seed to layout
-        QVBoxLayout *seedLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Seed"));
-        srand(time(NULL));
-        int randomNumber = rand() % 1000 + 1;
-        randomSeed = new QLineEdit();
-        randomSeed->setText(QString::number(randomNumber));
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-        seedLayout->addWidget(label3);
-        seedLayout->addWidget(randomSeed);
-
-        mLayout->addLayout(seedLayout);
-        mLayout->addStretch(1);
-    }
-    */
 }
 
-InputWidgetSampling::~InputWidgetSampling()
+InputWidgetSensitivity::~InputWidgetSensitivity()
 {
 
 }
 
 int 
-InputWidgetSampling::getMaxNumParallelTasks(void){
+InputWidgetSensitivity::getMaxNumParallelTasks(void){
   return theCurrentMethod->getNumberTasks();
 }
 
-void InputWidgetSampling::clear(void)
+void InputWidgetSensitivity::clear(void)
 {
 
 }
 
 
 bool
-InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
+InputWidgetSensitivity::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
@@ -289,13 +171,14 @@ InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
+InputWidgetSensitivity::inputFromJSON(QJsonObject &jsonObject)
 {
   bool result = false;
   this->clear();
 
   //
   // get sampleingMethodData, if not present it's an error
+  //
   
   if (jsonObject.contains("samplingMethodData")) {
     QJsonObject uq = jsonObject["samplingMethodData"].toObject();
@@ -311,23 +194,23 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
   return result;
 }
 
-void InputWidgetSampling::uqSelectionChanged(const QString &arg1)
+void InputWidgetSensitivity::uqSelectionChanged(const QString &arg1)
 {
     // if more data than just num samples and seed code would go here to add or remove widgets from layout
 }
 
-int InputWidgetSampling::processResults(QString &filenameResults, QString &filenameTab) {
+int InputWidgetSensitivity::processResults(QString &filenameResults, QString &filenameTab) {
 
     return 0;
 }
 
 DakotaResults *
-InputWidgetSampling::getResults(void) {
+InputWidgetSensitivity::getResults(void) {
     return new DakotaResultsSampling(theRandomVariables);
 }
 
 RandomVariablesContainer *
-InputWidgetSampling::getParameters(void) {
+InputWidgetSensitivity::getParameters(void) {
   QString classType("Uncertain");
   theRandomVariables =  new RandomVariablesContainer(classType);
   return theRandomVariables;

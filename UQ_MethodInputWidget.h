@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGET_SAMPLING_H
-#define INPUTWIDGET_SAMPLING_H
+#ifndef UQ_METHOD_INPUT_WIDGET_H
+#define UQ_METHOD_INPUT_WIDGET_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -37,72 +37,25 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-#include <InputWidgetDakotaMethod.h>
+// Written: fmckenna
+// abstract class needed for methods so that can get number of parallel tasks
 
-#include "EDP.h"
-#include <QGroupBox>
-#include <QVector>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QPushButton>
+#include <SimCenterWidget.h>
 
-class DakotaSamplingResults;
-class DakotaResults;
-class QCheckBox;
-class InputWidgetEDP;
-class RandomVariablesContainer;
-class QStackedWidget;
-class UQ_MethodInputWidget;
-
-class InputWidgetSampling : public InputWidgetDakotaMethod
+class UQ_MethodInputWidget : public SimCenterWidget
 {
     Q_OBJECT
+
 public:
-    explicit InputWidgetSampling(QWidget *parent = 0);
-    ~InputWidgetSampling();
+    UQ_MethodInputWidget(QWidget *parent = 0);
+    virtual ~UQ_MethodInputWidget();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
+    /** 
+     *   @brief getNumberTasks  method to return number of tasks that can be performed in parallel
+     *   @return int - number of tasks
+     */      
+    virtual int getNumberTasks(void) =0;
 
-    int processResults(QString &filenameResults, QString &filenameTab);
-
-    DakotaResults *getResults(void);
-    RandomVariablesContainer  *getParameters();
-
-    int getMaxNumParallelTasks(void);
-
-    QVBoxLayout *mLayout;
-
-signals:
-
-public slots:
-   void clear(void);
-   void uqSelectionChanged(const QString &arg1);
-   void onTextChanged(QString);
- //  void uqMethodChanged(const QString &arg1);
-
-private:
-    QVBoxLayout *layout;
-    QWidget     *methodSpecific;
-    QComboBox   *samplingMethod;
-    QLineEdit   *numSamples;
-    QLineEdit   *randomSeed;
-    //    QPushButton *run;
-
-    QComboBox   *uqSelection;
-    QWidget     *uqSpecific;
-
-    RandomVariablesContainer *theRandomVariables;
-    InputWidgetEDP *theEdpWidget;
-    DakotaSamplingResults *results;
-
-    QStackedWidget *theStackedWidget;
-    UQ_MethodInputWidget *theCurrentMethod;
-    UQ_MethodInputWidget *theMC;
-    UQ_MethodInputWidget *theLHS;
-    UQ_MethodInputWidget *theIS;
-    UQ_MethodInputWidget *theGP;
-    UQ_MethodInputWidget *thePCE;
 };
 
-#endif // INPUTWIDGET_SAMPLING_H
+#endif // UQ_METHOD_INPUT_WIDGET_H

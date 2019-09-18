@@ -1,6 +1,3 @@
-#ifndef DAKOTA_RESULTS_SAMPLING_H
-#define DAKOTA_RESULTS_SAMPLING_H
-
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -20,7 +17,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,62 +36,89 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <DakotaResults.h>
-#include <QtCharts/QChart>
-#include <QMessageBox>
-#include <QPushButton>
+#include <FORMInputWidget.h>
+#include <QLineEdit>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QValidator>
+#include <QJsonObject>
 
-
-using namespace QtCharts;
-
-class QTextEdit;
-class QTabWidget;
-class MyTableWidget;
-class MainWindow;
-class RandomVariablesContainer;
-
-//class QChart;
-
-class DakotaResultsSampling : public DakotaResults
+FORMInputWidget::FORMInputWidget(QWidget *parent) 
+: UQ_MethodInputWidget(parent)
 {
-    Q_OBJECT
-public:
-  explicit DakotaResultsSampling(RandomVariablesContainer *, QWidget *parent = 0);
-    ~DakotaResultsSampling();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
+  QVBoxLayout *mLayout = new QVBoxLayout();
 
-    int processResults(QString &filenameResults, QString &filenameTab);
-    QWidget *createResultEDPWidget(QString &name, double mean, double stdDev, double kurtosis);
+  // create layout label and entry for # samples
+  QVBoxLayout *samplesLayout= new QVBoxLayout;
+  QLabel *label2 = new QLabel();
+  label2->setText(QString("Reliability Scheme"));
+  reliabilityScheme = new QComboBox();
+  reliabilityScheme->setMaximumWidth(100);
+  reliabilityScheme->setMinimumWidth(100);
+  reliabilityScheme->addItem(tr("Local"));
+  reliabilityScheme->addItem(tr("Global"));  
+  reliabilityScheme->setToolTip("Set reliability scheme:  local vs global");
 
-signals:
+  samplesLayout->addWidget(label2);
+  samplesLayout->addWidget(reliabilityScheme);
 
-public slots:
-   void clear(void);
-   void onSpreadsheetCellClicked(int, int);
-   void onSaveSpreadsheetClicked();
+  mLayout->addLayout(samplesLayout);
+  mLayout->addStretch(1);
+  
+  // create label and entry for seed to layout
+  QVBoxLayout *seedLayout= new QVBoxLayout;
+  QLabel *label3 = new QLabel();
+  label3->setText(QString("MPP Search Method"));
+  mppMethod = new QComboBox();
+  mppMethod->setMaximumWidth(100);
+  mppMethod->setMinimumWidth(100);
+  mppMethod->addItem(tr("no_approx"));
+  mppMethod->addItem(tr("x_taylor_mean"));
+  mppMethod->addItem(tr("u_taylor_mean"));   
+  mppMethod->setToolTip("Set the search method for the Most Probable Point");
 
-   // modified by padhye 08/25/2018
+  seedLayout->addWidget(label3);
+  seedLayout->addWidget(mppMethod);
 
-private:
-   RandomVariablesContainer *theRVs;
-   QTabWidget *tabWidget;
 
-   MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
-   QChart *chart;
-   QPushButton* save_spreadheet; // save the data from spreadsheet
-   QLabel *label;
-   QLabel *best_fit_instructions;
 
-   int col1, col2;
-   bool mLeft;
-   QStringList theHeadings;
+  mLayout->addLayout(seedLayout);
+  mLayout->addStretch(1);
 
-   QVector<QString>theNames;
-   QVector<double>theMeans;
-   QVector<double>theStdDevs;
-   QVector<double>theKurtosis;
-};
+  this->setLayout(mLayout);
+}
 
-#endif // DAKOTA_RESULTS_SAMPLING_H
+FORMInputWidget::~FORMInputWidget()
+{
+
+}
+
+bool
+FORMInputWidget::outputToJSON(QJsonObject &jsonObj){
+
+    bool result = true;
+    jsonObj["reliability_Scheme"]=reliabilityScheme->currentText();
+    jsonObj["mpp_Method"]=mppMethod->currentText();
+    return result;    
+}
+
+bool
+FORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
+
+
+}
+
+void
+FORMInputWidget::clear(void)
+{
+
+}
+
+
+
+int
+FORMInputWidget::getNumberTasks()
+{
+
+}

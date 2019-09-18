@@ -52,6 +52,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetSampling.h>
 #include <InputWidgetCalibration.h>
 #include <InputWidgetBayesianCalibration.h>
+#include <InputWidgetReliability.h>
+#include <InputWidgetSensitivity.h>
 
 
 InputWidgetUQ::InputWidgetUQ(QWidget *parent)
@@ -88,6 +90,8 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     uqSelection->addItem(tr("Sampling"));
     uqSelection->addItem(tr("Calibration"));
     uqSelection->addItem(tr("Bayesian Calibration"));
+    uqSelection->addItem(tr("Reliability"));
+    uqSelection->addItem(tr("Sensitivity"));
 
     connect(uqSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(uqSelectionChanged(QString)));
 
@@ -201,6 +205,10 @@ void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
         delete dakotaMethod;
         dakotaMethod = new InputWidgetSampling();
 
+    } else if (arg1 == QString("Reliability")) {
+        delete dakotaMethod;
+        dakotaMethod = new InputWidgetReliability();
+    
     } else if (arg1 == QString("Calibration")) {
         delete dakotaMethod;
         dakotaMethod = new InputWidgetCalibration();
@@ -208,6 +216,11 @@ void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
     } else if (arg1 == QString("Bayesian Calibration")) {
         delete dakotaMethod;
         dakotaMethod = new InputWidgetBayesianCalibration();
+
+    } else if (arg1 == QString("Sensitivity")) {
+        delete dakotaMethod;
+        dakotaMethod = new InputWidgetSensitivity();
+
     } else {
         selectionChangeOK = false;
         emit sendErrorMessage("ERROR: UQ Input - no valid Method provided .. keeping old");

@@ -1,6 +1,3 @@
-#ifndef INPUTWIDGET_SAMPLING_H
-#define INPUTWIDGET_SAMPLING_H
-
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -20,7 +17,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -37,72 +34,84 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-#include <InputWidgetDakotaMethod.h>
+// Written: fmckenna
 
-#include "EDP.h"
-#include <QGroupBox>
-#include <QVector>
+#include <MonteCarloInputWidget.h>
+#include <QLineEdit>
 #include <QVBoxLayout>
-#include <QComboBox>
-#include <QPushButton>
+#include <QLabel>
+#include <QValidator>
+#include <QJsonObject>
 
-class DakotaSamplingResults;
-class DakotaResults;
-class QCheckBox;
-class InputWidgetEDP;
-class RandomVariablesContainer;
-class QStackedWidget;
-class UQ_MethodInputWidget;
-
-class InputWidgetSampling : public InputWidgetDakotaMethod
+MonteCarloInputWidget::MonteCarloInputWidget(QWidget *parent) 
+: UQ_MethodInputWidget(parent)
 {
-    Q_OBJECT
-public:
-    explicit InputWidgetSampling(QWidget *parent = 0);
-    ~InputWidgetSampling();
+    auto layout = new QGridLayout();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
+    // create layout label and entry for # samples
+    numSamples = new QLineEdit();
+    numSamples->setText(tr("10"));
+    numSamples->setValidator(new QIntValidator);
+    numSamples->setToolTip("Specify the number of samples");
 
-    int processResults(QString &filenameResults, QString &filenameTab);
+    layout->addWidget(new QLabel("# Samples"), 0, 0);
+    layout->addWidget(numSamples, 0, 1);
 
-    DakotaResults *getResults(void);
-    RandomVariablesContainer  *getParameters();
+    // create label and entry for seed to layout
+    srand(time(NULL));
+    int randomNumber = rand() % 1000 + 1;
+    randomSeed = new QLineEdit();
+    randomSeed->setText(QString::number(randomNumber));
+    randomSeed->setValidator(new QIntValidator);
+    randomSeed->setToolTip("Set the seed");
 
-    int getMaxNumParallelTasks(void);
+    layout->addWidget(new QLabel("Seed"), 1, 0);
+    layout->addWidget(randomSeed, 1, 1);
 
-    QVBoxLayout *mLayout;
+    layout->setRowStretch(2, 1);
+    layout->setColumnStretch(2, 1);
+    this->setLayout(layout);
+}
 
-signals:
+MonteCarloInputWidget::~MonteCarloInputWidget()
+{
 
-public slots:
-   void clear(void);
-   void uqSelectionChanged(const QString &arg1);
-   void onTextChanged(QString);
- //  void uqMethodChanged(const QString &arg1);
+}
 
-private:
-    QVBoxLayout *layout;
-    QWidget     *methodSpecific;
-    QComboBox   *samplingMethod;
-    QLineEdit   *numSamples;
-    QLineEdit   *randomSeed;
-    //    QPushButton *run;
+bool
+MonteCarloInputWidget::outputToJSON(QJsonObject &jsonObj){
 
-    QComboBox   *uqSelection;
-    QWidget     *uqSpecific;
+    bool result = true;
+    jsonObj["samples"]=numSamples->text().toInt();
+    jsonObj["seed"]=randomSeed->text().toDouble();
+    return result;    
+}
 
-    RandomVariablesContainer *theRandomVariables;
-    InputWidgetEDP *theEdpWidget;
-    DakotaSamplingResults *results;
+bool
+MonteCarloInputWidget::inputFromJSON(QJsonObject &jsonObject){
 
-    QStackedWidget *theStackedWidget;
-    UQ_MethodInputWidget *theCurrentMethod;
-    UQ_MethodInputWidget *theMC;
-    UQ_MethodInputWidget *theLHS;
-    UQ_MethodInputWidget *theIS;
-    UQ_MethodInputWidget *theGP;
-    UQ_MethodInputWidget *thePCE;
-};
+  bool result = false;
+  if (jsonObject.contains("samples") && jsonObject.contains("seed")) {
+    int samples=jsonObject["samples"].toInt();
+    double seed=jsonObject["seed"].toDouble();
+    numSamples->setText(QString::number(samples));
+    randomSeed->setText(QString::number(seed));
+    result = true;
+  }
 
-#endif // INPUTWIDGET_SAMPLING_H
+  return result;
+}
+
+void
+MonteCarloInputWidget::clear(void)
+{
+
+}
+
+
+
+int
+MonteCarloInputWidget::getNumberTasks()
+{
+  return numSamples->text().toInt();
+}

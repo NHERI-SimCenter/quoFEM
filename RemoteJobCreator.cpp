@@ -52,7 +52,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //#include <AgaveInterface.h>
 #include <QDebug>
 #include <QDir>
-
+#include <SimCenterPreferences.h>
 
 RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
     : QWidget(parent), theInterface(theInt),maxParallel(1)
@@ -76,7 +76,7 @@ RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
     layout->addWidget(numCPU_LineEdit,1,1);
 
     QLabel *numProcessorsLabel = new QLabel();
-    numProcessorsLabel->setText(QString("Num Processors:"));
+    numProcessorsLabel->setText(QString("Num Processors Per Node:"));
     layout->addWidget(numProcessorsLabel,2,0);
 
     numProcessorsLineEdit = new QLineEdit();
@@ -173,18 +173,14 @@ RemoteJobCreator::uploadDirReturn(bool result)
         pushButton->setDisabled(true);
 
         job["name"]=QString("uqFEM:") + nameLineEdit->text();
-        job["nodeCount"]=numCPU_LineEdit->text();
-        job["processorsPerNode"]=numProcessorsLineEdit->text();
-        job["requestedTime"]=runtimeLineEdit->text();
-
-        // defaults (possibly from a parameters file)
-        //Dakota-6.6.0.0u1
-        //job["appId"]="dakota-6.6.0";
-        //job["appId"]="Dakota-6.6.0.0u1";
-
-        job["appId"]=appLineEdit->text();
+        job["nodeCount"]=numCPU_LineEdit->text().toInt();
+        job["processorsOnEachNode"]=numProcessorsLineEdit->text().toInt();
+        job["maxRunTime"]=runtimeLineEdit->text();
+	job["appId"]=SimCenterPreferences::getInstance()->getRemoteAgaveApp();
+	//        job["appId"]=appLineEdit->text();
         job["memoryPerNode"]= "1GB";
-        job["archive"]="true";
+        job["archive"]=true;
+	job["archivePath"]="";
         job["archiveSystem"]="designsafe.storage.default";
 
         QJsonObject parameters;

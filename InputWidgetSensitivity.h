@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGET_SAMPLING_H
-#define INPUTWIDGET_SAMPLING_H
+#ifndef INPUTWIDGET_SENSITIVITY_H
+#define INPUTWIDGET_SENSITIVITY_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -54,12 +54,12 @@ class RandomVariablesContainer;
 class QStackedWidget;
 class UQ_MethodInputWidget;
 
-class InputWidgetSampling : public InputWidgetDakotaMethod
+class InputWidgetSensitivity : public InputWidgetDakotaMethod
 {
     Q_OBJECT
 public:
-    explicit InputWidgetSampling(QWidget *parent = 0);
-    ~InputWidgetSampling();
+    explicit InputWidgetSensitivity(QWidget *parent = 0);
+    ~InputWidgetSensitivity();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
@@ -105,4 +105,4 @@ private:
     UQ_MethodInputWidget *thePCE;
 };
 
-#endif // INPUTWIDGET_SAMPLING_H
+#endif // INPUTWIDGET_SENSITIVITY_H

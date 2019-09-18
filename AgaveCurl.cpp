@@ -1,4 +1,4 @@
-﻿/* *****************************************************************************
+/* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
 
@@ -55,6 +55,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <string>
 
 #include <QWindow>
+#include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -63,7 +64,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QUuid>
 #include <QFuture>
 #include <QDialog>
-
+#include <QStandardPaths>
+#include <QDir>
 
 using namespace std;
 
@@ -73,20 +75,23 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
   return written;
 }
 
-AgaveCurl::AgaveCurl(QString &_tenant, QString &_storage, QObject *parent)
-  :QObject(parent), tenant(_tenant), storage(_storage), loggedInFlag(false), slotNeededLocally(false)
+AgaveCurl::AgaveCurl(QString &_tenant, QString &_storage, QString *appDir, QObject *parent)
+  :RemoteService(parent), tenant(_tenant), storage(_storage), loggedInFlag(false), slotNeededLocally(false)
 {
     //
-    // for operation the class needs two temporary files to function
-    //  - either use name Qt provides or use a QUid in current dir
+    // for operation this class needs two temporary files to function
+    //  - hence thing1 and thing2
 
-    QUuid uniqueName1 = QUuid::createUuid();
-    QString strUnique1 = uniqueName1.toString();
-    uniqueFileName1 = QCoreApplication::applicationDirPath() + QDir::separator() + strUnique1.mid(1,36);
+    //Get application data folder
+    QString writableLocation = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::AppLocalDataLocation);
 
-    QUuid uniqueName2 = QUuid::createUuid();
-    QString strUnique2 = uniqueName2.toString();
-    uniqueFileName2 = QCoreApplication::applicationDirPath() + QDir::separator() + strUnique2.mid(1,36);
+    //Create the folder if it does not exist
+    QDir writableDir(writableLocation);
+    if(!writableDir.exists())
+        writableDir.mkpath(".");
+
+    uniqueFileName1 = writableDir.filePath("SimCenter.thing1");
+    uniqueFileName2 = writableDir.filePath("SimCenter.thing2");
 
     //
     // init curl variables
@@ -94,9 +99,13 @@ AgaveCurl::AgaveCurl(QString &_tenant, QString &_storage, QObject *parent)
 
     hnd = curl_easy_init();
     slist1 = NULL;
+    slist2 = NULL;
+
     tenantURL="https://agave.designsafe-ci.org/";
     appClient = QString("appClient");
 
+    if (appDir != nullptr)
+      appDirName = QString(*appDir);
 }
 
 AgaveCurl::~AgaveCurl()
@@ -112,14 +121,11 @@ AgaveCurl::~AgaveCurl()
         QString url = tenantURL + QString("clients/v2/") + appClient;
         QString user_passwd = username + QString(":") + password;
 
-        emit statusMessage("STATUS: contacting Agave to delete remote client app");
-
+        // note should not use emit as object which was sending deleted before this one
         curl_easy_setopt(hnd, CURLOPT_URL, url.toStdString().c_str());
         curl_easy_setopt(hnd, CURLOPT_USERPWD, user_passwd.toStdString().c_str());
         curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "DELETE");
         bool ok = this->invokeCurl();
-
-        emit statusMessage("STATUS: deleted client app at Agave");
 
     }
 
@@ -157,6 +163,9 @@ AgaveCurl::loginCall(QString uname, QString upassword)
   emit loginReturn(result);
   if (result == true) {
     QString result = storage + username;
+    if (!appDirName.isEmpty())
+      result = result + "/" + appDirName;
+
     emit getHomeDirPathReturn(result);
   }
 }
@@ -167,8 +176,11 @@ AgaveCurl::login(QString uname, QString upassword)
    username = uname;
    password = upassword;
 
-    QString consumerSecret;
-    QString consumerKey;
+   QString consumerSecret;
+   QString consumerKey;
+
+   curl_slist_free_all(slist1);
+   slist1 = NULL;
 
     //
     // first try deleting old app, needed if program crashed or old not deleted
@@ -315,17 +327,44 @@ AgaveCurl::login(QString uname, QString upassword)
         QJsonObject jsonObj = doc.object();
         if (jsonObj.contains("access_token")) {
             accessToken = jsonObj["access_token"].toString();
-            qDebug() << "accessToken" << accessToken;
-            QString bearer = QString("Authorization: Bearer ") + accessToken;
+            bearer = QString("Authorization: Bearer ") + accessToken;
             slist1 = curl_slist_append(slist1, bearer.toStdString().c_str());
             loggedInFlag = true;
-            emit statusMessage("Login SUCCESS");
+	    
+	    // now if appDir is specified make sure dir exists, 
+	    // creating it does delete existing one and one call as opposed to 2 if not there
+	    if (!appDirName.isEmpty()) {
+	      QString home = storage + username;
+	      bool ok = this->mkdir(appDirName, username);
+	      if (ok != true) {
+		QString message = QString("WARNING - could not create " ) + appDirName 
+		  + QString("on login, using home dir instead");
+		appDirName = QString(""); // no erase function!
+		emit statusMessage(message);
+	      } else {
+		emit statusMessage("Login SUCCESS");
+	      }
+	    } else {
+	      emit statusMessage("Login SUCCESS");
+	    }
+
 	    return true;
         }
-	emit statusMessage("ERROR - no access toen returned!");
+	emit statusMessage("ERROR - no access token returned!");
 	return false;
     }
     return false;
+
+   /* *************************************************** to test aloe 
+    consumerKey = QString("");
+    consumerSecret = QString("");
+    QString accessToken = QString("");
+    bearer = QString("Authorization: Bearer ") + accessToken;
+    slist1 = curl_slist_append(slist1, bearer.toStdString().c_str());
+    loggedInFlag = true;
+    emit statusMessage("SUCCESS fmk");
+    return true;
+    **************************************************************** */
 }
 
 void
@@ -400,7 +439,7 @@ AgaveCurl::uploadDirectory(const QString &local, const QString &remote)
 
     QDir originDirectory(local);
     if (! originDirectory.exists()) {
-      emit errorMessage("ERROR - local directory does not exist!");
+      emit errorMessage(QString("ERROR - local directory does not exist : ") + local);
       return false;
     }
     QString dirName = originDirectory.dirName();
@@ -532,7 +571,7 @@ AgaveCurl::mkdirCall(const QString &remoteName, const QString &remotePath) {
 bool
 AgaveCurl::mkdir(const QString &remoteName, const QString &remotePath) {
 
-    QString message = QString("Contacting ") + tenant + QString(" to create dir ") + remotePath;
+  QString message = QString("Contacting ") + tenant + QString(" to create dir ") + remotePath + QString("/") + remoteName;
     emit statusMessage(message);
 
      bool result = false;
@@ -560,8 +599,8 @@ AgaveCurl::mkdir(const QString &remoteName, const QString &remotePath) {
       // open results file
       QFile file(uniqueFileName1);
       if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        emit errorMessage("ERROR: removeDirectory .. COULD NOT OPEN RESULT");
-	return false;
+          emit errorMessage("ERROR: removeDirectory .. COULD NOT OPEN RESULT");
+          return false;
       }
 
       // read results file & check for errors
@@ -588,8 +627,15 @@ AgaveCurl::mkdir(const QString &remoteName, const QString &remotePath) {
 	     return false;
          } else if (status == "success") {
              return true;
-         }
+         } 
+     } else {
+       QJsonDocument doc(theObj);
+       QString strJson(doc.toJson(QJsonDocument::Compact));
+       emit errorMessage(strJson);
+       return false;
      }
+
+     return result;
 }
 
 void
@@ -764,9 +810,7 @@ AgaveCurl::downloadFile(const QString &remoteFile, const QString &localFile)
     // if failure, go get message, emit signal and return false;
 
     message = QString("Failed to Download File: ") + remoteFile; // more descriptive message
-    // const char *str = curl_easy_strerror(ret);
-    //QString errorString(str);
-    qDebug() << "ERROR: " << message;
+
     emit errorMessage(message);
     return false;
 }
@@ -848,31 +892,62 @@ AgaveCurl::remoteLS(const QString &remotePath)
 QString
 AgaveCurl::startJob(const QString &jobDescriptionFile)
 {
+  QString result = "FAILURE";
+
+  //
+  // openfile, put in QJsonObj and call other method
+  //
+
+    // open results file
+    QFile file(jobDescriptionFile);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+      emit errorMessage("ERROR: COULD NOT OPEN RESULT");
+      return result;
+    }
+
+    // read results file & check for errors
+    QString val;
+    val=file.readAll();
+    file.close();
+
+    // read into json object
+   QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
+   QJsonObject theObj = doc.object();
+
+   return startJob(theObj);
+}
+
+void
+AgaveCurl::startJobCall(const QJsonObject &theJob) {
+
+  QString result = startJob(theJob);
+  emit startJobReturn(result);
+}
+
+QString
+AgaveCurl::startJob(const QJsonObject &theJob)
+{
     QString result = "FAILURE";
 
-    QString message = QString("Contacting ") + tenant + QString(" to Start a Job");
-    emit statusMessage(message);
+    slist2 = NULL;
+    slist2 = curl_slist_append(slist2, "Content-Type: application/json");
+    slist2 = curl_slist_append(slist2, bearer.toStdString().c_str());
 
-    // invoke curl to upload the file or directory
-    struct curl_httppost *post1;
-    struct curl_httppost *postend;
-
-    post1 = NULL;
-    postend = NULL;
-    curl_formadd(&post1, &postend,
-                 CURLFORM_COPYNAME, "fileToUpload",
-                 CURLFORM_FILE, jobDescriptionFile.toStdString().c_str(),
-                 CURLFORM_CONTENTTYPE, "application/octet-stream",
-                 CURLFORM_END);
+    QJsonDocument docJob(theJob);
+    QString strJson(docJob.toJson(QJsonDocument::Compact));
+    QByteArray ba = strJson.toLocal8Bit();
+    const char *c_str2 = ba.data();
+    curl_easy_setopt(hnd, CURLOPT_POSTFIELDS, c_str2);
+    //  curl_easy_setopt(hnd, CURLOPT_POSTFIELDSIZE_LARGE, (curl_off_t)strlen(c_str2));
 
     QString url = tenantURL + QString("jobs/v2/?pretty=true");
     curl_easy_setopt(hnd, CURLOPT_URL, url.toStdString().c_str());
-    curl_easy_setopt(hnd, CURLOPT_HTTPPOST, post1);
     curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "POST");
 
     if (this->invokeCurl() == false) {
        return result;
     }
+
     //
     // process the results
     //
@@ -925,38 +1000,13 @@ AgaveCurl::startJob(const QString &jobDescriptionFile)
            emit errorMessage(message);
            return result;
        }
+   } else {
+     QString message("Job failed for unknown reason");;
+     emit errorMessage(message);
+     return result;
    }
 
    return result;
-}
-
-void
-AgaveCurl::startJobCall(const QJsonObject &theJob) {
-  QString result = startJob(theJob);
-  emit startJobReturn(result);
-}
-
-QString
-AgaveCurl::startJob(const QJsonObject &theJob)
-{
-    QString result = "FAILURE";
-
-    //
-    // write job data to file
-    //
-
-    QFile file2(uniqueFileName2);
-    if (!file2.open(QFile::WriteOnly | QFile::Text)) {
-        emit errorMessage("ERROR: COULD NOT OPEN TEMP FILE TO WRITE JSON");
-        return result;
-    }
-
-    QJsonDocument doc2(theJob);
-    file2.write(doc2.toJson());
-    file2.close();
-
-    // invoke previos method & return
-    return this->startJob(uniqueFileName2);
 }
 
 
@@ -993,7 +1043,6 @@ AgaveCurl::getJobList(const QString &matchingName)
     QString val;
     val=file.readAll();
     file.close();
-    qDebug() << val;
 
     if ((val.contains("Missing Credentals")) || (val.contains("Invalid Credentals"))){
         emit errorMessage("ERROR: Trouble LOGGING IN .. try Logout and Login Again");
@@ -1021,6 +1070,7 @@ AgaveCurl::getJobDetailsCall(const QString &jobID)
   QJsonObject result = getJobDetails(jobID);
   emit getJobDetailsReturn(result);
 }
+
 
 QJsonObject
 AgaveCurl::getJobDetails(const QString &jobID)
@@ -1066,6 +1116,7 @@ AgaveCurl::getJobStatusCall(const QString &jobID){
   QString result = this->getJobStatus(jobID);
   emit getJobStatusReturn(result);
 }
+
 
 QString
 AgaveCurl::getJobStatus(const QString &jobID){
@@ -1225,13 +1276,20 @@ AgaveCurl::invokeCurl(void) {
   // set default options
   curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 1L);
   curl_easy_setopt(hnd, CURLOPT_USERAGENT, "curl/7.54.0");
-  if (slist1 != NULL) 
+
+  if (slist2 != NULL) {
+    curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, slist2);
+  }
+  else if (slist1 != NULL) {
     curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, slist1);
+  }
+
   curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);
   curl_easy_setopt(hnd, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
   curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYPEER, 0L);
   curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYHOST, 0L);
   curl_easy_setopt(hnd, CURLOPT_TCP_KEEPALIVE, 1L);
+  //  curl_easy_setopt(hnd, CURLOPT_VERBOSE, 1L);
 
   // we send the result of curl request to a file > uniqueFileName1
   FILE *pagefile = fopen(uniqueFileName1.toStdString().c_str(), "wb");
@@ -1246,6 +1304,10 @@ AgaveCurl::invokeCurl(void) {
 
   // reset the handle so methods can fill in the different options before next call
   curl_easy_reset(hnd);
+  if (slist2 != NULL) {
+    curl_slist_free_all(slist2);
+    slist2 = NULL;
+  }
 
   // check for success
   if (ret == CURLE_OK)

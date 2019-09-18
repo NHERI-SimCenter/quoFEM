@@ -41,6 +41,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFile>
 #include <QTime>
 #include <QTextStream>
+#include <GoogleAnalytics.h>
+
 
  // customMessgaeOutput code from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
@@ -77,6 +79,15 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
+
+    //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
+    QCoreApplication::setApplicationName("quoFEM");
+    QCoreApplication::setOrganizationName("SimCenter");
+    QCoreApplication::setApplicationVersion("1.1.1");
+    //    GoogleAnalytics::SetTrackingId("UA-121636495-1");
+    GoogleAnalytics::StartSession();
+    GoogleAnalytics::ReportStart();
+
   //
   // set up logging of output messages for user debugging
   //
@@ -115,5 +126,7 @@ int main(int argc, char *argv[])
   // exe application event-loop
   //
 
-  return app.exec();
+  int res = app.exec();
+  GoogleAnalytics::EndSession();
+  return res;
 }
