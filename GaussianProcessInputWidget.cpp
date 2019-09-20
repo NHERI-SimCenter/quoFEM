@@ -95,7 +95,7 @@ bool GaussianProcessInputWidget::inputFromJSON(QJsonObject &jsonObject)
 
 int GaussianProcessInputWidget::getNumberTasks()
 {
-    return 0;
+    return numSamples->text().toInt();
 }
 
 

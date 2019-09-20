@@ -103,9 +103,14 @@ int main(int argc, char *argv[])
   
   qInstallMessageHandler(customMessageOutput);
 
-  // window scaling for mac
-  //qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
+  //
+  // windows scaling - Qt HighDPI scaling is problematic (llok at QtCreator on high res laptop
+  //    - this constitutes my best effort to make it look better on window laptop
+
+#ifdef Q_OS_WIN
+  qputenv("QT_SCALE_FACTOR", ".7");
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
 
   //
   // start Qt mainwindow per normal

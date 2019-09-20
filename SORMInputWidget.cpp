@@ -114,5 +114,5 @@ SORMInputWidget::clear(void)
 int
 SORMInputWidget::getNumberTasks()
 {
-    return 0;
+    return 1;
 }
