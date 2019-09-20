@@ -67,11 +67,12 @@ InputWidgetReliability::InputWidgetReliability(QWidget *parent)
 {
     layout = new QVBoxLayout();
     mLayout = new QVBoxLayout();
+
     //
     // create layout for selection box for method type to layout
     //
 
-    QVBoxLayout *methodLayout= new QVBoxLayout;
+    QHBoxLayout *methodLayout= new QHBoxLayout;
     QLabel *label1 = new QLabel();
     label1->setText(QString("Reliability Order"));
     samplingMethod = new QComboBox();
@@ -81,10 +82,10 @@ InputWidgetReliability::InputWidgetReliability(QWidget *parent)
     samplingMethod->addItem(tr("SORM"));
 
     methodLayout->addWidget(label1);
-    methodLayout->addWidget(samplingMethod);
+    methodLayout->addWidget(samplingMethod,2);
+    methodLayout->addStretch(4);
 
     mLayout->addLayout(methodLayout);
-    mLayout->addStretch(1);
 
     //
     // qstacked widget to hold all widgets
@@ -98,10 +99,8 @@ InputWidgetReliability::InputWidgetReliability(QWidget *parent)
     theFORM = new FORMInputWidget();
     theStackedWidget->addWidget(theFORM);
 
-
     // set current widget to index 0
     theCurrentMethod = theSORM;
-
 
     mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);

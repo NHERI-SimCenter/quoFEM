@@ -70,7 +70,7 @@ GaussianProcessInputWidget::GaussianProcessInputWidget(QWidget *parent) : UQ_Met
     sampleDataGroup->setLayout(sampleDataLayout);
 
     layout->addWidget(sampleDataGroup);
-    //    layout->addStretch();
+    layout->addStretch();
 
     this->setLayout(layout);
 }
