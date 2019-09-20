@@ -97,13 +97,12 @@ FORMInputWidget::outputToJSON(QJsonObject &jsonObj){
 bool
 FORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
 
-
+    return 0;
 }
 
 void
 FORMInputWidget::clear(void)
 {
-
 }
 
 
@@ -111,5 +110,5 @@ FORMInputWidget::clear(void)
 int
 FORMInputWidget::getNumberTasks()
 {
-
+    return 0;
 }
