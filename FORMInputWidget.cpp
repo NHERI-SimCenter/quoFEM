@@ -46,47 +46,38 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 FORMInputWidget::FORMInputWidget(QWidget *parent) 
 : UQ_MethodInputWidget(parent)
 {
-
-  QVBoxLayout *mLayout = new QVBoxLayout();
+  QGridLayout *layout = new QGridLayout();
 
   // create layout label and entry for # samples
-  QVBoxLayout *samplesLayout= new QVBoxLayout;
+  QHBoxLayout *methodLayout= new QHBoxLayout;
   QLabel *label2 = new QLabel();
   label2->setText(QString("Reliability Scheme"));
   reliabilityScheme = new QComboBox();
-  reliabilityScheme->setMaximumWidth(100);
-  reliabilityScheme->setMinimumWidth(100);
+  //reliabilityScheme->setMaximumWidth(100);
+  //  reliabilityScheme->setMinimumWidth(100);
   reliabilityScheme->addItem(tr("Local"));
   reliabilityScheme->addItem(tr("Global"));  
   reliabilityScheme->setToolTip("Set reliability scheme:  local vs global");
 
-  samplesLayout->addWidget(label2);
-  samplesLayout->addWidget(reliabilityScheme);
+  layout->addWidget(label2, 0,0);
+  layout->addWidget(reliabilityScheme, 0,1);
 
-  mLayout->addLayout(samplesLayout);
-  mLayout->addStretch(1);
-  
-  // create label and entry for seed to layout
-  QVBoxLayout *seedLayout= new QVBoxLayout;
   QLabel *label3 = new QLabel();
   label3->setText(QString("MPP Search Method"));
   mppMethod = new QComboBox();
-  mppMethod->setMaximumWidth(100);
-  mppMethod->setMinimumWidth(100);
+  //  mppMethod->setMaximumWidth(100);
+  //  mppMethod->setMinimumWidth(100);
   mppMethod->addItem(tr("no_approx"));
   mppMethod->addItem(tr("x_taylor_mean"));
   mppMethod->addItem(tr("u_taylor_mean"));   
   mppMethod->setToolTip("Set the search method for the Most Probable Point");
 
-  seedLayout->addWidget(label3);
-  seedLayout->addWidget(mppMethod);
+  layout->addWidget(label3, 1,0);
+  layout->addWidget(mppMethod, 1,1);
+  layout->setColumnStretch(1,2);
+  layout->setColumnStretch(2,4);
 
-
-
-  mLayout->addLayout(seedLayout);
-  mLayout->addStretch(1);
-
-  this->setLayout(mLayout);
+  this->setLayout(layout);
 }
 
 FORMInputWidget::~FORMInputWidget()

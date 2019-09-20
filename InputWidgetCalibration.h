@@ -84,7 +84,6 @@ public slots:
 
 
 private:
-    QVBoxLayout *layout;
     QComboBox   *calibrationMethod;
 
 //    QHBoxLayout *mLayout;//not using it anymore

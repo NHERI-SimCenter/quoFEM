@@ -8,7 +8,7 @@
 GaussianProcessInputWidget::GaussianProcessInputWidget(QWidget *parent) : UQ_MethodInputWidget(parent)
 {
     //auto layout = new QGridLayout();
-    QVBoxLayout *layout = new QVBoxLayout();
+    QHBoxLayout *layout = new QHBoxLayout();
 
     // create layout label and entry for # samples
     QGroupBox *trainingDataGroup = new QGroupBox("Surrogate Training Data");
@@ -39,7 +39,7 @@ GaussianProcessInputWidget::GaussianProcessInputWidget(QWidget *parent) : UQ_Met
     trainingDataGroup->setLayout(trainingDataLayout);
 
     layout->addWidget(trainingDataGroup);
-    layout->addStretch();
+    //    layout->addStretch();
 
     // create layout label and entry for # samples
     QGroupBox *sampleDataGroup = new QGroupBox("Surrogate Sampling Data");

@@ -61,59 +61,63 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 InputWidgetCalibration::InputWidgetCalibration(QWidget *parent)
     : InputWidgetDakotaMethod(parent)
 {
-    layout = new QVBoxLayout();
-    TestingLayout = new QVBoxLayout();
+  QVBoxLayout *layout = new QVBoxLayout();
+  QVBoxLayout *mLayout = new QVBoxLayout();
 
-    QVBoxLayout *methodLayout= new QVBoxLayout;
+  QHBoxLayout *methodLayout= new QHBoxLayout;
+  QLabel *label1 = new QLabel();
+  label1->setText(QString("Method"));
+  label1->setMaximumWidth(100);
+  label1->setMinimumWidth(100);
+  calibrationMethod = new QComboBox();
 
-    QLabel *label1 = new QLabel();
-    label1->setText(QString("Method"));
-    label1->setMaximumWidth(100);
-    label1->setMinimumWidth(100);
-    calibrationMethod = new QComboBox();
-
-    calibrationMethod->addItem(tr("OPT++GaussNewton"));
-    calibrationMethod->addItem(tr("NL2SOL"));
-
-    // The methods below are not yet handled by parseDAKOTA.py
-    //calibrationMethod->addItem(tr("ColinyPattern"));
-    //calibrationMethod->addItem(tr("ConjugateGradient"));
-    //calibrationMethod->addItem(tr("Coliny_EA"));
-
-    calibrationMethod->setMaximumWidth(250);
-    calibrationMethod->setMinimumWidth(100);
+  calibrationMethod->addItem(tr("OPT++GaussNewton"));
+  calibrationMethod->addItem(tr("NL2SOL"));
+  
+  // The methods below are not yet handled by parseDAKOTA.py
+  //calibrationMethod->addItem(tr("ColinyPattern"));
+  //calibrationMethod->addItem(tr("ConjugateGradient"));
+  //calibrationMethod->addItem(tr("Coliny_EA"));
+  
+  //  calibrationMethod->setMaximumWidth(250);
+  //  calibrationMethod->setMinimumWidth(100);
     
-    methodLayout->addWidget(label1);
-    methodLayout->addWidget(calibrationMethod);
+  methodLayout->addWidget(label1);
+  methodLayout->addWidget(calibrationMethod,2);
+  methodLayout->addStretch(4);  
 
-    connect(calibrationMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(comboboxItemChanged(QString)));
+  connect(calibrationMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(comboboxItemChanged(QString)));
 
-
-    QVBoxLayout *maxIterLayout= new QVBoxLayout;
-    QLabel *label2 = new QLabel();
-    label2->setText(QString("max # Iterations"));
-    maxIterations = new QLineEdit();
-    maxIterations->setText(tr("1000"));
-    maxIterations->setMaximumWidth(100);
-    maxIterations->setMinimumWidth(100);
+  mLayout->addLayout(methodLayout);
+  
+  QGridLayout *gridLayout= new QGridLayout;
+  QLabel *label2 = new QLabel();
+  label2->setText(QString("max # Iterations"));
+  maxIterations = new QLineEdit();
+  maxIterations->setText(tr("1000"));
+  maxIterations->setMaximumWidth(100);
+  maxIterations->setMinimumWidth(100);
+  
+  gridLayout->addWidget(label2, 0,0);
+  gridLayout->addWidget(maxIterations ,0,1);
     
-    maxIterLayout->addWidget(label2);
-    maxIterLayout->addWidget(maxIterations);
-    
-    QVBoxLayout *tolLayout= new QVBoxLayout;
-    QLabel *label3 = new QLabel();
-    label3->setText(QString("Convergence Tol"));
-    convergenceTol = new QLineEdit();
-    convergenceTol->setText(QString::number(1.0e-2));
-    convergenceTol->setMaximumWidth(100);
-    convergenceTol->setMinimumWidth(100);
-    
-    tolLayout->addWidget(label3);
-    tolLayout->addWidget(convergenceTol);
-    
-    QHBoxLayout *mLayout= new QHBoxLayout;
+  QLabel *label3 = new QLabel();
+  label3->setText(QString("Convergence Tol"));
+  convergenceTol = new QLineEdit();
+  convergenceTol->setText(QString::number(1.0e-2));
+  convergenceTol->setMaximumWidth(100);
+  convergenceTol->setMinimumWidth(100);
+  
+  gridLayout->addWidget(label3, 1, 0);
+  gridLayout->addWidget(convergenceTol, 1,1);
 
+  gridLayout->setColumnStretch(2,1);
 
+  mLayout->addLayout(gridLayout);
+  layout->addLayout(mLayout);
+    //    QHBoxLayout *mLayout= new QHBoxLayout;
+
+    /*
     TestingLayout->addLayout(methodLayout);
     TestingLayout->addLayout(maxIterLayout);
     TestingLayout->addLayout(tolLayout);
@@ -121,9 +125,11 @@ InputWidgetCalibration::InputWidgetCalibration(QWidget *parent)
 
     //layout->addLayout(mLayout);
     layout->addLayout(TestingLayout);
+    */
 
     theEdpWidget = new InputWidgetEDP();
-    layout->addWidget(theEdpWidget,1);
+    layout->addWidget(theEdpWidget);
+    layout->addStretch();
 
     this->setLayout(layout);
 }
