@@ -106,7 +106,7 @@ SORMInputWidget::outputToJSON(QJsonObject &jsonObj){
 bool
 SORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
 
-
+    return 0;
 }
 
 void
@@ -120,5 +120,5 @@ SORMInputWidget::clear(void)
 int
 SORMInputWidget::getNumberTasks()
 {
-
+    return 1;
 }
