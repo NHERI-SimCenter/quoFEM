@@ -188,7 +188,7 @@ uq_method = uq_data["uqType"]
 numResponses=0
 responseDescriptors=[]
 
-if uq_method == "Sampling":
+if uq_method == "Forward Propagation":
     
     samplingData = uq_data["samplingMethodData"]
     method = samplingData["method"]
@@ -315,7 +315,7 @@ text_archive
             numResponses += 1
 
 
-elif uq_method == 'Reliability':
+elif uq_method == "Reliability Analysis":
 
     sampling_data = uq_data["samplingMethodData"]
     rel_method = sampling_data["method"]       # [FORM, SORM]
@@ -428,6 +428,7 @@ seed = {seed}
 # write out the variable data // shall be replaced to make human-readable
 
 dakota_input += ('variables,\n')
+dakota_input += ('active uncertain\n')
 
 if (numNormalUncertain > 0):
     dakota_input += ('normal_uncertain = ' '{}'.format(numNormalUncertain))
@@ -689,12 +690,12 @@ if (uq_method == "Reliability"):
             row_string = row_string + "\n"
             dakota_input += (row_string)
             
-# if (uq_method == "Sampling") -> use rank matrix instead of correlation
+# if (uq_method == "Forward Propagation") -> use rank matrix instead of correlation
 
 dakota_input += ('\n')
 
 
-if uq_method == "Sampling":
+if uq_method == "Forward Propagation":
     
     samplingData = uq_data["samplingMethodData"]
     method = samplingData["method"]
@@ -732,7 +733,7 @@ femProgram = fem_data["program"]
 
 if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
     dakota_input += ('interface,\n')
-    if uq_method == "Sampling":
+    if uq_method == "Forward Propagation":
         samplingData = uq_data["samplingMethodData"]
         method = samplingData["method"]
         if method == "Gaussian Process Regression":
@@ -755,7 +756,7 @@ if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
     
 # write out the responses
 
-if uq_method == "Sampling":
+if uq_method == "Forward Propagation":
     
     samplingData = uq_data["samplingMethodData"]
     method = samplingData["method"]
@@ -809,7 +810,7 @@ if uq_method == "Sampling":
         responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
 
-elif uq_method == 'Reliability':
+elif uq_method == "Reliability Analysis":
        
     # write out the env data
     dakota_input += (
@@ -827,7 +828,7 @@ no_hessians
         responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))  
         
 
-elif uq_method == "Calibration":
+elif uq_method == "Parameter Estimation":
     dakota_input += (
 """responses,
 calibration_terms = {numResponses}
@@ -839,7 +840,7 @@ no_hessians
     numResponses = numResponses,
     responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
-elif uq_method == "Bayesian Calibration":
+elif uq_method == "Inverse Problem":
     dakota_input += (
 """responses,
 calibration_terms = {numResponses}
