@@ -208,3 +208,4 @@ QComboBox {
 QLineEdit {
     font-size: 12px;
 }
+
