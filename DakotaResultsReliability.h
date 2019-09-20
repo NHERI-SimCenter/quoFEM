@@ -1,3 +1,6 @@
+#ifndef DAKOTA_RESULTS_RELIABILITY_H
+#define DAKOTA_RESULTS_RELIABILITY_H
+
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -17,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -36,83 +39,56 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SORMInputWidget.h>
-#include <QLineEdit>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QValidator>
-#include <QJsonObject>
+#include <DakotaResults.h>
+#include <QtCharts/QChart>
+#include <QMessageBox>
+#include <QPushButton>
 
-SORMInputWidget::SORMInputWidget(QWidget *parent) 
-: UQ_MethodInputWidget(parent)
+
+using namespace QtCharts;
+
+class QTextEdit;
+class QTabWidget;
+class MyTableWidget;
+class MainWindow;
+class RandomVariablesContainer;
+
+//class QChart;
+
+class DakotaResultsReliability : public DakotaResults
 {
+    Q_OBJECT
+public:
+  explicit DakotaResultsReliability(RandomVariablesContainer *, QWidget *parent = 0);
+    ~DakotaResultsReliability();
 
-  QGridLayout *layout = new QGridLayout();
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
-  // create layout label and entry for # samples
-  QLabel *label2 = new QLabel();
-  label2->setText(QString("Reliability Scheme"));
-  reliabilityScheme = new QComboBox();
-  //  reliabilityScheme->setMaximumWidth(100);
-  //  reliabilityScheme->setMinimumWidth(100);
-  reliabilityScheme->addItem(tr("Local"));
-  reliabilityScheme->addItem(tr("Global"));  
-  reliabilityScheme->setToolTip("Set reliability scheme:  local vs global");
+    int processResults(QString &filenameResults, QString &filenameTab);
 
-  layout->addWidget(label2, 0,0);
-  layout->addWidget(reliabilityScheme, 0,1);
+signals:
 
-  // create label and entry for seed to layout
-  QVBoxLayout *seedLayout= new QVBoxLayout;
-  QLabel *label3 = new QLabel();
-  label3->setText(QString("MPP Search Method"));
-  mppMethod = new QComboBox();
-  //  mppMethod->setMaximumWidth(100);
-  //  mppMethod->setMinimumWidth(100);
-  mppMethod->addItem(tr("no_approx"));
-  mppMethod->addItem(tr("x_taylor_mean"));
-  mppMethod->addItem(tr("u_taylor_mean"));   
-  mppMethod->setToolTip("Set the search method for the Most Probable Point");
+public slots:
+   void clear(void);
+   void onSpreadsheetCellClicked(int, int);
+   void onSaveSpreadsheetClicked();
 
-  layout->addWidget(label3, 1,0);
-  layout->addWidget(mppMethod, 1,1);
+   // modified by padhye 08/25/2018
 
-  layout->setColumnStretch(1,2);
-  layout->setColumnStretch(2,4);
+private:
+   RandomVariablesContainer *theRVs;
 
-  this->setLayout(layout);
-}
+   MyTableWidget *spreadsheet;  
+   QChart *chart;
+   int numSpreadsheetRows;
+   int numSpreadsheetCols;
 
-SORMInputWidget::~SORMInputWidget()
-{
+   int col1, col2;
+   bool mLeft;
+   QStringList theHeadings;
 
-}
+   //   QVector<QString>theHeadings;
+};
 
-bool
-SORMInputWidget::outputToJSON(QJsonObject &jsonObj){
-
-    bool result = true;
-    jsonObj["reliability_Scheme"]=reliabilityScheme->currentText();
-    jsonObj["mpp_Method"]=mppMethod->currentText();
-    return result;    
-}
-
-bool
-SORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
-
-
-}
-
-void
-SORMInputWidget::clear(void)
-{
-
-}
-
-
-
-int
-SORMInputWidget::getNumberTasks()
-{
-
-}
+#endif // DAKOTA_RESULTS_RELIABILITY_H

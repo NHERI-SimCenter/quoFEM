@@ -65,17 +65,19 @@ InputWidgetSensitivity::InputWidgetSensitivity(QWidget *parent)
 : InputWidgetDakotaMethod(parent),uqSpecific(0)
 {
     layout = new QVBoxLayout();
+
     mLayout = new QVBoxLayout();
+
     //
     // create layout for selection box for method type to layout
     //
 
-    QVBoxLayout *methodLayout= new QVBoxLayout;
+    QHBoxLayout *methodLayout= new QHBoxLayout;
     QLabel *label1 = new QLabel();
     label1->setText(QString("Method"));
     samplingMethod = new QComboBox();
-    samplingMethod->setMaximumWidth(200);
-    samplingMethod->setMinimumWidth(200);
+    //samplingMethod->setMaximumWidth(800);
+    //samplingMethod->setMinimumWidth(800);
     samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
 
@@ -92,10 +94,12 @@ InputWidgetSensitivity::InputWidgetSensitivity(QWidget *parent)
     */
 
     methodLayout->addWidget(label1);
-    methodLayout->addWidget(samplingMethod);
+    methodLayout->addWidget(samplingMethod,2);
+    methodLayout->addStretch(4);
 
     mLayout->addLayout(methodLayout);
-    mLayout->addStretch(1);
+
+    //    mLayout->addStretch(1);
 
     //
     // qstacked widget to hold all widgets

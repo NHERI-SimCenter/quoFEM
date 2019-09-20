@@ -56,6 +56,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QMenu>
 #include <QPushButton>
 #include <QProcess>
+#include <QScrollArea>
 
 #include <iostream>
 #include <sstream>
@@ -76,7 +77,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //#include <InputWidgetFEM.h>
 #include <InputWidgetUQ.h>
 #include <MainWindow.h>
-
+#include <QHeaderView>
 
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
@@ -116,16 +117,21 @@ DakotaResultsSampling::~DakotaResultsSampling()
 
 void DakotaResultsSampling::clear(void)
 {
-    // delete any existing widgets
-    int count = tabWidget->count();
-    if (count > 0) {
-        for (int i=0; i<count; i++) {
-            QWidget *theWidget = tabWidget->widget(count);
-            delete theWidget;
-        }
+  // delete any existing widgets
+  int count = tabWidget->count();
+  if (count > 0) {
+    for (int i=0; i<count; i++) {
+      QWidget *theWidget = tabWidget->widget(count);
+      delete theWidget;
     }
+  }
+  theHeadings.clear();
+  theMeans.clear();
+  theStdDevs.clear();
+  theKurtosis.clear();
 
-    tabWidget->clear();
+  tabWidget->clear();
+  
 }
 
 
@@ -194,11 +200,18 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
     //
 
+    // create a scrollable windows, place summary inside it
+    QScrollArea *sa = new QScrollArea;
+    sa->setWidgetResizable(true);
+    sa->setLineWidth(0);
+    sa->setFrameShape(QFrame::NoFrame);
+
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
     summaryLayout->setContentsMargins(0,0,0,0); // adding back
     summary->setLayout(summaryLayout);
 
+    sa->setWidget(summary);
 
     //
     // create spreadsheet,  a QTableWidget showing RV and results for each run
@@ -221,7 +234,9 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     std::getline(tabResults, inputLine);
     std::istringstream iss(inputLine);
     int colCount = 0;
+
     theHeadings << "Run #";
+
     bool includesInterface = false;
     do {
         std::string subs;
@@ -244,9 +259,11 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
         colCount = colCount -1;
 
     qDebug() << "colCount: " << colCount << " " << includesInterface;
+    qDebug() << "HEADINGS: " << theHeadings;
 
     spreadsheet->setColumnCount(colCount);
     spreadsheet->setHorizontalHeaderLabels(theHeadings);
+    spreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     // now until end of file, read lines and place data into spreadsheet
 
@@ -351,7 +368,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     // add summary, detained info and spreadsheet with chart to the tabed widget
     //
 
-    tabWidget->addTab(summary,tr("Summary"));
+    tabWidget->addTab(sa,tr("Summary"));
     tabWidget->addTab(widget, tr("Data Values"));
     tabWidget->adjustSize();
 
@@ -719,11 +736,14 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
                     }
                     //line_from_file=line_from_file+info_fit_file.readLine()+"\n";
                 }
-                best_fit_label_text->setText(line_from_file);
-                best_fit_label_text->setStyleSheet("QLabel { background-color : white; color : gray; }");
+                qDebug() << line_from_file;
 
-                QFont f2("Helvetica [Cronyx]", 10, QFont::Normal);
-                best_fit_label_text->setFont(f2);
+                // best_fit_label_text->setText(line_from_file);
+                // best_fit_label_text->setStyleSheet("QLabel { background-color : white; color : gray; }");
+
+                // QFont f2("Helvetica [Cronyx]", 10, QFont::Normal);
+                // best_fit_label_text->setFont(f2);
+
                 //msgBox.show();
                 //  msgBox.exec();
 
@@ -792,10 +812,6 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
     bool result = true;
 
     jsonObject["resultType"]=QString(tr("DakotaResultsSampling"));
-    // qDebug()<<"\n \n I am inside the Dakota Sampling    \n    ";
-    // qDebug()<<"\n \n the value of resultType is     "<<jsonObject["resultType"]<<"\n \n";
-    //qDebug()<<"\n \n  \n \n the value of jsonObject is \n\n\n    ";
-    //qDebug()<<jsonObject<<"\n\n";
 
     //
     // add summary data
@@ -808,16 +824,11 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
         edpData["name"]=theNames.at(i);
         edpData["mean"]=theMeans.at(i);
         edpData["stdDev"]=theStdDevs.at(i);
+        edpData["kurtosis"]=theKurtosis.at(i);
         resultsData.append(edpData);
     }
 
-    //  qDebug()<<"\n I am exiting here     ";
-
-    //    exit(1);
-
-
     jsonObject["summary"]=resultsData;
-
 
     //
     // add spreadsheet data

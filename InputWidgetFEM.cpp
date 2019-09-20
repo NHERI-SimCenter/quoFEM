@@ -72,8 +72,8 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
     QSpacerItem *spacer = new QSpacerItem(50,10);
 
     femSelection = new QComboBox();
-    femSelection->setMaximumWidth(100);
-    femSelection->setMinimumWidth(100);
+    femSelection->setMaximumWidth(400);
+    femSelection->setMinimumWidth(200);
     femSelection->setToolTip(tr("Remote Application to Run"));
     titleLayout->addWidget(textFEM);
     titleLayout->addItem(spacer);

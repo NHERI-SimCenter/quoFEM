@@ -72,12 +72,12 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     QSpacerItem *spacer = new QSpacerItem(50,10);
 
     uqSelection = new QComboBox();
-    uqSelection->setMaximumWidth(200);
+    uqSelection->setMaximumWidth(400);
     uqSelection->setMinimumWidth(200);
 
     titleLayout->addWidget(textFEM);
     titleLayout->addItem(spacer);
-    titleLayout->addWidget(uqSelection);
+    titleLayout->addWidget(uqSelection,1);
     titleLayout->addStretch();
     titleLayout->setSpacing(0);
     titleLayout->setMargin(0);
@@ -87,11 +87,11 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     name->setSpacing(10);
     name->setMargin(0);
 
-    uqSelection->addItem(tr("Sampling"));
-    uqSelection->addItem(tr("Calibration"));
-    uqSelection->addItem(tr("Bayesian Calibration"));
-    uqSelection->addItem(tr("Reliability"));
-    uqSelection->addItem(tr("Sensitivity"));
+    uqSelection->addItem(tr("Forward Propogation"));
+    uqSelection->addItem(tr("Parameter Estimation"));
+    uqSelection->addItem(tr("Inverse Problem"));
+    uqSelection->addItem(tr("Reliability Analysis"));
+    uqSelection->addItem(tr("Sensitivity Analysis"));
 
     connect(uqSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(uqSelectionChanged(QString)));
 
@@ -201,23 +201,23 @@ void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
     if (dakotaMethod != 0)
         layout->removeWidget(dakotaMethod);
 
-    if (arg1 == QString("Sampling")) {
+    if ((arg1 == QString("Sampling")) || (arg1 == QString("Forward Propogation"))) {
         delete dakotaMethod;
         dakotaMethod = new InputWidgetSampling();
 
-    } else if (arg1 == QString("Reliability")) {
-        delete dakotaMethod;
-        dakotaMethod = new InputWidgetReliability();
+    } else if ((arg1 == QString("Reliability")) || (arg1 == QString("Reliability Analysis"))) {
+      delete dakotaMethod;
+      dakotaMethod = new InputWidgetReliability();
     
-    } else if (arg1 == QString("Calibration")) {
-        delete dakotaMethod;
-        dakotaMethod = new InputWidgetCalibration();
+    } else if ((arg1 == QString("Calibration")) || (arg1 == QString("Parameter Estimation"))) {
+      delete dakotaMethod;
+      dakotaMethod = new InputWidgetCalibration();
 
-    } else if (arg1 == QString("Bayesian Calibration")) {
+    } else if ((arg1 == QString("Bayesian Calibration")) || (arg1 == QString("Inverse Problem"))) {
         delete dakotaMethod;
         dakotaMethod = new InputWidgetBayesianCalibration();
-
-    } else if (arg1 == QString("Sensitivity")) {
+	
+    } else if ((arg1 == QString("Sensitivity")) || (arg1 == QString("Sensitivity Analysis"))) {
         delete dakotaMethod;
         dakotaMethod = new InputWidgetSensitivity();
 

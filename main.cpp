@@ -115,13 +115,16 @@ int main(int argc, char *argv[])
   MainWindow w;
   w.show();
   
-  // load SimCenter style sheet
-  QFile file(":/styleCommon/common_style.qss");
+  // load style sheet
+
+  QFile file(":/styles/stylesheet.qss");
   if(file.open(QFile::ReadOnly)) {
       app.setStyleSheet(file.readAll());
       file.close();
+  } else {
+      qDebug() << "could not open stylesheet";
   }
-  
+
   //
   // exe application event-loop
   //

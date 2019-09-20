@@ -66,7 +66,7 @@ InputWidgetBayesianCalibration::InputWidgetBayesianCalibration(QWidget *parent)
 {
     layout = new QVBoxLayout();
 
-    QVBoxLayout *methodLayout= new QVBoxLayout;
+    QHBoxLayout *methodLayout= new QHBoxLayout;
     QLabel *label1 = new QLabel();
     label1->setText(QString("Method"));
     calibrationMethod = new QComboBox();
@@ -74,21 +74,20 @@ InputWidgetBayesianCalibration::InputWidgetBayesianCalibration(QWidget *parent)
    // calibrationMethod->addItem(tr("QUESO"));
     
     methodLayout->addWidget(label1);
-    methodLayout->addWidget(calibrationMethod);
+    methodLayout->addWidget(calibrationMethod,2);
+    methodLayout->addStretch(4);
     
-    QVBoxLayout *samplesLayout= new QVBoxLayout;
+    QGridLayout *otherLayout= new QGridLayout;
     QLabel *label2 = new QLabel();
     label2->setText(QString("#Chain Samples"));
     chainSamples = new QLineEdit();
     chainSamples->setText(tr("10"));
-    chainSamples->setMaximumWidth(100);
-    chainSamples->setMinimumWidth(100);
+    //chainSamples->setMaximumWidth(100);
+    //chainSamples->setMinimumWidth(100);
 
+    otherLayout->addWidget(label2, 0,0);
+    otherLayout->addWidget(chainSamples, 0,1);
     
-    samplesLayout->addWidget(label2);
-    samplesLayout->addWidget(chainSamples);
-    
-    QVBoxLayout *seedLayout= new QVBoxLayout;
     QLabel *label3 = new QLabel();
     label3->setText(QString("Seed"));
     srand(time(NULL));
@@ -96,19 +95,15 @@ InputWidgetBayesianCalibration::InputWidgetBayesianCalibration(QWidget *parent)
 
     randomSeed = new QLineEdit();
     randomSeed->setText(QString::number(randomNumber));
-    randomSeed->setMaximumWidth(100);
-    randomSeed->setMinimumWidth(100);
+    //    randomSeed->setMaximumWidth(100);
+    //    randomSeed->setMinimumWidth(100);
     
-    seedLayout->addWidget(label3);
-    seedLayout->addWidget(randomSeed);
-    
-    QHBoxLayout *mLayout = new QHBoxLayout();
-    mLayout->addLayout(methodLayout);
-    mLayout->addLayout(samplesLayout);
-    mLayout->addLayout(seedLayout);
-    mLayout->addStretch();
+    otherLayout->addWidget(label3, 1,0);
+    otherLayout->addWidget(randomSeed, 1,1);
+    otherLayout->setColumnStretch(2,1);
 
-    layout->addLayout(mLayout);
+    layout->addLayout(methodLayout);
+    layout->addLayout(otherLayout);
 
     theEdpWidget = new InputWidgetEDP();
     layout->addWidget(theEdpWidget,1);

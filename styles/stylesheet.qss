@@ -1,15 +1,176 @@
-/* ---   Styles for EE-UQ    --- */
-/* --- Written: charles.wang --- */
+/*----------------------------------------------------------------------------*/
+/* QMainWindow                                                                */
+/*----------------------------------------------------------------------------*/
 
-QMainWindow, QDialog
+QMainWindow{
+    background: rgb(240, 240, 240);
+}
+
+/*----------------------------------------------------------------------------*/
+/* QDialog                                                                    */
+/*----------------------------------------------------------------------------*/
+
+QDialog
 {
-	background: #222;
+	background: rgb(240, 240, 240);
+}
+
+/*----------------------------------------------------------------------------*/
+/* Header and Footer                                                          */
+/*----------------------------------------------------------------------------*/
+
+FooterWidget, HeaderWidget {
+    background-color: #B0BEC5;
+    height: 30px;
+    border-radius: 2px;
+}
+
+QLabel#titleText {
+    font-size: 16px;
+    padding-left: 25px;
+    font-weight: bold;
+}
+
+footerLayout {
+    background-color: #B0BEC5;
+    height: 30px;
+    border-radius: 2px;
+    text-align: center;
+}
+
+QLabel#nsfText {
+    color: #E0E0E0;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/*----------------------------------------------------------------------------*/
+/* Labels                                                             */
+/*----------------------------------------------------------------------------*/
+
+QLabel#sectionTitle {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+QLabel#propertiesTitle {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+QLabel#vizTitle {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+QLabel#outTitle {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+QLabel#inTitle {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+QLabel{
+    font-size: 12px;
+}
+
+/*----------------------------------------------------------------------------*/
+/* Frames                                                                     */
+/*----------------------------------------------------------------------------*/
+
+QFrame#line {
+    background-color: #B0BEC5;
+    border:none;
+}
+
+QFrame#line2 {
+    background-color: #B0BEC5;
+    border:none;
+}
+
+QFrame#inputMotion {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#firstOutput {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#outputDataFrame {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#mainProperties {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#floorMassFrame {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#storyPropertiesFrame {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#outputDataFrame {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#pushButtons {
+    border:none;
+}
+
+/*----------------------------------------------------------------------------*/
+/* QPushButton                                                                */
+/*----------------------------------------------------------------------------*/
+
+QPushButton {
+    color: white;
+    border-style: outset;
+    background-color: #64B5F6;
+    border-style: outset;
+    border-width: 1px;
+    border-radius: 2px;
+    border-color: #607D8B;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px;
+}
+
+QPushButton:pressed {
+    background-color: #B0BEC5;
+    border-style: inset;
+    border-color: black;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/* QGroupBox                                                                  */
+/*----------------------------------------------------------------------------*/
+
+QGroupBox {
+    font-weight: bold;
+}
 
 
-/* --- The menu buttons on the left --- */
+/*----------------------------------------------------------------------------*/
+/* QTabWidget                                                                 */
+/*----------------------------------------------------------------------------*/
+
+QTabWidget::pane {
+    background-color: #ECECEC;
+    border: 1px solid rgb(244, 244, 244);
+}
 
 QTreeView#treeViewOnTheLeft{
     background: rgb(79, 83, 89);
@@ -17,8 +178,6 @@ QTreeView#treeViewOnTheLeft{
     /* set the font properties*/
     font-size:17px;
     color: white;
-
-border-width:50px;
 }
 
 QTreeView#treeViewOnTheLeft::item:hover {
@@ -32,34 +191,3 @@ QTreeView#treeViewOnTheLeft::item:selected:active{
 QTreeView#treeViewOnTheLeft::item:selected:!active {
     background: rgb(63, 147, 168);
 }
-
-
-/* This overrides some features of QComboBox defined in styles.qss */
-QComboBox {
-    color:black; /* set color to be black, even item hovered */
-    border: 1px solid gray;
-    border-radius: 3px;
-    background-color: #E0E0E0;
-    padding: 1px 18px 1px 3px;
-    min-width: 6em;
-}
-
-
-
-/*
-QPushButton
-{
-	border-radius: 1px;
-	border: 0;
-	text-align: center;
-	font-size: inherit;
-	background: #FA5C5C;
-	color: #fff;
-	outline: 0;
-	text-decoration: none;
-	padding: 0 10px;
-	border-radius: 1px;
-	line-height: 35px;
-}
-*/
-
