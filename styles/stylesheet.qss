@@ -196,6 +196,16 @@ QTreeView#treeViewOnTheLeft::item:selected:!active {
 /* QCombboBox                                                                 */
 /*----------------------------------------------------------------------------*/
 
-QCombboBox {
-    color: white;
+QComboBox {
+    background: white;
+    font-size: 12px;
+}
+
+/*----------------------------------------------------------------------------*/
+/* QLineEdit                                                                  */
+/*----------------------------------------------------------------------------*/
+
+
+QLineEdit {
+    font-size: 12px;
 }
