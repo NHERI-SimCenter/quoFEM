@@ -66,10 +66,12 @@ bool PCEInputWidget::outputToJSON(QJsonObject &jsonObject)
 
 bool PCEInputWidget::inputFromJSON(QJsonObject &jsonObject)
 {
+    return 0;
 }
 
 int PCEInputWidget::getNumberTasks()
 {
+    return 0;
 }
 
 void PCEInputWidget::dataMethodChanged(int method) {
