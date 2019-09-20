@@ -87,7 +87,7 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     name->setSpacing(10);
     name->setMargin(0);
 
-    uqSelection->addItem(tr("Forward Propogationn"));
+    uqSelection->addItem(tr("Forward Propogation"));
     uqSelection->addItem(tr("Parameter Estimation"));
     uqSelection->addItem(tr("Inverse Problem"));
     uqSelection->addItem(tr("Reliability Analysis"));
