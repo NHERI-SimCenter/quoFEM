@@ -66,7 +66,22 @@ bool PCEInputWidget::outputToJSON(QJsonObject &jsonObject)
 
 bool PCEInputWidget::inputFromJSON(QJsonObject &jsonObject)
 {
-    return 0;
+    bool result = false;
+    if ( (jsonObject.contains("samples"))
+         && (jsonObject.contains("seed"))
+         && (jsonObject.contains("dataMethod")) ) {
+
+        int samples=jsonObject["samples"].toInt();
+        double seed=jsonObject["seed"].toDouble();
+        numSamples->setText(QString::number(samples));
+        randomSeed->setText(QString::number(seed));
+
+        QString method=jsonObject["dataMethod"].toString();
+        dataMethod->setCurrentIndex(dataMethod->findText(method));
+        return true;
+
+    }
+    return result;
 }
 
 int PCEInputWidget::getNumberTasks()

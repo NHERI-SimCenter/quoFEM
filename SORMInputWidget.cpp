@@ -42,6 +42,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QLabel>
 #include <QValidator>
 #include <QJsonObject>
+#include <QDebug>
+
 
 SORMInputWidget::SORMInputWidget(QWidget *parent) 
 : UQ_MethodInputWidget(parent)
@@ -99,8 +101,21 @@ SORMInputWidget::outputToJSON(QJsonObject &jsonObj){
 
 bool
 SORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
+    qDebug() << "SORM_INPUT";
+    bool result = false;
+    if ( (jsonObject.contains("reliability_Scheme"))
+         && (jsonObject.contains("mpp_Method")) ) {
 
-    return 0;
+qDebug() << "SORM_INPUT 2";
+        QString scheme=jsonObject["reliability_Scheme"].toString();
+        reliabilityScheme->setCurrentIndex(reliabilityScheme->findText(scheme));
+
+        QString method=jsonObject["mpp_Method"].toString();
+        mppMethod->setCurrentIndex(mppMethod->findText(method));
+        return true;
+
+    }
+    return result;
 }
 
 void

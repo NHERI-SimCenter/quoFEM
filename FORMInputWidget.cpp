@@ -96,7 +96,20 @@ FORMInputWidget::outputToJSON(QJsonObject &jsonObj){
 
 bool
 FORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
-    return 0;
+    bool result = false;
+    if ( (jsonObject.contains("reliability_Scheme"))
+         && (jsonObject.contains("mpp_Method")) ) {
+
+
+        QString scheme=jsonObject["reliability_Scheme"].toString();
+        reliabilityScheme->setCurrentIndex(reliabilityScheme->findText(scheme));
+
+        QString method=jsonObject["mpp_Method"].toString();
+        mppMethod->setCurrentIndex(mppMethod->findText(method));
+        return true;
+
+    }
+    return result;
 }
 
 void

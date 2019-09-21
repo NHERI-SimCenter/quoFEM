@@ -162,98 +162,6 @@ void InputWidgetSampling::onTextChanged(const QString &text)
     theStackedWidget->setCurrentIndex(4);
     theCurrentMethod = thePCE;
   }
-    /*
-    } else if (text=="Quadrature") {
-
-        // create layout label and entry for dimension
-        QVBoxLayout *dimLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("Dimension"));
-        numSamples = new QLineEdit();
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-        dimLayout->addWidget(label2);
-        dimLayout->addWidget(numSamples);
-
-        mLayout->addLayout(dimLayout);
-        mLayout->addStretch(1);
-
-        // create label and entry for level
-        QVBoxLayout *levelLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Level"));
-        srand(time(NULL));
-        randomSeed = new QLineEdit();
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-        levelLayout->addWidget(label3);
-        levelLayout->addWidget(randomSeed);
-
-        mLayout->addLayout(levelLayout);
-        mLayout->addStretch(1);
-
-    } else if (text=="Surrogate - Polynomial Chaos") {
-
-        // create layout label and entry for dimension
-        QVBoxLayout *dimLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("Dimension"));
-        numSamples = new QLineEdit();
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-        dimLayout->addWidget(label2);
-        dimLayout->addWidget(numSamples);
-
-        mLayout->addLayout(dimLayout);
-        mLayout->addStretch(1);
-
-        // create label and entry for level
-        QVBoxLayout *chaosLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Pol. chaos order"));
-        srand(time(NULL));
-        randomSeed = new QLineEdit();
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-        chaosLayout->addWidget(label3);
-        chaosLayout->addWidget(randomSeed);
-
-        mLayout->addLayout(chaosLayout);
-        mLayout->addStretch(1);
-
-    }  else if (text=="Multilevel Monte Carlo") {
-
-        // create layout label and entry for # samples
-        QVBoxLayout *samplesLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("# Samples"));
-        numSamples = new QLineEdit();
-        numSamples->setText(tr("1000"));
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-        samplesLayout->addWidget(label2);
-        samplesLayout->addWidget(numSamples);
-
-        mLayout->addLayout(samplesLayout);
-        mLayout->addStretch(1);
-
-        // create label and entry for seed to layout
-        QVBoxLayout *seedLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Seed"));
-        srand(time(NULL));
-        int randomNumber = rand() % 1000 + 1;
-        randomSeed = new QLineEdit();
-        randomSeed->setText(QString::number(randomNumber));
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-        seedLayout->addWidget(label3);
-        seedLayout->addWidget(randomSeed);
-
-        mLayout->addLayout(seedLayout);
-        mLayout->addStretch(1);
-    }
-    */
 }
 
 InputWidgetSampling::~InputWidgetSampling()
@@ -309,7 +217,9 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
           return false;
       }
       samplingMethod->setCurrentIndex(index);
-      theCurrentMethod->inputFromJSON(uq);
+      result = theCurrentMethod->inputFromJSON(uq);
+      if (result == false)
+	return result;
 
       result = theEdpWidget->inputFromJSON(uq);
     }
