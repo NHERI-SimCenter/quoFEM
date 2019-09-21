@@ -51,7 +51,29 @@ bool ImportanceSamplingInputWidget::outputToJSON(QJsonObject &jsonObject)
 
 bool ImportanceSamplingInputWidget::inputFromJSON(QJsonObject &jsonObject)
 {
-    return 0;
+    bool result = false;
+    if ( (jsonObject.contains("samples"))
+         && (jsonObject.contains("seed"))
+         && (jsonObject.contains("ismethod")) ) {
+
+      int samples=jsonObject["samples"].toInt();
+      double seed=jsonObject["seed"].toDouble();
+      numSamples->setText(QString::number(samples));
+      randomSeed->setText(QString::number(seed));
+
+      QString method=jsonObject["ismethod"].toString();
+      //isMethod->setCurrentIndex(isMethod->findText(method));
+      if (method == "import") {
+          isMethod->setCurrentIndex(0);
+      } else if (method == "adapt_import")
+          isMethod->setCurrentIndex(1);
+      else
+          isMethod->setCurrentIndex(2);
+
+      result = true;
+    }
+
+    return result;
 }
 
 int ImportanceSamplingInputWidget::getNumberTasks()

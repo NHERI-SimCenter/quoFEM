@@ -77,8 +77,7 @@ signals:
 
 public slots:
    void clear(void);
-   void uqSelectionChanged(const QString &arg1);
-   void onTextChanged(QString);
+   void onTextChanged(const QString &arg1);
  //  void uqMethodChanged(const QString &arg1);
 
 private:

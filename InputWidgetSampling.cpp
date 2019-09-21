@@ -140,7 +140,7 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
 
 }
 
-void InputWidgetSampling::onTextChanged(QString text)
+void InputWidgetSampling::onTextChanged(const QString &text)
 {
   if (text=="LHS") {
     theStackedWidget->setCurrentIndex(0);
@@ -297,12 +297,18 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
 
   //
   // get sampleingMethodData, if not present it's an error
+  //
   
   if (jsonObject.contains("samplingMethodData")) {
     QJsonObject uq = jsonObject["samplingMethodData"].toObject();
     if (uq.contains("method")) {
+
       QString method =uq["method"].toString();
-      this->uqSelectionChanged(method);
+      int index = samplingMethod->findText(method);
+      if (index == -1) {
+          return false;
+      }
+      samplingMethod->setCurrentIndex(index);
       theCurrentMethod->inputFromJSON(uq);
 
       result = theEdpWidget->inputFromJSON(uq);
@@ -312,10 +318,6 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
   return result;
 }
 
-void InputWidgetSampling::uqSelectionChanged(const QString &arg1)
-{
-    // if more data than just num samples and seed code would go here to add or remove widgets from layout
-}
 
 int InputWidgetSampling::processResults(QString &filenameResults, QString &filenameTab) {
 

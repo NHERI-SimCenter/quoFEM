@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QJsonObject>
 #include <QGroupBox>
+#include <QDebug>
 
 GaussianProcessInputWidget::GaussianProcessInputWidget(QWidget *parent) : UQ_MethodInputWidget(parent)
 {
@@ -88,9 +89,37 @@ bool GaussianProcessInputWidget::outputToJSON(QJsonObject &jsonObject)
     return result;
 }
 
+
 bool GaussianProcessInputWidget::inputFromJSON(QJsonObject &jsonObject)
 {
-    return 0;
+
+  bool result = false;
+  if ( (jsonObject.contains("samples"))
+       && (jsonObject.contains("seed"))
+       && (jsonObject.contains("samples2"))
+       && (jsonObject.contains("seed2"))
+       && (jsonObject.contains("dataMethod"))
+       && (jsonObject.contains("dataMethod2")) ) {
+
+    int samples=jsonObject["samples"].toInt();
+    double seed=jsonObject["seed"].toDouble();
+    numSamples->setText(QString::number(samples));
+    randomSeed->setText(QString::number(seed));
+
+    int samples2=jsonObject["samples2"].toInt();
+    double seed2=jsonObject["seed2"].toDouble();
+    numSamples2->setText(QString::number(samples2));
+    randomSeed2->setText(QString::number(seed2));
+
+    QString method1=jsonObject["dataMethod"].toString();
+    QString method2=jsonObject["dataMethod2"].toString();
+    dataMethod->setCurrentIndex(dataMethod->findText(method1));
+    dataMethod2->setCurrentIndex(dataMethod2->findText(method2));
+
+    result = true;
+  }
+
+  return result;
 }
 
 int GaussianProcessInputWidget::getNumberTasks()
