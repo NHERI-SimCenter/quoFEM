@@ -59,6 +59,7 @@ with open('dakota.json') as data_file:
 uq_data = data["uqMethod"]
 fem_data = data["fem"]
 rnd_data = data["randomVariables"]
+my_edps = data["edps"]
 
 # parse the Random Variables
 
@@ -220,8 +221,8 @@ if uq_method == "Forward Propagation":
         samples = numSamples,
         seed = seed))
     
-        edps = samplingData["edps"]
-        for edp in edps:
+        # edps = samplingData["edps"]
+        for edp in my_edps:
             responseDescriptors.append(edp["name"])
             numResponses += 1
 
@@ -240,8 +241,8 @@ if uq_method == "Forward Propagation":
         samples = numSamples,
         seed = seed))
     
-        edps = samplingData["edps"]
-        for edp in edps:
+        #edps = samplingData["edps"]
+        for edp in my_edps:
             responseDescriptors.append(edp["name"])
             numResponses += 1
 
@@ -260,8 +261,8 @@ if uq_method == "Forward Propagation":
         samples = numSamples,
         seed = seed))
     
-        edps = samplingData["edps"]
-        for edp in edps:
+        #edps = samplingData["edps"]
+        for edp in my_edps:
             responseDescriptors.append(edp["name"])
             numResponses += 1
 
@@ -309,8 +310,8 @@ text_archive
         surr_seed = gpr_seed2,
         surr_sams_type = train_method2)
 
-        edps = samplingData["edps"]
-        for edp in edps:
+        #edps = samplingData["edps"]
+        for edp in my_edps:
             responseDescriptors.append(edp["name"])
             numResponses += 1
 
@@ -322,8 +323,8 @@ elif uq_method == "Reliability Analysis":
     mpp_method = sampling_data["mpp_Method"]      # [no_approx, ...]
     rel_scheme = sampling_data["reliability_Scheme"]      # [local, global]
 
-    edps = sampling_data["edps"]
-    for edp in edps:
+    #edps = sampling_data["edps"]
+    for edp in my_edps:
         responseDescriptors.append(edp["name"])
         numResponses += 1
     
@@ -390,8 +391,8 @@ max_iterations = {maxIter}
     convTol = convergenceTol,
     maxIter = maxIter))
 
-    edps = calibrationData["edps"]
-    for edp in edps:
+    #edps = calibrationData["edps"]
+    for edp in my_edps:
         responseDescriptors.append(edp["name"])
         numResponses += 1
 
@@ -420,8 +421,8 @@ seed = {seed}
     chainSamples = chainSamples,
     seed = seed))
 
-    edps = samplingData["edps"]
-    for edp in edps:
+    #edps = samplingData["edps"]
+    for edp in my_edps:
         responseDescriptors.append(edp["name"])
         numResponses += 1
 

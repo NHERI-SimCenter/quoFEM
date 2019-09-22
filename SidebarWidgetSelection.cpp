@@ -74,7 +74,10 @@ SidebarWidgetSelection::buildTreee(){
     treeView->setModel(standardModel);
     treeView->expandAll();
     treeView->setHeaderHidden(true);
-    treeView->setMaximumWidth(200);
+    treeView->setMinimumWidth(100);
+    treeView->setMaximumWidth(100);
+    treeView->setMinimumWidth(100);
+   // treeView->setMaximumWidth(200);
 
     // set up so that a slection change triggers the selectionChanged slot
     QItemSelectionModel *selectionModel= treeView->selectionModel();
@@ -84,7 +87,7 @@ SidebarWidgetSelection::buildTreee(){
             SLOT(selectionChangedSlot(const QItemSelection &, const QItemSelection &)));
 
     // add the TreeView widget to the layout
-    horizontalLayout->addWidget(treeView);
+    horizontalLayout->addWidget(treeView,1.0);
     horizontalLayout->addStretch();
 }
 
