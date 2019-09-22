@@ -129,7 +129,7 @@ InputWidgetSensitivity::InputWidgetSensitivity(QWidget *parent)
 
 }
 
-void InputWidgetSensitivity::onTextChanged(QString text)
+void InputWidgetSensitivity::onMethodChanged(QString text)
 {
   if (text=="LHS") {
     theStackedWidget->setCurrentIndex(0);
@@ -185,23 +185,25 @@ InputWidgetSensitivity::inputFromJSON(QJsonObject &jsonObject)
   //
   
   if (jsonObject.contains("samplingMethodData")) {
-    QJsonObject uq = jsonObject["samplingMethodData"].toObject();
-    if (uq.contains("method")) {
-      QString method =uq["method"].toString();
-      this->uqSelectionChanged(method);
-      theCurrentMethod->inputFromJSON(uq);
+      QJsonObject uq = jsonObject["samplingMethodData"].toObject();
+      if (uq.contains("method")) {
+          QString method =uq["method"].toString();
+          int index = samplingMethod->findText(method);
+          if (index == -1) {
+              return false;
+          }
+          samplingMethod->setCurrentIndex(index);
+          result = theCurrentMethod->inputFromJSON(uq);
+          if (result == false)
+              return result;
 
-      result = theEdpWidget->inputFromJSON(uq);
-    }
+          result = theEdpWidget->inputFromJSON(uq);
+      }
   }
-  
+
   return result;
 }
 
-void InputWidgetSensitivity::uqSelectionChanged(const QString &arg1)
-{
-    // if more data than just num samples and seed code would go here to add or remove widgets from layout
-}
 
 int InputWidgetSensitivity::processResults(QString &filenameResults, QString &filenameTab) {
 
