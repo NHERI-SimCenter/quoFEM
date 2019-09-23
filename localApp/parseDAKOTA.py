@@ -189,7 +189,7 @@ uq_method = uq_data["uqType"]
 numResponses=0
 responseDescriptors=[]
 
-if uq_method == "Forward Propagation":
+if uq_method == "Forward Propagation" or uq_method == "Sensitivity Analysis":
     
     samplingData = uq_data["samplingMethodData"]
     method = samplingData["method"]
@@ -240,6 +240,12 @@ if uq_method == "Forward Propagation":
         sample_type = 'random',
         samples = numSamples,
         seed = seed))
+        
+        if uq_method == "Sensitivity Analysis":
+            dakota_input += (
+            """variance_based_decomp
+                
+""")
     
         #edps = samplingData["edps"]
         for edp in my_edps:
@@ -260,6 +266,12 @@ if uq_method == "Forward Propagation":
         sample_type = 'lhs' ,
         samples = numSamples,
         seed = seed))
+
+        if uq_method == "Sensitivity Analysis":
+            dakota_input += (
+            """variance_based_decomp
+                
+""")
     
         #edps = samplingData["edps"]
         for edp in my_edps:
@@ -696,7 +708,7 @@ if (uq_method == "Reliability"):
 dakota_input += ('\n')
 
 
-if uq_method == "Forward Propagation":
+if uq_method == "Forward Propagation" or uq_method == "Sensitivity Analysis":
     
     samplingData = uq_data["samplingMethodData"]
     method = samplingData["method"]
@@ -734,7 +746,7 @@ femProgram = fem_data["program"]
 
 if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
     dakota_input += ('interface,\n')
-    if uq_method == "Forward Propagation":
+    if uq_method == "Forward Propagation" or uq_method == "Sensitivity Analysis":
         samplingData = uq_data["samplingMethodData"]
         method = samplingData["method"]
         if method == "Gaussian Process Regression":
@@ -757,7 +769,7 @@ if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
     
 # write out the responses
 
-if uq_method == "Forward Propagation":
+if uq_method == "Forward Propagation" or uq_method == "Sensitivity Analysis":
     
     samplingData = uq_data["samplingMethodData"]
     method = samplingData["method"]

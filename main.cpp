@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef Q_OS_LINUX
-    QFile afile(":/styles/stylesheetMAC.qss");
+    QFile file(":/styles/stylesheetMAC.qss");
 #endif
 
   if(file.open(QFile::ReadOnly)) {
