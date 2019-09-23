@@ -50,7 +50,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFileDialog>
 #include <QPushButton>
 #include <sectiontitle.h>
-#include <InputWidgetEDP.h>
 
 #include <iostream>
 #include <sstream>
@@ -130,10 +129,6 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);
 
-    // finally add the EDP layout & set widget layout
-    theEdpWidget = new InputWidgetEDP();
-    layout->addWidget(theEdpWidget,1);
-
     this->setLayout(layout);
 
     connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
@@ -189,8 +184,6 @@ InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
     uq["method"]=samplingMethod->currentText();
     theCurrentMethod->outputToJSON(uq);
 
-    result = theEdpWidget->outputToJSON(uq);
-
     jsonObject["samplingMethodData"]=uq;
 
     return result;
@@ -221,7 +214,6 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
       if (result == false)
 	return result;
 
-      result = theEdpWidget->inputFromJSON(uq);
     }
   }
   
@@ -236,6 +228,7 @@ int InputWidgetSampling::processResults(QString &filenameResults, QString &filen
 
 DakotaResults *
 InputWidgetSampling::getResults(void) {
+    qDebug() << "RETURNED DAKOTARESULTSSAMPLING";
     return new DakotaResultsSampling(theRandomVariables);
 }
 

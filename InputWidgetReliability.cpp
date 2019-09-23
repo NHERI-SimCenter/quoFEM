@@ -36,7 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 #include "InputWidgetReliability.h"
-#include <DakotaResultsSampling.h>
+#include <DakotaResultsReliability.h>
 #include <RandomVariablesContainer.h>
 
 
@@ -104,10 +104,9 @@ InputWidgetReliability::InputWidgetReliability(QWidget *parent)
 
     mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);
+    layout->addStretch();
 
     // finally add the EDP layout & set widget layout
-    theEdpWidget = new InputWidgetEDP();
-    layout->addWidget(theEdpWidget,1);
 
     this->setLayout(layout);
 
@@ -153,8 +152,6 @@ InputWidgetReliability::outputToJSON(QJsonObject &jsonObject)
     uq["method"]=samplingMethod->currentText();
     theCurrentMethod->outputToJSON(uq);
 
-    result = theEdpWidget->outputToJSON(uq);
-
     jsonObject["samplingMethodData"]=uq;
 
     return result;
@@ -182,8 +179,6 @@ InputWidgetReliability::inputFromJSON(QJsonObject &jsonObject)
           result = theCurrentMethod->inputFromJSON(uq);
           if (result == false)
               return result;
-
-          result = theEdpWidget->inputFromJSON(uq);
       }
   }
   
@@ -198,7 +193,7 @@ int InputWidgetReliability::processResults(QString &filenameResults, QString &fi
 
 DakotaResults *
 InputWidgetReliability::getResults(void) {
-    return new DakotaResultsSampling(theRandomVariables);
+    return new DakotaResultsReliability(theRandomVariables);
 }
 
 RandomVariablesContainer *

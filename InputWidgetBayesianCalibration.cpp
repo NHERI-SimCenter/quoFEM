@@ -105,9 +105,6 @@ InputWidgetBayesianCalibration::InputWidgetBayesianCalibration(QWidget *parent)
     layout->addLayout(methodLayout);
     layout->addLayout(otherLayout);
 
-    theEdpWidget = new InputWidgetEDP();
-    layout->addWidget(theEdpWidget,1);
-
     this->setLayout(layout);
 }
 
@@ -135,7 +132,7 @@ InputWidgetBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
     uq["method"]=calibrationMethod->currentText();
     uq["chain_samples"]=chainSamples->text().toInt();
     uq["seed"]=randomSeed->text().toDouble();
-    result =  theEdpWidget->outputToJSON(uq);
+
     jsonObject["bayesian_calibration_method_data"]=uq;
     return result;
 
@@ -159,7 +156,7 @@ InputWidgetBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 
         int index = calibrationMethod->findText(method);
         calibrationMethod->setCurrentIndex(index);
-        return theEdpWidget->inputFromJSON(uq);
+
     } else {
         emit sendErrorMessage("ERROR: Bayesian Calibration INput - no \"bayesian_calibration_method\" data");
         return false;

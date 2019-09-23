@@ -119,10 +119,6 @@ InputWidgetSensitivity::InputWidgetSensitivity(QWidget *parent)
     mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);
 
-    // finally add the EDP layout & set widget layout
-    theEdpWidget = new InputWidgetEDP();
-    layout->addWidget(theEdpWidget,1);
-
     this->setLayout(layout);
 
     connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
@@ -166,8 +162,6 @@ InputWidgetSensitivity::outputToJSON(QJsonObject &jsonObject)
     uq["method"]=samplingMethod->currentText();
     theCurrentMethod->outputToJSON(uq);
 
-    result = theEdpWidget->outputToJSON(uq);
-
     jsonObject["samplingMethodData"]=uq;
 
     return result;
@@ -196,8 +190,6 @@ InputWidgetSensitivity::inputFromJSON(QJsonObject &jsonObject)
           result = theCurrentMethod->inputFromJSON(uq);
           if (result == false)
               return result;
-
-          result = theEdpWidget->inputFromJSON(uq);
       }
   }
 

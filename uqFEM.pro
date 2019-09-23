@@ -69,7 +69,8 @@ SOURCES += main.cpp\
     PCEInputWidget.cpp \ 
     InputWidgetReliability.cpp \
     FORMInputWidget.cpp \
-    SORMInputWidget.cpp
+    SORMInputWidget.cpp \
+    DakotaResultsReliability.cpp
 
 
 HEADERS  += MainWindow.h \
@@ -105,7 +106,8 @@ HEADERS  += MainWindow.h \
     PCEInputWidget.h \
     InputWidgetReliability.h \
     FORMInputWidget.h \
-    SORMInputWidget.h
+    SORMInputWidget.h \
+    DakotaResultsReliability.h
 
 FORMS    += mainwindow.ui
 

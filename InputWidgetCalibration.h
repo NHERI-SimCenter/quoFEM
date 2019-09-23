@@ -42,7 +42,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <InputWidgetDakotaMethod.h>
 
-#include "EDP.h"
 #include <QGroupBox>
 #include <QVector>
 #include <QVBoxLayout>
@@ -51,13 +50,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtGui>
 #include <QDialog>
 
-
+class QLabel;
 class DakotaCalibrationResults;
 class DakotaResults;
 class RandomVariablesContainer;
 
-
-class InputWidgetEDP;
 
 class InputWidgetCalibration : public InputWidgetDakotaMethod
 {
@@ -143,7 +140,6 @@ private:
     QLineEdit   *convergenceTol;
 
     RandomVariablesContainer *theParameters;
-    InputWidgetEDP *theEdpWidget;
     DakotaCalibrationResults *results;
 };
 
