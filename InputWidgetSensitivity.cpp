@@ -35,7 +35,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 #include "InputWidgetSensitivity.h"
-#include <DakotaResultsSampling.h>
+#include <DakotaResultsSensitivity.h>
 #include <RandomVariablesContainer.h>
 
 
@@ -204,7 +204,7 @@ int InputWidgetSensitivity::processResults(QString &filenameResults, QString &fi
 
 DakotaResults *
 InputWidgetSensitivity::getResults(void) {
-    return new DakotaResultsSampling(theRandomVariables);
+    return new DakotaResultsSensitivity(theRandomVariables);
 }
 
 RandomVariablesContainer *

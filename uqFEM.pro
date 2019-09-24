@@ -47,6 +47,7 @@ SOURCES += main.cpp\
         InputWidgetSensitivity.cpp \
         DakotaResults.cpp \
         DakotaResultsSampling.cpp \
+        DakotaResultsSensitivity.cpp \
         DakotaResultsCalibration.cpp \
         InputWidgetCalibration.cpp \
         InputWidgetDakotaMethod.cpp \
@@ -85,6 +86,7 @@ HEADERS  += MainWindow.h \
     DakotaResultsSampling.h \
     InputWidgetCalibration.h \
     DakotaResultsCalibration.h \
+    DakotaResultsSensitivity.h \
     InputWidgetDakotaMethod.h \
     InputWidgetParameters.h \
     InputWidgetBayesianCalibration.h \
