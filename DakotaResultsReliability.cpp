@@ -137,6 +137,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
   this->clear();
 
   numSpreadsheetCols = 1;
+  numSpreadsheetRows = 0;
 
   theHeadings << "%";
   spreadsheet->setColumnCount(1);
@@ -174,7 +175,6 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
       std::vector<double>col1;
       std::vector<double>col2;
 
-      qDebug() << "\n\n\n\nHERE";
 
       while (std::getline(fileResults, haystack)) {
           if (haystack.find(needleStart) != std::string::npos) {
@@ -237,11 +237,9 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
           }
       }
       numSpreadsheetRows = numRows;
-      qDebug() << "numCOL - file results: " << fileResults.eof() << " " << true << " " << false;
   }
-  qDebug() << "HEADINGS: " << theHeadings;
-  spreadsheet->setHorizontalHeaderLabels(theHeadings);
 
+  spreadsheet->setHorizontalHeaderLabels(theHeadings);
   spreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
   fileResults.close();
@@ -290,6 +288,9 @@ DakotaResultsReliability::onSaveSpreadsheetClicked()
 
 void DakotaResultsReliability::onSpreadsheetCellClicked(int row, int col)
 {
+    if (numSpreadsheetRows == 0)
+        return;
+
     qDebug() << "row,col " << row << " " << col;
     mLeft = spreadsheet->wasLeftKeyPressed();
 
@@ -319,7 +320,7 @@ void DakotaResultsReliability::onSpreadsheetCellClicked(int row, int col)
     int rowCount = spreadsheet->rowCount();
 
     QLineSeries *series= new QLineSeries;
-    series->append(0, 0);
+
     double minX = 1e6;
     double maxX = -1e6;
 
