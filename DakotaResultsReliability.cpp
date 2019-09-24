@@ -345,7 +345,7 @@ void DakotaResultsReliability::onSpreadsheetCellClicked(int row, int col)
     axisY->setRange(0., 1.);
 
 
-    axisY->setTitleText("Probability %");
+    axisY->setTitleText("Probability Level");
     axisX->setTitleText(theHeadings.at(col2));
 
     axisY->setTickCount(11);
