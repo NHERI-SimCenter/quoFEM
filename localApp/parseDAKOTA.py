@@ -334,6 +334,7 @@ elif uq_method == "Reliability Analysis":
     rel_method = sampling_data["method"]       # [FORM, SORM]
     mpp_method = sampling_data["mpp_Method"]      # [no_approx, ...]
     rel_scheme = sampling_data["reliability_Scheme"]      # [local, global]
+    active_level = sampling_data["activeLevel"]     # [ProbabilityLevel, ResponseLevel]
 
     #edps = sampling_data["edps"]
     for edp in my_edps:
@@ -352,6 +353,17 @@ elif uq_method == "Reliability Analysis":
     elif rel_scheme == "Global":
         write_scheme = "global_reliability"
 
+    set_probability_level = "0.0 "
+    set_response_level = "0.0"
+    if active_level == "ProbabilityLevel":
+        set_probability_level = ""
+        for l in range(len(sampling_data["probabilityLevel"])):
+            set_probability_level += str(sampling_data["probabilityLevel"][l]) + '  '
+    elif active_level == "ResponseLevel":
+        set_response_level = ""
+        for m in range(len(sampling_data["responseLevel"])):
+            set_response_level += str(sampling_data["responseLevel"][m]) + '  '
+
     # write out the env data
     dakota_input = ""    
         
@@ -363,17 +375,15 @@ method
 {set_reliability_scheme}
 mpp_search {mpp_search_method}
 integration {set_reliability_order}
-probability_levels = .02 .04 .06  .08 .10 
- .12 .14 .16 .18 .20 .22 .24 .26 .28 .30
- .32 .34 .36 .38 .40 .42 .44 .46 .48 .50
- .52 .54 .56 .58 .60 .62 .64 .66 .68 .70
- .72 .74 .76 .78 .80 .82 .84 .86 .88 .90
- .92 .94 .96 .98 
+probability_levels = {set_my_prob}
+response_levels = {set_my_resp}
 
 """).format(
     mpp_search_method = mpp_method,
     set_reliability_order = write_order,
-    set_reliability_scheme = write_scheme)
+    set_reliability_scheme = write_scheme,
+    set_my_prob = set_probability_level,
+    set_my_resp = set_response_level)
 
 
 elif uq_method == 'Calibration':
