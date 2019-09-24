@@ -259,48 +259,89 @@ Node_2_Disp Sobol' indices:
     QGroupBox *groupBox = NULL;
     int numEDP = 0;
     QGridLayout * trainingDataLayout = NULL;
-
+    QHBoxLayout *tableLayout = NULL;
+    MyTableWidget *table = NULL;
+    QStringList theTableHeadings;
+    theTableHeadings << "Random Variable" << "Main" << "Total";
     while (done == false) {
         std::getline(fileResults, haystack);
         if (haystack.find(needleSobol) != std::string::npos) {
             QString h(QString::fromStdString(haystack));
-            qDebug() << "HAYSTACK: " << h;
 
             groupBox = new QGroupBox(h);
-            trainingDataLayout = new QGridLayout();
             summaryLayout->addWidget(groupBox);
+
+            /***** TABLE LAYOUT OPTION  ******
+            // QTable option
+            table = new MyTableWidget();
+            table->setColumnCount(3);
+            table->setHorizontalHeaderLabels(theTableHeadings);
+            table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+            table->verticalHeader()->setVisible(false);
+            tableLayout = new QHBoxLayout();
+            tableLayout->addWidget(table);
+            tableLayout->addStretch();
+            groupBox->setLayout(tableLayout);
+            ********************************************/
+
+            // Labels & QlineEdit Option in a QGrid
+            trainingDataLayout = new QGridLayout();
+            QLabel *l1 = new QLabel("Random Variabnle");
+            QLabel *l2 = new QLabel("Main");
+            QLabel *l3 = new QLabel("Total");
+            trainingDataLayout->addWidget(l1, 0,0);
+            trainingDataLayout->addWidget(l2, 0,1);
+            trainingDataLayout->addWidget(l3, 0,2);
+            QFont font;
+            font.setBold(true);
+            l1->setAlignment(Qt::AlignCenter);
+            l1->setFont(font);
+            l2->setAlignment(Qt::AlignCenter);
+            l2->setFont(font);
+            l3->setAlignment(Qt::AlignCenter);
+            l3->setFont(font);
+
+
             groupBox->setLayout(trainingDataLayout);
+
+            // set num EDP and read a useleass line
             numEDP = 0;
             std::getline(fileResults, haystack);
+
         } else {
             std::istringstream iss(haystack);
             QString h(QString::fromStdString(haystack));
             if (h.length() == 0) {
-                qDebug() << "FINISHED HAYSTACK";
                 done = true;
             } else {
                 std::string data1, data2, data3, data4;
-                QLabel *l1 = new QLabel("name");
-                QLabel *l2 = new QLabel("Main");
-                QLabel *l3 = new QLabel("Total");
+
                 iss >> data1 >> data2 >> data3;
                 QString d1(QString::fromStdString(data1));
                 QString d2(QString::fromStdString(data2));
                 QString d3(QString::fromStdString(data3));
-                QLineEdit *e1 = new QLineEdit(d3);
-                QLineEdit *e2 = new QLineEdit(d1);
-                QLineEdit *e3 = new QLineEdit(d2);
+                QLineEdit *e1 = new QLineEdit(d3); e1->setReadOnly(true); e1->setAlignment(Qt::AlignCenter);
+                QLineEdit *e2 = new QLineEdit(d1); e2->setReadOnly(true);  e2->setAlignment(Qt::AlignRight);
+                QLineEdit *e3 = new QLineEdit(d2); e3->setReadOnly(true); e3->setAlignment(Qt::AlignRight);
 
-                trainingDataLayout->addWidget(l1, numEDP,0);
-                trainingDataLayout->addWidget(e1, numEDP,1);
-                trainingDataLayout->addWidget(l2, numEDP,2);
-                trainingDataLayout->addWidget(e2, numEDP,3);
-                trainingDataLayout->addWidget(l3, numEDP,4);
-                trainingDataLayout->addWidget(e3, numEDP,5);
-                trainingDataLayout->setRowStretch(6,1);
+                trainingDataLayout->addWidget(e1, numEDP+1,0);
+                trainingDataLayout->addWidget(e2, numEDP+1,1);
+                trainingDataLayout->addWidget(e3, numEDP+1,2);
+                trainingDataLayout->setColumnStretch(1,.5);
+                trainingDataLayout->setColumnStretch(2,.5);
+                trainingDataLayout->setColumnStretch(3,1);
+
+                /* *** Table Widget option
+                table->insertRow(numEDP);
+                QModelIndex index1 = table->model()->index(numEDP, 0);
+                table->model()->setData(index1, data3.c_str());
+                QModelIndex index2 = table->model()->index(numEDP, 1);
+                table->model()->setData(index2, data1.c_str());
+                QModelIndex index3 = table->model()->index(numEDP, 2);
+                table->model()->setData(index3, data2.c_str());
+                */
+
                 numEDP++;
-
-                qDebug() << "1:" << d1 << "2:" << d2 << " " <<  d3;
             }
         }
     }
@@ -337,7 +378,6 @@ Node_2_Disp Sobol' indices:
     do {
         std::string subs;
             iss >> subs;
-            qDebug() << "subs: " << QString(subs.c_str());
             if (colCount > 0) {
                 if (subs != " ") {
                     if (subs != "interface")
@@ -354,8 +394,6 @@ Node_2_Disp Sobol' indices:
         else
             colCount = colCount -1;
 
-        qDebug() << "colCount: " << colCount << " " << includesInterface;
-        qDebug() << "HEADINGS: " << theHeadings;
 
         spreadsheet->setColumnCount(colCount);
         spreadsheet->setHorizontalHeaderLabels(theHeadings);
