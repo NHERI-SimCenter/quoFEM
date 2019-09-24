@@ -81,7 +81,7 @@ InputWidgetBayesianCalibration::InputWidgetBayesianCalibration(QWidget *parent)
     QLabel *label2 = new QLabel();
     label2->setText(QString("#Chain Samples"));
     chainSamples = new QLineEdit();
-    chainSamples->setText(tr("10"));
+    chainSamples->setText(tr("5000"));
     //chainSamples->setMaximumWidth(100);
     //chainSamples->setMinimumWidth(100);
 

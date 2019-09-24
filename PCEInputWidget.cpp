@@ -19,7 +19,7 @@ PCEInputWidget::PCEInputWidget(QWidget *parent) : UQ_MethodInputWidget(parent)
 
     // create layout label and entry for # samples
     numSamples = new QLineEdit();
-    numSamples->setText(tr("10"));
+    numSamples->setText(tr("1000"));
     numSamples->setValidator(new QIntValidator);
     numSamples->setToolTip("Specify the number of samples");
     layout->addWidget(new QLabel("# Samples"), 1, 0);

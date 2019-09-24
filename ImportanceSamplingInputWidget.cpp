@@ -9,7 +9,7 @@ ImportanceSamplingInputWidget::ImportanceSamplingInputWidget(QWidget *parent) : 
 
     // create layout label and entry for # samples
     numSamples = new QLineEdit();
-    numSamples->setText(tr("10"));
+    numSamples->setText(tr("10000"));
     numSamples->setValidator(new QIntValidator);
     numSamples->setToolTip("Specify the number of samples");
 
