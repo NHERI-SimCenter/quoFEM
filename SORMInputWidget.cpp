@@ -84,7 +84,7 @@ SORMInputWidget::SORMInputWidget(QWidget *parent)
 
     responseLevel = new QLineEdit();
     probabilityLevel = new QLineEdit();
-    probabilityLevel->setText(".02 .04 .06 .08 1.0");
+    probabilityLevel->setText(".02 .20 .40 .60 0.80 0.99");
 
     layout->addWidget(label3, 1,1);
     layout->addWidget(mppMethod, 1,2);
