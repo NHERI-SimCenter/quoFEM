@@ -42,6 +42,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QComboBox>
 
 class QLineEdit;
+class QCheckBox;
 
 class FORMInputWidget : public UQ_MethodInputWidget
 {
@@ -59,6 +60,10 @@ public:
 private:
     QComboBox *mppMethod;
     QComboBox *reliabilityScheme;
+    QLineEdit *probabilityLevel;
+    QLineEdit *responseLevel;
+    QCheckBox *checkedResponseLevel;
+    QCheckBox *checkedProbabilityLevel;
 };
 
 #endif // FORM_INPUT_WIDGET_H
