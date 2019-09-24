@@ -101,6 +101,7 @@ InputWidgetBayesianCalibration::InputWidgetBayesianCalibration(QWidget *parent)
     otherLayout->addWidget(label3, 1,0);
     otherLayout->addWidget(randomSeed, 1,1);
     otherLayout->setColumnStretch(2,1);
+    otherLayout->setRowStretch(2,1);
 
     layout->addLayout(methodLayout);
     layout->addLayout(otherLayout);

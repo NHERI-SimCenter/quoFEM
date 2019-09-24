@@ -93,11 +93,6 @@ using namespace QtCharts;
 
 #define NUM_DIVISIONS 10
 
-
-
-QLabel *best_fit_label_text;
-
-
 DakotaResultsSampling::DakotaResultsSampling(RandomVariablesContainer *theRandomVariables, QWidget *parent)
   : DakotaResults(parent), theRVs(theRandomVariables)
 {
@@ -241,7 +236,6 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     do {
         std::string subs;
         iss >> subs;
-        qDebug() << "subs: " << QString(subs.c_str());
         if (colCount > 0) {
             if (subs != " ") {
                 if (subs != "interface")
@@ -258,9 +252,6 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     else
         colCount = colCount -1;
 
-    qDebug() << "colCount: " << colCount << " " << includesInterface;
-    qDebug() << "HEADINGS: " << theHeadings;
-
     spreadsheet->setColumnCount(colCount);
     spreadsheet->setHorizontalHeaderLabels(theHeadings);
     spreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -271,7 +262,6 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     while (std::getline(tabResults, inputLine)) {
         std::istringstream is(inputLine);
         int col=0;
-        //qDebug()<<"\n the inputLine is        "<<inputLine.c_str();
 
         spreadsheet->insertRow(rowCount);
         for (int i=0; i<colCount+2; i++) {
@@ -403,30 +393,17 @@ DakotaResultsSampling::onSaveSpreadsheetClicked()
                 QTableWidgetItem *item_value = spreadsheet->item(i,j);
                 double value = item_value->text().toDouble();
                 stream << value << ",\t";
-                //     qDebug()<<value;
             }
             stream<<endl;
         }
     }
-
-    //    QFileDialog::getOpenFileName( this, tr("Open Document"), QDir::currentPath(), tr("Document files (*.doc *.rtf);;All files (*.*)"), 0, QFileDialog::DontUseNativeDialog );
-
-    //  qDebug()<<QDir::currentPath();
-
 }
 
 void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 {
     mLeft = spreadsheet->wasLeftKeyPressed();
 
-    //  best_fit_instructions->clear();
-    //see the file MyTableWiget.cpp in order to find the function wasLeftKeyPressed();
-    //qDebug()<<"\n the value of mLeft       "<<mLeft;
-    //qDebug()<<"\n I am inside the onSpreadsheetCellClicked routine  and I am exiting!!  ";
-    //  exit(1);
-    // create a new series
     chart->removeAllSeries();
-    //chart->removeA
 
     QAbstractAxis *oldAxisX=chart->axisX();
     if (oldAxisX != 0)
@@ -443,10 +420,6 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
         //oldCol=0;   // padhye trying. I don't think it makes sense to use coldCol as col2, i.e., something that was
         // previously selected?
         col2 = col; // col is the one that comes in te function, based on the click made after clicking
-
-        //    qDebug()<<"\n the value of oldcol is  "<<oldCol;
-        //    qDebug()<<"\n the value of col2 is    "<<col2;
-        //    qDebug()<<"\t the value of col is     "<<col;
 
     } else {
         oldCol= col1;
@@ -511,12 +484,6 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
         double xRange=maxX-minX;
         double yRange=maxY-minY;
-
-        //  qDebug()<<"\n the value of xRange is     ";
-        //qDebug()<<xRange;
-
-        //qDebug()<<"\n the value of yRange is     ";
-        //qDebug()<<yRange;
 
         // if the column is not the run number, i.e., 0 column, then adjust the x-axis differently
 
@@ -613,23 +580,12 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
             QString appDIR = qApp->applicationDirPath(); // this is where the .exe is and also the parseJson.py, and now the fit_distribution.py
 
-            // qDebug()<<"\n the value of appDIR is    "<<appDIR;
-            //  exit(1);
             QString data_input_file = appDIR +  QDir::separator() + QString("data_input.txt");
             QString pySCRIPT_dist_fit =  appDIR +  QDir::separator() + QString("fit.py");
-
-            //QString tDirectory = appDIR + QDir::separator() + QString("tmp.distributionfit");
-            // dump the data into a file
-
-
-            //QDir mDir; // an object of the class
-            //mDir.mkdir(tDirectory);
-            //qDebug()<<"\n the value of tDirectory is  "<<pySCRIPT_dist_fit;
 
             QFile file(data_input_file);
             QTextStream stream(&file);
 
-            //qDebug()<<"\n the data values are   \n";
             if (file.open(QIODevice::ReadWrite))
             {
                 for(int i=0;i<rowCount;++i)
@@ -637,8 +593,6 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
                     stream<<dataValues[i];
                     stream<< endl;
-
-                    //qDebug()<<"\n the dataValues is"<<dataValues[i];
                 }
             }else {qDebug()<<"\n error in opening file data file for histogram fit  ";exit(1);}
 
@@ -972,8 +926,6 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     tabWidget->addTab(widget, tr("Data Values"));
 
     tabWidget->adjustSize();
-
-    //qDebug()<<"\n debugging the values: result is  \n"<<result<<"\n";
 
     return result;
 }

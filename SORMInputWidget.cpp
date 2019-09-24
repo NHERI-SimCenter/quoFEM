@@ -81,6 +81,7 @@ SORMInputWidget::SORMInputWidget(QWidget *parent)
 
   layout->setColumnStretch(1,2);
   layout->setColumnStretch(2,4);
+ layout->setRowStretch(2,1);
 
   this->setLayout(layout);
 }

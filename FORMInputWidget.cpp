@@ -76,6 +76,7 @@ FORMInputWidget::FORMInputWidget(QWidget *parent)
   layout->addWidget(mppMethod, 1,1);
   layout->setColumnStretch(1,2);
   layout->setColumnStretch(2,4);
+  layout->setRowStretch(2,1);
 
   this->setLayout(layout);
 }
