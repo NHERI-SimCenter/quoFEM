@@ -108,9 +108,9 @@ int main(int argc, char *argv[])
   //    - this constitutes my best effort to make it look better on window laptop
 
 #ifdef Q_OS_WIN
-  qputenv("QT_SCALE_FACTOR", ".7");
-
+  //qputenv("QT_SCALE_FACTOR", ".7");
 #endif
+
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
   //
