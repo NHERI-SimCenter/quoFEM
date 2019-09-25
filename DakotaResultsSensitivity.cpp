@@ -394,10 +394,10 @@ Node_2_Disp Sobol' indices:
         else
             colCount = colCount -1;
 
-
         spreadsheet->setColumnCount(colCount);
         spreadsheet->setHorizontalHeaderLabels(theHeadings);
         spreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	spreadsheet->verticalHeader()->setVisible(false);
 
         // now until end of file, read lines and place data into spreadsheet
 
