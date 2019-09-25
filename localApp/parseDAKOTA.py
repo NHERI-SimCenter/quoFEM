@@ -59,6 +59,7 @@ with open('dakota.json') as data_file:
 uq_data = data["uqMethod"]
 fem_data = data["fem"]
 rnd_data = data["randomVariables"]
+my_edps = data["edps"]
 
 # parse the Random Variables
 
@@ -188,7 +189,7 @@ uq_method = uq_data["uqType"]
 numResponses=0
 responseDescriptors=[]
 
-if uq_method == "Sampling":
+if uq_method == "Forward Propagation" or uq_method == "Sensitivity Analysis":
     
     samplingData = uq_data["samplingMethodData"]
     method = samplingData["method"]
@@ -220,8 +221,8 @@ if uq_method == "Sampling":
         samples = numSamples,
         seed = seed))
     
-        edps = samplingData["edps"]
-        for edp in edps:
+        # edps = samplingData["edps"]
+        for edp in my_edps:
             responseDescriptors.append(edp["name"])
             numResponses += 1
 
@@ -239,9 +240,15 @@ if uq_method == "Sampling":
         sample_type = 'random',
         samples = numSamples,
         seed = seed))
+        
+        if uq_method == "Sensitivity Analysis":
+            dakota_input += (
+            """variance_based_decomp
+                
+""")
     
-        edps = samplingData["edps"]
-        for edp in edps:
+        #edps = samplingData["edps"]
+        for edp in my_edps:
             responseDescriptors.append(edp["name"])
             numResponses += 1
 
@@ -259,9 +266,15 @@ if uq_method == "Sampling":
         sample_type = 'lhs' ,
         samples = numSamples,
         seed = seed))
+
+        if uq_method == "Sensitivity Analysis":
+            dakota_input += (
+            """variance_based_decomp
+                
+""")
     
-        edps = samplingData["edps"]
-        for edp in edps:
+        #edps = samplingData["edps"]
+        for edp in my_edps:
             responseDescriptors.append(edp["name"])
             numResponses += 1
 
@@ -309,21 +322,22 @@ text_archive
         surr_seed = gpr_seed2,
         surr_sams_type = train_method2)
 
-        edps = samplingData["edps"]
-        for edp in edps:
+        #edps = samplingData["edps"]
+        for edp in my_edps:
             responseDescriptors.append(edp["name"])
             numResponses += 1
 
 
-elif uq_method == 'Reliability':
+elif uq_method == "Reliability Analysis":
 
     sampling_data = uq_data["samplingMethodData"]
     rel_method = sampling_data["method"]       # [FORM, SORM]
     mpp_method = sampling_data["mpp_Method"]      # [no_approx, ...]
     rel_scheme = sampling_data["reliability_Scheme"]      # [local, global]
+    active_level = sampling_data["activeLevel"]     # [ProbabilityLevel, ResponseLevel]
 
-    edps = sampling_data["edps"]
-    for edp in edps:
+    #edps = sampling_data["edps"]
+    for edp in my_edps:
         responseDescriptors.append(edp["name"])
         numResponses += 1
     
@@ -339,6 +353,17 @@ elif uq_method == 'Reliability':
     elif rel_scheme == "Global":
         write_scheme = "global_reliability"
 
+    set_probability_level = "0.0 "
+    set_response_level = "0.0"
+    if active_level == "ProbabilityLevel":
+        set_probability_level = ""
+        for l in range(len(sampling_data["probabilityLevel"])):
+            set_probability_level += str(sampling_data["probabilityLevel"][l]) + '  '
+    elif active_level == "ResponseLevel":
+        set_response_level = ""
+        for m in range(len(sampling_data["responseLevel"])):
+            set_response_level += str(sampling_data["responseLevel"][m]) + '  '
+
     # write out the env data
     dakota_input = ""    
         
@@ -350,17 +375,15 @@ method
 {set_reliability_scheme}
 mpp_search {mpp_search_method}
 integration {set_reliability_order}
-probability_levels = .02 .04 .06  .08 .10 
- .12 .14 .16 .18 .20 .22 .24 .26 .28 .30
- .32 .34 .36 .38 .40 .42 .44 .46 .48 .50
- .52 .54 .56 .58 .60 .62 .64 .66 .68 .70
- .72 .74 .76 .78 .80 .82 .84 .86 .88 .90
- .92 .94 .96 .98 
+probability_levels = {set_my_prob}
+response_levels = {set_my_resp}
 
 """).format(
     mpp_search_method = mpp_method,
     set_reliability_order = write_order,
-    set_reliability_scheme = write_scheme)
+    set_reliability_scheme = write_scheme,
+    set_my_prob = set_probability_level,
+    set_my_resp = set_response_level)
 
 
 elif uq_method == 'Calibration':
@@ -390,8 +413,8 @@ max_iterations = {maxIter}
     convTol = convergenceTol,
     maxIter = maxIter))
 
-    edps = calibrationData["edps"]
-    for edp in edps:
+    #edps = calibrationData["edps"]
+    for edp in my_edps:
         responseDescriptors.append(edp["name"])
         numResponses += 1
 
@@ -420,14 +443,15 @@ seed = {seed}
     chainSamples = chainSamples,
     seed = seed))
 
-    edps = samplingData["edps"]
-    for edp in edps:
+    #edps = samplingData["edps"]
+    for edp in my_edps:
         responseDescriptors.append(edp["name"])
         numResponses += 1
 
 # write out the variable data // shall be replaced to make human-readable
 
 dakota_input += ('variables,\n')
+dakota_input += ('active uncertain\n')
 
 if (numNormalUncertain > 0):
     dakota_input += ('normal_uncertain = ' '{}'.format(numNormalUncertain))
@@ -689,12 +713,12 @@ if (uq_method == "Reliability"):
             row_string = row_string + "\n"
             dakota_input += (row_string)
             
-# if (uq_method == "Sampling") -> use rank matrix instead of correlation
+# if (uq_method == "Forward Propagation") -> use rank matrix instead of correlation
 
 dakota_input += ('\n')
 
 
-if uq_method == "Sampling":
+if uq_method == "Forward Propagation" or uq_method == "Sensitivity Analysis":
     
     samplingData = uq_data["samplingMethodData"]
     method = samplingData["method"]
@@ -732,7 +756,7 @@ femProgram = fem_data["program"]
 
 if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
     dakota_input += ('interface,\n')
-    if uq_method == "Sampling":
+    if uq_method == "Forward Propagation" or uq_method == "Sensitivity Analysis":
         samplingData = uq_data["samplingMethodData"]
         method = samplingData["method"]
         if method == "Gaussian Process Regression":
@@ -755,7 +779,7 @@ if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
     
 # write out the responses
 
-if uq_method == "Sampling":
+if uq_method == "Forward Propagation" or uq_method == "Sensitivity Analysis":
     
     samplingData = uq_data["samplingMethodData"]
     method = samplingData["method"]
@@ -809,7 +833,7 @@ if uq_method == "Sampling":
         responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
 
-elif uq_method == 'Reliability':
+elif uq_method == "Reliability Analysis":
        
     # write out the env data
     dakota_input += (
@@ -827,7 +851,7 @@ no_hessians
         responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))  
         
 
-elif uq_method == "Calibration":
+elif uq_method == "Parameter Estimation":
     dakota_input += (
 """responses,
 calibration_terms = {numResponses}
@@ -839,7 +863,7 @@ no_hessians
     numResponses = numResponses,
     responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
-elif uq_method == "Bayesian Calibration":
+elif uq_method == "Inverse Problem":
     dakota_input += (
 """responses,
 calibration_terms = {numResponses}

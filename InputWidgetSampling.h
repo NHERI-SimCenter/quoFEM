@@ -39,7 +39,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <InputWidgetDakotaMethod.h>
 
-#include "EDP.h"
 #include <QGroupBox>
 #include <QVector>
 #include <QVBoxLayout>
@@ -49,7 +48,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 class DakotaSamplingResults;
 class DakotaResults;
 class QCheckBox;
-class InputWidgetEDP;
 class RandomVariablesContainer;
 class QStackedWidget;
 class UQ_MethodInputWidget;
@@ -77,9 +75,7 @@ signals:
 
 public slots:
    void clear(void);
-   void uqSelectionChanged(const QString &arg1);
-   void onTextChanged(QString);
- //  void uqMethodChanged(const QString &arg1);
+   void onTextChanged(const QString &arg1);
 
 private:
     QVBoxLayout *layout;
@@ -93,7 +89,6 @@ private:
     QWidget     *uqSpecific;
 
     RandomVariablesContainer *theRandomVariables;
-    InputWidgetEDP *theEdpWidget;
     DakotaSamplingResults *results;
 
     QStackedWidget *theStackedWidget;

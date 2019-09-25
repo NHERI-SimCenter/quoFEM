@@ -4,17 +4,18 @@
 #include <QLabel>
 #include <QJsonObject>
 #include <QGroupBox>
+#include <QDebug>
 
 GaussianProcessInputWidget::GaussianProcessInputWidget(QWidget *parent) : UQ_MethodInputWidget(parent)
 {
     //auto layout = new QGridLayout();
-    QHBoxLayout *layout = new QHBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
 
     // create layout label and entry for # samples
     QGroupBox *trainingDataGroup = new QGroupBox("Surrogate Training Data");
     QGridLayout * trainingDataLayout = new QGridLayout();
     numSamples = new QLineEdit();
-    numSamples->setText(tr("10"));
+    numSamples->setText(tr("1000"));
     numSamples->setValidator(new QIntValidator);
     numSamples->setToolTip("Specify the number of samples");
     trainingDataLayout->addWidget(new QLabel("# Samples "), 0, 0);
@@ -45,7 +46,7 @@ GaussianProcessInputWidget::GaussianProcessInputWidget(QWidget *parent) : UQ_Met
     QGroupBox *sampleDataGroup = new QGroupBox("Surrogate Sampling Data");
     QGridLayout * sampleDataLayout = new QGridLayout();
     numSamples2 = new QLineEdit();
-    numSamples2->setText(tr("10"));
+    numSamples2->setText(tr("10000"));
     numSamples2->setValidator(new QIntValidator);
     numSamples2->setToolTip("Specify the number of samples");
     sampleDataLayout->addWidget(new QLabel("# Samples "), 0, 0);
@@ -88,9 +89,37 @@ bool GaussianProcessInputWidget::outputToJSON(QJsonObject &jsonObject)
     return result;
 }
 
+
 bool GaussianProcessInputWidget::inputFromJSON(QJsonObject &jsonObject)
 {
-    return 0;
+
+  bool result = false;
+  if ( (jsonObject.contains("samples"))
+       && (jsonObject.contains("seed"))
+       && (jsonObject.contains("samples2"))
+       && (jsonObject.contains("seed2"))
+       && (jsonObject.contains("dataMethod"))
+       && (jsonObject.contains("dataMethod2")) ) {
+
+    int samples=jsonObject["samples"].toInt();
+    double seed=jsonObject["seed"].toDouble();
+    numSamples->setText(QString::number(samples));
+    randomSeed->setText(QString::number(seed));
+
+    int samples2=jsonObject["samples2"].toInt();
+    double seed2=jsonObject["seed2"].toDouble();
+    numSamples2->setText(QString::number(samples2));
+    randomSeed2->setText(QString::number(seed2));
+
+    QString method1=jsonObject["dataMethod"].toString();
+    QString method2=jsonObject["dataMethod2"].toString();
+    dataMethod->setCurrentIndex(dataMethod->findText(method1));
+    dataMethod2->setCurrentIndex(dataMethod2->findText(method2));
+
+    result = true;
+  }
+
+  return result;
 }
 
 int GaussianProcessInputWidget::getNumberTasks()

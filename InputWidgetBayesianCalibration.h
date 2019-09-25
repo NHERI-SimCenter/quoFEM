@@ -41,7 +41,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <InputWidgetDakotaMethod.h>
 
-#include "EDP.h"
 #include <QGroupBox>
 #include <QVector>
 #include <QVBoxLayout>
@@ -50,8 +49,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 class DakotaResultsBayesianCalibration;
 class DakotaResults;
 
-
-class InputWidgetEDP;
 class RandomVariablesContainer;
 
 class InputWidgetBayesianCalibration : public InputWidgetDakotaMethod
@@ -88,7 +85,6 @@ private:
     QWidget     *uqSpecific;
 
     RandomVariablesContainer *theParameters;
-    InputWidgetEDP *theEdpWidget;
     DakotaResultsBayesianCalibration *results;
 };
 

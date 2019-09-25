@@ -87,7 +87,7 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     name->setSpacing(10);
     name->setMargin(0);
 
-    uqSelection->addItem(tr("Forward Propogation"));
+    uqSelection->addItem(tr("Forward Propagation"));
     uqSelection->addItem(tr("Parameter Estimation"));
     uqSelection->addItem(tr("Inverse Problem"));
     uqSelection->addItem(tr("Reliability Analysis"));
@@ -100,8 +100,8 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
 
     this->setLayout(layout);
 
-    // set Samlping as the default
-    this->uqSelectionChanged(tr("Sampling"));
+    // set Forward Propagation as the default
+    this->uqSelectionChanged(tr("Forward Propagation"));
     layout->setMargin(0);
 }
 
@@ -201,7 +201,7 @@ void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
     if (dakotaMethod != 0)
         layout->removeWidget(dakotaMethod);
 
-    if ((arg1 == QString("Sampling")) || (arg1 == QString("Forward Propogation"))) {
+    if ((arg1 == QString("Sampling")) || (arg1 == QString("Forward Propagation"))) {
         delete dakotaMethod;
         dakotaMethod = new InputWidgetSampling();
 

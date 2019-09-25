@@ -41,6 +41,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "InputWidgetCalibration.h"
 #include <DakotaResultsCalibration.h>
 
+#include <QLabel>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -51,7 +52,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFileDialog>
 #include <QPushButton>
 #include <sectiontitle.h>
-#include <InputWidgetEDP.h>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -127,8 +127,6 @@ InputWidgetCalibration::InputWidgetCalibration(QWidget *parent)
     layout->addLayout(TestingLayout);
     */
 
-    theEdpWidget = new InputWidgetEDP();
-    layout->addWidget(theEdpWidget);
     layout->addStretch();
 
     this->setLayout(layout);
@@ -172,7 +170,6 @@ InputWidgetCalibration::outputToJSON(QJsonObject &jsonObject)
         uq["replacementValue"]=replacement_type_value_ColonyEA->text().toInt();
     }
 
-    theEdpWidget->outputToJSON(uq);
     jsonObject["calibrationMethodData"]=uq;
 
     return result;
@@ -562,7 +559,6 @@ InputWidgetCalibration::inputFromJSON(QJsonObject &jsonObject)
     int index = calibrationMethod->findText(method);
     calibrationMethod->setCurrentIndex(index);
 
-    result = theEdpWidget->inputFromJSON(uq);
     return result;
 
 }

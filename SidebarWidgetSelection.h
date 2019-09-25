@@ -46,7 +46,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStandardItemModel>
 #include <QHBoxLayout>
 #include <SimCenterWidget.h>
-
+class QStackedWidget;
 
 class SidebarWidgetSelection : public SimCenterWidget
 {
@@ -58,7 +58,7 @@ public:
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
-    void addInputWidget(const QString &, SimCenterWidget *);
+    void addInputWidget(const QString &, const QString &, SimCenterWidget *);
     void removeInputWidget(const QString &);
     void buildTreee();
     void clear(void);
@@ -79,6 +79,7 @@ private:
     int numWidgets;
     QStandardItem *rootNode;
     QWidget *currentWidget;
+    QStackedWidget *theStackedWidget;
 };
 
 #endif // SIDEBAR_WIDGET_SELECTION_H

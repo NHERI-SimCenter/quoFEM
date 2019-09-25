@@ -36,7 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 #include "InputWidgetReliability.h"
-#include <DakotaResultsSampling.h>
+#include <DakotaResultsReliability.h>
 #include <RandomVariablesContainer.h>
 
 
@@ -93,34 +93,35 @@ InputWidgetReliability::InputWidgetReliability(QWidget *parent)
 
     theStackedWidget = new QStackedWidget();
 
-    theSORM = new FORMInputWidget();
-    theStackedWidget->addWidget(theSORM);
-
     theFORM = new FORMInputWidget();
     theStackedWidget->addWidget(theFORM);
 
+    theSORM = new SORMInputWidget();
+    theStackedWidget->addWidget(theSORM);
+
     // set current widget to index 0
-    theCurrentMethod = theSORM;
+    theCurrentMethod = theFORM;
 
     mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);
+    layout->addStretch();
 
     // finally add the EDP layout & set widget layout
-    theEdpWidget = new InputWidgetEDP();
-    layout->addWidget(theEdpWidget,1);
 
     this->setLayout(layout);
 
-    connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
+    connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onMethodChanged(QString)));
 
 }
 
-void InputWidgetReliability::onTextChanged(QString text)
+void InputWidgetReliability::onMethodChanged(QString text)
 {
+    qDebug() << text;
+
   if (text=="FORM") {
     theStackedWidget->setCurrentIndex(0);
     theCurrentMethod = theFORM;
-  } else if (text=="SORM") {
+  } else {
     theStackedWidget->setCurrentIndex(1);
     theCurrentMethod = theSORM;
   }
@@ -151,8 +152,6 @@ InputWidgetReliability::outputToJSON(QJsonObject &jsonObject)
     uq["method"]=samplingMethod->currentText();
     theCurrentMethod->outputToJSON(uq);
 
-    result = theEdpWidget->outputToJSON(uq);
-
     jsonObject["samplingMethodData"]=uq;
 
     return result;
@@ -164,28 +163,28 @@ InputWidgetReliability::inputFromJSON(QJsonObject &jsonObject)
 {
   bool result = false;
   this->clear();
-  std::cerr << "STARTED";
+
   //
   // get sampleingMethodData, if not present it's an error
   
   if (jsonObject.contains("samplingMethodData")) {
-    QJsonObject uq = jsonObject["samplingMethodData"].toObject();
-    if (uq.contains("method")) {
-      QString method =uq["method"].toString();
-      this->uqSelectionChanged(method);
-      theCurrentMethod->inputFromJSON(uq);
-
-      result = theEdpWidget->inputFromJSON(uq);
-    }
+      QJsonObject uq = jsonObject["samplingMethodData"].toObject();
+      if (uq.contains("method")) {
+          QString method =uq["method"].toString();
+          int index = samplingMethod->findText(method);
+          if (index == -1) {
+              return false;
+          }
+          samplingMethod->setCurrentIndex(index);
+          result = theCurrentMethod->inputFromJSON(uq);
+          if (result == false)
+              return result;
+      }
   }
   
   return result;
 }
 
-void InputWidgetReliability::uqSelectionChanged(const QString &arg1)
-{
-    // if more data than just num samples and seed code would go here to add or remove widgets from layout
-}
 
 int InputWidgetReliability::processResults(QString &filenameResults, QString &filenameTab) {
 
@@ -194,7 +193,7 @@ int InputWidgetReliability::processResults(QString &filenameResults, QString &fi
 
 DakotaResults *
 InputWidgetReliability::getResults(void) {
-    return new DakotaResultsSampling(theRandomVariables);
+    return new DakotaResultsReliability(theRandomVariables);
 }
 
 RandomVariablesContainer *

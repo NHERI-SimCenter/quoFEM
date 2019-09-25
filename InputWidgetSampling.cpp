@@ -50,7 +50,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFileDialog>
 #include <QPushButton>
 #include <sectiontitle.h>
-#include <InputWidgetEDP.h>
 
 #include <iostream>
 #include <sstream>
@@ -130,17 +129,13 @@ InputWidgetSampling::InputWidgetSampling(QWidget *parent)
     mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);
 
-    // finally add the EDP layout & set widget layout
-    theEdpWidget = new InputWidgetEDP();
-    layout->addWidget(theEdpWidget,1);
-
     this->setLayout(layout);
 
     connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
 
 }
 
-void InputWidgetSampling::onTextChanged(QString text)
+void InputWidgetSampling::onTextChanged(const QString &text)
 {
   if (text=="LHS") {
     theStackedWidget->setCurrentIndex(0);
@@ -162,98 +157,6 @@ void InputWidgetSampling::onTextChanged(QString text)
     theStackedWidget->setCurrentIndex(4);
     theCurrentMethod = thePCE;
   }
-    /*
-    } else if (text=="Quadrature") {
-
-        // create layout label and entry for dimension
-        QVBoxLayout *dimLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("Dimension"));
-        numSamples = new QLineEdit();
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-        dimLayout->addWidget(label2);
-        dimLayout->addWidget(numSamples);
-
-        mLayout->addLayout(dimLayout);
-        mLayout->addStretch(1);
-
-        // create label and entry for level
-        QVBoxLayout *levelLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Level"));
-        srand(time(NULL));
-        randomSeed = new QLineEdit();
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-        levelLayout->addWidget(label3);
-        levelLayout->addWidget(randomSeed);
-
-        mLayout->addLayout(levelLayout);
-        mLayout->addStretch(1);
-
-    } else if (text=="Surrogate - Polynomial Chaos") {
-
-        // create layout label and entry for dimension
-        QVBoxLayout *dimLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("Dimension"));
-        numSamples = new QLineEdit();
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-        dimLayout->addWidget(label2);
-        dimLayout->addWidget(numSamples);
-
-        mLayout->addLayout(dimLayout);
-        mLayout->addStretch(1);
-
-        // create label and entry for level
-        QVBoxLayout *chaosLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Pol. chaos order"));
-        srand(time(NULL));
-        randomSeed = new QLineEdit();
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-        chaosLayout->addWidget(label3);
-        chaosLayout->addWidget(randomSeed);
-
-        mLayout->addLayout(chaosLayout);
-        mLayout->addStretch(1);
-
-    }  else if (text=="Multilevel Monte Carlo") {
-
-        // create layout label and entry for # samples
-        QVBoxLayout *samplesLayout= new QVBoxLayout;
-        QLabel *label2 = new QLabel();
-        label2->setText(QString("# Samples"));
-        numSamples = new QLineEdit();
-        numSamples->setText(tr("1000"));
-        numSamples->setMaximumWidth(100);
-        numSamples->setMinimumWidth(100);
-        samplesLayout->addWidget(label2);
-        samplesLayout->addWidget(numSamples);
-
-        mLayout->addLayout(samplesLayout);
-        mLayout->addStretch(1);
-
-        // create label and entry for seed to layout
-        QVBoxLayout *seedLayout= new QVBoxLayout;
-        QLabel *label3 = new QLabel();
-        label3->setText(QString("Seed"));
-        srand(time(NULL));
-        int randomNumber = rand() % 1000 + 1;
-        randomSeed = new QLineEdit();
-        randomSeed->setText(QString::number(randomNumber));
-        randomSeed->setMaximumWidth(100);
-        randomSeed->setMinimumWidth(100);
-        seedLayout->addWidget(label3);
-        seedLayout->addWidget(randomSeed);
-
-        mLayout->addLayout(seedLayout);
-        mLayout->addStretch(1);
-    }
-    */
 }
 
 InputWidgetSampling::~InputWidgetSampling()
@@ -281,8 +184,6 @@ InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
     uq["method"]=samplingMethod->currentText();
     theCurrentMethod->outputToJSON(uq);
 
-    result = theEdpWidget->outputToJSON(uq);
-
     jsonObject["samplingMethodData"]=uq;
 
     return result;
@@ -297,25 +198,28 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
 
   //
   // get sampleingMethodData, if not present it's an error
+  //
   
   if (jsonObject.contains("samplingMethodData")) {
     QJsonObject uq = jsonObject["samplingMethodData"].toObject();
     if (uq.contains("method")) {
-      QString method =uq["method"].toString();
-      this->uqSelectionChanged(method);
-      theCurrentMethod->inputFromJSON(uq);
 
-      result = theEdpWidget->inputFromJSON(uq);
+      QString method =uq["method"].toString();
+      int index = samplingMethod->findText(method);
+      if (index == -1) {
+          return false;
+      }
+      samplingMethod->setCurrentIndex(index);
+      result = theCurrentMethod->inputFromJSON(uq);
+      if (result == false)
+	return result;
+
     }
   }
   
   return result;
 }
 
-void InputWidgetSampling::uqSelectionChanged(const QString &arg1)
-{
-    // if more data than just num samples and seed code would go here to add or remove widgets from layout
-}
 
 int InputWidgetSampling::processResults(QString &filenameResults, QString &filenameTab) {
 
@@ -324,6 +228,7 @@ int InputWidgetSampling::processResults(QString &filenameResults, QString &filen
 
 DakotaResults *
 InputWidgetSampling::getResults(void) {
+    qDebug() << "RETURNED DAKOTARESULTSSAMPLING";
     return new DakotaResultsSampling(theRandomVariables);
 }
 

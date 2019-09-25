@@ -200,25 +200,28 @@ MainWindow::MainWindow(QWidget *parent)
     random = new InputWidgetParameters();
     fem = new InputWidgetFEM(random);
     random->setParametersWidget(uq->getParameters());
+    edp = new InputWidgetEDP();
+
 
     // create selection widget & add the input widgets
     results = new DakotaResults();
 
     inputWidget = new SidebarWidgetSelection();
 
-    inputWidget->addInputWidget(tr("FEM Selection"), fem);
-    inputWidget->addInputWidget(tr("Method Selection"), uq);
-    inputWidget->addInputWidget(tr("Input Variables"), random);
-    inputWidget->addInputWidget(tr("Results"), results);
+    inputWidget->addInputWidget(tr("UQ"), tr("Uncertainty Quantification Methods"), uq);
+    inputWidget->addInputWidget(tr("FEM"), tr("Finite Element Method Application"), fem);
+    inputWidget->addInputWidget(tr("RV"), tr("Random Variables"), random);
+    inputWidget->addInputWidget(tr("QoI"), tr("Quantities of Interest"), edp);
+    inputWidget->addInputWidget(tr("RES"), tr("Results"), results);
 
     //inputWidget->setFont(QFont( "lucida", 20, QFont::Bold, TRUE ) );
 
     // let ubput widget know end of ptions, then set initial input to fem
     inputWidget->buildTreee();
-    inputWidget->setSelection(tr("FEM Selection"));
-    inputWidget->setMinimumWidth(600);
+    inputWidget->setSelection(tr("UQ"));
+    //inputWidget->setMinimumWidth(600);
     // add selection widget to the central layout previosuly created
-    layout->addWidget(inputWidget,1.0);
+    layout->addWidget(inputWidget);
 
     //
     // add run, run-DesignSafe and exit buttons into a new widget for buttons
@@ -297,6 +300,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(uq,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(uq,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
+    connect(edp,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(edp,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(edp,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
     connect(jobManager,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(jobManager,SIGNAL(statusMessage(QString)),this,SLOT(statusMessage(QString)));
@@ -1006,6 +1013,8 @@ void MainWindow::loadFile(const QString &fileName)
         return;
     if (random->inputFromJSON(jsonObj) != true)
         return;
+    if (edp->inputFromJSON(jsonObj) != true)
+        return;
 
     // adding back ---
     /* these are already done in processResults, not necessary?
@@ -1036,7 +1045,7 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
     //connect(result,SLOT(sendE))
     result->processResults(dakotaIN, dakotaTAB);
     results->setResultWidget(result);
-    inputWidget->setSelection(QString("Results"));
+    inputWidget->setSelection(QString("RES"));
 
    // errorMessage(" ");// adding back
    // qDebug()<<"\n the value of results is \n\n  "<<results;

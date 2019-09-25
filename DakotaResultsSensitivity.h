@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGET_RELIABILITY_H
-#define INPUTWIDGET_RELIABILITY_H
+#ifndef DAKOTA_RESULTS_SENSITIVITY_H
+#define DAKOTA_RESULTS_SENSITIVITY_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -37,64 +37,64 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-#include <InputWidgetDakotaMethod.h>
+// Written: fmckenna
 
-#include <QGroupBox>
-#include <QVector>
-#include <QVBoxLayout>
-#include <QComboBox>
+#include <DakotaResults.h>
+#include <QtCharts/QChart>
+#include <QMessageBox>
 #include <QPushButton>
 
-class DakotaSamplingResults;
-class DakotaResults;
-class QCheckBox;
-class RandomVariablesContainer;
-class QStackedWidget;
-class UQ_MethodInputWidget;
 
-class InputWidgetReliability : public InputWidgetDakotaMethod
+using namespace QtCharts;
+
+class QTextEdit;
+class QTabWidget;
+class MyTableWidget;
+class MainWindow;
+class RandomVariablesContainer;
+
+//class QChart;
+
+class DakotaResultsSensitivity : public DakotaResults
 {
     Q_OBJECT
 public:
-    explicit InputWidgetReliability(QWidget *parent = 0);
-    ~InputWidgetReliability();
+  explicit DakotaResultsSensitivity(RandomVariablesContainer *, QWidget *parent = 0);
+    ~DakotaResultsSensitivity();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
-
-    DakotaResults *getResults(void);
-    RandomVariablesContainer  *getParameters();
-
-    int getMaxNumParallelTasks(void);
-
-    QVBoxLayout *mLayout;
+    QWidget *createResultEDPWidget(QString &name, double mean, double stdDev, double kurtosis);
 
 signals:
 
 public slots:
    void clear(void);
-   void onMethodChanged(QString);;
+   void onSpreadsheetCellClicked(int, int);
+   void onSaveSpreadsheetClicked();
+
+   // modified by padhye 08/25/2018
 
 private:
-    QVBoxLayout *layout;
-    QWidget     *methodSpecific;
-    QComboBox   *samplingMethod;
-    QLineEdit   *numSamples;
-    QLineEdit   *randomSeed;
-    //    QPushButton *run;
+   RandomVariablesContainer *theRVs;
+   QTabWidget *tabWidget;
 
-    QComboBox   *uqSelection;
-    QWidget     *uqSpecific;
+   MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
+   QChart *chart;
+   QPushButton* save_spreadheet; // save the data from spreadsheet
+   QLabel *label;
+   QLabel *best_fit_instructions;
 
-    RandomVariablesContainer *theRandomVariables;
-    DakotaSamplingResults *results;
+   int col1, col2;
+   bool mLeft;
+   QStringList theHeadings;
 
-    QStackedWidget *theStackedWidget;
-    UQ_MethodInputWidget *theCurrentMethod;
-    UQ_MethodInputWidget *theFORM;
-    UQ_MethodInputWidget *theSORM;
+   QVector<QString>theNames;
+   QVector<double>theMeans;
+   QVector<double>theStdDevs;
+   QVector<double>theKurtosis;
 };
 
-#endif // INPUTWIDGET_RELIABILITY_H
+#endif // DAKOTA_RESULTS_SENSITIVITY_H

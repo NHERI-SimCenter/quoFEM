@@ -48,6 +48,7 @@ class SidebarWidgetSelection;
 class SimCenterWidget;
 class InputWidgetFEM;
 class InputWidgetUQ;
+class InputWidgetEDP;
 class InputWidgetParameters;
 class DakotaResults;
 
@@ -126,6 +127,7 @@ signals:
     InputWidgetUQ *uq;
     InputWidgetParameters *random;
     DakotaResults *results;
+    InputWidgetEDP *edp;
 
     AgaveCurl *theRemoteInterface;
     RemoteJobCreator *jobCreator;

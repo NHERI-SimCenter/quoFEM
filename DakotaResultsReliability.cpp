@@ -82,6 +82,7 @@ using namespace QtCharts;
 
 #include <QXYSeries>
 #include <RandomVariablesContainer.h>
+#include <QMap>
 
 #define NUM_DIVISIONS 10
 #include <iostream>
@@ -137,6 +138,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
   this->clear();
 
   numSpreadsheetCols = 1;
+  numSpreadsheetRows = 0;
 
   theHeadings << "%";
   spreadsheet->setColumnCount(1);
@@ -174,7 +176,6 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
       std::vector<double>col1;
       std::vector<double>col2;
 
-      qDebug() << "\n\n\n\nHERE";
 
       while (std::getline(fileResults, haystack)) {
           if (haystack.find(needleStart) != std::string::npos) {
@@ -182,12 +183,11 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
           }
           else {
               if (numSpreadsheetRows > 0)
-                std::cerr << " HELLO: " << haystack << "\n";
+                  ;
           }
       }
 
       if (fileResults.eof()) {
-          qDebug() << "DONE EOF";
           break;
       }
 
@@ -205,48 +205,53 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
       std::getline(fileResults, haystack);
       std::getline(fileResults, haystack);
 
+      // for some reason
+       std::getline(fileResults, haystack);
+
       const std::string needleEnd = "---------------------------------------";
 
        spreadsheet->insertColumn(numSpreadsheetCols);
        numSpreadsheetCols++;
 
        qDebug() << "numCOL" << numSpreadsheetCols;
+       QMap<float,float> data;
+       // now read the data till end of data encountered
+       int numRows = 0;
+       while (std::getline(fileResults, haystack)) {
+           if (haystack.find(needleEnd) != std::string::npos) {
+               qDebug() << "FOUND END";
+               break;
 
-      // now read the data till end of data encountered
-      int numRows = 0;
-      while (std::getline(fileResults, haystack)) {
-          if (haystack.find(needleEnd) != std::string::npos) {
-              qDebug() << "FOUND END";
-              break;
+           } else {
+               // read column entries
+               if (numSpreadsheetCols == 2)
+                   spreadsheet->insertRow(numRows);
+               std::string data1, data2, data3, data4;
+               std::istringstream is(haystack);
 
-          } else {
-              // read column entries
-              if (numSpreadsheetCols == 2)
-                  spreadsheet->insertRow(numRows);
-              std::string data1, data2, data3, data4;
-              std::istringstream is(haystack);
+               is >> data1 >> data2 >> data3 >> data4;
+               if (numSpreadsheetCols == 2) {
+                   data.insert(std::stod(data2),std::stod(data1));
+                   QModelIndex index = spreadsheet->model()->index(numRows, numSpreadsheetCols-2);
+                   spreadsheet->model()->setData(index, data2.c_str());
+               }
+               QModelIndex index = spreadsheet->model()->index(numRows, numSpreadsheetCols-1);
+               spreadsheet->model()->setData(index, data1.c_str());
+               numRows++;
+           }
+       }
+       //QMap<QString, int>::iterator i;
+       qDebug() << "DATA";
+       for (auto i = data.begin(); i != data.end(); ++i)
+           qDebug() << i.key() << ": " << i.value() << endl;
 
-              is >> data1 >> data2 >> data3 >> data4;
-              if (numSpreadsheetCols == 2) {
-                  QModelIndex index = spreadsheet->model()->index(numRows, numSpreadsheetCols-2);
-                  spreadsheet->model()->setData(index, data2.c_str());
-              }
-              QModelIndex index = spreadsheet->model()->index(numRows, numSpreadsheetCols-1);
-              spreadsheet->model()->setData(index, data1.c_str());
-              numRows++;
-          }
-      }
-      numSpreadsheetRows = numRows;
-      qDebug() << "numCOL - file results: " << fileResults.eof() << " " << true << " " << false;
+       numSpreadsheetRows = numRows;
   }
-  qDebug() << "HEADINGS: " << theHeadings;
-  spreadsheet->setHorizontalHeaderLabels(theHeadings);
 
+  spreadsheet->setHorizontalHeaderLabels(theHeadings);
   spreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
   fileResults.close();
-
-  qDebug() << spreadsheet->columnCount() << " " << spreadsheet->rowCount();
 
   this->onSpreadsheetCellClicked(0,1);
 
@@ -290,6 +295,9 @@ DakotaResultsReliability::onSaveSpreadsheetClicked()
 
 void DakotaResultsReliability::onSpreadsheetCellClicked(int row, int col)
 {
+    if (numSpreadsheetRows == 0)
+        return;
+
     qDebug() << "row,col " << row << " " << col;
     mLeft = spreadsheet->wasLeftKeyPressed();
 
@@ -319,7 +327,7 @@ void DakotaResultsReliability::onSpreadsheetCellClicked(int row, int col)
     int rowCount = spreadsheet->rowCount();
 
     QLineSeries *series= new QLineSeries;
-    series->append(0, 0);
+
     double minX = 1e6;
     double maxX = -1e6;
 

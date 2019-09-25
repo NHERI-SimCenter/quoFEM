@@ -108,9 +108,10 @@ int main(int argc, char *argv[])
   //    - this constitutes my best effort to make it look better on window laptop
 
 #ifdef Q_OS_WIN
-  qputenv("QT_SCALE_FACTOR", ".7");
-  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+  //qputenv("QT_SCALE_FACTOR", ".7");
 #endif
+
+  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
   //
   // start Qt mainwindow per normal
@@ -122,7 +123,18 @@ int main(int argc, char *argv[])
   
   // load style sheet
 
-  QFile file(":/styles/stylesheet.qss");
+#ifdef Q_OS_WIN
+    QFile file(":/styles/stylesheetWIN.qss");
+#endif
+
+#ifdef Q_OS_MACOS
+    QFile file(":/styles/stylesheetMAC.qss");
+#endif
+
+#ifdef Q_OS_LINUX
+    QFile file(":/styles/stylesheetMAC.qss");
+#endif
+
   if(file.open(QFile::ReadOnly)) {
       app.setStyleSheet(file.readAll());
       file.close();

@@ -35,7 +35,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 #include "InputWidgetSensitivity.h"
-#include <DakotaResultsSampling.h>
+#include <DakotaResultsSensitivity.h>
 #include <RandomVariablesContainer.h>
 
 
@@ -119,17 +119,13 @@ InputWidgetSensitivity::InputWidgetSensitivity(QWidget *parent)
     mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);
 
-    // finally add the EDP layout & set widget layout
-    theEdpWidget = new InputWidgetEDP();
-    layout->addWidget(theEdpWidget,1);
-
     this->setLayout(layout);
 
     connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
 
 }
 
-void InputWidgetSensitivity::onTextChanged(QString text)
+void InputWidgetSensitivity::onMethodChanged(QString text)
 {
   if (text=="LHS") {
     theStackedWidget->setCurrentIndex(0);
@@ -166,8 +162,6 @@ InputWidgetSensitivity::outputToJSON(QJsonObject &jsonObject)
     uq["method"]=samplingMethod->currentText();
     theCurrentMethod->outputToJSON(uq);
 
-    result = theEdpWidget->outputToJSON(uq);
-
     jsonObject["samplingMethodData"]=uq;
 
     return result;
@@ -185,23 +179,23 @@ InputWidgetSensitivity::inputFromJSON(QJsonObject &jsonObject)
   //
   
   if (jsonObject.contains("samplingMethodData")) {
-    QJsonObject uq = jsonObject["samplingMethodData"].toObject();
-    if (uq.contains("method")) {
-      QString method =uq["method"].toString();
-      this->uqSelectionChanged(method);
-      theCurrentMethod->inputFromJSON(uq);
-
-      result = theEdpWidget->inputFromJSON(uq);
-    }
+      QJsonObject uq = jsonObject["samplingMethodData"].toObject();
+      if (uq.contains("method")) {
+          QString method =uq["method"].toString();
+          int index = samplingMethod->findText(method);
+          if (index == -1) {
+              return false;
+          }
+          samplingMethod->setCurrentIndex(index);
+          result = theCurrentMethod->inputFromJSON(uq);
+          if (result == false)
+              return result;
+      }
   }
-  
+
   return result;
 }
 
-void InputWidgetSensitivity::uqSelectionChanged(const QString &arg1)
-{
-    // if more data than just num samples and seed code would go here to add or remove widgets from layout
-}
 
 int InputWidgetSensitivity::processResults(QString &filenameResults, QString &filenameTab) {
 
@@ -210,7 +204,7 @@ int InputWidgetSensitivity::processResults(QString &filenameResults, QString &fi
 
 DakotaResults *
 InputWidgetSensitivity::getResults(void) {
-    return new DakotaResultsSampling(theRandomVariables);
+    return new DakotaResultsSensitivity(theRandomVariables);
 }
 
 RandomVariablesContainer *
