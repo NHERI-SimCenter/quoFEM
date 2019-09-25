@@ -18,8 +18,9 @@ INCLUDEPATH += ../SimCenterCommon/RandomVariables
 # INCLUDEPATH += ../simcenterAgave/interface
 
 macos:LIBS += /usr/lib/libcurl.dylib
-win32:INCLUDEPATH += "C:/Adam/Qt/curl/include"
-win32:LIBS += C:/Adam/Qt/curl/lib/libcurl.lib
+win32:INCLUDEPATH += "../curl-7.59/include"
+win32:LIBS += "../curl-7.59/lib/libcurl_a.lib"
+win32:DEFINES +=  CURL_STATICLIB
 #win32:INCLUDEPATH+=../libCurl-7.59.0/include
 #win32:LIBS += ../libCurl-7.59.0/lib/libcurl.lib
 linux:LIBS += /usr/lib/x86_64-linux-gnu/libcurl.so
