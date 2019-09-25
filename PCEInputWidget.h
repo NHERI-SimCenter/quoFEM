@@ -28,7 +28,7 @@ public:
 
 private:
     QLineEdit *randomSeed;
-    QLineEdit *numSamples;
+    QLineEdit *quadOd;
     QLineEdit *level;
     QComboBox* dataMethod;
     QGridLayout *layout;

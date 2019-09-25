@@ -328,6 +328,51 @@ text_archive
             numResponses += 1
 
 
+    elif method == "Polynomial Chaos Expansion":
+        quad_od = samplingData["order"]
+        spg_level = samplingData["level"]
+        train_method = samplingData["dataMethod"]
+        myseed = samplingData["seed"]
+        
+        pce_method = ''
+        if train_method == 'Quadrature':
+            pce_method = 'quadrature_order'
+            quad_method = quad_od
+        elif train_method == 'Sparse Grid Quadrature':
+            pce_method = 'sparse_grid_level'
+            quad_method = spg_level
+            
+        #train_samples2 = samplingData["samples2"]
+        #gpr_seed2 = samplingData["seed2"]
+        #train_method2 = samplingData["dataMethod2"]
+        
+        # write out the env data
+        dakota_input = ""
+        
+        dakota_input += (
+        """environment
+tabular_data
+tabular_data_file = 'dakotaTab.out'
+
+method        
+polynomial_chaos
+{set_method_name} = {integration_order}
+samples_on_emulator = 1000
+seed = {set_seed}
+probability_levels = .1 .5 .9
+variance_based_decomp
+        
+""").format(
+        set_method_name = pce_method,
+        integration_order = quad_method,
+        set_seed = myseed)
+
+        #edps = samplingData["edps"]
+        for edp in my_edps:
+            responseDescriptors.append(edp["name"])
+            numResponses += 1
+
+
 elif uq_method == "Reliability Analysis":
 
     sampling_data = uq_data["samplingMethodData"]
@@ -821,6 +866,18 @@ if uq_method == "Forward Propagation" or uq_method == "Sensitivity Analysis":
         responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
     elif method == "Gaussian Process Regression":
+        dakota_input += (
+    """responses,
+    response_functions = {numResponses}
+    response_descriptors = {responseDescriptors}
+    no_gradients
+    no_hessians
+    
+    """.format(
+        numResponses = numResponses,
+        responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
+
+    elif method == "Polynomial Chaos Expansion":
         dakota_input += (
     """responses,
     response_functions = {numResponses}
