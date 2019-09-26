@@ -17,58 +17,34 @@ PCEInputWidget::PCEInputWidget(QWidget *parent) : UQ_MethodInputWidget(parent)
 
     trainingDataLayout->addWidget(new QLabel("Method for Data Generation"), 0, 0);
     dataMethod = new QComboBox();
-    dataMethod->addItem("   ");
     dataMethod->addItem("Quadrature");
     dataMethod->addItem("Sparse Grid Quadrature");
     connect(dataMethod,SIGNAL(currentIndexChanged(int)),this,SLOT(trainingDataMethodChanged(int)));
     trainingDataLayout->addWidget(dataMethod, 0, 1);
 
-    // create layout label and entry for # samples
-    quadOd = new QLineEdit();
-    quadOd->setText(tr("6"));
-    quadOd->setValidator(new QIntValidator);
-    quadOd->setToolTip("Specify the order of the quadrature method");
-    layout->addWidget(new QLabel("Quadrature Order"), 1, 0);
-    layout->addWidget(quadOd, 1, 1);
-
-
-    // create label and entry for seed to layout
-    srand(time(NULL));
-    int randomNumber = rand() % 1000 + 1;
-    randomSeed = new QLineEdit();
-    randomSeed->setText(QString::number(randomNumber));
-    randomSeed->setValidator(new QIntValidator);
-    randomSeed->setToolTip("Set the seed");
-    trainingDataLayout->addWidget(new QLabel("Seed"), 2, 0);
-    trainingDataLayout->addWidget(randomSeed, 2, 1);
-
     // create layout label and entry for level
+    levelLabel = new QLabel("Quadrature Order");
     level = new QLineEdit();
     level->setText(tr("5"));
     level->setValidator(new QIntValidator);
     level->setToolTip("Specify the quadrature levels");
-    trainingDataLayout->addWidget(new QLabel("Quadrature Level"), 3, 0);
-    trainingDataLayout->addWidget(level, 3, 1);
-    trainingDataLayout->itemAtPosition(3,0)->widget()->hide();
-    trainingDataLayout->itemAtPosition(3,1)->widget()->hide();
+    //trainingDataLayout->addWidget(new QLabel("Quadrature Level"), 2, 0);
+    trainingDataLayout->addWidget(levelLabel, 1, 0);
+    trainingDataLayout->addWidget(level, 1, 1);
 
-    trainingDataLayout->setRowStretch(4, 1);
     trainingDataLayout->setColumnStretch(2, 1);
 
     trainingDataGroup->setLayout(trainingDataLayout);
     layout->addWidget(trainingDataGroup);
 
-
-
     QGroupBox *samplingDataGroup = new QGroupBox("Surrogate Sampling Data");
     samplingDataLayout = new QGridLayout();
 
-    trainingDataLayout->addWidget(new QLabel("Method for Data Generation"), 0, 0);
+    samplingDataLayout->addWidget(new QLabel("Method for Data Generation"), 0, 0);
     dataMethodSampling = new QComboBox();
     dataMethodSampling->addItem("LHS");
     dataMethodSampling->addItem("Monte Carlo");
-    dataMethodSampling->addItem("Sparse Grid Quadrature");
-    connect(dataMethodSampling,SIGNAL(currentIndexChanged(int)),this,SLOT(samplingDataMethodChanged(int)));
+    //connect(dataMethodSampling,SIGNAL(currentIndexChanged(int)),this,SLOT(samplingDataMethodChanged(int)));
     samplingDataLayout->addWidget(dataMethodSampling, 0, 1);
 
     // create layout label and entry for # samples
@@ -77,7 +53,7 @@ PCEInputWidget::PCEInputWidget(QWidget *parent) : UQ_MethodInputWidget(parent)
     numSamplesSampling->setValidator(new QIntValidator);
     numSamplesSampling->setToolTip("Specify the number of samples");
     samplingDataLayout->addWidget(new QLabel("# Samples"), 1, 0);
-    samplingDataLayout->addWidget(numSamples, 1, 1);
+    samplingDataLayout->addWidget(numSamplesSampling, 1, 1);
 
 
     // create label and entry for seed to layout
@@ -96,7 +72,7 @@ PCEInputWidget::PCEInputWidget(QWidget *parent) : UQ_MethodInputWidget(parent)
     levelSampling->setValidator(new QIntValidator);
     levelSampling->setToolTip("Specify the quadrature levels");
     samplingDataLayout->addWidget(new QLabel("Quadrature Level"), 3, 0);
-    samplingDataLayout->addWidget(level, 3, 1);
+    samplingDataLayout->addWidget(levelSampling, 3, 1);
     samplingDataLayout->itemAtPosition(3,0)->widget()->hide();
     samplingDataLayout->itemAtPosition(3,1)->widget()->hide();
 
@@ -115,15 +91,12 @@ PCEInputWidget::PCEInputWidget(QWidget *parent) : UQ_MethodInputWidget(parent)
 bool PCEInputWidget::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
-    jsonObject["order"]=quadOd->text().toInt();
-    jsonObject["seed"]=randomSeed->text().toDouble();
     jsonObject["dataMethod"]=dataMethod->currentText();
     jsonObject["level"]=level->text().toInt();
 
     jsonObject["samplesSampling"]=numSamplesSampling->text().toInt();
     jsonObject["seedSampling"]=randomSeedSampling->text().toDouble();
     jsonObject["dataMethodSampling"]=dataMethodSampling->currentText();
-    jsonObject["levelSampling"]=levelSampling->text().toInt();
 
     return result;
 }
@@ -131,31 +104,23 @@ bool PCEInputWidget::outputToJSON(QJsonObject &jsonObject)
 bool PCEInputWidget::inputFromJSON(QJsonObject &jsonObject)
 {
     bool result = false;
-    if ( (jsonObject.contains("order"))
-         && (jsonObject.contains("seed"))
-         && (jsonObject.contains("level"))
+    if ( (jsonObject.contains("level"))
          && (jsonObject.contains("dataMethod"))
          && (jsonObject.contains("samplesSampling"))
          && (jsonObject.contains("seedSampling"))
-         && (jsonObject.contains("levelSampling"))
          && (jsonObject.contains("dataMethodSampling")) ) {
 
-        int order=jsonObject["order"].toInt();
+        int levelV=jsonObject["level"].toInt();
 
-        double seed=jsonObject["seed"].toDouble();
-        quadOd->setText(QString::number(order));
-        randomSeed->setText(QString::number(seed));
         level->setText(QString::number(levelV));
 
         QString method=jsonObject["dataMethod"].toString();
         dataMethod->setCurrentIndex(dataMethod->findText(method));
 
         int samplesS=jsonObject["samplesSampling"].toInt();
-        int levelVS=jsonObject["levelSampling"].toInt();
         double seedS=jsonObject["seedSampling"].toDouble();
         numSamplesSampling->setText(QString::number(samplesS));
         randomSeedSampling->setText(QString::number(seedS));
-        levelSampling->setText(QString::number(levelVS));
 
         QString methodS=jsonObject["dataMethodSampling"].toString();
         dataMethodSampling->setCurrentIndex(dataMethod->findText(methodS));
@@ -174,20 +139,10 @@ int PCEInputWidget::getNumberTasks()
 
 void PCEInputWidget::trainingDataMethodChanged(int method) {
 
-    if (method == 0 || method == 1) {
-        trainingDataLayout->itemAtPosition(1,0)->widget()->show();
-        trainingDataLayout->itemAtPosition(1,1)->widget()->show();
-        trainingDataLayout->itemAtPosition(2,0)->widget()->show();
-        trainingDataLayout->itemAtPosition(2,1)->widget()->show();
-        trainingDataLayout->itemAtPosition(3,0)->widget()->hide();
-        trainingDataLayout->itemAtPosition(3,1)->widget()->hide();
+    if (method == 0) {
+       levelLabel->setText("Quadrature Order");
     } else {
-        trainingDataLayout->itemAtPosition(1,0)->widget()->hide();
-        trainingDataLayout->itemAtPosition(1,1)->widget()->hide();
-        trainingDataLayout->itemAtPosition(2,0)->widget()->hide();
-        trainingDataLayout->itemAtPosition(2,1)->widget()->hide();
-        trainingDataLayout->itemAtPosition(3,0)->widget()->show();
-        trainingDataLayout->itemAtPosition(3,1)->widget()->show();
+        levelLabel->setText("Quadrature Level");
     }
 }
 
