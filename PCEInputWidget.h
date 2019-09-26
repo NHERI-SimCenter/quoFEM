@@ -6,6 +6,7 @@
 #include <QComboBox>
 
 class QGridLayout;
+class QLabel;
 
 class PCEInputWidget : public UQ_MethodInputWidget
 {
@@ -28,9 +29,8 @@ public:
     int getNumberTasks();
 
 private:
-    QLineEdit *randomSeed;
-    QLineEdit *numSamples;
     QLineEdit *level;
+    QLabel *levelLabel;
     QComboBox* dataMethod;
 
     QLineEdit *randomSeedSampling;
