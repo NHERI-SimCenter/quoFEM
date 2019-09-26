@@ -2,6 +2,8 @@
 /* QMainWindow                                                                */
 /*----------------------------------------------------------------------------*/
 
+
+
 QMainWindow{
     background: rgb(240, 240, 240);
 }
@@ -26,7 +28,7 @@ FooterWidget, HeaderWidget {
 }
 
 QLabel#titleText {
-    font-size: 16px;
+    font-size: 11pt;
     padding-left: 25px;
     font-weight: bold;
 }
@@ -40,7 +42,7 @@ footerLayout {
 
 QLabel#nsfText {
     color: #E0E0E0;
-    font-size: 10px;
+    font-size: 10pt;
     font-weight: bold;
 }
 
@@ -49,32 +51,26 @@ QLabel#nsfText {
 /*----------------------------------------------------------------------------*/
 
 QLabel#sectionTitle {
-    font-size: 14px;
     font-weight: bold;
 }
 
 QLabel#propertiesTitle {
-    font-size: 12px;
     font-weight: bold;
 }
 
 QLabel#vizTitle {
-    font-size: 12px;
     font-weight: bold;
 }
 
 QLabel#outTitle {
-    font-size: 15px;
     font-weight: bold;
 }
 
 QLabel#inTitle {
-    font-size: 15px;
     font-weight: bold;
 }
 
 QLabel{
-    font-size: 12px;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -142,7 +138,6 @@ QPushButton {
     border-width: 1px;
     border-radius: 2px;
     border-color: #607D8B;
-    font-size: 12px;
     font-weight: bold;
     padding: 3px;
 }
@@ -176,7 +171,7 @@ QTreeView#treeViewOnTheLeft{
     background: rgb(79, 83, 89);
 
     /* set the font properties*/
-    font-size:17px;
+    font-size: 12pt;
     color: white;
 }
 
@@ -195,10 +190,28 @@ QTreeView#treeViewOnTheLeft::item:selected:!active {
 /*----------------------------------------------------------------------------*/
 /* QCombboBox                                                                 */
 /*----------------------------------------------------------------------------*/
-
+/*
 QComboBox {
     background: white;
-    font-size: 12px;
+    padding: 0px;
+}
+
+*/
+QComboBox {
+    border:  solid gray;
+    min-width: 6em;
+}
+
+QComboBox:editable {
+    background: white;
+}
+
+QComboBox:!editable, QComboBox::drop-down:editable {
+     background: white;
+}
+
+QComboBox:!editable:on, QComboBox::drop-down:editable:on {
+    background: rgb(240, 240, 240);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -206,6 +219,5 @@ QComboBox {
 /*----------------------------------------------------------------------------*/
 
 QLineEdit {
-    font-size: 12px;
 }
 
