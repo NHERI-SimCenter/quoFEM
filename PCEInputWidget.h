@@ -16,7 +16,8 @@ public:
 signals:
 
 public slots:
-    void dataMethodChanged(int);
+    void trainingDataMethodChanged(int);
+    void samplingDataMethodChanged(int);
 
 
 public:
@@ -31,8 +32,14 @@ private:
     QLineEdit *quadOd;
     QLineEdit *level;
     QComboBox* dataMethod;
-    QGridLayout *layout;
 
+    QLineEdit *randomSeedSampling;
+    QLineEdit *numSamplesSampling;
+    QLineEdit *levelSampling;
+    QComboBox* dataMethodSampling;
+
+    QGridLayout *trainingDataLayout;
+    QGridLayout *samplingDataLayout;
 };
 
 #endif // PCEINPUTWIDGET

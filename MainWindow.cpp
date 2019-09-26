@@ -208,24 +208,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     inputWidget = new SidebarWidgetSelection();
 
-    /*
-    inputWidget->addInputWidget(tr("FEM Selection"), fem);
-    inputWidget->addInputWidget(tr("Method Selection"), uq);
-    inputWidget->addInputWidget(tr("Input Variables"), random);
-    inputWidget->addInputWidget(tr("Results"), results);
-*/
-
-    inputWidget->addInputWidget(tr("UQ"), uq);
-    inputWidget->addInputWidget(tr("FEM"), fem);
-    inputWidget->addInputWidget(tr("RV"), random);
-     inputWidget->addInputWidget(tr("EDP"), edp);
-    inputWidget->addInputWidget(tr("RES"), results);
+    inputWidget->addInputWidget(tr("UQ"), tr("Uncertainty Quantification Methods"), uq);
+    inputWidget->addInputWidget(tr("FEM"), tr("Finite Element Method Application"), fem);
+    inputWidget->addInputWidget(tr("RV"), tr("Random Variables"), random);
+    inputWidget->addInputWidget(tr("QoI"), tr("Quantities of Interest"), edp);
+    inputWidget->addInputWidget(tr("RES"), tr("Results"), results);
 
     //inputWidget->setFont(QFont( "lucida", 20, QFont::Bold, TRUE ) );
 
     // let ubput widget know end of ptions, then set initial input to fem
     inputWidget->buildTreee();
-    //    inputWidget->setSelection(tr("FEM Selection"));
     inputWidget->setSelection(tr("UQ"));
     //inputWidget->setMinimumWidth(600);
     // add selection widget to the central layout previosuly created

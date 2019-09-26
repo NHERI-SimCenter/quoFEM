@@ -255,7 +255,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     spreadsheet->setColumnCount(colCount);
     spreadsheet->setHorizontalHeaderLabels(theHeadings);
     spreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
+    spreadsheet->verticalHeader()->setVisible(false);
     // now until end of file, read lines and place data into spreadsheet
 
     int rowCount = 0;
