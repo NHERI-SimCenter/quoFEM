@@ -155,6 +155,12 @@ QPushButton:pressed {
 
 QGroupBox {
     font-weight: bold;
+    background: rgb(230, 230, 230);
+}
+
+QGroupBox:title {
+    font-weight: bold;
+    background: rgb(240, 240, 240);
 }
 
 
