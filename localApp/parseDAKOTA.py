@@ -329,18 +329,16 @@ text_archive
 
 
     elif method == "Polynomial Chaos Expansion":
-        quad_od = samplingData["order"]
         spg_level = samplingData["level"]
         train_method = samplingData["dataMethod"]
-        myseed = samplingData["seed"]
+        sams = samplingData["samplesSampling"]
+        myseed = samplingData["seedSampling"]
         
         pce_method = ''
         if train_method == 'Quadrature':
             pce_method = 'quadrature_order'
-            quad_method = quad_od
         elif train_method == 'Sparse Grid Quadrature':
             pce_method = 'sparse_grid_level'
-            quad_method = spg_level
             
         #train_samples2 = samplingData["samples2"]
         #gpr_seed2 = samplingData["seed2"]
@@ -357,15 +355,16 @@ tabular_data_file = 'dakotaTab.out'
 method        
 polynomial_chaos
 {set_method_name} = {integration_order}
-samples_on_emulator = 1000
+samples_on_emulator = {set_pce_samples}
 seed = {set_seed}
 probability_levels = .1 .5 .9
 variance_based_decomp
         
 """).format(
         set_method_name = pce_method,
-        integration_order = quad_method,
-        set_seed = myseed)
+        integration_order = spg_level,
+        set_seed = myseed,
+        set_pce_samples = sams)
 
         #edps = samplingData["edps"]
         for edp in my_edps:
