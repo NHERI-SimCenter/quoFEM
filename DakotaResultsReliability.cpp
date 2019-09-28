@@ -132,7 +132,7 @@ void DakotaResultsReliability::clear(void)
 int DakotaResultsReliability::processResults(QString &filenameResults, QString &filenameTab)
 {
 
-  emit sendStatusMessage(tr("Processing SampingResults"));
+  emit sendStatusMessage(tr("Processing Reliability Results"));
 
   // clear current
   this->clear();
@@ -142,6 +142,42 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
   theHeadings << "%";
   spreadsheet->setColumnCount(1);
+
+
+  //
+  // check it actually ran with n errors
+  //
+
+  QFileInfo fileResultsInfo(filenameResults);
+  QString filenameErrorString = fileResultsInfo.absolutePath() + QDir::separator() + QString("dakota.err");
+
+  QFileInfo filenameErrorInfo(filenameErrorString);
+  if (!filenameErrorInfo.exists()) {
+      emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+      return 0;
+  }
+  QFile fileError(filenameErrorString);
+  QString line("");
+  if (fileError.open(QIODevice::ReadOnly)) {
+     QTextStream in(&fileError);
+     while (!in.atEnd()) {
+        line = in.readLine();
+     }
+     fileError.close();
+  }
+
+  if ((line.length() != 0) && (!line.contains("Warning: unit probability", Qt::CaseInsensitive))){
+      qDebug() << line.length() << " " << line;
+      emit sendErrorMessage(QString(QString("Error Rnning Dakota: ") + line));
+      return 0;
+  }
+
+  QFileInfo filenameResultsInfo(filenameResults);
+  if (!filenameResultsInfo.exists()) {
+      emit sendErrorMessage("No dakota.out file - dakota failed .. possibly no QoI");
+      return 0;
+  }
+
 
   // 
   // read data from file filename
@@ -241,9 +277,11 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
            }
        }
        //QMap<QString, int>::iterator i;
+       /*
        qDebug() << "DATA";
        for (auto i = data.begin(); i != data.end(); ++i)
            qDebug() << i.key() << ": " << i.value() << endl;
+           */
 
        numSpreadsheetRows = numRows;
   }
@@ -254,6 +292,8 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
   fileResults.close();
 
   this->onSpreadsheetCellClicked(0,1);
+  if (numSpreadsheetRows == 0)
+      emit sendStatusMessage(tr("No Result Data Found .. dakota failed .. possibly no QoI provided"));
 
   return 0;
 }
@@ -356,7 +396,7 @@ void DakotaResultsReliability::onSpreadsheetCellClicked(int row, int col)
     axisY->setTitleText("Probability Level");
     axisX->setTitleText(theHeadings.at(col2));
 
-    axisY->setTickCount(11);
+    axisY->setTickCount(5);
     axisX->setTickCount(NUM_DIVISIONS+1);
 
     chart->setAxisX(axisX, series);

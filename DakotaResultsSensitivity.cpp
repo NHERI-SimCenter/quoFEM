@@ -131,6 +131,8 @@ void DakotaResultsSensitivity::clear(void)
   theKurtosis.clear();
 
   tabWidget->clear();
+
+  spreadsheet = NULL;
   
 }
 
@@ -189,12 +191,46 @@ static int mergesort(double *input, int size)
 
 int DakotaResultsSensitivity::processResults(QString &filenameResults, QString &filenameTab)
 {
-    emit sendStatusMessage(tr("Processing SampingResults"));
+    emit sendStatusMessage(tr("Processing Results ... "));
 
     this->clear();
     mLeft = true;
     col1 = 0;
     col2 = 0;
+
+    //
+    // check it actually ran with errors
+    //
+
+    QFileInfo fileTabInfo(filenameTab);
+    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
+
+    QFileInfo filenameErrorInfo(filenameErrorString);
+    if (!filenameErrorInfo.exists()) {
+        emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        return 0;
+    }
+    QFile fileError(filenameErrorString);
+    QString line("");
+    if (fileError.open(QIODevice::ReadOnly)) {
+       QTextStream in(&fileError);
+       while (!in.atEnd()) {
+          line = in.readLine();
+       }
+       fileError.close();
+    }
+
+    if (line.length() != 0) {
+        qDebug() << line.length() << " " << line;
+        emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
+        return 0;
+    }
+
+    QFileInfo filenameTabInfo(filenameTab);
+    if (!filenameTabInfo.exists()) {
+        emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        return 0;
+    }
 
     //
     // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
@@ -301,7 +337,6 @@ Node_2_Disp Sobol' indices:
             l3->setAlignment(Qt::AlignCenter);
             l3->setFont(font);
 
-
             groupBox->setLayout(trainingDataLayout);
 
             // set num EDP and read a useleass line
@@ -397,7 +432,7 @@ Node_2_Disp Sobol' indices:
         spreadsheet->setColumnCount(colCount);
         spreadsheet->setHorizontalHeaderLabels(theHeadings);
         spreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-	spreadsheet->verticalHeader()->setVisible(false);
+        spreadsheet->verticalHeader()->setVisible(false);
 
         // now until end of file, read lines and place data into spreadsheet
 
@@ -430,6 +465,7 @@ Node_2_Disp Sobol' indices:
         //
         // create a chart, setting data points from first and last col of spreadsheet
         //
+
         chart = new QChart();
         chart->setAnimationOptions(QChart::AllAnimations);
 
@@ -463,6 +499,8 @@ Node_2_Disp Sobol' indices:
         tabWidget->addTab(sa,tr("Summary"));
         tabWidget->addTab(widget, tr("Data Values"));
         tabWidget->adjustSize();
+
+        emit sendStatusMessage(tr(""));
 
         return 0;
     }
@@ -899,11 +937,14 @@ Node_2_Disp Sobol' indices:
     // padhye
     // this function is called if you decide to say save the data from UI into a json object
     bool
-            DakotaResultsSensitivity::outputToJSON(QJsonObject &jsonObject)
+    DakotaResultsSensitivity::outputToJSON(QJsonObject &jsonObject)
     {
         bool result = true;
 
         jsonObject["resultType"]=QString(tr("DakotaResultsSensitivity"));
+
+        if (spreadsheet == NULL)
+            return true;
 
         //
         // add summary data
@@ -967,6 +1008,10 @@ Node_2_Disp Sobol' indices:
         bool result = true;
 
         this->clear();
+
+        QJsonValue theNameValue = jsonObject["spreadsheet"];
+        if (theNameValue.isNull())
+            return true;
 
         //
         // create a summary widget in which place basic output (name, mean, stdDev)
