@@ -78,5 +78,5 @@ bool ImportanceSamplingInputWidget::inputFromJSON(QJsonObject &jsonObject)
 
 int ImportanceSamplingInputWidget::getNumberTasks()
 {
-    return 0;
+    return numSamples->text().toInt();
 }
