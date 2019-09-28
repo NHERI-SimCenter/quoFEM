@@ -201,20 +201,20 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
   //
   
   if (jsonObject.contains("samplingMethodData")) {
-    QJsonObject uq = jsonObject["samplingMethodData"].toObject();
-    if (uq.contains("method")) {
+      QJsonObject uq = jsonObject["samplingMethodData"].toObject();
+      if (uq.contains("method")) {
 
-      QString method =uq["method"].toString();
-      int index = samplingMethod->findText(method);
-      if (index == -1) {
-          return false;
+          QString method =uq["method"].toString();
+          int index = samplingMethod->findText(method);
+          if (index == -1) {
+              return false;
+          }
+          samplingMethod->setCurrentIndex(index);
+          result = theCurrentMethod->inputFromJSON(uq);
+          if (result == false)
+              return result;
+
       }
-      samplingMethod->setCurrentIndex(index);
-      result = theCurrentMethod->inputFromJSON(uq);
-      if (result == false)
-	return result;
-
-    }
   }
   
   return result;
