@@ -65,6 +65,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <GoogleAnalytics.h>
 
 #include <DakotaResultsSampling.h>
+#include <SimCenterPreferences.h>
 
 #include <QVBoxLayout>
 #include <HeaderWidget.h>
@@ -370,28 +371,25 @@ MainWindow::MainWindow(QWidget *parent)
     // send get to my simple counter
     manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/uqFEM/use.php")));
 
-    QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-    workingDirectory = workingDir.filePath(QCoreApplication::applicationName());
-    qDebug() << "WORKING: " << workingDirectory;
+    //QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    workingDirectory = SimCenterPreferences::getInstance()->getLocalWorkDir();
 
-    // create a temporrary directory to work in
     QDir dirWork(workingDirectory);
     if (!dirWork.exists())
-      if (!dirWork.mkpath(workingDirectory)) {
-	emit errorMessage(QString("Could not create Working Dir: ") + workingDirectory + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
-	return;
-      }
+        if (!dirWork.mkpath(workingDirectory)) {
+            emit errorMessage(QString("Could not create Working Dir: ") + workingDirectory + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
+            return;
+        }
 
     QSettings settings("SimCenter", "Common");
     QVariant  loginName = settings.value("loginAgave");
     QVariant  loginPassword = settings.value("passwordAgave");
     if (loginName.isValid()) {
-        nameLineEdit->setText(loginName.toString());      
+        nameLineEdit->setText(loginName.toString());
     }
     if (loginPassword.isValid()) {
-        passwordLineEdit->setText(loginPassword.toString());      
+        passwordLineEdit->setText(loginPassword.toString());
     }
-
 }
 
 MainWindow::~MainWindow()
@@ -458,10 +456,7 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
 
 void MainWindow::onRunButtonClicked() {
 
-    errorMessage("");
-
     GoogleAnalytics::ReportLocalRun();
-
 
     //
     // get program & input file from fem widget
@@ -571,6 +566,7 @@ void MainWindow::onRunButtonClicked() {
     QVariant  pythonLocationVariant = settings.value("pythonLocation");
     if (pythonLocationVariant.isValid()) 
       python = pythonLocationVariant.toString();
+
 
 #ifdef Q_OS_WIN
 
