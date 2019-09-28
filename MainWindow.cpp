@@ -322,7 +322,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this,SIGNAL(attemptLogin(QString, QString)),theRemoteInterface,SLOT(loginCall(QString, QString)));
     connect(theRemoteInterface,SIGNAL(loginReturn(bool)),this,SLOT(attemptLoginReturn(bool)));
 
-
     // logout
     connect(this,SIGNAL(logout()),theRemoteInterface,SLOT(logoutCall()));
     connect(theRemoteInterface,SIGNAL(logoutReturn(bool)),this,SLOT(logoutReturn(bool)));
@@ -372,6 +371,16 @@ MainWindow::MainWindow(QWidget *parent)
     manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/uqFEM/use.php")));
 
     //QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+
+    workingDirectory = SimCenterPreferences::getInstance()->getRemoteWorkDir();
+
+    QDir dirWorkRemote(workingDirectory);
+    if (!dirWorkRemote.exists())
+        if (!dirWorkRemote.mkpath(workingDirectory)) {
+            emit errorMessage(QString("Could not create Working Dir: ") + workingDirectory + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
+            return;
+        }
+
     workingDirectory = SimCenterPreferences::getInstance()->getLocalWorkDir();
 
     QDir dirWork(workingDirectory);
