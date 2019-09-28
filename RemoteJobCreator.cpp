@@ -172,15 +172,15 @@ RemoteJobCreator::uploadDirReturn(bool result)
 
         pushButton->setDisabled(true);
 
-        job["name"]=QString("uqFEM:") + nameLineEdit->text();
+        job["name"]=QString("quoFEM:") + nameLineEdit->text();
         job["nodeCount"]=numCPU_LineEdit->text().toInt();
         job["processorsOnEachNode"]=numProcessorsLineEdit->text().toInt();
         job["maxRunTime"]=runtimeLineEdit->text();
-	job["appId"]=SimCenterPreferences::getInstance()->getRemoteAgaveApp();
-	//        job["appId"]=appLineEdit->text();
+        job["appId"]=SimCenterPreferences::getInstance()->getRemoteAgaveApp();
+        //        job["appId"]=appLineEdit->text();
         job["memoryPerNode"]= "1GB";
         job["archive"]=true;
-	job["archivePath"]="";
+        job["archivePath"]="";
         job["archiveSystem"]="designsafe.storage.default";
 
         QJsonObject parameters;

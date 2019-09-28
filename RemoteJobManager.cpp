@@ -45,6 +45,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <AgaveCurl.h>
 #include <QJsonDocument>
 
+#include <SimCenterPreferences.h>
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -287,27 +289,38 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
          QJsonValue inputs = job["inputs"];
          if (inputs.isObject()) {
 
-              QJsonObject inputObject = inputs.toObject();
-              QJsonValue inputPath = inputObject["inputDirectory"];
-              if (inputPath.isArray()) {
-		inputDir = inputPath.toArray().at(0).toString();
-		inputDir.remove(htmlInputDirectory);
-	      } else if (inputPath.isString()) {
-                inputDir = inputPath.toString();
-                inputDir.remove(htmlInputDirectory);
-	      }
+             QJsonObject inputObject = inputs.toObject();
+             QJsonValue inputPath = inputObject["inputDirectory"];
+             if (inputPath.isArray()) {
+                 inputDir = inputPath.toArray().at(0).toString();
+                 inputDir.remove(htmlInputDirectory);
+             } else if (inputPath.isString()) {
+                 inputDir = inputPath.toString();
+                 inputDir.remove(htmlInputDirectory);
+             }
          }
-	 
+
+        //archiveDir = SimCenterPreferences::getInstance()->getRemoteWorkDir();
         archiveDir = archiveDir + QString("/") + inputDir.remove(QRegExp(".*\/")); // regex to remove up till last /
 
-	name1 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakota.json");;
-	name2 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakota.out");;
-	name3 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakotaTab.out");;
+	QString localDir = SimCenterPreferences::getInstance()->getRemoteWorkDir();
+	QDir localWork(localDir);
+	if (!localWork.exists())
+	  if (!localWork.mkpath(localDir)) {
+            emit errorMessage(QString("Could not create Working Dir: ") + localDir + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
+            return;
+	  }
+	
+        name1 = localDir + QDir::separator() + QString("dakota.json");
+        name2 = localDir + QDir::separator() + QString("dakota.out");
+        name3 = localDir + QDir::separator() + QString("dakotaTab.out");
+        name4 = localDir + QDir::separator() + QString("dakota.err");;
 
         QStringList localFiles;
         localFiles.append(name1);
         localFiles.append(name2);
         localFiles.append(name3);
+        localFiles.append(name4);
 
         //
         // download data to temp files & then process them as normal
@@ -316,14 +329,14 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         QString dakotaJSON = archiveDir + QString("/dakota.json");
         QString dakotaOUT = archiveDir + QString("/dakota.out");
         QString dakotaTAB = archiveDir + QString("/dakotaTab.out");
+        QString dakotaERR = archiveDir + QString("/dakota.err");
 
         // first download the input data & load it
         QStringList filesToDownload;
         filesToDownload.append(dakotaJSON);
         filesToDownload.append(dakotaOUT);
         filesToDownload.append(dakotaTAB);
-
-	qDebug() << "remote out: " << dakotaOUT;
+        filesToDownload.append(dakotaERR);
 
         emit downloadFiles(filesToDownload, localFiles);
      }
@@ -345,8 +358,6 @@ RemoteJobManager::downloadFilesReturn(bool result)
     } else {
         emit errorMessage("ERROR - Failed to download File - did Job finish successfully?");
     }
-
-
 }
 
 void
