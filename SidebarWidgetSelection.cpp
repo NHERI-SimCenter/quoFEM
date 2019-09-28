@@ -79,8 +79,16 @@ SidebarWidgetSelection::buildTreee(){
     treeView->expandAll();
     treeView->setHeaderHidden(true);
 
+    //register the model
+    treeView->setModel(standardModel);
+    treeView->expandAll();
+    treeView->setHeaderHidden(true);
     treeView->setMinimumWidth(100);
     treeView->setMaximumWidth(100);
+    treeView->setMinimumWidth(100);
+
+    treeView->setEditTriggers(QTreeView::EditTrigger::NoEditTriggers);//Disable Edit for the TreeView
+
 
     /* *************************** EFFORTS TO REMOVE FIXED SIZE WIDGET
     treeView->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
