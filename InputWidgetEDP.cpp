@@ -58,7 +58,7 @@ InputWidgetEDP::InputWidgetEDP(QWidget *parent) : SimCenterWidget(parent)
 
 InputWidgetEDP::~InputWidgetEDP()
 {
-    // qDebug() << "InputWidgetEDP::DESTRCUTOR CALLED\n";
+
 }
 
 void
@@ -68,7 +68,7 @@ InputWidgetEDP::makeEDP(void)
     QHBoxLayout *titleLayout = new QHBoxLayout();
 
     SectionTitle *title=new SectionTitle();
-    title->setText(tr("Response Parameters"));
+    title->setText(tr("Quantities of Interest"));
     title->setMinimumWidth(250);
     QSpacerItem *spacer1 = new QSpacerItem(50,10);
     QSpacerItem *spacer2 = new QSpacerItem(20,10);
