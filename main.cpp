@@ -42,13 +42,15 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QTime>
 #include <QTextStream>
 #include <GoogleAnalytics.h>
-
+#include <QDir>
+#include <QStandardPaths>
 
  // customMessgaeOutput code from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
 
-const QString logFilePath = "debug.log";
-bool logToFile = false;
+static QString logFilePath;
+static bool logToFile = false;
+
 
 void customMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -88,28 +90,32 @@ int main(int argc, char *argv[])
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
 
-  //
-  // set up logging of output messages for user debugging
-  //
+    //
+    // set up logging of output messages for user debugging
+    //
 
-  // remove old log file
-  QFile debugFile("debug.log");
-  debugFile.remove();
 
-  QByteArray envVar = qgetenv("QTDIR");       //  check if the app is run in Qt Creator
-  
-  if (envVar.isEmpty())
-    logToFile = true;
-  
-  qInstallMessageHandler(customMessageOutput);
+    logFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + QDir::separator() + QCoreApplication::applicationName()
+            + QDir::separator() + QString("debug.log");
+
+
+    // remove old log file
+    QFile debugFile(logFilePath);
+    debugFile.remove();
+
+    QByteArray envVar = qgetenv("QTDIR");       //  check if the app is run in Qt Creator
+
+    if (envVar.isEmpty())
+        logToFile = true;
+
+    qInstallMessageHandler(customMessageOutput);
+
+    qDebug() << "LogFILE: " << logFilePath;
 
   //
   // windows scaling - Qt HighDPI scaling is problematic (llok at QtCreator on high res laptop
   //    - this constitutes my best effort to make it look better on window laptop
-
-#ifdef Q_OS_WIN
-  //qputenv("QT_SCALE_FACTOR", ".7");
-#endif
 
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
@@ -124,15 +130,15 @@ int main(int argc, char *argv[])
   // load style sheet
 
 #ifdef Q_OS_WIN
-    QFile file(":/styles/stylesheetWIN.qss");
+    QFile file(":/styleCommon/stylesheetWIN.qss");
 #endif
 
 #ifdef Q_OS_MACOS
-    QFile file(":/styles/stylesheetMAC.qss");
+    QFile file(":/styleCommon/stylesheetMAC.qss");
 #endif
 
 #ifdef Q_OS_LINUX
-    QFile file(":/styles/stylesheetMAC.qss");
+    QFile file(":/styleCommon/stylesheetMAC.qss");
 #endif
 
   if(file.open(QFile::ReadOnly)) {
