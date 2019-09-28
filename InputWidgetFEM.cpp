@@ -67,7 +67,7 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
     QHBoxLayout *titleLayout = new QHBoxLayout();
 
     SectionTitle *textFEM=new SectionTitle();
-    textFEM->setText(tr("Finite Element Application"));
+    textFEM->setText(tr("Finite Element Method Application"));
     textFEM->setMinimumWidth(250);
     QSpacerItem *spacer = new QSpacerItem(50,10);
 
