@@ -123,7 +123,7 @@ bool PCEInputWidget::inputFromJSON(QJsonObject &jsonObject)
         randomSeedSampling->setText(QString::number(seedS));
 
         QString methodS=jsonObject["dataMethodSampling"].toString();
-        dataMethodSampling->setCurrentIndex(dataMethod->findText(methodS));
+        dataMethodSampling->setCurrentIndex(dataMethodSampling->findText(methodS));
 
 
         return true;
@@ -134,7 +134,7 @@ bool PCEInputWidget::inputFromJSON(QJsonObject &jsonObject)
 
 int PCEInputWidget::getNumberTasks()
 {
-    return 0;
+    return 32;
 }
 
 void PCEInputWidget::trainingDataMethodChanged(int method) {
