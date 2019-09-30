@@ -900,7 +900,7 @@ numerical_gradients
 method_source dakota
 interval_type central
 fd_step_size = 1.e-4
-no_hessians
+numerical_hessians
     
     """.format(
         numResponses = numResponses,
