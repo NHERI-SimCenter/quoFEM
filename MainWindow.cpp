@@ -1191,7 +1191,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 1.1.1 "));
+                       tr("Version 2.0.0 "));
 }
 
 void MainWindow::preferences()
@@ -1206,7 +1206,7 @@ void MainWindow::about()
               sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
              quantification in the structural responses and parameter estimation of input variables in calibration studies.\
              <p>\
-             Version 1 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
+             Version 2.0.0 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
              will repeatedly invoke the finite element application either locally on the users dekstop machine or remotely\
              on high performance computing resources at the Texas Advanced Computing Center through the NHERI DesignSafe cyberinfrastructure.\
              <p>\
@@ -1241,7 +1241,7 @@ void MainWindow::manual()
 
 void MainWindow::cite()
 {
-  QString citeText = QString("Frank McKenna, Nikhil Padhye, Charles Wang, Peter Mackenzie-Helnwein, & Michael Gardner. (2018, October 1). NHERI-SimCenter/uqFEM: Release V1.1.0 (Version v1.1.0). Zenodo. http://doi.org/10.5281/zenodo.1439497");  
+  QString citeText = QString("Frank McKenna, Nikhil Padhye, & Adam Zsarnoczay. (2019, September 30). NHERI-SimCenter/quoFEM: Vesion 2.0.0 (Version v2.0.0). Zenodo. http://doi.org/10.5281/zenodo.3466061");
     QMessageBox msgBox;
     QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     msgBox.setText(citeText);
