@@ -92,16 +92,12 @@ DakotaResults::inputFromJSON(QJsonObject &jsonObject)
           return true; // no results saved
         }
 
-        // NOTE: this is kinda kludgy, this class need to know what subclasses enter here
-        // so that we can create object of correct type .. this should be done by this class
-	/*
-        if (resultType == QString("DakotaResultsSampling")) {
-            newResultWidget = new DakotaResultsSampling();
-            result = newResultWidget->inputFromJSON(uq);
-            this->setResultWidget(newResultWidget);
-            result = true;
-        }
-	*/
+	if (resultWidget != 0) {
+	  result = resultWidget->inputFromJSON(uq);
+	} else {
+	  emit sendErrorMessage("ERROR: reading Dakota Results - no result widget set!");
+	}
+
     } else {
         emit sendErrorMessage("ERROR: Dakota Results - no \"uqResults\" entry");
         return false;

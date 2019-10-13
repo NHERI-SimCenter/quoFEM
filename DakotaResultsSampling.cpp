@@ -598,7 +598,6 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
                 series->append(min+(i+1)*dRange, 0);
             }
 
-
             chart->addSeries(series);
             series->setName("Histogram");
 
@@ -613,8 +612,8 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             chart->setAxisX(axisX, series);
             chart->setAxisY(axisY, series);
 
+	    /* ************************************* REMVING BUGGY BEST FIT
             //calling external python script to find the best fit, generating the data and then plotting it.
-
             // this will be done in the application directory
 
             QString appDIR = qApp->applicationDirPath(); // this is where the .exe is and also the parseJson.py, and now the fit_distribution.py
@@ -760,18 +759,8 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
             //     qDebug()<<"process has been completed       ";
             //         exit(1);
-            /*
-    #else
-    QString command = QString("source $HOME/.bashrc; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
-            tmpDirectory + QString(" runningLocal");
-    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
-    //        tmpDirectory + QString(" runningLocal");
-    proc->execute("bash", QStringList() << "-c" <<  command);
-    qInfo() << command;
-    // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
-    #endif
-    proc->waitForStarted();
-*/
+
+	    ************************************ */
         } else {
             // cumulative distribution
             mergesort(dataValues, rowCount);
@@ -878,9 +867,22 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     // check any data exists
     //
 
-    QJsonValue spreadsheetValue = jsonObject["spreadsheet"];
-    if (spreadsheetValue.isNull())
+    QJsonObject &theObject = jsonObject;
+
+    QJsonValue uqValue;
+    if (jsonObject.contains("uqResults")) {
+        uqValue = jsonObject["uqResults"];
+	jsonObject = uqValue.toObject();
+	qDebug() << "DakotaResultsSampling - inputFromJSON - results exist in uqResults";
+    } else
+      theObject = jsonObject;
+    
+
+    QJsonValue spreadsheetValue = theObject["spreadsheet"];
+    if (spreadsheetValue.isNull()) {
+	qDebug() << "DakotaResultsSampling - inputFromJSON - no spreadSheet data";
         return true;
+    }
 
     //
     // create a summary widget in which place basic output (name, mean, stdDev)
@@ -890,7 +892,7 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     QVBoxLayout *summaryLayout = new QVBoxLayout();
     summary->setLayout(summaryLayout);
 
-    QJsonArray edpArray = jsonObject["summary"].toArray();
+    QJsonArray edpArray = theObject["summary"].toArray();
     foreach (const QJsonValue &edpValue, edpArray) {
         QString name;
         double mean, stdDev;

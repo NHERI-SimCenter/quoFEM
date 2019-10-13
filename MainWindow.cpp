@@ -1024,12 +1024,12 @@ void MainWindow::loadFile(const QString &fileName)
     // adding back ---
     /* these are already done in processResults, not necessary?
     qDebug() << "uq->getResults()";
-    DakotaResults *result=uq->getResults();
-    results->setResultWidget(result);
     qDebug() << "results - inputFRomJSON";
     */
     // adding back ---
 
+    DakotaResults *result=uq->getResults();
+    results->setResultWidget(result);
     if (results->inputFromJSON(jsonObj) != true)
         return;
 
