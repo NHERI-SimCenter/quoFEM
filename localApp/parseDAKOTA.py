@@ -11,6 +11,7 @@ else:
 
 import json
 import os
+import stat
 import sys
 import numpy as np
 from subprocess import Popen, PIPE
@@ -33,13 +34,17 @@ if run_type in ['runningLocal',]:
         OpenSees = 'OpenSees'
         Feap = 'feappv'
         Dakota = 'dakota'
-        numCPUs = 1
+        DakotaR = 'dprepro'
+        fem_driver = 'fem_driver'
+        numCPUs = 4
 
     # Windows
     else:
         OpenSees = 'OpenSees'
         Feap = 'Feappv41.exe'
         Dakota = 'dakota'
+        DakotaR = 'perl "C:/Adam/Dakota test/bin/dprepro"'
+        fem_driver = 'fem_driver.bat'
         numCPUs = 1
 
 # Stampede @ DesignSafe, DON'T EDIT
@@ -47,6 +52,8 @@ elif run_type in ['runningRemote',]:
     OpenSees = '/home1/00477/tg457427/bin/OpenSees'
     Feap = '/home1/00477/tg457427/bin/feappv'
     Dakota = 'dakota'
+    DakotaR = 'dprepro'
+
 
 # change workdir to the templatedir
 os.chdir(workdir_temp)
@@ -811,7 +818,11 @@ if femProgram in ['OpenSees', 'OpenSees-2', 'FEAPpv']:
         dakota_input += ("fork asynchronous evaluation_concurrency = %d" % numCPUs)
     else:
         dakota_input += ('fork asynchronous')
-    dakota_input += ('\nanalysis_driver = \'python analysis_driver.py\' \n')
+
+    if (femProgram == "FEAPpv"):
+        dakota_input += ('\nanalysis_driver = \'fem_driver\' \n')
+    else:
+        dakota_input += ('\nanalysis_driver = \'python analysis_driver.py\' \n')
     dakota_input += ('parameters_file = \'params.in\' \n')
     dakota_input += ('results_file = \'results.out\' \n')
     dakota_input += ('work_directory directory_tag directory_save\n')
@@ -1057,7 +1068,7 @@ if (femProgram == "FEAPpv"):
         f.write(unicode(DakotaR))
         f.write(unicode(' params.in '))
         f.write(unicode(inputFile))
-        f.write(unicode(' SimCenterIn.txt --output-format=\'\%10.5f\'\n'))
+        f.write(unicode(' SimCenterIn.txt --output-format=\'%10.5f\'\n'))
         f.write(unicode('echo y|'))
         f.write(unicode(Feap))
         f.write(unicode(' \n'))
@@ -1069,6 +1080,9 @@ if (femProgram == "FEAPpv"):
                                        
         f.write(unicode('\n'))
         f.close()
+
+        if run_type in ['runningLocal']:
+            os.chmod(fem_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
 command = Dakota + ' -input dakota.in -output dakota.out -error dakota.err'
 print(command)
