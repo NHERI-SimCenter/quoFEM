@@ -35,7 +35,7 @@ GaussianProcessInputWidget::GaussianProcessInputWidget(QWidget *parent) : UQ_Met
     dataMethod = new QComboBox();
     dataMethod->addItem("LHS");
     dataMethod->addItem("Monte Carlo");
-    dataMethod->addItem("Other");
+    //    dataMethod->addItem("Other");
     trainingDataLayout->addWidget(dataMethod,2,1);
     trainingDataGroup->setLayout(trainingDataLayout);
 
@@ -66,7 +66,7 @@ GaussianProcessInputWidget::GaussianProcessInputWidget(QWidget *parent) : UQ_Met
     dataMethod2 = new QComboBox();
     dataMethod2->addItem("LHS");
     dataMethod2->addItem("Monte Carlo");
-    dataMethod2->addItem("Other");
+    // dataMethod2->addItem("Other");
     sampleDataLayout->addWidget(dataMethod2,2,1);
     sampleDataGroup->setLayout(sampleDataLayout);
 

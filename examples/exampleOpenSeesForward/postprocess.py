@@ -28,12 +28,8 @@ def process_results(response):
 
     with open ('node.out', 'rt') as inFile:
         line = inFile.readline()
-        print(line)
-        print(line.split())
         displ = line.split()
         numNode = len(displ)
-
-    print(numNode)
 
     inFile.close
 
@@ -43,27 +39,21 @@ def process_results(response):
 
     # note for now assuming no ERROR in user data
     for i in inputArgs:
-        print(i)
         theList=i.split('_')
-        print(theList)
+
         if (theList[0] == "Node"):
             nodeTag = int(theList[1])
-            print(nodeTag)
 
             if (nodeTag > 0 and nodeTag <= numNode):
-                print(theList[2])
                 if (theList[2] == "Disp"):
                     nodeDisp = displ[nodeTag-1]
-                    print(nodeDisp)
                     outFile.write(nodeDisp)
                     outFile.write(' ')
                 else:
-                    print('NOTDISP')
                     outFile.write('0. ')
             else:
                 outFile.write('0. ')
         else:
-            print(theList[0])
             outFile.write('0. ')
 
     outFile.close
