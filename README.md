@@ -9,8 +9,7 @@ quantification and optimization methods utliizng existing finite
 element applictions.
 
 It will run the computations locally utilizing laptop/desktop or
-remotely utilizing the computational resources made at tt TACC made
-available through DesignSafe-ci.
+remotely utilizing the HPR resoursed TACC made available through DesignSafe-ci.
 
 Please visit the [quoFEM Research Tool webpage](https://simcenter.designsafe-ci.org/research-tools/quofem-application/)
 for more resources related to this tool. Additionally, this page
