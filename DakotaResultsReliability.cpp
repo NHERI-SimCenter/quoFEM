@@ -88,7 +88,7 @@ using namespace QtCharts;
 #include <iostream>
 
 DakotaResultsReliability::DakotaResultsReliability(RandomVariablesContainer *theRandomVariables, QWidget *parent)
-  : DakotaResults(parent), theRVs(theRandomVariables), numSpreadsheetRows(0), numSpreadsheetCols(0)
+  : UQ_Results(parent), theRVs(theRandomVariables), numSpreadsheetRows(0), numSpreadsheetCols(0)
 {
   chart = new QChart();
   chart->setAnimationOptions(QChart::AllAnimations);

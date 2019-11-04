@@ -1,5 +1,5 @@
-#ifndef DAKOTA_RESULTS_H
-#define DAKOTA_RESULTS_H
+#ifndef UQ_RESULTS_H
+#define UQ_RESULTS_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -42,27 +42,27 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SimCenterWidget.h>
 class QVBoxLayout;
 
-class DakotaResults : public SimCenterWidget
+class UQ_Results : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit DakotaResults(QWidget *parent = 0);
-    virtual ~DakotaResults();
+    explicit UQ_Results(QWidget *parent = 0);
+    virtual ~UQ_Results();
 
     virtual bool outputToJSON(QJsonObject &rvObject);
     virtual bool inputFromJSON(QJsonObject &rvObject);
 
     virtual int processResults(QString &filenameResults, QString &filenameTab);
 
-    void setResultWidget(DakotaResults *result);
+    void setResultWidget(UQ_Results *result);
 
 signals:
 
 public slots:
 
 protected:
-    DakotaResults *resultWidget;
+    UQ_Results *resultWidget;
     QVBoxLayout *layout;
 };
 
-#endif // DAKOTA_RESULTS_SAMPLING_H
+#endif // UQ_RESULTS

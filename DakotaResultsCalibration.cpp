@@ -76,7 +76,7 @@ using namespace QtCharts;
 
 
 DakotaResultsCalibration::DakotaResultsCalibration(QWidget *parent)
-    : DakotaResults(parent)
+    : UQ_Results(parent)
 {
     // title & add button
     tabWidget = new QTabWidget(this);

@@ -39,7 +39,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <DakotaResults.h>
+#include <UQ_Results.h>
 #include <QtCharts/QChart>
 #include <QMessageBox>
 #include <QPushButton>
@@ -55,7 +55,7 @@ class RandomVariablesContainer;
 
 //class QChart;
 
-class DakotaResultsSampling : public DakotaResults
+class DakotaResultsSampling : public UQ_Results
 {
     Q_OBJECT
 public:

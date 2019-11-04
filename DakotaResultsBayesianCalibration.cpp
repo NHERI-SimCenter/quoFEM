@@ -76,7 +76,7 @@ using namespace QtCharts;
 #define NUM_DIVISIONS 10
 
 DakotaResultsBayesianCalibration::DakotaResultsBayesianCalibration(QWidget *parent)
-    : DakotaResults(parent)
+    : UQ_Results(parent)
 {
     // title & add button
     tabWidget = new QTabWidget(this);

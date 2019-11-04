@@ -38,15 +38,15 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // essentially an abstract class, if no results are available this is the widget that shows up
 
-#include "DakotaResults.h"
+#include "UQ_Results.h"
 #include <QVBoxLayout>
 #include <QJsonObject>
-#include <DakotaResultsSampling.h>
+#include <UQ_Results.h>
 #include <QMessageBox>
 #include <QDebug>
 #include <RandomVariablesContainer.h>
 
-DakotaResults::DakotaResults(QWidget *parent)
+UQ_Results::UQ_Results(QWidget *parent)
 : SimCenterWidget(parent), resultWidget(0)
 {
     layout = new QVBoxLayout();
@@ -55,14 +55,14 @@ DakotaResults::DakotaResults(QWidget *parent)
     resultWidget = 0;
 }
 
-DakotaResults::~DakotaResults()
+UQ_Results::~UQ_Results()
 {
 
 }
 
 
 bool
-DakotaResults::outputToJSON(QJsonObject &jsonObject)
+UQ_Results::outputToJSON(QJsonObject &jsonObject)
 {
     QJsonObject uq;
     bool result = true;
@@ -78,7 +78,7 @@ DakotaResults::outputToJSON(QJsonObject &jsonObject)
 
 
 bool
-DakotaResults::inputFromJSON(QJsonObject &jsonObject)
+UQ_Results::inputFromJSON(QJsonObject &jsonObject)
 {   
     bool result = false;
     if (jsonObject.contains("uqResults")) {
@@ -86,7 +86,7 @@ DakotaResults::inputFromJSON(QJsonObject &jsonObject)
 
         QJsonObject uq = uqValue.toObject();
         QString resultType = uq["resultType"].toString();
-        DakotaResults *newResultWidget = 0;
+        UQ_Results *newResultWidget = 0;
 
         if (resultType == "NONE") {
           return true; // no results saved
@@ -109,7 +109,7 @@ DakotaResults::inputFromJSON(QJsonObject &jsonObject)
 }
 
 int 
-DakotaResults::processResults(QString &filenameResults, QString &filenameTab) {
+UQ_Results::processResults(QString &filenameResults, QString &filenameTab) {
 
     if (resultWidget != 0)
         return resultWidget->processResults(filenameResults, filenameTab);
@@ -122,7 +122,7 @@ DakotaResults::processResults(QString &filenameResults, QString &filenameTab) {
 }
 
 void
-DakotaResults::setResultWidget(DakotaResults *result) {
+UQ_Results::setResultWidget(UQ_Results *result) {
     if (resultWidget != 0) {
         layout->removeWidget(resultWidget);
         delete resultWidget;

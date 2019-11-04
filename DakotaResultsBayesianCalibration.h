@@ -39,7 +39,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <DakotaResults.h>
+#include <UQ_Results.h>
 #include <QtCharts/QChart>
 using namespace QtCharts;
 
@@ -48,7 +48,7 @@ class QTabWidget;
 class MyTableWidget;
 //class QChart;
 
-class DakotaResultsBayesianCalibration : public DakotaResults
+class DakotaResultsBayesianCalibration : public UQ_Results
 {
     Q_OBJECT
 public:
