@@ -58,7 +58,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPushButton>
 #include <sectiontitle.h>
 
-#include <DakotaUQ_Engine.h>
+#include <DakotaEngine.h>
 #include <UQpyEngine.h>
 
 UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
@@ -95,7 +95,7 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
     // create the individual widgets add to stacked widget
     //
 
-    theDakotaEngine = new DakotaUQ_Engine();
+    theDakotaEngine = new DakotaEngine();
     theUQpyEngine = new UQpyEngine();
 
     theStackedWidget->addWidget(theDakotaEngine);

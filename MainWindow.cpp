@@ -58,8 +58,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <InputWidgetEDP.h>
 #include <InputWidgetFEM.h>
-#include <InputWidgetUQ.h>
-#include <DakotaResults.h>
+#include <UQ_EngineSelection.h>
+#include <UQ_Results.h>
 #include <InputWidgetParameters.h>
 #include <RandomVariablesContainer.h>
 #include <GoogleAnalytics.h>
@@ -72,7 +72,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <FooterWidget.h>
 #include <QPushButton>
 #include <InputWidgetFEM.h>
-#include <InputWidgetUQ.h>
+#include <UQ_EngineSelection.h>
 //#include <InputWidgetEDP.h>
 #include <QFileInfo>
 #include <QProcess>
@@ -197,7 +197,7 @@ MainWindow::MainWindow(QWidget *parent)
     // finally we add new selection widget to layout
 
     //the input widgets
-    uq = new InputWidgetUQ();
+    uq = new UQ_EngineSelection();
     random = new InputWidgetParameters();
     fem = new InputWidgetFEM(random);
     random->setParametersWidget(uq->getParameters());
@@ -205,7 +205,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // create selection widget & add the input widgets
-    results = new DakotaResults();
+    results = new UQ_Results();
 
     inputWidget = new SidebarWidgetSelection();
 
@@ -334,7 +334,8 @@ MainWindow::MainWindow(QWidget *parent)
     // exit
     connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
 
-    connect(uq,SIGNAL(uqWidgetChanged()), this,SLOT(onDakotaMethodChanged()));
+    // change the UQ engine
+    connect(uq,SIGNAL(onUQ_EngineChanged()), this,SLOT(onUQ_EngineChanged()));
 
     // add button widget to layout
     layout->addWidget(buttonWidget);
@@ -875,12 +876,12 @@ MainWindow::logoutReturn(bool ok){
 
 
 void MainWindow::onExitButtonClicked(){
-    RandomVariablesContainer *theParameters = uq->getParameters();
+  //RandomVariablesContainer *theParameters = uq->getParameters();
     QApplication::quit();
 }
 
-void MainWindow::onDakotaMethodChanged(void) {
-    random->setParametersWidget(uq->getParameters());
+void MainWindow::onUQ_EngineChanged(void) {
+  random->setParametersWidget(uq->getParameters());
 }
 
 
@@ -1016,19 +1017,14 @@ void MainWindow::loadFile(const QString &fileName)
         return;
     if (uq->inputFromJSON(jsonObj) != true)
         return;
+
     if (random->inputFromJSON(jsonObj) != true)
         return;
+
     if (edp->inputFromJSON(jsonObj) != true)
         return;
 
-    // adding back ---
-    /* these are already done in processResults, not necessary?
-    qDebug() << "uq->getResults()";
-    qDebug() << "results - inputFRomJSON";
-    */
-    // adding back ---
-
-    DakotaResults *result=uq->getResults();
+    UQ_Results *result=uq->getResults();
     results->setResultWidget(result);
     if (results->inputFromJSON(jsonObj) != true)
         return;
@@ -1041,45 +1037,23 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 {
     errorMessage("Processing Results");
 
-    //qDebug()<<"\Inside processResults widget and trying to proceed";
-
-    DakotaResults *result=uq->getResults();
+    UQ_Results *result=uq->getResults();
     connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
     connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(errorMessage(QString)));
 
-    //connect(result,SLOT(sendE))
     result->processResults(dakotaIN, dakotaTAB);
     results->setResultWidget(result);
     inputWidget->setSelection(QString("RES"));
-
-   // errorMessage(" ");// adding back
-   // qDebug()<<"\n the value of results is \n\n  "<<results;
-
 }
 
 void MainWindow::createActions() {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-
-    //const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/images/open.png"));
-    //const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/images/save.png"));
-
-    //QToolBar *fileToolBar = addToolBar(tr("File"));
-
-    //    QAction *newAction = new QAction(tr("&New"), this);
-    //newAction->setShortcuts(QKeySequence::New);
-    //newAction->setStatusTip(tr("Create a new file"));
-    //    connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
-    //fileMenu->addAction(newAction);
-
-    //fileToolBar->addAction(newAction);
 
     QAction *openAction = new QAction(tr("&Open"), this);
     openAction->setShortcuts(QKeySequence::Open);
     openAction->setStatusTip(tr("Open an existing file"));
     connect(openAction, &QAction::triggered, this, &MainWindow::open);
     fileMenu->addAction(openAction);
-    //fileToolBar->addAction(openAction);
-
 
     QAction *saveAction = new QAction(tr("&Save"), this);
     saveAction->setShortcuts(QKeySequence::Save);
@@ -1191,7 +1165,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.0.0 "));
+                       tr("Version 2.0.1 "));
 }
 
 void MainWindow::preferences()
@@ -1206,7 +1180,7 @@ void MainWindow::about()
               sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
              quantification in the structural responses and parameter estimation of input variables in calibration studies.\
              <p>\
-             Version 2.0.0 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
+             Version 2.0.1 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
              will repeatedly invoke the finite element application either locally on the users dekstop machine or remotely\
              on high performance computing resources at the Texas Advanced Computing Center through the NHERI DesignSafe cyberinfrastructure.\
              <p>\
