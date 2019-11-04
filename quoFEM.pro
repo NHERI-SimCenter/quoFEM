@@ -43,18 +43,20 @@ SOURCES += main.cpp\
         EDP.cpp \
         InputWidgetEDP.cpp \
         InputWidgetFEM.cpp \
-        InputWidgetUQ.cpp \
-        InputWidgetSampling.cpp \
-        InputWidgetSensitivity.cpp \
-        DakotaResults.cpp \
+        UQ_EngineSelection.cpp \
+        DakotaInputSampling.cpp \
+        DakotaInputSensitivity.cpp \
+        UQ_Results.cpp \
         DakotaResultsSampling.cpp \
         DakotaResultsSensitivity.cpp \
         DakotaResultsCalibration.cpp \
-        InputWidgetCalibration.cpp \
-        InputWidgetDakotaMethod.cpp \
+        DakotaInputCalibration.cpp \
+        UQ_Engine.cpp \
+        DakotaEngine.cpp \
+        UQpyEngine.cpp \
         InputWidgetParameters.cpp \
         DakotaResultsBayesianCalibration.cpp \
-        InputWidgetBayesianCalibration.cpp \
+        DakotaInputBayesianCalibration.cpp \
         OpenSeesParser.cpp \
         FEAPpvParser.cpp \
     RemoteJobCreator.cpp \
@@ -69,7 +71,7 @@ SOURCES += main.cpp\
     ImportanceSamplingInputWidget.cpp \
     GaussianProcessInputWidget.cpp \
     PCEInputWidget.cpp \ 
-    InputWidgetReliability.cpp \
+    DakotaInputReliability.cpp \
     FORMInputWidget.cpp \
     SORMInputWidget.cpp \
     DakotaResultsReliability.cpp
@@ -80,18 +82,19 @@ HEADERS  += MainWindow.h \
     InputWidgetEDP.h \
     InputWidgetFEM.h \
     SidebarWidgetSelection.h \
-    InputWidgetUQ.h \
-    InputWidgetSampling.h \
-    InputWidgetSensitivity.h \
-    DakotaResults.h \
+    UQ_EngineSelection.h \
+    DakotaInputSampling.h \
+    DakotaInputSensitivity.h \
+    UQ_Results.h \
     DakotaResultsSampling.h \
-    InputWidgetCalibration.h \
+    DakotaInputCalibration.h \
     DakotaResultsCalibration.h \
     DakotaResultsSensitivity.h \
-    InputWidgetDakotaMethod.h \
+    UQ_Engine.h \
+    DakotaEngine.h \
+    UQpyEngine.h \
     InputWidgetParameters.h \
-    InputWidgetBayesianCalibration.h \
-    InputWidgetBayesianCalibration.h \
+    DakotaInputBayesianCalibration.h \
     DakotaResultsBayesianCalibration.h \
     OpenSeesParser.h \
     FEAPpvParser.h \
@@ -107,7 +110,7 @@ HEADERS  += MainWindow.h \
     ImportanceSamplingInputWidget.h \
     GaussianProcessInputWidget.h \
     PCEInputWidget.h \
-    InputWidgetReliability.h \
+    DakotaInputReliability.h \
     FORMInputWidget.h \
     SORMInputWidget.h \
     DakotaResultsReliability.h
