@@ -38,7 +38,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetCalibration.h"
+#include "DakotaInputCalibration.h"
 #include <DakotaResultsCalibration.h>
 
 #include <QLabel>
@@ -58,8 +58,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <time.h>
 #include <RandomVariablesContainer.h>
 
-InputWidgetCalibration::InputWidgetCalibration(QWidget *parent)
-    : InputWidgetDakotaMethod(parent)
+DakotaInputCalibration::DakotaInputCalibration(QWidget *parent)
+    : UQ_Engine(parent)
 {
   QVBoxLayout *layout = new QVBoxLayout();
   QVBoxLayout *mLayout = new QVBoxLayout();
@@ -133,13 +133,13 @@ InputWidgetCalibration::InputWidgetCalibration(QWidget *parent)
 }
 
 int
-InputWidgetCalibration::getMaxNumParallelTasks(void){
+DakotaInputCalibration::getMaxNumParallelTasks(void){
   return 1;
 }
 
 
 bool
-InputWidgetCalibration::outputToJSON(QJsonObject &jsonObject)
+DakotaInputCalibration::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
@@ -176,7 +176,7 @@ InputWidgetCalibration::outputToJSON(QJsonObject &jsonObject)
 }
 
 void
-InputWidgetCalibration::comboboxItemChanged(QString value)
+DakotaInputCalibration::comboboxItemChanged(QString value)
 {
 
 qDebug()<<"\n\n I am inside the combochage and the string value is      "<<value;
@@ -482,19 +482,19 @@ return;
 
 
 
-InputWidgetCalibration::~InputWidgetCalibration()
+DakotaInputCalibration::~DakotaInputCalibration()
 {
 
 }
 
 
-void InputWidgetCalibration::clear(void)
+void DakotaInputCalibration::clear(void)
 {
 
 }
 
 bool
-InputWidgetCalibration::inputFromJSON(QJsonObject &jsonObject)
+DakotaInputCalibration::inputFromJSON(QJsonObject &jsonObject)
 {
     bool result = true;
     this->clear();
@@ -564,24 +564,24 @@ InputWidgetCalibration::inputFromJSON(QJsonObject &jsonObject)
 }
 
 void 
-InputWidgetCalibration::methodChanged(const QString &arg1)
+DakotaInputCalibration::methodChanged(const QString &arg1)
 {
 
 }
 
 int 
-InputWidgetCalibration::processResults(QString &filenameResults, QString &filenameTab) 
+DakotaInputCalibration::processResults(QString &filenameResults, QString &filenameTab) 
 {
     return 0;
 }
 
-DakotaResults *
-InputWidgetCalibration::getResults(void) {
+UQ_Results *
+DakotaInputCalibration::getResults(void) {
   return new DakotaResultsCalibration();
 }
 
 RandomVariablesContainer *
-InputWidgetCalibration::getParameters(void) {
+DakotaInputCalibration::getParameters(void) {
   QString classType("Design");
   return new RandomVariablesContainer(classType);
 }

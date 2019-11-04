@@ -38,7 +38,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetBayesianCalibration.h"
+#include "DakotaInputBayesianCalibration.h"
 #include <DakotaResultsBayesianCalibration.h>
 #include <RandomVariablesContainer.h>
 
@@ -61,8 +61,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <time.h>
 
 
-InputWidgetBayesianCalibration::InputWidgetBayesianCalibration(QWidget *parent)
-    : InputWidgetDakotaMethod(parent),uqSpecific(0)
+DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
+    : UQ_Engine(parent),uqSpecific(0)
 {
     layout = new QVBoxLayout();
 
@@ -109,24 +109,24 @@ InputWidgetBayesianCalibration::InputWidgetBayesianCalibration(QWidget *parent)
     this->setLayout(layout);
 }
 
-InputWidgetBayesianCalibration::~InputWidgetBayesianCalibration()
+DakotaInputBayesianCalibration::~DakotaInputBayesianCalibration()
 {
 
 }
 
 int 
-InputWidgetBayesianCalibration::getMaxNumParallelTasks(void){
+DakotaInputBayesianCalibration::getMaxNumParallelTasks(void){
   return 1;
 }
 
-void InputWidgetBayesianCalibration::clear(void)
+void DakotaInputBayesianCalibration::clear(void)
 {
 
 }
 
 
 bool
-InputWidgetBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
+DakotaInputBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
     QJsonObject uq;
@@ -141,7 +141,7 @@ InputWidgetBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
+DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 {
     bool result = true;
     this->clear();
@@ -166,23 +166,23 @@ InputWidgetBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
     return true;
 }
 
-void InputWidgetBayesianCalibration::uqSelectionChanged(const QString &arg1)
+void DakotaInputBayesianCalibration::uqSelectionChanged(const QString &arg1)
 {
 
 }
 
-int InputWidgetBayesianCalibration::processResults(QString &filenameResults, QString &filenameTab) {
+int DakotaInputBayesianCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
     return 0;
 }
 
-DakotaResults *
-InputWidgetBayesianCalibration::getResults(void) {
+UQ_Results *
+DakotaInputBayesianCalibration::getResults(void) {
   return new DakotaResultsBayesianCalibration();
 }
 
 RandomVariablesContainer *
-InputWidgetBayesianCalibration::getParameters(void) {
+DakotaInputBayesianCalibration::getParameters(void) {
   QString classType("Uncertain");
   return new RandomVariablesContainer(classType);
 }

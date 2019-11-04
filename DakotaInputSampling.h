@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGET_SENSITIVITY_H
-#define INPUTWIDGET_SENSITIVITY_H
+#ifndef DAKOTA_INPUT_SAMPLING_H
+#define DAKOTA_INPUT_SAMPLING_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -37,7 +37,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-#include <InputWidgetDakotaMethod.h>
+#include <UQ_Engine.h>
 
 #include <QGroupBox>
 #include <QVector>
@@ -45,26 +45,26 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QComboBox>
 #include <QPushButton>
 
-class DakotaSensitivityResults;
+class DakotaSamplingResults;
 class DakotaResults;
 class QCheckBox;
 class RandomVariablesContainer;
 class QStackedWidget;
 class UQ_MethodInputWidget;
 
-class InputWidgetSensitivity : public InputWidgetDakotaMethod
+class DakotaInputSampling : public UQ_Engine
 {
     Q_OBJECT
 public:
-    explicit InputWidgetSensitivity(QWidget *parent = 0);
-    ~InputWidgetSensitivity();
+    explicit DakotaInputSampling(QWidget *parent = 0);
+    ~DakotaInputSampling();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
 
-    DakotaResults *getResults(void);
+    UQ_Results *getResults(void);
     RandomVariablesContainer  *getParameters();
 
     int getMaxNumParallelTasks(void);
@@ -75,7 +75,7 @@ signals:
 
 public slots:
    void clear(void);
-   void onMethodChanged(QString);
+   void onTextChanged(const QString &arg1);
 
 private:
     QVBoxLayout *layout;
@@ -89,7 +89,7 @@ private:
     QWidget     *uqSpecific;
 
     RandomVariablesContainer *theRandomVariables;
-    DakotaSensitivityResults *results;
+    DakotaSamplingResults *results;
 
     QStackedWidget *theStackedWidget;
     UQ_MethodInputWidget *theCurrentMethod;
@@ -100,4 +100,4 @@ private:
     UQ_MethodInputWidget *thePCE;
 };
 
-#endif // INPUTWIDGET_SENSITIVITY_H
+#endif // DAKOTA_INPUT_SAMPLING_H

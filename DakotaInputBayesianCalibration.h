@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGET_RELIABILITY_H
-#define INPUTWIDGET_RELIABILITY_H
+#ifndef DAKOTA_INPUT_BAYESIAN_CALIBRATION_H
+#define DAKOTA_INPUT_BAYESIAN_CALIBRATION_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -37,64 +37,55 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-#include <InputWidgetDakotaMethod.h>
+// Written: fmckenna
+
+#include <UQ_Engine.h>
 
 #include <QGroupBox>
 #include <QVector>
 #include <QVBoxLayout>
 #include <QComboBox>
 #include <QPushButton>
+class DakotaResultsBayesianCalibration;
+class UQ_Results;
 
-class DakotaSamplingResults;
-class DakotaResults;
-class QCheckBox;
 class RandomVariablesContainer;
-class QStackedWidget;
-class UQ_MethodInputWidget;
 
-class InputWidgetReliability : public InputWidgetDakotaMethod
+class DakotaInputBayesianCalibration : public UQ_Engine
 {
     Q_OBJECT
 public:
-    explicit InputWidgetReliability(QWidget *parent = 0);
-    ~InputWidgetReliability();
+    explicit DakotaInputBayesianCalibration(QWidget *parent = 0);
+    ~DakotaInputBayesianCalibration();
 
+    int getMaxNumParallelTasks(void);
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
 
-    DakotaResults *getResults(void);
+    UQ_Results *getResults(void);
     RandomVariablesContainer  *getParameters();
-
-    int getMaxNumParallelTasks(void);
-
-    QVBoxLayout *mLayout;
 
 signals:
 
 public slots:
    void clear(void);
-   void onMethodChanged(QString);;
+   void uqSelectionChanged(const QString &arg1);
 
 private:
     QVBoxLayout *layout;
     QWidget     *methodSpecific;
-    QComboBox   *samplingMethod;
-    QLineEdit   *numSamples;
+    QComboBox   *calibrationMethod;
+    QLineEdit   *chainSamples;
     QLineEdit   *randomSeed;
-    //    QPushButton *run;
+    QPushButton *run;
 
     QComboBox   *uqSelection;
     QWidget     *uqSpecific;
 
-    RandomVariablesContainer *theRandomVariables;
-    DakotaSamplingResults *results;
-
-    QStackedWidget *theStackedWidget;
-    UQ_MethodInputWidget *theCurrentMethod;
-    UQ_MethodInputWidget *theFORM;
-    UQ_MethodInputWidget *theSORM;
+    RandomVariablesContainer *theParameters;
+    DakotaResultsBayesianCalibration *results;
 };
 
-#endif // INPUTWIDGET_RELIABILITY_H
+#endif // DAKOTA_INPUT_BAYESIAN_CALIBRATION_H

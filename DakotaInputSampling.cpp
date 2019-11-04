@@ -35,8 +35,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-#include "InputWidgetReliability.h"
-#include <DakotaResultsReliability.h>
+#include "DakotaInputSampling.h"
+#include <DakotaResultsSampling.h>
 #include <RandomVariablesContainer.h>
 
 
@@ -50,7 +50,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFileDialog>
 #include <QPushButton>
 #include <sectiontitle.h>
-#include <InputWidgetEDP.h>
 
 #include <iostream>
 #include <sstream>
@@ -59,11 +58,14 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 #include <QStackedWidget>
-#include <FORMInputWidget.h>
-#include <SORMInputWidget.h>
+#include <MonteCarloInputWidget.h>
+#include <LatinHypercubeInputWidget.h>
+#include <ImportanceSamplingInputWidget.h>
+#include <GaussianProcessInputWidget.h>
+#include <PCEInputWidget.h>
 
-InputWidgetReliability::InputWidgetReliability(QWidget *parent)
-: InputWidgetDakotaMethod(parent),uqSpecific(0)
+DakotaInputSampling::DakotaInputSampling(QWidget *parent)
+: UQ_Engine(parent),uqSpecific(0)
 {
     layout = new QVBoxLayout();
     mLayout = new QVBoxLayout();
@@ -74,12 +76,24 @@ InputWidgetReliability::InputWidgetReliability(QWidget *parent)
 
     QHBoxLayout *methodLayout= new QHBoxLayout;
     QLabel *label1 = new QLabel();
-    label1->setText(QString("Reliability Order"));
+    label1->setText(QString("Method"));
     samplingMethod = new QComboBox();
-    samplingMethod->setMaximumWidth(200);
-    samplingMethod->setMinimumWidth(200);
-    samplingMethod->addItem(tr("FORM"));
-    samplingMethod->addItem(tr("SORM"));
+    //samplingMethod->setMaximumWidth(800);
+    //samplingMethod->setMinimumWidth(800);
+    samplingMethod->addItem(tr("LHS"));
+    samplingMethod->addItem(tr("Monte Carlo"));
+    samplingMethod->addItem(tr("Importance Sampling"));
+    samplingMethod->addItem(tr("Gaussian Process Regression"));
+    samplingMethod->addItem(tr("Polynomial Chaos Expansion"));
+
+    /*
+    samplingMethod->addItem(tr("Multilevel Monte Carlo"));
+    samplingMethod->addItem(tr("Importance Sampling"));
+    samplingMethod->addItem(tr("Quadrature"));
+    samplingMethod->addItem(tr("Sparse Grid Quadrature"));
+    samplingMethod->addItem(tr("Surrogate - Polynomial Chaos"));
+    samplingMethod->addItem(tr("Surrogate - Gaussian Process"));
+    */
 
     methodLayout->addWidget(label1);
     methodLayout->addWidget(samplingMethod,2);
@@ -93,58 +107,76 @@ InputWidgetReliability::InputWidgetReliability(QWidget *parent)
 
     theStackedWidget = new QStackedWidget();
 
-    theFORM = new FORMInputWidget();
-    theStackedWidget->addWidget(theFORM);
+    theLHS = new LatinHypercubeInputWidget();
+    theStackedWidget->addWidget(theLHS);
 
-    theSORM = new SORMInputWidget();
-    theStackedWidget->addWidget(theSORM);
+    theMC = new MonteCarloInputWidget();
+    theStackedWidget->addWidget(theMC);
+
+    theIS = new ImportanceSamplingInputWidget();
+    theStackedWidget->addWidget(theIS);
+
+    theGP = new GaussianProcessInputWidget();
+    theStackedWidget->addWidget(theGP);
+
+    thePCE = new PCEInputWidget();
+    theStackedWidget->addWidget(thePCE);
 
     // set current widget to index 0
-    theCurrentMethod = theFORM;
+    theCurrentMethod = theLHS;
+
 
     mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);
-    layout->addStretch();
-
-    // finally add the EDP layout & set widget layout
 
     this->setLayout(layout);
 
-    connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onMethodChanged(QString)));
+    connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
 
 }
 
-void InputWidgetReliability::onMethodChanged(QString text)
+void DakotaInputSampling::onTextChanged(const QString &text)
 {
-    qDebug() << text;
-
-  if (text=="FORM") {
+  if (text=="LHS") {
     theStackedWidget->setCurrentIndex(0);
-    theCurrentMethod = theFORM;
-  } else {
+    theCurrentMethod = theLHS;
+  }
+  else if (text=="Monte Carlo") {
     theStackedWidget->setCurrentIndex(1);
-    theCurrentMethod = theSORM;
+    theCurrentMethod = theMC;  
+  }
+  else if (text=="Importance Sampling") {
+    theStackedWidget->setCurrentIndex(2);
+    theCurrentMethod = theIS;
+  }
+  else if (text=="Gaussian Process Regression") {
+    theStackedWidget->setCurrentIndex(3);
+    theCurrentMethod = theGP;
+  }
+  else if (text=="Polynomial Chaos Expansion") {
+    theStackedWidget->setCurrentIndex(4);
+    theCurrentMethod = thePCE;
   }
 }
 
-InputWidgetReliability::~InputWidgetReliability()
+DakotaInputSampling::~DakotaInputSampling()
 {
 
 }
 
 int 
-InputWidgetReliability::getMaxNumParallelTasks(void){
+DakotaInputSampling::getMaxNumParallelTasks(void){
   return theCurrentMethod->getNumberTasks();
 }
 
-void InputWidgetReliability::clear(void)
+void DakotaInputSampling::clear(void)
 {
 
 }
 
 
 bool
-InputWidgetReliability::outputToJSON(QJsonObject &jsonObject)
+DakotaInputSampling::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
@@ -159,17 +191,19 @@ InputWidgetReliability::outputToJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetReliability::inputFromJSON(QJsonObject &jsonObject)
+DakotaInputSampling::inputFromJSON(QJsonObject &jsonObject)
 {
   bool result = false;
   this->clear();
 
   //
   // get sampleingMethodData, if not present it's an error
+  //
   
   if (jsonObject.contains("samplingMethodData")) {
       QJsonObject uq = jsonObject["samplingMethodData"].toObject();
       if (uq.contains("method")) {
+
           QString method =uq["method"].toString();
           int index = samplingMethod->findText(method);
           if (index == -1) {
@@ -179,6 +213,7 @@ InputWidgetReliability::inputFromJSON(QJsonObject &jsonObject)
           result = theCurrentMethod->inputFromJSON(uq);
           if (result == false)
               return result;
+
       }
   }
   
@@ -186,18 +221,19 @@ InputWidgetReliability::inputFromJSON(QJsonObject &jsonObject)
 }
 
 
-int InputWidgetReliability::processResults(QString &filenameResults, QString &filenameTab) {
+int DakotaInputSampling::processResults(QString &filenameResults, QString &filenameTab) {
 
     return 0;
 }
 
-DakotaResults *
-InputWidgetReliability::getResults(void) {
-    return new DakotaResultsReliability(theRandomVariables);
+UQ_Results *
+DakotaInputSampling::getResults(void) {
+    qDebug() << "RETURNED DAKOTARESULTSSAMPLING";
+    return new DakotaResultsSampling(theRandomVariables);
 }
 
 RandomVariablesContainer *
-InputWidgetReliability::getParameters(void) {
+DakotaInputSampling::getParameters(void) {
   QString classType("Uncertain");
   theRandomVariables =  new RandomVariablesContainer(classType);
   return theRandomVariables;
