@@ -71,7 +71,10 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     label1->setText(QString("Method"));
     calibrationMethod = new QComboBox();
     calibrationMethod->addItem(tr("DREAM"));
-   // calibrationMethod->addItem(tr("QUESO"));
+    calibrationMethod->addItem(tr("QUESO - MCMC w Delayed Rejection"));
+    calibrationMethod->addItem(tr("QUESO - Adaptive Metropolis"));
+    calibrationMethod->addItem(tr("QUESO - DRAM"));
+    calibrationMethod->addItem(tr("QUESO - Metropolis Hastings"));
     
     methodLayout->addWidget(label1);
     methodLayout->addWidget(calibrationMethod,2);
