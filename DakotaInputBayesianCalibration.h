@@ -79,8 +79,13 @@ private:
     QComboBox   *calibrationMethod;
     QLineEdit   *chainSamples;
     QLineEdit   *randomSeed;
-    QPushButton *run;
+    QLineEdit   *burnInSamples;
+    QComboBox   *Emulator;
+    QComboBox   *propCov;
+    QComboBox   *aPost;
+    QComboBox   *logMap;
 
+    QPushButton *run;
     QComboBox   *uqSelection;
     QWidget     *uqSpecific;
 
