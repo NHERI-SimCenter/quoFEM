@@ -71,7 +71,10 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     label1->setText(QString("Method"));
     calibrationMethod = new QComboBox();
     calibrationMethod->addItem(tr("DREAM"));
-   // calibrationMethod->addItem(tr("QUESO"));
+    calibrationMethod->addItem(tr("QUESO - MCMC w Delayed Rejection"));
+    calibrationMethod->addItem(tr("QUESO - Adaptive Metropolis"));
+    calibrationMethod->addItem(tr("QUESO - DRAM"));
+    calibrationMethod->addItem(tr("QUESO - Metropolis Hastings"));
     
     methodLayout->addWidget(label1);
     methodLayout->addWidget(calibrationMethod,2);
@@ -97,11 +100,57 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     randomSeed->setText(QString::number(randomNumber));
     //    randomSeed->setMaximumWidth(100);
     //    randomSeed->setMinimumWidth(100);
-    
     otherLayout->addWidget(label3, 1,0);
     otherLayout->addWidget(randomSeed, 1,1);
-    otherLayout->setColumnStretch(2,1);
-    otherLayout->setRowStretch(2,1);
+    
+    //Burn In Samples
+    QLabel* burnInlabel = new QLabel();
+    burnInlabel->setText(QString("Burn In Samples"));
+    burnInSamples = new QLineEdit();
+    burnInSamples->setText("500");
+    otherLayout->addWidget(burnInlabel, 2,0);
+    otherLayout->addWidget(burnInSamples, 2,1);
+    
+    //Emulator
+    QLabel* Emulatorlabel = new QLabel();
+    Emulatorlabel->setText(QString("Use Emulator"));
+    Emulator = new QComboBox();
+    Emulator->addItem("No");
+    Emulator->addItem("Yes");
+    otherLayout->addWidget(Emulatorlabel, 3,0);
+    otherLayout->addWidget(Emulator, 3,1);
+
+    //Proposal covariance
+    QLabel* covlabel = new QLabel();
+    covlabel->setText(QString("Proposal Covariance"));
+    propCov = new QComboBox();
+    propCov->addItem("Prior");
+    propCov->addItem("Values");
+    propCov->addItem("Filename");
+    otherLayout->addWidget(covlabel, 4,0);
+    otherLayout->addWidget(propCov, 4,1);    
+
+    //Adaptive posterior
+    QLabel* apostlabel = new QLabel();
+    apostlabel->setText(QString("Adaptive Posterior"));
+    aPost = new QComboBox();
+    aPost->addItem("No");
+    aPost->addItem("Yes");
+    otherLayout->addWidget(apostlabel, 5,0);
+    otherLayout->addWidget(aPost, 5,1);  
+
+    //Logit mapping
+    QLabel* logMaplabel = new QLabel();
+    logMaplabel->setText(QString("Logit Mapping"));
+    logMap = new QComboBox();
+    logMap->addItem("No");
+    logMap->addItem("Yes");
+    otherLayout->addWidget(logMaplabel, 6,0);
+    otherLayout->addWidget(logMap, 6,1);  
+
+
+    otherLayout->setColumnStretch(6,1);
+    otherLayout->setRowStretch(7,1);
 
     layout->addLayout(methodLayout);
     layout->addLayout(otherLayout);
@@ -133,6 +182,11 @@ DakotaInputBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
     uq["method"]=calibrationMethod->currentText();
     uq["chain_samples"]=chainSamples->text().toInt();
     uq["seed"]=randomSeed->text().toDouble();
+    uq["burn_in_samples"]=burnInSamples->text().toInt();
+    uq["use_emulator"]=Emulator->currentText();
+    uq["prop_cov"]=propCov->currentText();
+    uq["adaptive_post"]=aPost->currentText();
+    uq["logMap"]=logMap->currentText();
 
     jsonObject["bayesian_calibration_method_data"]=uq;
     return result;
