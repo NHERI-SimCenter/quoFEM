@@ -1,5 +1,5 @@
-#ifndef UQ_ENGINE_SELECTION_H
-#define UQ_ENGINE_SELECTION_H
+#ifndef filter_ENGINE_H
+#define filter_ENGINE_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,51 +39,37 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterAppWidget.h>
+#include <UQ_Engine.h>
 
-class QComboBox;
-class QStackedWidget;
-class RandomVariablesContainer;
 class UQ_Results;
-class UQ_Engine;
+class RandomVariablesContainer;
 
-class UQ_EngineSelection : public  SimCenterAppWidget
+class filterEngine : public UQ_Engine
 {
-  Q_OBJECT
+    Q_OBJECT
+public:
+    explicit filterEngine(QWidget *parent = 0);
+    virtual ~filterEngine();
 
-    public:
+    int getMaxNumParallelTasks(void);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
-  explicit UQ_EngineSelection(QWidget *parent = 0);
-  ~UQ_EngineSelection();
+    int processResults(QString &filenameResults, QString &filenameTab);
+    RandomVariablesContainer *getParameters();
+    UQ_Results *getResults(void);
 
-  RandomVariablesContainer  *getParameters();
-  UQ_Results  *getResults();
-  int getNumParallelTasks(void);
-  
-  bool outputAppDataToJSON(QJsonObject &jsonObject);
-  bool inputAppDataFromJSON(QJsonObject &jsonObject);
+    QString getProcessingScript();
 
-  bool outputToJSON(QJsonObject &rvObject);
-  bool inputFromJSON(QJsonObject &rvObject);
-  bool copyFiles(QString &destName);
-  
-  void clear(void);
-  
- signals:
-  void onUQ_EngineChanged(void);
+    void clear(void);
 
- public slots:
-  void engineSelectionChanged(const QString &arg1);
-  void enginesEngineSelectionChanged(void);
-  
+signals:
+
+public slots:
+
 private:
-   QComboBox   *theEngineSelectionBox;
-   QStackedWidget *theStackedWidget;
-
-   UQ_Engine *theCurrentEngine;
-   UQ_Engine *theDakotaEngine;
-   UQ_Engine *theUQpyEngine;
-   UQ_Engine *thefilterEngine;
+    RandomVariablesContainer *theRandomVariables;
+    UQ_Results *theResults;
 };
 
-#endif // WIND_SELECTION_H
+#endif // filter_ENGINE_H
