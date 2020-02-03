@@ -105,7 +105,6 @@ signals:
     void about();
     void manual();
     void submitFeedback();
-    void submitFeatureRequest();
     void version();
     void preferences();
     void copyright();

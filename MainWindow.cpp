@@ -1082,8 +1082,8 @@ void MainWindow::createActions() {
     QAction *preferencesAct = helpMenu->addAction(tr("&Preferences"), this, &MainWindow::preferences);
     //aboutAct->setStatusTip(tr("Show the application's About box"));
     QAction *manualAct = helpMenu->addAction(tr("&Manual"), this, &MainWindow::manual);
-    QAction *submitAct = helpMenu->addAction(tr("&Provide Feedback"), this, &MainWindow::submitFeedback);
-    QAction *submitFeature = helpMenu->addAction(tr("&Submit Feature Request"), this, &MainWindow::submitFeatureRequest);
+    QAction *submitAct = helpMenu->addAction(tr("&Submit Bug/Feature Request"), this, &MainWindow::submitFeedback);
+    //QAction *submitFeature = helpMenu->addAction(tr("&Submit Feature Request"), this, &MainWindow::submitFeatureRequest);
     QAction *citeAct = helpMenu->addAction(tr("&How to Cite"), this, &MainWindow::cite);
     QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindow::copyright);
 
@@ -1196,15 +1196,8 @@ void MainWindow::about()
 
 void MainWindow::submitFeedback()
 {
-  QString feedbackURL = QString("https://docs.google.com/forms/d/e/1FAIpQLSfh20kBxDmvmHgz9uFwhkospGLCeazZzL770A2GuYZ2KgBZBA/viewform");
-
-    QDesktopServices::openUrl(QUrl(feedbackURL, QUrl::TolerantMode));
-}
-
-void MainWindow::submitFeatureRequest()
-{
-  QString featureRequestURL = QString("https://docs.google.com/forms/d/e/1FAIpQLScTLkSwDjPNzH8wx8KxkyhoIT7AI9KZ16Wg9TuW1GOhSYFOag/viewform");
-    QDesktopServices::openUrl(QUrl(featureRequestURL, QUrl::TolerantMode));
+    QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=4.0");
+    QDesktopServices::openUrl(QUrl(messageBoardURL, QUrl::TolerantMode));
 }
 
 void MainWindow::manual()
@@ -1212,6 +1205,9 @@ void MainWindow::manual()
   QString featureRequestURL = QString("https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community//SimCenter/Software/uqFEM");
     QDesktopServices::openUrl(QUrl(featureRequestURL, QUrl::TolerantMode));
 }
+
+
+
 
 void MainWindow::cite()
 {
