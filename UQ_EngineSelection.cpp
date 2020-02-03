@@ -60,6 +60,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <DakotaEngine.h>
 #include <UQpyEngine.h>
+#include <filterEngine.h>
 
 UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEngine(0)
@@ -76,6 +77,7 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
     theEngineSelectionBox = new QComboBox();
     theEngineSelectionBox->addItem(tr("Dakota"));
     theEngineSelectionBox->addItem(tr("UQpy"));
+    theEngineSelectionBox->addItem(tr("filter"));
 
     theEngineSelectionBox->setItemData(0, "Dakota engine", Qt::ToolTipRole);
     theEngineSelectionBox->setItemData(1, "uqPY engine", Qt::ToolTipRole);
