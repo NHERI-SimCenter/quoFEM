@@ -1,5 +1,4 @@
-#ifndef UQ_ENGINE_SELECTION_H
-#define UQ_ENGINE_SELECTION_H
+// Written: fmckenna
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,51 +38,72 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterAppWidget.h>
+#include "filterEngine.h"
+#include <QDebug>
+#include <RandomVariablesContainer.h>
+#include <UQ_Results.h>
 
-class QComboBox;
-class QStackedWidget;
-class RandomVariablesContainer;
-class UQ_Results;
-class UQ_Engine;
-
-class UQ_EngineSelection : public  SimCenterAppWidget
+filterEngine::filterEngine(QWidget *parent)
+    : UQ_Engine(parent)
 {
-  Q_OBJECT
+  /*************************  at some point need to redo so no new
+    QString classType("Uncertain");
+    theRandomVariables =  new RandomVariablesContainer(classType);
+    theResults = new UQ_Results();
+  ***************************************************************/
+}
 
-    public:
+filterEngine::~filterEngine()
+{
 
-  explicit UQ_EngineSelection(QWidget *parent = 0);
-  ~UQ_EngineSelection();
+}
 
-  RandomVariablesContainer  *getParameters();
-  UQ_Results  *getResults();
-  int getNumParallelTasks(void);
-  
-  bool outputAppDataToJSON(QJsonObject &jsonObject);
-  bool inputAppDataFromJSON(QJsonObject &jsonObject);
+int
+filterEngine::getMaxNumParallelTasks(void) {
+    return 1;
+}
 
-  bool outputToJSON(QJsonObject &rvObject);
-  bool inputFromJSON(QJsonObject &rvObject);
-  bool copyFiles(QString &destName);
-  
-  void clear(void);
-  
- signals:
-  void onUQ_EngineChanged(void);
+bool
+filterEngine::outputToJSON(QJsonObject &rvObject) {
+    return true;
+}
 
- public slots:
-  void engineSelectionChanged(const QString &arg1);
-  void enginesEngineSelectionChanged(void);
-  
-private:
-   QComboBox   *theEngineSelectionBox;
-   QStackedWidget *theStackedWidget;
 
-   UQ_Engine *theCurrentEngine;
-   UQ_Engine *theDakotaEngine;
-   UQ_Engine *theUQpyEngine;
-   UQ_Engine *thefilterEngine;
-};
+bool
+filterEngine::inputFromJSON(QJsonObject &rvObject) {
+    return true;
+}
 
-#endif // WIND_SELECTION_H
+
+int
+filterEngine::processResults(QString &filenameResults, QString &filenameTab) {
+    return 0;
+}
+
+
+RandomVariablesContainer *
+filterEngine::getParameters() {
+  QString classType("Uncertain");
+  RandomVariablesContainer *theRV =  new RandomVariablesContainer(classType);
+  return theRV;
+}
+
+UQ_Results *filterEngine::getResults(void) {
+  UQ_Results *theRes = new UQ_Results();
+  return theRes;
+}
+
+void
+filterEngine::clear(void) {
+    return;
+}
+
+
+QString
+filterEngine::getProcessingScript() {
+    return QString("parsefilter.py");
+}
+
+
+
+

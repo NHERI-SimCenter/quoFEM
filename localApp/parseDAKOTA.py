@@ -475,36 +475,6 @@ max_iterations = {maxIter}
         responseDescriptors.append(edp["name"])
         numResponses += 1
 
-elif uq_method == 'Bayesian_Calibration':
-    samplingData = uq_data["bayesian_calibration_method_data"]
-    chainSamples=samplingData["chain_samples"]
-    seed = samplingData["seed"]
-
-    # write out the env data
-    dakota_input = ""
-    
-    dakota_input += (
-    """environment
-    tabular_data
-    tabular_data_file = 'dakotaTab.out'
-    
-    method,
-    """)
-
-    dakota_input += (
-"""bayes_calibration dream
-chain_samples = {chainSamples}
-seed = {seed}
-
-""".format(
-    chainSamples = chainSamples,
-    seed = seed))
-
-    #edps = samplingData["edps"]
-    for edp in my_edps:
-        responseDescriptors.append(edp["name"])
-        numResponses += 1
-
 # write out the variable data // shall be replaced to make human-readable
 
 dakota_input += ('variables,\n')
@@ -940,11 +910,77 @@ no_hessians
     responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))
 
 elif uq_method == "Inverse Problem":
+
+    samplingData = uq_data["bayesian_calibration_method_data"]
+    adaptive_post=samplingData["adaptive_post"]  
+    burn_in_samples=samplingData["burn_in_samples"]
+    chain_samples=samplingData["chain_samples"]
+    logMap=samplingData["logMap"]
+    methods=samplingData["method"]
+    prop_cov=samplingData["prop_cov"]
+    seed = samplingData["seed"]
+    use_emulator = samplingData["use_emulator"]
+
+    # write out the env data
+    method = ''
+    if methods == 'DREAM':
+        method = 'dream'
+    elif methods == 'QUESO - MCMC w Delayed Rejection':
+        method = 'delayed_rejection'
+    elif methods == 'QUESO - Adaptive Metropolis':
+        method == 'adaptive_metropolis'
+    elif methods == 'QUESO - DRAM':
+        method = 'dram'
+    elif methods == 'QUESO - Metropolis Hastings':
+        method = 'metropolis_hastings'
+    
+    log_map = ''
+    if logMap == 'No':
+        log_map = ''
+    elif logMap == 'Yes':
+        log_map = 'logit_transform'
+    
+    dakota_input = ""
+    
+    dakota_input += (
+    """environment
+    tabular_data
+    tabular_data_file = 'dakotaTab.out'
+    
+    method,
+    """)
+
+    dakota_input += (
+"""bayes_calibration queso
+chain_samples = {chainSamples}
+seed = {seed}
+{mymethod}
+proposal_covariance prior
+{mylogmap}
+
+probability_levels 0.05 0.1
+                   0.05 0.1
+posterior_stats kl_divergence
+output debug
+""".format(
+    chainSamples = chain_samples,
+    seed = seed,
+    mymethod = method,
+    mylogmap = log_map))
+
+    #edps = samplingData["edps"]
+    for edp in my_edps:
+        responseDescriptors.append(edp["name"])
+        numResponses += 1
+
+
+
     dakota_input += (
 """responses,
 calibration_terms = {numResponses}
 response_descriptors = {responseDescriptors}
-numerical_gradients
+calibration_data_file = 'wanted.txt'
+no_gradients
 no_hessians
 
 """.format(
