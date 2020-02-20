@@ -71,10 +71,12 @@ class UQ_EngineSelection : public  SimCenterAppWidget
   
  signals:
   void onUQ_EngineChanged(void);
+  void onNumModelsChanged(int);
 
  public slots:
   void engineSelectionChanged(const QString &arg1);
   void enginesEngineSelectionChanged(void);
+  void numModelsChanged(int newNum);
   
 private:
    QComboBox   *theEngineSelectionBox;

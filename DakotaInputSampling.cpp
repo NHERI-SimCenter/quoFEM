@@ -63,6 +63,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <ImportanceSamplingInputWidget.h>
 #include <GaussianProcessInputWidget.h>
 #include <PCEInputWidget.h>
+#include <MultiFidelityMonteCarlo.h>
 
 DakotaInputSampling::DakotaInputSampling(QWidget *parent)
 : UQ_Engine(parent),uqSpecific(0)
@@ -85,6 +86,7 @@ DakotaInputSampling::DakotaInputSampling(QWidget *parent)
     samplingMethod->addItem(tr("Importance Sampling"));
     samplingMethod->addItem(tr("Gaussian Process Regression"));
     samplingMethod->addItem(tr("Polynomial Chaos Expansion"));
+    samplingMethod->addItem(tr("Multi Fidelity Monte Carlo"));
 
     /*
     samplingMethod->addItem(tr("Multilevel Monte Carlo"));
@@ -122,6 +124,9 @@ DakotaInputSampling::DakotaInputSampling(QWidget *parent)
     thePCE = new PCEInputWidget();
     theStackedWidget->addWidget(thePCE);
 
+    theMFMC = new MultiFidelityMonteCarlo();
+    theStackedWidget->addWidget(theMFMC);
+
     // set current widget to index 0
     theCurrentMethod = theLHS;
 
@@ -131,6 +136,7 @@ DakotaInputSampling::DakotaInputSampling(QWidget *parent)
 
     this->setLayout(layout);
 
+    connect(theMFMC, SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
     connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
 
 }
@@ -157,6 +163,10 @@ void DakotaInputSampling::onTextChanged(const QString &text)
     theStackedWidget->setCurrentIndex(4);
     theCurrentMethod = thePCE;
   }
+  else if (text=="Multi Fidelity Monte Carlo") {
+    theStackedWidget->setCurrentIndex(5);
+    theCurrentMethod = theMFMC;
+  }
 }
 
 DakotaInputSampling::~DakotaInputSampling()
@@ -174,6 +184,9 @@ void DakotaInputSampling::clear(void)
 
 }
 
+void DakotaInputSampling::numModelsChanged(int numModels) {
+    emit onNumModelsChanged(numModels);
+}
 
 bool
 DakotaInputSampling::outputToJSON(QJsonObject &jsonObject)
@@ -219,6 +232,53 @@ DakotaInputSampling::inputFromJSON(QJsonObject &jsonObject)
   
   return result;
 }
+
+bool
+DakotaInputSampling::outputAppDataToJSON(QJsonObject &jsonObject)
+{
+    bool result = true;
+
+    jsonObject["Application"] = "Dakota-UQ";
+    QJsonObject uq;
+    uq["method"]=samplingMethod->currentText();
+    theCurrentMethod->outputToJSON(uq);
+    jsonObject["ApplicationData"] = uq;
+
+    return result;
+}
+
+
+bool
+DakotaInputSampling::inputAppDataFromJSON(QJsonObject &jsonObject)
+{
+    bool result = false;
+    this->clear();
+    //
+    // get sampleingMethodData, if not present it's an error
+
+    if (jsonObject.contains("ApplicationData")) {
+        QJsonObject uq = jsonObject["ApplicationData"].toObject();
+
+        if (uq.contains("method")) {
+          QString method = uq["method"].toString();
+          int index = samplingMethod->findText(method);
+
+          if (index == -1) {
+              emit sendErrorMessage(QString("ERROR: Unknown Method") + method);
+              return false;
+          }
+          samplingMethod->setCurrentIndex(index);
+          return theCurrentMethod->inputFromJSON(uq);
+        }
+
+    } else {
+        emit sendErrorMessage("ERROR: Sampling Input Widget - no \"samplingMethodData\" input");
+        return false;
+    }
+
+    return result;
+}
+
 
 
 int DakotaInputSampling::processResults(QString &filenameResults, QString &filenameTab) {

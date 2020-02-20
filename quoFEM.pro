@@ -35,7 +35,6 @@ win32 {
 
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/Common/Common.pri)
-include(./MiniZip/MiniZip.pri)
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -68,6 +67,7 @@ SOURCES += main.cpp\
     CustomizedItemModel.cpp \
     UQ_MethodInputWidget.cpp \
     MonteCarloInputWidget.cpp \
+    MultiFidelityMonteCarlo.cpp \
     LatinHypercubeInputWidget.cpp \
     ImportanceSamplingInputWidget.cpp \
     GaussianProcessInputWidget.cpp \
@@ -107,6 +107,7 @@ HEADERS  += MainWindow.h \
     RemoteService.h \
     UQ_MethodInputWidget.h \
     MonteCarloInputWidget.h \
+    MultiFidelityMonteCarlo.h \
     LatinHypercubeInputWidget.h \
     CustomizedItemModel.h \
     ImportanceSamplingInputWidget.h \

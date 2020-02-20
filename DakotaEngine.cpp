@@ -111,6 +111,8 @@ DakotaEngine::DakotaEngine(QWidget *parent)
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
           SLOT(engineSelectionChanged(QString)));
 
+    connect(theSamplingEngine, SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
+
     theCurrentEngine = theSamplingEngine;
 }
 
@@ -200,4 +202,9 @@ DakotaEngine::getResults(void) {
 QString
 DakotaEngine::getProcessingScript() {
     return QString("parseDAKOTA.py");
+}
+
+void
+DakotaEngine::numModelsChanged(int newNum) {
+    emit onNumModelsChanged(newNum);
 }

@@ -76,11 +76,12 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
     label->setText(QString("UQ Engine"));
     theEngineSelectionBox = new QComboBox();
     theEngineSelectionBox->addItem(tr("Dakota"));
-    theEngineSelectionBox->addItem(tr("UQpy"));
-    theEngineSelectionBox->addItem(tr("filter"));
+
+    //theEngineSelectionBox->addItem(tr("UQpy"));
+    //theEngineSelectionBox->addItem(tr("filter"));
 
     theEngineSelectionBox->setItemData(0, "Dakota engine", Qt::ToolTipRole);
-    theEngineSelectionBox->setItemData(1, "uqPY engine", Qt::ToolTipRole);
+    // theEngineSelectionBox->setItemData(1, "uqPY engine", Qt::ToolTipRole);
 
     theSelectionLayout->addWidget(label);
     theSelectionLayout->addWidget(theEngineSelectionBox);
@@ -98,10 +99,10 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
     //
 
     theDakotaEngine = new DakotaEngine();
-    theUQpyEngine = new UQpyEngine();
+    //theUQpyEngine = new UQpyEngine();
 
     theStackedWidget->addWidget(theDakotaEngine);
-    theStackedWidget->addWidget(theUQpyEngine);
+    //theStackedWidget->addWidget(theUQpyEngine);
 
 
     layout->addWidget(theStackedWidget);
@@ -110,6 +111,8 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
 
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
             SLOT(engineSelectionChanged(QString)));
+
+    connect(theDakotaEngine,SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
 
     connect(theDakotaEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
 }
@@ -255,4 +258,9 @@ UQ_EngineSelection::getResults(void) {
 int
 UQ_EngineSelection::getNumParallelTasks() {
     return theCurrentEngine->getMaxNumParallelTasks();
+}
+
+void
+UQ_EngineSelection::numModelsChanged(int newNum) {
+    emit onNumModelsChanged(newNum);
 }
