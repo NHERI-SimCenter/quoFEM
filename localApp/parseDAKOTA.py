@@ -897,7 +897,7 @@ numerical_hessians
         responseDescriptors = '\n'.join(["'{}'".format(r) for r in responseDescriptors])))  
         
 
-elif uq_method == "Parameter Estimation":
+elif uq_method == "Parameters Estimation":
     dakota_input += (
 """responses,
 calibration_terms = {numResponses}
