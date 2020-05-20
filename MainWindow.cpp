@@ -496,6 +496,8 @@ void MainWindow::onRunButtonClicked() {
     //  
 
     // first, delete the tmp.SimCenter directory if it already exists ...
+    workingDirectory = SimCenterPreferences::getInstance()->getLocalWorkDir();
+
     QString tmpSimCenterDirectoryName = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
     QDir tmpSimCenterDirectory(tmpSimCenterDirectoryName);
     if(tmpSimCenterDirectory.exists()) {
@@ -532,7 +534,11 @@ void MainWindow::onRunButtonClicked() {
     }
 
     QJsonObject json;
-    inputWidget->outputToJSON(json);
+    if  (this->outputToJSON(json) == false) {
+        file.close();
+        return;
+    }
+
     QJsonDocument doc(json);
     file.write(doc.toJson());
     file.close();
@@ -543,22 +549,72 @@ void MainWindow::onRunButtonClicked() {
     //
 
     QString homeDIR = QDir::homePath();
-    QString appDIR = qApp->applicationDirPath();
+    QString appDIR = SimCenterPreferences::getInstance()->getAppDir();
 
-    //   appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
-    //    QDir::separator() + QString("localApp");
-
+   //
+   // Get application to run for UQ engine from WorkflowApplications FIle
+   //   1. get uq to outputApp to a JSON object & from object get app name
+   //   2. from workflowapplications file get program name
     //
-    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseDAKOTA.py");
+
+    QString programToExe;
+
+    // get appName;
+
+    QJsonObject appData;
+    uq->outputAppDataToJSON(appData);
+    QJsonObject uqDataObj = appData["UQ"].toObject();
+    QString appName = uqDataObj["Application"].toString();
+
+    // 3. get program name from WorkflowAPplications file
+
+    // 3.a open Applications file
+    QString workflowApplications = appDIR + QDir::separator() + QString("applications") + QDir::separator() + QString("WorkflowApplications.json");
+    QFile workflowApplicationsFile(workflowApplications);
+    if (!workflowApplicationsFile.open(QFile::ReadOnly | QFile::Text)) {
+        QString message = QString("Error: could not open file") + workflowApplications;
+        this->errorMessage(message);
+        return;
+    }
+
+    // 3.b find program to execute, by converting to JSON object and itertaing through UQApplkications array for program
+
+    QString val = workflowApplicationsFile.readAll();
+
+    qDebug() << "VAL: " << val;
+
+    QJsonDocument docWA = QJsonDocument::fromJson(val.toUtf8());
+    QJsonObject jsonObj = docWA.object();
+    workflowApplicationsFile.close();
+
+    QJsonObject uqApplications = jsonObj["UQApplications"].toObject();
+    QJsonArray uqApplicationsArray = uqApplications["Applications"].toArray();
+
+    for (int i=0; i<uqApplicationsArray.size(); i++) {
+        QJsonObject entry = uqApplicationsArray[i].toObject();
+        QString programName = entry["Name"].toString();
+        if (programName == appName) {
+            programToExe = entry["ExecutablePath"].toString();
+            break;
+        }
+    }
+
+
+    qDebug() << "UQ APP DATA" << appData << "name: " << appName << " programToExe: " << programToExe;
+
+    QString pySCRIPT = appDIR +  QDir::separator() + programToExe;
+
     QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
 
     //
     // check the python script exists
     //
 
+    qDebug() << "pyScript: " << pySCRIPT;
+
     QFile pyDAKOTA(pySCRIPT);
     if (! pyDAKOTA.exists()) {
-      errorMessage("Dakota script does not exist, the parseDAKOTA.py script was not found in exe folder! .. download application again");
+      errorMessage("Executable script does not exist, try to reset settings, if fails download application again");
       return;
     }
 
@@ -611,6 +667,7 @@ void MainWindow::onRunButtonClicked() {
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
 
+    qDebug() << command;
     proc->waitForStarted();
 
 
@@ -672,8 +729,13 @@ void MainWindow::onRemoteRunButtonClicked(){
                                   file.errorString()));
         return;
     }
+
     QJsonObject json;
-    inputWidget->outputToJSON(json);
+    if (this->outputToJSON(json) == false) {
+        file.close();
+        return;
+    }
+
     QJsonDocument doc(json);
     file.write(doc.toJson());
     file.close();
@@ -690,7 +752,10 @@ void MainWindow::onRemoteRunButtonClicked(){
    //   QDir::separator() + QString("localApp");
 
     //
-    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseDAKOTA.py");
+    QString pySCRIPT = appDIR +  QDir::separator() + QString("applications") +
+                QDir::separator() + QString("performUQ") + QDir::separator() +
+                QString("dakota") + QDir::separator() + QString("parseDAKOTA.py");
+
     QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + strUnique;
 
     QFile pyDAKOTA(pySCRIPT);
@@ -919,7 +984,7 @@ void MainWindow::open()
 {
     errorMessage("");
 
-    QString fileName = QFileDialog::getOpenFileName(this);
+    QString fileName = QFileDialog::getOpenFileName(this, "Open Input File", "",  "Json files (*.json);;All files (*)");
     if (!fileName.isEmpty())
         loadFile(fileName);
 }
@@ -948,6 +1013,86 @@ void MainWindow::setCurrentFile(const QString &fileName)
     setWindowFilePath(shownName);
 }
 
+bool MainWindow::outputToJSON(QJsonObject &jsonObj) {
+
+    QJsonObject appsUQ;
+    uq->outputAppDataToJSON(appsUQ);
+    jsonObj["Applications"]=appsUQ;
+
+    if (fem->outputToJSON(jsonObj) != true) {
+        emit errorMessage(QString("FEM: failed to write output"));
+        return false;
+    }
+
+    if (uq->outputToJSON(jsonObj) != true) {
+        emit errorMessage(QString("UQ: failed to write output"));
+        return false;
+    }
+
+    if (random->outputToJSON(jsonObj) != true) {
+        emit errorMessage(QString("RV: failed to write output"));
+        return false;
+    }
+
+    if (edp->outputToJSON(jsonObj) != true) {
+        emit errorMessage(QString("EDP: failed to write output"));
+        return false;
+    }
+
+    UQ_Results *result=uq->getResults();
+    results->outputToJSON(jsonObj);
+
+    // output the preferences
+
+    jsonObj["localAppDir"]=SimCenterPreferences::getInstance()->getAppDir();
+    jsonObj["remoteAppDir"]=SimCenterPreferences::getInstance()->getRemoteAppDir();
+    jsonObj["workingDir"]=SimCenterPreferences::getInstance()->getLocalWorkDir();
+    jsonObj["python"]=SimCenterPreferences::getInstance()->getPython();
+
+    return true;
+}
+
+bool MainWindow::inputFromJSON(QJsonObject &jsonObj){
+
+    if (jsonObj.contains("Applications")) {
+
+        QJsonObject theApplicationObject = jsonObj["Applications"].toObject();
+        if (uq->inputAppDataFromJSON(theApplicationObject) != true) {
+            emit errorMessage(QString("UQ: failed to read app data input"));
+            return false;
+        }
+    } else {
+        // possibly old code: default is Dakota
+    }
+
+
+    if (fem->inputFromJSON(jsonObj) != true) {
+        emit errorMessage(QString("FEM: failed to read input"));
+        return false;
+    }
+
+    if (uq->inputFromJSON(jsonObj) != true) {
+        emit errorMessage(QString("UQ: failed to read input"));
+        return false;
+    }
+
+    if (random->inputFromJSON(jsonObj) != true) {
+        emit errorMessage(QString("RV: failed to read input"));
+        return false;
+    }
+
+    if (edp->inputFromJSON(jsonObj) != true) {
+        emit errorMessage(QString("EDP: failed to read input"));
+        return false;
+    }
+
+    UQ_Results *result=uq->getResults();
+    results->setResultWidget(result);
+    results->inputFromJSON(jsonObj); // results can fail if no results when file saved
+
+    return true;
+}
+
 bool MainWindow::saveFile(const QString &fileName)
 {   
     //
@@ -963,14 +1108,18 @@ bool MainWindow::saveFile(const QString &fileName)
         return false;
     }
 
-
     //
     // create a json object, fill it in & then use a QJsonDocument
     // to write the contents of the object to the file in JSON format
     //
 
     QJsonObject json;
-    inputWidget->outputToJSON(json);
+    if (this->outputToJSON(json) == false) {
+        qDebug() << "MainWindow - outputToJSON returned false";
+        file.close();
+        return false;
+    }
+
     QJsonDocument doc(json);
     file.write(doc.toJson());
 
@@ -1014,21 +1163,7 @@ void MainWindow::loadFile(const QString &fileName)
 
     // given the json object, create the C++ objects
     //inputWidget->inputFromJSON(jsonObj);
-    if (fem->inputFromJSON(jsonObj) != true)
-        return;
-    if (uq->inputFromJSON(jsonObj) != true)
-        return;
-
-    if (random->inputFromJSON(jsonObj) != true)
-        return;
-
-    if (edp->inputFromJSON(jsonObj) != true)
-        return;
-
-    UQ_Results *result=uq->getResults();
-    results->setResultWidget(result);
-    if (results->inputFromJSON(jsonObj) != true)
-        return;
+    this->inputFromJSON(jsonObj);
 
     setCurrentFile(fileName);
 }
