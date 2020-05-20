@@ -171,7 +171,6 @@ DakotaEngine::inputFromJSON(QJsonObject &jsonObject) {
     bool result = false;
 
     QString selection = jsonObject["uqType"].toString();
-    qDebug() << "Selection: " << selection;
 
     int index = theEngineSelectionBox->findText(selection);
     theEngineSelectionBox->setCurrentIndex(index);
@@ -182,6 +181,24 @@ DakotaEngine::inputFromJSON(QJsonObject &jsonObject) {
         result = false; // don't emit error as one should have been generated
 
     return result;
+}
+
+
+bool
+DakotaEngine::outputAppDataToJSON(QJsonObject &jsonObject)
+{
+    jsonObject["Application"] = "Dakota-UQ";
+    QJsonObject dataObj;
+    jsonObject["ApplicationData"] = dataObj;
+
+    return true;
+}
+
+bool
+DakotaEngine::inputAppDataFromJSON(QJsonObject &jsonObject)
+{
+    Q_UNUSED(jsonObject);
+    return true;
 }
 
 int
