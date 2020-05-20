@@ -42,10 +42,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SimCenterWidget.h>
 
 #include "EDP.h"
-#include <QGroupBox>
 #include <QVector>
-#include <QVBoxLayout>
-#include <QComboBox>
+class QGridLayout;
+class QVBoxLayout;
+class QGroupBox;
+class QComboBox;
+class QGroupBox;
 
 class InputWidgetParameters;
 
@@ -92,6 +94,7 @@ private:
     int numInputs;
     QVector<QLineEdit *>inputFilenames;
     QVector<QLineEdit *>postprocessFilenames;
+    QVector<QLineEdit *>parametersFilenames;
 };
 
 #endif // INPUTWIDGETFEM_H

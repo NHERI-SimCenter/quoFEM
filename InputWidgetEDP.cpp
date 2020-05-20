@@ -173,7 +173,7 @@ InputWidgetEDP::outputToJSON(QJsonObject &jsonObject)
         else
             result = false;
     }
-    jsonObject["edps"]=edpArray;
+    jsonObject["EDP"]=edpArray;
     return result;
 }
 
@@ -187,7 +187,7 @@ InputWidgetEDP::inputFromJSON(QJsonObject &rvObject)
     this->clear();
 
     // go get the array, and for each component create one, get it to read & then add
-    QJsonArray rvArray = rvObject["edps"].toArray();
+    QJsonArray rvArray = rvObject["EDP"].toArray();
     foreach (const QJsonValue &rvValue, rvArray) {
         QJsonObject rvObject = rvValue.toObject();
         EDP *theEDP = new EDP();
