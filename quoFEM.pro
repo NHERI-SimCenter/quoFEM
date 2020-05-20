@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts concurrent network
+QT       += core gui charts concurrent network printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -36,10 +36,11 @@ win32 {
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/Common/Common.pri)
 
+
 SOURCES += main.cpp\
         MainWindow.cpp \
+    EDP.cpp  \
         SidebarWidgetSelection.cpp \
-        EDP.cpp \
         InputWidgetEDP.cpp \
         InputWidgetFEM.cpp \
         UQ_EngineSelection.cpp \
@@ -59,6 +60,7 @@ SOURCES += main.cpp\
         DakotaInputBayesianCalibration.cpp \
         OpenSeesParser.cpp \
         FEAPpvParser.cpp \
+        OpenSeesPyParser.cpp \
     RemoteJobCreator.cpp \
     MyTableWidget.cpp \
     RemoteJobManager.cpp \
@@ -73,14 +75,16 @@ SOURCES += main.cpp\
     GaussianProcessInputWidget.cpp \
     PCEInputWidget.cpp \ 
     DakotaInputReliability.cpp \
-    FORMInputWidget.cpp \
-    SORMInputWidget.cpp \
+    LocalReliabilityWidget.cpp \
+    GlobalReliabilityWidget.cpp \
+    SimCenterGraphPlot.cpp \
+    qcustomplot.cpp \
     DakotaResultsReliability.cpp
 
 
 HEADERS  += MainWindow.h \
-    EDP.h \
     InputWidgetEDP.h \
+EDP.h \
     InputWidgetFEM.h \
     SidebarWidgetSelection.h \
     UQ_EngineSelection.h \
@@ -100,6 +104,7 @@ HEADERS  += MainWindow.h \
     DakotaResultsBayesianCalibration.h \
     OpenSeesParser.h \
     FEAPpvParser.h \
+    OpenSeesPyParser.h \
     RemoteJobCreator.h \
     MyTableWidget.h \
     RemoteJobManager.h \
@@ -113,9 +118,11 @@ HEADERS  += MainWindow.h \
     ImportanceSamplingInputWidget.h \
     GaussianProcessInputWidget.h \
     PCEInputWidget.h \
+    SimCenterGraphPlot.h \
     DakotaInputReliability.h \
-    FORMInputWidget.h \
-    SORMInputWidget.h \
+    LocalReliabilityWidget.h \
+    GlobalReliabilityWidget.h \
+    qcustomplot.h \
     DakotaResultsReliability.h
 
 FORMS    += mainwindow.ui
