@@ -1,5 +1,5 @@
-#ifndef SORM_INPUT_WIDGET_H
-#define SORM_INPUT_WIDGET_H
+#ifndef GLOBAL_RELIABILITY_WIDGET_H
+#define GLOBAL_RELIABILITY_WIDGET_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -44,12 +44,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 class QLineEdit;
 class QCheckBox;
 
-class SORMInputWidget : public UQ_MethodInputWidget
+class GlobalReliabilityWidget : public UQ_MethodInputWidget
 {
     Q_OBJECT
 public:
-    explicit SORMInputWidget(QWidget *parent = 0);
-    ~SORMInputWidget();
+    explicit GlobalReliabilityWidget(QWidget *parent = 0);
+    ~GlobalReliabilityWidget();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
@@ -58,12 +58,11 @@ public:
     int getNumberTasks(void);
 
 private:
-    QComboBox *mppMethod;
-    QComboBox *reliabilityScheme;
+    QComboBox *gpApproximation;
     QLineEdit *probabilityLevel;
-    QLineEdit *responseLevel;
-    QCheckBox *checkedResponseLevel;
-    QCheckBox *checkedProbabilityLevel;
+    //QLineEdit *responseLevel;
+    //QCheckBox *checkedResponseLevel;
+    //QCheckBox *checkedProbabilityLevel;
 };
 
-#endif // SORM_INPUT_WIDGET_H
+#endif // GLOBAL_RELIABILITY_WIDGET_H

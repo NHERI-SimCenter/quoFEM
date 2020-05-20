@@ -1,5 +1,5 @@
-#ifndef FORM_INPUT_WIDGET_H
-#define FORM_INPUT_WIDGET_H
+#ifndef LOCAL_RELIABILITY_WIDGET_H
+#define LOCAL_RELIABILITY_WIDGET_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -43,13 +43,14 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 class QLineEdit;
 class QCheckBox;
+class QGridLayout;
 
-class FORMInputWidget : public UQ_MethodInputWidget
+class LocalReliabilityWidget : public UQ_MethodInputWidget
 {
     Q_OBJECT
 public:
-    explicit FORMInputWidget(QWidget *parent = 0);
-    ~FORMInputWidget();
+    explicit LocalReliabilityWidget(QWidget *parent = 0);
+    ~LocalReliabilityWidget();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
@@ -57,13 +58,21 @@ public:
 
     int getNumberTasks(void);
 
+public slots:
+    void onMethodSelectionChanged(const QString &method);
+
 private:
+    QGridLayout *layout;
+    QComboBox *method;
     QComboBox *mppMethod;
-    QComboBox *reliabilityScheme;
+    QComboBox *integrationMethod;
+    QLineEdit *reliabilityLevel;
     QLineEdit *probabilityLevel;
-    QLineEdit *responseLevel;
-    QCheckBox *checkedResponseLevel;
-    QCheckBox *checkedProbabilityLevel;
+    QComboBox *levelType;
+
+    //QLineEdit *responseLevel;
+    //QCheckBox *checkedResponseLevel;
+    //QCheckBox *checkedProbabilityLevel;
 };
 
-#endif // FORM_INPUT_WIDGET_H
+#endif // LOCAL_RELIABILITY_WIDGET_H
