@@ -21,7 +21,14 @@ def process_results(response):
 
 	__, val1, val2 = [np.sqrt(np.sum(v)) for v in diff]
 
-	print(val1, val2)
-
 	with open('results.out', 'wb') as f:
 		f.write("{:.6f} {:.6f}".format(val1, val2).encode('utf8'))
+
+
+if __name__ == "__main__":
+    n = len(sys.argv)
+    responses = []
+    for i in range(1,n):
+        responses.append(sys.argv[i])
+
+    process_results(responses)

@@ -12,18 +12,11 @@ else:
     string_types = str
 
 import sys
-import re
 
-def process_results(response):
-
-    #print 'Number of arguments:', len(sys.argv), 'arguments.'
-    #print 'Argument List:', str(sys.argv)
-
-    inputArgs = response
-    #outFile = open('results.out','w')
+def process_results(inputArgs):
 
     #
-    # process output file "SimCenterOut.txt" for nodal displacements
+    # process output file "node.out" for nodal displacements
     #
 
     with open ('node.out', 'rt') as inFile:
@@ -39,15 +32,21 @@ def process_results(response):
 
     # note for now assuming no ERROR in user data
     for i in inputArgs:
+
         theList=i.split('_')
 
+        if (len(theList) == 4):
+            dof = int(theList[3])
+        else:
+            dof = 1
+                      
         if (theList[0] == "Node"):
             nodeTag = int(theList[1])
 
             if (nodeTag > 0 and nodeTag <= numNode):
                 if (theList[2] == "Disp"):
-                    nodeDisp = displ[nodeTag-1]
-                    outFile.write(nodeDisp)
+                    nodeDisp = abs(float(displ[((nodeTag-1)*2)+dof-1]))
+                    outFile.write(str(nodeDisp))
                     outFile.write(' ')
                 else:
                     outFile.write('0. ')
@@ -57,3 +56,12 @@ def process_results(response):
             outFile.write('0. ')
 
     outFile.close
+
+
+if __name__ == "__main__":
+    n = len(sys.argv)
+    responses = []
+    for i in range(1,n):
+        responses.append(sys.argv[i])
+
+    process_results(responses)
