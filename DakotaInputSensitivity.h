@@ -59,8 +59,8 @@ public:
     explicit DakotaInputSensitivity(QWidget *parent = 0);
     ~DakotaInputSensitivity();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &jsonObject);
+    bool inputFromJSON(QJsonObject &jsonObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
 

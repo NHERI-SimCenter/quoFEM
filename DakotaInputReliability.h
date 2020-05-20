@@ -59,8 +59,8 @@ public:
     explicit DakotaInputReliability(QWidget *parent = 0);
     ~DakotaInputReliability();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &jsonObject);
+    bool inputFromJSON(QJsonObject &jsonObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
 
@@ -79,22 +79,21 @@ public slots:
 
 private:
     QVBoxLayout *layout;
-    QWidget     *methodSpecific;
-    QComboBox   *samplingMethod;
-    QLineEdit   *numSamples;
-    QLineEdit   *randomSeed;
+    //QWidget     *methodSpecific;
+    QComboBox   *reliabilityMethod;
+
     //    QPushButton *run;
 
-    QComboBox   *uqSelection;
-    QWidget     *uqSpecific;
+    //QComboBox   *uqSelection;
+    //QWidget     *uqSpecific;
 
     RandomVariablesContainer *theRandomVariables;
     DakotaSamplingResults *results;
 
     QStackedWidget *theStackedWidget;
     UQ_MethodInputWidget *theCurrentMethod;
-    UQ_MethodInputWidget *theFORM;
-    UQ_MethodInputWidget *theSORM;
+    UQ_MethodInputWidget *theLocal;
+    UQ_MethodInputWidget *theGlobal;
 };
 
 #endif // DAKOTA_INPUT_RELIABILITY_H

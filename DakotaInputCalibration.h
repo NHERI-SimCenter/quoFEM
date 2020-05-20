@@ -64,8 +64,8 @@ public:
     ~DakotaInputCalibration();
 
     int getMaxNumParallelTasks(void);
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &jsonObject);
+    bool inputFromJSON(QJsonObject &jsonObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
     UQ_Results *getResults(void);
@@ -79,65 +79,11 @@ public slots:
    void methodChanged(const QString &arg1);
    void comboboxItemChanged(QString value);
 
-
 private:
     QComboBox   *calibrationMethod;
-
-//    QHBoxLayout *mLayout;//not using it anymore
-
-    QVBoxLayout *TestingLayout; //padhye
-
-    //additional widgets just for ant colony
-
-    QVBoxLayout *ColonyPatternLayout;//padhye
-
-    QLineEdit *initial_step_size_value;
-    QLineEdit *final_step_size_value;
-    QLineEdit *contraction_factor;
-    QLineEdit *max_function_evals_ColonyPattern;
-    QComboBox *exploratory_moves;
-
-    QLabel *label2_initial_step_size;
-    QLabel *label_final_step_size_value;
-    QLabel *label_contraction_factor;
-    QLabel *label_max_function_evals_ColonyPattern;
-    QLabel *label_exploratory_moves;
-
-    int colony_pattern_flag=0;
-
-    // additional for colony_EA
-
-    QGridLayout *ColonyEALayout;//padhye
-
-
-    QLineEdit *max_function_evals_ColonyEA;
-    QLineEdit *seed_ColonyEA;
-    QLineEdit *pop_sizeColonyEA;
-    QComboBox *fitness_typeColonyEA;
-    QComboBox *mutation_typeColonyEA;
-    QLineEdit *mutation_rateColonyEA;
-    QComboBox *crossover_typeColonyEA;
-    QLineEdit *crossover_rateColonyEA;
-    QComboBox *replacement_typeColonyEA;
-    QLineEdit *replacement_type_value_ColonyEA;
-
-    QLabel *label_max_function_evals_ColonyEA;
-    QLabel *label_seed_ColonyEA;
-    QLabel *label_pop_sizeColonyEA;
-    QLabel *label_fitness_typeColonyEA;
-    QLabel *label_mutation_typeColonyEA;
-    QLabel *label_mutation_rateColonyEA;
-    QLabel *label_crossover_typeColonyEA;
-    QLabel *label_crossover_rateColonyEA;
-    QLabel *label_replacement_typeColonyEA;
-    QLabel *label_replacement_type_value_ColonyEA;
-
-    int colony_EA_flag=0;
-
-
-    //common variables for all calibration methods
     QLineEdit   *maxIterations;
     QLineEdit   *convergenceTol;
+    QLineEdit   *scalingFactors;
 
     RandomVariablesContainer *theParameters;
     DakotaCalibrationResults *results;
