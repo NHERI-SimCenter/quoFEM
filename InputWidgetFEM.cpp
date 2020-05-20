@@ -37,6 +37,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 
 #include "InputWidgetFEM.h"
+#include <QGridLayout>
+#include <QComboBox>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -49,6 +51,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <sectiontitle.h>
 #include <QFileInfo>
 #include <QVectorIterator>
+#include <OpenSeesPyParser.h>
 
 #include <OpenSeesParser.h>
 #include <FEAPpvParser.h>
@@ -69,12 +72,12 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
 
     SectionTitle *textFEM=new SectionTitle();
     textFEM->setText(tr("Finite Element Method Application"));
-    textFEM->setMinimumWidth(250);
+    //textFEM->setMinimumWidth(250);
     QSpacerItem *spacer = new QSpacerItem(50,10);
 
     femSelection = new QComboBox();
-    femSelection->setMaximumWidth(400);
-    femSelection->setMinimumWidth(200);
+   // femSelection->setMaximumWidth(400);
+    //femSelection->setMinimumWidth(200);
     femSelection->setToolTip(tr("Remote Application to Run"));
     titleLayout->addWidget(textFEM);
     titleLayout->addItem(spacer);
@@ -91,6 +94,7 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
 
     femSelection->addItem(tr("OpenSees"));
     femSelection->addItem(tr("FEAPpv"));
+    femSelection->addItem(tr("OpenSeesPy"));
 
     connect(femSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(femProgramChanged(QString)));
 
@@ -142,6 +146,14 @@ InputWidgetFEM::outputToJSON(QJsonObject &jsonObject)
         QFileInfo fileInfo2(fileName2);
         fem["mainPostprocessScript"]=fileInfo2.fileName();
 
+        if (femSelection->currentText() == "OpenSeesPy") {
+
+             QString fileName3=parametersFilenames.at(0)->text();
+             QFileInfo pFileInfo(fileName3);
+             fem["parametersFile"]=pFileInfo.fileName();
+             fem["parametersScript"]=fileName3;
+        }
+
     } else {
         for (int i=0; i<numInputs; i++) {
             QJsonObject obj;
@@ -160,6 +172,8 @@ InputWidgetFEM::outputToJSON(QJsonObject &jsonObject)
             QFileInfo fileInfo2(fileName2);
             obj["mainPostprocessScript"]=fileInfo2.fileName();
             apps.append(obj);
+
+
         }
         fem["fileInfo"] = apps;
     }
@@ -194,8 +208,14 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
             QString fileName1=femObject["inputFile"].toString();
             QString fileName2=femObject["postprocessScript"].toString();
 
+
             inputFilenames.at(0)->setText(fileName1);
             postprocessFilenames.at(0)->setText(fileName2);
+
+            if (femSelection->currentText() == "OpenSeesPy") {
+                QString fileName3=femObject["parametersScript"].toString();
+                parametersFilenames.at(0)->setText(fileName3);
+            }
 
             this->parseInputfilesForRV(fileName1);
         }
@@ -220,62 +240,100 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
         delete femSpecific;
         femSpecific = 0;
     }
+
     inputFilenames.clear();
     postprocessFilenames.clear();
+    parametersFilenames.clear();
 
     femSpecific = new QWidget();   
 
     if (numInputs == 1) {
 
         QGridLayout *femLayout = new QGridLayout();
+
         QLabel *label1 = new QLabel();
-
-        QLabel *label2 = new QLabel();
-        label2->setText("Postprocess Script");
-
         QLineEdit *file1 = new QLineEdit;
         QPushButton *chooseFile1 = new QPushButton();
         chooseFile1->setText(tr("Choose"));
-        connect(chooseFile1, &QPushButton::clicked, this, [=](){
-            file1->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-            this->parseInputfilesForRV(file1->text());
-        });
-
-        if (arg1 == QString("FEAPpv")){
-            label1->setText("Input File");
-            file1->setToolTip(tr("Name of FEAPpv input file"));
-        } else {
-            label1->setText("Input Script");
-            file1->setToolTip(tr("Name of OpenSees input script"));
-        }
+         if ((arg1 == QString("FEAPpv")) || (arg1 == QString("OpenSees"))){
+            connect(chooseFile1, &QPushButton::clicked, this, [=](){
+                file1->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+                this->parseInputfilesForRV(file1->text());
+            });
+         } else {
+             connect(chooseFile1, &QPushButton::clicked, this, [=](){
+                 file1->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+                 // this->parseInputfilesForRV(file1->text());
+             });
+         }
 
         chooseFile1->setToolTip(tr("Push to choose a file from your file system"));
 
+        femLayout->addWidget(label1, 0,0);
+        femLayout->addWidget(file1,  0,1);
+        femLayout->addWidget(chooseFile1, 0, 2);
+
+        QLabel *label2 = new QLabel();
+        label2->setText("Postprocess Script");
         QLineEdit *file2 = new QLineEdit;
         QPushButton *chooseFile2 = new QPushButton();
 
         connect(chooseFile2, &QPushButton::clicked, this, [=](){
             file2->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
         });
-
-        file2->setToolTip(tr("Name of Python script that will process FEAPpv output file for UQ engine"));
+         chooseFile2->setText(tr("Choose"));
         chooseFile2->setToolTip(tr("Push to choose a file from your file system"));
 
-        chooseFile2->setText(tr("Choose"));
+        if (arg1 == QString("FEAPpv")){
+            label1->setText("Input File");
+            file1->setToolTip(tr("Name of FEAPpv input file"));
+            file2->setToolTip(tr("Name of Python script that will process FEAPpv output file for UQ engine"));
+        } else if (arg1 == "OpenSees") {
+            label1->setText("Input Script");
+            file1->setToolTip(tr("Name of OpenSees input script"));
+            file2->setToolTip(tr("Name of Python/Tcl script that will process OpenSees output file for UQ engine"));
+        } else {
+            label1->setText("Input Script");
+            file1->setToolTip(tr("Name of OpenSeesPy input script"));
+            file2->setToolTip(tr("Name of Python script that will process OpenSeesPy output"));
+        }
 
-        femLayout->addWidget(label1, 0,0);
-        femLayout->addWidget(file1,  0,1);
-        femLayout->addWidget(chooseFile1, 0, 2);
         femLayout->addWidget(label2, 1,0);
         femLayout->addWidget(file2, 1,1);
         femLayout->addWidget(chooseFile2, 1,2);
 
-        femLayout->setColumnStretch(3,1);
-        femLayout->setColumnStretch(1,3);
+
+        if (arg1 == "OpenSeesPy") {
+            QLabel *label3 = new QLabel();
+            label3->setText("Parameters File");
+            QLineEdit *file3 = new QLineEdit;
+            file2->setToolTip(tr("Name of Python script that contains defined parameters"));
+            QPushButton *chooseFile3 = new QPushButton();
+
+            connect(chooseFile3, &QPushButton::clicked, this, [=](){
+                file3->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+                this->parseInputfilesForRV(file3->text());
+            });
+            chooseFile3->setText(tr("Choose"));
+            chooseFile3->setToolTip(tr("Push to choose a file from your file system"));
+
+            parametersFilenames.append(file3);
+
+            femLayout->addWidget(label3, 2,0);
+            femLayout->addWidget(file3, 2,1);
+            femLayout->addWidget(chooseFile3, 2,2);
+
+            femLayout->setColumnStretch(3,1);
+            femLayout->setColumnStretch(1,3);
+
+        } else {
+            femLayout->setColumnStretch(3,1);
+            femLayout->setColumnStretch(1,3);
+        }
+
 
         inputFilenames.append(file1);
         postprocessFilenames.append(file2);
-
         femSpecific->setLayout(femLayout);
 
     } else {
@@ -354,6 +412,9 @@ int InputWidgetFEM::parseInputfilesForRV(QString name1){
     }  else if (pName == "FEAPpv") {
         FEAPpvParser theParser;
         varNamesAndValues = theParser.getVariables(fileName1);
+    } else if (pName == "OpenSeesPy") {
+        OpenSeesPyParser theParser;
+        varNamesAndValues = theParser.getVariables(fileName1);
     }
     // qDebug() << "VARNAMESANDVALUES: " << varNamesAndValues;
     theParameters->setInitialVarNamesAndValues(varNamesAndValues);
@@ -389,6 +450,26 @@ InputWidgetFEM::specialCopyMainInput(QString fileName, QStringList varNames) {
             QVectorIterator<QLineEdit *> i(inputFilenames);
             while (i.hasNext())
                 theParser.writeFile(i.next()->text(), fileName,varNames);
+
+        }  else if (pName == "OpenSeesPy") {
+            // do things a little different!
+            QFileInfo file(fileName);
+            QString fileDir = file.absolutePath();
+            qDebug() << "FILENAME: " << fileName << " path: " << fileDir;
+            OpenSeesPyParser theParser;
+            if (parametersFilenames.length() == 0) {
+                QString newName = fileDir + QDir::separator() + "tmpSimCenter.script";
+                QVectorIterator<QLineEdit *> i(inputFilenames);
+                while (i.hasNext()) {
+                        QFile::copy(i.next()->text(), newName);
+                }
+            } else {
+                QVectorIterator<QLineEdit *> i(parametersFilenames);
+                QString newName = fileDir + QDir::separator() + "tmpSimCenter.params";
+                while (i.hasNext()) {
+                    theParser.writeFile(i.next()->text(), newName,varNames);
+                }
+            }
         }
     }
 }
