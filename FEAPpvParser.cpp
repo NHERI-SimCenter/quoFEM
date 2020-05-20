@@ -145,7 +145,8 @@ FEAPpvParser::writeFile(QString inFilename, QString outFilename, QStringList var
 
             if (varToChange.contains(val1)) {
                 // write new line format to output
-                outFile << varName << " =  \{" << varName << "\}\n";
+               // OLD: outFile << varName << " =  \{" << varName << "\}\n";
+                outFile << varName << " =  \"RV." << varName << "\"\n";
             } else {
 
                 // not there, write current line

@@ -176,6 +176,10 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
     bool result = true;
     this->clear();
 
+    if (!jsonObject.contains("summary")) { // no saving of analysis data
+       return true;
+    }
+
     //
     // create a summary widget in which place basic output (name, mean, stdDev)
     //

@@ -178,6 +178,10 @@ DakotaResultsBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 
     bool result = true;
 
+     if (!jsonObject.contains("summary")) {
+        return true;
+     }
+
     //
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
@@ -223,6 +227,7 @@ DakotaResultsBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
     QJsonObject spreadsheetData = jsonObject["spreadsheet"].toObject();
     int numRow = spreadsheetData["numRow"].toInt();
     int numCol = spreadsheetData["numCol"].toInt();
+
     spreadsheet->setColumnCount(numCol);
     spreadsheet->setRowCount(numRow);
 
