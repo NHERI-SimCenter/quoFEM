@@ -59,11 +59,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 #include <QStackedWidget>
-#include <FORMInputWidget.h>
-#include <SORMInputWidget.h>
+#include <LocalReliabilityWidget.h>
+#include <GlobalReliabilityWidget.h>
 
 DakotaInputReliability::DakotaInputReliability(QWidget *parent)
-: UQ_Engine(parent),uqSpecific(0)
+: UQ_Engine(parent)
 {
     layout = new QVBoxLayout();
     mLayout = new QVBoxLayout();
@@ -74,15 +74,15 @@ DakotaInputReliability::DakotaInputReliability(QWidget *parent)
 
     QHBoxLayout *methodLayout= new QHBoxLayout;
     QLabel *label1 = new QLabel();
-    label1->setText(QString("Reliability Order"));
-    samplingMethod = new QComboBox();
-    samplingMethod->setMaximumWidth(200);
-    samplingMethod->setMinimumWidth(200);
-    samplingMethod->addItem(tr("FORM"));
-    samplingMethod->addItem(tr("SORM"));
+    label1->setText(QString("Reliability Method"));
+    reliabilityMethod = new QComboBox();
+    reliabilityMethod->setMaximumWidth(200);
+    reliabilityMethod->setMinimumWidth(200);
+    reliabilityMethod->addItem(tr("Local Reliability"));
+    reliabilityMethod->addItem(tr("Global Reliability"));
 
     methodLayout->addWidget(label1);
-    methodLayout->addWidget(samplingMethod,2);
+    methodLayout->addWidget(reliabilityMethod,2);
     methodLayout->addStretch(4);
 
     mLayout->addLayout(methodLayout);
@@ -93,14 +93,14 @@ DakotaInputReliability::DakotaInputReliability(QWidget *parent)
 
     theStackedWidget = new QStackedWidget();
 
-    theFORM = new FORMInputWidget();
-    theStackedWidget->addWidget(theFORM);
+    theLocal = new LocalReliabilityWidget();
+    theStackedWidget->addWidget(theLocal);
 
-    theSORM = new SORMInputWidget();
-    theStackedWidget->addWidget(theSORM);
+    theGlobal = new GlobalReliabilityWidget();
+    theStackedWidget->addWidget(theGlobal);
 
     // set current widget to index 0
-    theCurrentMethod = theFORM;
+    theCurrentMethod = theLocal;
 
     mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);
@@ -110,7 +110,7 @@ DakotaInputReliability::DakotaInputReliability(QWidget *parent)
 
     this->setLayout(layout);
 
-    connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onMethodChanged(QString)));
+    connect(reliabilityMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onMethodChanged(QString)));
 
 }
 
@@ -118,12 +118,12 @@ void DakotaInputReliability::onMethodChanged(QString text)
 {
     qDebug() << text;
 
-  if (text=="FORM") {
+  if (text=="Local Reliability") {
     theStackedWidget->setCurrentIndex(0);
-    theCurrentMethod = theFORM;
+    theCurrentMethod = theLocal;
   } else {
     theStackedWidget->setCurrentIndex(1);
-    theCurrentMethod = theSORM;
+    theCurrentMethod = theGlobal;
   }
 }
 
@@ -149,10 +149,10 @@ DakotaInputReliability::outputToJSON(QJsonObject &jsonObject)
     bool result = true;
 
     QJsonObject uq;
-    uq["method"]=samplingMethod->currentText();
+    uq["method"]=reliabilityMethod->currentText();
     theCurrentMethod->outputToJSON(uq);
 
-    jsonObject["samplingMethodData"]=uq;
+    jsonObject["reliabilityMethodData"]=uq;
 
     return result;
 }
@@ -167,15 +167,15 @@ DakotaInputReliability::inputFromJSON(QJsonObject &jsonObject)
   //
   // get sampleingMethodData, if not present it's an error
   
-  if (jsonObject.contains("samplingMethodData")) {
-      QJsonObject uq = jsonObject["samplingMethodData"].toObject();
+  if (jsonObject.contains("reliabilityMethodData")) {
+      QJsonObject uq = jsonObject["reliabilityMethodData"].toObject();
       if (uq.contains("method")) {
           QString method =uq["method"].toString();
-          int index = samplingMethod->findText(method);
+          int index = reliabilityMethod->findText(method);
           if (index == -1) {
               return false;
           }
-          samplingMethod->setCurrentIndex(index);
+          reliabilityMethod->setCurrentIndex(index);
           result = theCurrentMethod->inputFromJSON(uq);
           if (result == false)
               return result;
