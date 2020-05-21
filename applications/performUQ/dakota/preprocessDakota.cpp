@@ -17,8 +17,6 @@ int main(int argc, const char **argv) {
   const char *runType = argv[3];
   const char *osType = argv[4];
   
-  std::cout << "RUNTYPE: " << runType << "\n";
-
   struct randomVariables theRandomVariables;
   theRandomVariables.numRandomVariables = 0;
 
@@ -94,9 +92,9 @@ int main(int argc, const char **argv) {
   const char *remoteDir = json_string_value(json_object_get(rootINPUT,"remoteAppDir"));
 
   if (strcmp(runType, "runningLocal") == 0) {
-    dpreproCommand = localDir + std::string("/applications/performUQ/dakota/simCenterDprepro");
+    dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/dakota/simCenterDprepro\"");
     openSeesCommand = std::string("OpenSees");
-    pythonCommand = json_string_value(json_object_get(rootINPUT,"python"));
+    pythonCommand = std::string("\"") + json_string_value(json_object_get(rootINPUT,"python")) + std::string("\"");
     if ((strcmp(osType,"Windows") == 0))
       feapCommand = std::string("Feappv41.exe");
     else

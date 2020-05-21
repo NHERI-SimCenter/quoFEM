@@ -1,4 +1,4 @@
-simcenter_add_executable(NAME dpreproSimCenter
+simcenter_add_executable(NAME simCenterDprepro
                          FILES simCenterDprepro.cpp)
 simcenter_add_executable(NAME preprocessDakota
                          FILES preprocessDakota.cpp dakotaProcedures.cpp
