@@ -667,7 +667,6 @@ void MainWindow::onRunButtonClicked() {
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
 
-    qDebug() << command;
     proc->waitForStarted();
 
 

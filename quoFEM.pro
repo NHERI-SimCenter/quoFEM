@@ -73,14 +73,14 @@ SOURCES += main.cpp\
     LatinHypercubeInputWidget.cpp \
     ImportanceSamplingInputWidget.cpp \
     GaussianProcessInputWidget.cpp \
-    PCEInputWidget.cpp \ 
+    PCEInputWidget.cpp \
+    qcustomplot.cpp \
     DakotaInputReliability.cpp \
     LocalReliabilityWidget.cpp \
     GlobalReliabilityWidget.cpp \
     SimCenterGraphPlot.cpp \
     qcustomplot.cpp \
     DakotaResultsReliability.cpp
-
 
 HEADERS  += MainWindow.h \
     InputWidgetEDP.h \
