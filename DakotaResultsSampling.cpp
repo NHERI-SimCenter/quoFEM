@@ -873,15 +873,13 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     QJsonValue uqValue;
     if (jsonObject.contains("uqResults")) {
         uqValue = jsonObject["uqResults"];
-	jsonObject = uqValue.toObject();
-	qDebug() << "DakotaResultsSampling - inputFromJSON - results exist in uqResults";
+        jsonObject = uqValue.toObject();
     } else
-      theObject = jsonObject;
+        theObject = jsonObject;
     
 
     QJsonValue spreadsheetValue = theObject["spreadsheet"];
-    if (spreadsheetValue.isNull()) {
-	qDebug() << "DakotaResultsSampling - inputFromJSON - no spreadSheet data";
+    if (spreadsheetValue.isNull()) { // ok .. if saved files but did not run a simulation
         return true;
     }
 

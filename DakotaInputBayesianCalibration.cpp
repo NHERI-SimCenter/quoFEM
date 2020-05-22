@@ -54,6 +54,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPushButton>
 #include <sectiontitle.h>
 #include <InputWidgetEDP.h>
+#include <QGridLayout>
+#include <QComboBox>
+#include <QValidator>
 
 #include <iostream>
 #include <sstream>
@@ -62,98 +65,94 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
-    : UQ_Engine(parent),uqSpecific(0)
+    : UQ_Engine(parent)
 {
-    layout = new QVBoxLayout();
+    layout = new QGridLayout();
 
-    QHBoxLayout *methodLayout= new QHBoxLayout;
-    QLabel *label1 = new QLabel();
-    label1->setText(QString("Method"));
     calibrationMethod = new QComboBox();
     calibrationMethod->addItem(tr("DREAM"));
-    calibrationMethod->addItem(tr("QUESO - MCMC w Delayed Rejection"));
-    calibrationMethod->addItem(tr("QUESO - Adaptive Metropolis"));
-    calibrationMethod->addItem(tr("QUESO - DRAM"));
-    calibrationMethod->addItem(tr("QUESO - Metropolis Hastings"));
-    
-    methodLayout->addWidget(label1);
-    methodLayout->addWidget(calibrationMethod,2);
-    methodLayout->addStretch(4);
-    
-    QGridLayout *otherLayout= new QGridLayout;
-    QLabel *label2 = new QLabel();
-    label2->setText(QString("#Chain Samples"));
-    chainSamples = new QLineEdit();
-    chainSamples->setText(tr("5000"));
-    //chainSamples->setMaximumWidth(100);
-    //chainSamples->setMinimumWidth(100);
+    //calibrationMethod->addItem("QUESO"); QUESO GPL!
+    layout->addWidget(new QLabel("Method"), 0, 0);
+    layout->addWidget(calibrationMethod, 0, 1, 1, 2);
 
-    otherLayout->addWidget(label2, 0,0);
-    otherLayout->addWidget(chainSamples, 0,1);
-    
-    QLabel *label3 = new QLabel();
-    label3->setText(QString("Seed"));
+    connect(calibrationMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onMethodChanged(QString)));
+
+    mcmcMethod = new QComboBox();
+    mcmcMethod->addItem(tr("DRAM"));
+    mcmcMethod->addItem("Delayed Rejection");
+    mcmcMethod->addItem("Adaptive Metropolis");
+    mcmcMethod->addItem("Metropolis Hastings");
+    mcmcMethod->addItem("Multilevel");
+    layout->addWidget(new QLabel("MCMC Algorithm"), 2, 0);
+    layout->addWidget(mcmcMethod, 2, 1);
+
+    chains = new QLineEdit();
+    chains->setText(tr("3"));
+    layout->addWidget(new QLabel("# Chains"), 3, 0);
+    layout->addWidget(chains, 3, 1);
+
+
+
+    chainSamples = new QLineEdit();
+    chainSamples->setText(tr("1000"));
+    layout->addWidget(new QLabel("# Chain Samples"), 4,0);
+    layout->addWidget(chainSamples, 4,1);
+
+    burnInSamples = new QLineEdit();
+    burnInSamples->setText("0");
+    layout->addWidget(new QLabel("# Burn in Samples"), 5,0);
+    layout->addWidget(burnInSamples, 5,1);
+    burnInSamples->setValidator(new QIntValidator);
+    burnInSamples->setToolTip("Set Random Seed Value");
+
     srand(time(NULL));
     int randomNumber = rand() % 1000 + 1;
-
     randomSeed = new QLineEdit();
     randomSeed->setText(QString::number(randomNumber));
-    //    randomSeed->setMaximumWidth(100);
-    //    randomSeed->setMinimumWidth(100);
-    otherLayout->addWidget(label3, 1,0);
-    otherLayout->addWidget(randomSeed, 1,1);
-    
-    //Burn In Samples
-    QLabel* burnInlabel = new QLabel();
-    burnInlabel->setText(QString("Burn In Samples"));
-    burnInSamples = new QLineEdit();
-    burnInSamples->setText("500");
-    otherLayout->addWidget(burnInlabel, 2,0);
-    otherLayout->addWidget(burnInSamples, 2,1);
-    
-    //Emulator
-    QLabel* Emulatorlabel = new QLabel();
-    Emulatorlabel->setText(QString("Use Emulator"));
-    Emulator = new QComboBox();
-    Emulator->addItem("No");
-    Emulator->addItem("Yes");
-    otherLayout->addWidget(Emulatorlabel, 3,0);
-    otherLayout->addWidget(Emulator, 3,1);
+    randomSeed->setValidator(new QIntValidator);
+    randomSeed->setToolTip("Set Random Seed Value");
 
-    //Proposal covariance
-    QLabel* covlabel = new QLabel();
-    covlabel->setText(QString("Proposal Covariance"));
-    propCov = new QComboBox();
-    propCov->addItem("Prior");
-    propCov->addItem("Values");
-    propCov->addItem("Filename");
-    otherLayout->addWidget(covlabel, 4,0);
-    otherLayout->addWidget(propCov, 4,1);    
+    layout->addWidget(new QLabel("Seed"), 7, 0);
+    layout->addWidget(randomSeed, 7, 1);
 
-    //Adaptive posterior
-    QLabel* apostlabel = new QLabel();
-    apostlabel->setText(QString("Adaptive Posterior"));
-    aPost = new QComboBox();
-    aPost->addItem("No");
-    aPost->addItem("Yes");
-    otherLayout->addWidget(apostlabel, 5,0);
-    otherLayout->addWidget(aPost, 5,1);  
+    emulator = new QComboBox();
+    emulator->addItem(tr("Gaussian Process"));
+    emulator->addItem("Polynomial Chaos");
+    emulator->addItem("Multilevel Polynomial Chaos");
+    emulator->addItem("Multifidelity Polynomial Chaos");
+    emulator->addItem("Stochastic Collocation");
+    layout->addWidget(new QLabel("Emulator"), 6, 0);
+    layout->addWidget(emulator, 6, 1);
 
-    //Logit mapping
-    QLabel* logMaplabel = new QLabel();
-    logMaplabel->setText(QString("Logit Mapping"));
-    logMap = new QComboBox();
-    logMap->addItem("No");
-    logMap->addItem("Yes");
-    otherLayout->addWidget(logMaplabel, 6,0);
-    otherLayout->addWidget(logMap, 6,1);  
+    maxIterations = new QLineEdit();
+    maxIterations->setText("100");
+    maxIterations->setValidator(new QIntValidator);
+    maxIterations->setToolTip("Max number of iterations");
 
+    layout->addWidget(new QLabel("Max # Iterations"), 8, 0);
+    layout->addWidget(maxIterations, 8,1);
 
-    otherLayout->setColumnStretch(6,1);
-    otherLayout->setRowStretch(7,1);
+    convTol = new QLineEdit();
+    convTol->setText("1e-4");
+    convTol->setValidator(new QDoubleValidator);
+    convTol->setToolTip("Specify the convergence tolerance");
 
-    layout->addLayout(methodLayout);
-    layout->addLayout(otherLayout);
+    layout->addWidget(new QLabel("Convergence Tol"), 9, 0);
+    layout->addWidget(convTol, 9,1);
+
+    scalingFactors = new QLineEdit();
+    scalingFactors->setToolTip("Scaling factors on responses, one for each QoI must be provided or values ignored, default is 1.0 for all");
+    layout->addWidget(new QLabel("Scaling Factors"), 10, 0);
+    layout->addWidget(scalingFactors, 10, 1);
+
+    layout->itemAtPosition(2,0)->widget()->hide();
+    layout->itemAtPosition(2,1)->widget()->hide();
+
+    layout->setColumnStretch(1, 2);
+    layout->setColumnStretch(2, 1);
+    layout->setColumnStretch(3,4);
+
+    layout->setRowStretch(11,1);
 
     this->setLayout(layout);
 }
@@ -165,7 +164,7 @@ DakotaInputBayesianCalibration::~DakotaInputBayesianCalibration()
 
 int 
 DakotaInputBayesianCalibration::getMaxNumParallelTasks(void){
-  return 1;
+    return 1;
 }
 
 void DakotaInputBayesianCalibration::clear(void)
@@ -180,15 +179,17 @@ DakotaInputBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
     bool result = true;
     QJsonObject uq;
     uq["method"]=calibrationMethod->currentText();
-    uq["chain_samples"]=chainSamples->text().toInt();
+    uq["chainSamples"]=chainSamples->text().toInt();
     uq["seed"]=randomSeed->text().toDouble();
-    uq["burn_in_samples"]=burnInSamples->text().toInt();
-    uq["use_emulator"]=Emulator->currentText();
-    uq["prop_cov"]=propCov->currentText();
-    uq["adaptive_post"]=aPost->currentText();
-    uq["logMap"]=logMap->currentText();
+    uq["burnInSamples"]=burnInSamples->text().toInt();
+    uq["mcmcMethod"]=mcmcMethod->currentText();
+    uq["chains"]=chains->text().toInt();
+    uq["emulator"]=emulator->currentText();
+    uq["maxIter"]=maxIterations->text().toInt();
+    uq["tol"]=convTol->text().toDouble();
+    uq["factors"]=scalingFactors->text();
 
-    jsonObject["bayesian_calibration_method_data"]=uq;
+    jsonObject["bayesianCalibrationMethodData"]=uq;
     return result;
 
 }
@@ -200,17 +201,42 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
     bool result = true;
     this->clear();
 
-    if (jsonObject.contains("bayesian_calibration_method_data")) {
-        QJsonObject uq = jsonObject["bayesian_calibration_method_data"].toObject();
+    if (jsonObject.contains("bayesianCalibrationMethodData")) {
+
+        QJsonObject uq = jsonObject["bayesianCalibrationMethodData"].toObject();
+
         QString method =uq["method"].toString();
-        int samples=uq["chain_samples"].toInt();
-        double seed=uq["seed"].toDouble();
-
-        chainSamples->setText(QString::number(samples));
-        randomSeed->setText(QString::number(seed));
-
         int index = calibrationMethod->findText(method);
         calibrationMethod->setCurrentIndex(index);
+
+        QString mcmc = uq["mcmcMethod"].toString();
+        index = mcmcMethod->findText(mcmc);
+        mcmcMethod->setCurrentIndex(index);
+
+        int samples=uq["chainSamples"].toInt();
+        chainSamples->setText(QString::number(samples));
+
+        double seed=uq["seed"].toDouble();
+        randomSeed->setText(QString::number(seed));
+
+        int burnSamples = uq["burnSamples"].toInt();
+        burnInSamples->setText(QString::number(burnSamples));
+
+        int c = uq["chains"].toInt();
+        chains->setText(QString::number(c));
+
+        QString em = uq["emulator"].toString();
+        index =emulator->findText(em);
+        emulator->setCurrentIndex(index);
+
+        int maxIter=uq["maxIter"].toInt();
+        maxIterations->setText(QString::number(maxIter));
+
+        double tol=uq["tol"].toDouble();
+        convTol->setText(QString::number(tol));
+
+        QString fact = uq["factors"].toString();
+        scalingFactors->setText(fact);
 
     } else {
         emit sendErrorMessage("ERROR: Bayesian Calibration INput - no \"bayesian_calibration_method\" data");
@@ -220,8 +246,20 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
     return true;
 }
 
-void DakotaInputBayesianCalibration::uqSelectionChanged(const QString &arg1)
+void DakotaInputBayesianCalibration::onMethodChanged(const QString &arg1)
 {
+    if (arg1.compare(QString("QUESO"))) {
+        layout->itemAtPosition(2,0)->widget()->hide();
+        layout->itemAtPosition(2,1)->widget()->hide();
+        layout->itemAtPosition(3,0)->widget()->show();
+        layout->itemAtPosition(3,1)->widget()->show();
+
+    } else {
+        layout->itemAtPosition(2,0)->widget()->show();
+        layout->itemAtPosition(2,1)->widget()->show();
+        layout->itemAtPosition(3,0)->widget()->hide();
+        layout->itemAtPosition(3,1)->widget()->hide();
+    }
 
 }
 
@@ -232,6 +270,7 @@ int DakotaInputBayesianCalibration::processResults(QString &filenameResults, QSt
 
 UQ_Results *
 DakotaInputBayesianCalibration::getResults(void) {
+    qDebug() << "new DakotaResultsCalibration";
   return new DakotaResultsBayesianCalibration();
 }
 

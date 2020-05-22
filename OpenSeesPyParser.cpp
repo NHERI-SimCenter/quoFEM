@@ -36,85 +36,65 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-// Purpose: to present a widget for FEAPpv,
-// 1) to open feap input files, to parse for any parameters that have been set
+// Purpose: to present a widget for OpenSeesPy,
+// 1) to open feap input files, to parse for any parameters that have been set WITH THE PSET command
 // and then to return the variablename and values in a string. These are used to init the random variable widget.
 // 2) for dakota to again open and parse the input file, this time replacing any input parameters
-// with the needed dakota input format: varName {varName}
+// with the needed dakota input format: pset varName {varName}
 
-#include <FEAPpvParser.h>
+#include <OpenSeesPyParser.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <regex>
 #include <iterator>
 #include <string>
+#include <QDebug>
+#include <QFileInfo>
+#include <QDir>
 
 using namespace std;
 
-FEAPpvParser::FEAPpvParser()
+OpenSeesPyParser::OpenSeesPyParser()
 {
 
 }
 
-FEAPpvParser::~FEAPpvParser()
+OpenSeesPyParser::~OpenSeesPyParser()
 {
 
 }
 
 QStringList
-FEAPpvParser::getVariables(QString inFilename)
+OpenSeesPyParser::getVariables(QString inFilename)
 {
   QStringList result;
 
   ifstream inFile(inFilename.toStdString());
 
-  /*  ************** THIS MIGHT BE MORE EFFICIENT AS DON't REGEX EVERY LINE ***************************
   // read lines of input searching for pset using regular expression 
-  regex paramLine("PARA");
-  regex paramSet("[A-Za-z0-9]+[ ]+[=][-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
-  regex anything("[a-zA-Z0-9]");
   string line;
-  bool doParam = false;
-
   while (getline(inFile, line)) {
 
-    if (doParam == true) {
-        if (!regex_search(line, anything)) {
-            doParam = false;
-        } else {
-            // if found break into cmd, varName and value (ignore the rest)
-            istringstream iss(line);
-            string varName, eq, value;
-            iss >> varName >> eq >> value;
+    string equalTo("=");
+    std::size_t found = line.find(equalTo);
+    if (found != std::string::npos) {
 
-            // add varName and value to results
-            result.append(QString::fromStdString(varName));
-            result.append(QString::fromStdString(value));
-        }
-    }
-    if (regex_search(line, paramLine)) {
-      doParam = true;
+      std::string varName = line.substr(0, found);
+      varName.erase(std::remove_if(varName.begin(), varName.end(), ::isspace), varName.end());
+      std::string value = line.substr(found+1);
+      value.erase(std::remove_if(value.begin(), value.end(), ::isspace), value.end());
+
+      // strip possible ; from end of value (possible if comment) line
+      regex delim(";");
+      value = regex_replace(value,delim,"");
+      
+      // add varName and value to results   
+      result.append(QString::fromStdString(varName));
+      result.append(QString::fromStdString(value));
+	
     }
   } 
- ************************************************************************************/
-
-  // read lines of input searching for param set using regular expression
-  regex paramSet("[ \t]*[A-Za-z0-9]+[ \t]+[=][ \t]+[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
-  string line;
-
-  while (getline(inFile, line)) {
-      if (regex_search(line, paramSet)) {
-          // if found break into cmd, varName and value (ignore the rest)
-          istringstream iss(line);
-          string varName, eq, value;
-          iss >> varName >> eq >> value;
-
-          // add varName and value to results
-          result.append(QString::fromStdString(varName));
-          result.append(QString::fromStdString(value));
-      }
-  }
 
   // close file   
   inFile.close();
@@ -123,32 +103,35 @@ FEAPpvParser::getVariables(QString inFilename)
 }
 
 void 
-FEAPpvParser::writeFile(QString inFilename, QString outFilename, QStringList varToChange)
+OpenSeesPyParser::writeFile(QString inFilename, QString outFilename, QStringList varToChange)
 {
+    qDebug() << "in: " << inFilename << " " << outFilename;
     ifstream inFile(inFilename.toStdString());
     ofstream outFile(outFilename.toStdString());
 
-    regex paramSet("[ \t]*[A-Za-z0-9]+[ \t]+[=][ \t]+[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
-    string line;
+    QFileInfo outFileInfo(outFilename);
+    QString  outFileDir = outFileInfo.absolutePath();
 
+    // read lines of input searching for pset using regular expression
+    // read lines of input searching for pset using regular expression
+    string line;
     while (getline(inFile, line)) {
 
-        if (regex_search(line, paramSet)) {
+      string equalTo("=");
+      std::size_t found = line.find(equalTo);
+      if (found != std::string::npos) {
 
-            // if found break into cmd, varName and value (ignore the rest)
-            istringstream iss(line);
-            string varName, eq, value;
-            iss >> varName >> eq >> value;
+        std::string varNameWithSpaces = line.substr(0, found);
+        std::string varName(varNameWithSpaces); // need an extra to ensure indentation correct for python
+        varName.erase(std::remove_if(varName.begin(), varName.end(), ::isspace), varName.end());
+
 
             // if varName in input sting list, modify line otherwise write current line
             QString val1(QString::fromStdString(varName));
 
             if (varToChange.contains(val1)) {
-                // write new line format to output
-               // OLD: outFile << varName << " =  \{" << varName << "\}\n";
-                outFile << varName << " =  \"RV." << varName << "\"\n";
+                outFile << varNameWithSpaces << " = \"RV." << varName << "\"\n";
             } else {
-
                 // not there, write current line
                 outFile << line << "\n";
             }

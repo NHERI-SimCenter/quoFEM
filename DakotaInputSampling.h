@@ -59,8 +59,10 @@ public:
     explicit DakotaInputSampling(QWidget *parent = 0);
     ~DakotaInputSampling();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &jsonObject);
+    bool inputFromJSON(QJsonObject &jsonObject);
+    bool outputAppDataToJSON(QJsonObject &jsonObject);
+    bool inputAppDataFromJSON(QJsonObject &jsonObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
 
@@ -76,6 +78,7 @@ signals:
 public slots:
    void clear(void);
    void onTextChanged(const QString &arg1);
+   void numModelsChanged(int numModels);
 
 private:
     QVBoxLayout *layout;
@@ -98,6 +101,7 @@ private:
     UQ_MethodInputWidget *theIS;
     UQ_MethodInputWidget *theGP;
     UQ_MethodInputWidget *thePCE;
+    UQ_MethodInputWidget *theMFMC;
 };
 
 #endif // DAKOTA_INPUT_SAMPLING_H

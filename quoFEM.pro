@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts concurrent network
+QT       += core gui charts concurrent network printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -35,12 +35,12 @@ win32 {
 
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/Common/Common.pri)
-include(./MiniZip/MiniZip.pri)
+
 
 SOURCES += main.cpp\
         MainWindow.cpp \
+    EDP.cpp  \
         SidebarWidgetSelection.cpp \
-        EDP.cpp \
         InputWidgetEDP.cpp \
         InputWidgetFEM.cpp \
         UQ_EngineSelection.cpp \
@@ -54,11 +54,13 @@ SOURCES += main.cpp\
         UQ_Engine.cpp \
         DakotaEngine.cpp \
         UQpyEngine.cpp \
+	filterEngine.cpp \
         InputWidgetParameters.cpp \
         DakotaResultsBayesianCalibration.cpp \
         DakotaInputBayesianCalibration.cpp \
         OpenSeesParser.cpp \
         FEAPpvParser.cpp \
+        OpenSeesPyParser.cpp \
     RemoteJobCreator.cpp \
     MyTableWidget.cpp \
     RemoteJobManager.cpp \
@@ -67,19 +69,22 @@ SOURCES += main.cpp\
     CustomizedItemModel.cpp \
     UQ_MethodInputWidget.cpp \
     MonteCarloInputWidget.cpp \
+    MultiFidelityMonteCarlo.cpp \
     LatinHypercubeInputWidget.cpp \
     ImportanceSamplingInputWidget.cpp \
     GaussianProcessInputWidget.cpp \
-    PCEInputWidget.cpp \ 
+    PCEInputWidget.cpp \
+    qcustomplot.cpp \
     DakotaInputReliability.cpp \
-    FORMInputWidget.cpp \
-    SORMInputWidget.cpp \
+    LocalReliabilityWidget.cpp \
+    GlobalReliabilityWidget.cpp \
+    SimCenterGraphPlot.cpp \
+    qcustomplot.cpp \
     DakotaResultsReliability.cpp
 
-
 HEADERS  += MainWindow.h \
-    EDP.h \
     InputWidgetEDP.h \
+EDP.h \
     InputWidgetFEM.h \
     SidebarWidgetSelection.h \
     UQ_EngineSelection.h \
@@ -93,11 +98,13 @@ HEADERS  += MainWindow.h \
     UQ_Engine.h \
     DakotaEngine.h \
     UQpyEngine.h \
+    filterEngine.h \
     InputWidgetParameters.h \
     DakotaInputBayesianCalibration.h \
     DakotaResultsBayesianCalibration.h \
     OpenSeesParser.h \
     FEAPpvParser.h \
+    OpenSeesPyParser.h \
     RemoteJobCreator.h \
     MyTableWidget.h \
     RemoteJobManager.h \
@@ -105,14 +112,17 @@ HEADERS  += MainWindow.h \
     RemoteService.h \
     UQ_MethodInputWidget.h \
     MonteCarloInputWidget.h \
+    MultiFidelityMonteCarlo.h \
     LatinHypercubeInputWidget.h \
     CustomizedItemModel.h \
     ImportanceSamplingInputWidget.h \
     GaussianProcessInputWidget.h \
     PCEInputWidget.h \
+    SimCenterGraphPlot.h \
     DakotaInputReliability.h \
-    FORMInputWidget.h \
-    SORMInputWidget.h \
+    LocalReliabilityWidget.h \
+    GlobalReliabilityWidget.h \
+    qcustomplot.h \
     DakotaResultsReliability.h
 
 FORMS    += mainwindow.ui

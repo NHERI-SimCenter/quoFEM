@@ -58,6 +58,7 @@ public:
     virtual QString getProcessingScript();
 
 signals:
+    void onNumModelsChanged(int numModels);
 
 public slots:
 

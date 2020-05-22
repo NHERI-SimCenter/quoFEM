@@ -72,6 +72,7 @@ class MainWindow : public QMainWindow
 
   QLabel *errorLabel;
 
+
 signals:
     void attemptLogin(QString, QString);
     void logout();
@@ -105,7 +106,6 @@ signals:
     void about();
     void manual();
     void submitFeedback();
-    void submitFeatureRequest();
     void version();
     void preferences();
     void copyright();
@@ -113,6 +113,10 @@ signals:
 
  private:
     void setCurrentFile(const QString &fileName);
+
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
+
     void createActions();
 
     //Ui::MainWindow *ui;

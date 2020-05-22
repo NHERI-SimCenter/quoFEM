@@ -1,5 +1,5 @@
-#ifndef DAKOTA_ENGINE_H
-#define DAKOTA_ENGINE_H
+#ifndef LOCAL_RELIABILITY_WIDGET_H
+#define LOCAL_RELIABILITY_WIDGET_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -37,52 +37,42 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
 
-#include <UQ_Engine.h>
+#include <UQ_MethodInputWidget.h>
+#include <QComboBox>
 
-class QComboBox;
-class QStackedWidget;
-class UQ_Results;
-class RandomVariablesContainer;
+class QLineEdit;
+class QCheckBox;
+class QGridLayout;
 
-class DakotaEngine : public UQ_Engine
+class LocalReliabilityWidget : public UQ_MethodInputWidget
 {
     Q_OBJECT
 public:
-    explicit DakotaEngine(QWidget *parent = 0);
-    virtual ~DakotaEngine();
+    explicit LocalReliabilityWidget(QWidget *parent = 0);
+    ~LocalReliabilityWidget();
 
-    int getMaxNumParallelTasks(void);
-    bool outputToJSON(QJsonObject &jsonObject);
-    bool inputFromJSON(QJsonObject &jsonObject);
-    bool outputAppDataToJSON(QJsonObject &jsonObject);
-    bool inputAppDataFromJSON(QJsonObject &jsonObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
+    void clear(void);
 
-    int processResults(QString &filenameResults, QString &filenameTab);
-    RandomVariablesContainer *getParameters();
-    UQ_Results *getResults(void);
-
-     QString getProcessingScript();
-
-signals:
-    void onUQ_EngineChanged(void);
-    void onNumModelsChanged(int newNum);
+    int getNumberTasks(void);
 
 public slots:
-    void engineSelectionChanged(const QString &arg1);
-    void numModelsChanged(int newNum);
+    void onMethodSelectionChanged(const QString &method);
 
 private:
-   QComboBox   *theEngineSelectionBox;
-   QStackedWidget *theStackedWidget;
+    QGridLayout *layout;
+    QComboBox *method;
+    QComboBox *mppMethod;
+    QComboBox *integrationMethod;
+    QLineEdit *reliabilityLevel;
+    QLineEdit *probabilityLevel;
+    QComboBox *levelType;
 
-   UQ_Engine *theCurrentEngine;
-   UQ_Engine *theSamplingEngine;
-   UQ_Engine *theReliabilityEngine;
-   UQ_Engine *theCalibrationEngine;
-   UQ_Engine *theBayesianCalibrationEngine;
-   UQ_Engine *theSensitivityEngine;
+    //QLineEdit *responseLevel;
+    //QCheckBox *checkedResponseLevel;
+    //QCheckBox *checkedProbabilityLevel;
 };
 
-#endif // DAKOTA_ENGINE_H
+#endif // LOCAL_RELIABILITY_WIDGET_H

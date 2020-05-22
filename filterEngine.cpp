@@ -1,5 +1,4 @@
-#ifndef DAKOTA_ENGINE_H
-#define DAKOTA_ENGINE_H
+// Written: fmckenna
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,50 +38,72 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <UQ_Engine.h>
+#include "filterEngine.h"
+#include <QDebug>
+#include <RandomVariablesContainer.h>
+#include <UQ_Results.h>
 
-class QComboBox;
-class QStackedWidget;
-class UQ_Results;
-class RandomVariablesContainer;
-
-class DakotaEngine : public UQ_Engine
+filterEngine::filterEngine(QWidget *parent)
+    : UQ_Engine(parent)
 {
-    Q_OBJECT
-public:
-    explicit DakotaEngine(QWidget *parent = 0);
-    virtual ~DakotaEngine();
+  /*************************  at some point need to redo so no new
+    QString classType("Uncertain");
+    theRandomVariables =  new RandomVariablesContainer(classType);
+    theResults = new UQ_Results();
+  ***************************************************************/
+}
 
-    int getMaxNumParallelTasks(void);
-    bool outputToJSON(QJsonObject &jsonObject);
-    bool inputFromJSON(QJsonObject &jsonObject);
-    bool outputAppDataToJSON(QJsonObject &jsonObject);
-    bool inputAppDataFromJSON(QJsonObject &jsonObject);
+filterEngine::~filterEngine()
+{
 
-    int processResults(QString &filenameResults, QString &filenameTab);
-    RandomVariablesContainer *getParameters();
-    UQ_Results *getResults(void);
+}
 
-     QString getProcessingScript();
+int
+filterEngine::getMaxNumParallelTasks(void) {
+    return 1;
+}
 
-signals:
-    void onUQ_EngineChanged(void);
-    void onNumModelsChanged(int newNum);
+bool
+filterEngine::outputToJSON(QJsonObject &rvObject) {
+    return true;
+}
 
-public slots:
-    void engineSelectionChanged(const QString &arg1);
-    void numModelsChanged(int newNum);
 
-private:
-   QComboBox   *theEngineSelectionBox;
-   QStackedWidget *theStackedWidget;
+bool
+filterEngine::inputFromJSON(QJsonObject &rvObject) {
+    return true;
+}
 
-   UQ_Engine *theCurrentEngine;
-   UQ_Engine *theSamplingEngine;
-   UQ_Engine *theReliabilityEngine;
-   UQ_Engine *theCalibrationEngine;
-   UQ_Engine *theBayesianCalibrationEngine;
-   UQ_Engine *theSensitivityEngine;
-};
 
-#endif // DAKOTA_ENGINE_H
+int
+filterEngine::processResults(QString &filenameResults, QString &filenameTab) {
+    return 0;
+}
+
+
+RandomVariablesContainer *
+filterEngine::getParameters() {
+  QString classType("Uncertain");
+  RandomVariablesContainer *theRV =  new RandomVariablesContainer(classType);
+  return theRV;
+}
+
+UQ_Results *filterEngine::getResults(void) {
+  UQ_Results *theRes = new UQ_Results();
+  return theRes;
+}
+
+void
+filterEngine::clear(void) {
+    return;
+}
+
+
+QString
+filterEngine::getProcessingScript() {
+    return QString("parsefilter.py");
+}
+
+
+
+

@@ -42,10 +42,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SimCenterWidget.h>
 
 #include "EDP.h"
-#include <QGroupBox>
 #include <QVector>
-#include <QVBoxLayout>
-#include <QComboBox>
+class QGridLayout;
+class QVBoxLayout;
+class QGroupBox;
+class QComboBox;
+class QGroupBox;
 
 class InputWidgetParameters;
 
@@ -64,15 +66,17 @@ public:
 
      // copy main file to new filename ONLY if varNamesAndValues not empy
     void specialCopyMainInput(QString fileName, QStringList varNamesAndValues);
-    int setFilename1(QString filnema1);
+    int parseInputfilesForRV(QString filnema1);
 
 signals:
 
 public slots:
    void clear(void);
    void femProgramChanged(const QString &arg1);
-   void chooseFileName1(void);
-   void chooseFileName2(void);
+   void numModelsChanged(int newNum);
+
+   //void chooseFileName1(void);
+   //void chooseFileName2(void);
 
 private:
 
@@ -80,14 +84,17 @@ private:
     QWidget     *femSpecific;
     QComboBox   *femSelection;
 
-    QLineEdit *file1;
-    QLineEdit *file2;
+    //    QLineEdit *file1;
+    // QLineEdit *file2;
 
-    QString fileName1;
-    QString fileName2;
 
     InputWidgetParameters *theParameters;
     QStringList varNamesAndValues;
+
+    int numInputs;
+    QVector<QLineEdit *>inputFilenames;
+    QVector<QLineEdit *>postprocessFilenames;
+    QVector<QLineEdit *>parametersFilenames;
 };
 
 #endif // INPUTWIDGETFEM_H

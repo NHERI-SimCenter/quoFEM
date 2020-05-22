@@ -1,5 +1,5 @@
-#ifndef DAKOTA_ENGINE_H
-#define DAKOTA_ENGINE_H
+#ifndef filter_ENGINE_H
+#define filter_ENGINE_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -41,48 +41,35 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <UQ_Engine.h>
 
-class QComboBox;
-class QStackedWidget;
 class UQ_Results;
 class RandomVariablesContainer;
 
-class DakotaEngine : public UQ_Engine
+class filterEngine : public UQ_Engine
 {
     Q_OBJECT
 public:
-    explicit DakotaEngine(QWidget *parent = 0);
-    virtual ~DakotaEngine();
+    explicit filterEngine(QWidget *parent = 0);
+    virtual ~filterEngine();
 
     int getMaxNumParallelTasks(void);
-    bool outputToJSON(QJsonObject &jsonObject);
-    bool inputFromJSON(QJsonObject &jsonObject);
-    bool outputAppDataToJSON(QJsonObject &jsonObject);
-    bool inputAppDataFromJSON(QJsonObject &jsonObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
     RandomVariablesContainer *getParameters();
     UQ_Results *getResults(void);
 
-     QString getProcessingScript();
+    QString getProcessingScript();
+
+    void clear(void);
 
 signals:
-    void onUQ_EngineChanged(void);
-    void onNumModelsChanged(int newNum);
 
 public slots:
-    void engineSelectionChanged(const QString &arg1);
-    void numModelsChanged(int newNum);
 
 private:
-   QComboBox   *theEngineSelectionBox;
-   QStackedWidget *theStackedWidget;
-
-   UQ_Engine *theCurrentEngine;
-   UQ_Engine *theSamplingEngine;
-   UQ_Engine *theReliabilityEngine;
-   UQ_Engine *theCalibrationEngine;
-   UQ_Engine *theBayesianCalibrationEngine;
-   UQ_Engine *theSensitivityEngine;
+    RandomVariablesContainer *theRandomVariables;
+    UQ_Results *theResults;
 };
 
-#endif // DAKOTA_ENGINE_H
+#endif // filter_ENGINE_H

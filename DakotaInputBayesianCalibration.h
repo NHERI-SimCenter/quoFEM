@@ -41,13 +41,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <UQ_Engine.h>
 
-#include <QGroupBox>
-#include <QVector>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QPushButton>
 class DakotaResultsBayesianCalibration;
 class UQ_Results;
+class QGridLayout;
+class QComboBox;
+class QPushButton;
+class QLineEdit;
 
 class RandomVariablesContainer;
 
@@ -59,8 +58,8 @@ public:
     ~DakotaInputBayesianCalibration();
 
     int getMaxNumParallelTasks(void);
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &jsonObject);
+    bool inputFromJSON(QJsonObject &jsonObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
 
@@ -71,23 +70,29 @@ signals:
 
 public slots:
    void clear(void);
-   void uqSelectionChanged(const QString &arg1);
+   void onMethodChanged(const QString &arg1);
 
 private:
-    QVBoxLayout *layout;
+    QGridLayout *layout;
     QWidget     *methodSpecific;
     QComboBox   *calibrationMethod;
+    QComboBox   *mcmcMethod;
+    QLineEdit   *chains;
     QLineEdit   *chainSamples;
     QLineEdit   *randomSeed;
     QLineEdit   *burnInSamples;
-    QComboBox   *Emulator;
-    QComboBox   *propCov;
-    QComboBox   *aPost;
-    QComboBox   *logMap;
+    QComboBox   *emulator;
+    QLineEdit   *maxIterations;
+    QLineEdit   *convTol;
+    QLineEdit   *scalingFactors;
 
-    QPushButton *run;
-    QComboBox   *uqSelection;
-    QWidget     *uqSpecific;
+    //QComboBox   *propCov;
+    //QComboBox   *aPost;
+    //QComboBox   *logMap;
+
+    //QPushButton *run;
+    //QComboBox   *uqSelection;
+    //QWidget     *uqSpecific;
 
     RandomVariablesContainer *theParameters;
     DakotaResultsBayesianCalibration *results;

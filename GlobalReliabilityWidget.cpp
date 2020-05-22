@@ -36,127 +36,117 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <FORMInputWidget.h>
+#include <GlobalReliabilityWidget.h>
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QValidator>
 #include <QJsonObject>
+#include <QDebug>
+#include <QJsonArray>
 #include <QButtonGroup>
 #include <QCheckBox>
-#include <QJsonArray>
-#include <QDebug>
 
-FORMInputWidget::FORMInputWidget(QWidget *parent) 
+
+GlobalReliabilityWidget::GlobalReliabilityWidget(QWidget *parent) 
 : UQ_MethodInputWidget(parent)
 {
-  QGridLayout *layout = new QGridLayout();
+     QGridLayout *layout = new QGridLayout();
 
-  // create layout label and entry for # samples
-  QHBoxLayout *methodLayout= new QHBoxLayout;
-  QLabel *label2 = new QLabel();
-  label2->setText(QString("Reliability Scheme"));
-  reliabilityScheme = new QComboBox();
-  reliabilityScheme->addItem(tr("Local"));
-  reliabilityScheme->addItem(tr("Global"));  
-  reliabilityScheme->setToolTip("Set reliability scheme:  local vs global");
+    // create layout label and entry for # samples
+    QHBoxLayout *methodLayout= new QHBoxLayout;
+    QLabel *label2 = new QLabel();
+    label2->setText(QString("GP Approximation"));
+    gpApproximation = new QComboBox();
+    gpApproximation->addItem(tr("x-space"));
+    gpApproximation->addItem(tr("u-space"));
+    gpApproximation->setToolTip("Create Gaussian Proccess Approximation in x-space or u-space");
 
-  layout->addWidget(label2, 0,1);
-  layout->addWidget(reliabilityScheme, 0,2);
+    layout->addWidget(label2, 0,1);
+    layout->addWidget(gpApproximation, 0,2);
 
-  QLabel *label3 = new QLabel();
-  label3->setText(QString("MPP Search Method"));
-  mppMethod = new QComboBox();
-  //  mppMethod->setMaximumWidth(100);
-  //  mppMethod->setMinimumWidth(100);
-  mppMethod->addItem(tr("no_approx"));
-  mppMethod->addItem(tr("x_taylor_mean"));
-  mppMethod->addItem(tr("u_taylor_mean"));   
-  mppMethod->setToolTip("Set the search method for the Most Probable Point");
+    /*
+    QButtonGroup *theButtonGroup = new QButtonGroup();
+    checkedResponseLevel = new QCheckBox();
+    checkedProbabilityLevel = new QCheckBox();
+    checkedProbabilityLevel->setChecked(true);
+    theButtonGroup->addButton(checkedResponseLevel);
+    theButtonGroup->addButton(checkedProbabilityLevel);
 
-  QButtonGroup *theButtonGroup = new QButtonGroup();
-  checkedResponseLevel = new QCheckBox();
-  checkedProbabilityLevel = new QCheckBox();
-  checkedProbabilityLevel->setChecked(true);
-  theButtonGroup->addButton(checkedResponseLevel);
-  theButtonGroup->addButton(checkedProbabilityLevel);
+    responseLevel = new QLineEdit();
+    layout->addWidget(label3, 1,1);
+    layout->addWidget(mppMethod, 1,2);
 
-  responseLevel = new QLineEdit();
-  probabilityLevel = new QLineEdit();
-  probabilityLevel->setText(".02 .20 .40 .60 0.80 0.99");
+    layout->addWidget(checkedResponseLevel, 2,0);
+    layout->addWidget(new QLabel("Response Levels"), 2, 1);
+    layout->addWidget(responseLevel, 2, 2);
+    layout->addWidget(checkedProbabilityLevel, 3,0);
+    */
 
-  layout->addWidget(label3, 1,1);
-  layout->addWidget(mppMethod, 1,2);
+    probabilityLevel = new QLineEdit();
+    probabilityLevel->setText(".02 .20 .40 .60 0.80 0.99");
 
+    layout->addWidget(new QLabel("Probability Levels"), 1, 1);
+    layout->addWidget(probabilityLevel, 1, 2);
 
-  layout->addWidget(checkedResponseLevel, 2,0);
-  layout->addWidget(new QLabel("Response Levels"), 2, 1);
-  layout->addWidget(responseLevel, 2, 2);
-  layout->addWidget(checkedProbabilityLevel, 3,0);
-  layout->addWidget(new QLabel("Probability Levels"), 3, 1);
-  layout->addWidget(probabilityLevel, 3, 2);
-
-  layout->setColumnStretch(2,2);
-  layout->setColumnStretch(3,4);
-  layout->setRowStretch(5,1);
+    layout->setColumnStretch(2,2);
+    layout->setColumnStretch(3,4);
+    layout->setRowStretch(5,1);
 
 
-  this->setLayout(layout);
+    this->setLayout(layout);
 }
 
-FORMInputWidget::~FORMInputWidget()
+GlobalReliabilityWidget::~GlobalReliabilityWidget()
 {
 
 }
 
 bool
-FORMInputWidget::outputToJSON(QJsonObject &jsonObj){
+GlobalReliabilityWidget::outputToJSON(QJsonObject &jsonObj){
 
     bool result = true;
-    jsonObj["reliability_Scheme"]=reliabilityScheme->currentText();
-    jsonObj["mpp_Method"]=mppMethod->currentText();
+    jsonObj["gpApproximation"]=gpApproximation->currentText();
 
     QJsonArray probLevel;
     QStringList probLevelList = QStringList(probabilityLevel->text().split(" "));
     for (int i = 0; i < probLevelList.size(); ++i)
         probLevel.push_back(probLevelList.at(i).toDouble());
-
+    jsonObj["probabilityLevel"]=probLevel;
+    /*
     QJsonArray respLevel;
     QStringList respLevelList = QStringList(responseLevel->text().split(" "));
     for (int i = 0; i < respLevelList.size(); ++i)
         respLevel.push_back(respLevelList.at(i).toDouble());
-
-
-    jsonObj["probabilityLevel"]=probLevel;
     jsonObj["responseLevel"]=respLevel;
+
     if (checkedResponseLevel->isChecked())
         jsonObj["activeLevel"]=QString("ResponseLevel");
     else
         jsonObj["activeLevel"]=QString("ProbabilityLevel");
+    */
+
+
+
 
     return result;    
 }
 
 bool
-FORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
-    bool result = false;
+GlobalReliabilityWidget::inputFromJSON(QJsonObject &jsonObject){
 
-    if ( (jsonObject.contains("reliability_Scheme"))
-         && (jsonObject.contains("mpp_Method"))
-         && (jsonObject.contains("activeLevel"))
+    bool result = false;
+    if ( (jsonObject.contains("gpApproximation"))
          && (jsonObject.contains("probabilityLevel"))
-         && (jsonObject.contains("responseLevel"))
          ) {
 
-        responseLevel->setText("");
+        //responseLevel->setText("");
         probabilityLevel->setText("");
 
-        QString scheme=jsonObject["reliability_Scheme"].toString();
-        reliabilityScheme->setCurrentIndex(reliabilityScheme->findText(scheme));
+        QString scheme=jsonObject["gpApproximation"].toString();
+        gpApproximation->setCurrentIndex(gpApproximation->findText(scheme));
 
-        QString method=jsonObject["mpp_Method"].toString();
-        mppMethod->setCurrentIndex(mppMethod->findText(method));
-
+        /*
          QString activeLevel=jsonObject["activeLevel"].toString();
          if (activeLevel ==  QString("ProbabilityLevel"))
              checkedProbabilityLevel->setChecked(true);
@@ -164,6 +154,8 @@ FORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
              checkedResponseLevel->setChecked(true);
 
         QStringList respLevelList;
+        */
+
         QJsonArray probLevels;
 
         QJsonValue probLevelVal = jsonObject["probabilityLevel"];
@@ -181,7 +173,7 @@ FORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
         } else {
             qDebug() << "FORM Input: Probability level not json array";
         }
-
+    /*
         QJsonValue respLevelVal = jsonObject["responseLevel"];
         if (respLevelVal.isArray()) {
 
@@ -197,7 +189,7 @@ FORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
         } else {
             qDebug() << "FORM Input: Response level not json array";
         }
-
+*/
 
         return true;
     }
@@ -206,14 +198,15 @@ FORMInputWidget::inputFromJSON(QJsonObject &jsonObject){
 }
 
 void
-FORMInputWidget::clear(void)
+GlobalReliabilityWidget::clear(void)
 {
+
 }
 
 
 
 int
-FORMInputWidget::getNumberTasks()
+GlobalReliabilityWidget::getNumberTasks()
 {
     return 1;
 }

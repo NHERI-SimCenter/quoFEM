@@ -1,5 +1,5 @@
-#ifndef SORM_INPUT_WIDGET_H
-#define SORM_INPUT_WIDGET_H
+#ifndef OpenSeesPy_PARSER_H
+#define OpenSeesPy_PARSER_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -37,33 +37,21 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
+// Written: fmckenna
 
-#include <UQ_MethodInputWidget.h>
-#include <QComboBox>
+#include <QStringList>
 
-class QLineEdit;
-class QCheckBox;
-
-class SORMInputWidget : public UQ_MethodInputWidget
+class OpenSeesPyParser
 {
-    Q_OBJECT
 public:
-    explicit SORMInputWidget(QWidget *parent = 0);
-    ~SORMInputWidget();
+    OpenSeesPyParser();
+    ~OpenSeesPyParser();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-    void clear(void);
-
-    int getNumberTasks(void);
+    QStringList getVariables(QString inFilename);
+    void writeFile(QString infilename, QString outFilename, QStringList varToChange);
 
 private:
-    QComboBox *mppMethod;
-    QComboBox *reliabilityScheme;
-    QLineEdit *probabilityLevel;
-    QLineEdit *responseLevel;
-    QCheckBox *checkedResponseLevel;
-    QCheckBox *checkedProbabilityLevel;
+
 };
 
-#endif // SORM_INPUT_WIDGET_H
+#endif // OpenSeesPy_PARSER_H

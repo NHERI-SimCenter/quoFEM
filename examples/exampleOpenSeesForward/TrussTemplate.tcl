@@ -22,13 +22,13 @@ element truss 6 6 4 $A2 1
 element truss 7 2 5 $A1 1
 element truss 8 3 6 $A1 1
 element truss 9 5 3 $A1 1
-timeSeries Constant 1
+timeSeries Linear 1
 pattern Plain 1 1 {
     load 2 0 -$P
     load 3 0 -$P
 }
 
-recorder Node -file node.out -node 1 2 3 4 5 6 -dof 2 disp
+recorder Node -file node.out -scientific -precision 10 -node 1 2 3 4 5 6 -dof 1 2 disp
 
 algorithm Linear
 integrator LoadControl 1.0
@@ -37,3 +37,10 @@ numberer RCM
 constraints Plain
 analysis Static
 analyze 1
+
+#set fd [open "test.out" w]
+#puts $fd "E: $E disp2: [nodeDisp 2 2] disp2*E: [expr [nodeDisp 2 2]*$E]"
+#close $fd
+#puts "E: $E disp2: [nodeDisp 2 2] disp2*E: [expr [nodeDisp 2 2]*$E]"
+
+remove recorders
