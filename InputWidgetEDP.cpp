@@ -58,7 +58,7 @@ InputWidgetEDP::InputWidgetEDP(QWidget *parent) : SimCenterWidget(parent)
 
 InputWidgetEDP::~InputWidgetEDP()
 {
-    // qDebug() << "InputWidgetEDP::DESTRCUTOR CALLED\n";
+
 }
 
 void
@@ -68,7 +68,7 @@ InputWidgetEDP::makeEDP(void)
     QHBoxLayout *titleLayout = new QHBoxLayout();
 
     SectionTitle *title=new SectionTitle();
-    title->setText(tr("Response Parameters"));
+    title->setText(tr("Quantities of Interest"));
     title->setMinimumWidth(250);
     QSpacerItem *spacer1 = new QSpacerItem(50,10);
     QSpacerItem *spacer2 = new QSpacerItem(20,10);
@@ -173,7 +173,7 @@ InputWidgetEDP::outputToJSON(QJsonObject &jsonObject)
         else
             result = false;
     }
-    jsonObject["edps"]=edpArray;
+    jsonObject["EDP"]=edpArray;
     return result;
 }
 
@@ -187,7 +187,7 @@ InputWidgetEDP::inputFromJSON(QJsonObject &rvObject)
     this->clear();
 
     // go get the array, and for each component create one, get it to read & then add
-    QJsonArray rvArray = rvObject["edps"].toArray();
+    QJsonArray rvArray = rvObject["EDP"].toArray();
     foreach (const QJsonValue &rvValue, rvArray) {
         QJsonObject rvObject = rvValue.toObject();
         EDP *theEDP = new EDP();

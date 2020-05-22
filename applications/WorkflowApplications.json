@@ -1,0 +1,44 @@
+{
+  "UQApplications": {
+    "API": {
+      "Inputs": [
+      {
+          "id": "inputFile",
+          "type": "string",
+          "description": "name of file containing the input",
+          "default": "input.json"
+      }
+      ],
+      "Outputs": [
+      {
+          "id": "outFile",
+          "type": "string",
+          "description": "name of output file",
+          "default": "EDP.json"
+      },
+      {
+          "id": "tabFile",
+          "type": "string",
+          "description": "name of tab file containing for each simulation the RV values and response values",
+          "default": "EDP.json"
+      }
+      ]
+    },
+    "Applications": [
+      {
+        "Name": "Dakota-UQ",
+        "ExecutablePath": "applications/performUQ/dakota/parseDakota.py",
+        "ApplicationSpecificInputs": [
+        ]
+      },
+      {
+        "Name": "uqPY",
+        "ExecutablePath": "applications/performUQ/uqPy/runUQ_PY.py",
+        "ApplicationSpecificInputs": [
+        ]
+      }
+    ]
+  }
+} 
+
+

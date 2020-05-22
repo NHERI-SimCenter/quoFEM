@@ -36,6 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
+#include <ZipUtils.h>
 #include <QTreeView>
 #include <QStandardItemModel>
 #include <QItemSelectionModel>
@@ -50,24 +51,28 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QAction>
 #include <QMenu>
 #include <QApplication>
+#include <SimCenterPreferences.h>
+#include <QSettings>
 
 #include "SidebarWidgetSelection.h"
 
 #include <InputWidgetEDP.h>
 #include <InputWidgetFEM.h>
-#include <InputWidgetUQ.h>
-#include <DakotaResults.h>
+#include <UQ_EngineSelection.h>
+#include <UQ_Results.h>
 #include <InputWidgetParameters.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
+#include <GoogleAnalytics.h>
 
 #include <DakotaResultsSampling.h>
+#include <SimCenterPreferences.h>
 
 #include <QVBoxLayout>
 #include <HeaderWidget.h>
 #include <FooterWidget.h>
 #include <QPushButton>
 #include <InputWidgetFEM.h>
-#include <InputWidgetUQ.h>
+#include <UQ_EngineSelection.h>
 //#include <InputWidgetEDP.h>
 #include <QFileInfo>
 #include <QProcess>
@@ -90,27 +95,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 
-
-/*
-static
-MainWindow::MainWindow *theOneStaticMainWindow = 0;
-
-void
-MainWindow::errorMessage(const QString msg){
-    //qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-    theOneStaticMainWindow->errorLabel->setText(msg);
-    qDebug() << "ERROR MESSAGE" << msg;
-}
-
-void warningMessage(const QStringList &msg){
-
-}
-void updateMessage(const QStringList &msg)
-{
-
-}
-*/
-
 void
 MainWindow::errorMessage(const QString msg){
     //qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
@@ -132,6 +116,8 @@ MainWindow::MainWindow(QWidget *parent)
     // user settings
     //
 
+
+    /*
     QSettings settings("SimCenter", "uqFEM");
     QVariant savedValue = settings.value("uuid");
     QUuid uuid;
@@ -140,16 +126,17 @@ MainWindow::MainWindow(QWidget *parent)
         settings.setValue("uuid",uuid);
     } else
         uuid =savedValue.toUuid();
-
+    */
 
     //
     // create the interface, jobCreator and jobManager
     //
     QString tenant("designsafe");
     QString storage("agave://designsafe.storage.default/");
+    QString dirName("quoFEM");
 
     //theRemoteInterface = new AgaveCLI(tenant, storage, this);
-    theRemoteInterface =  new AgaveCurl(tenant, storage);
+    theRemoteInterface =  new AgaveCurl(tenant, storage, &dirName);
     jobCreator = new RemoteJobCreator(theRemoteInterface);
     jobManager = new RemoteJobManager(theRemoteInterface, this);
 
@@ -176,7 +163,7 @@ MainWindow::MainWindow(QWidget *parent)
     //
 
     HeaderWidget *header = new HeaderWidget();
-    header->setHeadingText(tr("uqFEM Application"));
+    header->setHeadingText(tr("quoFEM Application"));
     layout->addWidget(header);
 
     // place a location for messages;
@@ -211,29 +198,33 @@ MainWindow::MainWindow(QWidget *parent)
     // finally we add new selection widget to layout
 
     //the input widgets
-    uq = new InputWidgetUQ();
+    uq = new UQ_EngineSelection();
     random = new InputWidgetParameters();
     fem = new InputWidgetFEM(random);
     random->setParametersWidget(uq->getParameters());
+    edp = new InputWidgetEDP();
+
+    connect(uq, SIGNAL(onNumModelsChanged(int)), fem, SLOT(numModelsChanged(int)));
 
     // create selection widget & add the input widgets
-    results = new DakotaResults();
+    results = new UQ_Results();
 
     inputWidget = new SidebarWidgetSelection();
 
-    inputWidget->addInputWidget(tr("FEM Selection"), fem);
-    inputWidget->addInputWidget(tr("Method Selection"), uq);
-    inputWidget->addInputWidget(tr("Input Variables"), random);
-    inputWidget->addInputWidget(tr("Results"), results);
+    inputWidget->addInputWidget(tr("UQ"), tr("Uncertainty Quantification Methods"), uq);
+    inputWidget->addInputWidget(tr("FEM"), tr("Finite Element Method Application"), fem);
+    inputWidget->addInputWidget(tr("RV"), tr("Random Variables"), random);
+    inputWidget->addInputWidget(tr("QoI"), tr("Quantities of Interest"), edp);
+    inputWidget->addInputWidget(tr("RES"), tr("Results"), results);
 
     //inputWidget->setFont(QFont( "lucida", 20, QFont::Bold, TRUE ) );
 
     // let ubput widget know end of ptions, then set initial input to fem
     inputWidget->buildTreee();
-    inputWidget->setSelection(tr("FEM Selection"));
-
+    inputWidget->setSelection(tr("UQ"));
+    //inputWidget->setMinimumWidth(600);
     // add selection widget to the central layout previosuly created
-    layout->addWidget(inputWidget,1.0);
+    layout->addWidget(inputWidget);
 
     //
     // add run, run-DesignSafe and exit buttons into a new widget for buttons
@@ -268,20 +259,24 @@ MainWindow::MainWindow(QWidget *parent)
 
     loginWindow = new QWidget();
     QGridLayout *loginLayout = new QGridLayout();
+    SectionTitle *info=new SectionTitle();
+    info->setText(tr("DesignSafe User Account Info:"));
+
     QLabel *nameLabel = new QLabel();
-    nameLabel->setText("username:");
+    nameLabel->setText("Username:");
     QLabel *passwordLabel = new QLabel();
-    passwordLabel->setText("password:");
+    passwordLabel->setText("Password:");
     nameLineEdit = new QLineEdit();
     passwordLineEdit = new QLineEdit();
     passwordLineEdit->setEchoMode(QLineEdit::Password);
     loginSubmitButton = new QPushButton();
     loginSubmitButton->setText("Login");
-    loginLayout->addWidget(nameLabel,0,0);
-    loginLayout->addWidget(nameLineEdit,0,1);
-    loginLayout->addWidget(passwordLabel,1,0);
-    loginLayout->addWidget(passwordLineEdit,1,1);
-    loginLayout->addWidget(loginSubmitButton,2,2);
+    loginLayout->addWidget(info,0,0,2,2,Qt::AlignBottom);
+    loginLayout->addWidget(nameLabel,2,0);
+    loginLayout->addWidget(nameLineEdit,2,1);
+    loginLayout->addWidget(passwordLabel,3,0);
+    loginLayout->addWidget(passwordLineEdit,3,1);
+    loginLayout->addWidget(loginSubmitButton,4,2);
     loginWindow->setLayout(loginLayout);
 
     //
@@ -292,12 +287,35 @@ MainWindow::MainWindow(QWidget *parent)
     connect(theRemoteInterface,SIGNAL(errorMessage(QString)), this, SLOT(errorMessage(QString)));
     connect(theRemoteInterface,SIGNAL(statusMessage(QString)), this, SLOT(errorMessage(QString)));
     connect(theRemoteInterface,SIGNAL(fatalMessage(QString)), this, SLOT(fatalMessage(QString)));
+
     connect(fem,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(fem,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(fem,SIGNAL(sendStatusMessage(QString)),this,SLOT(fatalMessage(QString)));
+
     connect(random,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(random,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(random,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
     connect(results,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(results,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(results,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
     connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+
+    connect(uq,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(uq,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
+    connect(edp,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(edp,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(edp,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
     connect(jobManager,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(jobManager,SIGNAL(statusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(jobManager,SIGNAL(fatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
     connect(jobCreator,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(jobCreator,SIGNAL(statusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(jobCreator,SIGNAL(fatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
     // login
     connect(loginButton,SIGNAL(clicked(bool)),this,SLOT(onLoginButtonClicked()));
@@ -305,7 +323,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(this,SIGNAL(attemptLogin(QString, QString)),theRemoteInterface,SLOT(loginCall(QString, QString)));
     connect(theRemoteInterface,SIGNAL(loginReturn(bool)),this,SLOT(attemptLoginReturn(bool)));
-
 
     // logout
     connect(this,SIGNAL(logout()),theRemoteInterface,SLOT(logoutCall()));
@@ -319,7 +336,8 @@ MainWindow::MainWindow(QWidget *parent)
     // exit
     connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
 
-    connect(uq,SIGNAL(uqWidgetChanged()), this,SLOT(onDakotaMethodChanged()));
+    // change the UQ engine
+    connect(uq,SIGNAL(onUQ_EngineChanged()), this,SLOT(onUQ_EngineChanged()));
 
     // add button widget to layout
     layout->addWidget(buttonWidget);
@@ -343,11 +361,13 @@ MainWindow::MainWindow(QWidget *parent)
     thread = new QThread();
     theRemoteInterface->moveToThread(thread);
 
-    connect(thread, SIGNAL(finished()), theRemoteInterface, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()), theRemoteInterface, SLOT(deleteLater()));//adding back
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
     thread->start();
 
+
+    // adding back ---
     //
     // at startup make some URL calls to cleect tool stats
     //
@@ -360,32 +380,35 @@ MainWindow::MainWindow(QWidget *parent)
     // send get to my simple counter
     manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/uqFEM/use.php")));
 
-    //
-    // google analytics
-    // ref: https://developers.google.com/analytics/devguides/collection/protocol/v1/reference
-    //
+    //QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
 
-    QNetworkRequest request;
-    QUrl host("http://www.google-analytics.com/collect");
-    request.setUrl(host);
-    request.setHeader(QNetworkRequest::ContentTypeHeader,
-                      "application/x-www-form-urlencoded");
+    workingDirectory = SimCenterPreferences::getInstance()->getRemoteWorkDir();
 
-    // setup parameters of request
-    QString requestParams;
-    QString hostname = QHostInfo::localHostName() + "." + QHostInfo::localDomainName();
-    //QUuid uuid = QUuid::createUuid();
-    requestParams += "v=1"; // version of protocol
-    requestParams += "&tid=UA-121636495-1"; // Google Analytics account
-    requestParams += "&cid=" + uuid.toString(); // unique user identifier
-    requestParams += "&t=event";  // hit type = event others pageview, exception
-    requestParams += "&an=uqFEM"; // app name
-    requestParams += "&av=1.0.1"; // app version
-    requestParams += "&ec=uqFEM";   // event category
-    requestParams += "&ea=start"; // event action
+    QDir dirWorkRemote(workingDirectory);
+    if (!dirWorkRemote.exists())
+        if (!dirWorkRemote.mkpath(workingDirectory)) {
+            emit errorMessage(QString("Could not create Working Dir: ") + workingDirectory + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
+            return;
+        }
 
-    // send post to google-analytics
-    manager->post(request, requestParams.toStdString().c_str());
+    workingDirectory = SimCenterPreferences::getInstance()->getLocalWorkDir();
+
+    QDir dirWork(workingDirectory);
+    if (!dirWork.exists())
+        if (!dirWork.mkpath(workingDirectory)) {
+            emit errorMessage(QString("Could not create Working Dir: ") + workingDirectory + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
+            return;
+        }
+
+    QSettings settings("SimCenter", "Common");
+    QVariant  loginName = settings.value("loginAgave");
+    QVariant  loginPassword = settings.value("passwordAgave");
+    if (loginName.isValid()) {
+        nameLineEdit->setText(loginName.toString());
+    }
+    if (loginPassword.isValid()) {
+        passwordLineEdit->setText(loginPassword.toString());
+    }
 }
 
 MainWindow::~MainWindow()
@@ -399,7 +422,7 @@ MainWindow::~MainWindow()
     // destroy objects we created
     delete jobCreator;
     delete jobManager;
-    delete manager;
+    delete manager;// adding back
 }
 
 bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory)
@@ -418,8 +441,6 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
     {
         return false;
     }
-
-
     else if(destinationDirectory.exists() && overWriteDirectory)
     {
         destinationDirectory.removeRecursively();
@@ -427,13 +448,12 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
 
     originDirectory.mkpath(destinationDir);
 
-    foreach (QString directoryName, originDirectory.entryList(QDir::Dirs | \
-                                                              QDir::NoDotAndDotDot))
+    foreach (QString directoryName,
+             originDirectory.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
     {
-        if (directoryName != QString("tmp.SimCenter")) {
-        QString destinationPath = destinationDir + "/" + directoryName;
-        originDirectory.mkpath(destinationPath);
-        copyPath(sourceDir + "/" + directoryName, destinationPath, overWriteDirectory);
+        if (!directoryName.startsWith(QString("tmp.SimCenter"))) {
+            QString destinationPath = destinationDir + "/" + directoryName;
+            copyPath(sourceDir + "/" + directoryName, destinationPath, overWriteDirectory);
         }
     }
 
@@ -456,7 +476,7 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
 
 void MainWindow::onRunButtonClicked() {
 
-    errorMessage("");
+    GoogleAnalytics::ReportLocalRun();
 
     //
     // get program & input file from fem widget
@@ -467,26 +487,52 @@ void MainWindow::onRunButtonClicked() {
 
     QFileInfo fileInfo(mainInput);
     QDir fileDir = fileInfo.absolutePath();
+
     QString fileName =fileInfo.fileName();
     QString path = fileDir.absolutePath();// + QDir::separator();
+
+    qDebug() << "workdir set to " << fileDir;
+
+    if (! fileDir.exists()) {
+      errorMessage(QString("Directory ") + path + QString(" specified does not exist!"));
+      return;
+    }
+    qDebug() << "workdir exists ";
 
     //
     // given path to input file we are going to create temporary directory below it
     // and copy all files from this input file directory to the new subdirectory
-    //
+    //  
 
-    QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
-    copyPath(path, tmpDirectory, false);
+    // first, delete the tmp.SimCenter directory if it already exists ...
+    workingDirectory = SimCenterPreferences::getInstance()->getLocalWorkDir();
+
+    QString tmpSimCenterDirectoryName = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
+    QDir tmpSimCenterDirectory(tmpSimCenterDirectoryName);
+    if(tmpSimCenterDirectory.exists()) {
+        tmpSimCenterDirectory.removeRecursively();
+    }
+
+    QString tmpDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
+    qDebug() << "creating the temp directory and copying files there... " << tmpDirectory;
+    copyPath(path, tmpDirectory, true);
+    qDebug() << "creating the temp directory and copying files there...  - SUCCESSFUL";
 
     // special copy the of the main script to set up lines containg parameters for dakota
+
+    //    QString mainScriptTmp = workingDirectory + QDir::separator() + fileName;
     QString mainScriptTmp = tmpDirectory + QDir::separator() + fileName;
+    qDebug() << "creating a special copy of the main FE model script... " << mainScriptTmp;
     fem->specialCopyMainInput(mainScriptTmp, random->getParametereNames());
+    qDebug() << "creating a special copy of the main FE model script...  - SUCCESSFUL";
+
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
     //
 
     QString filenameTMP = tmpDirectory + QDir::separator() + tr("dakota.json");
 
+    qDebug() << "creating dakota input at " << filenameTMP;
     QFile file(filenameTMP);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Application"),
@@ -495,8 +541,13 @@ void MainWindow::onRunButtonClicked() {
                                   file.errorString()));
         return;
     }
+
     QJsonObject json;
-    inputWidget->outputToJSON(json);
+    if  (this->outputToJSON(json) == false) {
+        file.close();
+        return;
+    }
+
     QJsonDocument doc(json);
     file.write(doc.toJson());
     file.close();
@@ -507,34 +558,78 @@ void MainWindow::onRunButtonClicked() {
     //
 
     QString homeDIR = QDir::homePath();
-    QString appDIR = qApp->applicationDirPath();
+    QString appDIR = SimCenterPreferences::getInstance()->getAppDir();
 
-  //   appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
-  //    QDir::separator() + QString("localApp");
+   //
+   // Get application to run for UQ engine from WorkflowApplications FIle
+   //   1. get uq to outputApp to a JSON object & from object get app name
+   //   2. from workflowapplications file get program name
+    //
+
+    QString programToExe;
+
+    // get appName;
+
+    QJsonObject appData;
+    uq->outputAppDataToJSON(appData);
+    QJsonObject uqDataObj = appData["UQ"].toObject();
+    QString appName = uqDataObj["Application"].toString();
+
+    // 3. get program name from WorkflowAPplications file
+
+    // 3.a open Applications file
+    QString workflowApplications = appDIR + QDir::separator() + QString("applications") + QDir::separator() + QString("WorkflowApplications.json");
+    QFile workflowApplicationsFile(workflowApplications);
+    if (!workflowApplicationsFile.open(QFile::ReadOnly | QFile::Text)) {
+        QString message = QString("Error: could not open file") + workflowApplications;
+        this->errorMessage(message);
+        return;
+    }
+
+    // 3.b find program to execute, by converting to JSON object and itertaing through UQApplkications array for program
+
+    QString val = workflowApplicationsFile.readAll();
+
+    qDebug() << "VAL: " << val;
+
+    QJsonDocument docWA = QJsonDocument::fromJson(val.toUtf8());
+    QJsonObject jsonObj = docWA.object();
+    workflowApplicationsFile.close();
+
+    QJsonObject uqApplications = jsonObj["UQApplications"].toObject();
+    QJsonArray uqApplicationsArray = uqApplications["Applications"].toArray();
+
+    for (int i=0; i<uqApplicationsArray.size(); i++) {
+        QJsonObject entry = uqApplicationsArray[i].toObject();
+        QString programName = entry["Name"].toString();
+        if (programName == appName) {
+            programToExe = entry["ExecutablePath"].toString();
+            break;
+        }
+    }
+
+
+    qDebug() << "UQ APP DATA" << appData << "name: " << appName << " programToExe: " << programToExe;
+
+    QString pySCRIPT = appDIR +  QDir::separator() + programToExe;
+
+    QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
 
     //
-    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
-    QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter");
+    // check the python script exists
+    //
+
+    qDebug() << "pyScript: " << pySCRIPT;
+
+    QFile pyDAKOTA(pySCRIPT);
+    if (! pyDAKOTA.exists()) {
+      errorMessage("Executable script does not exist, try to reset settings, if fails download application again");
+      return;
+    }
 
     // remove current results widget
 
     results->setResultWidget(0);
-
-    //
-    // want to first remove old dakota files from the current directory
-    //
-
-    QString sourceDir = path + QDir::separator() + QString("tmp.SimCenter") + QDir::separator();
-    QString destinationDir = path + QDir::separator();
-
-    QStringList files;
-    files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
-
-    for (int i = 0; i < files.size(); i++) {
-        QString copy = files.at(i);
-        QFile file(destinationDir + copy);
-        file.remove();
-    }
 
     //
     // now invoke dakota, done via a python script in tool app dircetory
@@ -547,48 +642,49 @@ void MainWindow::onRunButtonClicked() {
 
     QProcess *proc = new QProcess();
 
+    QString python("python");
+    QSettings settings("SimCenter", "Common"); 
+    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    if (pythonLocationVariant.isValid()) 
+      python = pythonLocationVariant.toString();
+
+
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
-    qDebug() << command;
-    proc->execute("cmd", QStringList() << "/C" << command);
+
+    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
+    qDebug() << "Executing parseDAKOTA.py... " << args;
+    proc->execute(python, args);
+    qDebug() << "Executing parseDAKOTA.py... - SUCCESSFUL" ;
+
+    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
+    //qDebug() << command;
+    //proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
+    //qDebug() << command;
 
 #else
-   QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
-     tmpDirectory + QString(" runningLocal");
 
-    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
-    //        tmpDirectory + QString(" runningLocal");
+    // wrap paths with quotes (dealing with spaces in the path);
+    pySCRIPT = "\"" + pySCRIPT + "\"";
+    tDirectory = "\"" + tDirectory + "\"";
+    tmpDirectory = "\"" + tmpDirectory + "\"";
 
-    proc->execute("bash", QStringList() << "-c" <<  command);
+    QString command = QString("source $HOME/.bash_profile; source $HOME/.bashrc; \"") + python + QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+            tmpDirectory + QString(" runningLocal");
 
+    qInfo() << QProcessEnvironment::systemEnvironment().value("PATH") << "\n";// system PATH
     qInfo() << command;
+    
+    proc->execute("bash", QStringList() << "-c" <<  command);
 
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
+
     proc->waitForStarted();
 
-    //
-    // now copy results file from tmp.SimCenter directory and remove tmp directory
-    //
 
-   for (int i = 0; i < files.size(); i++) {
-       QString copy = files.at(i);
-       QFile::copy(sourceDir + copy, destinationDir + copy);
-   }
-
-   QDir dirToRemove(sourceDir);
-
-   dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
-                                    // so to debug you can simply comment it
-
-
-    //
-    // process the results
-    //
-
-    QString filenameOUT = destinationDir + tr("dakota.out");
-    QString filenameTAB = destinationDir + tr("dakotaTab.out");
+    QString filenameOUT = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota.out");
+    QString filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
 
     this->processResults(filenameOUT, filenameTAB);
 }
@@ -600,6 +696,8 @@ void MainWindow::onRemoteRunButtonClicked(){
           errorMessage("ERROR - You Need to Login");
           return;
     }
+
+    GoogleAnalytics::ReportDesignSafeRun();
 
     //
     // get program & input file from fem widget
@@ -622,8 +720,8 @@ void MainWindow::onRemoteRunButtonClicked(){
     QString strUnique = uniqueName.toString();
     strUnique = strUnique.mid(1,36);
 
-    QString tmpDirectory = path + QDir::separator() + QString("tmp.SimCenter") + strUnique + QDir::separator() + QString("templatedir");
-    copyPath(path, tmpDirectory, false);
+    QString tmpDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + strUnique + QDir::separator() + QString("templatedir");
+    copyPath(path, tmpDirectory, true);
 
     // special copy the of the main script to set up lines containg parameters for dakota
     QString mainScriptTmp = tmpDirectory + QDir::separator() + fileName;
@@ -643,14 +741,19 @@ void MainWindow::onRemoteRunButtonClicked(){
                                   file.errorString()));
         return;
     }
+
     QJsonObject json;
-    inputWidget->outputToJSON(json);
+    if (this->outputToJSON(json) == false) {
+        file.close();
+        return;
+    }
+
     QJsonDocument doc(json);
     file.write(doc.toJson());
     file.close();
 
     //
-    // now use the applications parseJSON file to run dakota and produce output files:
+    // now use the applications parseDAKOTA file to run dakota and produce output files:
     //    dakota.in dakota.out dakotaTab.out dakota.err
     //
 
@@ -661,8 +764,17 @@ void MainWindow::onRemoteRunButtonClicked(){
    //   QDir::separator() + QString("localApp");
 
     //
-    QString pySCRIPT = appDIR +  QDir::separator() + QString("parseJson3.py");
-    QString tDirectory = path + QDir::separator() + QString("tmp.SimCenter") + strUnique;
+    QString pySCRIPT = appDIR +  QDir::separator() + QString("applications") +
+                QDir::separator() + QString("performUQ") + QDir::separator() +
+                QString("dakota") + QDir::separator() + QString("parseDAKOTA.py");
+
+    QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + strUnique;
+
+    QFile pyDAKOTA(pySCRIPT);
+    if (! pyDAKOTA.exists()) {
+      errorMessage("Dakota script does not exist, the parseDAKOTA.py script was not found in exe folder! .. download application again");
+      return;
+    }
 
     // remove current results widget
     results->setResultWidget(0);
@@ -671,8 +783,8 @@ void MainWindow::onRemoteRunButtonClicked(){
     // want to first remove old dakota files from the current directory
     //
 
-    QString sourceDir = path + QDir::separator() + QString("tmp.SimCenter") + strUnique + QDir::separator();
-    QString destinationDir = path + QDir::separator();
+    QString sourceDir = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + strUnique + QDir::separator();
+    QString destinationDir = workingDirectory + QDir::separator();
 
     QStringList files;
     files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
@@ -687,25 +799,51 @@ void MainWindow::onRemoteRunButtonClicked(){
     // now invoke dakota, done via a python script in tool app dircetory
     //
 
+
+    QProcess *proc = new QProcess();
+
+    QString python("python");
+    QSettings settings("SimCenter", "Common"); 
+    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    if (pythonLocationVariant.isValid()) 
+      python = pythonLocationVariant.toString();
+
+#ifdef Q_OS_WIN
+
+    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningRemote"};
+    qDebug() << args;
+    proc->execute(python, args);
+
+    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
+    //qDebug() << command;
+    //proc->execute("cmd", QStringList() << "/C" << command);
+    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
+
+#else
+
     // wrap paths with quotes:
     pySCRIPT = "\"" + pySCRIPT + "\"";
     tDirectory = "\"" + tDirectory + "\"";
     tmpDirectory = "\"" + tmpDirectory + "\"";
-
-    QProcess *proc = new QProcess();
-#ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
-    qDebug() << command;
-    proc->execute("cmd", QStringList() << "/C" << command);
-    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
-
-#else
-    QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
+    QString command = QString("source $HOME/.bashrc; source $HOME/.bash_profile; \"") + python +QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
     proc->execute("bash", QStringList() << "-c" <<  command);
     qDebug() << command;
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
     proc->waitForStarted();
+
+    //
+    // in tmpDirectory we will zip up current template dir and then remove before sending (doone to reduce number of sends)
+    //
+
+    QString tDirectory2 = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + strUnique;
+    QString templateDIR(tDirectory2 + QDir::separator() + QString("templatedir"));
+    QString zipFile(tDirectory2 + QDir::separator() + QString("templatedir.zip"));
+    ZipUtils::ZipFolder(QDir(templateDIR), zipFile);
+    qDebug() << "ZIP DIR: " << templateDIR;
+    qDebug() << "ZIP FILE: " << zipFile;
+    QDir dirToRemove(templateDIR);
+    dirToRemove.removeRecursively();
 
     //
     // when setup is complete, pop open the jobCreateor Widget which will allow user
@@ -775,6 +913,11 @@ MainWindow::attemptLoginReturn(bool ok){
         loginWindow->hide();
         loggedIn = true;
         loginButton->setText("Logout");
+
+	QSettings settings("SimCenter", "Common");
+	settings.setValue("loginAgave", nameLineEdit->text());
+	settings.setValue("passwordAgave", passwordLineEdit->text());
+
         //this->enableButtons();
 
         //theJobManager->up
@@ -811,12 +954,13 @@ MainWindow::logoutReturn(bool ok){
 
 
 void MainWindow::onExitButtonClicked(){
-  //RandomVariableInputWidget *theParameters = uq->getParameters();
-  QApplication::quit();
+
+  //RandomVariablesContainer *theParameters = uq->getParameters();
+    QApplication::quit();
 }
 
-void MainWindow::onDakotaMethodChanged(void) {
-    random->setParametersWidget(uq->getParameters());
+void MainWindow::onUQ_EngineChanged(void) {
+  random->setParametersWidget(uq->getParameters());
 }
 
 
@@ -853,7 +997,7 @@ void MainWindow::open()
 {
     errorMessage("");
 
-    QString fileName = QFileDialog::getOpenFileName(this);
+    QString fileName = QFileDialog::getOpenFileName(this, "Open Input File", "",  "Json files (*.json);;All files (*)");
     if (!fileName.isEmpty())
         loadFile(fileName);
 }
@@ -882,6 +1026,86 @@ void MainWindow::setCurrentFile(const QString &fileName)
     setWindowFilePath(shownName);
 }
 
+bool MainWindow::outputToJSON(QJsonObject &jsonObj) {
+
+    QJsonObject appsUQ;
+    uq->outputAppDataToJSON(appsUQ);
+    jsonObj["Applications"]=appsUQ;
+
+    if (fem->outputToJSON(jsonObj) != true) {
+        emit errorMessage(QString("FEM: failed to write output"));
+        return false;
+    }
+
+    if (uq->outputToJSON(jsonObj) != true) {
+        emit errorMessage(QString("UQ: failed to write output"));
+        return false;
+    }
+
+    if (random->outputToJSON(jsonObj) != true) {
+        emit errorMessage(QString("RV: failed to write output"));
+        return false;
+    }
+
+    if (edp->outputToJSON(jsonObj) != true) {
+        emit errorMessage(QString("EDP: failed to write output"));
+        return false;
+    }
+
+    UQ_Results *result=uq->getResults();
+    results->outputToJSON(jsonObj);
+
+    // output the preferences
+
+    jsonObj["localAppDir"]=SimCenterPreferences::getInstance()->getAppDir();
+    jsonObj["remoteAppDir"]=SimCenterPreferences::getInstance()->getRemoteAppDir();
+    jsonObj["workingDir"]=SimCenterPreferences::getInstance()->getLocalWorkDir();
+    jsonObj["python"]=SimCenterPreferences::getInstance()->getPython();
+
+    return true;
+}
+
+bool MainWindow::inputFromJSON(QJsonObject &jsonObj){
+
+    if (jsonObj.contains("Applications")) {
+
+        QJsonObject theApplicationObject = jsonObj["Applications"].toObject();
+        if (uq->inputAppDataFromJSON(theApplicationObject) != true) {
+            emit errorMessage(QString("UQ: failed to read app data input"));
+            return false;
+        }
+    } else {
+        // possibly old code: default is Dakota
+    }
+
+
+    if (fem->inputFromJSON(jsonObj) != true) {
+        emit errorMessage(QString("FEM: failed to read input"));
+        return false;
+    }
+
+    if (uq->inputFromJSON(jsonObj) != true) {
+        emit errorMessage(QString("UQ: failed to read input"));
+        return false;
+    }
+
+    if (random->inputFromJSON(jsonObj) != true) {
+        emit errorMessage(QString("RV: failed to read input"));
+        return false;
+    }
+
+    if (edp->inputFromJSON(jsonObj) != true) {
+        emit errorMessage(QString("EDP: failed to read input"));
+        return false;
+    }
+
+    UQ_Results *result=uq->getResults();
+    results->setResultWidget(result);
+    results->inputFromJSON(jsonObj); // results can fail if no results when file saved
+
+    return true;
+}
+
 bool MainWindow::saveFile(const QString &fileName)
 {   
     //
@@ -897,14 +1121,18 @@ bool MainWindow::saveFile(const QString &fileName)
         return false;
     }
 
-
     //
     // create a json object, fill it in & then use a QJsonDocument
     // to write the contents of the object to the file in JSON format
     //
 
     QJsonObject json;
-    inputWidget->outputToJSON(json);
+    if (this->outputToJSON(json) == false) {
+        qDebug() << "MainWindow - outputToJSON returned false";
+        file.close();
+        return false;
+    }
+
     QJsonDocument doc(json);
     file.write(doc.toJson());
 
@@ -947,20 +1175,7 @@ void MainWindow::loadFile(const QString &fileName)
 
     // given the json object, create the C++ objects
     //inputWidget->inputFromJSON(jsonObj);
-    if (fem->inputFromJSON(jsonObj) != true)
-        return;
-    if (uq->inputFromJSON(jsonObj) != true)
-        return;
-    if (random->inputFromJSON(jsonObj) != true)
-        return;
-
-    qDebug() << "uq->getResults()";
-    DakotaResults *result=uq->getResults();
-    results->setResultWidget(result);
-    qDebug() << "results - inputFRomJSON";
-
-    if (results->inputFromJSON(jsonObj) != true)
-        return;
+    this->inputFromJSON(jsonObj);
 
     setCurrentFile(fileName);
 }
@@ -970,39 +1185,24 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 {
     errorMessage("Processing Results");
 
-    qDebug()<<"\Inside processResults widget and trying to proceed";
+    UQ_Results *result=uq->getResults();
+    connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
+    connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(errorMessage(QString)));
 
-    DakotaResults *result=uq->getResults();
     result->processResults(dakotaIN, dakotaTAB);
     results->setResultWidget(result);
-    inputWidget->setSelection(QString("Results"));
-
-    errorMessage(" ");
-    qDebug()<<"\n the value of results is \n\n  "<<results;
+    
+    inputWidget->setSelection(QString("RES"));
 }
 
 void MainWindow::createActions() {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-
-    //const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/images/open.png"));
-    //const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/images/save.png"));
-
-    //QToolBar *fileToolBar = addToolBar(tr("File"));
-
-    QAction *newAction = new QAction(tr("&New"), this);
-    newAction->setShortcuts(QKeySequence::New);
-    newAction->setStatusTip(tr("Create a new file"));
-    connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
-    fileMenu->addAction(newAction);
-    //fileToolBar->addAction(newAction);
 
     QAction *openAction = new QAction(tr("&Open"), this);
     openAction->setShortcuts(QKeySequence::Open);
     openAction->setStatusTip(tr("Open an existing file"));
     connect(openAction, &QAction::triggered, this, &MainWindow::open);
     fileMenu->addAction(openAction);
-    //fileToolBar->addAction(openAction);
-
 
     QAction *saveAction = new QAction(tr("&Save"), this);
     saveAction->setShortcuts(QKeySequence::Save);
@@ -1026,14 +1226,17 @@ void MainWindow::createActions() {
     fileMenu->addAction(exitAction);
 
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
-    QAction *infoAct = helpMenu->addAction(tr("&About"), this, &MainWindow::about);
-    QAction *submitAct = helpMenu->addAction(tr("&Provide Feedback"), this, &MainWindow::submitFeedback);
+    QAction *versionAct = helpMenu->addAction(tr("&Version"), this, &MainWindow::version);
+    QAction *aboutAct = helpMenu->addAction(tr("&About"), this, &MainWindow::about);
+    QAction *preferencesAct = helpMenu->addAction(tr("&Preferences"), this, &MainWindow::preferences);
     //aboutAct->setStatusTip(tr("Show the application's About box"));
-    QAction *aboutAct = helpMenu->addAction(tr("&Version"), this, &MainWindow::version);
-    //aboutAct->setStatusTip(tr("Show the application's About box"));
+    QAction *manualAct = helpMenu->addAction(tr("&Manual"), this, &MainWindow::manual);
+    QAction *submitAct = helpMenu->addAction(tr("&Submit Bug/Feature Request"), this, &MainWindow::submitFeedback);
+    //QAction *submitFeature = helpMenu->addAction(tr("&Submit Feature Request"), this, &MainWindow::submitFeatureRequest);
+    QAction *citeAct = helpMenu->addAction(tr("&How to Cite"), this, &MainWindow::cite);
     QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindow::copyright);
-    //aboutAct->setStatusTip(tr("Show the application's About box"));
 
+    thePreferences = SimCenterPreferences::getInstance();
 }
 
 
@@ -1111,17 +1314,23 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 1.0.1 "));
+                       tr("Version 2.0.1 "));
+}
+
+void MainWindow::preferences()
+{
+  thePreferences->show();
 }
 
 void MainWindow::about()
 {
     QString textAbout = "\
-              This is the open-source uqFEM tool. It is an application intended to augment finite element applications with\
+
+              This is the open-source quoFEM tool. It is an application intended to augment finite element applications with\
               sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
              quantification in the structural responses and parameter estimation of input variables in calibration studies.\
              <p>\
-             Version 1.0 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
+             Version 2.0.1 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
              will repeatedly invoke the finite element application either locally on the users dekstop machine or remotely\
              on high performance computing resources at the Texas Advanced Computing Center through the NHERI DesignSafe cyberinfrastructure.\
              <p>\
@@ -1137,7 +1346,26 @@ void MainWindow::about()
 
 void MainWindow::submitFeedback()
 {
-   // QDesktopServices::openUrl(QUrl("https://github.com/NHERI-SimCenter/MDOF/issues", QUrl::TolerantMode));
- QDesktopServices::openUrl(QUrl("https://www.designsafe-ci.org/help/new-ticket/", QUrl::TolerantMode));
+    QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=4.0");
+    QDesktopServices::openUrl(QUrl(messageBoardURL, QUrl::TolerantMode));
 }
 
+void MainWindow::manual()
+{
+  QString featureRequestURL = QString("https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community//SimCenter/Software/uqFEM");
+    QDesktopServices::openUrl(QUrl(featureRequestURL, QUrl::TolerantMode));
+}
+
+
+
+
+void MainWindow::cite()
+{
+  QString citeText = QString("Frank McKenna, Nikhil Padhye, & Adam Zsarnoczay. (2019, September 30). NHERI-SimCenter/quoFEM: Vesion 2.0.0 (Version v2.0.0). Zenodo. http://doi.org/10.5281/zenodo.3466061");
+    QMessageBox msgBox;
+    QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    msgBox.setText(citeText);
+    QGridLayout *layout = (QGridLayout*)msgBox.layout();
+    layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
+    msgBox.exec();
+}

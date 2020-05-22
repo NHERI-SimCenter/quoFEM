@@ -76,7 +76,7 @@ using namespace QtCharts;
 #define NUM_DIVISIONS 10
 
 DakotaResultsBayesianCalibration::DakotaResultsBayesianCalibration(QWidget *parent)
-    : DakotaResults(parent)
+    : UQ_Results(parent)
 {
     // title & add button
     tabWidget = new QTabWidget(this);
@@ -178,6 +178,10 @@ DakotaResultsBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 
     bool result = true;
 
+     if (!jsonObject.contains("summary")) {
+        return true;
+     }
+
     //
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
@@ -223,6 +227,7 @@ DakotaResultsBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
     QJsonObject spreadsheetData = jsonObject["spreadsheet"].toObject();
     int numRow = spreadsheetData["numRow"].toInt();
     int numCol = spreadsheetData["numCol"].toInt();
+
     spreadsheet->setColumnCount(numCol);
     spreadsheet->setRowCount(numRow);
 
@@ -277,7 +282,7 @@ DakotaResultsBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
     // add 3 Widgets to TabWidget
     //
 
-    tabWidget->addTab(summary,tr("Summmary"));
+    tabWidget->addTab(summary,tr("Summary"));
     tabWidget->addTab(dakotaText, tr("General"));
     tabWidget->addTab(widget, tr("Data Values"));
 

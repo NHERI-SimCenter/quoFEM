@@ -41,7 +41,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <SimCenterWidget.h>
 class QVBoxLayout;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class InputWidgetParameters : public SimCenterWidget
 {
@@ -53,7 +53,7 @@ public:
     virtual bool outputToJSON(QJsonObject &rvObject);
     virtual bool inputFromJSON(QJsonObject &rvObject);
 
-    void setParametersWidget(RandomVariableInputWidget *theParameters);
+    void setParametersWidget(RandomVariablesContainer *theParameters);
     void setInitialVarNamesAndValues(QStringList varNamesAndValues);
     QStringList getParametereNames(void);
 
@@ -63,7 +63,7 @@ public slots:
        void errorMessage(QString message);
 
 protected:
-    RandomVariableInputWidget *theParameters;
+    RandomVariablesContainer *theParameters;
     QVBoxLayout *layout;
 
     QStringList varNamesAndValues;

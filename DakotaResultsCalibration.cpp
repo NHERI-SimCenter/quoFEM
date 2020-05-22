@@ -76,7 +76,7 @@ using namespace QtCharts;
 
 
 DakotaResultsCalibration::DakotaResultsCalibration(QWidget *parent)
-    : DakotaResults(parent)
+    : UQ_Results(parent)
 {
     // title & add button
     tabWidget = new QTabWidget(this);
@@ -176,6 +176,10 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
     bool result = true;
     this->clear();
 
+    if (!jsonObject.contains("summary")) { // no saving of analysis data
+       return true;
+    }
+
     //
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
@@ -272,7 +276,7 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
     // add 3 Widgets to TabWidget
     //
 
-    tabWidget->addTab(summary,tr("Summmary"));
+    tabWidget->addTab(summary,tr("Summary"));
     tabWidget->addTab(dakotaText, tr("General"));
     tabWidget->addTab(widget, tr("Data Values"));
 

@@ -45,6 +45,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <AgaveCurl.h>
 #include <QJsonDocument>
 
+#include <SimCenterPreferences.h>
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -57,7 +59,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QRect>
 #include <QApplication>
 #include <QDesktopWidget>
-
+#include <QDir>
 #include <QMenu>
 
 #include  <QDebug>
@@ -287,73 +289,54 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
          QJsonValue inputs = job["inputs"];
          if (inputs.isObject()) {
 
-              QJsonObject inputObject = inputs.toObject();
-              QJsonValue inputPath = inputObject["inputDirectory"];
-              if (inputPath.isArray()) {
-                  inputDir = inputPath.toArray().at(0).toString();
-                  inputDir.remove(htmlInputDirectory);
-              }
+             QJsonObject inputObject = inputs.toObject();
+             QJsonValue inputPath = inputObject["inputDirectory"];
+             if (inputPath.isArray()) {
+                 inputDir = inputPath.toArray().at(0).toString();
+                 inputDir.remove(htmlInputDirectory);
+             } else if (inputPath.isString()) {
+                 inputDir = inputPath.toString();
+                 inputDir.remove(htmlInputDirectory);
+             }
          }
 
+        //archiveDir = SimCenterPreferences::getInstance()->getRemoteWorkDir();
         archiveDir = archiveDir + QString("/") + inputDir.remove(QRegExp(".*\/")); // regex to remove up till last /
 
-        //
-        // create 3 temp file names neede to store remote data files locally
-        //
-
-        /* name1 in following keeps failing .. just use same file names
-        QTemporaryFile tmpFile1;
-       // QString name1, name2, name3;
-
-        if (tmpFile1.open()) {
-            name1 = tmpFile1.fileName();
-            tmpFile1.close();
-        } else {
-             // will have to overwrite any local dakota.in
-             name1 = "dakota.json";
-        }
-
-        QTemporaryFile tmpFile2;
-        if (tmpFile2.open()) {
-            name2 = tmpFile2.fileName();
-            tmpFile2.close();
-        } else {
-            // will have to overwrite any local dakotaTab.out;
-            name2 = "dakota.out";
-        }
-
-        QTemporaryFile tmpFile3;
-        if (tmpFile3.open()) {
-            name3 = tmpFile3.fileName();
-            tmpFile3.close();
-        } else {
-            // will have to overwrite any local dakotaTab.out;
-            name3 = "dakotaTab.out";
-        }
-        */
-
-        name1="dakota.json";
-        name2="dakota.out";
-        name3="dakotaTab.out";
+	QString localDir = SimCenterPreferences::getInstance()->getRemoteWorkDir();
+	QDir localWork(localDir);
+	if (!localWork.exists())
+	  if (!localWork.mkpath(localDir)) {
+            emit errorMessage(QString("Could not create Working Dir: ") + localDir + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
+            return;
+	  }
+	
+        name1 = localDir + QDir::separator() + QString("dakota.json");
+        name2 = localDir + QDir::separator() + QString("dakota.out");
+        name3 = localDir + QDir::separator() + QString("dakotaTab.out");
+        name4 = localDir + QDir::separator() + QString("dakota.err");;
 
         QStringList localFiles;
         localFiles.append(name1);
         localFiles.append(name2);
         localFiles.append(name3);
+        localFiles.append(name4);
 
         //
         // download data to temp files & then process them as normal
         //
 
-        QString dakotaJSON = archiveDir + QString("/templatedir/dakota.json");
+        QString dakotaJSON = archiveDir + QString("/dakota.json");
         QString dakotaOUT = archiveDir + QString("/dakota.out");
         QString dakotaTAB = archiveDir + QString("/dakotaTab.out");
+        QString dakotaERR = archiveDir + QString("/dakota.err");
 
         // first download the input data & load it
         QStringList filesToDownload;
         filesToDownload.append(dakotaJSON);
         filesToDownload.append(dakotaOUT);
         filesToDownload.append(dakotaTAB);
+        filesToDownload.append(dakotaERR);
 
         emit downloadFiles(filesToDownload, localFiles);
      }
@@ -375,8 +358,6 @@ RemoteJobManager::downloadFilesReturn(bool result)
     } else {
         emit errorMessage("ERROR - Failed to download File - did Job finish successfully?");
     }
-
-
 }
 
 void

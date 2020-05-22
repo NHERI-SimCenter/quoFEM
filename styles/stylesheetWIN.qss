@@ -1,0 +1,211 @@
+/*----------------------------------------------------------------------------*/
+/* QMainWindow                                                                */
+/*----------------------------------------------------------------------------*/
+
+QMainWindow{
+    background: rgb(240, 240, 240);
+}
+
+/*----------------------------------------------------------------------------*/
+/* QDialog                                                                    */
+/*----------------------------------------------------------------------------*/
+
+QDialog
+{
+	background: rgb(240, 240, 240);
+}
+
+/*----------------------------------------------------------------------------*/
+/* Header and Footer                                                          */
+/*----------------------------------------------------------------------------*/
+
+FooterWidget, HeaderWidget {
+    background-color: #B0BEC5;
+    height: 30px;
+    border-radius: 2px;
+}
+
+QLabel#titleText {
+    font-size: 12pt;
+    padding-left: 25px;
+    font-weight: bold;
+}
+
+footerLayout {
+    background-color: #B0BEC5;
+    height: 30px;
+    border-radius: 2px;
+    text-align: center;
+}
+
+QLabel#nsfText {
+    color: #E0E0E0;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/*----------------------------------------------------------------------------*/
+/* Labels                                                             */
+/*----------------------------------------------------------------------------*/
+
+
+QLabel#sectionTitle {
+  /*  font-size: 14px; */
+    font-weight: bold;
+}
+
+QLabel#propertiesTitle {
+   /* font-size: 12px; */
+    font-weight: bold;
+}
+
+QLabel#vizTitle {
+  /*  font-size: 12px; */
+    font-weight: bold;
+}
+
+QLabel#outTitle {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+QLabel#inTitle {
+   /* font-size: 15px; */
+    font-weight: bold;
+}
+
+QLabel{
+
+}
+
+/*----------------------------------------------------------------------------*/
+/* Frames                                                                     */
+/*----------------------------------------------------------------------------*/
+
+QFrame#line {
+    background-color: #B0BEC5;
+    border:none;
+}
+
+QFrame#line2 {
+    background-color: #B0BEC5;
+    border:none;
+}
+
+QFrame#inputMotion {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#firstOutput {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#outputDataFrame {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#mainProperties {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#floorMassFrame {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#storyPropertiesFrame {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#outputDataFrame {
+    background-color: #FFFFFF;
+    border:none;
+}
+
+QFrame#pushButtons {
+    border:none;
+}
+
+/*----------------------------------------------------------------------------*/
+/* QPushButton                                                                */
+/*----------------------------------------------------------------------------*/
+
+QPushButton {
+    color: white;
+    border-style: outset;
+    background-color: #64B5F6;
+    border-style: outset;
+    border-width: 1px;
+    border-radius: 2px;
+    border-color: #607D8B;
+    font-weight: bold;
+    padding: 3px;
+}
+
+QPushButton:pressed {
+    background-color: #B0BEC5;
+    border-style: inset;
+    border-color: black;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/* QGroupBox                                                                  */
+/*----------------------------------------------------------------------------*/
+
+QGroupBox {
+    font-weight: bold;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/* QTabWidget                                                                 */
+/*----------------------------------------------------------------------------*/
+
+QTabWidget::pane {
+    background-color: #ECECEC;
+    border: 1px solid rgb(244, 244, 244);
+}
+
+QTreeView#treeViewOnTheLeft{
+    background: rgb(79, 83, 89);
+
+    /* set the font properties*/
+    font-size:12pt;
+    height: 20px;
+    color: white;
+}
+
+QTreeView#treeViewOnTheLeft::item:hover {
+    background: rgb(69, 187, 217);
+}
+
+QTreeView#treeViewOnTheLeft::item:selected:active{
+    background: rgb(63, 147, 168);
+}
+
+QTreeView#treeViewOnTheLeft::item:selected:!active {
+    background: rgb(63, 147, 168);
+}
+
+QComboBox {
+    border:  solid gray;
+    min-width: 6em;
+}
+
+QComboBox:editable {
+    background: white;
+}
+
+QComboBox:!editable, QComboBox::drop-down:editable {
+     background: white;
+}
+
+QComboBox:!editable:on, QComboBox::drop-down:editable:on {
+    background: rgb(240, 240, 240);
+}

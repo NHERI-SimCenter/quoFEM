@@ -52,6 +52,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetSampling.h>
 #include <InputWidgetCalibration.h>
 #include <InputWidgetBayesianCalibration.h>
+#include <InputWidgetReliability.h>
+#include <InputWidgetSensitivity.h>
 
 
 InputWidgetUQ::InputWidgetUQ(QWidget *parent)
@@ -70,13 +72,12 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     QSpacerItem *spacer = new QSpacerItem(50,10);
 
     uqSelection = new QComboBox();
-    //uqSelection->setStyleSheet("QComboBox::down-arrow {image: url(C://Users//nikhil//NHERI/uqFEM//images//pulldownarrow.PNG);heigth:50px;width:100px;}");
-    uqSelection->setMaximumWidth(200);
+    uqSelection->setMaximumWidth(400);
     uqSelection->setMinimumWidth(200);
 
     titleLayout->addWidget(textFEM);
     titleLayout->addItem(spacer);
-    titleLayout->addWidget(uqSelection);
+    titleLayout->addWidget(uqSelection,1);
     titleLayout->addStretch();
     titleLayout->setSpacing(0);
     titleLayout->setMargin(0);
@@ -86,9 +87,11 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
     name->setSpacing(10);
     name->setMargin(0);
 
-    uqSelection->addItem(tr("Sampling"));
-    uqSelection->addItem(tr("Calibration"));
-    uqSelection->addItem(tr("Bayesian Calibration"));
+    uqSelection->addItem(tr("Forward Propagation"));
+    uqSelection->addItem(tr("Parameter Estimation"));
+    uqSelection->addItem(tr("Inverse Problem"));
+    uqSelection->addItem(tr("Reliability Analysis"));
+    uqSelection->addItem(tr("Sensitivity Analysis"));
 
     connect(uqSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(uqSelectionChanged(QString)));
 
@@ -97,8 +100,8 @@ InputWidgetUQ::InputWidgetUQ(QWidget *parent)
 
     this->setLayout(layout);
 
-    // set Samlping as the default
-    this->uqSelectionChanged(tr("Sampling"));
+    // set Forward Propagation as the default
+    this->uqSelectionChanged(tr("Forward Propagation"));
     layout->setMargin(0);
 }
 
@@ -198,17 +201,26 @@ void InputWidgetUQ::uqSelectionChanged(const QString &arg1)
     if (dakotaMethod != 0)
         layout->removeWidget(dakotaMethod);
 
-    if (arg1 == QString("Sampling")) {
+    if ((arg1 == QString("Sampling")) || (arg1 == QString("Forward Propagation"))) {
         delete dakotaMethod;
         dakotaMethod = new InputWidgetSampling();
 
-    } else if (arg1 == QString("Calibration")) {
-        delete dakotaMethod;
-        dakotaMethod = new InputWidgetCalibration();
+    } else if ((arg1 == QString("Reliability")) || (arg1 == QString("Reliability Analysis"))) {
+      delete dakotaMethod;
+      dakotaMethod = new InputWidgetReliability();
+    
+    } else if ((arg1 == QString("Calibration")) || (arg1 == QString("Parameter Estimation"))) {
+      delete dakotaMethod;
+      dakotaMethod = new InputWidgetCalibration();
 
-    } else if (arg1 == QString("Bayesian Calibration")) {
+    } else if ((arg1 == QString("Bayesian Calibration")) || (arg1 == QString("Inverse Problem"))) {
         delete dakotaMethod;
         dakotaMethod = new InputWidgetBayesianCalibration();
+	
+    } else if ((arg1 == QString("Sensitivity")) || (arg1 == QString("Sensitivity Analysis"))) {
+        delete dakotaMethod;
+        dakotaMethod = new InputWidgetSensitivity();
+
     } else {
         selectionChangeOK = false;
         emit sendErrorMessage("ERROR: UQ Input - no valid Method provided .. keeping old");
@@ -233,7 +245,7 @@ InputWidgetUQ::getResults(void)
     return 0;
 }
 
-RandomVariableInputWidget *
+RandomVariablesContainer *
 InputWidgetUQ::getParameters(void)
 {
     if (dakotaMethod != 0) {

@@ -49,17 +49,21 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QItemSelectionModel>
 #include <QDebug>
 #include <QModelIndex>
+#include <QStackedWidget>
+#include <QHeaderView>
 
 #include "CustomizedItemModel.h"
 #include <QFile>
 
 void 
-SidebarWidgetSelection::addInputWidget(const QString &name, SimCenterWidget *theWidget){
+SidebarWidgetSelection::addInputWidget(const QString &name, const QString &description, SimCenterWidget *theWidget){
     QStandardItem *item = new QStandardItem(name);
+    item->setToolTip(description);
     rootNode->appendRow(item);
     widgets[name] = theWidget;
     widgetIndices[name] = numWidgets;
     numWidgets++;
+    theStackedWidget->addWidget(theWidget);
 }
 
 void
@@ -74,7 +78,27 @@ SidebarWidgetSelection::buildTreee(){
     treeView->setModel(standardModel);
     treeView->expandAll();
     treeView->setHeaderHidden(true);
-    treeView->setMaximumWidth(200);
+
+    //register the model
+    treeView->setModel(standardModel);
+    treeView->expandAll();
+    treeView->setHeaderHidden(true);
+    treeView->setMinimumWidth(100);
+    treeView->setMaximumWidth(100);
+    treeView->setMinimumWidth(100);
+
+    treeView->setEditTriggers(QTreeView::EditTrigger::NoEditTriggers);//Disable Edit for the TreeView
+
+
+    /* *************************** EFFORTS TO REMOVE FIXED SIZE WIDGET
+    treeView->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    QHeaderView *header = treeView->header();
+    header->setSectionResizeMode(0, QHeaderView::Stretch);
+    header->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    header->setStretchLastSection(false);
+    //treeView->resizeColumnToContents(0);
+    ***********************************************************************/
+   // treeView->setMaximumWidth(200);
 
     // set up so that a slection change triggers the selectionChanged slot
     QItemSelectionModel *selectionModel= treeView->selectionModel();
@@ -84,7 +108,8 @@ SidebarWidgetSelection::buildTreee(){
             SLOT(selectionChangedSlot(const QItemSelection &, const QItemSelection &)));
 
     // add the TreeView widget to the layout
-    horizontalLayout->addWidget(treeView);
+    horizontalLayout->addWidget(treeView,0);
+    horizontalLayout->addWidget(theStackedWidget,1);
     horizontalLayout->addStretch();
 }
 
@@ -110,16 +135,9 @@ SidebarWidgetSelection::SidebarWidgetSelection(QWidget *parent)
     treeView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff ); // hide the horizontal scroll bar
     treeView->setObjectName("treeViewOnTheLeft");
     treeView->setIndentation(0);
+    //treeView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
-    QFile file(":/styles/stylesheet.qss");
-    if(file.open(QFile::ReadOnly)) {
-        this->setStyleSheet(file.readAll());
-        file.close();
-        qDebug() << "Open Style File Successfully.";
-    }
-    else
-        qDebug() << "Open Style File Failed!";
-
+    theStackedWidget = new QStackedWidget();
 }
 
 SidebarWidgetSelection::~SidebarWidgetSelection()
@@ -131,46 +149,25 @@ SidebarWidgetSelection::~SidebarWidgetSelection()
 void
 SidebarWidgetSelection::setSelection(const QString &newSelection)
 {
-    // remove current widget from layout
-    if (currentWidget != 0) {
-        horizontalLayout->removeWidget(currentWidget);
-        currentWidget->setParent(0);
-    }
-
-    // find replacement given inut & add that one to layout
-
     currentWidget = widgets[newSelection];
-    int widgetIndex= widgetIndices[newSelection];
     if (currentWidget == 0)
         qDebug() << "WIDGET NOT FOUND";
     else {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, currentWidget, 1);
-       // standardModel->index(0,0);
+        int widgetIndex= widgetIndices[newSelection];
         treeView->setCurrentIndex(treeView->model()->index(widgetIndex,0));
     }
-
 }
 
 
 void 	
 SidebarWidgetSelection::selectionChangedSlot(const QItemSelection & /*newSelection*/, const QItemSelection & /*oldSelection*/)
 {
-    // remove current widget from layout
-    if (currentWidget != 0) {
-        horizontalLayout->removeWidget(currentWidget);
-        currentWidget->setParent(0);
-    }
-
     //get the text of the selected item
     const QModelIndex index = treeView->selectionModel()->currentIndex();
     QString selectedText = index.data(Qt::DisplayRole).toString();
+    int widgetIndex= widgetIndices[selectedText];
 
-    // get widget based on text supplied & that one to layout
-    currentWidget = widgets[selectedText];
-    if (currentWidget == 0)
-        qDebug() << "WIDGET NOT FOUND";
-    else
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, currentWidget, 1);
+    theStackedWidget->setCurrentIndex(widgetIndex);
 }
 
 

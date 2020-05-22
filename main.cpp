@@ -41,12 +41,16 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFile>
 #include <QTime>
 #include <QTextStream>
+#include <GoogleAnalytics.h>
+#include <QDir>
+#include <QStandardPaths>
 
  // customMessgaeOutput code from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
 
-const QString logFilePath = "debug.log";
-bool logToFile = false;
+static QString logFilePath;
+static bool logToFile = false;
+
 
 void customMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -77,49 +81,78 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
+
+    //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
+    QCoreApplication::setApplicationName("quoFEM");
+    QCoreApplication::setOrganizationName("SimCenter");
+    QCoreApplication::setApplicationVersion("2.0.1");
+    //    GoogleAnalytics::SetTrackingId("UA-121636495-1");
+    GoogleAnalytics::StartSession();
+    GoogleAnalytics::ReportStart();
+
+    //
+    // set up logging of output messages for user debugging
+    //
+
+
+    logFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + QDir::separator() + QCoreApplication::applicationName()
+            + QDir::separator() + QString("debug.log");
+
+
+    // remove old log file
+    QFile debugFile(logFilePath);
+    debugFile.remove();
+
+    QByteArray envVar = qgetenv("QTDIR");       //  check if the app is run in Qt Creator
+
+    if (envVar.isEmpty())
+        logToFile = true;
+
+    qInstallMessageHandler(customMessageOutput);
+
+    qDebug() << "LogFILE: " << logFilePath;
+
   //
-  // set up logging of output messages for user debugging
-  //
+  // windows scaling - Qt HighDPI scaling is problematic (llok at QtCreator on high res laptop
+  //    - this constitutes my best effort to make it look better on window laptop
 
-  // remove old log file
-  QFile debugFile("debug.log");
-  debugFile.remove();
-
-  QByteArray envVar = qgetenv("QTDIR");       //  check if the app is run in Qt Creator
-  
-  if (envVar.isEmpty())
-    logToFile = true;
-  
-  qInstallMessageHandler(customMessageOutput);
-
-  // window scaling for mac
-  //qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
   //
   // start Qt mainwindow per normal
   //
 
-  QApplication a(argc, argv);
+  QApplication app(argc, argv);
   MainWindow w;
   w.show();
   
-  //
-  // deal with simcenter style sheets
-  //
+  // load style sheet
 
-  QFile file(":/styleCommon/style.qss");
+#ifdef Q_OS_WIN
+    QFile file(":/styleCommon/stylesheetWIN.qss");
+#endif
+
+#ifdef Q_OS_MACOS
+    QFile file(":/styleCommon/stylesheetMAC.qss");
+#endif
+
+#ifdef Q_OS_LINUX
+    QFile file(":/styleCommon/stylesheetMAC.qss");
+#endif
+
   if(file.open(QFile::ReadOnly)) {
-    QString styleSheet = QLatin1String(file.readAll());
-    a.setStyleSheet(styleSheet);
+      app.setStyleSheet(file.readAll());
+      file.close();
+  } else {
+      qDebug() << "could not open stylesheet";
   }
-  
-  w.setStyleSheet("QLineEdit {background: #FFFFFF;}");
-  w.setStyleSheet("QComboBox {background: #FFFFFF;} QLineEdit {background: #FFFFFF}");
-  
+
   //
   // exe application event-loop
   //
 
-  return a.exec();
+  int res = app.exec();
+  GoogleAnalytics::EndSession();
+  return res;
 }

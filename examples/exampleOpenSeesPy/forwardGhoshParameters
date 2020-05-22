@@ -1,0 +1,85 @@
+{
+    "Applications": {
+        "UQ": {
+            "Application": "Dakota-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "name": "D"
+        }
+    ],
+    "UQ_Method": {
+        "samplingMethodData": {
+            "method": "LHS",
+            "samples": 500,
+            "seed": 355
+        },
+        "uqEngine": "Dakota",
+        "uqType": "Forward Propagation"
+    },
+    "fem": {
+        "dir": "/Users/fmckenna/release/quoFEM/examples/exampleOpenSeesPy",
+        "inputFile": "/Users/fmckenna/release/quoFEM/examples/exampleOpenSeesPy/ghosh2.py",
+        "mainInput": "ghosh2.py",
+        "mainPostprocessScript": "",
+        "numInputs": 1,
+        "parametersFile": "parameters.py",
+        "parametersScript": "/Users/fmckenna/release/quoFEM/examples/exampleOpenSeesPy/parameters.py",
+        "postprocessScript": "",
+        "program": "OpenSeesPy"
+    },
+    "localAppDir": "/Users/fmckenna/release/quoFEM",
+    "python": "/Library/Frameworks/Python.framework/Versions/3.7/bin/python3",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "lowerbound": 0,
+            "name": "x1",
+            "refCount": 2,
+            "upperbound": 1,
+            "value": "RV.x1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "lowerbound": 0,
+            "name": "y1",
+            "refCount": 2,
+            "upperbound": 1,
+            "value": "RV.y1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "lowerbound": 0,
+            "name": "x2",
+            "refCount": 2,
+            "upperbound": 1,
+            "value": "RV.x2",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "lowerbound": 0,
+            "name": "y2",
+            "refCount": 2,
+            "upperbound": 1,
+            "value": "RV.y2",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Constant",
+            "name": "A1",
+            "refCount": 1,
+            "value": 10,
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/Oct-2019",
+    "uqResults": {
+    },
+    "workingDir": "/Users/fmckenna/Documents/quoFEM/LocalWorkDir"
+}
