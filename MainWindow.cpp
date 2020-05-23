@@ -1325,7 +1325,6 @@ void MainWindow::preferences()
 void MainWindow::about()
 {
     QString textAbout = "\
-
               This is the open-source quoFEM tool. It is an application intended to augment finite element applications with\
               sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
              quantification in the structural responses and parameter estimation of input variables in calibration studies.\
