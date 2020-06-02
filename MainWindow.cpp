@@ -656,13 +656,25 @@ void MainWindow::onRunButtonClicked() {
     tDirectory = "\"" + tDirectory + "\"";
     tmpDirectory = "\"" + tmpDirectory + "\"";
 
-    QString command = QString("source $HOME/.bash_profile; source $HOME/.bashrc; \"") + python + QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+    // check for bashrc or bash profile
+    QDir homeDir(QDir::homePath());
+    QString sourceBash("\"");
+    if (homeDir.exists(".bash_profile")) {
+        sourceBash = QString("source $HOME/.bash_profile; \"");
+    } else if (homeDir.exists(".bashrc")) {
+        sourceBash = QString("source $HOME/.bashrc; \"");
+    } else {
+       qDebug() << "No .bash_profile or .bashrc file found. This may not find Dakota or OpenSees";
+    }
+
+    QString command = sourceBash + python + QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
             tmpDirectory + QString(" runningLocal");
 
     qInfo() << QProcessEnvironment::systemEnvironment().value("PATH") << "\n";// system PATH
     qInfo() << command;
     
     proc->execute("bash", QStringList() << "-c" <<  command);
+   // proc->start("bash", QStringList() << "-c" <<  command);
 
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
