@@ -106,9 +106,19 @@ cwd = os.getcwd()
 print(cwd)
 
 if run_type in ['runningLocal']:
-    p = Popen(command, stdout=PIPE, stderr=PIPE, shell=True)
-    for line in p.stdout:
-        print(str(line))
+
+#    p = Popen(command, stdout=PIPE, stderr=PIPE, shell=True)
+#    for line in p.stdout:
+#        print(str(line))
+
+    dakotaCommand = "dakota -input dakota.in -output dakota.out -error dakota.err"
+    print('running Dakota: ', dakotaCommand)
+    try:
+        result = subprocess.check_output(dakotaCommand, stderr=subprocess.STDOUT, shell=True)
+        returncode = 0
+    except subprocess.CalledProcessError as e:
+        result = e.output
+        returncode = e.returncode
 
 
 
