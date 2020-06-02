@@ -631,7 +631,7 @@ void MainWindow::onRunButtonClicked() {
 
     QString python("python");
     QSettings settings("SimCenter", "Common"); 
-    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid()) 
       python = pythonLocationVariant.toString();
 
@@ -804,7 +804,7 @@ void MainWindow::onRemoteRunButtonClicked(){
 
     QString python("python");
     QSettings settings("SimCenter", "Common"); 
-    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid()) 
       python = pythonLocationVariant.toString();
 
