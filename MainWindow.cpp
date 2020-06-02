@@ -92,6 +92,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QThread>
 #include <QSettings>
 #include <QDesktopServices>
+#include <Utils/RelativePathResolver.h>
 
 
 
@@ -981,9 +982,15 @@ bool MainWindow::saveAs()
     // get filename
     //
 
-    QFileDialog dialog(this);
+    QFileDialog dialog(this, "Save Simulation Model");
     dialog.setWindowModality(Qt::WindowModal);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
+    QStringList filters;
+    filters << "Json files (*.json)"
+            << "All files (*)";
+    dialog.setNameFilters(filters);
+
+
     if (dialog.exec() != QDialog::Accepted)
         return false;
 
@@ -995,7 +1002,7 @@ void MainWindow::open()
 {
     errorMessage("");
 
-    QString fileName = QFileDialog::getOpenFileName(this, "Open Input File", "",  "Json files (*.json);;All files (*)");
+    QString fileName = QFileDialog::getOpenFileName(this, "Open Simulation Model", "",  "Json files (*.json);;All files (*)");
     if (!fileName.isEmpty())
         loadFile(fileName);
 }
@@ -1131,6 +1138,12 @@ bool MainWindow::saveFile(const QString &fileName)
         return false;
     }
 
+
+    //Resolve relative paths before saving
+    QFileInfo fileInfo(fileName);
+    SCUtils::ResolveRelativePaths(json, fileInfo.dir());
+
+
     QJsonDocument doc(json);
     file.write(doc.toJson());
 
@@ -1161,6 +1174,10 @@ void MainWindow::loadFile(const QString &fileName)
     val=file.readAll();
     QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject jsonObj = doc.object();
+
+    //Resolve absolute paths from relative ones
+    QFileInfo fileInfo(fileName);
+    SCUtils::ResolveAbsolutePaths(jsonObj, fileInfo.dir());
 
     // close file
     file.close();
