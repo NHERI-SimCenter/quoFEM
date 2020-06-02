@@ -93,7 +93,7 @@ using namespace QtCharts;
 #include <QFileInfo>
 #include <QFile>
 
-#define NUM_DIVISIONS 10
+//#define NUM_DIVISIONS 10
 
 DakotaResultsSampling::DakotaResultsSampling(RandomVariablesContainer *theRandomVariables, QWidget *parent)
   : UQ_Results(parent), theRVs(theRandomVariables)
@@ -561,7 +561,11 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
         QLineSeries *series= new QLineSeries;
 
-        static double NUM_DIVISIONS_FOR_DIVISION = 10.0;
+        double NUM_DIVISIONS_FOR_DIVISION = ceil(sqrt(rowCount));
+        if (NUM_DIVISIONS_FOR_DIVISION < 10)
+            NUM_DIVISIONS_FOR_DIVISION = 10;
+        int NUM_DIVISIONS = NUM_DIVISIONS_FOR_DIVISION;
+
         double *dataValues = new double[rowCount];
         double histogram[NUM_DIVISIONS];
         for (int i=0; i<NUM_DIVISIONS; i++)
@@ -603,7 +607,7 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
             double maxPercent = 0;
             for (int i=0; i<NUM_DIVISIONS; i++) {
-                histogram[i]/rowCount;
+                histogram[i] = histogram[i]/rowCount;
                 if (histogram[i] > maxPercent)
                     maxPercent = histogram[i];
             }
