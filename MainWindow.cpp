@@ -674,6 +674,7 @@ void MainWindow::onRunButtonClicked() {
     qInfo() << QProcessEnvironment::systemEnvironment().value("PATH") << "\n";// system PATH
     qInfo() << command;
     
+    emit errorMessage("Starting Backend");
     proc->execute("bash", QStringList() << "-c" <<  command);
    // proc->start("bash", QStringList() << "-c" <<  command);
 
