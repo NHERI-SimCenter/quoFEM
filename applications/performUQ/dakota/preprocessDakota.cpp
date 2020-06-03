@@ -87,6 +87,7 @@ int main(int argc, const char **argv) {
   std::string openSeesCommand;
   std::string pythonCommand;
   std::string feapCommand;
+  std::string moveCommand;
 
   const char *localDir = json_string_value(json_object_get(rootINPUT,"localAppDir"));
   const char *remoteDir = json_string_value(json_object_get(rootINPUT,"remoteAppDir"));
@@ -95,15 +96,20 @@ int main(int argc, const char **argv) {
     dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/dakota/simCenterDprepro\"");
     openSeesCommand = std::string("OpenSees");
     pythonCommand = std::string("\"") + json_string_value(json_object_get(rootINPUT,"python")) + std::string("\"");
-    if ((strcmp(osType,"Windows") == 0))
+    if ((strcmp(osType,"Windows") == 0)) {
       feapCommand = std::string("Feappv41.exe");
-    else
+      moveCommand = std::string("move /y ");
+    }
+    else {
       feapCommand = std::string("feappv");
+      moveCommand = std::string("mv ");
+    }
   } else {
     dpreproCommand = remoteDir + std::string("/applications/performUQ/dakota/simCenterDprepro");
     openSeesCommand = std::string("OpenSees");
     pythonCommand = std::string("python");
     feapCommand = std::string("/home1/00477/tg457427/bin/feappv");
+    moveCommand = std::string("mv ");
   }
 
 
@@ -198,8 +204,10 @@ int main(int argc, const char **argv) {
     const char *parametersScript =  json_string_value(json_object_get(fem, "parametersFile"));
 
     if (strcmp(parametersScript,"") == 0) {	
+      workflowDriverFile << moveCommand << mainScript << " tmpSimCenter.script \n";
       workflowDriverFile << dpreproCommand << "  params.in tmpSimCenter.script " << mainScript << "\n";
     } else {
+      workflowDriverFile << moveCommand << parametersScript << " tmpSimCenter.params \n";
       workflowDriverFile << dpreproCommand << "  params.in  tmpSimCenter.params " << " " << parametersScript << "\n";
     }
 
@@ -211,7 +219,6 @@ int main(int argc, const char **argv) {
 	workflowDriverFile << " " << *itEDP;
       }
     }
-    std::cerr << "OPENSEES_PY DONE\n";
   }
 
   workflowDriverFile.close();
