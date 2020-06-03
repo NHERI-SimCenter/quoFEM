@@ -242,7 +242,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
       std::getline(fileResults, haystack);
 
       // for some reason
-       std::getline(fileResults, haystack);
+      ;// std::getline(fileResults, haystack);
 
       const std::string needleEnd = "---------------------------------------";
 
