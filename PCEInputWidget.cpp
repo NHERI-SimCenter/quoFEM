@@ -18,7 +18,9 @@ PCEInputWidget::PCEInputWidget(QWidget *parent) : UQ_MethodInputWidget(parent)
     trainingDataLayout->addWidget(new QLabel("Method for Data Generation"), 0, 0);
     dataMethod = new QComboBox();
     dataMethod->addItem("Quadrature");
-    dataMethod->addItem("Sparse Grid Quadrature");
+    dataMethod->addItem("Smolyak Sparse_Grid");
+    dataMethod->addItem("Stroud Curbature");
+    dataMethod->addItem("Orthogonal Least_Interpolation");
     connect(dataMethod,SIGNAL(currentIndexChanged(int)),this,SLOT(trainingDataMethodChanged(int)));
     trainingDataLayout->addWidget(dataMethod, 0, 1);
 
@@ -94,9 +96,9 @@ bool PCEInputWidget::outputToJSON(QJsonObject &jsonObject)
     jsonObject["dataMethod"]=dataMethod->currentText();
     jsonObject["level"]=level->text().toInt();
 
-    jsonObject["samplesSampling"]=numSamplesSampling->text().toInt();
-    jsonObject["seedSampling"]=randomSeedSampling->text().toDouble();
-    jsonObject["dataMethodSampling"]=dataMethodSampling->currentText();
+    jsonObject["samplingSamples"]=numSamplesSampling->text().toInt();
+    jsonObject["samplingSeed"]=randomSeedSampling->text().toInt();
+    jsonObject["samplingMethod"]=dataMethodSampling->currentText();
 
     return result;
 }
@@ -106,9 +108,9 @@ bool PCEInputWidget::inputFromJSON(QJsonObject &jsonObject)
     bool result = false;
     if ( (jsonObject.contains("level"))
          && (jsonObject.contains("dataMethod"))
-         && (jsonObject.contains("samplesSampling"))
-         && (jsonObject.contains("seedSampling"))
-         && (jsonObject.contains("dataMethodSampling")) ) {
+         && (jsonObject.contains("samplingSamples"))
+         && (jsonObject.contains("samplingSeed"))
+         && (jsonObject.contains("samplingMethod")) ) {
 
         int levelV=jsonObject["level"].toInt();
 
@@ -117,12 +119,11 @@ bool PCEInputWidget::inputFromJSON(QJsonObject &jsonObject)
         QString method=jsonObject["dataMethod"].toString();
         dataMethod->setCurrentIndex(dataMethod->findText(method));
 
-        int samplesS=jsonObject["samplesSampling"].toInt();
-        double seedS=jsonObject["seedSampling"].toDouble();
+        int samplesS=jsonObject["samplingSamples"].toInt();
+        double seedS=jsonObject["samplingSeed"].toInt();
         numSamplesSampling->setText(QString::number(samplesS));
         randomSeedSampling->setText(QString::number(seedS));
-
-        QString methodS=jsonObject["dataMethodSampling"].toString();
+        QString methodS=jsonObject["samplingMethod"].toString();
         dataMethodSampling->setCurrentIndex(dataMethodSampling->findText(methodS));
 
 
@@ -139,15 +140,18 @@ int PCEInputWidget::getNumberTasks()
 
 void PCEInputWidget::trainingDataMethodChanged(int method) {
 
-    if (method == 0) {
-       levelLabel->setText("Quadrature Order");
-    } else {
-        levelLabel->setText("Quadrature Level");
-    }
+    if (method == 0)
+        levelLabel->setText("Quadrature Order");
+    else if (method == 1)
+        levelLabel->setText("Sparse Grid Level");
+    else if (method == 2)
+        levelLabel->setText("Integrand Order");
+    else if (method == 3)
+        levelLabel->setText("Training Samples");
 }
 
 void PCEInputWidget::samplingDataMethodChanged(int method) {
-
+    /*
     if (method == 0 || method == 1) {
         samplingDataLayout->itemAtPosition(1,0)->widget()->show();
         samplingDataLayout->itemAtPosition(1,1)->widget()->show();
@@ -163,5 +167,6 @@ void PCEInputWidget::samplingDataMethodChanged(int method) {
         samplingDataLayout->itemAtPosition(3,0)->widget()->show();
         samplingDataLayout->itemAtPosition(3,1)->widget()->show();
     }
+    */
 }
 
