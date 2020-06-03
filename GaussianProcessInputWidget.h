@@ -24,12 +24,13 @@ public:
     int getNumberTasks();
 
 private:
-    QLineEdit *randomSeed;
-    QLineEdit *numSamples;
-    QComboBox* dataMethod;
-    QLineEdit *randomSeed2;
-    QLineEdit *numSamples2;
-    QComboBox* dataMethod2;
+    QLineEdit *trainingSeed;
+    QLineEdit *trainingNumSamples;
+    QComboBox* trainingMethod;
+    QLineEdit *samplingSeed;
+    QLineEdit *samplingNumSamples;
+    QComboBox *samplingMethod;
+    QComboBox *surrogateSurfaceModel;
 };
 
 #endif // GAUSSIANPROCESSINPUTWIDGET
