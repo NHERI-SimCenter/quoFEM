@@ -870,7 +870,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	gpMethod = "u_gaussian_process";
 
 
-      json_t *levels =  json_object_get(reliabilityMethodData, "probabilityLevel");
+      json_t *levels =  json_object_get(reliabilityMethodData, "responseLevel");
       if (levels == NULL) {
 	return 0; 
       }
