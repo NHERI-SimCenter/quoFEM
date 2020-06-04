@@ -564,6 +564,9 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
         double NUM_DIVISIONS_FOR_DIVISION = ceil(sqrt(rowCount));
         if (NUM_DIVISIONS_FOR_DIVISION < 10)
             NUM_DIVISIONS_FOR_DIVISION = 10;
+        else if (NUM_DIVISIONS_FOR_DIVISION > 20)
+            NUM_DIVISIONS_FOR_DIVISION = 20;
+
         int NUM_DIVISIONS = NUM_DIVISIONS_FOR_DIVISION;
 
         double *dataValues = new double[rowCount];
