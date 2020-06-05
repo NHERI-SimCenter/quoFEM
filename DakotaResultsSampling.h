@@ -66,7 +66,7 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
-    QWidget *createResultEDPWidget(QString &name, double mean, double stdDev, double kurtosis);
+    QWidget *createResultEDPWidget(QString &name, double mean, double stdDev, double skewness, double kurtosis);
 
 signals:
 
@@ -95,6 +95,7 @@ private:
    QVector<double>theMeans;
    QVector<double>theStdDevs;
    QVector<double>theKurtosis;
+   QVector<double>theSkewness;
 };
 
 #endif // DAKOTA_RESULTS_SAMPLING_H

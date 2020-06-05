@@ -93,7 +93,7 @@ using namespace QtCharts;
 #include <QFileInfo>
 #include <QFile>
 
-#define NUM_DIVISIONS 10
+//#define NUM_DIVISIONS 10
 
 DakotaResultsSampling::DakotaResultsSampling(RandomVariablesContainer *theRandomVariables, QWidget *parent)
   : UQ_Results(parent), theRVs(theRandomVariables)
@@ -114,21 +114,22 @@ DakotaResultsSampling::~DakotaResultsSampling()
 
 void DakotaResultsSampling::clear(void)
 {
-  // delete any existing widgets
-  int count = tabWidget->count();
-  if (count > 0) {
-    for (int i=0; i<count; i++) {
-      QWidget *theWidget = tabWidget->widget(count);
-      delete theWidget;
+    // delete any existing widgets
+    int count = tabWidget->count();
+    if (count > 0) {
+        for (int i=0; i<count; i++) {
+            QWidget *theWidget = tabWidget->widget(count);
+            delete theWidget;
+        }
     }
-  }
-  theHeadings.clear();
-  theMeans.clear();
-  theStdDevs.clear();
-  theKurtosis.clear();
+    theHeadings.clear();
+    theMeans.clear();
+    theStdDevs.clear();
+    theKurtosis.clear();
+    theSkewness.clear();
 
-  tabWidget->clear();
-  spreadsheet = NULL;
+    tabWidget->clear();
+    spreadsheet = NULL;
 }
 
 
@@ -332,27 +333,41 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
         double mean_value=sum_value/rowCount;
 
         double sd_value=0;
+        double kurtosis_value=0;
+        double skewness_value = 0;
         for(int row=0; row<rowCount;++row) {
             QTableWidgetItem *item_index = spreadsheet->item(row,col);
             double value_item = item_index->text().toDouble();
-            sd_value = sd_value+(mean_value-value_item)*(mean_value-value_item);
+            double tmp = value_item - mean_value;
+            double tmp2 = tmp*tmp;
+            sd_value += tmp2;
+            skewness_value += tmp*tmp2;
+            kurtosis_value += tmp2*tmp2;
         }
-        sd_value = sd_value/rowCount;
+
+
+        double n = rowCount;
+        double tmpV = sd_value/n;
+
+        if (rowCount > 1)
+            sd_value = sd_value/(n-1);
         sd_value=sqrt(sd_value);
 
+        // biased Kurtosis
+        kurtosis_value = kurtosis_value/(n*tmpV*tmpV);
+        // unbiased kurtosis value as calculated by Matlab
+        if (n > 3)
+            kurtosis_value = (n-1)/((n-2)*(n-3))*((n+1)*kurtosis_value - 3*(n-1)) + 3;
 
-        double kurtosis_value=0;
-        for(int row=0;row<rowCount;++row) {
-            QTableWidgetItem *item_index = spreadsheet->item(row,col);
-            double value_item = item_index->text().toDouble();
-            kurtosis_value = (mean_value-value_item)*(mean_value-value_item)*(mean_value-value_item)*(mean_value-value_item);
-	    kurtosis_value = (kurtosis_value/(sd_value*sd_value*sd_value*sd_value));
-        }
+        tmpV = sqrt(tmpV);
+        // biased skewness
+        skewness_value = skewness_value/(n*tmpV*tmpV*tmpV);
+        // unbiased skewness like Matlab
+        if (n > 3)
+            skewness_value *= sqrt(n*(n-1))/(n-2);
 
-        //kurtosis_value = kurtosis_value/rowCount;
-        //kurtosis_value = (kurtosis_value/(sd_value*sd_value*sd_value*sd_value))-3;
         QString variableName = theHeadings.at(col);
-        QWidget *theWidget = this->createResultEDPWidget(variableName, mean_value, sd_value, kurtosis_value);
+        QWidget *theWidget = this->createResultEDPWidget(variableName, mean_value, sd_value, skewness_value, kurtosis_value);
         summaryLayout->addWidget(theWidget);
     }
 
@@ -546,7 +561,14 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
         QLineSeries *series= new QLineSeries;
 
-        static double NUM_DIVISIONS_FOR_DIVISION = 10.0;
+        double NUM_DIVISIONS_FOR_DIVISION = ceil(sqrt(rowCount));
+        if (NUM_DIVISIONS_FOR_DIVISION < 10)
+            NUM_DIVISIONS_FOR_DIVISION = 10;
+        else if (NUM_DIVISIONS_FOR_DIVISION > 20)
+            NUM_DIVISIONS_FOR_DIVISION = 20;
+
+        int NUM_DIVISIONS = NUM_DIVISIONS_FOR_DIVISION;
+
         double *dataValues = new double[rowCount];
         double histogram[NUM_DIVISIONS];
         for (int i=0; i<NUM_DIVISIONS; i++)
@@ -588,7 +610,7 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
             double maxPercent = 0;
             for (int i=0; i<NUM_DIVISIONS; i++) {
-                histogram[i]/rowCount;
+                histogram[i] = histogram[i]/rowCount;
                 if (histogram[i] > maxPercent)
                     maxPercent = histogram[i];
             }
@@ -811,6 +833,7 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
         edpData["mean"]=theMeans.at(i);
         edpData["stdDev"]=theStdDevs.at(i);
         edpData["kurtosis"]=theKurtosis.at(i);
+        edpData["skewness"]=theSkewness.at(i);
         resultsData.append(edpData);
     }
 
@@ -908,7 +931,10 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
         QJsonValue theKurtosis = edpObject["kurtosis"];
         double kurtosis = theKurtosis.toDouble();
 
-        QWidget *theWidget = this->createResultEDPWidget(name, mean, stdDev, kurtosis);
+        QJsonValue theSkewness = edpObject["skewness"];
+        double skewness = theSkewness.toDouble();
+
+        QWidget *theWidget = this->createResultEDPWidget(name, mean, stdDev, skewness, kurtosis);
         summaryLayout->addWidget(theWidget);
     }
     summaryLayout->addStretch();
@@ -988,7 +1014,7 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
 extern QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit);
 
 QWidget *
-DakotaResultsSampling::createResultEDPWidget(QString &name, double mean, double stdDev, double kurtosis) {
+DakotaResultsSampling::createResultEDPWidget(QString &name, double mean, double stdDev, double skewness, double kurtosis) {
     QWidget *edp = new QWidget;
     QHBoxLayout *edpLayout = new QHBoxLayout();
 
@@ -1014,6 +1040,13 @@ DakotaResultsSampling::createResultEDPWidget(QString &name, double mean, double 
     stdDevLineEdit->setDisabled(true);
     theStdDevs.append(stdDev);
     edpLayout->addWidget(stdDevWidget);
+
+    QLineEdit *skewnessLineEdit;
+    QWidget *skewnessWidget = addLabeledLineEdit(QString("Skewness"), &skewnessLineEdit);
+    skewnessLineEdit->setText(QString::number(skewness));
+    skewnessLineEdit->setDisabled(true);
+    theSkewness.append(skewness);
+    edpLayout->addWidget(skewnessWidget);
 
     QLineEdit *kurtosisLineEdit;
     QWidget *kurtosisWidget = addLabeledLineEdit(QString("Kurtosis"), &kurtosisLineEdit);

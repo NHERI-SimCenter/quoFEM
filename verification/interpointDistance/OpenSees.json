@@ -1,0 +1,77 @@
+{
+    "Applications": {
+        "UQ": {
+            "Application": "Dakota-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "name": "E"
+        }
+    ],
+    "UQ_Method": {
+        "samplingMethodData": {
+            "method": "LHS",
+            "samples": 1000,
+            "seed": 175
+        },
+        "uqEngine": "Dakota",
+        "uqType": "Forward Propagation"
+    },
+    "fem": {
+        "dir": "{Current_Dir}/.",
+        "inputFile": "{Current_Dir}/ghosh.tcl",
+        "mainInput": "ghosh.tcl",
+        "mainPostprocessScript": "",
+        "numInputs": 1,
+        "postprocessScript": "",
+        "program": "OpenSees"
+    },
+    "localAppDir": "/Users/fmckenna/release/quoFEM",
+    "python": "/usr/local/bin/python3",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "lowerbound": 0,
+            "name": "x1",
+            "refCount": 0,
+            "upperbound": 1,
+            "value": "RV.x1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "lowerbound": 0,
+            "name": "x2",
+            "refCount": 0,
+            "upperbound": 1,
+            "value": "RV.x2",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "lowerbound": 0,
+            "name": "y1",
+            "refCount": 0,
+            "upperbound": 0.6,
+            "value": "RV.y1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "lowerbound": 0,
+            "name": "y2",
+            "refCount": 0,
+            "upperbound": 0.6,
+            "value": "RV.y2",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
+    "uqResults": {
+        "resultType": "NONE"
+    },
+    "workingDir": "/Users/fmckenna/Documents/quoFEM/LocalWorkDir"
+}

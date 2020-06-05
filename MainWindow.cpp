@@ -92,6 +92,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QThread>
 #include <QSettings>
 #include <QDesktopServices>
+#include <Utils/RelativePathResolver.h>
 
 
 
@@ -630,7 +631,7 @@ void MainWindow::onRunButtonClicked() {
 
     QString python("python");
     QSettings settings("SimCenter", "Common"); 
-    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid()) 
       python = pythonLocationVariant.toString();
 
@@ -656,13 +657,26 @@ void MainWindow::onRunButtonClicked() {
     tDirectory = "\"" + tDirectory + "\"";
     tmpDirectory = "\"" + tmpDirectory + "\"";
 
-    QString command = QString("source $HOME/.bash_profile; source $HOME/.bashrc; \"") + python + QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+    // check for bashrc or bash profile
+    QDir homeDir(QDir::homePath());
+    QString sourceBash("\"");
+    if (homeDir.exists(".bash_profile")) {
+        sourceBash = QString("source $HOME/.bash_profile; \"");
+    } else if (homeDir.exists(".bashrc")) {
+        sourceBash = QString("source $HOME/.bashrc; \"");
+    } else {
+       qDebug() << "No .bash_profile or .bashrc file found. This may not find Dakota or OpenSees";
+    }
+
+    QString command = sourceBash + python + QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
             tmpDirectory + QString(" runningLocal");
 
     qInfo() << QProcessEnvironment::systemEnvironment().value("PATH") << "\n";// system PATH
     qInfo() << command;
     
+    emit errorMessage("Starting Backend");
     proc->execute("bash", QStringList() << "-c" <<  command);
+   // proc->start("bash", QStringList() << "-c" <<  command);
 
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
@@ -791,7 +805,7 @@ void MainWindow::onRemoteRunButtonClicked(){
 
     QString python("python");
     QSettings settings("SimCenter", "Common"); 
-    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid()) 
       python = pythonLocationVariant.toString();
 
@@ -969,9 +983,15 @@ bool MainWindow::saveAs()
     // get filename
     //
 
-    QFileDialog dialog(this);
+    QFileDialog dialog(this, "Save Simulation Model");
     dialog.setWindowModality(Qt::WindowModal);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
+    QStringList filters;
+    filters << "Json files (*.json)"
+            << "All files (*)";
+    dialog.setNameFilters(filters);
+
+
     if (dialog.exec() != QDialog::Accepted)
         return false;
 
@@ -983,7 +1003,7 @@ void MainWindow::open()
 {
     errorMessage("");
 
-    QString fileName = QFileDialog::getOpenFileName(this, "Open Input File", "",  "Json files (*.json);;All files (*)");
+    QString fileName = QFileDialog::getOpenFileName(this, "Open Simulation Model", "",  "Json files (*.json);;All files (*)");
     if (!fileName.isEmpty())
         loadFile(fileName);
 }
@@ -1119,6 +1139,12 @@ bool MainWindow::saveFile(const QString &fileName)
         return false;
     }
 
+
+    //Resolve relative paths before saving
+    QFileInfo fileInfo(fileName);
+    SCUtils::ResolveRelativePaths(json, fileInfo.dir());
+
+
     QJsonDocument doc(json);
     file.write(doc.toJson());
 
@@ -1149,6 +1175,10 @@ void MainWindow::loadFile(const QString &fileName)
     val=file.readAll();
     QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject jsonObj = doc.object();
+
+    //Resolve absolute paths from relative ones
+    QFileInfo fileInfo(fileName);
+    SCUtils::ResolveAbsolutePaths(jsonObj, fileInfo.dir());
 
     // close file
     file.close();

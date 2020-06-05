@@ -293,8 +293,7 @@ writeRV(std::ostream &dakotaFile, struct randomVariables &theRandomVariables, st
     if (idVariables.empty())
       dakotaFile << "variables \n active uncertain \n";
     else
-      dakotaFile << "variables \n id_variables =  '" << idVariables << "'\n active uncertain \n";    
-    
+      dakotaFile << "variables \n id_variables =  '" << idVariables << "'\n active uncertain \n";        
     int numNormalUncertain = theRandomVariables.normalRVs.size();
 
     int numNormal = theRandomVariables.normalRVs.size();
@@ -342,8 +341,10 @@ writeRV(std::ostream &dakotaFile, struct randomVariables &theRandomVariables, st
       for (auto it = theRandomVariables.uniformRVs.begin(); it != theRandomVariables.uniformRVs.end(); it++)
 	dakotaFile << it->upperBound << " ";
       dakotaFile << "\n    descriptors = ";
-      for (auto it = theRandomVariables.uniformRVs.begin(); it != theRandomVariables.uniformRVs.end(); it++)
+      for (auto it = theRandomVariables.uniformRVs.begin(); it != theRandomVariables.uniformRVs.end(); it++) {
 	dakotaFile << "\'" << it->name << "\' ";
+	rvList.push_back(it->name);
+      }
       dakotaFile << "\n";
     }
 
@@ -645,7 +646,13 @@ writeDakotaInputFile(std::ostream &dakotaFile,
   if (strcmp(type, "Sensitivity Analysis") == 0)
     sensitivityAnalysis = true;
 
-  int numResponses = json_integer_value(json_object_get(rootEDP,"total_number_edp"));
+  json_t *EDPs = json_object_get(rootEDP,"EngineeringDemandParameters");
+  int numResponses = 0;
+  if (EDPs != NULL) {
+    numResponses = json_integer_value(json_object_get(rootEDP,"total_number_edp"));
+  } else {
+    numResponses = json_array_size(rootEDP);
+  }
 
   //
   // based on method do stuff
@@ -808,7 +815,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       if (strcmp(integrationMethod,"First Order") == 0)
 	intMethod = "first_order";
       else
-	intMethod = "second_order ";
+	intMethod = "second_order";
 
       dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
       if (strcmp(localMethod,"Mean Value") == 0) {
@@ -850,13 +857,19 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evalConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList);
+      writeResponse(dakotaFile, rootEDP, emptyString, true, true, edpList);
     }
 
     else if (strcmp(method,"Global Reliability")==0) {
 
-      int seed = json_integer_value(json_object_get(reliabilityMethodData,"seed"));    
       const char *gp = json_string_value(json_object_get(reliabilityMethodData,"gpApproximation"));    
+      std::string gpMethod;
+      if (strcmp(gp,"x-space") == 0)
+	gpMethod = "x_gaussian_process";
+      else
+	gpMethod = "u_gaussian_process";
+
+
       json_t *levels =  json_object_get(reliabilityMethodData, "responseLevel");
       if (levels == NULL) {
 	return 0; 
@@ -864,7 +877,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       int numLevels = json_array_size(levels);
 
       dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
-      dakotaFile << "method, \n global_reliability " << gp << " \n seed " << seed;
+      dakotaFile << "method, \n global_reliability " << gpMethod << " \n"; // seed " << seed;
 
       dakotaFile << " \n num_response_levels = ";
       for (int i=0; i<numResponses; i++) 
@@ -899,17 +912,35 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
     int maxIterations = json_integer_value(json_object_get(methodData,"maxIterations"));    
     double tol = json_number_value(json_object_get(methodData,"convergenceTol"));    
+    const char *factors = json_string_value(json_object_get(methodData,"factors"));    
     
     dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
-    dakotaFile << "method, \n " << methodString << "\n  convergence_tolerance = " << tol 
-	       << " \n   max_iterations = " << maxIterations << "\n\n";
 
+    dakotaFile << "method, \n " << methodString << "\n  convergence_tolerance = " << tol 
+	       << " \n   max_iterations = " << maxIterations;
+
+    if (strcmp(factors,"") != 0) 
+      dakotaFile << "\n  scaling\n";
+
+    dakotaFile << "\n\n";
+      
     std::string calibrationString("calibration");
     std::string emptyString;
     writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
     writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evalConcurrency);
     writeResponse(dakotaFile, rootEDP, calibrationString, true, false, edpList);
 
+    if (strcmp(factors,"") != 0) {      
+      dakotaFile << "\n  primary_scale_types = \"value\" \n  primary_scales = ";
+      std::string factorString(factors);
+      std::stringstream factors_stream(factorString);
+      std::string tmp;
+      while (factors_stream >> tmp) {
+	// maybe some checks, i.e. ,
+	dakotaFile << tmp << " ";
+      }
+      dakotaFile << "\n";
+    }
 
   } else if ((strcmp(type, "Inverse Problem") == 0)) {
 

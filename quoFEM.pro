@@ -74,7 +74,6 @@ SOURCES += main.cpp\
     ImportanceSamplingInputWidget.cpp \
     GaussianProcessInputWidget.cpp \
     PCEInputWidget.cpp \
-    qcustomplot.cpp \
     DakotaInputReliability.cpp \
     LocalReliabilityWidget.cpp \
     GlobalReliabilityWidget.cpp \
