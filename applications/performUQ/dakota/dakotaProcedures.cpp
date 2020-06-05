@@ -912,17 +912,35 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
     int maxIterations = json_integer_value(json_object_get(methodData,"maxIterations"));    
     double tol = json_number_value(json_object_get(methodData,"convergenceTol"));    
+    const char *factors = json_string_value(json_object_get(methodData,"factors"));    
     
     dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
-    dakotaFile << "method, \n " << methodString << "\n  convergence_tolerance = " << tol 
-	       << " \n   max_iterations = " << maxIterations << "\n\n";
 
+    dakotaFile << "method, \n " << methodString << "\n  convergence_tolerance = " << tol 
+	       << " \n   max_iterations = " << maxIterations;
+
+    if (strcmp(factors,"") != 0) 
+      dakotaFile << "\n  scaling\n";
+
+    dakotaFile << "\n\n";
+      
     std::string calibrationString("calibration");
     std::string emptyString;
     writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
     writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evalConcurrency);
     writeResponse(dakotaFile, rootEDP, calibrationString, true, false, edpList);
 
+    if (strcmp(factors,"") != 0) {      
+      dakotaFile << "\n  primary_scale_types = \"value\" \n  primary_scales = ";
+      std::string factorString(factors);
+      std::stringstream factors_stream(factorString);
+      std::string tmp;
+      while (factors_stream >> tmp) {
+	// maybe some checks, i.e. ,
+	dakotaFile << tmp << " ";
+      }
+      dakotaFile << "\n";
+    }
 
   } else if ((strcmp(type, "Inverse Problem") == 0)) {
 
