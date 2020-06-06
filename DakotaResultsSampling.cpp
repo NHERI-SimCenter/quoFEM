@@ -570,7 +570,7 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
         int NUM_DIVISIONS = NUM_DIVISIONS_FOR_DIVISION;
 
         double *dataValues = new double[rowCount];
-        double histogram[NUM_DIVISIONS];
+        double histogram[20];
         for (int i=0; i<NUM_DIVISIONS; i++)
             histogram[i] = 0;
 
