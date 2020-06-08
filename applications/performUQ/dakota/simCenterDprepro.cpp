@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <iterator>
+#include <stdlib.h>
+#include <stdio.h>
 
 using std::string;
 using std::vector;
@@ -32,6 +34,9 @@ int main(int argc, char **argv)
   std::ifstream params(argv[1]);
   std::ifstream in(argv[2]);
   std::ofstream out(argv[3]);
+  const char *fixedFormat = NULL;
+  if (argc == 5)
+    fixedFormat = argv[4];
 
   if (!params.is_open()) {
     std::cerr << "ERROR: simCenterDprepro could not open: " << argv[1] << "\n";
@@ -47,7 +52,7 @@ int main(int argc, char **argv)
   }
 
   //
-  // vectors that will contain strinmgs to search for & their replacement
+  // vectors that will contain strings to search for (original) & their replacement (replace)
   //
 
   vector<string> original; 
@@ -70,18 +75,30 @@ int main(int argc, char **argv)
 
       // first line contains #RV
       numRVs = std::stoi(tokens.at(3));
-      // std::cerr << "numRV: " << numRVs << "\n";
 
     } else {
 
       // subsequent lines contain RV and value .. add to string vectors
       string rvName = "\"RV." + tokens.at(1) + "\"";  // add SimCenter delimiters begin="RV. & end="
       string rvValue = tokens.at(3);
+
+      if (fixedFormat == NULL) {
+	replace.push_back(rvValue);
+      } else {
+	try {
+	  double val = std::stod(rvValue);
+	  char valA[45];
+	  std::sprintf(valA,"%30.15f",val);
+	  std::string valS(valA);
+	  replace.push_back(valS);	
+	} catch(...) {
+	  replace.push_back(rvValue);
+	}
+      }
+
       original.push_back(rvName);
-      replace.push_back(rvValue);
       originalLength.push_back(rvName.length());
       replacementLength.push_back(rvValue.length());
-      // std::cerr << rvName << " " << rvValue << "\n";
     }
 
     lineCount++;

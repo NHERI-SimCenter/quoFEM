@@ -142,29 +142,27 @@ int main(int argc, const char **argv) {
     for(std::vector<std::string>::iterator itRV = rvList.begin(); itRV != rvList.end(); ++itRV) {
       templateFile << "pset " << *itRV << " \"RV." << *itRV << "\"\n";
     }
-    templateFile << "\n source " << mainInput << "\n";
+
+    templateFile << "\n set listQoI \"";
+    for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
+      templateFile << *itEDP << " ";
+    }
+
+    templateFile << "\"\n\n\n source " << mainInput << "\n";
 
     workflowDriverFile << dpreproCommand << "  params.in SimCenterInput.RV SimCenterInput.tcl\n";
     workflowDriverFile << openSeesCommand << "  SimCenterInput.tcl >> ops.out\n";
 
     // depending on script type do something
     if (scriptType == 1) { // python script
-
-      workflowDriverFile << pythonCommand << " " << postprocessScript;
+      workflowDriverFile << "\n" << pythonCommand << " " << postprocessScript;
       for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
 	workflowDriverFile << " " << *itEDP;
       }
-
-    } else if (scriptType == 2) { // tcl script
-
-      templateFile << "\n set listQoI \"";
-      for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
-	templateFile << *itEDP << " ";
-      }
-      
-      templateFile << "\"\n\n source " << postprocessScript << "\n";      
+    } 
+    else if (scriptType == 2) { // tcl script
+      templateFile << " source " << postprocessScript << "\n";      
     }
-    workflowDriverFile << "\n";
 
     templateFile.close();
   }    
@@ -185,7 +183,7 @@ int main(int argc, const char **argv) {
     feapFile.close();
 
     // write driiver file
-    workflowDriverFile << dpreproCommand << "  params.in " << mainInput  << " SimCenterIn.txt --output-format\'%10.5f\'\n";
+    workflowDriverFile << dpreproCommand << "  params.in " << mainInput  << " SimCenterIn.txt --formatFixed\n";
     workflowDriverFile << "echo y | " << feapCommand << "\n";
     workflowDriverFile << pythonCommand << " " << postprocessScript;
     for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
@@ -211,10 +209,14 @@ int main(int argc, const char **argv) {
       workflowDriverFile << dpreproCommand << "  params.in  tmpSimCenter.params " << " " << parametersScript << "\n";
     }
 
-    workflowDriverFile << pythonCommand << " " << mainScript << "\n";
+    workflowDriverFile << pythonCommand << " " << mainScript;
 
     if (strcmp(postprocessScript,"") != 0) {
-      workflowDriverFile << pythonCommand << " " << postprocessScript;
+      workflowDriverFile << "\n" << pythonCommand << " " << postprocessScript;
+      for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
+	workflowDriverFile << " " << *itEDP;
+      }
+    } else {
       for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
 	workflowDriverFile << " " << *itEDP;
       }
