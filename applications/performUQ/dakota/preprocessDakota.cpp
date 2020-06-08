@@ -195,17 +195,15 @@ int main(int argc, const char **argv) {
 
   else if (strcmp(program,"OpenSeesPy") == 0) {
 
-    std::cerr << "OPENSEES_PY\n";
-
     const char *mainScript =  json_string_value(json_object_get(fem, "mainInput"));
     const char *postprocessScript =  json_string_value(json_object_get(fem, "mainPostprocessScript"));
     const char *parametersScript =  json_string_value(json_object_get(fem, "parametersFile"));
 
     if (strcmp(parametersScript,"") == 0) {	
-      workflowDriverFile << moveCommand << mainScript << " tmpSimCenter.script \n";
+      // workflowDriverFile << moveCommand << mainScript << " tmpSimCenter.script \n";
       workflowDriverFile << dpreproCommand << "  params.in tmpSimCenter.script " << mainScript << "\n";
     } else {
-      workflowDriverFile << moveCommand << parametersScript << " tmpSimCenter.params \n";
+      // workflowDriverFile << moveCommand << parametersScript << " tmpSimCenter.params \n";
       workflowDriverFile << dpreproCommand << "  params.in  tmpSimCenter.params " << " " << parametersScript << "\n";
     }
 
