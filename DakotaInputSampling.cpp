@@ -86,7 +86,7 @@ DakotaInputSampling::DakotaInputSampling(QWidget *parent)
     samplingMethod->addItem(tr("Importance Sampling"));
     samplingMethod->addItem(tr("Gaussian Process Regression"));
     samplingMethod->addItem(tr("Polynomial Chaos Expansion"));
-    samplingMethod->addItem(tr("Multi Fidelity Monte Carlo"));
+    // samplingMethod->addItem(tr("Multi Fidelity Monte Carlo"));
 
     /*
     samplingMethod->addItem(tr("Multilevel Monte Carlo"));
