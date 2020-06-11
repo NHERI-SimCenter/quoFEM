@@ -508,7 +508,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
     // add summary, detained info and spreadsheet with chart to the tabed widget
     //
 
-    tabWidget->addTab(summary,tr("Summmary"));
+    tabWidget->addTab(summary,tr("Summary"));
     tabWidget->addTab(dakotaText, tr("General"));
     tabWidget->addTab(widget, tr("Data Values"));
 

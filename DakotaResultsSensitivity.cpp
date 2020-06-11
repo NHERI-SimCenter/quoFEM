@@ -1105,7 +1105,7 @@ DakotaResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
     // add 3 Widgets to TabWidget
     //
 
-    tabWidget->addTab(summary,tr("Summmary"));
+    tabWidget->addTab(summary,tr("Summary"));
     tabWidget->addTab(widget, tr("Data Values"));
 
     tabWidget->adjustSize();
