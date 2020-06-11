@@ -534,6 +534,8 @@ void MainWindow::onRunButtonClicked() {
         return;
     }
 
+
+
     QJsonObject json;
     if  (this->outputToJSON(json) == false) {
         file.close();
@@ -600,9 +602,6 @@ void MainWindow::onRunButtonClicked() {
         }
     }
 
-
-    qDebug() << "UQ APP DATA" << appData << "name: " << appName << " programToExe: " << programToExe;
-
     QString pySCRIPT = appDIR +  QDir::separator() + programToExe;
 
     QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
@@ -611,17 +610,11 @@ void MainWindow::onRunButtonClicked() {
     // check the python script exists
     //
 
-    qDebug() << "pyScript: " << pySCRIPT;
-
     QFile pyDAKOTA(pySCRIPT);
     if (! pyDAKOTA.exists()) {
       errorMessage("Executable script does not exist, try to reset settings, if fails download application again");
       return;
     }
-
-    // remove current results widget
-
-    results->setResultWidget(0);
 
     //
     // now invoke dakota, done via a python script in tool app dircetory
@@ -743,6 +736,11 @@ void MainWindow::onRemoteRunButtonClicked(){
         return;
     }
 
+
+    // remove current results widget
+    results->setResultWidget(0);
+
+
     QJsonObject json;
     if (this->outputToJSON(json) == false) {
         file.close();
@@ -776,9 +774,6 @@ void MainWindow::onRemoteRunButtonClicked(){
       errorMessage("Dakota script does not exist, the parseDAKOTA.py script was not found in exe folder! .. download application again");
       return;
     }
-
-    // remove current results widget
-    results->setResultWidget(0);
 
     //
     // want to first remove old dakota files from the current directory
