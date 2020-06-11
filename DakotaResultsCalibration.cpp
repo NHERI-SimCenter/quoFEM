@@ -368,6 +368,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
 
     const std::string needle = "Best parameters          =";
     const std::string needle2 = "Best residual term";
+    const std::string needle3 = "Original";
     std::string haystack;
 
     while (std::getline(fileResults, haystack)) {
@@ -390,7 +391,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
         dakotaText->append(haystack.c_str());
         if (isSummaryDone == false) {
 
-            if (haystack.find(needle2) != std::string::npos) {
+            if (haystack.find(needle2) != std::string::npos || haystack.find(needle3) != std::string::npos) {
                 isSummaryDone = true;
             } else {
                 //
