@@ -515,7 +515,7 @@ int DakotaResultsBayesianCalibration::processResults(QString &filenameResults, Q
     // add summary, detained info and spreadsheet with chart to the tabed widget
     //
 
-    tabWidget->addTab(summary,tr("Summmary"));
+    tabWidget->addTab(summary,tr("Summary"));
     tabWidget->addTab(dakotaText, tr("General"));
     tabWidget->addTab(widget, tr("Data Values"));
 
@@ -554,6 +554,29 @@ DakotaResultsBayesianCalibration::onSpreadsheetCellClicked(int row, int col)
     int rowCount = spreadsheet->rowCount();
     if (col1 != col2) {
         QScatterSeries *series = new QScatterSeries;
+
+        // adjust marker size and opacity based on the number of samples
+        if (rowCount < 10) {
+            series->setMarkerSize(15.0);
+            series->setColor(QColor(0, 114, 178, 200));
+        } else if (rowCount < 100) {
+            series->setMarkerSize(11.0);
+            series->setColor(QColor(0, 114, 178, 160));
+        } else if (rowCount < 1000) {
+            series->setMarkerSize(8.0);
+            series->setColor(QColor(0, 114, 178, 100));
+        } else if (rowCount < 10000) {
+            series->setMarkerSize(6.0);
+            series->setColor(QColor(0, 114, 178, 70));
+        } else if (rowCount < 100000) {
+            series->setMarkerSize(5.0);
+            series->setColor(QColor(0, 114, 178, 50));
+        } else {
+            series->setMarkerSize(4.5);
+            series->setColor(QColor(0, 114, 178, 30));
+        }
+        
+        series->setBorderColor(QColor(255,255,255,0));
 
         for (int i=0; i<rowCount; i++) {
             QTableWidgetItem *itemX = spreadsheet->item(i,col1);
