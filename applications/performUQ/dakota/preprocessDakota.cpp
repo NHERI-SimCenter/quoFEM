@@ -151,7 +151,7 @@ int main(int argc, const char **argv) {
     templateFile << "\"\n\n\n source " << mainInput << "\n";
 
     workflowDriverFile << dpreproCommand << "  params.in SimCenterInput.RV SimCenterInput.tcl\n";
-    workflowDriverFile << openSeesCommand << "  SimCenterInput.tcl >> ops.out\n";
+    workflowDriverFile << openSeesCommand << "  SimCenterInput.tcl -suppressOutput >> ops.out\n";
 
     // depending on script type do something
     if (scriptType == 1) { // python script
