@@ -255,7 +255,7 @@ parseForRV(json_t *root, struct randomVariables &theRandomVariables){
 
 
 int
-writeRV(std::ostream &dakotaFile, struct randomVariables &theRandomVariables, std::string idVariables, std::vector<std::string> &rvList){ 
+writeRV(std::ostream &dakotaFile, struct randomVariables &theRandomVariables, std::string idVariables, std::vector<std::string> &rvList, bool includeActiveText = true){ 
 
 
     int numContinuousDesign = theRandomVariables.continuousDesignRVs.size();
@@ -266,7 +266,6 @@ writeRV(std::ostream &dakotaFile, struct randomVariables &theRandomVariables, st
 	dakotaFile << "variables \n ";
       else
 	dakotaFile << "variables \n id_variables =  '" << idVariables << "'\n";    
-
 
       if (numContinuousDesign > 0) {
 	dakotaFile << "  continuous_design = " << numContinuousDesign << "\n    initial_point = ";
@@ -289,12 +288,16 @@ writeRV(std::ostream &dakotaFile, struct randomVariables &theRandomVariables, st
       return 0;
     }
 
+    if (includeActiveText == true) {
+      if (idVariables.empty())
+	dakotaFile << "variables \n active uncertain \n";
+      else
+	dakotaFile << "variables \n id_variables =  '" << idVariables << "'\n active uncertain \n";        
+    } else {
+	dakotaFile << "variables \n";
+    }
 
-    if (idVariables.empty())
-      dakotaFile << "variables \n active uncertain \n";
-    else
-      dakotaFile << "variables \n id_variables =  '" << idVariables << "'\n active uncertain \n";        
-    int numNormalUncertain = theRandomVariables.normalRVs.size();
+      int numNormalUncertain = theRandomVariables.normalRVs.size();
 
     int numNormal = theRandomVariables.normalRVs.size();
     if (theRandomVariables.normalRVs.size() > 0) {
@@ -675,7 +678,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	dakotaFile << "variance_based_decomp \n\n";
 
       std::string emptyString;
-      writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
+      writeRV(dakotaFile, theRandomVariables, emptyString, rvList, true);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evalConcurrency);
       writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList);
     }
@@ -947,7 +950,8 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     json_t *methodData = json_object_get(uqData,"bayesianCalibrationMethodData");
 
     const char *method = json_string_value(json_object_get(methodData,"method"));
-
+    
+    /*
     const char *emulator = json_string_value(json_object_get(methodData,"emulator"));
     std::string emulatorString("gaussian_process");
     if (strcmp(emulator,"Polynomial Chaos")==0) 
@@ -958,12 +962,14 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       emulatorString = "mf_pce";
     else if (strcmp(emulator,"Stochastic Collocation")==0) 
       emulatorString = "sc";
+    */
 
     int chainSamples = json_integer_value(json_object_get(methodData,"chainSamples"));    
     int seed = json_integer_value(json_object_get(methodData,"seed"));    
     int burnInSamples = json_integer_value(json_object_get(methodData,"burnInSamples"));    
-    int maxIterations = json_integer_value(json_object_get(methodData,"maxIter"));    
-    double tol = json_number_value(json_object_get(methodData,"tol"));    
+    int jumpStep = json_integer_value(json_object_get(methodData,"jumpStep"));    
+    //    int maxIterations = json_integer_value(json_object_get(methodData,"maxIter"));    
+    //    double tol = json_number_value(json_object_get(methodData,"tol"));    
 
     if (strcmp(method,"DREAM")==0) {
 
@@ -973,9 +979,8 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       dakotaFile << "method \n bayes_calibration dream "
 		 << "\n  chain_samples = " << chainSamples
 		 << "\n  chains = " << chains
-		 << "\n  burn_in_samples = " << burnInSamples
-		 << "\n  convergence_tolerance = " << tol 
-		 << "\n  max_iterations = " << maxIterations << "\n\n";
+		 << "\n  jump_step = " << jumpStep
+		 << "\n  burn_in_samples = " << burnInSamples << "\n\n";
 
     } else {
 
@@ -993,15 +998,12 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
       dakotaFile << "method \n bayes_calibration queso\n  " << mcmc
 		 << "\n  chain_samples = " << chainSamples
-		 << "\n  burn_in_samples = " << burnInSamples
-		 << "\n  convergence_tolerance = " << tol 
-		 << "\n  max_iterations = " << maxIterations << "\n\n";
-      
+		 << "\n  burn_in_samples = " << burnInSamples << "\n\n";
     }
 
     std::string calibrationString("calibration");
     std::string emptyString;
-    writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
+    writeRV(dakotaFile, theRandomVariables, emptyString, rvList, false);
     writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evalConcurrency);
     writeResponse(dakotaFile, rootEDP, calibrationString, false, false, edpList);
 

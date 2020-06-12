@@ -69,8 +69,14 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
 {
     layout = new QGridLayout();
 
+
     calibrationMethod = new QComboBox();
     calibrationMethod->addItem(tr("DREAM"));
+    connect(calibrationMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onMethodChanged(QString)));
+    layout->addWidget(new QLabel("Method"), 0, 0);
+    layout->addWidget(calibrationMethod, 0, 1, 1, 2);
+
+    /*
     //calibrationMethod->addItem("QUESO"); QUESO GPL!
     layout->addWidget(new QLabel("Method"), 0, 0);
     layout->addWidget(calibrationMethod, 0, 1, 1, 2);
@@ -85,25 +91,33 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     mcmcMethod->addItem("Multilevel");
     layout->addWidget(new QLabel("MCMC Algorithm"), 2, 0);
     layout->addWidget(mcmcMethod, 2, 1);
-
+    */
     chains = new QLineEdit();
     chains->setText(tr("3"));
-    layout->addWidget(new QLabel("# Chains"), 3, 0);
-    layout->addWidget(chains, 3, 1);
+    layout->addWidget(new QLabel("# Chains"), 2, 0);
+    layout->addWidget(chains, 2, 1);
 
 
 
     chainSamples = new QLineEdit();
     chainSamples->setText(tr("1000"));
-    layout->addWidget(new QLabel("# Chain Samples"), 4,0);
-    layout->addWidget(chainSamples, 4,1);
+    layout->addWidget(new QLabel("# Chain Samples"), 3,0);
+    layout->addWidget(chainSamples, 3,1);
 
     burnInSamples = new QLineEdit();
     burnInSamples->setText("0");
-    layout->addWidget(new QLabel("# Burn in Samples"), 5,0);
-    layout->addWidget(burnInSamples, 5,1);
+    layout->addWidget(new QLabel("# Burn in Samples"), 4,0);
+    layout->addWidget(burnInSamples, 4,1);
     burnInSamples->setValidator(new QIntValidator);
     burnInSamples->setToolTip("Set Random Seed Value");
+
+    jumpStep = new QLineEdit();
+    jumpStep->setText(tr("5"));
+    layout->addWidget(new QLabel("Jump Step"), 5,0);
+    layout->addWidget(jumpStep, 5,1);
+    burnInSamples->setValidator(new QIntValidator);
+    burnInSamples->setToolTip("Jump Step");
+
 
     srand(time(NULL));
     int randomNumber = rand() % 1000 + 1;
@@ -112,9 +126,9 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     randomSeed->setValidator(new QIntValidator);
     randomSeed->setToolTip("Set Random Seed Value");
 
-    layout->addWidget(new QLabel("Seed"), 7, 0);
-    layout->addWidget(randomSeed, 7, 1);
-
+    layout->addWidget(new QLabel("Seed"), 6, 0);
+    layout->addWidget(randomSeed, 6, 1);
+    /*
     emulator = new QComboBox();
     emulator->addItem(tr("Gaussian Process"));
     emulator->addItem("Polynomial Chaos");
@@ -147,12 +161,13 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
 
     layout->itemAtPosition(2,0)->widget()->hide();
     layout->itemAtPosition(2,1)->widget()->hide();
+    */
 
     layout->setColumnStretch(1, 2);
     layout->setColumnStretch(2, 1);
     layout->setColumnStretch(3,4);
 
-    layout->setRowStretch(11,1);
+    layout->setRowStretch(7,1);
 
     this->setLayout(layout);
 }
@@ -182,12 +197,13 @@ DakotaInputBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
     uq["chainSamples"]=chainSamples->text().toInt();
     uq["seed"]=randomSeed->text().toDouble();
     uq["burnInSamples"]=burnInSamples->text().toInt();
-    uq["mcmcMethod"]=mcmcMethod->currentText();
+    uq["jumpStep"]=jumpStep->text().toInt();
+    //uq["mcmcMethod"]=mcmcMethod->currentText();
     uq["chains"]=chains->text().toInt();
-    uq["emulator"]=emulator->currentText();
-    uq["maxIter"]=maxIterations->text().toInt();
-    uq["tol"]=convTol->text().toDouble();
-    uq["factors"]=scalingFactors->text();
+    //uq["emulator"]=emulator->currentText();
+    //uq["maxIter"]=maxIterations->text().toInt();
+    //uq["tol"]=convTol->text().toDouble();
+    //uq["factors"]=scalingFactors->text();
 
     jsonObject["bayesianCalibrationMethodData"]=uq;
     return result;
@@ -209,9 +225,9 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
         int index = calibrationMethod->findText(method);
         calibrationMethod->setCurrentIndex(index);
 
-        QString mcmc = uq["mcmcMethod"].toString();
-        index = mcmcMethod->findText(mcmc);
-        mcmcMethod->setCurrentIndex(index);
+        //QString mcmc = uq["mcmcMethod"].toString();
+        //index = mcmcMethod->findText(mcmc);
+        //mcmcMethod->setCurrentIndex(index);
 
         int samples=uq["chainSamples"].toInt();
         chainSamples->setText(QString::number(samples));
@@ -225,18 +241,21 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
         int c = uq["chains"].toInt();
         chains->setText(QString::number(c));
 
-        QString em = uq["emulator"].toString();
-        index =emulator->findText(em);
-        emulator->setCurrentIndex(index);
+        int j = uq["jumpStep"].toInt();
+        jumpStep->setText(QString::number(j));
 
-        int maxIter=uq["maxIter"].toInt();
-        maxIterations->setText(QString::number(maxIter));
+        //QString em = uq["emulator"].toString();
+        //index =emulator->findText(em);
+        //emulator->setCurrentIndex(index);
 
-        double tol=uq["tol"].toDouble();
-        convTol->setText(QString::number(tol));
+        //int maxIter=uq["maxIter"].toInt();
+        //maxIterations->setText(QString::number(maxIter));
 
-        QString fact = uq["factors"].toString();
-        scalingFactors->setText(fact);
+        //double tol=uq["tol"].toDouble();
+        //convTol->setText(QString::number(tol));
+
+        //QString fact = uq["factors"].toString();
+        //scalingFactors->setText(fact);
 
     } else {
         emit sendErrorMessage("ERROR: Bayesian Calibration INput - no \"bayesian_calibration_method\" data");
@@ -248,6 +267,7 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 
 void DakotaInputBayesianCalibration::onMethodChanged(const QString &arg1)
 {
+    /*
     if (arg1.compare(QString("QUESO"))) {
         layout->itemAtPosition(2,0)->widget()->hide();
         layout->itemAtPosition(2,1)->widget()->hide();
@@ -260,6 +280,7 @@ void DakotaInputBayesianCalibration::onMethodChanged(const QString &arg1)
         layout->itemAtPosition(3,0)->widget()->hide();
         layout->itemAtPosition(3,1)->widget()->hide();
     }
+    */
 
 }
 
@@ -271,7 +292,7 @@ int DakotaInputBayesianCalibration::processResults(QString &filenameResults, QSt
 UQ_Results *
 DakotaInputBayesianCalibration::getResults(void) {
     qDebug() << "new DakotaResultsCalibration";
-  return new DakotaResultsBayesianCalibration();
+  return new DakotaResultsBayesianCalibration(burnInSamples->text().toInt());
 }
 
 RandomVariablesContainer *

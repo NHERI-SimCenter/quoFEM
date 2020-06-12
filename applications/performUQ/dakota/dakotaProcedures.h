@@ -82,7 +82,8 @@ int parseForRV(json_t *root,
 int writeRV(std::ostream &dakotaFile, 
 	    struct randomVariables &theRandomVariables, 
 	    std::string idVariables,
-	    std::vector<std::string> &rvList);
+	    std::vector<std::string> &rvList,
+	    bool includeActiveUncertainText = true);
 
 int writeInterface(std::ostream &dakotaFile, 
 		   json_t *uqData, 
