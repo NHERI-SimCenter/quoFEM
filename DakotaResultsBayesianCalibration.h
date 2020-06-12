@@ -52,7 +52,7 @@ class DakotaResultsBayesianCalibration : public UQ_Results
 {
     Q_OBJECT
 public:
-    explicit DakotaResultsBayesianCalibration(QWidget *parent = 0);
+    explicit DakotaResultsBayesianCalibration(int burnInSamples, QWidget *parent = 0);
     ~DakotaResultsBayesianCalibration();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -72,6 +72,8 @@ private:
    QTextEdit  *dakotaText;
    MyTableWidget *spreadsheet;
    QChart *chart;
+
+   int burnInSamples;
 
    int col1, col2;
    bool mLeft;

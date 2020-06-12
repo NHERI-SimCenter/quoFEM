@@ -75,7 +75,7 @@ using namespace QtCharts;
 
 #define NUM_DIVISIONS 10
 
-DakotaResultsBayesianCalibration::DakotaResultsBayesianCalibration(QWidget *parent)
+DakotaResultsBayesianCalibration::DakotaResultsBayesianCalibration(int numBurn, QWidget *parent)
     : UQ_Results(parent)
 {
     // title & add button
@@ -84,6 +84,7 @@ DakotaResultsBayesianCalibration::DakotaResultsBayesianCalibration(QWidget *pare
     mLeft = true;
     col1 = 0;
     col2 = 0;
+    burnInSamples = numBurn;
 }
 
 DakotaResultsBayesianCalibration::~DakotaResultsBayesianCalibration()
