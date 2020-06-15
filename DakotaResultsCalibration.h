@@ -66,6 +66,7 @@ signals:
 public slots:
    void clear(void);
    void onSpreadsheetCellClicked(int, int);
+   void onSaveSpreadsheetClicked();
 
 private:
    QTabWidget *tabWidget;
@@ -79,6 +80,9 @@ private:
 
    QVector<QString>theNames;
    QVector<double>theBestValues;
+
+   QWidget *summary;
+   QVBoxLayout *summaryLayout;
 };
 
 #endif // DAKOTA_RESULTS_CALIBRATION_H
