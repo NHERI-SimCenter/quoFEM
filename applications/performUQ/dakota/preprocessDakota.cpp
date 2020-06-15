@@ -64,9 +64,9 @@ int main(int argc, const char **argv) {
     std::cerr << "EVAL: " << evalConcurrency << "\n";
   }
 
-  std::string workflowDriver = "fem_driver";
+  std::string workflowDriver = "workflow_driver";
   if ((strcmp(osType,"Windows") == 0) && (strcmp(runType,"runningLocal") == 0))
-    workflowDriver = "fem_driver.bat";
+    workflowDriver = "workflow_driver.bat";
 
   int errorWrite = writeDakotaInputFile(dakotaFile, uqData, rootEDP, theRandomVariables, workflowDriver, rvList, edpList, evalConcurrency);
 
