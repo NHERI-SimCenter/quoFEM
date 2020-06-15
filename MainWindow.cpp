@@ -657,8 +657,12 @@ void MainWindow::onRunButtonClicked() {
         sourceBash = QString("source $HOME/.bash_profile; \"");
     } else if (homeDir.exists(".bashrc")) {
         sourceBash = QString("source $HOME/.bashrc; \"");
+    } else if (homeDir.exists(".zprofile")) {
+        sourceBash = QString("source $HOME/.zprofile; \"");
+    } else if (homeDir.exists(".zsh")) {
+        sourceBash = QString("source $HOME/.zsh; \"");
     } else {
-       qDebug() << "No .bash_profile or .bashrc file found. This may not find Dakota or OpenSees";
+       qDebug() << "No .bash_profile, .bashrc, .zshrc file found. This may not find Dakota or OpenSees when running";
     }
 
     QString command = sourceBash + python + QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
@@ -1362,7 +1366,7 @@ void MainWindow::submitFeedback()
 
 void MainWindow::manual()
 {
-  QString featureRequestURL = QString("https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community//SimCenter/Software/uqFEM");
+  QString featureRequestURL = QString("https://nheri-simcenter.github.io/quoFEM-Documentation/");
     QDesktopServices::openUrl(QUrl(featureRequestURL, QUrl::TolerantMode));
 }
 

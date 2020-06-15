@@ -187,7 +187,7 @@ RemoteJobCreator::uploadDirReturn(bool result)
         parameters["inputFile"]="dakota.in";
         parameters["outputFile"]="dakota.out";
         parameters["errorFile"]="dakota.err";
-        parameters["driverFile"]="fem_driver";
+        parameters["driverFile"]="workflow_driver";
         parameters["modules"]="petsc";
         job["parameters"]=parameters;
 
