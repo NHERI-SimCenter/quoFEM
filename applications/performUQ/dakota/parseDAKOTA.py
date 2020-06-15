@@ -37,21 +37,21 @@ if run_type in ['runningLocal',]:
         OpenSees = 'OpenSees'
         Feap = 'feappv'
         Dakota = 'dakota'
-        fem_driver = 'workflow_driver'
+        fem_driver = 'fem_driver'
 
     # Windows
     else:
         OpenSees = 'OpenSees'
         Feap = 'Feappv41.exe'
         Dakota = 'dakota'
-        fem_driver = 'workflow_driver.bat'
+        fem_driver = 'fem_driver.bat'
 
 # Stampede @ DesignSafe, DON'T EDIT
 elif run_type in ['runningRemote',]:
     OpenSees = '/home1/00477/tg457427/bin/OpenSees'
     Feap = '/home1/00477/tg457427/bin/feappv'
     Dakota = 'dakota'
-    fem_driver = 'workflow_driver'
+    fem_driver = 'fem_driver'
 
 # change workdir to the templatedir
 os.chdir(workdir_temp)
