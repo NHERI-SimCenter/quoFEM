@@ -40,7 +40,7 @@ int main(int argc, const char **argv) {
   // open empty dakota input file & write file
   //
 
-  std::ofstream dakotaFile("dakota.in");
+  std::ofstream dakotaFile("dakota.in", std::ios::binary);
 
   if (!dakotaFile.is_open()) {
     std::cerr << "parseFileForRV:: could not create dakota input file: dakota.in\n";
@@ -76,7 +76,7 @@ int main(int argc, const char **argv) {
   // open workflow_driver 
   //
 
-  std::ofstream workflowDriverFile(workflowDriver);
+  std::ofstream workflowDriverFile(workflowDriver, std::ios::binary);
 
   if (!workflowDriverFile.is_open()) {
     std::cerr << "parseFileForRV:: could not create workflow driver file: " << workflowDriver << "\n";
@@ -150,8 +150,9 @@ int main(int argc, const char **argv) {
 
     templateFile << "\"\n\n\n source " << mainInput << "\n";
 
-    workflowDriverFile << dpreproCommand << "  params.in SimCenterInput.RV SimCenterInput.tcl\n";
-    workflowDriverFile << openSeesCommand << "  SimCenterInput.tcl 1> ops.out 2>&1\n";
+    workflowDriverFile << dpreproCommand << " params.in SimCenterInput.RV SimCenterInput.tcl\n";
+	workflowDriverFile << openSeesCommand << " SimCenterInput.tcl 1> ops.out 2>&1\n";
+
 
     // depending on script type do something
     if (scriptType == 1) { // python script
