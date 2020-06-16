@@ -235,7 +235,7 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
         double seed=uq["seed"].toDouble();
         randomSeed->setText(QString::number(seed));
 
-        int burnSamples = uq["burnSamples"].toInt();
+        int burnSamples = uq["burnInSamples"].toInt();
         burnInSamples->setText(QString::number(burnSamples));
 
         int c = uq["chains"].toInt();
