@@ -680,9 +680,29 @@ void MainWindow::onRunButtonClicked() {
 
     proc->waitForStarted();
 
+    // TODO: fix this so that we do not have to open the config file the get the info
+
+    // Get the input json data from the dakota.json file
+    QFile inputFile(filenameTMP);
+    inputFile.open(QFile::ReadOnly | QFile::Text);
+    val = inputFile.readAll();
+    doc = QJsonDocument::fromJson(val.toUtf8());
+    QJsonObject inputData = doc.object();
+    inputFile.close();
+
+    QString problemType = inputData["UQ_Method"].toObject()["uqType"].toString();
+    
+    // TODO END
+
+    qDebug() << problemType;
 
     QString filenameOUT = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota.out");
-    QString filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
+    QString filenameTAB;
+    if (problemType == "Inverse Problem") {
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota_mcmc_tabular.dat");
+    } else {
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
+    }
 
     this->processResults(filenameOUT, filenameTAB);
 }
