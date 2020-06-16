@@ -781,7 +781,8 @@ void MainWindow::onRemoteRunButtonClicked(){
     //
 
     QString homeDIR = QDir::homePath();
-    QString appDIR = qApp->applicationDirPath();
+    //QString appDIR = qApp->applicationDirPath();
+    QString appDIR = SimCenterPreferences::getInstance()->getAppDir();
 
    // appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
    //   QDir::separator() + QString("localApp");
