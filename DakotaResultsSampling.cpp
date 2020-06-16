@@ -438,7 +438,7 @@ DakotaResultsSampling::onSaveSpreadsheetClicked()
         QTextStream stream(&file);
         for (int j=0; j<columnCount; j++)
         {
-            stream <<theHeadings.at(j)<<",\t";
+            stream <<theHeadings.at(j)<<", ";
         }
         stream <<endl;
         for (int i=0; i<rowCount; i++)
@@ -447,7 +447,7 @@ DakotaResultsSampling::onSaveSpreadsheetClicked()
             {
                 QTableWidgetItem *item_value = spreadsheet->item(i,j);
                 double value = item_value->text().toDouble();
-                stream << value << ",\t";
+                stream << value << ", ";
             }
             stream<<endl;
         }
