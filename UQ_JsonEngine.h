@@ -1,5 +1,5 @@
-#ifndef UQ_ENGINE_SELECTION_H
-#define UQ_ENGINE_SELECTION_H
+#ifndef UQ_JSON_ENGINE_H
+#define UQ_JSON_ENGINE_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -37,56 +37,46 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
+// Written: Michael Gardner
 
 #include <SimCenterAppWidget.h>
+#include <JsonConfiguredWidget.h>
 
-class QComboBox;
-class QStackedWidget;
-class RandomVariablesContainer;
+#include "UQ_Engine.h"
+#include "UQ_Results.h"
+
+class JsonConfiguredWidget;
 class UQ_Results;
-class UQ_Engine;
+class RandomVariablesContainer;
 
-class UQ_EngineSelection : public  SimCenterAppWidget
+class UQ_JsonEngine : public UQ_Engine
 {
-  Q_OBJECT
+    Q_OBJECT
+public:
+  explicit UQ_JsonEngine(QWidget * parent = 0);
+  virtual ~UQ_JsonEngine();
 
-    public:
+  int getMaxNumParallelTasks(void) override;
+  bool outputToJSON(QJsonObject &jsonObject);
+  bool inputFromJSON(QJsonObject &jsonObject);
+  // bool outputAppDataToJSON(QJsonObject &jsonObject);
+  // bool inputAppDataFromJSON(QJsonObject &jsonObject);
 
-  explicit UQ_EngineSelection(QWidget *parent = 0);
-  ~UQ_EngineSelection();
-
-  RandomVariablesContainer  *getParameters();
-  UQ_Results  *getResults();
-  int getNumParallelTasks(void);
+  int processResults(QString &filenameResults, QString &filenameTab) override;
+  RandomVariablesContainer * getParameters() override;
+  UQ_Results * getResults(void) override;
   
-  bool outputAppDataToJSON(QJsonObject &jsonObject);
-  bool inputAppDataFromJSON(QJsonObject &jsonObject);
+  QString getProcessingScript() override;
 
-  bool outputToJSON(QJsonObject &rvObject);
-  bool inputFromJSON(QJsonObject &rvObject);
-  bool copyFiles(QString &destName);
-  
-  void clear(void);
-  
- signals:
-  void onUQ_EngineChanged(void);
-  void onNumModelsChanged(int);
+signals:
+  void onUQ_EngineChanged();    
+  void onNumModelsChanged(int numModels);
 
- public slots:
-  void engineSelectionChanged(const QString &arg1);
-  void enginesEngineSelectionChanged(void);
-  void numModelsChanged(int newNum);
-  
+public slots:
+
 private:
-   QComboBox   *theEngineSelectionBox;
-   QStackedWidget *theStackedWidget;
-
-   UQ_Engine *theCurrentEngine;
-   UQ_Engine *theDakotaEngine;
-   UQ_Engine *theUQpyEngine;
-   UQ_Engine *thefilterEngine;
-   UQ_Engine *theCustomEngine;
+  JsonConfiguredWidget * theJsonConfigureWidget;
+  RandomVariablesContainer * theRandomVariables;
 };
 
-#endif // WIND_SELECTION_H
+#endif // UQ_JSON_ENGINE_H

@@ -15,6 +15,7 @@ VERSION=2.0.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 INCLUDEPATH += ../SimCenterCommon/RandomVariables
+INCLUDEPATH += ../SimCenterCommon/Workflow/WORKFLOW
 # INCLUDEPATH += ../simcenterAgave/interface
 
 macos:LIBS += /usr/lib/libcurl.dylib
@@ -35,7 +36,7 @@ win32 {
 
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/Common/Common.pri)
-
+include(../SimCenterCommon/Workflow/JsonConfiguredWidgets.pri)
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -79,7 +80,8 @@ SOURCES += main.cpp\
     GlobalReliabilityWidget.cpp \
     SimCenterGraphPlot.cpp \
     qcustomplot.cpp \
-    DakotaResultsReliability.cpp
+    DakotaResultsReliability.cpp \
+    UQ_JsonEngine.cpp    
 
 HEADERS  += MainWindow.h \
     InputWidgetEDP.h \
@@ -122,7 +124,8 @@ EDP.h \
     LocalReliabilityWidget.h \
     GlobalReliabilityWidget.h \
     qcustomplot.h \
-    DakotaResultsReliability.h
+    DakotaResultsReliability.h \
+    UQ_JsonEngine.h
 
 FORMS    += mainwindow.ui
 

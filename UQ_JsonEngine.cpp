@@ -1,5 +1,4 @@
-#ifndef UQ_ENGINE_SELECTION_H
-#define UQ_ENGINE_SELECTION_H
+// Written: fmckenna
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -37,56 +36,74 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
+// Written: Michael Gardner
 
-#include <SimCenterAppWidget.h>
+#include "UQ_JsonEngine.h"
 
-class QComboBox;
-class QStackedWidget;
-class RandomVariablesContainer;
-class UQ_Results;
-class UQ_Engine;
+#include <QComboBox>
+#include <QFileDialog>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QPushButton>
+#include <QStackedWidget>
+#include <QVBoxLayout>
+#include <QLabel>
 
-class UQ_EngineSelection : public  SimCenterAppWidget
+#include <QDebug>
+
+UQ_JsonEngine::UQ_JsonEngine(QWidget *parent)
+: UQ_Engine(parent)
 {
-  Q_OBJECT
 
-    public:
+    QVBoxLayout *layout = new QVBoxLayout();
 
-  explicit UQ_EngineSelection(QWidget *parent = 0);
-  ~UQ_EngineSelection();
+    //
+    // the selection part
+    //
+    theRandomVariables = new RandomVariablesContainer();
+    theJsonConfigureWidget = new JsonConfiguredWidget( theRandomVariables );
+    layout->addWidget(theJsonConfigureWidget);
+    layout->addStretch();
+    this->setLayout(layout);
+}
 
-  RandomVariablesContainer  *getParameters();
-  UQ_Results  *getResults();
-  int getNumParallelTasks(void);
-  
-  bool outputAppDataToJSON(QJsonObject &jsonObject);
-  bool inputAppDataFromJSON(QJsonObject &jsonObject);
+UQ_JsonEngine::~UQ_JsonEngine()
+{}
 
-  bool outputToJSON(QJsonObject &rvObject);
-  bool inputFromJSON(QJsonObject &rvObject);
-  bool copyFiles(QString &destName);
-  
-  void clear(void);
-  
- signals:
-  void onUQ_EngineChanged(void);
-  void onNumModelsChanged(int);
+int
+UQ_JsonEngine::getMaxNumParallelTasks(void) {
+  return 1;
+    // return theCurrentEngine->getMaxNumParallelTasks();
+}
 
- public slots:
-  void engineSelectionChanged(const QString &arg1);
-  void enginesEngineSelectionChanged(void);
-  void numModelsChanged(int newNum);
-  
-private:
-   QComboBox   *theEngineSelectionBox;
-   QStackedWidget *theStackedWidget;
+bool
+UQ_JsonEngine::outputToJSON(QJsonObject &rvObject) {
+  return theJsonConfigureWidget->outputToJSON(rvObject);
+}
 
-   UQ_Engine *theCurrentEngine;
-   UQ_Engine *theDakotaEngine;
-   UQ_Engine *theUQpyEngine;
-   UQ_Engine *thefilterEngine;
-   UQ_Engine *theCustomEngine;
-};
+bool
+UQ_JsonEngine::inputFromJSON(QJsonObject &rvObject) {
+  return theJsonConfigureWidget->inputFromJSON(rvObject);
+}
 
-#endif // WIND_SELECTION_H
+int
+UQ_JsonEngine::processResults(QString &filenameResults, QString &filenameTab) {
+  return 0;
+}
+
+RandomVariablesContainer *
+UQ_JsonEngine::getParameters() {
+  return theRandomVariables;
+}
+
+UQ_Results *
+UQ_JsonEngine::getResults(void) {
+  return new UQ_Results();
+    // return theCurrentEngine->getResults();
+}
+
+QString
+UQ_JsonEngine::getProcessingScript() {
+    // return QString("parseDAKOTA.py");
+  return QString("doesNotExist.py");
+}
