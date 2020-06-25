@@ -76,15 +76,16 @@ private:
     QGridLayout *layout;
     QWidget     *methodSpecific;
     QComboBox   *calibrationMethod;
-    QComboBox   *mcmcMethod;
+    //QComboBox   *mcmcMethod;
     QLineEdit   *chains;
     QLineEdit   *chainSamples;
     QLineEdit   *randomSeed;
     QLineEdit   *burnInSamples;
-    QComboBox   *emulator;
-    QLineEdit   *maxIterations;
-    QLineEdit   *convTol;
-    QLineEdit   *scalingFactors;
+    QLineEdit   *jumpStep;
+    //QComboBox   *emulator;
+    //QLineEdit   *maxIterations;
+    //QLineEdit   *convTol;
+    //QLineEdit   *scalingFactors;
 
     //QComboBox   *propCov;
     //QComboBox   *aPost;

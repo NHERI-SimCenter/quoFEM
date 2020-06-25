@@ -455,19 +455,25 @@ InputWidgetFEM::specialCopyMainInput(QString fileName, QStringList varNames) {
             // do things a little different!
             QFileInfo file(fileName);
             QString fileDir = file.absolutePath();
-            qDebug() << "FILENAME: " << fileName << " path: " << fileDir;
+            //qDebug() << "FILENAME: " << fileName << " path: " << fileDir;
+            //qDebug() << "LENGTHS:" << inputFilenames.count() << parametersFilenames.count() << parametersFilenames.length();
             OpenSeesPyParser theParser;
-            if (parametersFilenames.length() == 0) {
+            bool hasParams = false;
+            QVectorIterator<QLineEdit *> i(parametersFilenames);
+            QString newName = fileDir + QDir::separator() + "tmpSimCenter.params";
+            while (i.hasNext()) {
+                QString fileName = i.next()->text();
+                if (fileName.length() != 0) {
+                    theParser.writeFile(fileName, newName,varNames);
+                    hasParams = true;
+                }
+            }
+
+            if (hasParams == false) {
                 QString newName = fileDir + QDir::separator() + "tmpSimCenter.script";
                 QVectorIterator<QLineEdit *> i(inputFilenames);
                 while (i.hasNext()) {
-                        QFile::copy(i.next()->text(), newName);
-                }
-            } else {
-                QVectorIterator<QLineEdit *> i(parametersFilenames);
-                QString newName = fileDir + QDir::separator() + "tmpSimCenter.params";
-                while (i.hasNext()) {
-                    theParser.writeFile(i.next()->text(), newName,varNames);
+                    QFile::copy(i.next()->text(), newName);
                 }
             }
         }

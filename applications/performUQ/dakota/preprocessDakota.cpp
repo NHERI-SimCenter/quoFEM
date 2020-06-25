@@ -40,7 +40,7 @@ int main(int argc, const char **argv) {
   // open empty dakota input file & write file
   //
 
-  std::ofstream dakotaFile("dakota.in");
+  std::ofstream dakotaFile("dakota.in", std::ios::binary);
 
   if (!dakotaFile.is_open()) {
     std::cerr << "parseFileForRV:: could not create dakota input file: dakota.in\n";
@@ -76,7 +76,7 @@ int main(int argc, const char **argv) {
   // open workflow_driver 
   //
 
-  std::ofstream workflowDriverFile(workflowDriver);
+  std::ofstream workflowDriverFile(workflowDriver, std::ios::binary);
 
   if (!workflowDriverFile.is_open()) {
     std::cerr << "parseFileForRV:: could not create workflow driver file: " << workflowDriver << "\n";
@@ -87,6 +87,7 @@ int main(int argc, const char **argv) {
   std::string openSeesCommand;
   std::string pythonCommand;
   std::string feapCommand;
+  std::string moveCommand;
 
   const char *localDir = json_string_value(json_object_get(rootINPUT,"localAppDir"));
   const char *remoteDir = json_string_value(json_object_get(rootINPUT,"remoteAppDir"));
@@ -95,15 +96,20 @@ int main(int argc, const char **argv) {
     dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/dakota/simCenterDprepro\"");
     openSeesCommand = std::string("OpenSees");
     pythonCommand = std::string("\"") + json_string_value(json_object_get(rootINPUT,"python")) + std::string("\"");
-    if ((strcmp(osType,"Windows") == 0))
+    if ((strcmp(osType,"Windows") == 0)) {
       feapCommand = std::string("Feappv41.exe");
-    else
+      moveCommand = std::string("move /y ");
+    }
+    else {
       feapCommand = std::string("feappv");
+      moveCommand = std::string("mv ");
+    }
   } else {
     dpreproCommand = remoteDir + std::string("/applications/performUQ/dakota/simCenterDprepro");
-    openSeesCommand = std::string("OpenSees");
+    openSeesCommand = std::string("/home1/00477/tg457427/bin/OpenSees");
     pythonCommand = std::string("python");
     feapCommand = std::string("/home1/00477/tg457427/bin/feappv");
+    moveCommand = std::string("mv ");
   }
 
 
@@ -136,29 +142,28 @@ int main(int argc, const char **argv) {
     for(std::vector<std::string>::iterator itRV = rvList.begin(); itRV != rvList.end(); ++itRV) {
       templateFile << "pset " << *itRV << " \"RV." << *itRV << "\"\n";
     }
-    templateFile << "\n source " << mainInput << "\n";
 
-    workflowDriverFile << dpreproCommand << "  params.in SimCenterInput.RV SimCenterInput.tcl\n";
-    workflowDriverFile << openSeesCommand << "  SimCenterInput.tcl >> ops.out\n";
+    templateFile << "\n set listQoI \"";
+    for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
+      templateFile << *itEDP << " ";
+    }
+
+    templateFile << "\"\n\n\n source " << mainInput << "\n";
+
+    workflowDriverFile << dpreproCommand << " params.in SimCenterInput.RV SimCenterInput.tcl\n";
+	workflowDriverFile << openSeesCommand << " SimCenterInput.tcl 1> ops.out 2>&1\n";
+
 
     // depending on script type do something
     if (scriptType == 1) { // python script
-
-      workflowDriverFile << pythonCommand << " " << postprocessScript;
+      workflowDriverFile << "\n" << pythonCommand << " " << postprocessScript;
       for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
 	workflowDriverFile << " " << *itEDP;
       }
-
-    } else if (scriptType == 2) { // tcl script
-
-      templateFile << "\n set listQoI \"";
-      for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
-	templateFile << *itEDP << " ";
-      }
-      
-      templateFile << "\"\n\n source " << postprocessScript << "\n";      
+    } 
+    else if (scriptType == 2) { // tcl script
+      templateFile << " source " << postprocessScript << "\n";      
     }
-    workflowDriverFile << "\n";
 
     templateFile.close();
   }    
@@ -179,7 +184,7 @@ int main(int argc, const char **argv) {
     feapFile.close();
 
     // write driiver file
-    workflowDriverFile << dpreproCommand << "  params.in " << mainInput  << " SimCenterIn.txt --output-format\'%10.5f\'\n";
+    workflowDriverFile << dpreproCommand << "  params.in " << mainInput  << " SimCenterIn.txt --formatFixed\n";
     workflowDriverFile << "echo y | " << feapCommand << "\n";
     workflowDriverFile << pythonCommand << " " << postprocessScript;
     for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
@@ -191,27 +196,30 @@ int main(int argc, const char **argv) {
 
   else if (strcmp(program,"OpenSeesPy") == 0) {
 
-    std::cerr << "OPENSEES_PY\n";
-
     const char *mainScript =  json_string_value(json_object_get(fem, "mainInput"));
     const char *postprocessScript =  json_string_value(json_object_get(fem, "mainPostprocessScript"));
     const char *parametersScript =  json_string_value(json_object_get(fem, "parametersFile"));
 
     if (strcmp(parametersScript,"") == 0) {	
+      // workflowDriverFile << moveCommand << mainScript << " tmpSimCenter.script \n";
       workflowDriverFile << dpreproCommand << "  params.in tmpSimCenter.script " << mainScript << "\n";
     } else {
+      // workflowDriverFile << moveCommand << parametersScript << " tmpSimCenter.params \n";
       workflowDriverFile << dpreproCommand << "  params.in  tmpSimCenter.params " << " " << parametersScript << "\n";
     }
 
-    workflowDriverFile << pythonCommand << " " << mainScript << "\n";
+    workflowDriverFile << pythonCommand << " " << mainScript;
 
     if (strcmp(postprocessScript,"") != 0) {
-      workflowDriverFile << pythonCommand << " " << postprocessScript;
+      workflowDriverFile << "\n" << pythonCommand << " " << postprocessScript;
+      for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
+	workflowDriverFile << " " << *itEDP;
+      }
+    } else {
       for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
 	workflowDriverFile << " " << *itEDP;
       }
     }
-    std::cerr << "OPENSEES_PY DONE\n";
   }
 
   workflowDriverFile.close();

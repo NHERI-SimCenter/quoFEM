@@ -84,9 +84,9 @@ GlobalReliabilityWidget::GlobalReliabilityWidget(QWidget *parent)
     */
 
     probabilityLevel = new QLineEdit();
-    probabilityLevel->setText(".02 .20 .40 .60 0.80 0.99");
+    probabilityLevel->setText("");
 
-    layout->addWidget(new QLabel("Probability Levels"), 1, 1);
+    layout->addWidget(new QLabel("Response Levels"), 1, 1);
     layout->addWidget(probabilityLevel, 1, 2);
 
     layout->setColumnStretch(2,2);
@@ -108,26 +108,11 @@ GlobalReliabilityWidget::outputToJSON(QJsonObject &jsonObj){
     bool result = true;
     jsonObj["gpApproximation"]=gpApproximation->currentText();
 
-    QJsonArray probLevel;
-    QStringList probLevelList = QStringList(probabilityLevel->text().split(" "));
-    for (int i = 0; i < probLevelList.size(); ++i)
-        probLevel.push_back(probLevelList.at(i).toDouble());
-    jsonObj["probabilityLevel"]=probLevel;
-    /*
-    QJsonArray respLevel;
-    QStringList respLevelList = QStringList(responseLevel->text().split(" "));
-    for (int i = 0; i < respLevelList.size(); ++i)
-        respLevel.push_back(respLevelList.at(i).toDouble());
-    jsonObj["responseLevel"]=respLevel;
-
-    if (checkedResponseLevel->isChecked())
-        jsonObj["activeLevel"]=QString("ResponseLevel");
-    else
-        jsonObj["activeLevel"]=QString("ProbabilityLevel");
-    */
-
-
-
+    QJsonArray responseLevel;
+    QStringList responseLevelList = QStringList(probabilityLevel->text().split(" "));
+    for (int i = 0; i < responseLevelList.size(); ++i)
+        responseLevel.push_back(responseLevelList.at(i).toDouble());
+    jsonObj["responseLevel"]=responseLevel;
 
     return result;    
 }
@@ -146,19 +131,9 @@ GlobalReliabilityWidget::inputFromJSON(QJsonObject &jsonObject){
         QString scheme=jsonObject["gpApproximation"].toString();
         gpApproximation->setCurrentIndex(gpApproximation->findText(scheme));
 
-        /*
-         QString activeLevel=jsonObject["activeLevel"].toString();
-         if (activeLevel ==  QString("ProbabilityLevel"))
-             checkedProbabilityLevel->setChecked(true);
-         else
-             checkedResponseLevel->setChecked(true);
-
-        QStringList respLevelList;
-        */
-
         QJsonArray probLevels;
 
-        QJsonValue probLevelVal = jsonObject["probabilityLevel"];
+        QJsonValue probLevelVal = jsonObject["responseLevel"];
         if (probLevelVal.isArray()) {
 
             QStringList levelList;
@@ -173,23 +148,6 @@ GlobalReliabilityWidget::inputFromJSON(QJsonObject &jsonObject){
         } else {
             qDebug() << "FORM Input: Probability level not json array";
         }
-    /*
-        QJsonValue respLevelVal = jsonObject["responseLevel"];
-        if (respLevelVal.isArray()) {
-
-            QStringList levelList;
-            QJsonArray levels = respLevelVal.toArray();
-
-            for (int i=0; i<levels.count(); i++) {
-                QJsonValue value = levels.at(i);
-                double levelV = value.toDouble();
-                levelList << QString::number(levelV);
-            }
-            responseLevel->setText(levelList.join(" "));
-        } else {
-            qDebug() << "FORM Input: Response level not json array";
-        }
-*/
 
         return true;
     }

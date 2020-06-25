@@ -92,6 +92,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QThread>
 #include <QSettings>
 #include <QDesktopServices>
+#include <Utils/RelativePathResolver.h>
 
 
 
@@ -542,6 +543,8 @@ void MainWindow::onRunButtonClicked() {
         return;
     }
 
+
+
     QJsonObject json;
     if  (this->outputToJSON(json) == false) {
         file.close();
@@ -608,9 +611,6 @@ void MainWindow::onRunButtonClicked() {
         }
     }
 
-
-    qDebug() << "UQ APP DATA" << appData << "name: " << appName << " programToExe: " << programToExe;
-
     QString pySCRIPT = appDIR +  QDir::separator() + programToExe;
 
     QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
@@ -619,17 +619,11 @@ void MainWindow::onRunButtonClicked() {
     // check the python script exists
     //
 
-    qDebug() << "pyScript: " << pySCRIPT;
-
     QFile pyDAKOTA(pySCRIPT);
     if (! pyDAKOTA.exists()) {
       errorMessage("Executable script does not exist, try to reset settings, if fails download application again");
       return;
     }
-
-    // remove current results widget
-
-    results->setResultWidget(0);
 
     //
     // now invoke dakota, done via a python script in tool app dircetory
@@ -644,7 +638,7 @@ void MainWindow::onRunButtonClicked() {
 
     QString python("python");
     QSettings settings("SimCenter", "Common"); 
-    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid()) 
       python = pythonLocationVariant.toString();
 
@@ -669,22 +663,59 @@ void MainWindow::onRunButtonClicked() {
     tDirectory = "\"" + tDirectory + "\"";
     tmpDirectory = "\"" + tmpDirectory + "\"";
 
-    QString command = QString("source $HOME/.bash_profile; source $HOME/.bashrc; \"") + python + QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+    // check for bashrc or bash profile
+    QDir homeDir(QDir::homePath());
+    QString sourceBash("\"");
+    if (homeDir.exists(".bash_profile")) {
+        sourceBash = QString("source $HOME/.bash_profile; \"");
+    } else if (homeDir.exists(".bashrc")) {
+        sourceBash = QString("source $HOME/.bashrc; \"");
+    } else if (homeDir.exists(".zprofile")) {
+        sourceBash = QString("source $HOME/.zprofile; \"");
+    } else if (homeDir.exists(".zsh")) {
+        sourceBash = QString("source $HOME/.zsh; \"");
+    } else {
+       qDebug() << "No .bash_profile, .bashrc, .zshrc file found. This may not find Dakota or OpenSees when running";
+    }
+
+    QString command = sourceBash + python + QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
             tmpDirectory + QString(" runningLocal");
 
     qInfo() << QProcessEnvironment::systemEnvironment().value("PATH") << "\n";// system PATH
     qInfo() << command;
     
+    emit errorMessage("Starting Backend");
     proc->execute("bash", QStringList() << "-c" <<  command);
+   // proc->start("bash", QStringList() << "-c" <<  command);
 
     // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
 
     proc->waitForStarted();
 
+    // TODO: fix this so that we do not have to open the config file the get the info
+
+    // Get the input json data from the dakota.json file
+    QFile inputFile(filenameTMP);
+    inputFile.open(QFile::ReadOnly | QFile::Text);
+    val = inputFile.readAll();
+    doc = QJsonDocument::fromJson(val.toUtf8());
+    QJsonObject inputData = doc.object();
+    inputFile.close();
+
+    QString problemType = inputData["UQ_Method"].toObject()["uqType"].toString();
+    
+    // TODO END
+
+    qDebug() << problemType;
 
     QString filenameOUT = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota.out");
-    QString filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
+    QString filenameTAB;
+    if (problemType == "Inverse Problem") {
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota_mcmc_tabular.dat");
+    } else {
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
+    }
 
     this->processResults(filenameOUT, filenameTAB);
 }
@@ -742,6 +773,11 @@ void MainWindow::onRemoteRunButtonClicked(){
         return;
     }
 
+
+    // remove current results widget
+    results->setResultWidget(0);
+
+
     QJsonObject json;
     if (this->outputToJSON(json) == false) {
         file.close();
@@ -758,7 +794,8 @@ void MainWindow::onRemoteRunButtonClicked(){
     //
 
     QString homeDIR = QDir::homePath();
-    QString appDIR = qApp->applicationDirPath();
+    //QString appDIR = qApp->applicationDirPath();
+    QString appDIR = SimCenterPreferences::getInstance()->getAppDir();
 
    // appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
    //   QDir::separator() + QString("localApp");
@@ -775,9 +812,6 @@ void MainWindow::onRemoteRunButtonClicked(){
       errorMessage("Dakota script does not exist, the parseDAKOTA.py script was not found in exe folder! .. download application again");
       return;
     }
-
-    // remove current results widget
-    results->setResultWidget(0);
 
     //
     // want to first remove old dakota files from the current directory
@@ -804,7 +838,7 @@ void MainWindow::onRemoteRunButtonClicked(){
 
     QString python("python");
     QSettings settings("SimCenter", "Common"); 
-    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid()) 
       python = pythonLocationVariant.toString();
 
@@ -983,9 +1017,15 @@ bool MainWindow::saveAs()
     // get filename
     //
 
-    QFileDialog dialog(this);
+    QFileDialog dialog(this, "Save Simulation Model");
     dialog.setWindowModality(Qt::WindowModal);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
+    QStringList filters;
+    filters << "Json files (*.json)"
+            << "All files (*)";
+    dialog.setNameFilters(filters);
+
+
     if (dialog.exec() != QDialog::Accepted)
         return false;
 
@@ -997,7 +1037,7 @@ void MainWindow::open()
 {
     errorMessage("");
 
-    QString fileName = QFileDialog::getOpenFileName(this, "Open Input File", "",  "Json files (*.json);;All files (*)");
+    QString fileName = QFileDialog::getOpenFileName(this, "Open Simulation Model", "",  "Json files (*.json);;All files (*)");
     if (!fileName.isEmpty())
         loadFile(fileName);
 }
@@ -1133,6 +1173,12 @@ bool MainWindow::saveFile(const QString &fileName)
         return false;
     }
 
+
+    //Resolve relative paths before saving
+    QFileInfo fileInfo(fileName);
+    SCUtils::ResolveRelativePaths(json, fileInfo.dir());
+
+
     QJsonDocument doc(json);
     file.write(doc.toJson());
 
@@ -1163,6 +1209,10 @@ void MainWindow::loadFile(const QString &fileName)
     val=file.readAll();
     QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject jsonObj = doc.object();
+
+    //Resolve absolute paths from relative ones
+    QFileInfo fileInfo(fileName);
+    SCUtils::ResolveAbsolutePaths(jsonObj, fileInfo.dir());
 
     // close file
     file.close();
@@ -1314,7 +1364,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.0.1 "));
+                       tr("Version 2.1.0 "));
 }
 
 void MainWindow::preferences()
@@ -1329,7 +1379,7 @@ void MainWindow::about()
               sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
              quantification in the structural responses and parameter estimation of input variables in calibration studies.\
              <p>\
-             Version 2.0.1 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
+             Version 2.1.0 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
              will repeatedly invoke the finite element application either locally on the users dekstop machine or remotely\
              on high performance computing resources at the Texas Advanced Computing Center through the NHERI DesignSafe cyberinfrastructure.\
              <p>\
@@ -1351,7 +1401,7 @@ void MainWindow::submitFeedback()
 
 void MainWindow::manual()
 {
-  QString featureRequestURL = QString("https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community//SimCenter/Software/uqFEM");
+  QString featureRequestURL = QString("https://nheri-simcenter.github.io/quoFEM-Documentation/");
     QDesktopServices::openUrl(QUrl(featureRequestURL, QUrl::TolerantMode));
 }
 
