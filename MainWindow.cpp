@@ -534,6 +534,8 @@ void MainWindow::onRunButtonClicked() {
         return;
     }
 
+
+
     QJsonObject json;
     if  (this->outputToJSON(json) == false) {
         file.close();
@@ -600,9 +602,6 @@ void MainWindow::onRunButtonClicked() {
         }
     }
 
-
-    qDebug() << "UQ APP DATA" << appData << "name: " << appName << " programToExe: " << programToExe;
-
     QString pySCRIPT = appDIR +  QDir::separator() + programToExe;
 
     QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
@@ -611,17 +610,11 @@ void MainWindow::onRunButtonClicked() {
     // check the python script exists
     //
 
-    qDebug() << "pyScript: " << pySCRIPT;
-
     QFile pyDAKOTA(pySCRIPT);
     if (! pyDAKOTA.exists()) {
       errorMessage("Executable script does not exist, try to reset settings, if fails download application again");
       return;
     }
-
-    // remove current results widget
-
-    results->setResultWidget(0);
 
     //
     // now invoke dakota, done via a python script in tool app dircetory
@@ -639,17 +632,46 @@ void MainWindow::onRunButtonClicked() {
 #ifdef Q_OS_WIN
 
     QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
-    qDebug() << "Executing parseDAKOTA.py... " << args;
-    proc->execute(python, args);
-    qDebug() << "Executing parseDAKOTA.py... - SUCCESSFUL" ;
+    // qDebug() << "Executing parseDAKOTA.py... " << args;
+    // proc->execute(python, args);
+    //qDebug() << "Executing parseDAKOTA.py... - SUCCESSFUL" ;
 
-    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
-    //qDebug() << command;
-    //proc->execute("cmd", QStringList() << "/C" << command);
-    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
-    //qDebug() << command;
+    proc->start(python,args);
 
-    //std::cerr << command << "\n";
+    bool failed = false;
+    if (!proc->waitForStarted(-1))
+    {
+        qDebug() << "Failed to start the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << proc->errorString().split('\n');
+        emit sendStatusMessage("Failed to start the workflow!!!");
+        failed = true;
+    }
+
+    if(!proc->waitForFinished(-1))
+    {
+        qDebug() << "Failed to finish running the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << proc->errorString();
+        emit sendStatusMessage("Failed to finish running the workflow!!!");
+        failed = true;
+    }
+
+
+    if(0 != proc->exitCode())
+    {
+        qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << proc->errorString();
+        emit sendStatusMessage("Failed to run the workflow!!!");
+        failed = true;
+    }
+
+    if(failed)
+    {
+        qDebug().noquote() << proc->readAllStandardOutput();
+        qDebug().noquote() << proc->readAllStandardError();
+        return false;
+    }
+
+
 #else
 
     // wrap paths with quotes (dealing with spaces in the path);
@@ -664,8 +686,12 @@ void MainWindow::onRunButtonClicked() {
         sourceBash = QString("source $HOME/.bash_profile; \"");
     } else if (homeDir.exists(".bashrc")) {
         sourceBash = QString("source $HOME/.bashrc; \"");
+    } else if (homeDir.exists(".zprofile")) {
+        sourceBash = QString("source $HOME/.zprofile; \"");
+    } else if (homeDir.exists(".zsh")) {
+        sourceBash = QString("source $HOME/.zsh; \"");
     } else {
-       qDebug() << "No .bash_profile or .bashrc file found. This may not find Dakota or OpenSees";
+       qDebug() << "No .bash_profile, .bashrc, .zshrc file found. This may not find Dakota or OpenSees when running";
     }
 
     QString command = sourceBash + python + QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
@@ -683,9 +709,29 @@ void MainWindow::onRunButtonClicked() {
 
     proc->waitForStarted();
 
+    // TODO: fix this so that we do not have to open the config file the get the info
+
+    // Get the input json data from the dakota.json file
+    QFile inputFile(filenameTMP);
+    inputFile.open(QFile::ReadOnly | QFile::Text);
+    val = inputFile.readAll();
+    doc = QJsonDocument::fromJson(val.toUtf8());
+    QJsonObject inputData = doc.object();
+    inputFile.close();
+
+    QString problemType = inputData["UQ_Method"].toObject()["uqType"].toString();
+    
+    // TODO END
+
+    qDebug() << problemType;
 
     QString filenameOUT = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota.out");
-    QString filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
+    QString filenameTAB;
+    if (problemType == "Inverse Problem") {
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota_mcmc_tabular.dat");
+    } else {
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
+    }
 
     this->processResults(filenameOUT, filenameTAB);
 }
@@ -743,6 +789,11 @@ void MainWindow::onRemoteRunButtonClicked(){
         return;
     }
 
+
+    // remove current results widget
+    results->setResultWidget(0);
+
+
     QJsonObject json;
     if (this->outputToJSON(json) == false) {
         file.close();
@@ -759,7 +810,8 @@ void MainWindow::onRemoteRunButtonClicked(){
     //
 
     QString homeDIR = QDir::homePath();
-    QString appDIR = qApp->applicationDirPath();
+    //QString appDIR = qApp->applicationDirPath();
+    QString appDIR = SimCenterPreferences::getInstance()->getAppDir();
 
    // appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
    //   QDir::separator() + QString("localApp");
@@ -776,9 +828,6 @@ void MainWindow::onRemoteRunButtonClicked(){
       errorMessage("Dakota script does not exist, the parseDAKOTA.py script was not found in exe folder! .. download application again");
       return;
     }
-
-    // remove current results widget
-    results->setResultWidget(0);
 
     //
     // want to first remove old dakota files from the current directory
@@ -1330,7 +1379,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.0.1 "));
+                       tr("Version 2.1.0 "));
 }
 
 void MainWindow::preferences()
@@ -1345,7 +1394,7 @@ void MainWindow::about()
               sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
              quantification in the structural responses and parameter estimation of input variables in calibration studies.\
              <p>\
-             Version 2.0.1 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
+             Version 2.1.0 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
              will repeatedly invoke the finite element application either locally on the users dekstop machine or remotely\
              on high performance computing resources at the Texas Advanced Computing Center through the NHERI DesignSafe cyberinfrastructure.\
              <p>\
@@ -1367,7 +1416,7 @@ void MainWindow::submitFeedback()
 
 void MainWindow::manual()
 {
-  QString featureRequestURL = QString("https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community//SimCenter/Software/uqFEM");
+  QString featureRequestURL = QString("https://nheri-simcenter.github.io/quoFEM-Documentation/");
     QDesktopServices::openUrl(QUrl(featureRequestURL, QUrl::TolerantMode));
 }
 

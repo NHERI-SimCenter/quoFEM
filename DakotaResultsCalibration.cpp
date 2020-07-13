@@ -70,6 +70,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 using namespace QtCharts;
 #include <math.h>
 #include <QValueAxis>
+#include <QPushButton>
+#include <QFileDialog>
 
 #include <QXYSeries>
 #define NUM_DIVISIONS 10
@@ -84,6 +86,52 @@ DakotaResultsCalibration::DakotaResultsCalibration(QWidget *parent)
     mLeft = true;
     col1 = 0;
     col2 = 0;
+
+    summary = new QWidget();
+    summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0);
+    summary->setLayout(summaryLayout);
+    tabWidget->addTab(summary,tr("Summary"));
+
+    dakotaText = new QTextEdit();
+    dakotaText->setReadOnly(true); // make it so user cannot edit the contents
+    tabWidget->addTab(dakotaText, tr("General"));
+
+
+     spreadsheet = new MyTableWidget();
+     spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
+     connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
+
+     spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
+     connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
+
+     chart = new QChart();
+     chart->setAnimationOptions(QChart::AllAnimations);
+
+     QChartView *chartView = new QChartView(chart);
+     chartView->setRenderHint(QPainter::Antialiasing);
+     chartView->chart()->legend()->hide();
+
+     //
+     // create a widget into which we place the chart and the spreadsheet
+     //
+
+     QWidget *widget = new QWidget();
+     QGridLayout *layout = new QGridLayout(widget);
+     QPushButton* save_spreadsheet = new QPushButton();
+     save_spreadsheet->setText("Save Data");
+     save_spreadsheet->setToolTip(tr("Save data into file in a CSV format"));
+     save_spreadsheet->resize(30,30);
+     connect(save_spreadsheet,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetClicked()));
+
+     layout->setContentsMargins(0,0,0,0);
+     layout->setSpacing(3);
+
+     layout->addWidget(chartView, 0,0,1,1);
+     layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
+     layout->addWidget(spreadsheet,2,0,1,1);
+
+     tabWidget->addTab(widget, tr("Data Values"));
 }
 
 DakotaResultsCalibration::~DakotaResultsCalibration()
@@ -94,6 +142,7 @@ DakotaResultsCalibration::~DakotaResultsCalibration()
 
 void DakotaResultsCalibration::clear(void)
 {
+    /*
     QWidget *res=tabWidget->widget(0);
     QWidget *gen=tabWidget->widget(0);
     QWidget *dat=tabWidget->widget(0);
@@ -102,6 +151,10 @@ void DakotaResultsCalibration::clear(void)
     delete dat;
     delete gen;
     delete res;
+    */
+    spreadsheet->clear();
+    dakotaText->clear();
+
 }
 
 bool
@@ -129,7 +182,6 @@ DakotaResultsCalibration::outputToJSON(QJsonObject &jsonObject)
         resultsData.append(edpData);
     }
     jsonObject["summary"]=resultsData;
-
 
     // add general data
     jsonObject["general"]=dakotaText->toPlainText();
@@ -184,11 +236,6 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
 
-    QWidget *summary = new QWidget();
-    QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summaryLayout->setContentsMargins(0,0,0,0);
-    summary->setLayout(summaryLayout);
-
     QJsonArray edpArray = jsonObject["summary"].toArray();
     foreach (const QJsonValue &edpValue, edpArray) {
         QString name;
@@ -206,11 +253,9 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
     summaryLayout->addStretch();
 
     //
-    // into a QTextEdit place more detailed Dakota text
+    // into dakotaText place more detailed Dakota text
     //
 
-    dakotaText = new QTextEdit();
-    dakotaText->setReadOnly(true); // make it so user cannot edit the contents
     QJsonValue theValue = jsonObject["general"];
     dakotaText->setText(theValue.toString());
 
@@ -218,7 +263,6 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
     // into a spreadsheet place all the data returned
     //
 
-    spreadsheet = new MyTableWidget();
     QJsonObject spreadsheetData = jsonObject["spreadsheet"].toObject();
     int numRow = spreadsheetData["numRow"].toInt();
     int numCol = spreadsheetData["numCol"].toInt();
@@ -241,44 +285,15 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
             dataCount++;
         }
     }
-    spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
 
     //
     // create a chart, setting data points from first and last col of spreadsheet
     //
 
-    chart = new QChart();
-    chart->setAnimationOptions(QChart::AllAnimations);
-    QScatterSeries *series = new QScatterSeries;
     col1 = 0;
     col2 = numCol-1;
     mLeft = true;
-
     this->onSpreadsheetCellClicked(0,numCol-1);
-
-    QChartView *chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->chart()->legend()->hide();
-
-    //
-    // create a widget into which we place the chart and the spreadsheet
-    //
-
-    QWidget *widget = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout(widget);
-    layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(3);
-    layout->addWidget(chartView, 1);
-    layout->addWidget(spreadsheet, 1);
-
-    //
-    // add 3 Widgets to TabWidget
-    //
-
-    tabWidget->addTab(summary,tr("Summary"));
-    tabWidget->addTab(dakotaText, tr("General"));
-    tabWidget->addTab(widget, tr("Data Values"));
 
     tabWidget->adjustSize();
     return result;
@@ -336,27 +351,11 @@ static int mergesort(double *input, int size)
 
 int DakotaResultsCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
-    //
-    // get a Qwidget ready to place summary data, the EDP name, mean, stdDev into
-    //
-
-    QWidget *summary = new QWidget();
-    QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summaryLayout->setContentsMargins(0,0,0,0);
-    summary->setLayout(summaryLayout);
-
-    //
-    // into a QTextEdit we will place contents of Dakota more detailed output
-    //
-
-    dakotaText = new QTextEdit();
-    dakotaText->setReadOnly(true); // make it so user cannot edit the contents
-
-    dakotaText->setText("\n");
 
     //
     // open Dakota output file
     //
+
 
     std::ifstream fileResults(filenameResults.toStdString().c_str());
     if (!fileResults.is_open()) {
@@ -368,6 +367,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
 
     const std::string needle = "Best parameters          =";
     const std::string needle2 = "Best residual term";
+    const std::string needle3 = "Original";
     std::string haystack;
 
     while (std::getline(fileResults, haystack)) {
@@ -381,6 +381,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
     //  - also if still collecting sumary data, add each EDP's sumary info
     //
 
+    dakotaText->setText("\n");
     dakotaText->append(haystack.c_str());
 
     bool isSummaryDone = false;
@@ -390,7 +391,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
         dakotaText->append(haystack.c_str());
         if (isSummaryDone == false) {
 
-            if (haystack.find(needle2) != std::string::npos) {
+            if (haystack.find(needle2) != std::string::npos || haystack.find(needle3) != std::string::npos) {
                 isSummaryDone = true;
             } else {
                 //
@@ -421,7 +422,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
     // now into a QTableWidget copy the random variable and edp's of each black box run
     //
 
-    spreadsheet = new MyTableWidget();
+    //spreadsheet = new MyTableWidget();
 
     // open file containing tab data
     std::ifstream tabResults(filenameTab.toStdString().c_str());
@@ -475,41 +476,9 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
     }
     tabResults.close();
 
-   // rowCount;
-    spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
-
-    //
-    // create a chart, setting data points from first and last col of spreadsheet
-    //
-
-    chart = new QChart();
-    chart->setAnimationOptions(QChart::AllAnimations);
 
     this->onSpreadsheetCellClicked(0,colCount-1);
 
-    QChartView *chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->chart()->legend()->hide();
-
-    //
-    // into QWidget place chart and spreadsheet
-    //
-
-    QWidget *widget = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout(widget);
-    layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(3);
-    layout->addWidget(chartView, 1);
-    layout->addWidget(spreadsheet, 1);
-
-    //
-    // add summary, detained info and spreadsheet with chart to the tabed widget
-    //
-
-    tabWidget->addTab(summary,tr("Summmary"));
-    tabWidget->addTab(dakotaText, tr("General"));
-    tabWidget->addTab(widget, tr("Data Values"));
 
     tabWidget->adjustSize();
 
@@ -546,6 +515,29 @@ DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
     int rowCount = spreadsheet->rowCount();
     if (col1 != col2) {
         QScatterSeries *series = new QScatterSeries;
+
+        // adjust marker size and opacity based on the number of samples
+        if (rowCount < 10) {
+            series->setMarkerSize(15.0);
+            series->setColor(QColor(0, 114, 178, 200));
+        } else if (rowCount < 100) {
+            series->setMarkerSize(11.0);
+            series->setColor(QColor(0, 114, 178, 160));
+        } else if (rowCount < 1000) {
+            series->setMarkerSize(8.0);
+            series->setColor(QColor(0, 114, 178, 100));
+        } else if (rowCount < 10000) {
+            series->setMarkerSize(6.0);
+            series->setColor(QColor(0, 114, 178, 70));
+        } else if (rowCount < 100000) {
+            series->setMarkerSize(5.0);
+            series->setColor(QColor(0, 114, 178, 50));
+        } else {
+            series->setMarkerSize(4.5);
+            series->setColor(QColor(0, 114, 178, 30));
+        }
+        
+        series->setBorderColor(QColor(255,255,255,0));
 
         for (int i=0; i<rowCount; i++) {
             QTableWidgetItem *itemX = spreadsheet->item(i,col1);
@@ -713,6 +705,38 @@ DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
     }
 }
 
+void
+DakotaResultsCalibration::onSaveSpreadsheetClicked()
+{
+
+    int rowCount = spreadsheet->rowCount();
+    int columnCount = spreadsheet->columnCount();
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                    tr("Save Data"), "",
+                                                    tr("All Files (*)"));
+
+    QFile file(fileName);
+    if (file.open(QIODevice::ReadWrite))
+    {
+        QTextStream stream(&file);
+        for (int j=0; j<columnCount; j++)
+        {
+            stream <<theHeadings.at(j)<<", ";
+        }
+        stream <<endl;
+        for (int i=0; i<rowCount; i++)
+        {
+            for (int j=0; j<columnCount; j++)
+            {
+                QTableWidgetItem *item_value = spreadsheet->item(i,j);
+                double value = item_value->text().toDouble();
+                stream << value << ", ";
+            }
+            stream<<endl;
+        }
+    }
+}
 
 extern QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit);
 

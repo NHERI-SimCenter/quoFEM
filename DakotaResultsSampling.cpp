@@ -438,7 +438,7 @@ DakotaResultsSampling::onSaveSpreadsheetClicked()
         QTextStream stream(&file);
         for (int j=0; j<columnCount; j++)
         {
-            stream <<theHeadings.at(j)<<",\t";
+            stream <<theHeadings.at(j)<<", ";
         }
         stream <<endl;
         for (int i=0; i<rowCount; i++)
@@ -447,7 +447,7 @@ DakotaResultsSampling::onSaveSpreadsheetClicked()
             {
                 QTableWidgetItem *item_value = spreadsheet->item(i,j);
                 double value = item_value->text().toDouble();
-                stream << value << ",\t";
+                stream << value << ", ";
             }
             stream<<endl;
         }
@@ -485,6 +485,29 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
     if (col1 != col2) {
         QScatterSeries *series = new QScatterSeries;
+
+        // adjust marker size and opacity based on the number of samples
+        if (rowCount < 10) {
+            series->setMarkerSize(15.0);
+            series->setColor(QColor(0, 114, 178, 200));
+        } else if (rowCount < 100) {
+            series->setMarkerSize(11.0);
+            series->setColor(QColor(0, 114, 178, 160));
+        } else if (rowCount < 1000) {
+            series->setMarkerSize(8.0);
+            series->setColor(QColor(0, 114, 178, 100));
+        } else if (rowCount < 10000) {
+            series->setMarkerSize(6.0);
+            series->setColor(QColor(0, 114, 178, 70));
+        } else if (rowCount < 100000) {
+            series->setMarkerSize(5.0);
+            series->setColor(QColor(0, 114, 178, 50));
+        } else {
+            series->setMarkerSize(4.5);
+            series->setColor(QColor(0, 114, 178, 30));
+        }
+        
+        series->setBorderColor(QColor(255,255,255,0));
 
         for (int i=0; i<rowCount; i++) {
             QTableWidgetItem *itemX = spreadsheet->item(i,col1);    //col1 goes in x-axis, col2 on y-axis
@@ -1002,7 +1025,7 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     // add 3 Widgets to TabWidget
     //
 
-    tabWidget->addTab(summary,tr("Summmary"));
+    tabWidget->addTab(summary,tr("Summary"));
     tabWidget->addTab(widget, tr("Data Values"));
 
     tabWidget->adjustSize();
