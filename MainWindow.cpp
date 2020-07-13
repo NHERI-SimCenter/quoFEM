@@ -643,7 +643,7 @@ void MainWindow::onRunButtonClicked() {
     {
         qDebug() << "Failed to start the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString().split('\n');
-        emit sendStatusMessage("Failed to start the workflow!!!");
+        emit errorMessage("Failed to start the workflow!!!");
         failed = true;
     }
 
@@ -651,7 +651,7 @@ void MainWindow::onRunButtonClicked() {
     {
         qDebug() << "Failed to finish running the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
-        emit sendStatusMessage("Failed to finish running the workflow!!!");
+        emit errorMessage("Failed to finish running the workflow!!!");
         failed = true;
     }
 
@@ -660,7 +660,7 @@ void MainWindow::onRunButtonClicked() {
     {
         qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
-        emit sendStatusMessage("Failed to run the workflow!!!");
+        emit errorMessage("Failed to run the workflow!!!");
         failed = true;
     }
 
@@ -668,7 +668,7 @@ void MainWindow::onRunButtonClicked() {
     {
         qDebug().noquote() << proc->readAllStandardOutput();
         qDebug().noquote() << proc->readAllStandardError();
-        return false;
+        return;
     }
 
 
