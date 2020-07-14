@@ -646,15 +646,45 @@ void MainWindow::onRunButtonClicked() {
 #ifdef Q_OS_WIN
 
     QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
-    qDebug() << "Executing parseDAKOTA.py... " << args;
-    proc->execute(python, args);
-    qDebug() << "Executing parseDAKOTA.py... - SUCCESSFUL" ;
+    // qDebug() << "Executing parseDAKOTA.py... " << args;
+    // proc->execute(python, args);
+    //qDebug() << "Executing parseDAKOTA.py... - SUCCESSFUL" ;
 
-    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
-    //qDebug() << command;
-    //proc->execute("cmd", QStringList() << "/C" << command);
-    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
-    //qDebug() << command;
+    proc->start(python,args);
+
+    bool failed = false;
+    if (!proc->waitForStarted(-1))
+    {
+        qDebug() << "Failed to start the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << proc->errorString().split('\n');
+        emit errorMessage("Failed to start the workflow!!!");
+        failed = true;
+    }
+
+    if(!proc->waitForFinished(-1))
+    {
+        qDebug() << "Failed to finish running the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << proc->errorString();
+        emit errorMessage("Failed to finish running the workflow!!!");
+        failed = true;
+    }
+
+
+    if(0 != proc->exitCode())
+    {
+        qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << proc->errorString();
+        emit errorMessage("Failed to run the workflow!!!");
+        failed = true;
+    }
+
+    if(failed)
+    {
+        qDebug().noquote() << proc->readAllStandardOutput();
+        qDebug().noquote() << proc->readAllStandardError();
+        return;
+    }
+
 
 #else
 
