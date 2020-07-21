@@ -622,19 +622,55 @@ void MainWindow::onRunButtonClicked() {
 
     QProcess *proc = new QProcess();
 
+    proc->setProcessChannelMode(QProcess::SeparateChannels);
+    auto procEnv = QProcessEnvironment::systemEnvironment();
+    QString pathEnv = procEnv.value("PATH");
+    QString pythonPathEnv = procEnv.value("PYTHONPATH");
+
     QString python("python");
     QSettings settings("SimCenter", "Common"); 
     QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid()) 
       python = pythonLocationVariant.toString();
 
+    QSettings settingsApplication("SimCenter", QCoreApplication::applicationName());
+    QVariant  openseesPathVariant = settingsApplication.value("openseesPath");
+    if (openseesPathVariant.isValid()) {
+        QFileInfo openseesFile(openseesPathVariant.toString());
+        if (openseesFile.exists()) {
+            QString openseesPath = openseesFile.absolutePath();
+            pathEnv = openseesPath + ';' + pathEnv;
+        }
+    }
+
+    QVariant  dakotaPathVariant = settingsApplication.value("dakotaPath");
+    if (dakotaPathVariant.isValid()) {
+        QFileInfo dakotaFile(dakotaPathVariant.toString());
+        if (dakotaFile.exists()) {
+            QString dakotaPath = dakotaFile.absolutePath();
+            QString dakotaPythonPath = QFileInfo(dakotaPath).absolutePath() + QDir::separator() +
+                      "share" + QDir::separator() + "Dakota" + QDir::separator() + "Python";
+            pathEnv = dakotaPath + ';' + pathEnv;
+            pythonPathEnv = dakotaPythonPath + ";" + pythonPathEnv;
+        }
+    }
+
+    procEnv.insert("PATH", pathEnv);
+    procEnv.insert("PYTHONPATH", pythonPathEnv);
+    proc->setProcessEnvironment(procEnv);
+
+    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
+
 
 #ifdef Q_OS_WIN
 
-    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
+    //QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
     // qDebug() << "Executing parseDAKOTA.py... " << args;
     // proc->execute(python, args);
     //qDebug() << "Executing parseDAKOTA.py... - SUCCESSFUL" ;
+
+
+#endif
 
     proc->start(python,args);
 
@@ -643,7 +679,7 @@ void MainWindow::onRunButtonClicked() {
     {
         qDebug() << "Failed to start the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString().split('\n');
-        emit sendStatusMessage("Failed to start the workflow!!!");
+        emit errorMessage("Failed to start the workflow!!!");
         failed = true;
     }
 
@@ -651,8 +687,8 @@ void MainWindow::onRunButtonClicked() {
     {
         qDebug() << "Failed to finish running the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
-        emit sendStatusMessage("Failed to finish running the workflow!!!");
-        failed = true;
+        emit errorMessage("Failed to finish running the workflow!!!");
+        return;
     }
 
 
@@ -660,54 +696,18 @@ void MainWindow::onRunButtonClicked() {
     {
         qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
-        emit sendStatusMessage("Failed to run the workflow!!!");
-        failed = true;
+        emit errorMessage("Failed to run the workflow!!!");
+        return;
     }
 
     if(failed)
     {
         qDebug().noquote() << proc->readAllStandardOutput();
         qDebug().noquote() << proc->readAllStandardError();
-        return false;
+        return;
     }
 
-
-#else
-
-    // wrap paths with quotes (dealing with spaces in the path);
-    pySCRIPT = "\"" + pySCRIPT + "\"";
-    tDirectory = "\"" + tDirectory + "\"";
-    tmpDirectory = "\"" + tmpDirectory + "\"";
-
-    // check for bashrc or bash profile
-    QDir homeDir(QDir::homePath());
-    QString sourceBash("\"");
-    if (homeDir.exists(".bash_profile")) {
-        sourceBash = QString("source $HOME/.bash_profile; \"");
-    } else if (homeDir.exists(".bashrc")) {
-        sourceBash = QString("source $HOME/.bashrc; \"");
-    } else if (homeDir.exists(".zprofile")) {
-        sourceBash = QString("source $HOME/.zprofile; \"");
-    } else if (homeDir.exists(".zsh")) {
-        sourceBash = QString("source $HOME/.zsh; \"");
-    } else {
-       qDebug() << "No .bash_profile, .bashrc, .zshrc file found. This may not find Dakota or OpenSees when running";
-    }
-
-    QString command = sourceBash + python + QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
-            tmpDirectory + QString(" runningLocal");
-
-    qInfo() << QProcessEnvironment::systemEnvironment().value("PATH") << "\n";// system PATH
-    qInfo() << command;
-    
-    emit errorMessage("Starting Backend");
-    proc->execute("bash", QStringList() << "-c" <<  command);
-   // proc->start("bash", QStringList() << "-c" <<  command);
-
-    // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
-#endif
-
-    proc->waitForStarted();
+    // proc->waitForStarted();
 
     // TODO: fix this so that we do not have to open the config file the get the info
 
