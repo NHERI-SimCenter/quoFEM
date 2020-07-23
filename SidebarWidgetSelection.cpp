@@ -51,6 +51,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QModelIndex>
 #include <QStackedWidget>
 #include <QHeaderView>
+#include <QVBoxLayout>
 
 #include "CustomizedItemModel.h"
 #include <QFile>
@@ -108,7 +109,24 @@ SidebarWidgetSelection::buildTreee(){
             SLOT(selectionChangedSlot(const QItemSelection &, const QItemSelection &)));
 
     // add the TreeView widget to the layout
+    /*
+    QVBoxLayout *sideLayout = new QVBoxLayout();
+    sideLayout->addWidget(treeView,1);
+    QLabel *simLogo = new QLabel();
+    QPixmap pixmap2(":/imagesCommon/sim_logo_footer.png");
+    QPixmap newPixmap2 = pixmap2;
+    int w = pixmap2.width();
+    int h = pixmap2.height();
+    simLogo->setPixmap(newPixmap2.scaled(w/2,h/2,Qt::KeepAspectRatio));
+
+    sideLayout->addWidget(simLogo);
+     horizontalLayout->addLayout(sideLayout,0);
+    */
+
+
     horizontalLayout->addWidget(treeView,0);
+
+
     horizontalLayout->addWidget(theStackedWidget,1);
     horizontalLayout->addStretch();
 }
@@ -116,7 +134,11 @@ SidebarWidgetSelection::buildTreee(){
 SidebarWidgetSelection::SidebarWidgetSelection(QWidget *parent) 
     : SimCenterWidget(parent), currentWidget(0)
 {
+    //this->setStyleSheet("background-color:red;");
+    this->setContentsMargins(0,5,0,5);
     horizontalLayout = new QHBoxLayout();
+    horizontalLayout->setMargin(0);
+    //horizontalLayout->setSpacing(0);
     this->setLayout(horizontalLayout);
 
     //
@@ -169,7 +191,6 @@ SidebarWidgetSelection::selectionChangedSlot(const QItemSelection & /*newSelecti
 
     theStackedWidget->setCurrentIndex(widgetIndex);
 }
-
 
 bool
 SidebarWidgetSelection::outputToJSON(QJsonObject &jsonObject)

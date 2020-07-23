@@ -50,6 +50,7 @@ InputWidgetParameters::InputWidgetParameters(QWidget *parent)
     : SimCenterWidget(parent), theParameters(0)
 {
     layout = new QVBoxLayout();
+    layout->setMargin(0);
     this->setLayout(layout);
 }
 
