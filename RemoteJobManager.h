@@ -117,6 +117,7 @@ private:
     QString name2;
     QString name3;
     QString name4;
+    QString name5;
     MainWindow *theMainWindow;
 };
 

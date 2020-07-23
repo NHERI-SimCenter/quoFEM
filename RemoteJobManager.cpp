@@ -315,6 +315,7 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         name2 = localDir + QDir::separator() + QString("dakota.out");
         name3 = localDir + QDir::separator() + QString("dakotaTab.out");
         name4 = localDir + QDir::separator() + QString("dakota.err");;
+        name5 = localDir + QDir::separator() + QString("dakota_mcmc_tabular.dat");;
 
         QStringList localFiles;
         localFiles.append(name1);
