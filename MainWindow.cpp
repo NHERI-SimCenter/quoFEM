@@ -664,7 +664,6 @@ void MainWindow::onRunButtonClicked() {
 
     QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
 
-
 #ifdef Q_OS_WIN
 
     python = QString("\"") + python + QString("\"");
@@ -704,12 +703,8 @@ void MainWindow::onRunButtonClicked() {
         return;
     }
 
-    //QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
-    // qDebug() << "Executing parseDAKOTA.py... " << args;
-    // proc->execute(python, args);
-    //qDebug() << "Executing parseDAKOTA.py... - SUCCESSFUL" ;
+#else
 
-    // check for bashrc or bash profile
     QDir homeDir(QDir::homePath());
     QString sourceBash("\"");
     if (homeDir.exists(".bash_profile")) {
@@ -721,11 +716,15 @@ void MainWindow::onRunButtonClicked() {
     } else if (homeDir.exists(".zshrc")) {
       sourceBash = QString("source $HOME/.zshrc; ");
     } else
-      emit sendErrorMessage( "No .bash_profile, .bashrc or .zshrc file found. This may not find Dakota or OpenSees");
+      emit errorMessage( "No .bash_profile, .bashrc or .zshrc file found. This may not find Dakota or OpenSees");
 
     // note the above not working under linux because bash_profile not being called so no env variables!!
-    QString command = sourceBash + exportPath + "; \"" + python + QString("\" \"" ) +
-      pySCRIPT + QString("\" " ) + runType + QString(" \"" ) + inputFile + QString("\" \"") + registryFile + QString("\"");
+    QString command = sourceBash + exportPath + "; \"" + python + 
+      QString("\" \"" ) + pySCRIPT + QString("\" \"" ) + tDirectory + 
+      QString("\" \"") + tmpDirectory + QString("\" runningLocal");
+
+    //    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
+    //    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
 
     qDebug() << "PYTHON COMMAND" << command;
 
@@ -733,8 +732,6 @@ void MainWindow::onRunButtonClicked() {
     proc->waitForStarted();
 
 #endif
-
-
 
     // proc->waitForStarted();
 
