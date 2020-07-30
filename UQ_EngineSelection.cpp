@@ -59,6 +59,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <sectiontitle.h>
 
 #include <DakotaEngine.h>
+#include <SimCenterUQEngine.h>
 #include <UQpyEngine.h>
 #include <filterEngine.h>
 #include <sectiontitle.h>
@@ -83,11 +84,13 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
    // label->setText(QString("    UQ Engine   "));
     theEngineSelectionBox = new QComboBox();
     theEngineSelectionBox->addItem(tr("Dakota"));
+    theEngineSelectionBox->addItem(tr("SimCenterUQ"));
 
    //theEngineSelectionBox->addItem(tr("UQpy"));
    // theEngineSelectionBox->addItem(tr("filter"));
 
     theEngineSelectionBox->setItemData(0, "Dakota engine", Qt::ToolTipRole);
+    theEngineSelectionBox->setItemData(1, "SimCenterUQ engine", Qt::ToolTipRole);
     //theEngineSelectionBox->setItemData(1, "uqPY engine", Qt::ToolTipRole);
 
     theSelectionLayout->addWidget(title,1);
@@ -106,9 +109,11 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
     //
 
     theDakotaEngine = new DakotaEngine();
+    theSimCenterUQEngine = new SimCenterUQEngine();
     theUQpyEngine = new UQpyEngine();
 
     theStackedWidget->addWidget(theDakotaEngine);
+    theStackedWidget->addWidget(theSimCenterUQEngine);
     //theStackedWidget->addWidget(theUQpyEngine);
 
 
@@ -119,9 +124,10 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
             SLOT(engineSelectionChanged(QString)));
 
-    connect(theDakotaEngine,SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
+    //connect(theDakotaEngine,SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
+    //connect(theDakotaEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
 
-    connect(theDakotaEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
+
 }
 
 UQ_EngineSelection::~UQ_EngineSelection()
@@ -178,8 +184,14 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
         emit onUQ_EngineChanged();
     }
 
-    else if (arg1 == "UQpy") {
+    else if (arg1 == "SimCenterUQ") {
         theStackedWidget->setCurrentIndex(1);
+        theCurrentEngine = theSimCenterUQEngine;
+        emit onUQ_EngineChanged();
+    }
+
+    else if (arg1 == "UQpy") {
+        theStackedWidget->setCurrentIndex(2);
         theCurrentEngine = theUQpyEngine;
         emit onUQ_EngineChanged();
     }
@@ -187,6 +199,9 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
     else {
         qDebug() << "ERROR .. UQ_EngineSelection selection .. type unknown: " << arg1;
     }
+
+    connect(theCurrentEngine,SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
+    connect(theCurrentEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
 }
 
 

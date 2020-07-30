@@ -26,10 +26,10 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 
-REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS 
-PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, 
+THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS
+PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,
 UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
@@ -138,7 +138,7 @@ AgaveCurl::~AgaveCurl()
 
     QFile file1 (uniqueFileName1);
     file1.remove();
-    
+
     QFile file2 (uniqueFileName2);
     file2.remove();
 
@@ -149,7 +149,7 @@ AgaveCurl::~AgaveCurl()
     curl_easy_cleanup(hnd);
 }
 
-bool 
+bool
 AgaveCurl::isLoggedIn()
 {
     return loggedInFlag;
@@ -219,11 +219,11 @@ AgaveCurl::login(QString uname, QString upassword)
     int postFieldLength = postField.length() ; // strlen(postFieldChar);
     char *pField = new char[postFieldLength+1]; // have to do new char as seems to miss ending string char when pass directcly
     strncpy(pField, postField.toStdString().c_str(),postFieldLength+1);
-    
+
     curl_easy_setopt(hnd, CURLOPT_POSTFIELDS, pField);
     curl_easy_setopt(hnd, CURLOPT_POSTFIELDSIZE_LARGE, (curl_off_t)postFieldLength);
     curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "POST");
-    
+
     if (this->invokeCurl() == false) {
         return false;
     }
@@ -239,7 +239,7 @@ AgaveCurl::login(QString uname, QString upassword)
     QString val;
     val=file.readAll();
     file.close();
-    
+
     // process results into json object and get the results object whhich contains the two keys
     if (val.isEmpty()) {
         emit errorMessage(QString("ERROR - libCurl ERROR!"));
@@ -294,14 +294,14 @@ AgaveCurl::login(QString uname, QString upassword)
     int postFieldLength2 = postField2.length() ; // strlen(postFieldChar);
     char *pField2 = new char[postFieldLength2+1]; // have to do new char as seems to miss ending string char when pass directcly
     strncpy(pField2, postField2.toStdString().c_str(),postFieldLength2+1);
-    
+
     curl_easy_setopt(hnd, CURLOPT_POSTFIELDS, pField2);
     curl_easy_setopt(hnd, CURLOPT_POSTFIELDSIZE_LARGE, (curl_off_t)postFieldLength2);
     curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "POST");
     if (this->invokeCurl() == false) {
         return false;
     }
-    
+
 
     // process result .. we want that access token
     // when we have it we add to slist1 variable which is used in all the subsequent curl calls
@@ -312,16 +312,16 @@ AgaveCurl::login(QString uname, QString upassword)
         emit errorMessage("ERROR: COULD NOT OPEN RESULT of OAuth");
         return false;
     }
-    
+
     // read results file & check for errors
     val=file2.readAll();
     file2.close();
 
     QString accessToken;
-    
+
     if (val.contains("Invalid Credentals") || val.isEmpty()) {
         emit errorMessage("ERROR: Invalid Credentials in OAuth!");
-	return false;
+    return false;
     } else {
         QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
         QJsonObject jsonObj = doc.object();
@@ -330,32 +330,32 @@ AgaveCurl::login(QString uname, QString upassword)
             bearer = QString("Authorization: Bearer ") + accessToken;
             slist1 = curl_slist_append(slist1, bearer.toStdString().c_str());
             loggedInFlag = true;
-	    
-	    // now if appDir is specified make sure dir exists, 
-	    // creating it does delete existing one and one call as opposed to 2 if not there
-	    if (!appDirName.isEmpty()) {
-	      QString home = storage + username;
-	      bool ok = this->mkdir(appDirName, username);
-	      if (ok != true) {
-		QString message = QString("WARNING - could not create " ) + appDirName 
-		  + QString("on login, using home dir instead");
-		appDirName = QString(""); // no erase function!
-		emit statusMessage(message);
-	      } else {
-		emit statusMessage("Login SUCCESS");
-	      }
-	    } else {
-	      emit statusMessage("Login SUCCESS");
-	    }
 
-	    return true;
+        // now if appDir is specified make sure dir exists,
+        // creating it does delete existing one and one call as opposed to 2 if not there
+        if (!appDirName.isEmpty()) {
+          QString home = storage + username;
+          bool ok = this->mkdir(appDirName, username);
+          if (ok != true) {
+        QString message = QString("WARNING - could not create " ) + appDirName
+          + QString("on login, using home dir instead");
+        appDirName = QString(""); // no erase function!
+        emit statusMessage(message);
+          } else {
+        emit statusMessage("Login SUCCESS");
+          }
+        } else {
+          emit statusMessage("Login SUCCESS");
         }
-	emit statusMessage("ERROR - no access token returned!");
-	return false;
+
+        return true;
+        }
+    emit statusMessage("ERROR - no access token returned!");
+    return false;
     }
     return false;
 
-   /* *************************************************** to test aloe 
+   /* *************************************************** to test aloe
     consumerKey = QString("");
     consumerSecret = QString("");
     QString accessToken = QString("");
@@ -544,7 +544,7 @@ AgaveCurl::removeDirectory(const QString &remote)
                message = theObj["message"].toString();
 
            emit errorMessage(message);
-	   return false;
+       return false;
 
        } else if (status == "success") {
            emit errorMessage("Succesfully removed directory");
@@ -624,10 +624,10 @@ AgaveCurl::mkdir(const QString &remoteName, const QString &remotePath) {
              if (theObj.contains("message"))
                  message = theObj["message"].toString();
              emit errorMessage(message);
-	     return false;
+         return false;
          } else if (status == "success") {
              return true;
-         } 
+         }
      } else {
        QJsonDocument doc(theObj);
        QString strJson(doc.toJson(QJsonDocument::Compact));
@@ -699,7 +699,7 @@ AgaveCurl::uploadFile(const QString &local, const QString &remote) {
     QFile file(uniqueFileName1);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         emit errorMessage("ERROR: COULD NOT OPEN RESULT");
-	return false;
+    return false;
     }
 
     // read results file & check for errors
@@ -734,7 +734,7 @@ AgaveCurl::uploadFile(const QString &local, const QString &remote) {
        if (theFault.contains("message")) {
            QString message = theFault["message"].toString();
            emit errorMessage(message);
-	   return false;
+       return false;
        }
    }
 
@@ -980,7 +980,7 @@ AgaveCurl::startJob(const QJsonObject &theJob)
            if (theObj.contains("message"))
                message = QString("ERROR: " ) + theObj["message"].toString();
            emit errorMessage(message);
-	   return result;
+       return result;
        } else if (status == "success") {
            if (theObj.contains("result")) {
                QJsonObject resObj = theObj["result"].toObject();
@@ -1089,14 +1089,14 @@ AgaveCurl::getJobDetails(const QString &jobID)
   //
   // process the results
   //
-  
+
   // open results file
   QFile file(uniqueFileName1);
   if (!file.open(QFile::ReadOnly | QFile::Text)) {
     emit errorMessage("ERROR: COULD NOT OPEN RESULT .. getJobDetails!");
     return result;
   }
-  
+
   // read results file & check for errors
   QString val;
   val=file.readAll();
@@ -1107,7 +1107,7 @@ AgaveCurl::getJobDetails(const QString &jobID)
   if (theObj.contains("result")){
       result = theObj["result"].toObject();
   }
-  
+
   return result;
 }
 
@@ -1229,7 +1229,7 @@ AgaveCurl::deleteJob(const QString &jobID, const QStringList &dirToRemove)
     QFile file(uniqueFileName1);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         emit errorMessage("ERROR: COULD NOT OPEN RESULT");
-	return false;
+    return false;
     }
 
     // read into json object
@@ -1262,7 +1262,7 @@ AgaveCurl::deleteJob(const QString &jobID, const QStringList &dirToRemove)
 }
 
 
-bool 
+bool
 AgaveCurl::invokeCurl(void) {
 
   CURLcode ret;
@@ -1297,7 +1297,7 @@ AgaveCurl::invokeCurl(void) {
     curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(hnd, CURLOPT_WRITEDATA, pagefile);
   }
-  
+
   // perform the curl operation that has been set up
   ret = curl_easy_perform(hnd);
   fclose(pagefile);

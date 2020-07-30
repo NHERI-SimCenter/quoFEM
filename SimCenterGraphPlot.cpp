@@ -7,7 +7,6 @@
 
 #include <qcustomplot.h>
 
-
 SimCenterGraphPlot::SimCenterGraphPlot(
                                QString xLabel,
                                QString yLabel,
@@ -146,4 +145,3 @@ SimCenterGraphPlot::addLine(QVector<double> &x, QVector<double> &y, int width, i
 
     thePlot->replot();
 }
-

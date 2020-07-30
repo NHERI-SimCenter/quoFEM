@@ -66,7 +66,7 @@ class UQ_EngineSelection : public  SimCenterAppWidget
   bool outputToJSON(QJsonObject &rvObject);
   bool inputFromJSON(QJsonObject &rvObject);
   bool copyFiles(QString &destName);
-  
+
   void clear(void);
   
  signals:
@@ -84,6 +84,7 @@ private:
 
    UQ_Engine *theCurrentEngine;
    UQ_Engine *theDakotaEngine;
+   UQ_Engine *theSimCenterUQEngine;
    UQ_Engine *theUQpyEngine;
    UQ_Engine *thefilterEngine;
 };
