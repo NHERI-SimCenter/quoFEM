@@ -53,7 +53,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QApplication>
 #include <SimCenterPreferences.h>
 #include <QSettings>
-
+#include <Utils/dialogabout.h>
 #include "SidebarWidgetSelection.h"
 
 #include <InputWidgetEDP.h>
@@ -233,10 +233,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // create the buttons widget and a layout for it
     QHBoxLayout *pushButtonLayout = new QHBoxLayout();
-    QWidget *buttonWidget = new QWidget();
-    buttonWidget->setLayout(pushButtonLayout);
-
-    // create a bunch of buttons
+    pushButtonLayout->setSpacing(10);
 
     QPushButton *runButton = new QPushButton();
     runButton->setText(tr("RUN"));
@@ -341,14 +338,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(uq,SIGNAL(onUQ_EngineChanged()), this,SLOT(onUQ_EngineChanged()));
 
     // add button widget to layout
-    layout->addWidget(buttonWidget);
+    //layout->addWidget(buttonWidget);
+    layout->addLayout(pushButtonLayout);
 
     //
     // add SimCenter footer
     //
 
-    FooterWidget *footer = new FooterWidget();
-    layout->addWidget(footer);
+    //FooterWidget *footer = new FooterWidget();
+    //layout->addWidget(footer);
+
+    layout->setSpacing(0);
 
     this->setCentralWidget(centralWidget);
 
@@ -636,19 +636,51 @@ void MainWindow::onRunButtonClicked() {
 
     QProcess *proc = new QProcess();
 
+    proc->setProcessChannelMode(QProcess::SeparateChannels);
+    auto procEnv = QProcessEnvironment::systemEnvironment();
+    QString pathEnv = procEnv.value("PATH");
+    QString pythonPathEnv = procEnv.value("PYTHONPATH");
+
     QString python("python");
+    QString exportPath("export PATH=$PATH");
     QSettings settings("SimCenter", "Common"); 
     QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid()) 
       python = pythonLocationVariant.toString();
 
+    QSettings settingsApplication("SimCenter", QCoreApplication::applicationName());
+    QVariant  openseesPathVariant = settingsApplication.value("openseesPath");
+    if (openseesPathVariant.isValid()) {
+        QFileInfo openseesFile(openseesPathVariant.toString());
+        if (openseesFile.exists()) {
+            QString openseesPath = openseesFile.absolutePath();
+            pathEnv = openseesPath + ';' + pathEnv;
+	    exportPath += ":" + openseesPath;
+        }
+    }
+
+    QVariant  dakotaPathVariant = settingsApplication.value("dakotaPath");
+    if (dakotaPathVariant.isValid()) {
+        QFileInfo dakotaFile(dakotaPathVariant.toString());
+        if (dakotaFile.exists()) {
+            QString dakotaPath = dakotaFile.absolutePath();
+            QString dakotaPythonPath = QFileInfo(dakotaPath).absolutePath() + QDir::separator() +
+                      "share" + QDir::separator() + "Dakota" + QDir::separator() + "Python";
+            pathEnv = dakotaPath + ';' + pathEnv;
+	    exportPath += ":" + dakotaPath;
+            pythonPathEnv = dakotaPythonPath + ";" + pythonPathEnv;
+        }
+    }
+
+    procEnv.insert("PATH", pathEnv);
+    procEnv.insert("PYTHONPATH", pythonPathEnv);
+    proc->setProcessEnvironment(procEnv);
+
+    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
 
 #ifdef Q_OS_WIN
 
-    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
-    // qDebug() << "Executing parseDAKOTA.py... " << args;
-    // proc->execute(python, args);
-    //qDebug() << "Executing parseDAKOTA.py... - SUCCESSFUL" ;
+    python = QString("\"") + python + QString("\"");
 
     proc->start(python,args);
 
@@ -666,7 +698,7 @@ void MainWindow::onRunButtonClicked() {
         qDebug() << "Failed to finish running the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
         emit errorMessage("Failed to finish running the workflow!!!");
-        failed = true;
+        return;
     }
 
 
@@ -675,7 +707,7 @@ void MainWindow::onRunButtonClicked() {
         qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
         emit errorMessage("Failed to run the workflow!!!");
-        failed = true;
+        return;
     }
 
     if(failed)
@@ -685,43 +717,37 @@ void MainWindow::onRunButtonClicked() {
         return;
     }
 
-
 #else
 
-    // wrap paths with quotes (dealing with spaces in the path);
-    pySCRIPT = "\"" + pySCRIPT + "\"";
-    tDirectory = "\"" + tDirectory + "\"";
-    tmpDirectory = "\"" + tmpDirectory + "\"";
-
-    // check for bashrc or bash profile
     QDir homeDir(QDir::homePath());
     QString sourceBash("\"");
     if (homeDir.exists(".bash_profile")) {
-        sourceBash = QString("source $HOME/.bash_profile; \"");
+      sourceBash = QString("source $HOME/.bash_profile; ");
     } else if (homeDir.exists(".bashrc")) {
-        sourceBash = QString("source $HOME/.bashrc; \"");
+      sourceBash = QString("source $HOME/.bashrc; ");
     } else if (homeDir.exists(".zprofile")) {
-        sourceBash = QString("source $HOME/.zprofile; \"");
-    } else if (homeDir.exists(".zsh")) {
-        sourceBash = QString("source $HOME/.zsh; \"");
-    } else {
-       qDebug() << "No .bash_profile, .bashrc, .zshrc file found. This may not find Dakota or OpenSees when running";
-    }
+      sourceBash = QString("source $HOME/.zprofile; ");
+    } else if (homeDir.exists(".zshrc")) {
+      sourceBash = QString("source $HOME/.zshrc; ");
+    } else
+      emit errorMessage( "No .bash_profile, .bashrc or .zshrc file found. This may not find Dakota or OpenSees");
 
-    QString command = sourceBash + python + QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
-            tmpDirectory + QString(" runningLocal");
+    // note the above not working under linux because bash_profile not being called so no env variables!!
+    QString command = sourceBash + exportPath + "; \"" + python + 
+      QString("\" \"" ) + pySCRIPT + QString("\" \"" ) + tDirectory + 
+      QString("\" \"") + tmpDirectory + QString("\" runningLocal");
 
-    qInfo() << QProcessEnvironment::systemEnvironment().value("PATH") << "\n";// system PATH
-    qInfo() << command;
-    
-    emit errorMessage("Starting Backend");
+    //    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
+    //    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
+
+    qDebug() << "PYTHON COMMAND" << command;
+
     proc->execute("bash", QStringList() << "-c" <<  command);
-   // proc->start("bash", QStringList() << "-c" <<  command);
+    proc->waitForStarted();
 
-    // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
 
-    proc->waitForStarted();
+    // proc->waitForStarted();
 
     // TODO: fix this so that we do not have to open the config file the get the info
 
@@ -1404,6 +1430,7 @@ void MainWindow::preferences()
 
 void MainWindow::about()
 {
+  /*
     QString textAbout = "\
               This is the open-source quoFEM tool. It is an application intended to augment finite element applications with\
               sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
@@ -1413,6 +1440,7 @@ void MainWindow::about()
              will repeatedly invoke the finite element application either locally on the users dekstop machine or remotely\
              on high performance computing resources at the Texas Advanced Computing Center through the NHERI DesignSafe cyberinfrastructure.\
              <p>\
+             This work is based on material supported by the National Science Foundation under grant 1612843<p>\
             ";
 
             QMessageBox msgBox;
@@ -1421,6 +1449,26 @@ void MainWindow::about()
     QGridLayout *layout = (QGridLayout*)msgBox.layout();
     layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
     msgBox.exec();
+  */
+
+
+    QString aboutTitle = "About the SimCenter quoFEM Application"; // this is the title displayed in the on About dialog
+    QString aboutSource = ":/images/aboutQUOFEM.html";  // this is an HTML file stored under resources
+
+    DialogAbout *dlg = new DialogAbout();
+    dlg->setTitle(aboutTitle);
+    dlg->setTextSource(aboutSource);
+
+    //
+    // adjust size of application window to the available display
+    //
+    QRect rec = QApplication::desktop()->screenGeometry();
+    int height = 0.50*rec.height();
+    int width  = 0.50*rec.width();
+    dlg->resize(width, height);
+
+    dlg->exec();
+    delete dlg;
 }
 
 void MainWindow::submitFeedback()
