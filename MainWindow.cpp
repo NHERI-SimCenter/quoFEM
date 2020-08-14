@@ -198,11 +198,13 @@ MainWindow::MainWindow(QWidget *parent)
     // finally we add new selection widget to layout
 
     //the input widgets
-    uq = new UQ_EngineSelection();
+
     random = new InputWidgetParameters();
     fem = new InputWidgetFEM(random);
+    edp = new InputWidgetEDP(random);
+    uq = new UQ_EngineSelection(edp);
     random->setParametersWidget(uq->getParameters());
-    edp = new InputWidgetEDP();
+
 
     connect(uq, SIGNAL(onNumModelsChanged(int)), fem, SLOT(numModelsChanged(int)));
 

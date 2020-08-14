@@ -45,12 +45,13 @@ class QComboBox;
 class QStackedWidget;
 class UQ_Results;
 class RandomVariablesContainer;
+class InputWidgetEDP;
 
 class SimCenterUQEngine : public UQ_Engine
 {
     Q_OBJECT
 public:
-    explicit SimCenterUQEngine(QWidget *parent = 0);
+    explicit SimCenterUQEngine(InputWidgetEDP *edpWidget, QWidget *parent = 0);
     virtual ~SimCenterUQEngine();
 
     int getMaxNumParallelTasks(void);
@@ -83,6 +84,8 @@ private:
    //UQ_Engine *theCalibrationEngine;
    //UQ_Engine *theBayesianCalibrationEngine;
    UQ_Engine *theSensitivityEngine;
+
+   InputWidgetEDP *theEdpWidget;
 };
 
 #endif // SimCenterUQ_ENGINE_H

@@ -63,10 +63,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <UQpyEngine.h>
 #include <filterEngine.h>
 #include <sectiontitle.h>
+#include <InputWidgetEDP.h>
 
-
-UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
-    : SimCenterAppWidget(parent), theCurrentEngine(0)
+UQ_EngineSelection::UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *parent)
+    : SimCenterAppWidget(parent), theCurrentEngine(0), theEdpWidget(edpwidget)
 {
     QVBoxLayout *layout = new QVBoxLayout();
 
@@ -109,7 +109,7 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
     //
 
     theDakotaEngine = new DakotaEngine();
-    theSimCenterUQEngine = new SimCenterUQEngine();
+    theSimCenterUQEngine = new SimCenterUQEngine(theEdpWidget);
     theUQpyEngine = new UQpyEngine();
 
     theStackedWidget->addWidget(theDakotaEngine);
@@ -178,6 +178,8 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
     // note type output in json and name in pull down are not the same and hence the ||
     //
 
+    theEdpWidget->hideAdvancedSensitivity();
+
     if (arg1 == "Dakota") {
         theStackedWidget->setCurrentIndex(0);
         theCurrentEngine = theDakotaEngine;
@@ -188,6 +190,7 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
         theStackedWidget->setCurrentIndex(1);
         theCurrentEngine = theSimCenterUQEngine;
         emit onUQ_EngineChanged();
+        theEdpWidget->showAdvancedSensitivity();
     }
 
     else if (arg1 == "UQpy") {
@@ -241,8 +244,10 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
                     (type == QString("DakotaEngine")) ||
                     (type == QString("Dakota-UQ"))) {
                 index = 0;
-            } else if ((type == QString("UQpy")) || (type == QString("UQpyEngine"))) {
+            } else if ((type == QString("SimCenterUQ-UQ"))) {
                 index = 1;
+            } else if ((type == QString("UQpy")) || (type == QString("UQpyEngine"))) {
+                index = 2;
             } else {
                 emit sendErrorMessage("UQ_EngineSelection - no valid type found");
                 return false;

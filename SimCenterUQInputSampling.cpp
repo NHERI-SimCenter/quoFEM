@@ -81,7 +81,7 @@ SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
     samplingMethod = new QComboBox();
     //samplingMethod->setMaximumWidth(800);
     //samplingMethod->setMinimumWidth(800);
-    samplingMethod->addItem(tr("LHS"));
+    //samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
     samplingMethod->addItem(tr("Importance Sampling"));
     samplingMethod->addItem(tr("Gaussian Process Regression"));
@@ -109,8 +109,8 @@ SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
 
     theStackedWidget = new QStackedWidget();
 
-    theLHS = new LatinHypercubeInputWidget();
-    theStackedWidget->addWidget(theLHS);
+    //theLHS = new LatinHypercubeInputWidget();
+    //theStackedWidget->addWidget(theLHS);
 
     theMC = new MonteCarloInputWidget();
     theStackedWidget->addWidget(theMC);
@@ -128,7 +128,7 @@ SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
     theStackedWidget->addWidget(theMFMC);
 
     // set current widget to index 0
-    theCurrentMethod = theLHS;
+    theCurrentMethod = theMC;
 
 
     mLayout->addWidget(theStackedWidget);
@@ -144,11 +144,11 @@ SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
 void SimCenterUQInputSampling::onTextChanged(const QString &text)
 {
   if (text=="LHS") {
-    theStackedWidget->setCurrentIndex(0);
-    theCurrentMethod = theLHS;
+    //theStackedWidget->setCurrentIndex(1);
+    //theCurrentMethod = theLHS;
   }
   else if (text=="Monte Carlo") {
-    theStackedWidget->setCurrentIndex(1);
+    theStackedWidget->setCurrentIndex(0);
     theCurrentMethod = theMC;  
   }
   else if (text=="Importance Sampling") {

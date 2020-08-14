@@ -103,7 +103,7 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
 
     // layout->addStretch();
     // layout->setSpacing(10);
-    layout->setMargin(0);
+    layout->setMargin(10);
     layout->addStretch();
 
     this->setLayout(layout);

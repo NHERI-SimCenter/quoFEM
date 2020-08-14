@@ -46,6 +46,7 @@ class QStackedWidget;
 class RandomVariablesContainer;
 class UQ_Results;
 class UQ_Engine;
+class InputWidgetEDP;
 
 class UQ_EngineSelection : public  SimCenterAppWidget
 {
@@ -53,7 +54,7 @@ class UQ_EngineSelection : public  SimCenterAppWidget
 
     public:
 
-  explicit UQ_EngineSelection(QWidget *parent = 0);
+  explicit UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *parent = 0);
   ~UQ_EngineSelection();
 
   RandomVariablesContainer  *getParameters();
@@ -79,6 +80,7 @@ class UQ_EngineSelection : public  SimCenterAppWidget
   void numModelsChanged(int newNum);
   
 private:
+
    QComboBox   *theEngineSelectionBox;
    QStackedWidget *theStackedWidget;
 
@@ -87,6 +89,9 @@ private:
    UQ_Engine *theSimCenterUQEngine;
    UQ_Engine *theUQpyEngine;
    UQ_Engine *thefilterEngine;
+
+   InputWidgetEDP *theEdpWidget;
+
 };
 
 #endif // WIND_SELECTION_H

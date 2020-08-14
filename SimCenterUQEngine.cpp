@@ -56,8 +56,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //#include <SimCenterUQInputCalibration.h>
 //#include <SimCenterUQInputBayesianCalibration.h>
 
-SimCenterUQEngine::SimCenterUQEngine(QWidget *parent)
-: UQ_Engine(parent), theCurrentEngine(0)
+#include "InputWidgetEDP.h"
+
+SimCenterUQEngine::SimCenterUQEngine(InputWidgetEDP *edpWidget, QWidget *parent)
+: UQ_Engine(parent), theCurrentEngine(0), theEdpWidget(edpWidget)
 {
 
     QVBoxLayout *layout = new QVBoxLayout();

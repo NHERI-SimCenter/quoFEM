@@ -78,7 +78,7 @@ SimCenterUQInputSensitivity::SimCenterUQInputSensitivity(QWidget *parent)
     samplingMethod = new QComboBox();
     //samplingMethod->setMaximumWidth(800);
     //samplingMethod->setMinimumWidth(800);
-    samplingMethod->addItem(tr("LHS"));
+    //samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
 
     /*
@@ -107,14 +107,14 @@ SimCenterUQInputSensitivity::SimCenterUQInputSensitivity(QWidget *parent)
 
     theStackedWidget = new QStackedWidget();
 
-    theLHS = new LatinHypercubeInputWidget();
-    theStackedWidget->addWidget(theLHS);
+    //theLHS = new LatinHypercubeInputWidget();
+    //theStackedWidget->addWidget(theLHS);
 
     theMC = new MonteCarloInputWidget();
     theStackedWidget->addWidget(theMC);
 
     // set current widget to index 0
-    theCurrentMethod = theLHS;
+    theCurrentMethod = theMC;
 
     mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);
@@ -128,11 +128,11 @@ SimCenterUQInputSensitivity::SimCenterUQInputSensitivity(QWidget *parent)
 void SimCenterUQInputSensitivity::onMethodChanged(QString text)
 {
   if (text=="LHS") {
-    theStackedWidget->setCurrentIndex(0);
-    theCurrentMethod = theLHS;
+    //theStackedWidget->setCurrentIndex(0);
+    //theCurrentMethod = theLHS;
   }
   else if (text=="Monte Carlo") {
-    theStackedWidget->setCurrentIndex(1);
+    theStackedWidget->setCurrentIndex(0);
     theCurrentMethod = theMC;  
   }
 }
