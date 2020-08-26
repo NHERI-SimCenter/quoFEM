@@ -205,9 +205,8 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
 
         if (numInputs == 1) {
 
-            QString fileName1=femObject["inputFile"].toString();
+            QString fileName1=femObject["inputFile"].toString();;
             QString fileName2=femObject["postprocessScript"].toString();
-
 
             inputFilenames.at(0)->setText(fileName1);
             postprocessFilenames.at(0)->setText(fileName2);

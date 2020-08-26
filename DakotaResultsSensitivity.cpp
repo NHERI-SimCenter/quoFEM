@@ -322,7 +322,7 @@ Node_2_Disp Sobol' indices:
 
             // Labels & QlineEdit Option in a QGrid
             trainingDataLayout = new QGridLayout();
-            QLabel *l1 = new QLabel("Random Variabnle");
+            QLabel *l1 = new QLabel("Random Variable");
             QLabel *l2 = new QLabel("Main");
             QLabel *l3 = new QLabel("Total");
             trainingDataLayout->addWidget(l1, 0,0);

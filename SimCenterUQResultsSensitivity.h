@@ -81,7 +81,7 @@ private:
    RandomVariablesContainer *theRVs;
    QTabWidget *tabWidget;
 
-   MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
+   MyTableWidget *spreadsheet=NULL;  // MyTableWidget inherits the QTableWidget
    QChart *chart;
    QPushButton* save_spreadheet; // save the data from spreadsheet
    QLabel *label;

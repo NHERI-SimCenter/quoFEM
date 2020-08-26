@@ -1109,7 +1109,8 @@ bool MainWindow::outputToJSON(QJsonObject &jsonObj) {
         return false;
     }
 
-    UQ_Results *result=uq->getResults();
+    //UQ_Results *result=uq->getResults();
+    //results->setResultWidget(result);
     results->outputToJSON(jsonObj);
 
     // output the preferences
@@ -1156,9 +1157,10 @@ bool MainWindow::inputFromJSON(QJsonObject &jsonObj){
         return false;
     }
 
-    UQ_Results *result=uq->getResults();
-    results->setResultWidget(result);
+    //UQ_Results *result=uq->getResults();
+    results->setResultWidget(uq->getResults());
     results->inputFromJSON(jsonObj); // results can fail if no results when file saved
+
 
     return true;
 }

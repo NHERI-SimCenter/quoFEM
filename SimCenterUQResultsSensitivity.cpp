@@ -39,6 +39,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "SimCenterUQResultsSensitivity.h"
 //#include "InputWidgetFEM.h"
+#include "qbarset.h"
+#include <QBarCategoryAxis>
+#include <QBarSeries>
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -207,7 +210,7 @@ int SimCenterUQResultsSensitivity::processResults(QString &filenameResults, QStr
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        emit sendErrorMessage("No dakota.err file - SimCenterUQ did not run - problem with dakota setup or the applicatins failed with inputs provied");
         return 0;
     }
     QFile fileError(filenameErrorString);
@@ -278,6 +281,7 @@ Node_2_Disp Sobol' indices:
 
               ******************************************** */
 
+    /*
     const std::string needleStart = "Global sensitivity indices for each response function:";
     std::string haystack;
 
@@ -291,21 +295,71 @@ Node_2_Disp Sobol' indices:
     }
 
     const std::string needleSobol = "Sobol'";
-    bool done = false;
+    */
+
+    std::string readline;
+    QVector<QString> combs, QoInames;
+    // Heading
+    //fileResults.getline(a,0);
+    //fileResults.getline(a,0);
+
+    //getline(fileResults, a);
+    //getline(fileResults, a);
+    //fileResults >> a;
+    getline(fileResults, readline);// header
+    getline(fileResults, readline);// value
+    int ncomb=atoi(readline.c_str());
+
+    getline(fileResults, readline);// header
+    for (int nc=0; nc<ncomb; nc++) {
+        getline(fileResults, readline);
+        combs.push_back(QString::fromStdString(readline));
+    }
+
+    getline(fileResults, readline);// header
+    getline(fileResults, readline);// value
+    int nQoI=atoi(readline.c_str());
+
+    getline(fileResults, readline);// header
+    for (int nq=0; nq<nQoI; nq++) {
+        getline(fileResults, readline);// value
+        QoInames.push_back(QString::fromStdString(readline));
+    }
+
+    getline(fileResults, readline);// header
+    QVector<QVector<double>> sobols ;
+    for (int nq=0; nq<nQoI; nq++) {
+        QVector<double> sobols_vec;
+        getline(fileResults, readline);// value
+        std::istringstream stm(readline) ;
+        double val ;
+        while( stm >> val ) sobols_vec.push_back(val) ;
+        sobols.push_back(sobols_vec);
+    }
+
+
+    //bool done = false;
     QGroupBox *groupBox = NULL;
-    int numEDP = 0;
-    QGridLayout * trainingDataLayout = NULL;
-    QHBoxLayout *tableLayout = NULL;
-    MyTableWidget *table = NULL;
+    //int numEDP = 0;
+
+    //QHBoxLayout *tableLayout = NULL;
+    //MyTableWidget *table = NULL;
     QStringList theTableHeadings;
     theTableHeadings << "Random Variable" << "Main" << "Total";
-    while (done == false) {
-        std::getline(fileResults, haystack);
-        if (haystack.find(needleSobol) != std::string::npos) {
-            QString h(QString::fromStdString(haystack));
+    //while (done == false) {
 
+    //QHBoxLayout *gsaLayout = new QHBoxLayout();
+
+    for (int nq=0; nq<nQoI; nq++){
+        QGridLayout * trainingDataLayout = NULL;
+        //std::getline(fileResults, haystack);
+        //if (haystack.find(needleSobol) != std::string::npos) {
+            //QString h(QString::fromStdString(haystack));
+            QString h(QoInames[nq]+" Sobol' Indicies");
             groupBox = new QGroupBox(h);
             summaryLayout->addWidget(groupBox);
+            summaryLayout->setSpacing(10);
+            summaryLayout->setMargin(10);
 
             /***** TABLE LAYOUT OPTION  ******
             // QTable option
@@ -322,7 +376,7 @@ Node_2_Disp Sobol' indices:
 
             // Labels & QlineEdit Option in a QGrid
             trainingDataLayout = new QGridLayout();
-            QLabel *l1 = new QLabel("Random Variabnle");
+            QLabel *l1 = new QLabel("Random Variable");
             QLabel *l2 = new QLabel("Main");
             QLabel *l3 = new QLabel("Total");
             trainingDataLayout->addWidget(l1, 0,0);
@@ -330,41 +384,135 @@ Node_2_Disp Sobol' indices:
             trainingDataLayout->addWidget(l3, 0,2);
             QFont font;
             font.setBold(true);
+
+            l1->setMaximumHeight(25);
+            l1->setMinimumHeight(25);
             l1->setAlignment(Qt::AlignCenter);
             l1->setFont(font);
+
+            l2->setMaximumHeight(25);
+            l2->setMinimumHeight(25);
             l2->setAlignment(Qt::AlignCenter);
             l2->setFont(font);
+
+            l3->setMaximumHeight(25);
+            l3->setMinimumHeight(25);
             l3->setAlignment(Qt::AlignCenter);
             l3->setFont(font);
+
 
             groupBox->setLayout(trainingDataLayout);
 
             // set num EDP and read a useleass line
-            numEDP = 0;
-            std::getline(fileResults, haystack);
+            //numEDP = 0;
+            //std::getline(fileResults, haystack);
 
-        } else {
-            std::istringstream iss(haystack);
-            QString h(QString::fromStdString(haystack));
-            if (h.length() == 0) {
-                done = true;
-            } else {
-                std::string data1, data2, data3, data4;
+        //} else {
+            //std::istringstream iss(haystack);
+            //QString h(QString::fromStdString(haystack));
+            //if (h.length() == 0) {
+            //    done = true;
+            //} else {
+                //std::string data1, data2, data3, data4;
 
-                iss >> data1 >> data2 >> data3;
-                QString d1(QString::fromStdString(data1));
-                QString d2(QString::fromStdString(data2));
-                QString d3(QString::fromStdString(data3));
-                QLineEdit *e1 = new QLineEdit(d3); e1->setReadOnly(true); e1->setAlignment(Qt::AlignCenter);
-                QLineEdit *e2 = new QLineEdit(d1); e2->setReadOnly(true);  e2->setAlignment(Qt::AlignRight);
-                QLineEdit *e3 = new QLineEdit(d2); e3->setReadOnly(true); e3->setAlignment(Qt::AlignRight);
+                //iss >> data1 >> data2 >> data3;
+                //QString d1(QString::fromStdString(data1));
+                //QString d2(QString::fromStdString(data2));
+                //QString d3(QString::fromStdString(data3));
 
-                trainingDataLayout->addWidget(e1, numEDP+1,0);
-                trainingDataLayout->addWidget(e2, numEDP+1,1);
-                trainingDataLayout->addWidget(e3, numEDP+1,2);
-                trainingDataLayout->setColumnStretch(1,.5);
-                trainingDataLayout->setColumnStretch(2,.5);
+
+            QBarSet *set0 = new QBarSet("Main");
+            QBarSet *set1 = new QBarSet("Total");
+
+            for (int nc=0; nc<ncomb; nc++) {
+                //QLineEdit *e1 = new QLineEdit(combs[nc]); e1->setReadOnly(true); e1->setAlignment(Qt::AlignCenter);
+                QLabel *e1 = new QLabel(combs[nc]); e1->setAlignment(Qt::AlignCenter);
+                QLineEdit *e2 = new QLineEdit(QString::number(sobols[nq][nc])); e2->setReadOnly(true);  e2->setAlignment(Qt::AlignRight);
+                QLineEdit *e3 = new QLineEdit(QString::number(sobols[nq][nc+ncomb])); e3->setReadOnly(true); e3->setAlignment(Qt::AlignRight);
+                e1->setMaximumWidth(100);
+                e2->setMaximumWidth(100);
+                e3->setMaximumWidth(100);
+
+                e1->setMinimumWidth(100);
+                e2->setMinimumWidth(100);
+                e3->setMinimumWidth(100);
+
+                trainingDataLayout->addWidget(e1, nc+1,0);
+                trainingDataLayout->addWidget(e2, nc+1,1);
+                trainingDataLayout->addWidget(e3, nc+1,2);
+                //trainingDataLayout->setColumnStretch(1,.5);
+                //trainingDataLayout->setColumnStretch(2,.5);
+                trainingDataLayout->setColumnStretch(1,0);
+                trainingDataLayout->setColumnStretch(2,0);
                 trainingDataLayout->setColumnStretch(3,1);
+
+                *set0 << sobols[nq][nc];
+                *set1 << sobols[nq][nc+ncomb];
+                //*set0 << 2;
+                //*set1 << 3;
+             }
+
+            QBarSeries *series = new QBarSeries();
+            series->append(set0);
+            series->append(set1);
+
+            QChart *chartSobol = new QChart();
+            chartSobol->addSeries(series);
+            //chart->setTitle("");
+            chartSobol->setAnimationOptions(QChart::SeriesAnimations);
+
+            QStringList categories;
+            foreach (const QString str, combs) {
+                categories << str;
+            }
+
+            QBarCategoryAxis *axisX = new QBarCategoryAxis();
+            axisX->append(categories);
+
+
+            chartSobol->addAxis(axisX, Qt::AlignBottom);
+            series->attachAxis(axisX);
+
+            QValueAxis *axisY = new QValueAxis();
+            axisY->setRange(0.0, 1.05);
+            axisY->setTickType(QValueAxis::TickType::TicksDynamic);
+            axisY->setTickInterval(0.5);
+            axisY->setTickAnchor(0.0);
+            chartSobol->addAxis(axisY, Qt::AlignLeft);
+            series->attachAxis(axisY);
+
+            chartSobol->setMargins(QMargins(10,10,10,10));
+            chartSobol->setBackgroundRoundness(0);
+            chartSobol->setMinimumHeight(120);
+            if (ncomb<5) {
+                //chartSobol->setMaximumWidth(400);
+            }
+
+
+            QChartView *chartView = new QChartView(chartSobol);
+            chartView->setRenderHint(QPainter::Antialiasing);
+
+            chartSobol->legend()->setVisible(true);
+            chartSobol->legend()->setAlignment(Qt::AlignRight);
+            //chartView->chart()->legend()->hide();
+            trainingDataLayout->addWidget(chartView, 0,3,ncomb+1,1);
+            trainingDataLayout->setSpacing(5);
+            trainingDataLayout->setMargin(10);
+            //trainingDataLayout->setColumnStretch(0,1);
+            //trainingDataLayout->setColumnStretch(1,1);
+            //trainingDataLayout->setColumnStretch(2,1);
+            //trainingDataLayout->setColumnStretch(0 | 1 | 2, 200);
+            trainingDataLayout->setColumnStretch(0 | 1 | 2, 1);
+                        //
+            // create a widget into which we place the chart and the spreadsheet
+            //
+
+            //QWidget *widget = new QWidget();
+            //QVBoxLayout *gsaLayout = new QVBoxLayout(widget);
+
+            //gsaLayout->addLayout(trainingDataLayout, 1);
+            //gsaLayout->addWidget(chartView, 1);
+            //groupBox->setLayout(gsaLayout);
 
                 /* *** Table Widget option
                 table->insertRow(numEDP);
@@ -376,9 +524,9 @@ Node_2_Disp Sobol' indices:
                 table->model()->setData(index3, data2.c_str());
                 */
 
-                numEDP++;
-            }
-        }
+                //numEDP++;
+            //}
+        //}
     }
 
     summaryLayout->addStretch();
@@ -414,12 +562,12 @@ Node_2_Disp Sobol' indices:
         std::string subs;
         iss >> subs;
         if (colCount > 0) {
-            if (subs != " ") {
-                if (subs != "interface")
+            //if (subs != " ") {
+                //if (subs != "interface")
                     theHeadings << subs.c_str();
-                else
-                    includesInterface = true;
-            }
+                //else
+                    //includesInterface = true;
+            //}
         }
         colCount++;
     } while (iss);
@@ -446,11 +594,11 @@ Node_2_Disp Sobol' indices:
         for (int i=0; i<colCount+2; i++) {
             std::string data;
             is >> data;
-            if ((includesInterface == true && i != 1) || (includesInterface == false)) {
+            //if ((includesInterface == true && i != 1) || (includesInterface == false)) {
                 QModelIndex index = spreadsheet->model()->index(rowCount, col);
                 spreadsheet->model()->setData(index, data.c_str());
                 col++;
-            }
+            //}
         }
         rowCount++;
     }
@@ -638,6 +786,7 @@ void SimCenterUQResultsSensitivity::onSpreadsheetCellClicked(int row, int col)
         double minX, maxX;
         double minY, maxY;
 
+
         for (int i=0; i<rowCount; i++) {
 
             QTableWidgetItem *itemX = spreadsheet->item(i,col1);
@@ -760,6 +909,7 @@ void SimCenterUQResultsSensitivity::onSpreadsheetCellClicked(int row, int col)
             chart->setAxisX(axisX, series);
             chart->setAxisY(axisY, series);
 
+            /*
             //calling external python script to find the best fit, generating the data and then plotting it.
 
             // this will be done in the application directory
@@ -915,6 +1065,7 @@ void SimCenterUQResultsSensitivity::onSpreadsheetCellClicked(int row, int col)
             //process.execute("cmd", QStringList() << "/C" << command);
             //process.start("cmd", QStringList(), QIODevice::ReadWrite);
             //std::cerr << command << "\n";
+            */
 
             //     process.waitForStarted();
 
@@ -935,16 +1086,21 @@ void SimCenterUQResultsSensitivity::onSpreadsheetCellClicked(int row, int col)
         } else {
             // cumulative distribution
             mergesort(dataValues, rowCount);
-            for (int i=0; i<rowCount; i++) {
-                series->append(dataValues[i], 1.0*i/rowCount);
+            series->append(min-(max-min)*0.1, 0.0);
+            for (int i=0; i<rowCount-1; i++) {
+                series->append(dataValues[i], 1.0*(i)/rowCount);
+                series->append(dataValues[i+1], 1.0*(i)/rowCount);
                 //qDebug()<<"\n the dataValues[i] and rowCount is     "<<dataValues[i]<<"\t"<<rowCount<<"";
             }
+            series->append(dataValues[rowCount-1], 1.0);
+            series->append(max+(max-min)*0.1, 1.0);
+
             delete [] dataValues;
             chart->addSeries(series);
             QValueAxis *axisX = new QValueAxis();
             QValueAxis *axisY = new QValueAxis();
             // padhye, make these consistent changes all across.
-            axisX->setRange(min- (max-min)*0.1, max+(max-min)*0.1);
+            axisX->setRange(min-(max-min)*0.1, max+(max-min)*0.1);
             axisY->setRange(0, 1);
             axisY->setTitleText("Cumulative Probability");
             axisX->setTitleText(theHeadings.at(col1));
@@ -966,9 +1122,8 @@ SimCenterUQResultsSensitivity::outputToJSON(QJsonObject &jsonObject)
 
     jsonObject["resultType"]=QString(tr("SimCenterUQResultsSensitivity"));
 
-    if (spreadsheet == NULL)
+    if (this->spreadsheet == nullptr)
         return true;
-
     //
     // add summary data
     //

@@ -108,14 +108,13 @@ SimCenterUQEngine::SimCenterUQEngine(InputWidgetEDP *edpWidget, QWidget *parent)
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
-    theCurrentEngine=theSamplingEngine;
+    theCurrentEngine=theSensitivityEngine;
 
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
           SLOT(engineSelectionChanged(QString)));
 
     connect(theSamplingEngine, SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
 
-    theCurrentEngine = theSamplingEngine;
 }
 
 SimCenterUQEngine::~SimCenterUQEngine()

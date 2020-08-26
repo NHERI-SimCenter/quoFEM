@@ -210,6 +210,6 @@ SimCenterUQInputSensitivity::getResults(void) {
 RandomVariablesContainer *
 SimCenterUQInputSensitivity::getParameters(void) {
   QString classType("Uncertain");
-  theRandomVariables =  new RandomVariablesContainer(classType);
+  theRandomVariables =  new RandomVariablesContainer(classType,tr("SimCenterUQ"));
   return theRandomVariables;
 }

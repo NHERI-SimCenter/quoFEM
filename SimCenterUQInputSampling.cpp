@@ -83,9 +83,9 @@ SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
     //samplingMethod->setMinimumWidth(800);
     //samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
-    samplingMethod->addItem(tr("Importance Sampling"));
-    samplingMethod->addItem(tr("Gaussian Process Regression"));
-    samplingMethod->addItem(tr("Polynomial Chaos Expansion"));
+    //samplingMethod->addItem(tr("Importance Sampling"));
+    //samplingMethod->addItem(tr("Gaussian Process Regression"));
+    //samplingMethod->addItem(tr("Polynomial Chaos Expansion"));
     // samplingMethod->addItem(tr("Multi Fidelity Monte Carlo"));
 
     /*
@@ -115,19 +115,20 @@ SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
     theMC = new MonteCarloInputWidget();
     theStackedWidget->addWidget(theMC);
 
-    theIS = new ImportanceSamplingInputWidget();
-    theStackedWidget->addWidget(theIS);
+    //theIS = new ImportanceSamplingInputWidget();
+    //theStackedWidget->addWidget(theIS);
 
-    theGP = new GaussianProcessInputWidget();
-    theStackedWidget->addWidget(theGP);
+    //theGP = new GaussianProcessInputWidget();
+    //theStackedWidget->addWidget(theGP);
 
-    thePCE = new PCEInputWidget();
-    theStackedWidget->addWidget(thePCE);
+    //thePCE = new PCEInputWidget();
+    //theStackedWidget->addWidget(thePCE);
 
-    theMFMC = new MultiFidelityMonteCarlo();
-    theStackedWidget->addWidget(theMFMC);
+    //theMFMC = new MultiFidelityMonteCarlo();
+    //theStackedWidget->addWidget(theMFMC);
 
     // set current widget to index 0
+    theStackedWidget->setCurrentIndex(0);
     theCurrentMethod = theMC;
 
 
@@ -136,7 +137,7 @@ SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
 
     this->setLayout(layout);
 
-    connect(theMFMC, SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
+    //connect(theMFMC, SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
     connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
 
 }
