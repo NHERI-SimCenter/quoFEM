@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>styles/stylesheetWIN.qss</file>
         <file>styles/stylesheetMAC.qss</file>
+        <file>images/aboutQUOFEM.html</file>
     </qresource>
 </RCC>

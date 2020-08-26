@@ -119,6 +119,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *paren
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
+    layout->setMargin(0);
     theCurrentEngine=theDakotaEngine;
 
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
