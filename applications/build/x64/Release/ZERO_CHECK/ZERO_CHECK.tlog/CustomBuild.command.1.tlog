@@ -1,0 +1,10 @@
+^C:\USERS\YISAN\DESKTOP\DEVELOPMENT\QUOFEM\APPLICATIONS\BUILD\CMAKEFILES\C793C89E2E82E92CC56C8910198E91F0\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/yisan/Desktop/Development/quoFEM/applications -BC:/Users/yisan/Desktop/Development/quoFEM/applications/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/yisan/Desktop/Development/quoFEM/applications/build/quoFEM_BackendApplications.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

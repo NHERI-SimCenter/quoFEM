@@ -1,0 +1,10 @@
+C:/Users/yisan/Desktop/Development/quoFEM/applications/build/CMakeFiles/INSTALL.dir
+C:/Users/yisan/Desktop/Development/quoFEM/applications/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/yisan/Desktop/Development/quoFEM/applications/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/yisan/Desktop/Development/quoFEM/applications/build/performUQ/CMakeFiles/INSTALL.dir
+C:/Users/yisan/Desktop/Development/quoFEM/applications/build/performUQ/dakota/CMakeFiles/simCenterDprepro.dir
+C:/Users/yisan/Desktop/Development/quoFEM/applications/build/performUQ/dakota/CMakeFiles/preprocessDakota.dir
+C:/Users/yisan/Desktop/Development/quoFEM/applications/build/performUQ/dakota/CMakeFiles/INSTALL.dir
+C:/Users/yisan/Desktop/Development/quoFEM/applications/build/performUQ/SimCenterUQ/CMakeFiles/simCenterDprepro2.dir
+C:/Users/yisan/Desktop/Development/quoFEM/applications/build/performUQ/SimCenterUQ/CMakeFiles/preprocessSimCenterUQ.dir
+C:/Users/yisan/Desktop/Development/quoFEM/applications/build/performUQ/SimCenterUQ/CMakeFiles/INSTALL.dir

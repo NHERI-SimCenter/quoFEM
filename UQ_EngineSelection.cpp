@@ -77,7 +77,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *paren
 
 
     QHBoxLayout *theSelectionLayout = new QHBoxLayout();
-
+    theSelectionLayout->setMargin(10);
     SectionTitle *title=new SectionTitle();
     title->setText(tr("UQ Engine"));
 

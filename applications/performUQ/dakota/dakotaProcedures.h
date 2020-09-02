@@ -74,6 +74,8 @@ struct randomVariables {
   std::list<struct gumbellRV> gumbellRVs;
   std::list<struct betaRV> betaRVs;
   std::list<struct discreteDesignSetRV> discreteDesignSetRVs;
+  std::vector<int> ordering;
+  std::vector<double> corrMat;
 };
 
 int parseForRV(json_t *root, 

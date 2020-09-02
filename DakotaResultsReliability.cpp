@@ -383,6 +383,13 @@ void DakotaResultsReliability::onSpreadsheetCellClicked(int row, int col)
         series->append(value1, value2);
     }
 
+    // if value is constant, adjust axes
+    if (minX==maxX) {
+        double axisMargin=abs(minX)*0.1;
+        minX=minX-axisMargin;
+        maxX=maxX+axisMargin;
+    }
+
     chart->addSeries(series);
     series->setName("CDF");
 

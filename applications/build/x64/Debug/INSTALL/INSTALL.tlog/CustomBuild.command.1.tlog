@@ -1,0 +1,10 @@
+^C:\USERS\YISAN\DESKTOP\DEVELOPMENT\QUOFEM\APPLICATIONS\BUILD\CMAKEFILES\C793C89E2E82E92CC56C8910198E91F0\INSTALL_FORCE.RULE
+setlocal
+cd .
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

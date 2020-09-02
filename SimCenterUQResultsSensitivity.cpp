@@ -66,7 +66,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <fstream>
 #include <string>
 
-#include <QMessageBox>
+//#include <QMessageBox>
 #include <QVBoxLayout>
 #include <QLineEdit>
 #include <QHBoxLayout>
@@ -809,6 +809,18 @@ void SimCenterUQResultsSensitivity::onSpreadsheetCellClicked(int row, int col)
             if(value2<minY){minY=value2;}
             if(value2>maxY){maxY=value2;}
 
+        }
+
+        // if value is constant, adjust axes
+        if (minX==maxX) {
+            double axisMargin=abs(minX)*0.1;
+            minX=minX-axisMargin;
+            maxX=maxX+axisMargin;
+        }
+        if (minY==maxY) {
+            double axisMargin=abs(minY)*0.1;
+            minY=minY-axisMargin;
+            maxY=maxY+axisMargin;
         }
 
         double xRange=maxX-minX;
