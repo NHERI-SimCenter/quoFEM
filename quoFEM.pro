@@ -79,7 +79,9 @@ SOURCES += main.cpp\
     GlobalReliabilityWidget.cpp \
     SimCenterGraphPlot.cpp \
     qcustomplot.cpp \
-    DakotaResultsReliability.cpp
+    DakotaResultsReliability.cpp \
+    UCSD_Engine.cpp \
+    UCSD_TMMC.cpp
 
 HEADERS  += MainWindow.h \
     InputWidgetEDP.h \
@@ -122,7 +124,9 @@ EDP.h \
     LocalReliabilityWidget.h \
     GlobalReliabilityWidget.h \
     qcustomplot.h \
-    DakotaResultsReliability.h
+    DakotaResultsReliability.h \
+    UCSD_Engine.h \
+    UCSD_TMMC.h
 
 FORMS    += mainwindow.ui
 
