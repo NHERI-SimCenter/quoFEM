@@ -82,6 +82,7 @@ bool
 MonteCarloInputWidget::outputToJSON(QJsonObject &jsonObj){
 
     bool result = true;
+
     jsonObj["samples"]=numSamples->text().toInt();
     jsonObj["seed"]=randomSeed->text().toDouble();
     return result;    

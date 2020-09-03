@@ -198,11 +198,13 @@ MainWindow::MainWindow(QWidget *parent)
     // finally we add new selection widget to layout
 
     //the input widgets
-    uq = new UQ_EngineSelection();
+
     random = new InputWidgetParameters();
     fem = new InputWidgetFEM(random);
+    edp = new InputWidgetEDP(random);
+    uq = new UQ_EngineSelection(edp);
     random->setParametersWidget(uq->getParameters());
-    edp = new InputWidgetEDP();
+
 
     connect(uq, SIGNAL(onNumModelsChanged(int)), fem, SLOT(numModelsChanged(int)));
 
@@ -1133,7 +1135,8 @@ bool MainWindow::outputToJSON(QJsonObject &jsonObj) {
         return false;
     }
 
-    UQ_Results *result=uq->getResults();
+    //UQ_Results *result=uq->getResults();
+    //results->setResultWidget(result);
     results->outputToJSON(jsonObj);
 
     // output the preferences
@@ -1180,9 +1183,10 @@ bool MainWindow::inputFromJSON(QJsonObject &jsonObj){
         return false;
     }
 
-    UQ_Results *result=uq->getResults();
-    results->setResultWidget(result);
+    //UQ_Results *result=uq->getResults();
+    results->setResultWidget(uq->getResults());
     results->inputFromJSON(jsonObj); // results can fail if no results when file saved
+
 
     return true;
 }

@@ -214,5 +214,5 @@ DakotaInputCalibration::getResults(void) {
 RandomVariablesContainer *
 DakotaInputCalibration::getParameters(void) {
   QString classType("Design");
-  return new RandomVariablesContainer(classType);
+  return new RandomVariablesContainer(classType,QString("Dakota"));
 }

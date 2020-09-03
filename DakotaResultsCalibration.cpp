@@ -583,6 +583,18 @@ DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
             if(value2>maxY){maxY=value2;}
         }
 
+        // if value is constant, adjust axes
+        if (minX==maxX) {
+            double axisMargin=abs(minX)*0.1;
+            minX=minX-axisMargin;
+            maxX=maxX+axisMargin;
+        }
+        if (minY==maxY) {
+            double axisMargin=abs(minY)*0.1;
+            minY=minY-axisMargin;
+            maxY=maxY+axisMargin;
+        }
+
         double xRange=maxX-minX;
         double yRange=maxY-minY;
 

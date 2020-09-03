@@ -16,6 +16,10 @@ for more resources related to this tool. Additionally, this page
 provides more information on the NHERI SimCenter, including other SimCenter
 applications, FAQ, and how to collaborate.
 
+### Documentation
+
+The documentation for quoFEM is here https://nheri-simcenter.github.io/quoFEM-Documentation 
+
 ### How to Build
 ##### 1. Download this repo.
 
