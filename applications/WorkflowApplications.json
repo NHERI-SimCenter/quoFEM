@@ -31,6 +31,12 @@
         "ApplicationSpecificInputs": [
         ]
       },
+	  {
+        "Name": "SimCenterUQ-UQ",
+        "ExecutablePath": "applications/performUQ/SimCenterUQ/parseSimCenterUQ.py",
+        "ApplicationSpecificInputs": [
+        ]
+      },
       {
         "Name": "uqPY",
         "ExecutablePath": "applications/performUQ/uqPy/runUQ_PY.py",

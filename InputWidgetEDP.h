@@ -45,20 +45,25 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QGroupBox>
 #include <QVector>
 #include <QVBoxLayout>
+#include <QCheckBox>
+
+#include "InputWidgetParameters.h"
 
 class InputWidgetEDP : public SimCenterWidget
 {
     Q_OBJECT
 
 public:
-    explicit InputWidgetEDP(QWidget *parent = 0);
+    explicit InputWidgetEDP(InputWidgetParameters *param, QWidget *parent = 0);
     ~InputWidgetEDP();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(double *data);
-    int getNumEDP(void);
+    int getNumEDP(void);  
+    void hideAdvancedSensitivity(void);
+    void showAdvancedSensitivity(void);
 
 signals:
 
@@ -66,16 +71,23 @@ public slots:
    void addEDP(void);
    void removeEDP(void);
    void clear(void);
+   void setDefaultGroup(bool tog);
 
 private:
     void makeEDP(void);
+    QWidget *AdvancedSensitivity(void);
+
+    QWidget *theAdvancedLayout;
+    QCheckBox *theCheckButton;
     QVBoxLayout *verticalLayout;
     QVBoxLayout *edpLayout;
     //QGroupBox *edp;
     QFrame *edp;
     //QWidget *edp;
-
+    QLineEdit *theGroupEdit;
     QVector<EDP *>theEDPs;
+
+    InputWidgetParameters *theParameters;
 };
 
 #endif // INPUTWIDGETEDP_H

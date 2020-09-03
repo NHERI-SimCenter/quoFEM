@@ -590,6 +590,18 @@ DakotaResultsBayesianCalibration::onSpreadsheetCellClicked(int row, int col)
         double xRange=maxX-minX;
         double yRange=maxY-minY;
 
+        // if value is constant, adjust axes
+        if (minX==maxX) {
+            double axisMargin=abs(minX)*0.1;
+            minX=minX-axisMargin;
+            maxX=maxX+axisMargin;
+        }
+        if (minY==maxY) {
+            double axisMargin=abs(minY)*0.1;
+            minY=minY-axisMargin;
+            maxY=maxY+axisMargin;
+        }
+
       //  qDebug()<<"\n the value of xRange is     ";
         //qDebug()<<xRange;
 
