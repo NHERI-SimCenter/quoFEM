@@ -89,7 +89,8 @@ UQ_Results::inputFromJSON(QJsonObject &jsonObject)
         UQ_Results *newResultWidget = 0;
 
         if (resultType == "NONE") {
-          return true; // no results saved
+            resultWidget=0;
+            return true; // no results saved
         }
 
 	if (resultWidget != 0) {

@@ -70,7 +70,7 @@ myScriptDir = os.path.dirname(os.path.realpath(__file__))
 inputFile = "dakota.json"
 
 osType = platform.system()
-preprocessorCommand = '"{}/preprocessDakota" {} {} {} {}'.format(myScriptDir, inputFile, workflow_driver, run_type, osType)
+preprocessorCommand = '"{}/preprocessSimCenterUQ" {} {} {} {}'.format(myScriptDir, inputFile, workflow_driver, run_type, osType)
 subprocess.Popen(preprocessorCommand, shell=True).wait()
 print("DONE RUNNING PREPROCESSOR\n")
 
@@ -90,14 +90,14 @@ print(femProgram)
 if run_type in ['runningLocal']:
     os.chmod(workflow_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
-command = Dakota + ' -input dakota.in -output dakota.out -error dakota.err'
+#command = Dakota + ' -input dakota.in -output dakota.out -error dakota.err'
 
 #Change permision of workflow driver
 st = os.stat(workflow_driver)
 os.chmod(workflow_driver, st.st_mode | stat.S_IEXEC)
 
 # copy the dakota input file to the main working dir for the structure
-shutil.move("dakota.in", "../")
+#shutil.move("dakota.in", "../")
 
 # change dir to the main working dir for the structure
 os.chdir("../")
@@ -111,14 +111,20 @@ if run_type in ['runningLocal']:
 #    for line in p.stdout:
 #        print(str(line))
 
-    dakotaCommand = "dakota -input dakota.in -output dakota.out -error dakota.err"
-    print('running Dakota: ', dakotaCommand)
-    try:
-        result = subprocess.check_output(dakotaCommand, stderr=subprocess.STDOUT, shell=True)
-        returncode = 0
-    except subprocess.CalledProcessError as e:
-        result = e.output
-        returncode = e.returncode
+#    dakotaCommand = "dakota -input dakota.in -output dakota.out -error dakota.err"
+
+	'''
+	LATER, CHANGE THE LOCATION
+	'''
+	simCenterUQCommand = r'C:\Users\yisan\Desktop\Development\nataf_gsa\x64\Debug\nataf_gsa.exe C:\Users\yisan\Documents\quoFEM\LocalWorkDir'
+
+	print('running SimCenterUQ: ', simCenterUQCommand)
+	try:
+		result = subprocess.check_output(simCenterUQCommand, stderr=subprocess.STDOUT, shell=True)
+		returncode = 0
+	except subprocess.CalledProcessError as e:
+		result = e.output
+		returncode = e.returncode
 
 
 
