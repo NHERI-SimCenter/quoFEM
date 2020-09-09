@@ -840,7 +840,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	pceMethod = "quadrature_order = ";
       else if (strcmp(dataMethod,"Smolyak Sparse_Grid") == 0)
 	pceMethod = "sparse_grid_level = ";
-      else if (strcmp(dataMethod,"Stroud Curbature") == 0)
+      else if (strcmp(dataMethod,"Stroud Cubature") == 0)
 	pceMethod = "cubature_integrand = ";
       else if (strcmp(dataMethod,"Orthogonal Least_Interpolation") == 0)
 	pceMethod = "orthogonal_least_squares collocation_points = ";
