@@ -1061,7 +1061,7 @@ bool MainWindow::saveAs()
     //
 
     QFileDialog dialog(this, "Save Simulation Model");
-    dialog.setWindowModality(Qt::WindowModal);
+    //dialog.setWindowModality(Qt::WindowModal);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     QStringList filters;
     filters << "Json files (*.json)"
@@ -1454,8 +1454,8 @@ void MainWindow::about()
     QRect rec = QApplication::desktop()->screenGeometry();
     int height = 0.50*rec.height();
     int width  = 0.50*rec.width();
-    dlg->resize(width, height);
 
+    dlg->resize(width, height);
     dlg->exec();
     delete dlg;
 }
