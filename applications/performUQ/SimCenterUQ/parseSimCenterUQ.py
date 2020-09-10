@@ -35,16 +35,20 @@ if run_type in ['runningLocal',]:
     # MAC
     if (sys.platform == 'darwin'):
         OpenSees = 'OpenSees'
+        natafExe = 'nataf_gsa'        
         Feap = 'feappv'
         Dakota = 'dakota'
         workflow_driver = 'workflow_driver'
+        osType = 'Darwin'
 
     # Windows
     else:
         OpenSees = 'OpenSees'
         Feap = 'Feappv41.exe'
+        natafExe = 'nataf_gsa.exe'        
         Dakota = 'dakota'
         workflow_driver = 'workflow_driver.bat'
+        osType = 'Windows'
 
 # Stampede @ DesignSafe, DON'T EDIT
 elif run_type in ['runningRemote',]:
@@ -52,10 +56,13 @@ elif run_type in ['runningRemote',]:
     Feap = '/home1/00477/tg457427/bin/feappv'
     Dakota = 'dakota'
     workflow_driver = 'workflow_driver'
+    osType = 'Linux'    
 
 # change workdir to the templatedir
 os.chdir(workdir_temp)
 cwd = os.getcwd()
+
+print(cwd)
 
 # open the dakota json file
 with open('dakota.json') as data_file:    
@@ -86,7 +93,6 @@ for edp in my_edps:
 femProgram = fem_data["program"]
 print(femProgram)
 
-
 if run_type in ['runningLocal']:
     os.chmod(workflow_driver, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
 
@@ -95,9 +101,6 @@ if run_type in ['runningLocal']:
 #Change permision of workflow driver
 st = os.stat(workflow_driver)
 os.chmod(workflow_driver, st.st_mode | stat.S_IEXEC)
-
-# copy the dakota input file to the main working dir for the structure
-#shutil.move("dakota.in", "../")
 
 # change dir to the main working dir for the structure
 os.chdir("../")
@@ -113,18 +116,22 @@ if run_type in ['runningLocal']:
 
 #    dakotaCommand = "dakota -input dakota.in -output dakota.out -error dakota.err"
 
-	'''
-	LATER, CHANGE THE LOCATION
-	'''
-	simCenterUQCommand = r'C:\Users\yisan\Desktop\Development\nataf_gsa\x64\Debug\nataf_gsa.exe C:\Users\yisan\Documents\quoFEM\LocalWorkDir'
+    '''
+    LATER, CHANGE THE LOCATION
+    '''
 
-	print('running SimCenterUQ: ', simCenterUQCommand)
-	try:
-		result = subprocess.check_output(simCenterUQCommand, stderr=subprocess.STDOUT, shell=True)
-		returncode = 0
-	except subprocess.CalledProcessError as e:
-		result = e.output
-		returncode = e.returncode
+    simCenterUQCommand = '"{}/{}" {} {} {}'.format(myScriptDir,natafExe,workdir_main,osType,run_type)
+        
+    print('running SimCenterUQ: ', simCenterUQCommand)
 
-
-
+    # subprocess.Popen(simCenterUQCommand, shell=True).wait()
+    
+    try:
+        result = subprocess.check_output(simCenterUQCommand, stderr=subprocess.STDOUT, shell=True)
+        returncode = 0
+        print('DONE SUCESS')
+    except subprocess.CalledProcessError as e:
+        result = e.output
+        returncode = e.returncode
+        print('DONE FAIL')
+        
