@@ -32,6 +32,12 @@
         ]
       },
       {
+        "Name": "Other-UQ",
+        "ExecutablePath": "applications/performUQ/other/runOtherUQ.py",
+        "ApplicationSpecificInputs": [
+        ]
+      },	
+      {
         "Name": "uqPY",
         "ExecutablePath": "applications/performUQ/uqPy/runUQ_PY.py",
         "ApplicationSpecificInputs": [

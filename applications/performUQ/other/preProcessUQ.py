@@ -4,25 +4,14 @@ import argparse
 # import sys
 from rvDelimiter import RvDelimiterFactory
 
-# main function
-def main():
-
-    parser = argparse.ArgumentParser(description='Preprocess simulation configuration files to replace parameter realizations')
-    parser.add_argument('--params', '-p', required=True, help="Parameter realizations")
-    parser.add_argument('--inputFile', '-i', required=True, help="Input template")
-    parser.add_argument('--outputFile', '-o', required=True, help="Output file")
-    parser.add_argument('--rvSpecifier', '-s', required=True, help="Symbol identifying value as random variable",
-                        choices=["SimCenterDelimiter", "UQpyDelimiter"])
-    parser.add_argument('--fixedFormat', '-f', required=False, help="Flag for identifying whether fixed format output is required",
-                        action='store_true')
-
-    args = parser.parse_args()
+def preProcessUQ(paramsFile, inputFile, outputFile, rvSpecifier):
+    # These are the delimiter choices, which can expanded as more UQ programs are added. Remember to also
+    # extend the factory in rvDelimiter to handle addtional cases
+    rvDelimiterChoices=["SimCenterDelimiter", "UQpyDelimiter"]
     
-    paramsFile = args.params
-    inputFile = args.inputFile
-    outputFile = args.outputFile
-    fixedFormat = args.fixedFormat
-    rvSpecifier = RvDelimiterFactory.createRvDelimiter(args.rvSpecifier)
+    if rvSpecifier not in rvDelimiterChoices:
+        except IOError:
+            print("ERROR: preProcessUQ.py: Symbol identifying value as random variable not recognized : ", rvSpecifier)            
     
     # Open parameters file and read parameter settings
     numRVs = 0
@@ -73,7 +62,3 @@ def main():
         realizationOutput.write(line)
 
     realizationOutput.close()
-
- 
-if __name__ == '__main__':
-    main()

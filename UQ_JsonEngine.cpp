@@ -98,12 +98,11 @@ UQ_JsonEngine::getParameters() {
 
 UQ_Results *
 UQ_JsonEngine::getResults(void) {
-  return new UQ_Results();
-    // return theCurrentEngine->getResults();
+  // CONTINUE HERE TO IMPLEMENT JSONCONFIGUREDSAMPLING CLASS, FIRST IMPLEMENT SCRIPT FOR RUNNING BACKEND
+  return new JsonConfiguredSampling(theRandomVariables);
 }
 
 QString
 UQ_JsonEngine::getProcessingScript() {
-    // return QString("parseDAKOTA.py");
-  return QString("doesNotExist.py");
+  return QString("runCustomUQ.py");
 }
