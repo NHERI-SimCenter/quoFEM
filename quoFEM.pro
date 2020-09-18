@@ -89,7 +89,8 @@ SOURCES += main.cpp\
     qcustomplot.cpp \
     DakotaResultsReliability.cpp \
     UCSD_Engine.cpp \
-    UCSD_TMMC.cpp
+    UCSD_TMMC.cpp \
+    UCSD_Results.cpp
 
 HEADERS  += MainWindow.h \
     InputWidgetEDP.h \
@@ -139,7 +140,8 @@ EDP.h \
     qcustomplot.h \
     DakotaResultsReliability.h \
     UCSD_Engine.h \
-    UCSD_TMMC.h
+    UCSD_TMMC.h \
+    UCSD_Results.h
 
 FORMS    += mainwindow.ui
 

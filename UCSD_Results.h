@@ -1,5 +1,5 @@
-#ifndef UQ_ENGINE_SELECTION_H
-#define UQ_ENGINE_SELECTION_H
+#ifndef UCSD_RESULTS_H
+#define UCSD_RESULTS_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,60 +39,63 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterAppWidget.h>
+#include <UQ_Results.h>
+#include <QtCharts/QChart>
+#include <QMessageBox>
+#include <QPushButton>
 
-class QComboBox;
-class QStackedWidget;
+
+using namespace QtCharts;
+
+class QTextEdit;
+class QTabWidget;
+class MyTableWidget;
+class MainWindow;
 class RandomVariablesContainer;
-class UQ_Results;
-class UQ_Engine;
-class InputWidgetEDP;
 
-class UQ_EngineSelection : public  SimCenterAppWidget
+//class QChart;
+
+class UCSD_Results : public UQ_Results
 {
-  Q_OBJECT
+    Q_OBJECT
+public:
+  explicit UCSD_Results(RandomVariablesContainer *, QWidget *parent = 0);
+    ~UCSD_Results();
 
-    public:
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
-  explicit UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *parent = 0);
-  ~UQ_EngineSelection();
+    int processResults(QString &filenameResults, QString &filenameTab);
+    QWidget *createResultEDPWidget(QString &name, double mean, double stdDev, double skewness, double kurtosis);
 
-  RandomVariablesContainer  *getParameters();
-  UQ_Results  *getResults();
-  int getNumParallelTasks(void);
-  
-  bool outputAppDataToJSON(QJsonObject &jsonObject);
-  bool inputAppDataFromJSON(QJsonObject &jsonObject);
+signals:
 
-  bool outputToJSON(QJsonObject &rvObject);
-  bool inputFromJSON(QJsonObject &rvObject);
-  bool copyFiles(QString &destName);
+public slots:
+   void clear(void);
+   void onSpreadsheetCellClicked(int, int);
+   void onSaveSpreadsheetClicked();
 
-  void clear(void);
-  
- signals:
-  void onUQ_EngineChanged(void);
-  void onNumModelsChanged(int);
+   // modified by padhye 08/25/2018
 
- public slots:
-  void engineSelectionChanged(const QString &arg1);
-  void enginesEngineSelectionChanged(void);
-  void numModelsChanged(int newNum);
-  
 private:
+   RandomVariablesContainer *theRVs;
+   QTabWidget *tabWidget;
 
-   QComboBox   *theEngineSelectionBox;
-   QStackedWidget *theStackedWidget;
+   MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
+   QChart *chart;
+   QPushButton* save_spreadheet; // save the data from spreadsheet
+   QLabel *label;
+   QLabel *best_fit_instructions;
 
-   UQ_Engine *theCurrentEngine;
-   UQ_Engine *theDakotaEngine;
-   UQ_Engine *theSimCenterUQEngine;
-   UQ_Engine *theUQpyEngine;
-   UQ_Engine *theUCSD_Engine;
-   UQ_Engine *thefilterEngine;
+   int col1, col2;
+   bool mLeft;
+   QStringList theHeadings;
 
-   InputWidgetEDP *theEdpWidget;
-
+   QVector<QString>theNames;
+   QVector<double>theMeans;
+   QVector<double>theStdDevs;
+   QVector<double>theKurtosis;
+   QVector<double>theSkewness;
 };
 
-#endif // WIND_SELECTION_H
+#endif // UCSD_RESULTS_H
