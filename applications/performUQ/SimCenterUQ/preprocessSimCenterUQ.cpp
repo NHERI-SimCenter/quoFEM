@@ -8,7 +8,7 @@
 #include <vector>
 #include <thread>
 
-#include "dakotaProcedures.h"
+#include "SimCenterUQProcedures.h"
 
 int main(int argc, const char **argv) {
 
@@ -36,14 +36,15 @@ int main(int argc, const char **argv) {
 
   int numRV = parseForRV(rootINPUT, theRandomVariables);
 
+  
   //
-  // open empty dakota input file & write file
+  // open empty SimCenterUQ input file & write file
   //
 
-  std::ofstream dakotaFile("dakota.in", std::ios::binary);
+  std::ofstream SimCenterUQFile("SimCenterUQ.in", std::ios::binary);
 
-  if (!dakotaFile.is_open()) {
-    std::cerr << "parseFileForRV:: could not create dakota input file: dakota.in\n";
+  if (!SimCenterUQFile.is_open()) {
+    std::cerr << "parseFileForRV:: could not create SimCenterUQ input file: SimCenterUQ.in\n";
     exit(802); // no random variables is allowed
   }
 
@@ -68,9 +69,9 @@ int main(int argc, const char **argv) {
   if ((strcmp(osType,"Windows") == 0) && (strcmp(runType,"runningLocal") == 0))
     workflowDriver = "workflow_driver.bat";
 
-  int errorWrite = writeDakotaInputFile(dakotaFile, uqData, rootEDP, theRandomVariables, workflowDriver, rvList, edpList, evalConcurrency);
+  int errorWrite = writeSimCenterUQInputFile(SimCenterUQFile, uqData, rootEDP, theRandomVariables, workflowDriver, rvList, edpList, evalConcurrency);
 
-  dakotaFile.close();
+  SimCenterUQFile.close();
 
   //
   // open workflow_driver 
@@ -93,7 +94,7 @@ int main(int argc, const char **argv) {
   const char *remoteDir = json_string_value(json_object_get(rootINPUT,"remoteAppDir"));
 
   if (strcmp(runType, "runningLocal") == 0) {
-    dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/dakota/simCenterDprepro\"");
+    dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/SimCenterUQ/simCenterDprepro2\"");
     openSeesCommand = std::string("OpenSees");
     pythonCommand = std::string("\"") + json_string_value(json_object_get(rootINPUT,"python")) + std::string("\"");
     if ((strcmp(osType,"Windows") == 0)) {
@@ -105,7 +106,7 @@ int main(int argc, const char **argv) {
       moveCommand = std::string("mv ");
     }
   } else {
-    dpreproCommand = remoteDir + std::string("/applications/performUQ/dakota/simCenterDprepro");
+    dpreproCommand = remoteDir + std::string("/applications/performUQ/SimCenterUQ/simCenterDprepro2");
     openSeesCommand = std::string("/home1/00477/tg457427/bin/OpenSees");
     pythonCommand = std::string("python");
     feapCommand = std::string("/home1/00477/tg457427/bin/feappv");
@@ -149,6 +150,10 @@ int main(int argc, const char **argv) {
     }
 
     templateFile << "\"\n\n\n source " << mainInput << "\n";
+
+
+    // workflowDriverFile << dpreproCommand << "  params.in SimCenterInput.RV SimCenterInput.tcl\n";
+    //workflowDriverFile << openSeesCommand << "  SimCenterInput.tcl -suppressOutput >> ops.out\n";
 
     workflowDriverFile << dpreproCommand << " params.in SimCenterInput.RV SimCenterInput.tcl\n";
 	workflowDriverFile << openSeesCommand << " SimCenterInput.tcl 1> ops.out 2>&1\n";

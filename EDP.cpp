@@ -89,8 +89,8 @@ EDP::EDP(QWidget *parent)
     mainLayout->addWidget(nameWidget);;
     mainLayout->addStretch();
 
-    mainLayout->setSpacing(5);
-    mainLayout->setMargin(5);
+    mainLayout->setSpacing(8);
+    mainLayout->setMargin(0);
 
     this->setLayout(mainLayout);
 }

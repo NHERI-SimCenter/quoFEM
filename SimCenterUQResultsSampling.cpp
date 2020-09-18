@@ -37,7 +37,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 // added and modified: padhye
 
-#include "DakotaResultsSampling.h"
+#include "SimCenterUQResultsSampling.h"
 //#include "InputWidgetFEM.h"
 
 #include <QJsonObject>
@@ -95,7 +95,7 @@ using namespace QtCharts;
 
 //#define NUM_DIVISIONS 10
 
-DakotaResultsSampling::DakotaResultsSampling(RandomVariablesContainer *theRandomVariables, QWidget *parent)
+SimCenterUQResultsSampling::SimCenterUQResultsSampling(RandomVariablesContainer *theRandomVariables, QWidget *parent)
   : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
@@ -106,13 +106,13 @@ DakotaResultsSampling::DakotaResultsSampling(RandomVariablesContainer *theRandom
     col2 = 0;
 }
 
-DakotaResultsSampling::~DakotaResultsSampling()
+SimCenterUQResultsSampling::~SimCenterUQResultsSampling()
 {
 
 }
 
 
-void DakotaResultsSampling::clear(void)
+void SimCenterUQResultsSampling::clear(void)
 {
     // delete any existing widgets
     int count = tabWidget->count();
@@ -131,6 +131,8 @@ void DakotaResultsSampling::clear(void)
     tabWidget->clear();
     spreadsheet = NULL;
 }
+
+
 
 static void merge_helper(double *input, int left, int right, double *scratch)
 {
@@ -183,7 +185,7 @@ static int mergesort(double *input, int size)
 
 // if sobelov indices are selected then we would need to do some processing outselves
 
-int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab)
+int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString &filenameTab)
 {
     emit sendStatusMessage(tr("Processing Sampling Results"));
 
@@ -196,12 +198,13 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     // check it actually ran with n errors
     //
 
+
     QFileInfo fileTabInfo(filenameTab);
-    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
+    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("SimCenterUQ.err");
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        emit sendErrorMessage("No SimCenterUQ.err file - SimCenterUQ did not run - problem with SimCenterUQ setup or the applicatins failed with inputs provied");
         return 0;
     }
     QFile fileError(filenameErrorString);
@@ -216,13 +219,13 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     if (line.length() != 0) {
         qDebug() << line.length() << " " << line;
-        emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
+        emit sendErrorMessage(QString(QString("Error Running SimCenterUQ: ") + line));
         return 0;
     }
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        emit sendErrorMessage("No SimCenterUQTab.out file - SimCenterUQ failed .. possibly no QoI");
         return 0;
     }
 
@@ -312,6 +315,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     }
     tabResults.close();
 
+
     //
     // determine summary statistics for each edp
     //
@@ -390,6 +394,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->chart()->legend()->hide();
 
+
     QWidget *widget = new QWidget();
     QGridLayout *layout = new QGridLayout(widget);
     QPushButton* save_spreadsheet = new QPushButton();
@@ -417,7 +422,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
 
 void
-DakotaResultsSampling::onSaveSpreadsheetClicked()
+SimCenterUQResultsSampling::onSaveSpreadsheetClicked()
 {
 
     int rowCount = spreadsheet->rowCount();
@@ -449,7 +454,7 @@ DakotaResultsSampling::onSaveSpreadsheetClicked()
     }
 }
 
-void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
+void SimCenterUQResultsSampling::onSpreadsheetCellClicked(int row, int col)
 {
     mLeft = spreadsheet->wasLeftKeyPressed();
 
@@ -553,18 +558,6 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             if(value2<minY){minY=value2;}
             if(value2>maxY){maxY=value2;}
 
-        }
-
-        // if value is constant, adjust axes
-        if (minX==maxX) {
-            double axisMargin=abs(minX)*0.1;
-            minX=minX-axisMargin;
-            maxX=maxX+axisMargin;
-        }
-        if (minY==maxY) {
-            double axisMargin=abs(minY)*0.1;
-            minY=minY-axisMargin;
-            maxY=maxY+axisMargin;
         }
 
         double xRange=maxX-minX;
@@ -689,7 +682,6 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
 
             delete [] dataValues;
-
 
             QString file_fitted_path = appDIR +  QDir::separator() + QString("Best_fit.out");
 
@@ -843,14 +835,14 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 // padhye
 // this function is called if you decide to say save the data from UI into a json object
 bool
-DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
+SimCenterUQResultsSampling::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
     if (spreadsheet == NULL)
         return true;
 
-    jsonObject["resultType"]=QString(tr("DakotaResultsSampling"));
+    jsonObject["resultType"]=QString(tr("SimCenterUQResultsSampling"));
 
     //
     // add summary data
@@ -912,7 +904,7 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
 // if you already have a json data file then you can populate the UI with the entries from json.
 
 bool
-DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
+SimCenterUQResultsSampling::inputFromJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
@@ -1045,11 +1037,9 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
 extern QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit);
 
 QWidget *
-DakotaResultsSampling::createResultEDPWidget(QString &name, double mean, double stdDev, double skewness, double kurtosis) {
+SimCenterUQResultsSampling::createResultEDPWidget(QString &name, double mean, double stdDev, double skewness, double kurtosis) {
     QWidget *edp = new QWidget;
     QHBoxLayout *edpLayout = new QHBoxLayout();
-    edpLayout->setContentsMargins(0,0,0,0);
-    edpLayout->setSpacing(3);
 
     edp->setLayout(edpLayout);
 

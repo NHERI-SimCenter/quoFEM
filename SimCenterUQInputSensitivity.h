@@ -1,4 +1,5 @@
-// Written: fmckenna
+#ifndef SIMCENTERUQ_INPUT_SENSITIVITY_H
+#define SIMCENTERUQ_INPUT_SENSITIVITY_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -36,74 +37,67 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
+#include <UQ_Engine.h>
 
-#include "filterEngine.h"
-#include <QDebug>
-#include <RandomVariablesContainer.h>
-#include <UQ_Results.h>
+#include <QGroupBox>
+#include <QVector>
+#include <QVBoxLayout>
+#include <QComboBox>
+#include <QPushButton>
 
-filterEngine::filterEngine(QWidget *parent)
-    : UQ_Engine(parent)
+class SimCenterUQSensitivityResults;
+class SimCenterUQResults;
+class QCheckBox;
+class RandomVariablesContainer;
+class QStackedWidget;
+class UQ_MethodInputWidget;
+
+class SimCenterUQInputSensitivity : public UQ_Engine
 {
-  /*************************  at some point need to redo so no new
-    QString classType("Uncertain");
-    theRandomVariables =  new RandomVariablesContainer(classType);
-    theResults = new UQ_Results();
-  ***************************************************************/
-}
+    Q_OBJECT
+public:
+    explicit SimCenterUQInputSensitivity(QWidget *parent = 0);
+    ~SimCenterUQInputSensitivity();
 
-filterEngine::~filterEngine()
-{
+    bool outputToJSON(QJsonObject &jsonObject);
+    bool inputFromJSON(QJsonObject &jsonObject);
 
-}
+    int processResults(QString &filenameResults, QString &filenameTab);
 
-int
-filterEngine::getMaxNumParallelTasks(void) {
-    return 1;
-}
+    UQ_Results *getResults(void);
+    RandomVariablesContainer  *getParameters();
 
-bool
-filterEngine::outputToJSON(QJsonObject &rvObject) {
-    return true;
-}
+    int getMaxNumParallelTasks(void);
 
+    QVBoxLayout *mLayout;
 
-bool
-filterEngine::inputFromJSON(QJsonObject &rvObject) {
-    return true;
-}
+signals:
 
+public slots:
+   void clear(void);
+   void onMethodChanged(QString);
 
-int
-filterEngine::processResults(QString &filenameResults, QString &filenameTab) {
-    return 0;
-}
+private:
+    QVBoxLayout *layout;
+    QWidget     *methodSpecific;
+    QComboBox   *samplingMethod;
+    QLineEdit   *numSamples;
+    QLineEdit   *randomSeed;
+    //    QPushButton *run;
 
+    QComboBox   *uqSelection;
+    QWidget     *uqSpecific;
 
-RandomVariablesContainer *
-filterEngine::getParameters() {
-  QString classType("Uncertain");
-  RandomVariablesContainer *theRV =  new RandomVariablesContainer(classType,QString("filterEngin"));
-  return theRV;
-}
+    RandomVariablesContainer *theRandomVariables;
+    SimCenterUQSensitivityResults *results;
 
-UQ_Results *filterEngine::getResults(void) {
-  UQ_Results *theRes = new UQ_Results();
-  return theRes;
-}
+    QStackedWidget *theStackedWidget;
+    UQ_MethodInputWidget *theCurrentMethod;
+    UQ_MethodInputWidget *theMC;
+    UQ_MethodInputWidget *theLHS;
+    UQ_MethodInputWidget *theIS;
+    UQ_MethodInputWidget *theGP;
+    UQ_MethodInputWidget *thePCE;
+};
 
-void
-filterEngine::clear(void) {
-    return;
-}
-
-
-QString
-filterEngine::getProcessingScript() {
-    return QString("parsefilter.py");
-}
-
-
-
-
+#endif // SIMCENTERUQ_INPUT_SENSITIVITY_H

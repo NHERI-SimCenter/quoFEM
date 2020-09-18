@@ -103,7 +103,7 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
 
     // layout->addStretch();
     // layout->setSpacing(10);
-    layout->setMargin(0);
+    layout->setMargin(10);
     layout->addStretch();
 
     this->setLayout(layout);
@@ -205,9 +205,8 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
 
         if (numInputs == 1) {
 
-            QString fileName1=femObject["inputFile"].toString();
+            QString fileName1=femObject["inputFile"].toString();;
             QString fileName2=femObject["postprocessScript"].toString();
-
 
             inputFilenames.at(0)->setText(fileName1);
             postprocessFilenames.at(0)->setText(fileName2);

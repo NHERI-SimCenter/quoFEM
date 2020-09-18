@@ -1,4 +1,5 @@
-// Written: fmckenna
+#ifndef SimCenterUQ_RESULTS_SAMPLING_H
+#define SimCenterUQ_RESULTS_SAMPLING_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -38,72 +39,63 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "filterEngine.h"
-#include <QDebug>
-#include <RandomVariablesContainer.h>
 #include <UQ_Results.h>
+#include <QtCharts/QChart>
+#include <QMessageBox>
+#include <QPushButton>
 
-filterEngine::filterEngine(QWidget *parent)
-    : UQ_Engine(parent)
+
+using namespace QtCharts;
+
+class QTextEdit;
+class QTabWidget;
+class MyTableWidget;
+class MainWindow;
+class RandomVariablesContainer;
+
+//class QChart;
+
+class SimCenterUQResultsSampling : public UQ_Results
 {
-  /*************************  at some point need to redo so no new
-    QString classType("Uncertain");
-    theRandomVariables =  new RandomVariablesContainer(classType);
-    theResults = new UQ_Results();
-  ***************************************************************/
-}
+    Q_OBJECT
+public:
+  explicit SimCenterUQResultsSampling(RandomVariablesContainer *, QWidget *parent = 0);
+    ~SimCenterUQResultsSampling();
 
-filterEngine::~filterEngine()
-{
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
-}
+    int processResults(QString &filenameResults, QString &filenameTab);
+    QWidget *createResultEDPWidget(QString &name, double mean, double stdDev, double skewness, double kurtosis);
 
-int
-filterEngine::getMaxNumParallelTasks(void) {
-    return 1;
-}
+signals:
 
-bool
-filterEngine::outputToJSON(QJsonObject &rvObject) {
-    return true;
-}
+public slots:
+   void clear(void);
+   void onSpreadsheetCellClicked(int, int);
+   void onSaveSpreadsheetClicked();
 
+   // modified by padhye 08/25/2018
 
-bool
-filterEngine::inputFromJSON(QJsonObject &rvObject) {
-    return true;
-}
+private:
+   RandomVariablesContainer *theRVs;
+   QTabWidget *tabWidget;
 
+   MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
+   QChart *chart;
+   QPushButton* save_spreadheet; // save the data from spreadsheet
+   QLabel *label;
+   QLabel *best_fit_instructions;
 
-int
-filterEngine::processResults(QString &filenameResults, QString &filenameTab) {
-    return 0;
-}
+   int col1, col2;
+   bool mLeft;
+   QStringList theHeadings;
 
+   QVector<QString>theNames;
+   QVector<double>theMeans;
+   QVector<double>theStdDevs;
+   QVector<double>theKurtosis;
+   QVector<double>theSkewness;
+};
 
-RandomVariablesContainer *
-filterEngine::getParameters() {
-  QString classType("Uncertain");
-  RandomVariablesContainer *theRV =  new RandomVariablesContainer(classType,QString("filterEngin"));
-  return theRV;
-}
-
-UQ_Results *filterEngine::getResults(void) {
-  UQ_Results *theRes = new UQ_Results();
-  return theRes;
-}
-
-void
-filterEngine::clear(void) {
-    return;
-}
-
-
-QString
-filterEngine::getProcessingScript() {
-    return QString("parsefilter.py");
-}
-
-
-
-
+#endif // SimCenterUQ_RESULTS_SAMPLING_H

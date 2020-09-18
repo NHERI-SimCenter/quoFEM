@@ -60,14 +60,15 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <sectiontitle.h>
 
 #include <DakotaEngine.h>
+#include <SimCenterUQEngine.h>
 #include <UQpyEngine.h>
 #include <UQ_JsonEngine.h>
 #include <filterEngine.h>
 #include <sectiontitle.h>
+#include <InputWidgetEDP.h>
 
-
-UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
-    : SimCenterAppWidget(parent), theCurrentEngine(0)
+UQ_EngineSelection::UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *parent)
+    : SimCenterAppWidget(parent), theCurrentEngine(0), theEdpWidget(edpwidget)
 {
     QVBoxLayout *layout = new QVBoxLayout();
 
@@ -78,7 +79,7 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
 
 
     QHBoxLayout *theSelectionLayout = new QHBoxLayout();
-
+    theSelectionLayout->setMargin(10);
     SectionTitle *title=new SectionTitle();
     title->setText(tr("UQ Engine"));
 
@@ -87,12 +88,15 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
     theEngineSelectionBox->addItem(tr("Dakota"));
     theEngineSelectionBox->addItem(tr("UQpy"));    
     theEngineSelectionBox->addItem(tr("CustomUQ"));    
+    theEngineSelectionBox->addItem(tr("SimCenterUQ"));
+
    //theEngineSelectionBox->addItem(tr("UQpy"));
    // theEngineSelectionBox->addItem(tr("filter"));
 
     theEngineSelectionBox->setItemData(0, "Dakota engine", Qt::ToolTipRole);
-    theEngineSelectionBox->setItemData(1, "uqPY engine", Qt::ToolTipRole);    
     theEngineSelectionBox->setItemData(2, "Custom UQ Engine", Qt::ToolTipRole);    
+    theEngineSelectionBox->setItemData(1, "SimCenterUQ engine", Qt::ToolTipRole);
+    //theEngineSelectionBox->setItemData(1, "uqPY engine", Qt::ToolTipRole);
 
     theSelectionLayout->addWidget(title,1);
     theSelectionLayout->addWidget(theEngineSelectionBox,3);
@@ -110,12 +114,14 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
     //
 
     theDakotaEngine = new DakotaEngine();
+    theSimCenterUQEngine = new SimCenterUQEngine(theEdpWidget);
     theUQpyEngine = new UQpyEngine();
     theCustomEngine = new UQ_JsonEngine();
 
     theStackedWidget->addWidget(theDakotaEngine);
-    theStackedWidget->addWidget(theUQpyEngine);
     theStackedWidget->addWidget(theCustomEngine);    
+    theStackedWidget->addWidget(theSimCenterUQEngine);
+    //theStackedWidget->addWidget(theUQpyEngine);
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
@@ -125,9 +131,12 @@ UQ_EngineSelection::UQ_EngineSelection(QWidget *parent)
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
             SLOT(engineSelectionChanged(QString)));
 
-    connect(theDakotaEngine,SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
+    //connect(theDakotaEngine,SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
+    //connect(theDakotaEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
 
-    connect(theDakotaEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
+
+
+    //    connect(theDakotaEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
     
     // connect(theCustomEngine, SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));    
     // connect(theCustomEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
@@ -181,14 +190,23 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
     // note type output in json and name in pull down are not the same and hence the ||
     //
 
+    theEdpWidget->hideAdvancedSensitivity();
+
     if (arg1 == "Dakota") {
         theStackedWidget->setCurrentIndex(0);
         theCurrentEngine = theDakotaEngine;
         emit onUQ_EngineChanged();
     }
 
-    else if (arg1 == "UQpy") {
+    else if (arg1 == "SimCenterUQ") {
         theStackedWidget->setCurrentIndex(1);
+        theCurrentEngine = theSimCenterUQEngine;
+        emit onUQ_EngineChanged();
+        theEdpWidget->showAdvancedSensitivity();
+    }
+
+    else if (arg1 == "UQpy") {
+        theStackedWidget->setCurrentIndex(2);
         theCurrentEngine = theUQpyEngine;
         emit onUQ_EngineChanged();
     } else if (arg1 == "CustomUQ") {
@@ -200,6 +218,9 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
     else {
         qDebug() << "ERROR .. UQ_EngineSelection selection .. type unknown: " << arg1;
     }
+
+    connect(theCurrentEngine,SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
+    connect(theCurrentEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
 }
 
 
@@ -238,14 +259,16 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
             if ((type == QString("Dakota")) ||
                     (type == QString("DakotaEngine")) ||
                     (type == QString("Dakota-UQ"))) {
-	      index = 0;
-            } else if ((type == QString("UQpy")) || (type == QString("UQpyEngine"))) {
+                index = 0;
+            } else if ((type == QString("SimCenterUQ-UQ"))) {
 	      index = 1;
-            } else if ((type == QString("CustomUQ")) || type == QString("CustomUQEngine")) {
+            } else if ((type == QString("UQpy")) || (type == QString("UQpyEngine"))) {
 	      index = 2;
-	    } else {
-	      emit sendErrorMessage("UQ_EngineSelection - no valid type found");
-	      return false;
+            } else if ((type == QString("CustomUQ")) || type == QString("CustomUQEngine")) {
+	      index = 3;		
+            } else {
+                emit sendErrorMessage("UQ_EngineSelection - no valid type found");
+                return false;
             }
 
             theEngineSelectionBox->setCurrentIndex(index);

@@ -45,11 +45,16 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFrame>
 #include <sectiontitle.h>
 #include <QSpacerItem>
+#include <QCheckBox>
+#include <QLineEdit>
+
+#include "InputWidgetParameters.h"
 
 #include <QDebug>
 
 
-InputWidgetEDP::InputWidgetEDP(QWidget *parent) : SimCenterWidget(parent)
+InputWidgetEDP::InputWidgetEDP(InputWidgetParameters *param, QWidget *parent)
+    : SimCenterWidget(parent), theParameters(param)
 {
     verticalLayout = new QVBoxLayout();
     this->setLayout(verticalLayout);
@@ -114,8 +119,90 @@ InputWidgetEDP::makeEDP(void)
     verticalLayout->addWidget(sa);
 
     verticalLayout->setSpacing(0);
-    verticalLayout->setMargin(0);
+    //verticalLayout->setMargin(0);
+
+    // show if SimCenterUQ && Sensitivity analysis
+    theAdvancedLayout=AdvancedSensitivity();
+
 }
+
+// For SimcenterUQ\GSA
+QWidget*
+InputWidgetEDP::AdvancedSensitivity(void) {
+
+    QWidget* containterWidget = new QWidget;
+
+    //Title
+    QVBoxLayout *theAdvancedLayout = new QVBoxLayout(containterWidget);
+    SectionTitle *title2=new SectionTitle();
+    title2->setText(tr("Advanced option for global sensitivity analysis"));
+    title2->setMinimumWidth(250);
+
+    //Contents
+    QLabel *theLabel = new QLabel();
+    theGroupEdit = new QLineEdit();
+
+    theLabel->setText("Get group sobol indicies");
+    theLabel->setMaximumWidth(180);
+    theLabel->setMinimumWidth(180);
+    theGroupEdit->setMaximumWidth(400);
+    theGroupEdit->setMinimumWidth(400);
+    theGroupEdit->setDisabled(1);
+
+    theCheckButton = new QCheckBox();
+    QHBoxLayout *theGroupLayout = new QHBoxLayout();
+    theGroupLayout->addWidget(theCheckButton);
+    theGroupLayout->addWidget(theLabel);
+    theGroupLayout->addWidget(theGroupEdit);
+
+    theGroupLayout->addStretch();
+    theGroupLayout->setSpacing(10);
+    theGroupLayout->setMargin(0);
+
+    theAdvancedLayout->addWidget(title2);
+    theAdvancedLayout->addLayout(theGroupLayout);
+    theAdvancedLayout->setSpacing(10);
+
+   // connect(theCheckButton,&QCheckBox::toggled,[this](bool i)
+   //        {if (i) {theGroupEdit->setDisabled(0);}
+   //          else   {theGroupEdit->setDisabled(1);};});
+
+    connect(theCheckButton,SIGNAL(toggled(bool)),this,SLOT(setDefaultGroup(bool)));
+
+    return containterWidget;
+}
+// SLOT function
+void InputWidgetEDP::setDefaultGroup(bool tog)
+{
+    if (tog) {
+        theGroupEdit->setDisabled(0);
+        QStringList rvNames = theParameters->getParametereNames();
+        if (rvNames.count()>0) {
+            QString rvNameString;
+            for (QString eleName : rvNames)
+            {
+                rvNameString.push_back("{"+eleName+"},");
+            }
+            //int pos = rvNameString.lastIndexOf(QChar(','));
+            rvNameString.truncate(rvNameString.lastIndexOf(QChar(',')));
+            theGroupEdit->setText(rvNameString);
+        }
+    } else {
+        theGroupEdit->setDisabled(1);
+        theGroupEdit->setText("");
+    }
+}
+
+void InputWidgetEDP::showAdvancedSensitivity(void){
+    verticalLayout->addWidget(theAdvancedLayout);
+    theAdvancedLayout->show();
+}
+
+void InputWidgetEDP::hideAdvancedSensitivity(void){
+    theAdvancedLayout->hide();
+}
+
+
 
 void InputWidgetEDP::addEDP(void)
 {
@@ -174,6 +261,15 @@ InputWidgetEDP::outputToJSON(QJsonObject &jsonObject)
             result = false;
     }
     jsonObject["EDP"]=edpArray;
+
+    // RV group - for sensitivity
+    if (!(theGroupEdit->text().isEmpty())){
+        QJsonObject uq= jsonObject["UQ_Method"].toObject();
+        uq["sensitivityGroups"]=theGroupEdit->text();
+        jsonObject["UQ_Method"]=uq;
+        //jsonObject.insert("UQ_Method",uq);
+
+    }
     return result;
 }
 
@@ -196,6 +292,16 @@ InputWidgetEDP::inputFromJSON(QJsonObject &rvObject)
             edpLayout->insertWidget(edpLayout->count()-1, theEDP);
         } else
             result = false;
+    }
+
+
+    if (rvObject.contains("UQ_Method")) {
+        QJsonObject uq = rvObject["UQ_Method"].toObject();
+        if (uq.contains("sensitivityGroups")) {
+            theCheckButton->setCheckState( Qt::Checked );
+            QString gsaGroup =uq["sensitivityGroups"].toString();
+            theGroupEdit->setText(gsaGroup);
+        }
     }
 
     return result;

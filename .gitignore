@@ -47,3 +47,4 @@ uqFEM.pro.user
 *.json
 
 Makefile
+*.pro.user

@@ -322,7 +322,7 @@ Node_2_Disp Sobol' indices:
 
             // Labels & QlineEdit Option in a QGrid
             trainingDataLayout = new QGridLayout();
-            QLabel *l1 = new QLabel("Random Variabnle");
+            QLabel *l1 = new QLabel("Random Variable");
             QLabel *l2 = new QLabel("Main");
             QLabel *l3 = new QLabel("Total");
             trainingDataLayout->addWidget(l1, 0,0);
@@ -660,6 +660,18 @@ void DakotaResultsSensitivity::onSpreadsheetCellClicked(int row, int col)
             if(value2<minY){minY=value2;}
             if(value2>maxY){maxY=value2;}
 
+        }
+
+        // if value is constant, adjust axes
+        if (minX==maxX) {
+            double axisMargin=abs(minX)*0.1;
+            minX=minX-axisMargin;
+            maxX=maxX+axisMargin;
+        }
+        if (minY==maxY) {
+            double axisMargin=abs(minY)*0.1;
+            minY=minY-axisMargin;
+            maxY=maxY+axisMargin;
         }
 
         double xRange=maxX-minX;
