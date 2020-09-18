@@ -1,5 +1,5 @@
-#ifndef UQ_ENGINE_SELECTION_H
-#define UQ_ENGINE_SELECTION_H
+#ifndef UCSD_ENGINE_H
+#define UCSD_ENGINE_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,60 +39,49 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterAppWidget.h>
+#include <UQ_Engine.h>
 
 class QComboBox;
 class QStackedWidget;
-class RandomVariablesContainer;
 class UQ_Results;
-class UQ_Engine;
-class InputWidgetEDP;
 
-class UQ_EngineSelection : public  SimCenterAppWidget
+class RandomVariablesContainer;
+class UQ_MethodInputWidget;
+
+
+class UCSD_Engine : public UQ_Engine
 {
-  Q_OBJECT
+    Q_OBJECT
 
-    public:
+public:
 
-  explicit UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *parent = 0);
-  ~UQ_EngineSelection();
+    explicit UCSD_Engine(QWidget *parent = 0);
+    virtual ~UCSD_Engine();
 
-  RandomVariablesContainer  *getParameters();
-  UQ_Results  *getResults();
-  int getNumParallelTasks(void);
-  
-  bool outputAppDataToJSON(QJsonObject &jsonObject);
-  bool inputAppDataFromJSON(QJsonObject &jsonObject);
+    int getMaxNumParallelTasks(void);
+    bool outputToJSON(QJsonObject &jsonObject);
+    bool inputFromJSON(QJsonObject &jsonObject);
+    bool outputAppDataToJSON(QJsonObject &jsonObject);
+    bool inputAppDataFromJSON(QJsonObject &jsonObject);
 
-  bool outputToJSON(QJsonObject &rvObject);
-  bool inputFromJSON(QJsonObject &rvObject);
-  bool copyFiles(QString &destName);
+    int processResults(QString &filenameResults, QString &filenameTab);
+    RandomVariablesContainer *getParameters();
+    UQ_Results *getResults(void);
 
-  void clear(void);
-  
- signals:
-  void onUQ_EngineChanged(void);
-  void onNumModelsChanged(int);
+    QString getProcessingScript();
 
- public slots:
-  void engineSelectionChanged(const QString &arg1);
-  void enginesEngineSelectionChanged(void);
-  void numModelsChanged(int newNum);
-  
+signals:
+    void onMethodChanged(void);
+
+public slots:
+    void methodChanged(const QString &arg1);
+
 private:
-
-   QComboBox   *theEngineSelectionBox;
+   QComboBox   *theMethodSelection;
    QStackedWidget *theStackedWidget;
-
-   UQ_Engine *theCurrentEngine;
-   UQ_Engine *theDakotaEngine;
-   UQ_Engine *theSimCenterUQEngine;
-   UQ_Engine *theUQpyEngine;
-   UQ_Engine *theUCSD_Engine;
-   UQ_Engine *thefilterEngine;
-   UQ_Engine *theCustomEngine;
-
-  InputWidgetEDP *theEdpWidget;
+   UQ_MethodInputWidget *theCurrentMethod;
+   UQ_MethodInputWidget *theTMMC;
+  RandomVariablesContainer *theRandomVariables;
 };
 
-#endif // WIND_SELECTION_H
+#endif // UCSD_ENGINE_H

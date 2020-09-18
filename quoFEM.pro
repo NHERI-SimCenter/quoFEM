@@ -91,7 +91,8 @@ SOURCES += main.cpp\
     DakotaResultsReliability.cpp \
     UQ_JsonEngine.cpp \
     UCSD_Engine.cpp \
-    UCSD_TMMC.cpp
+    UCSD_TMMC.cpp \
+    UCSD_Results.cpp
 
 HEADERS  += MainWindow.h \
     InputWidgetEDP.h \
@@ -142,7 +143,8 @@ EDP.h \
     DakotaResultsReliability.h \
     UQ_JsonEngine.h \
     UCSD_Engine.h \
-    UCSD_TMMC.h 
+    UCSD_TMMC.h \
+    UCSD_Results.h
 
 FORMS    += mainwindow.ui
 
