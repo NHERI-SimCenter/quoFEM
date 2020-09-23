@@ -77,6 +77,7 @@ int main(int argc, const char **argv) {
   // open workflow_driver 
   //
 
+  /*
   std::ofstream workflowDriverFile(workflowDriver, std::ios::binary);
 
   if (!workflowDriverFile.is_open()) {
@@ -228,7 +229,8 @@ int main(int argc, const char **argv) {
   }
 
   workflowDriverFile.close();
-
+  */
+  
   //
   // done
   //
