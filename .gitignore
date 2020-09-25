@@ -48,3 +48,9 @@ uqFEM.pro.user
 
 Makefile
 *.pro.user
+simCenterSub
+simCenterDprepro
+createOpenSeesDriver
+createOpenSeesPyDriver
+createFeapDriver
+nataf_gsa
