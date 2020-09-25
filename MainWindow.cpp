@@ -468,6 +468,126 @@ bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory
     return false;
 }
 
+int
+MainWindow::runApplication(QString program, QStringList args) {
+
+    static int count = 0;
+    count++;
+
+    QProcess *proc = new QProcess();
+
+    proc->setProcessChannelMode(QProcess::SeparateChannels);
+    auto procEnv = QProcessEnvironment::systemEnvironment();
+    QString pathEnv = procEnv.value("PATH");
+    QString pythonPathEnv = procEnv.value("PYTHONPATH");
+
+    QString python("python");
+    QString exportPath("export PATH=$PATH");
+    QSettings settings("SimCenter", "Common");
+    QVariant  pythonLocationVariant = settings.value("pythonExePath");
+    if (pythonLocationVariant.isValid())
+      python = pythonLocationVariant.toString();
+
+    QSettings settingsApplication("SimCenter", QCoreApplication::applicationName());
+    QVariant  openseesPathVariant = settingsApplication.value("openseesPath");
+    if (openseesPathVariant.isValid()) {
+        QFileInfo openseesFile(openseesPathVariant.toString());
+        if (openseesFile.exists()) {
+            QString openseesPath = openseesFile.absolutePath();
+            pathEnv = openseesPath + ';' + pathEnv;
+            exportPath += ":" + openseesPath;
+        }
+    }
+
+    QVariant  dakotaPathVariant = settingsApplication.value("dakotaPath");
+    if (dakotaPathVariant.isValid()) {
+        QFileInfo dakotaFile(dakotaPathVariant.toString());
+        if (dakotaFile.exists()) {
+            QString dakotaPath = dakotaFile.absolutePath();
+            QString dakotaPythonPath = QFileInfo(dakotaPath).absolutePath() + QDir::separator() +
+                    "share" + QDir::separator() + "Dakota" + QDir::separator() + "Python";
+            pathEnv = dakotaPath + ';' + pathEnv;
+            exportPath += ":" + dakotaPath;
+            pythonPathEnv = dakotaPythonPath + ";" + pythonPathEnv;
+        }
+    }
+
+    procEnv.insert("PATH", pathEnv);
+    procEnv.insert("PYTHONPATH", pythonPathEnv);
+    proc->setProcessEnvironment(procEnv);
+
+#ifdef Q_OS_WIN
+
+    //python = QString('\"') + python + QString('\"');
+
+    proc->start(program,args);
+
+    bool failed = false;
+    if (!proc->waitForStarted(-1))
+    {
+        qDebug() << "Failed to start the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << proc->errorString().split('\n');
+        emit errorMessage("Failed to start the workflow!!!");
+        failed = true;
+    }
+
+    if(!proc->waitForFinished(-1))
+    {
+        qDebug() << "Failed to finish running the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << proc->errorString();
+        emit errorMessage("Failed to finish running the workflow!!!");
+        return -1;
+    }
+
+
+    if(0 != proc->exitCode())
+    {
+        qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << proc->errorString();
+        emit errorMessage("Failed to run the workflow!!!");
+        return proc->exitCode();
+    }
+
+    if(failed)
+    {
+        qDebug().noquote() << proc->readAllStandardOutput();
+        qDebug().noquote() << proc->readAllStandardError();
+        return -1;
+    }
+
+#else
+
+    QDir homeDir(QDir::homePath());
+    QString sourceBash("\"");
+    if (homeDir.exists(".bash_profile")) {
+      sourceBash = QString("source $HOME/.bash_profile; ");
+    } else if (homeDir.exists(".bashrc")) {
+      sourceBash = QString("source $HOME/.bashrc; ");
+    } else if (homeDir.exists(".zprofile")) {
+      sourceBash = QString("source $HOME/.zprofile; ");
+    } else if (homeDir.exists(".zshrc")) {
+      sourceBash = QString("source $HOME/.zshrc; ");
+    } else
+      emit errorMessage( "No .bash_profile, .bashrc or .zshrc file found. This may not find Dakota or OpenSees");
+
+    // note the above not working under linux because bash_profile not being called so no env variables!!
+    QString command = sourceBash + exportPath + "; \"" + program + QString("\"  ");
+    for ( const auto& arg : args  )
+    {
+        command += "\"" + arg + "\" ";
+    }
+
+    command += "> $HOME/Documents/quoFEM/fem.out." + QString::number(count) + " file 2>&1";
+    qDebug() << "COMMAND" << command;
+
+    proc->execute("bash", QStringList() << "-c" <<  command);
+    proc->waitForStarted();
+
+#endif
+
+   return 0;
+}
+
 void MainWindow::onRunButtonClicked() {
 
     GoogleAnalytics::ReportLocalRun();
@@ -479,26 +599,7 @@ void MainWindow::onRunButtonClicked() {
     QString application = fem->getApplicationName();
     QString mainInput = fem->getMainInput();
 
-    QFileInfo fileInfo(mainInput);
-    QDir fileDir = fileInfo.absolutePath();
-
-    QString fileName =fileInfo.fileName();
-    QString path = fileDir.absolutePath();// + QDir::separator();
-
-    qDebug() << "workdir set to " << fileDir;
-
-    if (! fileDir.exists()) {
-      errorMessage(QString("Directory ") + path + QString(" specified does not exist!"));
-      return;
-    }
-    qDebug() << "workdir exists ";
-
-    //
-    // given path to input file we are going to create temporary directory below it
-    // and copy all files from this input file directory to the new subdirectory
-    //  
-
-    // first, delete the tmp.SimCenter directory if it already exists ...
+    // first, delete the tmp.SimCenter directory if it already exists
     workingDirectory = SimCenterPreferences::getInstance()->getLocalWorkDir();
 
     QString tmpSimCenterDirectoryName = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
@@ -507,35 +608,61 @@ void MainWindow::onRunButtonClicked() {
         tmpSimCenterDirectory.removeRecursively();
     }
 
+       // now mkpath to tmp.SimnCenter/templatedir
     QString tmpDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
-    qDebug() << "creating the temp directory and copying files there... " << tmpDirectory;
-    copyPath(path, tmpDirectory, true);
-    qDebug() << "creating the temp directory and copying files there...  - SUCCESSFUL";
+    tmpSimCenterDirectory.mkpath(tmpSimCenterDirectoryName);
 
-    // special copy the of the main script to set up lines containg parameters for dakota
+    if (mainInput != "") {
 
-    //    QString mainScriptTmp = workingDirectory + QDir::separator() + fileName;
-    QString mainScriptTmp = tmpDirectory + QDir::separator() + fileName;
-    qDebug() << "creating a special copy of the main FE model script... " << mainScriptTmp;
-    fem->specialCopyMainInput(mainScriptTmp, random->getParametereNames());
-    qDebug() << "creating a special copy of the main FE model script...  - SUCCESSFUL";
+        QFileInfo fileInfo(mainInput);
+        QDir fileDir = fileInfo.absolutePath();
+
+        QString fileName =fileInfo.fileName();
+        QString path = fileDir.absolutePath();// + QDir::separator();
+
+        qDebug() << "workdir set to " << fileDir;
+
+        if (! fileDir.exists()) {
+            errorMessage(QString("Directory ") + path + QString(" specified does not exist!"));
+            return;
+        }
+        qDebug() << "workdir exists ";
+
+        //
+        // given path to input file we are going to create temporary directory below it
+        // and copy all files from this input file directory to the new subdirectory
+        //
+
+        QString tmpDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + QDir::separator() + QString("templatedir");
+        qDebug() << "creating the temp directory and copying files there... " << tmpDirectory;
+        copyPath(path, tmpDirectory, true);
+        qDebug() << "creating the temp directory and copying files there...  - SUCCESSFUL";
+
+        // special copy the of the main script to set up lines containg parameters for  UQ engine
+
+        //    QString mainScriptTmp = workingDirectory + QDir::separator() + fileName;
+        QString mainScriptTmp = tmpDirectory + QDir::separator() + fileName;
+        qDebug() << "creating a special copy of the main FE model script... " << mainScriptTmp;
+        fem->specialCopyMainInput(mainScriptTmp, random->getParametereNames());
+        qDebug() << "creating a special copy of the main FE model script...  - SUCCESSFUL";
+
+    }
 
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
     //
 
-    QString filenameTMP = tmpDirectory + QDir::separator() + tr("dakota.json");
+    QString inputFilename = tmpDirectory + QDir::separator() + tr("dakota.json");
 
-    qDebug() << "creating dakota input at " << filenameTMP;
-    QFile file(filenameTMP);
+    qDebug() << "creating dakota input at " << inputFilename;
+    QFile file(inputFilename);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Application"),
                              tr("Cannot write file %1:\n%2.")
-                             .arg(QDir::toNativeSeparators(filenameTMP),
+                             .arg(QDir::toNativeSeparators(inputFilename),
                                   file.errorString()));
         return;
     }
-
 
 
     QJsonObject json;
@@ -563,6 +690,7 @@ void MainWindow::onRunButtonClicked() {
     //
 
     QString programToExe;
+    QString femProgramToExe;
 
     // get appName;
 
@@ -585,9 +713,7 @@ void MainWindow::onRunButtonClicked() {
     // 3.b find program to execute, by converting to JSON object and itertaing through UQApplkications array for program
 
     QString val = workflowApplicationsFile.readAll();
-
-    qDebug() << "VAL: " << val;
-
+qDebug() << val;
     QJsonDocument docWA = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject jsonObj = docWA.object();
     workflowApplicationsFile.close();
@@ -595,152 +721,98 @@ void MainWindow::onRunButtonClicked() {
     QJsonObject uqApplications = jsonObj["UQApplications"].toObject();
     QJsonArray uqApplicationsArray = uqApplications["Applications"].toArray();
 
+    bool found = false;
     for (int i=0; i<uqApplicationsArray.size(); i++) {
         QJsonObject entry = uqApplicationsArray[i].toObject();
         QString programName = entry["Name"].toString();
+        qDebug() << "programName: " << programName;
         if (programName == appName) {
             programToExe = entry["ExecutablePath"].toString();
+            found = true;
             break;
         }
     }
 
-    QString pySCRIPT = appDIR +  QDir::separator() + programToExe;
+    if (found == false) {
+        QString message = QString("Error: could not find UQ application ") + appName;
+        this->errorMessage(message);
+        return;
+
+    }
+
+
+    QJsonObject femApplications = jsonObj["femApplications"].toObject();
+    QJsonArray femApplicationsArray = femApplications["Applications"].toArray();
+
+    found = false;
+    for (int i=0; i<femApplicationsArray.size(); i++) {
+        QJsonObject entry = femApplicationsArray[i].toObject();
+        QString programName = entry["Name"].toString();
+        qDebug() << "programName: " << programName;
+        if (programName == application) {
+            femProgramToExe = entry["ExecutablePath"].toString();
+            found = true;
+            break;
+        }
+    }
+
+    if (found == false) {
+        QString message = QString("Error: could not find FEM application ") + application;
+        this->errorMessage(message);
+        return;
+
+    }
+
+    QString uqApp = appDIR +  QDir::separator() + programToExe;
+    QString femApp = appDIR +  QDir::separator() + femProgramToExe;
 
     QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
 
     //
-    // check the python script exists
+    // check the Apps exist
     //
 
-    QFile pyDAKOTA(pySCRIPT);
-    if (! pyDAKOTA.exists()) {
-      errorMessage("Executable script does not exist, try to reset settings, if fails download application again");
+    QFile uqAppFile(uqApp);
+    if (! uqAppFile.exists()) {
+      errorMessage("UQ application does not exist, try to reset settings, if fails download application again");
+      return;
+    }
+
+    QFile femAppFile(femApp);
+    if (! femAppFile.exists()) {
+      qDebug() << "FEM application: " << femApp;
+
+      errorMessage("FEM Application does not exist, try to reset settings, if fails download application again");
       return;
     }
 
     //
-    // now invoke dakota, done via a python script in tool app dircetory
+    // invoke the fem aplication to create workflow driver
     //
 
-    QProcess *proc = new QProcess();
-
-    proc->setProcessChannelMode(QProcess::SeparateChannels);
-    auto procEnv = QProcessEnvironment::systemEnvironment();
-    QString pathEnv = procEnv.value("PATH");
-    QString pythonPathEnv = procEnv.value("PYTHONPATH");
-
-    QString python("python");
-    QString exportPath("export PATH=$PATH");
-    QSettings settings("SimCenter", "Common"); 
-    QVariant  pythonLocationVariant = settings.value("pythonExePath");
-    if (pythonLocationVariant.isValid()) 
-      python = pythonLocationVariant.toString();
-
-    QSettings settingsApplication("SimCenter", QCoreApplication::applicationName());
-    QVariant  openseesPathVariant = settingsApplication.value("openseesPath");
-    if (openseesPathVariant.isValid()) {
-        QFileInfo openseesFile(openseesPathVariant.toString());
-        if (openseesFile.exists()) {
-            QString openseesPath = openseesFile.absolutePath();
-            pathEnv = openseesPath + ';' + pathEnv;
-	    exportPath += ":" + openseesPath;
-        }
-    }
-
-    QVariant  dakotaPathVariant = settingsApplication.value("dakotaPath");
-    if (dakotaPathVariant.isValid()) {
-        QFileInfo dakotaFile(dakotaPathVariant.toString());
-        if (dakotaFile.exists()) {
-            QString dakotaPath = dakotaFile.absolutePath();
-            QString dakotaPythonPath = QFileInfo(dakotaPath).absolutePath() + QDir::separator() +
-                      "share" + QDir::separator() + "Dakota" + QDir::separator() + "Python";
-            pathEnv = dakotaPath + ';' + pathEnv;
-	    exportPath += ":" + dakotaPath;
-            pythonPathEnv = dakotaPythonPath + ";" + pythonPathEnv;
-        }
-    }
-
-    procEnv.insert("PATH", pathEnv);
-    procEnv.insert("PYTHONPATH", pythonPathEnv);
-    proc->setProcessEnvironment(procEnv);
-
-    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
-
-#ifdef Q_OS_WIN
-
-    python = QString("\"") + python + QString("\"");
-
-    proc->start(python,args);
-
-    bool failed = false;
-    if (!proc->waitForStarted(-1))
-    {
-        qDebug() << "Failed to start the workflow!!! exit code returned: " << proc->exitCode();
-        qDebug() << proc->errorString().split('\n');
-        emit errorMessage("Failed to start the workflow!!!");
-        failed = true;
-    }
-
-    if(!proc->waitForFinished(-1))
-    {
-        qDebug() << "Failed to finish running the workflow!!! exit code returned: " << proc->exitCode();
-        qDebug() << proc->errorString();
-        emit errorMessage("Failed to finish running the workflow!!!");
-        return;
+    if (femApp.contains(".py")) {
+        QStringList args{femApp, inputFilename, "runningLocal", "Mac"};
+        this->runApplication(QString("python"), args);
+    } else {
+        QStringList args{inputFilename, "runningLocal", "Mac"};
+        this->runApplication(femApp, args);
     }
 
 
-    if(0 != proc->exitCode())
-    {
-        qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
-        qDebug() << proc->errorString();
-        emit errorMessage("Failed to run the workflow!!!");
-        return;
+    //
+    // now invoke uq app
+    //
+
+    if (uqApp.contains(".py")) {
+        QStringList args{uqApp, tDirectory, tmpDirectory, "runningLocal"};
+        this->runApplication(QString("python"), args);
+    } else {
+        QStringList args{tDirectory, tmpDirectory, "runningLocal"};
+        this->runApplication(uqApp, args);
     }
-
-    if(failed)
-    {
-        qDebug().noquote() << proc->readAllStandardOutput();
-        qDebug().noquote() << proc->readAllStandardError();
-        return;
-    }
-
-#else
-
-    QDir homeDir(QDir::homePath());
-    QString sourceBash("\"");
-    if (homeDir.exists(".bash_profile")) {
-      sourceBash = QString("source $HOME/.bash_profile; ");
-    } else if (homeDir.exists(".bashrc")) {
-      sourceBash = QString("source $HOME/.bashrc; ");
-    } else if (homeDir.exists(".zprofile")) {
-      sourceBash = QString("source $HOME/.zprofile; ");
-    } else if (homeDir.exists(".zshrc")) {
-      sourceBash = QString("source $HOME/.zshrc; ");
-    } else
-      emit errorMessage( "No .bash_profile, .bashrc or .zshrc file found. This may not find Dakota or OpenSees");
-
-    // note the above not working under linux because bash_profile not being called so no env variables!!
-    QString command = sourceBash + exportPath + "; \"" + python + 
-      QString("\" \"" ) + pySCRIPT + QString("\" \"" ) + tDirectory + 
-      QString("\" \"") + tmpDirectory + QString("\" runningLocal");
-
-    //    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
-    //    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningLocal"};
-
-    qDebug() << "PYTHON COMMAND" << command;
-
-    proc->execute("bash", QStringList() << "-c" <<  command);
-    proc->waitForStarted();
-
-#endif
-
-    // proc->waitForStarted();
-
-    // TODO: fix this so that we do not have to open the config file the get the info
 
     // Get the input json data from the dakota.json file
-    QFile inputFile(filenameTMP);
+    QFile inputFile(inputFilename);
     inputFile.open(QFile::ReadOnly | QFile::Text);
     val = inputFile.readAll();
     doc = QJsonDocument::fromJson(val.toUtf8());
@@ -763,6 +835,9 @@ void MainWindow::onRunButtonClicked() {
 
     this->processResults(filenameOUT, filenameTAB);
 }
+
+
+
 
 void MainWindow::onRemoteRunButtonClicked(){
 
@@ -806,13 +881,13 @@ void MainWindow::onRemoteRunButtonClicked(){
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
     //
 
-    QString filenameTMP = tmpDirectory + QDir::separator() + tr("dakota.json");
+    QString inputFilename = tmpDirectory + QDir::separator() + tr("dakota.json");
 
-    QFile file(filenameTMP);
+    QFile file(inputFilename);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Application"),
                              tr("Cannot write file %1:\n%2.")
-                             .arg(QDir::toNativeSeparators(filenameTMP),
+                             .arg(QDir::toNativeSeparators(inputFilename),
                                   file.errorString()));
         return;
     }

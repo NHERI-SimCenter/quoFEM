@@ -113,6 +113,7 @@ signals:
 
  private:
     void setCurrentFile(const QString &fileName);
+    int runApplication(QString app, QStringList args);
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
