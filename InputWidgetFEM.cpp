@@ -95,6 +95,7 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
     femSelection->addItem(tr("OpenSees"));
     femSelection->addItem(tr("FEAPpv"));
     femSelection->addItem(tr("OpenSeesPy"));
+    // femSelection->addItem(tr("Custom"));    
 
     connect(femSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(femProgramChanged(QString)));
 

@@ -42,8 +42,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QComboBox>
 #include <QFileDialog>
+#include <QHBoxLayout>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QLabel>
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QVBoxLayout>
@@ -56,12 +58,25 @@ UQ_JsonEngine::UQ_JsonEngine(QWidget *parent)
 {
 
     QVBoxLayout *layout = new QVBoxLayout();
-
+    QHBoxLayout *applicationLayout = new QHBoxLayout();
+    
     //
     // the selection part
     //
-    theRandomVariables = new RandomVariablesContainer();
+    theApplicationName = new QLineEdit();
+    auto applicationNameLabel = new QLabel();
+    applicationNameLabel->setText(tr("UQ Application Name"));
+    theApplicationName->setToolTip(tr("Input the UQ application name here to match what has been set in WorkflowApplications.json"));
+
+    applicationLayout->addWidget(applicationNameLabel);
+    applicationLayout->addWidget(theApplicationName);
+    applicationLayout->addStretch();
+      
+    QString classType("Uncertain");    
+    theRandomVariables = new RandomVariablesContainer(classType);
     theJsonConfigureWidget = new JsonConfiguredWidget( theRandomVariables );
+    
+    layout->addLayout(applicationLayout);
     layout->addWidget(theJsonConfigureWidget);
     layout->addStretch();
     this->setLayout(layout);
@@ -86,6 +101,22 @@ UQ_JsonEngine::inputFromJSON(QJsonObject &rvObject) {
   return theJsonConfigureWidget->inputFromJSON(rvObject);
 }
 
+bool
+UQ_JsonEngine::outputAppDataToJSON(QJsonObject &jsonObject) {
+  jsonObject["Application"] = theApplicationName->text();
+  QJsonObject dataObj;
+  jsonObject["ApplicationData"] = dataObj;
+
+  return true;  
+}
+
+bool
+UQ_JsonEngine::inputAppDataFromJSON(QJsonObject &jsonObject)
+{
+    Q_UNUSED(jsonObject);
+    return true;
+}
+
 int
 UQ_JsonEngine::processResults(QString &filenameResults, QString &filenameTab) {
   return 0;
@@ -93,13 +124,16 @@ UQ_JsonEngine::processResults(QString &filenameResults, QString &filenameTab) {
 
 RandomVariablesContainer *
 UQ_JsonEngine::getParameters() {
+  QString classType("Uncertain");    
+  theRandomVariables = new RandomVariablesContainer(classType);  
   return theRandomVariables;
 }
 
 UQ_Results *
 UQ_JsonEngine::getResults(void) {
   // CONTINUE HERE TO IMPLEMENT JSONCONFIGUREDSAMPLING CLASS, FIRST IMPLEMENT SCRIPT FOR RUNNING BACKEND
-  return new JsonConfiguredSampling(theRandomVariables);
+  // return new JsonConfiguredSampling(theRandomVariables);
+  return new UQ_Results();
 }
 
 QString

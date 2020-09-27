@@ -39,6 +39,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: Michael Gardner
 
+#include <QLineEdit>
 #include <SimCenterAppWidget.h>
 #include <JsonConfiguredWidget.h>
 
@@ -59,8 +60,8 @@ public:
   int getMaxNumParallelTasks(void) override;
   bool outputToJSON(QJsonObject &jsonObject);
   bool inputFromJSON(QJsonObject &jsonObject);
-  // bool outputAppDataToJSON(QJsonObject &jsonObject);
-  // bool inputAppDataFromJSON(QJsonObject &jsonObject);
+  bool outputAppDataToJSON(QJsonObject &jsonObject);
+  bool inputAppDataFromJSON(QJsonObject &jsonObject);
 
   int processResults(QString &filenameResults, QString &filenameTab) override;
   RandomVariablesContainer * getParameters() override;
@@ -77,6 +78,7 @@ public slots:
 private:
   JsonConfiguredWidget * theJsonConfigureWidget;
   RandomVariablesContainer * theRandomVariables;
+  QLineEdit * theApplicationName;
 };
 
 #endif // UQ_JSON_ENGINE_H
