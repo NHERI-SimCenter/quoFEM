@@ -540,7 +540,7 @@ writeInterface(std::ostream &dakotaFile, json_t *uqData, std::string &workflowDr
 
   dakotaFile << "  fork\n";  
 
-  dakotaFile << "   parameters_file = 'params.in'\n";
+  dakotaFile << "   parameters_file = 'paramsDakota.in'\n";
   dakotaFile << "   results_file = 'results.out' \n";
   dakotaFile << "   aprepro \n";
   dakotaFile << "   work_directory\n";

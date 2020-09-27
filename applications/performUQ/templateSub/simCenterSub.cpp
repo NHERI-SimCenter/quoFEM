@@ -3,27 +3,15 @@
 #include <iostream>
 #include <vector>
 #include <iterator>
-#include <stdlib.h>
-#include <stdio.h>
 
 using std::string;
 using std::vector;
 
 /* ***************** params.in example ******
-{ DAKOTA_VARS     =                      2 }
-{ mag             =  6.903245983350862e+00 }
-{ test             =  1.90                  }
-{ DAKOTA_FNS      =                      5 }
-{ ASV_1:1-PFA-0-1 =                      1 }
-{ ASV_2:1-PFD-0-1 =                      1 }
-{ ASV_3:1-PFA-1-1 =                      1 }
-{ ASV_4:1-PFD-1-1 =                      1 }
-{ ASV_5:1-PID-1-1 =                      1 }
-{ DAKOTA_DER_VARS =                      1 }
-{ DVV_1:mag       =                      1 }
-{ DAKOTA_AN_COMPS =                      0 }
-{ DAKOTA_EVAL_ID  =                      1 }
-******************************************** */
+2
+mag  6.903245983350862e+00
+test 1.90 
+*********************************************/
 
 int main(int argc, char **argv)
 {
@@ -34,9 +22,6 @@ int main(int argc, char **argv)
   std::ifstream params(argv[1]);
   std::ifstream in(argv[2]);
   std::ofstream out(argv[3]);
-  const char *fixedFormat = NULL;
-  if (argc == 5)
-    fixedFormat = argv[4];
 
   if (!params.is_open()) {
     std::cerr << "ERROR: simCenterDprepro could not open: " << argv[1] << "\n";
@@ -52,7 +37,7 @@ int main(int argc, char **argv)
   }
 
   //
-  // vectors that will contain strings to search for (original) & their replacement (replace)
+  // vectors that will contain strings to search for & their replacement
   //
 
   vector<string> original; 
@@ -74,31 +59,19 @@ int main(int argc, char **argv)
     if (lineCount == 0) {
 
       // first line contains #RV
-      numRVs = std::stoi(tokens.at(3));
+      numRVs = std::stoi(tokens.at(0));
+      // std::cerr << "numRV: " << numRVs << "\n";
 
     } else {
 
       // subsequent lines contain RV and value .. add to string vectors
-      string rvName = "\"RV." + tokens.at(1) + "\"";  // add SimCenter delimiters begin="RV. & end="
-      string rvValue = tokens.at(3);
-
-      if (fixedFormat == NULL) {
-	replace.push_back(rvValue);
-      } else {
-	try {
-	  double val = std::stod(rvValue);
-	  char valA[45];
-	  std::sprintf(valA,"%30.15f",val);
-	  std::string valS(valA);
-	  replace.push_back(valS);	
-	} catch(...) {
-	  replace.push_back(rvValue);
-	}
-      }
-
+      string rvName = "\"RV." + tokens.at(0) + "\"";  // add SimCenter delimiters begin="RV. & end="
+      string rvValue = tokens.at(1);
       original.push_back(rvName);
+      replace.push_back(rvValue);
       originalLength.push_back(rvName.length());
       replacementLength.push_back(rvValue.length());
+      // std::cerr << rvName << " " << rvValue << "\n";
     }
 
     lineCount++;

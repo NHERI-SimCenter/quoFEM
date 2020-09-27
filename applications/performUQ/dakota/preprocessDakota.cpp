@@ -14,8 +14,9 @@ int main(int argc, const char **argv) {
 
   const char *inputFile = argv[1];
   const char *workflow = argv[2];
-  const char *runType = argv[3];
-  const char *osType = argv[4];
+  std::string workflow1(argv[3]);
+  const char *runType = argv[4];
+  const char *osType = argv[5];
   
   struct randomVariables theRandomVariables;
   theRandomVariables.numRandomVariables = 0;
@@ -64,11 +65,7 @@ int main(int argc, const char **argv) {
     std::cerr << "EVAL: " << evalConcurrency << "\n";
   }
 
-  std::string workflowDriver = "workflow_driver";
-  if ((strcmp(osType,"Windows") == 0) && (strcmp(runType,"runningLocal") == 0))
-    workflowDriver = "workflow_driver.bat";
-
-  int errorWrite = writeDakotaInputFile(dakotaFile, uqData, rootEDP, theRandomVariables, workflowDriver, rvList, edpList, evalConcurrency);
+  int errorWrite = writeDakotaInputFile(dakotaFile, uqData, rootEDP, theRandomVariables, workflow1, rvList, edpList, evalConcurrency);
 
   dakotaFile.close();
 
@@ -76,153 +73,54 @@ int main(int argc, const char **argv) {
   // open workflow_driver 
   //
 
-  std::ofstream workflowDriverFile(workflowDriver, std::ios::binary);
+  std::ofstream workflowDriverFile(workflow1, std::ios::binary);
 
   if (!workflowDriverFile.is_open()) {
-    std::cerr << "parseFileForRV:: could not create workflow driver file: " << workflowDriver << "\n";
+    std::cerr << "parseFileForRV:: could not create workflow driver file: " << workflow1 << "\n";
     exit(802); // no random variables is allowed
   }
 
-  std::string dpreproCommand;
-  std::string openSeesCommand;
-  std::string pythonCommand;
-  std::string feapCommand;
-  std::string moveCommand;
-
-  const char *localDir = json_string_value(json_object_get(rootINPUT,"localAppDir"));
-  const char *remoteDir = json_string_value(json_object_get(rootINPUT,"remoteAppDir"));
-
-  if (strcmp(runType, "runningLocal") == 0) {
-    dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/dakota/simCenterDprepro\"");
-    openSeesCommand = std::string("OpenSees");
-    pythonCommand = std::string("\"") + json_string_value(json_object_get(rootINPUT,"python")) + std::string("\"");
-    if ((strcmp(osType,"Windows") == 0)) {
-      feapCommand = std::string("Feappv41.exe");
-      moveCommand = std::string("move /y ");
-    }
-    else {
-      feapCommand = std::string("feappv");
-      moveCommand = std::string("mv ");
-    }
-  } else {
-    dpreproCommand = remoteDir + std::string("/applications/performUQ/dakota/simCenterDprepro");
-    openSeesCommand = std::string("/home1/00477/tg457427/bin/OpenSees");
-    pythonCommand = std::string("python");
-    feapCommand = std::string("/home1/00477/tg457427/bin/feappv");
-    moveCommand = std::string("mv ");
-  }
-
-
-  //
-  // based on fem program we do things
-  //
-
-  json_t *fem =  json_object_get(rootINPUT, "fem");
-  if (fem == NULL) {
-    return 0; // no random variables is allowed
-  }
-
-  json_t *programType =  json_object_get(fem, "program");
-  const char *program = json_string_value(programType);    
-
-  std::cerr << "PROGRAM: " << program;
-
-  if (strcmp(program,"OpenSees") == 0) {
-
-    const char *mainInput =  json_string_value(json_object_get(fem, "mainInput"));
-    const char *postprocessScript =  json_string_value(json_object_get(fem, "mainPostprocessScript"));
-    
-    int scriptType = 0;
-    if (strstr(postprocessScript,".py") != NULL) 
-      scriptType = 1;
-    else if (strstr(postprocessScript,".tcl") != NULL) 
-      scriptType = 2;
-
-    std::ofstream templateFile("SimCenterInput.RV");
-    for(std::vector<std::string>::iterator itRV = rvList.begin(); itRV != rvList.end(); ++itRV) {
-      templateFile << "pset " << *itRV << " \"RV." << *itRV << "\"\n";
-    }
-
-    templateFile << "\n set listQoI \"";
-    for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
-      templateFile << *itEDP << " ";
-    }
-
-    templateFile << "\"\n\n\n source " << mainInput << "\n";
-
-    workflowDriverFile << dpreproCommand << " params.in SimCenterInput.RV SimCenterInput.tcl\n";
-	workflowDriverFile << openSeesCommand << " SimCenterInput.tcl 1> ops.out 2>&1\n";
-
-
-    // depending on script type do something
-    if (scriptType == 1) { // python script
-      workflowDriverFile << "\n" << pythonCommand << " " << postprocessScript;
-      for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
-	workflowDriverFile << " " << *itEDP;
-      }
-    } 
-    else if (scriptType == 2) { // tcl script
-      templateFile << " source " << postprocessScript << "\n";      
-    }
-
-    templateFile.close();
-  }    
-
-  else  if (strcmp(program,"FEAPpv") == 0) {
-
-    const char *mainInput =  json_string_value(json_object_get(fem, "mainInput"));
-    const char *postprocessScript =  json_string_value(json_object_get(fem, "mainPostprocessScript"));
-
-    // write run file
-    std::ofstream feapFile("feapname");
-    feapFile << "SimCenterIn.txt   \n";
-    feapFile << "SimCenterOut.txt   \n";
-    feapFile << "SimCenterR.txt   \n";
-    feapFile << "SimCenterR.txt   \n";
-    feapFile << "NONE   \n";
-    feapFile << "\n";
-    feapFile.close();
-
-    // write driiver file
-    workflowDriverFile << dpreproCommand << "  params.in " << mainInput  << " SimCenterIn.txt --formatFixed\n";
-    workflowDriverFile << "echo y | " << feapCommand << "\n";
-    workflowDriverFile << pythonCommand << " " << postprocessScript;
-    for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
-      workflowDriverFile << " " << *itEDP;
-    }
-    workflowDriverFile << "\n";
-  }
-
-
-  else if (strcmp(program,"OpenSeesPy") == 0) {
-
-    const char *mainScript =  json_string_value(json_object_get(fem, "mainInput"));
-    const char *postprocessScript =  json_string_value(json_object_get(fem, "mainPostprocessScript"));
-    const char *parametersScript =  json_string_value(json_object_get(fem, "parametersFile"));
-
-    if (strcmp(parametersScript,"") == 0) {	
-      // workflowDriverFile << moveCommand << mainScript << " tmpSimCenter.script \n";
-      workflowDriverFile << dpreproCommand << "  params.in tmpSimCenter.script " << mainScript << "\n";
-    } else {
-      // workflowDriverFile << moveCommand << parametersScript << " tmpSimCenter.params \n";
-      workflowDriverFile << dpreproCommand << "  params.in  tmpSimCenter.params " << " " << parametersScript << "\n";
-    }
-
-    workflowDriverFile << pythonCommand << " " << mainScript;
-
-    if (strcmp(postprocessScript,"") != 0) {
-      workflowDriverFile << "\n" << pythonCommand << " " << postprocessScript;
-      for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
-	workflowDriverFile << " " << *itEDP;
-      }
-    } else {
-      for(std::vector<std::string>::iterator itEDP = edpList.begin(); itEDP != edpList.end(); ++itEDP) {
-	workflowDriverFile << " " << *itEDP;
-      }
-    }
-  }
+  workflowDriverFile << "python writeParam.py paramsDakota.in params.in\n";
+  workflowDriverFile << "source " << workflow << "\n";
 
   workflowDriverFile.close();
+  
+  std::string moveCommand;
+  
+  std::ofstream writeParamsFile("writeParam.py", std::ios::binary);
+
+  if (!writeParamsFile.is_open()) {
+    std::cerr << "parseFileForRV:: could not create writeParam file\n";
+    exit(802); // no random variables is allowed
+  }  
+
+  writeParamsFile << "import sys\n";
+  writeParamsFile << "import os\n";
+  writeParamsFile << "from subprocess import Popen, PIPE\n";
+  writeParamsFile << "import subprocess\n\n";
+  writeParamsFile << "def main():\n";
+  writeParamsFile << "    paramsIn = sys.argv[1]\n";
+  writeParamsFile << "    paramsOut = sys.argv[2]\n\n";
+  writeParamsFile << "    if not os.path.isfile(paramsIn):\n";
+  writeParamsFile << "        print('Input param file {} does not exist. Exiting...'.format(paramsIn))\n        sys.exit()\n\n";
+  writeParamsFile << "    outFILE = open(paramsOut, 'w')\n\n";
+  writeParamsFile << "    with open(paramsIn) as inFILE:\n\n";
+  writeParamsFile << "        line = inFILE.readline()\n";
+  writeParamsFile << "        splitLine = line.split()\n";
+  writeParamsFile << "        numRV = int(splitLine[3])\n";
+  writeParamsFile << "        print(numRV, file=outFILE)\n\n";
+  writeParamsFile << "        for i in range(numRV):\n";
+  writeParamsFile << "            line = inFILE.readline()\n";
+  writeParamsFile << "            splitLine = line.split()\n";
+  writeParamsFile << "            nameRV = splitLine[1]\n";
+  writeParamsFile << "            valueRV = splitLine[3]\n";
+  writeParamsFile << "            print('{} {}'.format(nameRV, valueRV), file=outFILE)\n\n";
+  writeParamsFile << "    outFILE.close \n";
+  writeParamsFile << "    inFILE.close\n\n";
+  writeParamsFile << "if __name__ == '__main__':\n";
+  writeParamsFile << "   main()\n";
+				     
+  writeParamsFile.close();
 
   //
   // done

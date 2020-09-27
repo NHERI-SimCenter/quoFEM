@@ -488,6 +488,9 @@ QString InputWidgetFEM::getApplicationName() {
 
 
 QString InputWidgetFEM::getMainInput() {
-    return inputFilenames.at(0)->text();
+    if (inputFilenames.length() != 0)
+        return inputFilenames.at(0)->text();
+    else
+        return(QString(""));
 }
 
