@@ -31,15 +31,15 @@
         "ApplicationSpecificInputs": [
         ]
       },
-	  {
+	{
         "Name": "SimCenterUQ-UQ",
         "ExecutablePath": "applications/performUQ/SimCenterUQ/parseSimCenterUQ.py",
         "ApplicationSpecificInputs": [
         ]
       },
       {
-        "Name": "uqPY",
-        "ExecutablePath": "applications/performUQ/uqPy/runUQ_PY.py",
+        "Name": "UCSD-UQ",
+        "ExecutablePath": "applications/performUQ/UCSD_UQ/mainscript.py",
         "ApplicationSpecificInputs": [
         ]
       }
