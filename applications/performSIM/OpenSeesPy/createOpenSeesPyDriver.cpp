@@ -175,7 +175,17 @@ int main(int argc, const char **argv) {
   }
 
   workflowDriverFile.close();
-
+  
+  try {
+    std::filesystem::permissions(workflowDriver,
+				 std::filesystem::perms::owner_all |
+				 std::filesystem::perms::group_all,
+				 std::filesystem::perm_options::add);
+  }
+  catch (std::exception& e) {
+    std::cerr << "createOpenSeesPyDriver - failed to set permissions\n";
+  }
+  
   //
   // done
   //
