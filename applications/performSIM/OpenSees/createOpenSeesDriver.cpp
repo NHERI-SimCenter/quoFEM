@@ -125,7 +125,6 @@ int main(int argc, const char **argv) {
   }
 
 
-
   json_t *fem =  json_object_get(rootInput, "fem");
   if (fem == NULL) {
     return 0; // no random variables is allowed
@@ -171,6 +170,17 @@ int main(int argc, const char **argv) {
 
   workflowDriverFile.close();
 
+
+  try {
+    std::filesystem::permissions(workflowDriver,
+				 std::filesystem::perms::owner_all |
+				 std::filesystem::perms::group_all,
+				 std::filesystem::perm_options::add);
+  }
+  catch (std::exception& e) {
+    std::cerr << "createOpenSeesDriver - failed in setting permissions\n";
+  }
+    
   //
   // done
   //

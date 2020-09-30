@@ -25,9 +25,6 @@ workdir_main = inputArgs[1]
 workdir_temp = inputArgs[2]
 run_type = inputArgs[3]
 
-with open('PATH.err', 'w') as f:
-    print(os.environ, file=f)
-
 # Replace the PATH TO strings with the path to the given executable in your 
 # computer. The 'darwin' part corresponds to Mac, the 'else' clause corresponds 
 # to Windows. You only need the path to either Feap or OpenSees depending on 
