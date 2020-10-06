@@ -81,7 +81,10 @@ int main(int argc, const char **argv) {
   }
 
   workflowDriverFile << "python3 writeParam.py paramsDakota.in params.in\n";
-  workflowDriverFile << "source " << workflow << "\n";
+  //  if (strcmp(runType,"runningLocal") != 0) {
+  //    workflowDriverFile << "chmod 'a+rx' " << workflow << "\n";
+  //  }
+  workflowDriverFile << "source ./" << workflow << "\n";
 
   workflowDriverFile.close();
   
