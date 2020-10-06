@@ -52,9 +52,12 @@ int main(int argc, const char **argv) {
   //current_path(currentPath);
   auto path = std::filesystem::current_path(); //getting path
   std::cerr << "PATH: " << path << '\n';
-  std::string fileName = std::filesystem::path(inputFile).filename();
+  //std::string fileName = std::filesystem::path(inputFile).filename();
+  std::filesystem::path fileNameP = std::filesystem::path(inputFile).filename();
+  std::string fileName = fileNameP.generic_string();   
   std::cerr << "fileName: " << fileName << '\n';
 
+  
   std::string fullPath = std::filesystem::path(inputFile).remove_filename();
   std::cerr << "fullPath: " << fullPath << '\n';  
 
