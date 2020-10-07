@@ -120,7 +120,12 @@ int main(int argc, const char **argv) {
 
   if (runType.compare("runningLocal") == 0) {
 
-    dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/templateSub/simCenterSub\"");
+    if (osType.compare("Windows") == 0) {
+      dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/templateSub/simCenterSub.exe\"");
+    } else {
+      dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/templateSub/simCenterSub\"");
+    }
+    
     openSeesCommand = std::string("OpenSees");
     pythonCommand = std::string("\"") + json_string_value(json_object_get(rootInput,"python")) + std::string("\"");
 

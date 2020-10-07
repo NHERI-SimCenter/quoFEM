@@ -38,6 +38,7 @@ int main(int argc, const char **argv) {
   int numRV = parseForRV(rootINPUT, theRandomVariables);
 
   //
+
   // open empty dakota input file & write file
   //
 
@@ -80,11 +81,18 @@ int main(int argc, const char **argv) {
     exit(802); // no random variables is allowed
   }
 
-  workflowDriverFile << "python3 writeParam.py paramsDakota.in params.in\n";
-  //  if (strcmp(runType,"runningLocal") != 0) {
-  //    workflowDriverFile << "chmod 'a+rx' " << workflow << "\n";
-  //  }
-  workflowDriverFile << "source ./" << workflow << "\n";
+  if ((strcmp(runType,"runningLocal") == 0)
+      && strcmp(osType,"Windows") == 0) {
+    workflowDriverFile << "python writeParam.py paramsDakota.in params.in\n";
+    workflowDriverFile << "call ./" << workflow << "\n";
+    std::cerr << "WINDOWS\n";
+    
+  } else {
+
+    workflowDriverFile << "python3 writeParam.py paramsDakota.in params.in\n";
+    workflowDriverFile << "source ./" << workflow << "\n";
+    std::cerr << "OTHER\n";
+  }
 
   workflowDriverFile.close();
   
