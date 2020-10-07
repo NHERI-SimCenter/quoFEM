@@ -58,7 +58,7 @@ int main(int argc, const char **argv) {
   std::cerr << "fileName: " << fileName << '\n';  
 
   
-  std::string fullPath = std::filesystem::path(inputFile).remove_filename();
+  std::string fullPath = std::filesystem::path(inputFile).remove_filename().generic_string();
 
   std::filesystem::current_path(fullPath); //getting path
   std::filesystem::current_path(fullPath); //getting path
