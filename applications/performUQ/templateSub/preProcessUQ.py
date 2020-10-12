@@ -1,11 +1,18 @@
 # written: Michael Gardner @ UNR
 
+import sys
 from rvDelimiter import RvDelimiterFactory
 
-def preProcessUQ(paramsFile, inputFile, outputFile, rvSpecifier):
+def main():
     # These are the delimiter choices, which can expanded as more UQ programs are added. Remember to also
     # extend the factory in rvDelimiter to handle addtional cases
     rvDelimiterChoices=["SimCenterDelimiter", "UQpyDelimiter"]
+
+    inputArgs = sys.argv    
+    paramsFile = inputArgs[1]
+    inputFile = inputArgs[2]
+    outputFile = inputArgs[3]
+    rvSpecifier = inputArgs[4]    
     
     if rvSpecifier not in rvDelimiterChoices:
         except IOError:
@@ -60,3 +67,6 @@ def preProcessUQ(paramsFile, inputFile, outputFile, rvSpecifier):
         realizationOutput.write(line)
 
     realizationOutput.close()
+
+if __name__ == '__main__':
+    main()

@@ -1,16 +1,19 @@
 # written: Michael Gardner @ UNR
 
+import os
+# THIS IS FOR WHEN MESSING AROUND WITH UQpy SOURCE
+# import sys
+# sys.path.append(os.path.abspath("/home/michael/UQpy/src"))
 from UQpy.SampleMethods import LHS
 from UQpy.RunModel import RunModel
-import numpy as np
-import matplotlib.pyplot as plt
+from UQpy import Distributions
+from createTemplate import createTemplate
 import time
 import csv
 import json
-import importlib.util
-from pathlib import Path  
+import shutil
 
-def runUQpy(uqData, simulationData, randomVarsData, demandParams, workingDir, runType):
+def runUQpy(uqData, simulationData, randomVarsData, demandParams, workingDir, runType, localAppDir, remoteAppDir):
     """
     This function configures and runs a UQ simulation using UQpy based on the 
     input UQ configuration, simulation configuration, random variables,
@@ -25,22 +28,33 @@ def runUQpy(uqData, simulationData, randomVarsData, demandParams, workingDir, ru
     demandParams:   JsonObject that specifies the demand parameters as input in the quoFEM GUI
     workingDir:     Directory in which to run simulations and store temporary results
     runType:        Specifies whether computations are being run locally or on an HPC cluster
+    localAppDir:    Directory containing apps for local run
+    remoteAppDir:   Directory containing apps for remote run
     """
     
     # There is still plenty of configuration that can and should be added here. This currently does LHS sampling with Uniform
     # distributions only, though this is easily expanded
 
+    # Copy required python files to template directory
+    shutil.copyfile(os.path.join(localAppDir, 'applications/performUQ/other/runWorkflowDriver.py'),
+                                 os.path.join(workingDir, 'runWorkflowDriver.py'))
+    shutil.copyfile(os.path.join(localAppDir, 'applications/performUQ/other/createTemplate.py'),
+                                 os.path.join(workingDir, 'createTemplate.py'))
+    shutil.copyfile(os.path.join(localAppDir, 'applications/performUQ/other/processUQpyOutput.py'),
+                                 os.path.join(workingDir, 'processUQpyOutput.py'))
+
     # Parse configuration for UQ    
     distributionNames = []
     distributionParams = []
     variableNames = []
+    distributionObjects = []
     samples = []
     samplingMethod = ""
     numberOfSamples = 0
-    modelScript = ""
-    inputTemplate = ""
-    outputObjectName = ""
-    outputScript = ""
+    modelScript = 'runWorkflowDriver.py'
+    inputTemplate = 'params.template'
+    outputObjectName = 'OutputProcessor'
+    outputScript = 'processUQpyOutput.py'
     numberOfTasks = 1
     numberOfNodes = 1
     coresPerTask = 1
@@ -55,7 +69,7 @@ def runUQpy(uqData, simulationData, randomVarsData, demandParams, workingDir, ru
         if val["distribution"] == "Uniform":
             distributionNames.append('Uniform')
             variableNames.append(val["name"])
-            distributionParams.append([val["lowerbound"], (val["upperbound"] - val["lowerbound"])])
+            distributionParams.append([val["lowerbound"], val["upperbound"]])
         else:
             raise IOError("ERROR: You'll need to update runUQpy.py to run your specified RV distribution!")
 
@@ -66,19 +80,6 @@ def runUQpy(uqData, simulationData, randomVarsData, demandParams, workingDir, ru
         if val["name"] == "Number of Samples":
             numberOfSamples = val["value"]
 
-        if val["name"] == "Model Script":
-            modelScript = val["value"]
-
-        if val["name"] == "Input Template":
-            inputTemplate = val["value"]
-
-        if val["name"] == "Output Object":
-            outputObjectName = val["value"]
-
-        if val["name"] == "Output Script":
-            outputScript = val["value"]
-            spec = importlib.util.spec_from_file_location(Path(outputScript).stem, outputScript)
-
         if val["name"] == "Number of Concurrent Tasks":
             numberOfTasks = val["value"]
 
@@ -88,21 +89,57 @@ def runUQpy(uqData, simulationData, randomVarsData, demandParams, workingDir, ru
         if val["name"] == "Cores per Task":
             coresPerTask = val["value"]
 
+
+    # Create distribution objects
+    for index, val in enumerate(distributionNames, 0):
+        distributionObjects.append(Distributions.Uniform(distributionParams[index][0], distributionParams[index][1]))
+
+    createTemplate(variableNames, inputTemplate)
+            
     # Generate samples
     if samplingMethod == "LHS":
-        samples = LHS(dist_name=distributionNames, dist_params=distributionParams, lhs_criterion='random',\
-                      lhs_iter=None, nsamples=numberOfSamples, var_names=variableNames)
+        samples = LHS(dist_object=distributionObjects, lhs_criterion='random',\
+                      lhs_iter=None, nsamples=numberOfSamples, var_names=variableNames)        
+        # samples = LHS(dist_name=distributionNames, dist_params=distributionParams, lhs_criterion='random',\
+        #               lhs_iter=None, nsamples=numberOfSamples, var_names=variableNames)
     else:
         raise IOError("ERROR: You'll need to update runUQpy.py to run your specified sampling method!")
 
+    # Change workdir to the template directory
+    os.chdir(workingDir)    
+    
     # Run model based on input config
     startTime = time.time()
     model = RunModel(samples=samples.samples, model_script=modelScript,
-                     input_template=inputTemplate, var_names=samples.var_names,
+                     input_template=inputTemplate, var_names=variableNames,
                      output_script=outputScript, output_object_name=outputObjectName,
-                     model_dir=workingDir, verbose=True, ntasks=numberOfTasks,
+                     verbose=True, ntasks=numberOfTasks,
                      nodes=numberOfNodes, cores_per_task=coresPerTask,
                      cluster=clusterRun, resume=resumeRun)
     
     runTime = time.time() - startTime
     print("\nTotal time for all experiments: ", runTime)
+
+    with open(os.path.join(workingDir, '..', 'tabularResults.out'), 'w') as f:
+        f.write("%eval_id\t interface\t")
+
+        for val in variableNames:
+            f.write("%s\t" % val)
+
+        for val in demandParams:
+            f.write("%s\t" % val["name"])
+
+        f.write("\n")
+            
+        for index, experiment in enumerate(model.qoi_list, 0):
+            if len(experiment) != 0:
+                for item in experiment:
+                    f.write("%s\t custom\t" % (index + 1))
+                    for sample in samples.samples[index]:
+                        f.write("%s\t" % sample)
+
+                    for result in item:
+                        f.write("%s\t" % result)
+                        
+                        f.write("\n")
+    f.close()

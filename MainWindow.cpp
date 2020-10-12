@@ -695,6 +695,7 @@ void MainWindow::onRunButtonClicked() {
     QString appDIR = SimCenterPreferences::getInstance()->getAppDir();
 
     QString programToExe;
+    QString programName;
     QString femProgramToExe;
 
     //
@@ -726,7 +727,7 @@ void MainWindow::onRunButtonClicked() {
     bool found = false;
     for (int i=0; i<uqApplicationsArray.size(); i++) {
         QJsonObject entry = uqApplicationsArray[i].toObject();
-        QString programName = entry["Name"].toString();
+        programName = entry["Name"].toString();
         qDebug() << "programName: " << programName;
         if (programName == appName) {
             programToExe = entry["ExecutablePath"].toString();
@@ -840,7 +841,9 @@ void MainWindow::onRunButtonClicked() {
     QString filenameOUT = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota.out");
     QString filenameTAB;
     if (problemType == "Inverse Problem") {
-        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota_mcmc_tabular.dat");
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota_mcmc_tabular.dat");	
+    } else if (programName == "Other-UQ") {
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("tabularResults.out");
     } else {
         filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
     }

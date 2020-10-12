@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGETFEM_H
-#define INPUTWIDGETFEM_H
+#ifndef DAKOTA_RESULTS_SAMPLING_H
+#define DAKOTA_RESULTS_SAMPLING_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -37,70 +37,65 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
+// Written: fmckenna and mhgardner
 
-#include <SimCenterWidget.h>
+#include <UQ_Results.h>
+#include <QtCharts/QChart>
+#include <QMessageBox>
+#include <QPushButton>
 
-#include "EDP.h"
-#include <QVector>
-#include <QSpinBox>
-class QGridLayout;
-class QVBoxLayout;
-class QGroupBox;
-class QComboBox;
-class QGroupBox;
-class QSpinBox;
 
-class InputWidgetParameters;
+using namespace QtCharts;
 
-class InputWidgetFEM : public SimCenterWidget
+class QTextEdit;
+class QTabWidget;
+class MyTableWidget;
+class MainWindow;
+class RandomVariablesContainer;
+
+//class QChart;
+
+class CustomUQ_Results : public UQ_Results
 {
     Q_OBJECT
 public:
-    explicit InputWidgetFEM(InputWidgetParameters *theParams, QWidget *parent = 0);
-    ~InputWidgetFEM();
+  explicit CustomUQ_Results(RandomVariablesContainer *, QWidget *parent = 0);
+    ~CustomUQ_Results();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
-    QString getApplicationName();
-    QString getMainInput();
-
-     // copy main file to new filename ONLY if varNamesAndValues not empy
-    void specialCopyMainInput(QString fileName, QStringList varNamesAndValues);
-    int parseInputfilesForRV(QString filnema1);
+    int processResults(QString &filenameResults, QString &filenameTab);
+    QWidget *createResultEDPWidget(QString &name, double mean, double stdDev, double skewness, double kurtosis);
 
 signals:
 
 public slots:
    void clear(void);
-   void femProgramChanged(const QString &arg1);
-   void numModelsChanged(int newNum);
-   void customInputNumberChanged(int numCustomInputs);
+   void onSpreadsheetCellClicked(int, int);
+   void onSaveSpreadsheetClicked();
 
-   //void chooseFileName1(void);
-   //void chooseFileName2(void);
+   // modified by padhye 08/25/2018
 
 private:
+   RandomVariablesContainer *theRVs;
+   QTabWidget *tabWidget;
 
-    QVBoxLayout *layout;
-    QWidget     *femSpecific;
-    QComboBox   *femSelection;
-    QSpinBox * theCustomInputNumber;
-    QVBoxLayout* theCustomLayout;
-    QVBoxLayout* theCustomFileInputs;
-    QWidget* theCustomFileInputWidget;
+   MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
+   QChart *chart;
+   QPushButton* save_spreadheet; // save the data from spreadsheet 
+   QLabel *label;
+   QLabel *best_fit_instructions;
 
-    //    QLineEdit *file1;
-    // QLineEdit *file2;
+   int col1, col2;
+   bool mLeft;
+   QStringList theHeadings;
 
-    InputWidgetParameters *theParameters;
-    QStringList varNamesAndValues;
-
-    int numInputs;
-    QVector<QLineEdit *>inputFilenames;
-    QVector<QLineEdit *>postprocessFilenames;
-    QVector<QLineEdit *>parametersFilenames;
+   QVector<QString>theNames;
+   QVector<double>theMeans;
+   QVector<double>theStdDevs;
+   QVector<double>theKurtosis;
+   QVector<double>theSkewness;
 };
 
-#endif // INPUTWIDGETFEM_H
+#endif // DAKOTA_RESULTS_SAMPLING_H

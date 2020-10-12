@@ -92,11 +92,12 @@ SOURCES += main.cpp\
     UQ_JsonEngine.cpp \
     UCSD_Engine.cpp \
     UCSD_TMMC.cpp \
-    UCSD_Results.cpp
+    UCSD_Results.cpp \
+    CustomUQ_Results.cpp
 
 HEADERS  += MainWindow.h \
     InputWidgetEDP.h \
-EDP.h \
+    EDP.h \
     InputWidgetFEM.h \
     SidebarWidgetSelection.h \
     UQ_EngineSelection.h \
@@ -144,7 +145,8 @@ EDP.h \
     UQ_JsonEngine.h \
     UCSD_Engine.h \
     UCSD_TMMC.h \
-    UCSD_Results.h
+    UCSD_Results.h \
+    CustomUQ_Results.h
 
 FORMS    += mainwindow.ui
 

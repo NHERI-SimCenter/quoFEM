@@ -4,7 +4,8 @@ from runUQpy import runUQpy
 # Currently, the only UQ driver that is implemented is UQpy. Use this as a starting point if you want
 # to add other UQ capabilities
 
-def configureAndRunUQ(uqData, simulationData, randomVarsData, demandParams, workingDir, runType):
+def configureAndRunUQ(uqData, simulationData, randomVarsData, demandParams, workingDir,
+                      runType, localAppDir, remoteAppDir):
     """
     This function configures and runs a UQ simulation based on the input
     UQ driver and its associated inputs, simulation configuration, random
@@ -19,6 +20,8 @@ def configureAndRunUQ(uqData, simulationData, randomVarsData, demandParams, work
     demandParams:   JsonObject that specifies the demand parameters as input in the quoFEM GUI
     workingDir:     Directory in which to run simulations and store temporary results
     runType:        Specifies whether computations are being run locally or on an HPC cluster
+    localAppDir:    Directory containing apps for local run
+    remoteAppDir:   Directory containing apps for remote run
     """
     uqDriver = ""
     
@@ -27,6 +30,6 @@ def configureAndRunUQ(uqData, simulationData, randomVarsData, demandParams, work
             uqDriver = val["value"]
     
     if uqDriver == "UQpy":
-        runUQpy(uqData, simulationData, randomVarsData, demandParams, workingDir, runType)
+        runUQpy(uqData, simulationData, randomVarsData, demandParams, workingDir, runType, localAppDir, remoteAppDir)
     else:
         raise ValueError("ERROR: Input UQ driver application not recognized: ", uqDriver)            

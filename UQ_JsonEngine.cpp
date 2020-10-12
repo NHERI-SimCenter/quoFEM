@@ -53,6 +53,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QDebug>
 
+#include "CustomUQ_Results.h"
+
 UQ_JsonEngine::UQ_JsonEngine(QWidget *parent)
 : UQ_Engine(parent)
 {
@@ -131,9 +133,7 @@ UQ_JsonEngine::getParameters() {
 
 UQ_Results *
 UQ_JsonEngine::getResults(void) {
-  // CONTINUE HERE TO IMPLEMENT JSONCONFIGUREDSAMPLING CLASS, FIRST IMPLEMENT SCRIPT FOR RUNNING BACKEND
-  // return new JsonConfiguredSampling(theRandomVariables);
-  return new UQ_Results();
+  return new CustomUQ_Results(theRandomVariables);
 }
 
 QString
