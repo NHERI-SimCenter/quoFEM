@@ -187,8 +187,8 @@ RemoteJobCreator::uploadDirReturn(bool result)
         parameters["inputFile"]="dakota.in";
         parameters["outputFile"]="dakota.out";
         parameters["errorFile"]="dakota.err";
-        parameters["driverFile"]="workflow_driver";
-        parameters["modules"]="petsc";
+        parameters["driverFile"]="workflow_driver1";
+        parameters["modules"]="petsc, python3";
         job["parameters"]=parameters;
 
         QDir theDirectory(directoryName);

@@ -96,7 +96,7 @@ using namespace QtCharts;
 //#define NUM_DIVISIONS 10
 
 DakotaResultsSampling::DakotaResultsSampling(RandomVariablesContainer *theRandomVariables, QWidget *parent)
-  : UQ_Results(parent), theRVs(theRandomVariables)
+  : UQ_Results(parent), theRVs(theRandomVariables), spreadsheet(0), tabWidget(0), chart(0)
 {
     // title & add button
     tabWidget = new QTabWidget(this);

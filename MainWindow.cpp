@@ -1083,37 +1083,6 @@ void MainWindow::onRemoteRunButtonClicked(){
     }
 
 
-
-/******
-
-
-
-
-    //
-    // now use the applications parseDAKOTA file to run dakota and produce output files:
-    //    dakota.in dakota.out dakotaTab.out dakota.err
-    //
-
-    QString homeDIR = QDir::homePath();
-    //QString appDIR = qApp->applicationDirPath();
-    QString appDIR = SimCenterPreferences::getInstance()->getAppDir();
-
-   // appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
-   //   QDir::separator() + QString("localApp");
-
-    //
-    QString pySCRIPT = appDIR +  QDir::separator() + QString("applications") +
-                QDir::separator() + QString("performUQ") + QDir::separator() +
-                QString("dakota") + QDir::separator() + QString("parseDAKOTA.py");
-
-    QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + strUnique;
-
-    QFile pyDAKOTA(pySCRIPT);
-    if (! pyDAKOTA.exists()) {
-      errorMessage("Dakota script does not exist, the parseDAKOTA.py script was not found in exe folder! .. download application again");
-      return;
-    }
-
     //
     // want to first remove old dakota files from the current directory
     //
@@ -1129,47 +1098,6 @@ void MainWindow::onRemoteRunButtonClicked(){
         QFile file(destinationDir + copy);
         file.remove();
     }
-
-    //
-    // now invoke dakota, done via a python script in tool app dircetory
-    //
-
-
-    QProcess *proc = new QProcess();
-
-    QString python("python");
-    QSettings settings("SimCenter", "Common"); 
-    QVariant  pythonLocationVariant = settings.value("pythonExePath");
-    if (pythonLocationVariant.isValid()) 
-      python = pythonLocationVariant.toString();
-
-#ifdef Q_OS_WIN
-
-    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningRemote"};
-    qDebug() << args;
-    proc->execute(python, args);
-
-    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
-    //qDebug() << command;
-    //proc->execute("cmd", QStringList() << "/C" << command);
-    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
-
-#else
-
-    // wrap paths with quotes:
-    pySCRIPT = "\"" + pySCRIPT + "\"";
-    tDirectory = "\"" + tDirectory + "\"";
-    tmpDirectory = "\"" + tmpDirectory + "\"";
-    QString command = QString("source $HOME/.bashrc; source $HOME/.bash_profile; \"") + python +QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
-    proc->execute("bash", QStringList() << "-c" <<  command);
-    qDebug() << command;
-    // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
-#endif
-    proc->waitForStarted();
-
-    **/
-
-    return;
 
     //
     // in tmpDirectory we will zip up current template dir and then remove before sending (doone to reduce number of sends)

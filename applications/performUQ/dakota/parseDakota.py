@@ -61,7 +61,7 @@ myScriptDir = os.path.dirname(os.path.realpath(__file__))
 inputFile = "dakota.json"
 
 osType = platform.system()
-preprocessorCommand = '"{}/preprocessDakota" {} {} {} {}'.format(myScriptDir, inputFile, workflow_driver, workflow_driver1, run_type, osType)
+preprocessorCommand = '"{}/preprocessDakota" {} {} {} {} {}'.format(myScriptDir, inputFile, workflow_driver, workflow_driver1, run_type, osType)
 subprocess.Popen(preprocessorCommand, shell=True).wait()
 
 print("DONE RUNNING PREPROCESSOR\n")
