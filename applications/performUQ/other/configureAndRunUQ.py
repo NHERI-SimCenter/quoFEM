@@ -1,8 +1,8 @@
 # written: Michael Gardner @ UNR
 
-from runUQpy import runUQpy
-# Currently, the only UQ driver that is implemented is UQpy. Use this as a starting point if you want
-# to add other UQ capabilities
+from UQpyRunner import UQpyRunner
+# Currently, the only UQ driver that is implemented is UQpy. Use this as a
+# starting point if you want to add other UQ capabilities
 
 def configureAndRunUQ(uqData, simulationData, randomVarsData, demandParams, workingDir,
                       runType, localAppDir, remoteAppDir):
@@ -23,13 +23,18 @@ def configureAndRunUQ(uqData, simulationData, randomVarsData, demandParams, work
     localAppDir:    Directory containing apps for local run
     remoteAppDir:   Directory containing apps for remote run
     """
-    uqDriver = ""
+
+    uqDriverOptions = ["UQpy"]
     
     for val in uqData["Parameters"]:
         if val["name"] == "UQ Driver":
             uqDriver = val["value"]
-    
-    if uqDriver == "UQpy":
-        runUQpy(uqData, simulationData, randomVarsData, demandParams, workingDir, runType, localAppDir, remoteAppDir)
+        
+    if uqDriver not in uqDriverOptions:
+        raise ValueError("ERROR: configureAndRunUQ.py: UQ driver not recognized."+\
+                         " Either input incorrectly or class to run UQ driver not"+\
+                         " implemented: ", uqDriver)
     else:
-        raise ValueError("ERROR: Input UQ driver application not recognized: ", uqDriver)            
+        uqDriverClass = globals()[uqDriver+"Runner"]
+        uqDriverClass().runUQ(uqData, simulationData, randomVarsData, demandParams,
+                              workingDir, runType, localAppDir, remoteAppDir)      
