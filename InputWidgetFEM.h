@@ -43,11 +43,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "EDP.h"
 #include <QVector>
+#include <QSpinBox>
 class QGridLayout;
 class QVBoxLayout;
 class QGroupBox;
 class QComboBox;
 class QGroupBox;
+class QSpinBox;
 
 class InputWidgetParameters;
 
@@ -74,6 +76,7 @@ public slots:
    void clear(void);
    void femProgramChanged(const QString &arg1);
    void numModelsChanged(int newNum);
+   void customInputNumberChanged(int numCustomInputs);
 
    //void chooseFileName1(void);
    //void chooseFileName2(void);
@@ -83,10 +86,13 @@ private:
     QVBoxLayout *layout;
     QWidget     *femSpecific;
     QComboBox   *femSelection;
+    QSpinBox * theCustomInputNumber;
+    QVBoxLayout* theCustomLayout;
+    QVBoxLayout* theCustomFileInputs;
+    QWidget* theCustomFileInputWidget;
 
     //    QLineEdit *file1;
     // QLineEdit *file2;
-
 
     InputWidgetParameters *theParameters;
     QStringList varNamesAndValues;
@@ -95,6 +101,7 @@ private:
     QVector<QLineEdit *>inputFilenames;
     QVector<QLineEdit *>postprocessFilenames;
     QVector<QLineEdit *>parametersFilenames;
+    QVector<QLineEdit *>customInputFiles;
 };
 
 #endif // INPUTWIDGETFEM_H
