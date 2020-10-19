@@ -65,23 +65,24 @@ public:
 
     QString getApplicationName();
     QString getMainInput();
+    QVector< QString > getCustomInputs() const;  
 
      // copy main file to new filename ONLY if varNamesAndValues not empy
     void specialCopyMainInput(QString fileName, QStringList varNamesAndValues);
     int parseInputfilesForRV(QString filnema1);
 
-signals:
+  signals:
 
-public slots:
-   void clear(void);
-   void femProgramChanged(const QString &arg1);
-   void numModelsChanged(int newNum);
-   void customInputNumberChanged(int numCustomInputs);
+  public slots:
+    void clear(void);
+    void femProgramChanged(const QString& arg1);
+    void numModelsChanged(int newNum);
+    void customInputNumberChanged(int numCustomInputs);
 
-   //void chooseFileName1(void);
-   //void chooseFileName2(void);
+    // void chooseFileName1(void);
+    // void chooseFileName2(void);
 
-private:
+  private:
 
     QVBoxLayout *layout;
     QWidget     *femSpecific;

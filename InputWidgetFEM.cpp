@@ -36,7 +36,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <iostream>
 #include "InputWidgetFEM.h"
 #include <QGridLayout>
 #include <QComboBox>
@@ -616,75 +615,81 @@ void InputWidgetFEM::chooseFileName1(void)
 void
 InputWidgetFEM::specialCopyMainInput(QString fileName, QStringList varNames) {
     // if OpenSees or FEAP parse the file for the variables
-    if (varNames.size() > 0) {
-        QString pName = femSelection->currentText();
-        if (pName == "OpenSees" || pName == "OpenSees-2") {
-            OpenSeesParser theParser;
-            QVectorIterator<QLineEdit *> i(inputFilenames);
-            while (i.hasNext())
-                theParser.writeFile(i.next()->text(), fileName,varNames);
-        }  else if (pName == "FEAPpv") {
-            FEAPpvParser theParser;
-            QVectorIterator<QLineEdit *> i(inputFilenames);
-            while (i.hasNext())
-                theParser.writeFile(i.next()->text(), fileName,varNames);
-
-        }  else if (pName == "OpenSeesPy") {
-            // do things a little different!
-            QFileInfo file(fileName);
-            QString fileDir = file.absolutePath();
-            //qDebug() << "FILENAME: " << fileName << " path: " << fileDir;
-            //qDebug() << "LENGTHS:" << inputFilenames.count() << parametersFilenames.count() << parametersFilenames.length();
-            OpenSeesPyParser theParser;
-            bool hasParams = false;
-            QVectorIterator<QLineEdit *> i(parametersFilenames);
-            QString newName = fileDir + QDir::separator() + "tmpSimCenter.params";
-            while (i.hasNext()) {
+    if (femSelection->currentText() != "Custom")
+    {
+       if (varNames.size() > 0)
+       {
+          QString pName = femSelection->currentText();
+          if (pName == "OpenSees" || pName == "OpenSees-2")
+          {
+             OpenSeesParser theParser;
+             QVectorIterator< QLineEdit* > i(inputFilenames);
+             while (i.hasNext())
+                theParser.writeFile(i.next()->text(), fileName, varNames);
+          }
+          else if (pName == "FEAPpv")
+          {
+             FEAPpvParser theParser;
+             QVectorIterator< QLineEdit* > i(inputFilenames);
+             while (i.hasNext())
+                theParser.writeFile(i.next()->text(), fileName, varNames);
+          }
+          else if (pName == "OpenSeesPy")
+          {
+             // do things a little different!
+             QFileInfo file(fileName);
+             QString fileDir = file.absolutePath();
+             // qDebug() << "FILENAME: " << fileName << " path: " << fileDir;
+             // qDebug() << "LENGTHS:" << inputFilenames.count() << parametersFilenames.count() <<
+             // parametersFilenames.length();
+             OpenSeesPyParser theParser;
+             bool hasParams = false;
+             QVectorIterator< QLineEdit* > i(parametersFilenames);
+             QString newName = fileDir + QDir::separator() + "tmpSimCenter.params";
+             while (i.hasNext())
+             {
                 QString fileName = i.next()->text();
-                if (fileName.length() != 0) {
-                    theParser.writeFile(fileName, newName,varNames);
-                    hasParams = true;
+                if (fileName.length() != 0)
+                {
+                   theParser.writeFile(fileName, newName, varNames);
+                   hasParams = true;
                 }
-            }
+             }
 
-            if (hasParams == false) {
+             if (hasParams == false)
+             {
                 QString newName = fileDir + QDir::separator() + "tmpSimCenter.script";
-                QVectorIterator<QLineEdit *> i(inputFilenames);
-                while (i.hasNext()) {
-                    QFile::copy(i.next()->text(), newName);
+                QVectorIterator< QLineEdit* > i(inputFilenames);
+                while (i.hasNext())
+                {
+                   QFile::copy(i.next()->text(), newName);
                 }
-            }
-        } else {
-	  std::cout << "\nWILL BE ADDING SOMETHING HERE!!!\n";
-	}
+             }
+          }
+       }
     }
 }
-
-
 
 QString InputWidgetFEM::getApplicationName() {
     return femSelection->currentText();
 }
 
-
-QString InputWidgetFEM::getMainInput() {
-
-  QVectorIterator<QLineEdit *> i(inputFilenames);
-  std::cout << "\nINPUT FILES:\n";
-  while (i.hasNext()) {
-    std::cout << (i.next()->text()).toUtf8().constData() << std::endl;    
-  }
-
-  std::cout << "\nINPUT FILES:\n";  
-  QVectorIterator<QLineEdit *> j(customInputFiles);  
-  while (j.hasNext()) {
-    std::cout << (j.next()->text()).toUtf8().constData() << std::endl;    
-  }
-  
+QString InputWidgetFEM::getMainInput() { 
   if (inputFilenames.length() != 0) {
-      std::cout << "\nMAIN INPUT: " << (inputFilenames.at(0)->text()).toUtf8().constData() << std::endl;
-        return inputFilenames.at(0)->text();    
-  } else
-        return(QString(""));
+    return inputFilenames.at(0)->text();    
+  } else {
+    return(QString(""));    
+  }
 }
 
+QVector< QString > InputWidgetFEM::getCustomInputs() const {
+   QVector< QString > stringOutput(customInputFiles.size());
+
+   unsigned int count = 0;
+   for (auto const& val : customInputFiles)
+   {
+      stringOutput[count] = val->text();
+  }
+
+  return stringOutput;
+}
