@@ -38,6 +38,12 @@
         ]
       },
       {
+        "Name": "Other-UQ",
+        "ExecutablePath": "applications/performUQ/other/runOtherUQ.py",
+        "ApplicationSpecificInputs": [
+        ]
+      },	
+      {
         "Name": "UCSD-UQ",
         "ExecutablePath": "applications/performUQ/UCSD_UQ/mainscript.py",
         "ApplicationSpecificInputs": [
