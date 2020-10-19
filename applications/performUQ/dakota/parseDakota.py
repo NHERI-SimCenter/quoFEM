@@ -1,13 +1,13 @@
 # written: UQ team @ SimCenter
 
 # import functions for Python 2.X support
-from __future__ import division, print_function
-import sys
-if sys.version.startswith('2'): 
-    range=xrange
-    string_types = basestring
-else:
-    string_types = str
+# from __future__ import division, print_function
+# import sys
+# if sys.version.startswith('2'): 
+#     range=xrange
+#     string_types = basestring
+# else:
+#     string_types = str
 
 import shutil
 import json
@@ -25,6 +25,12 @@ workdir_main = inputArgs[1]
 workdir_temp = inputArgs[2]
 run_type = inputArgs[3]
 
+workflow_driver = 'blank'
+workflow_driver1 = 'blank'
+
+with open('PATH.err', 'w') as f:
+    print(os.environ, file=f)
+
 # Replace the PATH TO strings with the path to the given executable in your 
 # computer. The 'darwin' part corresponds to Mac, the 'else' clause corresponds 
 # to Windows. You only need the path to either Feap or OpenSees depending on 
@@ -33,7 +39,7 @@ run_type = inputArgs[3]
 # run on local computer
 if run_type in ['runningLocal',]:
 
-    if (sys.platform == 'darwin'):
+    if (sys.platform == 'darwin' or sys.platform == "linux" or sys.platform == "linux2"):
         Dakota = 'dakota'
         workflow_driver = 'workflow_driver'
         workflow_driver1 = 'workflow_driver1'        

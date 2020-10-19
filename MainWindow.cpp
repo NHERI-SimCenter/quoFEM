@@ -117,6 +117,7 @@ MainWindow::MainWindow(QWidget *parent)
     // user settings
     //
 
+
     /*
     QSettings settings("SimCenter", "uqFEM");
     QVariant savedValue = settings.value("uuid");
@@ -300,6 +301,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(results,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
     connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+
     connect(uq,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(uq,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
@@ -314,7 +316,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(jobCreator,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(jobCreator,SIGNAL(statusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(jobCreator,SIGNAL(fatalMessage(QString)),this,SLOT(fatalMessage(QString)));
-
 
     // login
     connect(loginButton,SIGNAL(clicked(bool)),this,SLOT(onLoginButtonClicked()));
@@ -355,12 +356,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->createActions();
 
+    //
+    // create QThread in which the Interface will work, move interface to it,
+    // connect slots to thread to quit and invoke interface destructor & start running
+    //
+
     thread = new QThread();
     theRemoteInterface->moveToThread(thread);
+
     connect(thread, SIGNAL(finished()), theRemoteInterface, SLOT(deleteLater()));//adding back
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
     thread->start();
+
 
     // adding back ---
     //
@@ -408,15 +416,16 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    // invoke destructor as AgaveCLI not a QObject
-    //delete theRemoteInterface;
+    //
+    // call quit on thread and deleteLater on interface
+    // -interface destructor called here
     thread->quit();
     theRemoteInterface->deleteLater();
 
+    // destroy objects we created
     delete jobCreator;
     delete jobManager;
     delete manager;// adding back
-
 }
 
 bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory)
@@ -686,6 +695,7 @@ void MainWindow::onRunButtonClicked() {
     QString appDIR = SimCenterPreferences::getInstance()->getAppDir();
 
     QString programToExe;
+    QString programName;
     QString femProgramToExe;
 
     //
@@ -717,7 +727,7 @@ void MainWindow::onRunButtonClicked() {
     bool found = false;
     for (int i=0; i<uqApplicationsArray.size(); i++) {
         QJsonObject entry = uqApplicationsArray[i].toObject();
-        QString programName = entry["Name"].toString();
+        programName = entry["Name"].toString();
         qDebug() << "programName: " << programName;
         if (programName == appName) {
             programToExe = entry["ExecutablePath"].toString();
@@ -731,6 +741,7 @@ void MainWindow::onRunButtonClicked() {
         this->errorMessage(message);
         return;
     }
+
 
     //
     // repeat for FEM application
@@ -830,7 +841,9 @@ void MainWindow::onRunButtonClicked() {
     QString filenameOUT = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota.out");
     QString filenameTAB;
     if (problemType == "Inverse Problem") {
-        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota_mcmc_tabular.dat");
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota_mcmc_tabular.dat");	
+    } else if (programName == "Other-UQ") {
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("tabularResults.out");
     } else {
         filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
     }
@@ -1208,6 +1221,7 @@ MainWindow::logoutReturn(bool ok){
 
 
 void MainWindow::onExitButtonClicked(){
+
   //RandomVariablesContainer *theParameters = uq->getParameters();
     QApplication::quit();
 }
@@ -1444,7 +1458,6 @@ void MainWindow::loadFile(const QString &fileName)
         return;
     }
 
-
     // given the json object, create the C++ objects
     //inputWidget->inputFromJSON(jsonObj);
     this->inputFromJSON(jsonObj);
@@ -1463,6 +1476,7 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 
     result->processResults(dakotaIN, dakotaTAB);
     results->setResultWidget(result);
+    
     inputWidget->setSelection(QString("RES"));
 }
 

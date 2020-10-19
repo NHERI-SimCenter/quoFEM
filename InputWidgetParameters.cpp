@@ -83,7 +83,7 @@ InputWidgetParameters::setParametersWidget(RandomVariablesContainer *param) {
     if (theParameters != 0) {
         layout->removeWidget(theParameters);
         delete theParameters;
-        theParameters = 0;
+        theParameters = nullptr;
     }
 
     if (param != 0) {

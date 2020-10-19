@@ -34,11 +34,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
+// Written: fmckenna and mhgardner
 // added and modified: padhye
 
-#include "DakotaResultsSampling.h"
-//#include "InputWidgetFEM.h"
+#include "CustomUQ_Results.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -95,8 +94,8 @@ using namespace QtCharts;
 
 //#define NUM_DIVISIONS 10
 
-DakotaResultsSampling::DakotaResultsSampling(RandomVariablesContainer *theRandomVariables, QWidget *parent)
-  : UQ_Results(parent), theRVs(theRandomVariables), spreadsheet(0), tabWidget(0), chart(0)
+CustomUQ_Results::CustomUQ_Results(RandomVariablesContainer *theRandomVariables, QWidget *parent)
+  : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
     tabWidget = new QTabWidget(this);
@@ -106,13 +105,13 @@ DakotaResultsSampling::DakotaResultsSampling(RandomVariablesContainer *theRandom
     col2 = 0;
 }
 
-DakotaResultsSampling::~DakotaResultsSampling()
+CustomUQ_Results::~CustomUQ_Results()
 {
 
 }
 
 
-void DakotaResultsSampling::clear(void)
+void CustomUQ_Results::clear(void)
 {
     // delete any existing widgets
     int count = tabWidget->count();
@@ -183,7 +182,7 @@ static int mergesort(double *input, int size)
 
 // if sobelov indices are selected then we would need to do some processing outselves
 
-int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab)
+int CustomUQ_Results::processResults(QString &filenameResults, QString &filenameTab)
 {
     emit sendStatusMessage(tr("Processing Sampling Results"));
 
@@ -197,32 +196,10 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     //
 
     QFileInfo fileTabInfo(filenameTab);
-    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
-
-    QFileInfo filenameErrorInfo(filenameErrorString);
-    if (!filenameErrorInfo.exists()) {
-        emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
-        return 0;
-    }
-    QFile fileError(filenameErrorString);
-    QString line("");
-    if (fileError.open(QIODevice::ReadOnly)) {
-       QTextStream in(&fileError);
-       while (!in.atEnd()) {
-          line = in.readLine();
-       }
-       fileError.close();
-    }
-
-    if (line.length() != 0) {
-        qDebug() << line.length() << " " << line;
-        emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
-        return 0;
-    }
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        emit sendErrorMessage("No tabularResults.out file - Custom UQ failed to finish running");
         return 0;
     }
 
@@ -411,13 +388,13 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     tabWidget->adjustSize();
 
     emit sendStatusMessage(tr(""));
-
+    
     return 0;
 }
 
 
 void
-DakotaResultsSampling::onSaveSpreadsheetClicked()
+CustomUQ_Results::onSaveSpreadsheetClicked()
 {
 
     int rowCount = spreadsheet->rowCount();
@@ -449,7 +426,7 @@ DakotaResultsSampling::onSaveSpreadsheetClicked()
     }
 }
 
-void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
+void CustomUQ_Results::onSpreadsheetCellClicked(int row, int col)
 {
     mLeft = spreadsheet->wasLeftKeyPressed();
 
@@ -843,14 +820,14 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 // padhye
 // this function is called if you decide to say save the data from UI into a json object
 bool
-DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
+CustomUQ_Results::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
     if (spreadsheet == NULL)
         return true;
 
-    jsonObject["resultType"]=QString(tr("DakotaResultsSampling"));
+    jsonObject["resultType"]=QString(tr("CustomUQ_Results"));
 
     //
     // add summary data
@@ -912,7 +889,7 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
 // if you already have a json data file then you can populate the UI with the entries from json.
 
 bool
-DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
+CustomUQ_Results::inputFromJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
@@ -1045,7 +1022,7 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
 extern QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit);
 
 QWidget *
-DakotaResultsSampling::createResultEDPWidget(QString &name, double mean, double stdDev, double skewness, double kurtosis) {
+CustomUQ_Results::createResultEDPWidget(QString &name, double mean, double stdDev, double skewness, double kurtosis) {
     QWidget *edp = new QWidget;
     QHBoxLayout *edpLayout = new QHBoxLayout();
     edpLayout->setContentsMargins(0,0,0,0);
