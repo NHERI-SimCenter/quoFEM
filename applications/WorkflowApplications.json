@@ -83,18 +83,21 @@
         "ApplicationSpecificInputs": [
         ]
       },
-	      {
+      {
         "Name": "OpenSeesPy",
         "ExecutablePath": "applications/performSIM/OpenSeesPy/createOpenSeesPyDriver",
-        "ApplicationSpecificInputs": [
-        ]
-	      },
-	      {
+        "ApplicationSpecificInputs": []
+      },
+      {
         "Name": "FEAPpv",
         "ExecutablePath": "applications/performSIM/feappv/createFeapDriver",
-        "ApplicationSpecificInputs": [
-        ]
-      }
+        "ApplicationSpecificInputs": []
+      },
+      {
+        "Name": "Custom",
+        "ExecutablePath": "",
+        "ApplicationSpecificInputs": []
+      }	
     ]
   }    
 } 

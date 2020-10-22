@@ -81,9 +81,6 @@ int main(int argc, const char **argv) {
     exit(802); // no random variables is allowed
   }
 
-  // workflowDriverFile << "#!/bin/bash\n";
-  // workflowDriverFile << "python3 writeParam.py paramsDakota.in params.in\n";
-  // workflowDriverFile << "source " << workflow << "\n";
   if ((strcmp(runType,"runningLocal") == 0)
       && strcmp(osType,"Windows") == 0) {
     workflowDriverFile << "python writeParam.py paramsDakota.in params.in\n";
@@ -91,7 +88,7 @@ int main(int argc, const char **argv) {
     std::cerr << "WINDOWS\n";
     
   } else {
-
+    workflowDriverFile << "#!/bin/bash\n"; 
     workflowDriverFile << "python3 writeParam.py paramsDakota.in params.in\n";
     workflowDriverFile << "source ./" << workflow << "\n";
     std::cerr << "OTHER\n";
