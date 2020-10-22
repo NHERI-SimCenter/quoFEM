@@ -7,8 +7,8 @@
 
 pset E 205
 pset P 25
-pset Ao 250
 pset Au 500
+pset Ao 250
 
 #
 # build the model
@@ -66,3 +66,4 @@ analyze 1
 #
 
 remove recorders
+
