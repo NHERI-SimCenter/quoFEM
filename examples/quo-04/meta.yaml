@@ -1,0 +1,7 @@
+files:
+- TrussModel.tcl
+- TrussPost.tcl
+id: quo-04
+synopsis: This example uses quoFEM to perform a global sensitivity analysis of an
+  OpenSees FE model.
+title: Sensitivity Analysis

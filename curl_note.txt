@@ -1,0 +1,3 @@
+win32:INCLUDEPATH+=C:/Users/yisan/Anaconda3/pkgs/libcurl-7.65.2-h2a8f88b_0/Library/include
+win32:LIBS += C:/Users/yisan/Anaconda3/pkgs/libcurl-7.65.2-h2a8f88b_0/Library/lib/libcurl.lib
+win32:DEFINES +=  CURL_STATICLIB
