@@ -309,7 +309,7 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
       QPushButton *chooseDriver = new QPushButton();
       chooseDriver->setText(tr("Choose"));
       connect(chooseDriver, &QPushButton::clicked, this, [=](){
-                driverFile->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+                driverFile->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
             });      
       chooseDriver->setToolTip(tr("Push to choose a file from your file system"));
       
@@ -327,7 +327,7 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
       QPushButton *choosePostProcessing = new QPushButton();
       
       connect(choosePostProcessing, &QPushButton::clicked, this, [=](){
-            postProcessScript->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+            postProcessScript->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
 							});
       choosePostProcessing->setText(tr("Choose"));
       choosePostProcessing->setToolTip(tr("Push to choose a file from your file system"));
@@ -578,7 +578,7 @@ void InputWidgetFEM::customInputNumberChanged(int numCustomInputs) {
     auto *chooseFile = new QPushButton();
     chooseFile->setText(tr("Choose"));
     connect(chooseFile, &QPushButton::clicked, this, [=](){
-                inputFile->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+                inputFile->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
             });      
     chooseFile->setToolTip(tr("Push to choose a file from your file system"));
     
@@ -689,7 +689,8 @@ QVector< QString > InputWidgetFEM::getCustomInputs() const {
    for (auto const& val : customInputFiles)
    {
       stringOutput[count] = val->text();
-  }
+      count++;
+   }
 
-  return stringOutput;
+   return stringOutput;
 }
