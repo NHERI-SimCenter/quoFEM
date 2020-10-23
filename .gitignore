@@ -54,3 +54,4 @@ createOpenSeesDriver
 createOpenSeesPyDriver
 createFeapDriver
 nataf_gsa
+preprocessDakota
