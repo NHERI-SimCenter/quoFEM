@@ -1,12 +1,13 @@
 """
-@author: Mukesh, Maitreya, and Conte 
+authors: Mukesh Kumar Ramancha, Maitreya Manoj Kurumbhati, and Prof. J.P. Conte 
+affiliation: University of California, San Diego
 
 """
 
 #import standard python modules
 import numpy as np
 from runFEM import runFEM
-from runFEM import ParameterName
+# from runFEM import ParameterName
 from generateData import data
 
 #%%
@@ -20,16 +21,21 @@ sig_channels = np.array([0.05,0.05]) #My x 1,  Ny = number of measurement channe
 sig = np.array([sig_channels[0]*1079.88,sig_channels[1]*1.414]) # array of size: ny
 sig = sig/normalizeData
 
-def log_likelihood(ParticleNum,par):
+def log_likelihood(ParticleNum,par, variables, resultsLocation):
     """ this function computes the log-likelihood for parameter value: par """
      
     # num of data point: N, num of measurement channels: Ny
     N = data.shape[1]
     Ny = data.shape[0]
     
+    ParameterName = variables['names']
+    
     # FE predicted response
 #    FEpred = runFEM(ParticleNum,par[:len(ParameterName)])[:,np.newaxis] #Nyx1
-    FEpred = runFEM(ParticleNum,par[:len(ParameterName)])/normalizeData
+    runFEM(ParticleNum,par[:len(ParameterName)], variables, resultsLocation)
+    
+    FEpred = np.loadtxt('results.out')/normalizeData
+    
     FEpred = FEpred[:,np.newaxis]
     
     # CASE I & II: Known/Estimate Noise
@@ -46,5 +52,3 @@ def log_likelihood(ParticleNum,par):
     #LL = -0.5*N*Ny*np.log(2*np.pi) + sum(-np.log(np.diag((data.T-FEpred.T).T @ (data.T-FEpred.T))))
     
     return LL
-
-    
