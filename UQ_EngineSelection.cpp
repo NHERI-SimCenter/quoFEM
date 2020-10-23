@@ -86,7 +86,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *paren
     theEngineSelectionBox = new QComboBox();
     theEngineSelectionBox->addItem(tr("Dakota"));
     theEngineSelectionBox->addItem(tr("SimCenterUQ"));
-    //    theEngineSelectionBox->addItem(tr("UCSD_UQ"));
+    theEngineSelectionBox->addItem(tr("UCSD_UQ"));
 
    //theEngineSelectionBox->addItem(tr("UQpy"));
    // theEngineSelectionBox->addItem(tr("filter"));

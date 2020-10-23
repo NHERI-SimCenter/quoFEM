@@ -1,5 +1,6 @@
 """
-@author: Mukesh, Maitreya, and Conte 
+authors: Dr. Frank McKenna*, Mukesh Kumar Ramancha, Maitreya Manoj Kurumbhati, and Prof. J.P. Conte 
+affiliation: SimCenter*; University of California, San Diego
 
 """
 
@@ -9,12 +10,8 @@ import os
 import platform
 import subprocess
 from subprocess import call
-from parseData import variables
-from parseData import resultsLocation
 from pathlib import Path
 import shutil
-
-ParameterName = variables["names"]
 
 def copytree(src, dst, symlinks=False, ignore=None):
     if not os.path.exists(dst):
@@ -28,7 +25,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
             if not os.path.exists(d) or os.stat(s).st_mtime - os.stat(d).st_mtime > 1:
                 shutil.copy2(s, d)
 
-def runFEM(ParticleNum,par):
+def runFEM(ParticleNum,par, variables, resultsLocation):
     """ 
     this function runs FE model (model.tcl) for each parameter value (par)
     model.tcl should take parameter input
@@ -58,6 +55,7 @@ def runFEM(ParticleNum,par):
     os.chdir(analysisPath)
     
     # write input file
+    ParameterName = variables["names"]
     f = open("params.in", "w")
     f.write('{}\n'.format(len(par)))
     for i in range(0,len(par)):
@@ -98,6 +96,6 @@ def runFEM(ParticleNum,par):
     for f in files:
         print(f)
     
-    output = np.loadtxt('results.out')
     
-    return output
+    
+    

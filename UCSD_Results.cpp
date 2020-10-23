@@ -199,29 +199,29 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     //
 
 
-    QFileInfo fileTabInfo(filenameTab);
-    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
+//    QFileInfo fileTabInfo(filenameTab);
+//    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
 
-    QFileInfo filenameErrorInfo(filenameErrorString);
-    if (!filenameErrorInfo.exists()) {
-        emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
-        return 0;
-    }
-    QFile fileError(filenameErrorString);
-    QString line("");
-    if (fileError.open(QIODevice::ReadOnly)) {
-       QTextStream in(&fileError);
-       while (!in.atEnd()) {
-          line = in.readLine();
-       }
-       fileError.close();
-    }
+//    QFileInfo filenameErrorInfo(filenameErrorString);
+//    if (!filenameErrorInfo.exists()) {
+//        emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+//        return 0;
+//    }
+//    QFile fileError(filenameErrorString);
+//    QString line("");
+//    if (fileError.open(QIODevice::ReadOnly)) {
+//       QTextStream in(&fileError);
+//       while (!in.atEnd()) {
+//          line = in.readLine();
+//       }
+//       fileError.close();
+//    }
 
-    if (line.length() != 0) {
-        qDebug() << line.length() << " " << line;
-        emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
-        return 0;
-    }
+//    if (line.length() != 0) {
+//        qDebug() << line.length() << " " << line;
+//        emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
+//        return 0;
+//    }
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
@@ -320,8 +320,8 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     // determine summary statistics for each edp
     //
 
-
-    for (int col = theRVs->getNumRandomVariables()+1; col<colCount; ++col) { // +1 for first col which is nit an RV
+    for (int col = theRVs->getNumRandomVariables()-1; col<colCount; ++col) { // Changed by ABS
+//    for (int col = theRVs->getNumRandomVariables()+1; col<colCount; ++col) { // +1 for first col which is nit an RV
         // compute the mean
         double sum_value=0;
         for(int row=0;row<rowCount;++row) {
