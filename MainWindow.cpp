@@ -117,6 +117,7 @@ MainWindow::MainWindow(QWidget *parent)
     // user settings
     //
 
+
     /*
     QSettings settings("SimCenter", "uqFEM");
     QVariant savedValue = settings.value("uuid");
@@ -300,6 +301,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(results,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
     connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+
     connect(uq,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(uq,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
@@ -314,7 +316,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(jobCreator,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(jobCreator,SIGNAL(statusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(jobCreator,SIGNAL(fatalMessage(QString)),this,SLOT(fatalMessage(QString)));
-
 
     // login
     connect(loginButton,SIGNAL(clicked(bool)),this,SLOT(onLoginButtonClicked()));
@@ -355,12 +356,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->createActions();
 
+    //
+    // create QThread in which the Interface will work, move interface to it,
+    // connect slots to thread to quit and invoke interface destructor & start running
+    //
+
     thread = new QThread();
     theRemoteInterface->moveToThread(thread);
+
     connect(thread, SIGNAL(finished()), theRemoteInterface, SLOT(deleteLater()));//adding back
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
     thread->start();
+
 
     // adding back ---
     //
@@ -408,15 +416,16 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    // invoke destructor as AgaveCLI not a QObject
-    //delete theRemoteInterface;
+    //
+    // call quit on thread and deleteLater on interface
+    // -interface destructor called here
     thread->quit();
     theRemoteInterface->deleteLater();
 
+    // destroy objects we created
     delete jobCreator;
     delete jobManager;
     delete manager;// adding back
-
 }
 
 bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory)
@@ -643,6 +652,17 @@ void MainWindow::onRunButtonClicked() {
         qDebug() << "creating a special copy of the main FE model script... " << mainScriptTmp;
         fem->specialCopyMainInput(mainScriptTmp, random->getParametereNames());
 
+        if (application == "Custom")
+        {
+           auto filesToCopy = fem->getCustomInputs();
+
+           foreach (QString filePath, filesToCopy)
+           {
+	     QFileInfo fileInfo(filePath);
+	     QString destination(templateDirectory + QDir::separator() + fileInfo.fileName());
+	     QFile::copy(filePath, destination);
+           }
+        }
     } else {
 
         // create template dir for other type of fem app to put stuff
@@ -686,6 +706,7 @@ void MainWindow::onRunButtonClicked() {
     QString appDIR = SimCenterPreferences::getInstance()->getAppDir();
 
     QString programToExe;
+    QString programName;
     QString femProgramToExe;
 
     //
@@ -717,7 +738,7 @@ void MainWindow::onRunButtonClicked() {
     bool found = false;
     for (int i=0; i<uqApplicationsArray.size(); i++) {
         QJsonObject entry = uqApplicationsArray[i].toObject();
-        QString programName = entry["Name"].toString();
+        programName = entry["Name"].toString();
         qDebug() << "programName: " << programName;
         if (programName == appName) {
             programToExe = entry["ExecutablePath"].toString();
@@ -731,6 +752,7 @@ void MainWindow::onRunButtonClicked() {
         this->errorMessage(message);
         return;
     }
+
 
     //
     // repeat for FEM application
@@ -793,14 +815,21 @@ void MainWindow::onRunButtonClicked() {
       python = pythonLocationVariant.toString();
 
     count = 1;
-    if (femApp.contains(".py")) {
-        QStringList args{femApp, inputFilename, "runningLocal", "Mac"};
-        this->runApplication(python, args);
-    } else {
-        QStringList args{inputFilename, "runningLocal", "Mac"};
-        this->runApplication(femApp, args);
+    // Only create workflow driver when not custom fem app, since workflow
+    // driver provided as input in that case
+    if (application != "Custom")
+    {
+       if (femApp.contains(".py"))
+       {
+          QStringList args{ femApp, inputFilename, "runningLocal", "Mac" };
+          this->runApplication(python, args);
+       }
+       else
+       {
+          QStringList args{ inputFilename, "runningLocal", "Mac" };
+          this->runApplication(femApp, args);
+       }
     }
-
 
     //
     // now invoke uq app
@@ -830,7 +859,9 @@ void MainWindow::onRunButtonClicked() {
     QString filenameOUT = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota.out");
     QString filenameTAB;
     if (problemType == "Inverse Problem") {
-        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota_mcmc_tabular.dat");
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota_mcmc_tabular.dat");	
+    } else if (programName == "Other-UQ") {
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("tabularResults.out");
     } else {
         filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
     }
@@ -1070,37 +1101,6 @@ void MainWindow::onRemoteRunButtonClicked(){
     }
 
 
-
-/******
-
-
-
-
-    //
-    // now use the applications parseDAKOTA file to run dakota and produce output files:
-    //    dakota.in dakota.out dakotaTab.out dakota.err
-    //
-
-    QString homeDIR = QDir::homePath();
-    //QString appDIR = qApp->applicationDirPath();
-    QString appDIR = SimCenterPreferences::getInstance()->getAppDir();
-
-   // appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
-   //   QDir::separator() + QString("localApp");
-
-    //
-    QString pySCRIPT = appDIR +  QDir::separator() + QString("applications") +
-                QDir::separator() + QString("performUQ") + QDir::separator() +
-                QString("dakota") + QDir::separator() + QString("parseDAKOTA.py");
-
-    QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter") + strUnique;
-
-    QFile pyDAKOTA(pySCRIPT);
-    if (! pyDAKOTA.exists()) {
-      errorMessage("Dakota script does not exist, the parseDAKOTA.py script was not found in exe folder! .. download application again");
-      return;
-    }
-
     //
     // want to first remove old dakota files from the current directory
     //
@@ -1116,47 +1116,6 @@ void MainWindow::onRemoteRunButtonClicked(){
         QFile file(destinationDir + copy);
         file.remove();
     }
-
-    //
-    // now invoke dakota, done via a python script in tool app dircetory
-    //
-
-
-    QProcess *proc = new QProcess();
-
-    QString python("python");
-    QSettings settings("SimCenter", "Common"); 
-    QVariant  pythonLocationVariant = settings.value("pythonExePath");
-    if (pythonLocationVariant.isValid()) 
-      python = pythonLocationVariant.toString();
-
-
-#ifdef Q_OS_WIN
-
-    QStringList args{pySCRIPT, tDirectory, tmpDirectory, "runningRemote"};
-    qDebug() << args;
-    proc->execute(python, args);
-
-    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
-    //qDebug() << command;
-    //proc->execute("cmd", QStringList() << "/C" << command);
-    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
-
-#else
-    // wrap paths with quotes:
-    pySCRIPT = "\"" + pySCRIPT + "\"";
-    tDirectory = "\"" + tDirectory + "\"";
-    tmpDirectory = "\"" + tmpDirectory + "\"";
-    QString command = QString("source $HOME/.bashrc; source $HOME/.bash_profile; \"") + python +QString("\" ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory + QString(" runningRemote");
-    proc->execute("bash", QStringList() << "-c" <<  command);
-    qDebug() << command;
-    // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
-#endif
-    proc->waitForStarted();
-
-    **/
-
-    return;
 
     //
     // in tmpDirectory we will zip up current template dir and then remove before sending (doone to reduce number of sends)
@@ -1280,6 +1239,7 @@ MainWindow::logoutReturn(bool ok){
 
 
 void MainWindow::onExitButtonClicked(){
+
   //RandomVariablesContainer *theParameters = uq->getParameters();
     QApplication::quit();
 }
@@ -1516,7 +1476,6 @@ void MainWindow::loadFile(const QString &fileName)
         return;
     }
 
-
     // given the json object, create the C++ objects
     //inputWidget->inputFromJSON(jsonObj);
     this->inputFromJSON(jsonObj);
@@ -1535,6 +1494,7 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 
     result->processResults(dakotaIN, dakotaTAB);
     results->setResultWidget(result);
+    
     inputWidget->setSelection(QString("RES"));
 }
 

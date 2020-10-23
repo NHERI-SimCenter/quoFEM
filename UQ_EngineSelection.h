@@ -90,9 +90,9 @@ private:
    UQ_Engine *theUQpyEngine;
    UQ_Engine *theUCSD_Engine;
    UQ_Engine *thefilterEngine;
+   UQ_Engine *theCustomEngine;
 
-   InputWidgetEDP *theEdpWidget;
-
+  InputWidgetEDP *theEdpWidget;
 };
 
 #endif // WIND_SELECTION_H

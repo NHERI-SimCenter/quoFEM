@@ -52,10 +52,13 @@ int main(int argc, const char **argv) {
   //current_path(currentPath);
   auto path = std::filesystem::current_path(); //getting path
   std::cerr << "PATH: " << path << '\n';
-  std::string fileName = std::filesystem::path(inputFile).filename();
+ // std::string fileName = std::filesystem::path(inputFile).filename();
+  std::filesystem::path fileNameP = std::filesystem::path(inputFile).filename();
+  std::string fileName = fileNameP.generic_string(); // std::filesystem::path(inputFile).filename();
+
   std::cerr << "fileName: " << fileName << '\n';
 
-  std::string fullPath = std::filesystem::path(inputFile).remove_filename();
+  std::string fullPath = std::filesystem::path(inputFile).remove_filename().generic_string();
   std::cerr << "fullPath: " << fullPath << '\n';  
 
   std::filesystem::current_path(fullPath); //getting path
@@ -168,19 +171,10 @@ int main(int argc, const char **argv) {
     workflowDriverFile << " " << *itEDP;
   }
   workflowDriverFile << "\n";
+
+
   workflowDriverFile.close();
 
-  try {
-    std::filesystem::permissions(workflowDriver,
-				 std::filesystem::perms::owner_all |
-				 std::filesystem::perms::group_all,
-				 std::filesystem::perm_options::add);
-  }
-  catch (std::exception& e) {
-    std::cerr << "createFeapDriver - failed in setting permissions\n";
-  }
-
-  
   //
   // done
   //

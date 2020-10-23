@@ -43,11 +43,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "EDP.h"
 #include <QVector>
+#include <QSpinBox>
 class QGridLayout;
 class QVBoxLayout;
 class QGroupBox;
 class QComboBox;
 class QGroupBox;
+class QSpinBox;
 
 class InputWidgetParameters;
 
@@ -63,30 +65,35 @@ public:
 
     QString getApplicationName();
     QString getMainInput();
+    QVector< QString > getCustomInputs() const;  
 
      // copy main file to new filename ONLY if varNamesAndValues not empy
     void specialCopyMainInput(QString fileName, QStringList varNamesAndValues);
     int parseInputfilesForRV(QString filnema1);
 
-signals:
+  signals:
 
-public slots:
-   void clear(void);
-   void femProgramChanged(const QString &arg1);
-   void numModelsChanged(int newNum);
+  public slots:
+    void clear(void);
+    void femProgramChanged(const QString& arg1);
+    void numModelsChanged(int newNum);
+    void customInputNumberChanged(int numCustomInputs);
 
-   //void chooseFileName1(void);
-   //void chooseFileName2(void);
+    // void chooseFileName1(void);
+    // void chooseFileName2(void);
 
-private:
+  private:
 
     QVBoxLayout *layout;
     QWidget     *femSpecific;
     QComboBox   *femSelection;
+    QSpinBox * theCustomInputNumber;
+    QVBoxLayout* theCustomLayout;
+    QVBoxLayout* theCustomFileInputs;
+    QWidget* theCustomFileInputWidget;
 
     //    QLineEdit *file1;
     // QLineEdit *file2;
-
 
     InputWidgetParameters *theParameters;
     QStringList varNamesAndValues;
@@ -95,6 +102,7 @@ private:
     QVector<QLineEdit *>inputFilenames;
     QVector<QLineEdit *>postprocessFilenames;
     QVector<QLineEdit *>parametersFilenames;
+    QVector<QLineEdit *>customInputFiles;
 };
 
 #endif // INPUTWIDGETFEM_H

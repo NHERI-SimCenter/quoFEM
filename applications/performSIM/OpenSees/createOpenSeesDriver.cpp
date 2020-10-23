@@ -51,9 +51,16 @@ int main(int argc, const char **argv) {
   
   //current_path(currentPath);
   auto path = std::filesystem::current_path(); //getting path
-  std::string fileName = std::filesystem::path(inputFile).filename();
-  std::string fullPath = std::filesystem::path(inputFile).remove_filename();
 
+  //  std::string fileName = std::filesystem::path(inputFile).filename()
+  std::filesystem::path fileNameP = std::filesystem::path(inputFile).filename();
+  std::string fileName = fileNameP.generic_string(); 
+  std::cerr << "fileName: " << fileName << '\n';  
+
+  
+  std::string fullPath = std::filesystem::path(inputFile).remove_filename().generic_string();
+
+  std::filesystem::current_path(fullPath); //getting path
   std::filesystem::current_path(fullPath); //getting path
   path = std::filesystem::current_path(); //getting path
   std::cerr << "PATH: " << path << '\n';
@@ -113,7 +120,12 @@ int main(int argc, const char **argv) {
 
   if (runType.compare("runningLocal") == 0) {
 
-    dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/templateSub/simCenterSub\"");
+    if (osType.compare("Windows") == 0) {
+      dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/templateSub/simCenterSub.exe\"");
+    } else {
+      dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/templateSub/simCenterSub\"");
+    }
+    
     openSeesCommand = std::string("OpenSees");
     pythonCommand = std::string("\"") + json_string_value(json_object_get(rootInput,"python")) + std::string("\"");
 

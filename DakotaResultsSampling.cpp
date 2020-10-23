@@ -96,7 +96,7 @@ using namespace QtCharts;
 //#define NUM_DIVISIONS 10
 
 DakotaResultsSampling::DakotaResultsSampling(RandomVariablesContainer *theRandomVariables, QWidget *parent)
-  : UQ_Results(parent), theRVs(theRandomVariables)
+  : UQ_Results(parent), theRVs(theRandomVariables), spreadsheet(0), tabWidget(0), chart(0)
 {
     // title & add button
     tabWidget = new QTabWidget(this);
@@ -131,8 +131,6 @@ void DakotaResultsSampling::clear(void)
     tabWidget->clear();
     spreadsheet = NULL;
 }
-
-
 
 static void merge_helper(double *input, int left, int right, double *scratch)
 {
@@ -197,7 +195,6 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     //
     // check it actually ran with n errors
     //
-
 
     QFileInfo fileTabInfo(filenameTab);
     QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
@@ -315,7 +312,6 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     }
     tabResults.close();
 
-
     //
     // determine summary statistics for each edp
     //
@@ -393,7 +389,6 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     QChartView *chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->chart()->legend()->hide();
-
 
     QWidget *widget = new QWidget();
     QGridLayout *layout = new QGridLayout(widget);
@@ -694,6 +689,7 @@ void DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
 
             delete [] dataValues;
+
 
             QString file_fitted_path = appDIR +  QDir::separator() + QString("Best_fit.out");
 
@@ -1052,6 +1048,8 @@ QWidget *
 DakotaResultsSampling::createResultEDPWidget(QString &name, double mean, double stdDev, double skewness, double kurtosis) {
     QWidget *edp = new QWidget;
     QHBoxLayout *edpLayout = new QHBoxLayout();
+    edpLayout->setContentsMargins(0,0,0,0);
+    edpLayout->setSpacing(3);
 
     edp->setLayout(edpLayout);
 
