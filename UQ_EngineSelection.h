@@ -71,8 +71,10 @@ class UQ_EngineSelection : public  SimCenterAppWidget
   void clear(void);
   
  signals:
-  void onUQ_EngineChanged(void);
+  void onUQ_EngineChanged(bool);
   void onNumModelsChanged(int);
+
+  // void remoteRunningCapability(bool);
 
  public slots:
   void engineSelectionChanged(const QString &arg1);

@@ -46,6 +46,9 @@ uqFEM.pro.user
 *.out
 *.json
 
+# build folder
+applications/out/build/*
+
 Makefile
 *.pro.user
 simCenterSub
@@ -55,3 +58,4 @@ createOpenSeesPyDriver
 createFeapDriver
 nataf_gsa
 preprocessDakota
+

@@ -103,6 +103,3 @@ if run_type in ['runningLocal']:
     except subprocess.CalledProcessError as e:
         result = e.output
         returncode = e.returncode
-
-
-

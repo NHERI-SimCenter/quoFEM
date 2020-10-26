@@ -241,7 +241,7 @@ MainWindow::MainWindow(QWidget *parent)
     runButton->setText(tr("RUN"));
     pushButtonLayout->addWidget(runButton);
 
-    QPushButton *runDesignSafeButton = new QPushButton();
+    runDesignSafeButton = new QPushButton();
     runDesignSafeButton->setText(tr("RUN at DesignSafe"));
     pushButtonLayout->addWidget(runDesignSafeButton);
 
@@ -337,7 +337,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
 
     // change the UQ engine
-    connect(uq,SIGNAL(onUQ_EngineChanged()), this,SLOT(onUQ_EngineChanged()));
+    connect(uq,SIGNAL(onUQ_EngineChanged(bool)), this,SLOT(onUQ_EngineChanged(bool)));
 
     // add button widget to layout
     //layout->addWidget(buttonWidget);
@@ -652,6 +652,17 @@ void MainWindow::onRunButtonClicked() {
         qDebug() << "creating a special copy of the main FE model script... " << mainScriptTmp;
         fem->specialCopyMainInput(mainScriptTmp, random->getParametereNames());
 
+        if (application == "Custom")
+        {
+           auto filesToCopy = fem->getCustomInputs();
+
+           foreach (QString filePath, filesToCopy)
+           {
+	     QFileInfo fileInfo(filePath);
+	     QString destination(templateDirectory + QDir::separator() + fileInfo.fileName());
+	     QFile::copy(filePath, destination);
+           }
+        }
     } else {
 
         // create template dir for other type of fem app to put stuff
@@ -804,14 +815,21 @@ void MainWindow::onRunButtonClicked() {
       python = pythonLocationVariant.toString();
 
     count = 1;
-    if (femApp.contains(".py")) {
-        QStringList args{femApp, inputFilename, "runningLocal", "Mac"};
-        this->runApplication(python, args);
-    } else {
-        QStringList args{inputFilename, "runningLocal", "Mac"};
-        this->runApplication(femApp, args);
+    // Only create workflow driver when not custom fem app, since workflow
+    // driver provided as input in that case
+    if (application != "Custom")
+    {
+       if (femApp.contains(".py"))
+       {
+          QStringList args{ femApp, inputFilename, "runningLocal", "Mac" };
+          this->runApplication(python, args);
+       }
+       else
+       {
+          QStringList args{ inputFilename, "runningLocal", "Mac" };
+          this->runApplication(femApp, args);
+       }
     }
-
 
     //
     // now invoke uq app
@@ -850,8 +868,6 @@ void MainWindow::onRunButtonClicked() {
 
     this->processResults(filenameOUT, filenameTAB);
 }
-
-
 
 
 void MainWindow::onRemoteRunButtonClicked(){
@@ -1226,8 +1242,12 @@ void MainWindow::onExitButtonClicked(){
     QApplication::quit();
 }
 
-void MainWindow::onUQ_EngineChanged(void) {
-  random->setParametersWidget(uq->getParameters());
+void MainWindow::onUQ_EngineChanged(bool abilityToRunRemote) {
+
+    qDebug() << "onUQENGINECHANGED " << abilityToRunRemote;
+    runDesignSafeButton->setDisabled(!abilityToRunRemote);
+    random->setParametersWidget(uq->getParameters());
+
 }
 
 

@@ -1,7 +1,7 @@
 # written: Michael Gardner @ UNR
 
 import sys
-from rvDelimiter import RvDelimiterFactory
+from rvDelimiter import *
 
 def main():
     # These are the delimiter choices, which can expanded as more UQ programs are added. Remember to also
@@ -15,30 +15,20 @@ def main():
     rvSpecifier = inputArgs[4]    
     
     if rvSpecifier not in rvDelimiterChoices:
-        except IOError:
-            print("ERROR: preProcessUQ.py: Symbol identifying value as random variable not recognized : ", rvSpecifier)            
+        raise IOError("ERROR: preProcessUQ.py: Symbol identifying value as random variable not recognized : ", rvSpecifier)            
     
     # Open parameters file and read parameter settings
     numRVs = 0
-    lineCount = 0
-    rvNames = []
     rvSettings = []
-    
+
+    rvSub = globals()[rvSpecifier]    
     try:
         with open(paramsFile, 'r') as params:
+            numRVs = params.readline().strip()
+            
             for line in params:
-                if lineCount == 0:
-                    rvNames = [i.strip() for i in line.split(',')]
-                    numRVs = len(rvNames)
-                    # Replace RV names based on delimiter
-                    for i, rv in enumerate(rvNames):
-                        rvNames[i] = rvSpecifier.replaceRV(rv)
+                rvSettings.append([i.strip() for i in line.split()])
 
-                else:
-                    rvSettings = [i.strip() for i in line.split(',')]
-
-                lineCount = lineCount + 1
-                    
     except IOError:
         print("ERROR: preProcessUQ.py could not open parameters file: " + paramsFile)
 
@@ -58,9 +48,9 @@ def main():
     # Iterate over all lines in input template
     for line in inputTemplate:
         # Iterate over all RVs to check they need to be replaced
-        for i, rv in enumerate(rvNames):
+        for i, rv in enumerate(rvSettings):
             try:
-                line = line.replace(rv, rvSettings[i])
+                line = line.replace(rvSub().replaceRV(rv[0]), rv[1])                
             except:
                 pass
 
