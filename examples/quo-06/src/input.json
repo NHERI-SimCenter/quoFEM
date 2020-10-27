@@ -1,0 +1,62 @@
+{
+    "UQ_Method": {
+        "calibrationMethodData": {
+            "convergenceTol": 1e-10,
+            "factors": "",
+            "maxIterations": 50,
+            "method": "NL2SOL"
+        },
+        "uqEngine": "Dakota",
+        "uqType": "Parameters Estimation"
+    },
+    "randomVariables": [
+        {
+            "name": "X",
+            "title": "first variable",
+            "distribution": "Uniform",
+            "lowerbound": -2.0,
+            "refCount": 1,
+            "upperbound": 2.0,
+            "value": "RV.X",
+            "variableClass": "Uncertain"
+        },
+        {
+            "name": "Y",
+            "title": "second variable",
+            "distribution": "Uniform",
+            "lowerbound": -2.0,
+            "refCount": 1,
+            "upperbound": 2.0,
+            "value": "RV.Y",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "fem": {
+        "dir": "{Current_Dir}/.",
+        "inputFile": "{Current_Dir}/Rosen.py",
+        "mainInput": "Rosen.py",
+        "mainPostprocessScript": "",
+        "numInputs": 1,
+        "parametersFile": "RosenParams.py",
+        "parametersScript": "{Current_Dir}/RosenParams.py",
+        "postprocessScript": "",
+        "program": "OpenSeesPy"
+    },
+    "EDP": [
+        {
+            "name": "f"
+        }
+    ],
+    "$schema": "https://raw.githubusercontent.com/NHERI-SimCenter/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",
+    "Applications": {
+        "UQ": {
+            "Application": "Dakota-UQ",
+            "ApplicationData": {}
+        }
+    },
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
+    "uqResults": {},
+    "workingDir": "C:/Workdir/quoFEM",
+    "localAppDir": "C:/Tools/quoFEM/quoFEM",
+    "python": "python"
+}
