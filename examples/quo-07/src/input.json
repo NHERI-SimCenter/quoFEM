@@ -1,0 +1,91 @@
+{
+    "UQ_Method": {
+        "calibrationMethodData": {
+            "convergenceTol": 1e-10,
+            "factors": "",
+            "maxIterations": 50,
+            "method": "NL2SOL"
+        },
+        "uqEngine": "Dakota",
+        "uqType": "Parameters Estimation"
+    },
+    "randomVariables": [
+        {
+            "name": "Ic1",
+            "distribution": "ContinuousDesign",
+            "title": "first story column moment of inertia",
+            "initialpoint": 1500.0,
+            "lowerbound": 500.0,
+            "refCount": 2,
+            "upperbound": 2000.0,
+            "value": "RV.Ic1",
+            "variableClass": "Design"
+        },
+        {
+            "name": "Ic2",
+            "distribution": "ContinuousDesign",
+            "title": "second story column moment of inertia",
+            "initialpoint": 500.0,
+            "lowerbound": 500.0,
+            "refCount": 2,
+            "upperbound": 2000.0,
+            "value": "RV.Ic2",
+            "variableClass": "Design"
+        }
+    ],
+    "fem": {
+        "dir": "{Current_Dir}/.",
+        "inputFile": "{Current_Dir}/Frame2FEM.tcl",
+        "mainInput": "Frame2FEM.tcl",
+        "mainPostprocessScript": "",
+        "numInputs": 1,
+        "postprocessScript": "",
+        "parametersFile": "",
+        "parametersScript": "",
+        "program": "OpenSees"
+    },
+    "EDP": [
+        {
+            "name": "eps_l1"
+        },
+        {
+            "name": "eps_l2"
+        },
+        {
+            "name": "eps_l3"
+        },
+        {
+            "name": "eps_l4"
+        },
+        {
+            "name": "eps_l5"
+        },
+        {
+            "name": "eps_p1"
+        },
+        {
+            "name": "eps_p2"
+        },
+        {
+            "name": "eps_p3"
+        },
+        {
+            "name": "eps_p4"
+        },
+        {
+            "name": "eps_p5"
+        }
+    ],
+    "$schema": "https://raw.githubusercontent.com/claudioperez/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",
+    "Applications": {
+        "UQ": {
+            "Application": "Dakota-UQ",
+            "ApplicationData": {}
+        }
+    },
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
+    "uqResults": {},
+    "workingDir": "C:/Workdir/quoFEM",
+    "localAppDir": "C:/Tools/quoFEM/quoFEM",
+    "python": "python"
+}
