@@ -1619,7 +1619,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.1.0 "));
+                       tr("Version 2.2.0 "));
 }
 
 void MainWindow::preferences()
