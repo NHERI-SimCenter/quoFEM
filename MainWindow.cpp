@@ -764,8 +764,17 @@ void MainWindow::onRunButtonClicked() {
     QString uqApp = appDIR +  QDir::separator() + programToExe;
     QString femApp = appDIR +  QDir::separator() + femProgramToExe;
 
-   // QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
+    // if windows add a .exe to non py applications
+    QString os("Linux");
+#ifdef _WIN32
+   if (!femApp.contains(".py"))
+       femApp += ".exe";
+   if (!uqApp.contains(".py"))
+       uqApp += ".exe";
+   os = "Windows";
+#endif
 
+   // QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
 
     // check the Apps exist
     QFile uqAppFile(uqApp);
@@ -774,7 +783,7 @@ void MainWindow::onRunButtonClicked() {
       return;
     }
 
-    QFile femAppFile(femApp);
+    QFile femAppFile(femApp); 
     if (! femAppFile.exists()) {
       qDebug() << "FEM application: " << femApp;
 
@@ -794,10 +803,10 @@ void MainWindow::onRunButtonClicked() {
 
     count = 1;
     if (femApp.contains(".py")) {
-        QStringList args{femApp, inputFilename, "runningLocal", "Mac"};
+        QStringList args{femApp, inputFilename, "runningLocal", os};
         this->runApplication(python, args);
     } else {
-        QStringList args{inputFilename, "runningLocal", "Mac"};
+        QStringList args{inputFilename, "runningLocal", os};
         this->runApplication(femApp, args);
     }
 
