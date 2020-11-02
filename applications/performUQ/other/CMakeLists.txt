@@ -1,0 +1,10 @@
+simcenter_add_python_script(SCRIPT UQpyRunner.py)
+simcenter_add_python_script(SCRIPT prepareUQ.py)
+simcenter_add_python_script(SCRIPT runWorkflowDriver.py)
+simcenter_add_python_script(SCRIPT configureAndRunUQ.py)
+simcenter_add_python_script(SCRIPT processUQpyOutput.py)
+simcenter_add_python_script(SCRIPT uqRunner.py)
+simcenter_add_python_script(SCRIPT createTemplate.py)
+simcenter_add_python_script(SCRIPT runOtherUQ.py)
+
+

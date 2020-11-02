@@ -195,14 +195,13 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
     if (arg1 == "Dakota") {
         theStackedWidget->setCurrentIndex(0);
         theCurrentEngine = theDakotaEngine;
-        emit onUQ_EngineChanged();
+        emit onUQ_EngineChanged(true);
     }
 
     else if (arg1 == "SimCenterUQ") {
-         qDebug() << "SETTING 2: " << arg1;
         theStackedWidget->setCurrentIndex(1);
         theCurrentEngine = theSimCenterUQEngine;
-        emit onUQ_EngineChanged();
+        emit onUQ_EngineChanged(false);
         theEdpWidget->showAdvancedSensitivity();
     // }
     // else if (arg1 == "UQpy") {
@@ -210,15 +209,13 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
     //     theCurrentEngine = theUQpyEngine;
     //     emit onUQ_EngineChanged();
     } else if (arg1 == "CustomUQ") {
-      qDebug() << "SETTING 2: " << arg1;      
       theStackedWidget->setCurrentIndex(2);
       theCurrentEngine = theCustomEngine;
-      emit onUQ_EngineChanged();
+      emit onUQ_EngineChanged(false);
     } else if (arg1 == "UCSD_UQ") {
-      qDebug() << "SETTING 2: " << arg1;
       theStackedWidget->setCurrentIndex(3);
       theCurrentEngine = theUCSD_Engine;
-      emit onUQ_EngineChanged();
+      emit onUQ_EngineChanged(false);
     } else {
       qDebug() << "ERROR .. UQ_EngineSelection selection .. type unknown: " << arg1;
     }
@@ -232,9 +229,9 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
 
 
 void
-UQ_EngineSelection::enginesEngineSelectionChanged(void){
+UQ_EngineSelection::enginesEngineSelectionChanged(){
     qDebug() << "UQ_EngineSelection::enginesSelectionChanged()";
-    emit onUQ_EngineChanged();
+    emit onUQ_EngineChanged(true);
 }
 
 bool
@@ -266,15 +263,15 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
             if ((type == QString("Dakota")) ||
                     (type == QString("DakotaEngine")) ||
                     (type == QString("Dakota-UQ"))) {
-	      index = 0;
+                index = 0;
             } else if ((type == QString("SimCenterUQ-UQ"))) {
-	      index = 1;
-            // } else if ((type == QString("UQpy")) || (type == QString("UQpyEngine"))) {
-	    //   index = 2;
+                index = 1;
+                // } else if ((type == QString("UQpy")) || (type == QString("UQpyEngine"))) {
+                //   index = 2;
             } else if ((type == QString("CustomUQ")) || type == QString("CustomUQEngine")) {
-	      index = 2;
-	    } else if ((type == QString("UCSD_UQ"))) {
-	      index = 3;
+                index = 2;
+            } else if ((type == QString("UCSD_UQ"))) {
+                index = 3;
             } else {
                 emit sendErrorMessage("UQ_EngineSelection - no valid type found");
                 return false;
@@ -284,7 +281,7 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
 
             // invoke inputAppDataFromJSON on new type
             if (theCurrentEngine != 0) {
-	      return theCurrentEngine->inputAppDataFromJSON(theObject);
+                return theCurrentEngine->inputAppDataFromJSON(theObject);
             }
         } else {
             emit sendErrorMessage("UQ_EngineSelection - no Application key found");

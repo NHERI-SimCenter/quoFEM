@@ -89,7 +89,7 @@ UQ_Results::inputFromJSON(QJsonObject &jsonObject)
         UQ_Results *newResultWidget = 0;
 
         if (resultType == "NONE") {
-            resultWidget=0;
+           // resultWidget=0;
             return true; // no results saved
         }
 
@@ -128,6 +128,8 @@ UQ_Results::setResultWidget(UQ_Results *result) {
         layout->removeWidget(resultWidget);
         delete resultWidget;
         resultWidget = 0;
+    } else {
+        qDebug() << "ResultWidget NULL";
     }
 
     if (result != 0) {

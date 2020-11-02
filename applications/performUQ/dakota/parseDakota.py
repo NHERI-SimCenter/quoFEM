@@ -28,8 +28,8 @@ run_type = inputArgs[3]
 workflow_driver = 'blank'
 workflow_driver1 = 'blank'
 
-with open('PATH.err', 'w') as f:
-    print(os.environ, file=f)
+#with open('PATH.err', 'w') as f:
+#    print(os.environ, file=f)
 
 # Replace the PATH TO strings with the path to the given executable in your 
 # computer. The 'darwin' part corresponds to Mac, the 'else' clause corresponds 

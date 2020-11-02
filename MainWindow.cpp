@@ -241,7 +241,7 @@ MainWindow::MainWindow(QWidget *parent)
     runButton->setText(tr("RUN"));
     pushButtonLayout->addWidget(runButton);
 
-    QPushButton *runDesignSafeButton = new QPushButton();
+    runDesignSafeButton = new QPushButton();
     runDesignSafeButton->setText(tr("RUN at DesignSafe"));
     pushButtonLayout->addWidget(runDesignSafeButton);
 
@@ -337,7 +337,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
 
     // change the UQ engine
-    connect(uq,SIGNAL(onUQ_EngineChanged()), this,SLOT(onUQ_EngineChanged()));
+    connect(uq,SIGNAL(onUQ_EngineChanged(bool)), this,SLOT(onUQ_EngineChanged(bool)));
 
     // add button widget to layout
     //layout->addWidget(buttonWidget);
@@ -870,8 +870,6 @@ void MainWindow::onRunButtonClicked() {
 }
 
 
-
-
 void MainWindow::onRemoteRunButtonClicked(){
 
     // check logged in
@@ -1244,8 +1242,12 @@ void MainWindow::onExitButtonClicked(){
     QApplication::quit();
 }
 
-void MainWindow::onUQ_EngineChanged(void) {
-  random->setParametersWidget(uq->getParameters());
+void MainWindow::onUQ_EngineChanged(bool abilityToRunRemote) {
+
+    qDebug() << "onUQENGINECHANGED " << abilityToRunRemote;
+    runDesignSafeButton->setDisabled(!abilityToRunRemote);
+    random->setParametersWidget(uq->getParameters());
+
 }
 
 
@@ -1617,7 +1619,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.1.0 "));
+                       tr("Version 2.2.0 "));
 }
 
 void MainWindow::preferences()

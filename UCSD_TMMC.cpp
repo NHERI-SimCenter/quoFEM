@@ -90,6 +90,14 @@ UCSD_TMMC::outputToJSON(QJsonObject &jsonObj){
 
     bool result = true;
     jsonObj["numParticles"]=numParticles->text().toInt();
+
+    QString logLike = logLikelihoodScript->text();
+    QFileInfo fileInfo(logLike);
+
+    jsonObj["logLikelihoodFile"]=fileInfo.fileName();
+    QString path = fileInfo.absolutePath();
+    jsonObj["logLikelihoodPath"]=path;
+
     return result;    
 }
 
@@ -97,9 +105,13 @@ bool
 UCSD_TMMC::inputFromJSON(QJsonObject &jsonObject){
 
   bool result = false;
-  if (jsonObject.contains("numParticles") && jsonObject.contains("loglikelihood")) {
+  if (jsonObject.contains("numParticles") && jsonObject.contains("logLikelihoodFile") && jsonObject.contains("logLikelihoodPath")) {
     int particles=jsonObject["numParticles"].toInt();
     numParticles->setText(QString::number(particles));
+    QString file = jsonObject["logLikelihoodFile"].toString();
+    QString path = jsonObject["logLikelihoodPath"].toString();
+    logLikelihoodScript->setText(file + QDir::separator() + path);
+
     result = true;
   }
 
