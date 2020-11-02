@@ -1,0 +1,10 @@
+abstract: In this example, Bayesian estimation is used to estimate column stiffnesses
+  of a simple steel frame, given data about it's mode shapes and mass distribution.
+archive: $SIMCENTER_DEV
+archive_location: quoFEM/examples/qfem-0009
+collection-title: Simple Truss
+id: qfem-0009
+medium: quoFEM
+system: quoFEM
+title: Global sensitivity with SimCenterUQ
+type: book
