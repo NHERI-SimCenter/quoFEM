@@ -1,19 +1,17 @@
-# quoFEM Examples
+# quoFEM
+### Build: `win-2020-10-31`
 
-
-## Index
-
-- [x] `quo-01`: Forward Propagation - OPS/TCL
-- [ ] [`quo-02`](quo-02/quo-02.zip): Forward Propagation - OpenSeesPy
-       [Documentation](https://claudioperez.github.io/SimCenterExamples/common/user_manual/examples/desktop/quoFEM/quo-02.html)
-- [ ] [`quo-03`](): Reliability - OPS/TCL
-- [x] `quo-04`: Sensitivity - OPS/TCL
-- [x] `quo-05`: Forward Propagation - Rosenbrock
-- [x] `quo-06`: Optimization - Rosenbrock
-- [x] `quo-07`: Calibration - Frame
-- [ ] [`quo-08`](https://claudioperez.github.io/SimCenterExamples/common/user_manual/examples/desktop/quoFEM/quo-08.html): Bayesian Calibration - Frame
-- [ ] `quo-09`: Global sensitivity - Truss [SimCenterUQ]
-- [ ] `quo-10`: Forward propagation - Truss [FEAP]
-- [ ] `quo-11`: Bayesian Calibration (Old)
-- [ ] `quo-12`: Calibration (Old)
-- [ ] `quo-13`: Shear wall calibration
+| ID  | Pass  | Notes  |   |
+|---|---|---|---|
+| `qfem-0001`  | True |  ~ |
+| `qfem-0002`  | False |  Failing to load *.py files in FEM panel |
+| `qfem-0003`  | True |  ~ |
+| `qfem-0004`  | True |  ~ |
+| `qfem-0005`  | True |  ~ |
+| `qfem-0006`  | False |  Stuck at "Processing Results" |
+| `qfem-0007`  | False |  - Input: Crashes when loading JSON input. |
+|        |   |    - RV: Unpredictable RV distribution options. |
+|        |   |    - RV: Odd behavior on selection of "ContinuousDesign". |
+|        |   |   |
+| `qfem-0008`  | NA |  ~ |
+| `qfem-0009`  | NA |  ~ |

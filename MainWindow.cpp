@@ -827,16 +827,27 @@ void MainWindow::onRunButtonClicked() {
 
     // Only create workflow driver when not custom fem app, since workflow
     // driver provided as input in that case
+
+    #ifdef Q_OS_WIN
+     QString OperatingSystem="Windows";
+    #else
+     QString OperatingSystem="Mac";
+    #endif
+
     if (application != "Custom")
     {
        if (femApp.contains(".py"))
        {
-          QStringList args{ femApp, inputFilename, "runningLocal", os };
+
+          QStringList args{ femApp, inputFilename, "runningLocal", OperatingSystem };
+
           this->runApplication(python, args);
        }
        else
        {
-          QStringList args{ inputFilename, "runningLocal", os};
+
+          QStringList args{ inputFilename, "runningLocal", OperatingSystem };
+
           this->runApplication(femApp, args);
        }
     }
@@ -1628,7 +1639,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.2.0 "));
+                       tr("Version 2.2.1 "));
 }
 
 void MainWindow::preferences()
@@ -1644,7 +1655,7 @@ void MainWindow::about()
               sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
              quantification in the structural responses and parameter estimation of input variables in calibration studies.\
              <p>\
-             Version 2.1.0 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
+             Version 2.2.1 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
              will repeatedly invoke the finite element application either locally on the users dekstop machine or remotely\
              on high performance computing resources at the Texas Advanced Computing Center through the NHERI DesignSafe cyberinfrastructure.\
              <p>\

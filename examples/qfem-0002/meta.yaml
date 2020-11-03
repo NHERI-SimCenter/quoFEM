@@ -1,0 +1,7 @@
+archive: $SIMCENTER_DEV
+archive_location: quoFEM/examples/qfem-0002
+collection-title: Simple Truss
+id: qfem-0002
+programming-language: Python
+title: Forward Propagation - OpenSeesPy
+type: book

@@ -94,7 +94,7 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     */
     chains = new QLineEdit();
     chains->setText(tr("3"));
-    layout->addWidget(new QLabel("# Chains"), 2, 0);
+    layout->addWidget(new QLabel("# Chains (>2)"), 2, 0);
     layout->addWidget(chains, 2, 1);
 
 
