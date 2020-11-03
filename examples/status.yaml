@@ -24,7 +24,6 @@ references:
     - passing: true
       build: win-2020-10-31
       notes: ~
-
 - id: qfem-0006
   status:
     - passing: false
@@ -38,5 +37,13 @@ references:
         - Input: Crashes when loading JSON input.
           - RV: Unpredictable RV distribution options.
           - RV: Odd behavior on selection of "ContinuousDesign".
-
+- id: qfem-0008
+  status:
+    - build: win-2020-10-31
+      passing: NA
+      
+- id: qfem-0009
+  status:
+    - build: win-2020-10-31
+      passing: NA
       
