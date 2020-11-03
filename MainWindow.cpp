@@ -817,16 +817,23 @@ void MainWindow::onRunButtonClicked() {
     count = 1;
     // Only create workflow driver when not custom fem app, since workflow
     // driver provided as input in that case
+
+    #ifdef Q_OS_WIN
+     QString OperatingSystem="Windows";
+    #else
+     QString OperatingSystem="Mac";
+    #endif
+
     if (application != "Custom")
     {
        if (femApp.contains(".py"))
        {
-          QStringList args{ femApp, inputFilename, "runningLocal", "Mac" };
+          QStringList args{ femApp, inputFilename, "runningLocal", OperatingSystem };
           this->runApplication(python, args);
        }
        else
        {
-          QStringList args{ inputFilename, "runningLocal", "Mac" };
+          QStringList args{ inputFilename, "runningLocal", OperatingSystem };
           this->runApplication(femApp, args);
        }
     }
