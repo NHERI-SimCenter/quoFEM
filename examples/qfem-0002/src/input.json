@@ -1,12 +1,12 @@
 {
     "fem": {
         "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/model.py",
-        "mainInput": "model.py",
+        "inputFile": "{Current_Dir}/TrussModel.py",
+        "mainInput": "TrussModel.py",
         "mainPostprocessScript": "",
         "numInputs": 1,
-        "parametersFile": "params.py",
-        "parametersScript": "{Current_Dir}/params.py",
+        "parametersFile": "TrussParams.py",
+        "parametersScript": "{Current_Dir}/TrussParams.py",
         "postprocessScript": "",
         "program": "OpenSeesPy"
     },
