@@ -88,7 +88,7 @@ int main(int argc, const char **argv) {
     std::cerr << "WINDOWS\n";
     
   } else {
-
+    workflowDriverFile << "#!/bin/bash\n"; 
     workflowDriverFile << "python3 writeParam.py paramsDakota.in params.in\n";
     workflowDriverFile << "source ./" << workflow << "\n";
     std::cerr << "OTHER\n";

@@ -1,0 +1,61 @@
+{
+    "UQ_Method": {
+        "samplingMethodData": {
+            "method": "LHS",
+            "samples": 200,
+            "seed": 949
+        },
+        "uqEngine": "Dakota",
+        "uqType": "Forward Propagation"
+    },
+    "fem": {
+        "dir": "{Current_Dir}/.",
+        "inputFile": "{Current_Dir}/rosenbrock.py",
+        "mainInput": "rosenbrock.py",
+        "mainPostprocessScript": "",
+        "numInputs": 1,
+        "parametersFile": "params.py",
+        "parametersScript": "{Current_Dir}/params.py",
+        "postprocessScript": "",
+        "program": "OpenSeesPy"
+    },
+    "EDP": [
+        {
+            "name": "f"
+        }
+    ],
+    "randomVariables": [
+        {
+            "name": "X",
+            "title": "first variable",
+            "distribution": "Uniform",
+            "lowerbound": -2.0,
+            "refCount": 1,
+            "upperbound": 2.0,
+            "value": "RV.X",
+            "variableClass": "Uncertain"
+        },
+        {
+            "name": "Y",
+            "title": "second variable",
+            "distribution": "Uniform",
+            "lowerbound": 1.4,
+            "refCount": 1,
+            "upperbound": 1.6,
+            "value": "RV.Y",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "$schema": "https://raw.githubusercontent.com/claudioperez/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",
+    "Applications": {
+        "UQ": {
+            "Application": "Dakota-UQ",
+            "ApplicationData": {}
+        }
+    },
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
+    "uqResults": {},
+    "workingDir": "C:/Workdir/quoFEM",
+    "localAppDir": "C:/Tools/quoFEM/quoFEM",
+    "python": "python"
+}

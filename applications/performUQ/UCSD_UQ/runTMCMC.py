@@ -1,5 +1,6 @@
 """
-@author: Mukesh, Maitreya, and Conte 
+authors: Mukesh Kumar Ramancha, Maitreya Manoj Kurumbhati, and Prof. J.P. Conte 
+affiliation: University of California, San Diego
 
 """
 
@@ -8,7 +9,7 @@ import tmcmcFunctions
 import multiprocessing as mp
 from multiprocessing import Pool
 
-def RunTMCMC(N,AllPars,Nm_steps_max,Nm_steps_maxmax,log_likelihood):
+def RunTMCMC(N,AllPars,Nm_steps_max,Nm_steps_maxmax,log_likelihood, variables, resultsLocation):
     
     """ Runs TMCMC Algorithm """
     
@@ -38,7 +39,7 @@ def RunTMCMC(N,AllPars,Nm_steps_max,Nm_steps_maxmax,log_likelihood):
     pool = Pool(processes=mp.cpu_count())
     
     # 500 x 1 array LMT
-    Lmt = pool.starmap(log_likelihood,[(ind,Sm[ind]) for ind in range(N)],)
+    Lmt = pool.starmap(log_likelihood,[(ind,Sm[ind], variables, resultsLocation) for ind in range(N)],)
     pool.close()
     Lm = np.array(Lmt).squeeze()
     
@@ -76,10 +77,10 @@ def RunTMCMC(N,AllPars,Nm_steps_max,Nm_steps_maxmax,log_likelihood):
         
         if parallelize_MCMC == 'yes':
             pool = Pool(processes=mp.cpu_count())
-            results = pool.starmap(tmcmcFunctions.MCMC_MH,[(j1,Em,Nm_steps,Smcap[j1],Lmcap[j1],Postmcap[j1],beta,numAccepts,AllPars,log_likelihood) for j1 in range(N)],)
+            results = pool.starmap(tmcmcFunctions.MCMC_MH,[(j1,Em,Nm_steps,Smcap[j1],Lmcap[j1],Postmcap[j1],beta,numAccepts,AllPars,log_likelihood, variables, resultsLocation) for j1 in range(N)],)
             pool.close()
         else:
-            results = [tmcmcFunctions.MCMC_MH(j1,Em,Nm_steps,Smcap[j1],Lmcap[j1],Postmcap[j1],beta,numAccepts,AllPars,log_likelihood) for j1 in range(N)];
+            results = [tmcmcFunctions.MCMC_MH(j1,Em,Nm_steps,Smcap[j1],Lmcap[j1],Postmcap[j1],beta,numAccepts,AllPars,log_likelihood, variables, resultsLocation) for j1 in range(N)];
         
         Sm1,Lm1,Postm1,numAcceptsS,all_proposals,all_PLP= zip(*results)
         Sm1 = np.asarray(Sm1)

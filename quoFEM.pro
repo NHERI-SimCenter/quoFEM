@@ -15,15 +15,24 @@ VERSION=2.1.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 INCLUDEPATH += ../SimCenterCommon/RandomVariables
+INCLUDEPATH += ../SimCenterCommon/Workflow/WORKFLOW
+
+include($$PWD/ConanHelper.pri)
+win32::LIBS+=Advapi32.lib
+
 # INCLUDEPATH += ../simcenterAgave/interface
 
 macos:LIBS += /usr/lib/libcurl.dylib
 #win32:INCLUDEPATH += "../curl-7.71.1-win64-mingw/include"
 #win32:LIBS += "../curl-7.71.1-win64-mingw/lib/libcurl.dll.a"
-win32:INCLUDEPATH+=C:/Users/yisan/Anaconda3/pkgs/libcurl-7.65.2-h2a8f88b_0/Library/include
-win32:LIBS += C:/Users/yisan/Anaconda3/pkgs/libcurl-7.65.2-h2a8f88b_0/Library/lib/libcurl.lib
+#win32:INCLUDEPATH+=C:/Users/yisan/Anaconda3/pkgs/libcurl-7.65.2-h2a8f88b_0/Library/include
+#win32:LIBS += C:/Users/yisan/Anaconda3/pkgs/libcurl-7.65.2-h2a8f88b_0/Library/lib/libcurl.lib
 
-win32:DEFINES +=  CURL_STATICLIB
+#win32:DEFINES +=  CURL_STATICLIB
+#win32:INCLUDEPATH +=  "C:/Users/fmckenna/.conan/data/libcurl/7.64.1/bincrafters/stable/package/5bfad631c97132b9b85a3335485ad3178d6b06b3/include"
+#win32::LIBS += "C:/Users/fmckenna/.conan/data/libcurl/7.64.1/bincrafters/stable/package/5bfad631c97132b9b85a3335485ad3178d6b06b3/lib/libcurl.lib"
+#win32:DEFINES += "CURL_STATICLIB=1"
+#win32::LIBS += -lws2_32 -lCrypt32
 #win32:INCLUDEPATH+=../libCurl-7.59.0/include
 #win32:LIBS += ../libCurl-7.59.0/lib/libcurl.lib
 linux:LIBS += /usr/lib/x86_64-linux-gnu/libcurl.so
@@ -38,7 +47,7 @@ win32 {
 
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/Common/Common.pri)
-
+include(../SimCenterCommon/Workflow/JsonConfiguredWidgets.pri)
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -88,13 +97,15 @@ SOURCES += main.cpp\
     SimCenterGraphPlot.cpp \
     qcustomplot.cpp \
     DakotaResultsReliability.cpp \
+    UQ_JsonEngine.cpp \
     UCSD_Engine.cpp \
     UCSD_TMMC.cpp \
-    UCSD_Results.cpp
+    UCSD_Results.cpp \
+    CustomUQ_Results.cpp
 
 HEADERS  += MainWindow.h \
     InputWidgetEDP.h \
-EDP.h \
+    EDP.h \
     InputWidgetFEM.h \
     SidebarWidgetSelection.h \
     UQ_EngineSelection.h \
@@ -139,9 +150,11 @@ EDP.h \
     GlobalReliabilityWidget.h \
     qcustomplot.h \
     DakotaResultsReliability.h \
+    UQ_JsonEngine.h \
     UCSD_Engine.h \
     UCSD_TMMC.h \
-    UCSD_Results.h
+    UCSD_Results.h \
+    CustomUQ_Results.h
 
 FORMS    += mainwindow.ui
 

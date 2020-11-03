@@ -44,7 +44,10 @@ uqFEM.pro.user
 # application
 *.tmp
 *.out
-*.json
+# *.json
+
+# build folder
+applications/out/build/*
 
 Makefile
 *.pro.user
@@ -54,3 +57,5 @@ createOpenSeesDriver
 createOpenSeesPyDriver
 createFeapDriver
 nataf_gsa
+preprocessDakota
+

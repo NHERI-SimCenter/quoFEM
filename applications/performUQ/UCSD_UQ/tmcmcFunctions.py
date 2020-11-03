@@ -1,5 +1,6 @@
 """
-@author: Mukesh, Maitreya, and Conte 
+authors: Mukesh Kumar Ramancha, Maitreya Manoj Kurumbhati, and Prof. J.P. Conte 
+affiliation: University of California, San Diego
 
 """
 
@@ -50,7 +51,7 @@ def compute_beta(beta, likelihoods, prev_ESS, threshold):
     return new_beta, Wm_n, ESS
 
 # MCMC
-def MCMC_MH(ParticleNum,Em,Nm_steps,current,likelihood_current,posterior_current,beta,numAccepts,AllPars,log_likelihood):
+def MCMC_MH(ParticleNum,Em,Nm_steps,current,likelihood_current,posterior_current,beta,numAccepts,AllPars,log_likelihood, variables, resultsLocation):
     all_proposals = []
     all_PLP = []
     
@@ -61,7 +62,7 @@ def MCMC_MH(ParticleNum,Em,Nm_steps,current,likelihood_current,posterior_current
         prior_proposal = log_prior(proposal,AllPars)
         
         if np.isfinite(prior_proposal): #proposal satisfies the prior constraints    
-            likelihood_proposal = log_likelihood(ParticleNum,proposal)
+            likelihood_proposal = log_likelihood(ParticleNum,proposal, variables, resultsLocation)
             posterior_proposal = prior_proposal + likelihood_proposal * beta
         else:
             likelihood_proposal = -np.Inf #dont run the FE model

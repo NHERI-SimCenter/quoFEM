@@ -117,6 +117,7 @@ MainWindow::MainWindow(QWidget *parent)
     // user settings
     //
 
+
     /*
     QSettings settings("SimCenter", "uqFEM");
     QVariant savedValue = settings.value("uuid");
@@ -240,7 +241,7 @@ MainWindow::MainWindow(QWidget *parent)
     runButton->setText(tr("RUN"));
     pushButtonLayout->addWidget(runButton);
 
-    QPushButton *runDesignSafeButton = new QPushButton();
+    runDesignSafeButton = new QPushButton();
     runDesignSafeButton->setText(tr("RUN at DesignSafe"));
     pushButtonLayout->addWidget(runDesignSafeButton);
 
@@ -300,6 +301,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(results,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
     connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+
     connect(uq,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(uq,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
@@ -314,7 +316,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(jobCreator,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(jobCreator,SIGNAL(statusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(jobCreator,SIGNAL(fatalMessage(QString)),this,SLOT(fatalMessage(QString)));
-
 
     // login
     connect(loginButton,SIGNAL(clicked(bool)),this,SLOT(onLoginButtonClicked()));
@@ -336,7 +337,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
 
     // change the UQ engine
-    connect(uq,SIGNAL(onUQ_EngineChanged()), this,SLOT(onUQ_EngineChanged()));
+    connect(uq,SIGNAL(onUQ_EngineChanged(bool)), this,SLOT(onUQ_EngineChanged(bool)));
 
     // add button widget to layout
     //layout->addWidget(buttonWidget);
@@ -355,12 +356,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->createActions();
 
+    //
+    // create QThread in which the Interface will work, move interface to it,
+    // connect slots to thread to quit and invoke interface destructor & start running
+    //
+
     thread = new QThread();
     theRemoteInterface->moveToThread(thread);
+
     connect(thread, SIGNAL(finished()), theRemoteInterface, SLOT(deleteLater()));//adding back
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
     thread->start();
+
 
     // adding back ---
     //
@@ -408,15 +416,16 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    // invoke destructor as AgaveCLI not a QObject
-    //delete theRemoteInterface;
+    //
+    // call quit on thread and deleteLater on interface
+    // -interface destructor called here
     thread->quit();
     theRemoteInterface->deleteLater();
 
+    // destroy objects we created
     delete jobCreator;
     delete jobManager;
     delete manager;// adding back
-
 }
 
 bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory)
@@ -643,6 +652,17 @@ void MainWindow::onRunButtonClicked() {
         qDebug() << "creating a special copy of the main FE model script... " << mainScriptTmp;
         fem->specialCopyMainInput(mainScriptTmp, random->getParametereNames());
 
+        if (application == "Custom")
+        {
+           auto filesToCopy = fem->getCustomInputs();
+
+           foreach (QString filePath, filesToCopy)
+           {
+	     QFileInfo fileInfo(filePath);
+	     QString destination(templateDirectory + QDir::separator() + fileInfo.fileName());
+	     QFile::copy(filePath, destination);
+           }
+        }
     } else {
 
         // create template dir for other type of fem app to put stuff
@@ -686,6 +706,7 @@ void MainWindow::onRunButtonClicked() {
     QString appDIR = SimCenterPreferences::getInstance()->getAppDir();
 
     QString programToExe;
+    QString programName;
     QString femProgramToExe;
 
     //
@@ -717,7 +738,7 @@ void MainWindow::onRunButtonClicked() {
     bool found = false;
     for (int i=0; i<uqApplicationsArray.size(); i++) {
         QJsonObject entry = uqApplicationsArray[i].toObject();
-        QString programName = entry["Name"].toString();
+        programName = entry["Name"].toString();
         qDebug() << "programName: " << programName;
         if (programName == appName) {
             programToExe = entry["ExecutablePath"].toString();
@@ -731,6 +752,7 @@ void MainWindow::onRunButtonClicked() {
         this->errorMessage(message);
         return;
     }
+
 
     //
     // repeat for FEM application
@@ -802,14 +824,22 @@ void MainWindow::onRunButtonClicked() {
       python = pythonLocationVariant.toString();
 
     count = 1;
-    if (femApp.contains(".py")) {
-        QStringList args{femApp, inputFilename, "runningLocal", os};
-        this->runApplication(python, args);
-    } else {
-        QStringList args{inputFilename, "runningLocal", os};
-        this->runApplication(femApp, args);
-    }
 
+    // Only create workflow driver when not custom fem app, since workflow
+    // driver provided as input in that case
+    if (application != "Custom")
+    {
+       if (femApp.contains(".py"))
+       {
+          QStringList args{ femApp, inputFilename, "runningLocal", os };
+          this->runApplication(python, args);
+       }
+       else
+       {
+          QStringList args{ inputFilename, "runningLocal", os};
+          this->runApplication(femApp, args);
+       }
+    }
 
     //
     // now invoke uq app
@@ -839,15 +869,15 @@ void MainWindow::onRunButtonClicked() {
     QString filenameOUT = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota.out");
     QString filenameTAB;
     if (problemType == "Inverse Problem") {
-        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota_mcmc_tabular.dat");
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota_mcmc_tabular.dat");	
+    } else if (programName == "Other-UQ") {
+        filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("tabularResults.out");
     } else {
         filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
     }
 
     this->processResults(filenameOUT, filenameTAB);
 }
-
-
 
 
 void MainWindow::onRemoteRunButtonClicked(){
@@ -1217,12 +1247,17 @@ MainWindow::logoutReturn(bool ok){
 
 
 void MainWindow::onExitButtonClicked(){
+
   //RandomVariablesContainer *theParameters = uq->getParameters();
     QApplication::quit();
 }
 
-void MainWindow::onUQ_EngineChanged(void) {
-  random->setParametersWidget(uq->getParameters());
+void MainWindow::onUQ_EngineChanged(bool abilityToRunRemote) {
+
+    qDebug() << "onUQENGINECHANGED " << abilityToRunRemote;
+    runDesignSafeButton->setDisabled(!abilityToRunRemote);
+    random->setParametersWidget(uq->getParameters());
+
 }
 
 
@@ -1372,7 +1407,6 @@ bool MainWindow::inputFromJSON(QJsonObject &jsonObj){
     results->setResultWidget(uq->getResults());
     results->inputFromJSON(jsonObj); // results can fail if no results when file saved
 
-
     return true;
 }
 
@@ -1453,7 +1487,6 @@ void MainWindow::loadFile(const QString &fileName)
         return;
     }
 
-
     // given the json object, create the C++ objects
     //inputWidget->inputFromJSON(jsonObj);
     this->inputFromJSON(jsonObj);
@@ -1472,6 +1505,7 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 
     result->processResults(dakotaIN, dakotaTAB);
     results->setResultWidget(result);
+    
     inputWidget->setSelection(QString("RES"));
 }
 
@@ -1594,7 +1628,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.1.0 "));
+                       tr("Version 2.2.0 "));
 }
 
 void MainWindow::preferences()

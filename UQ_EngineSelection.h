@@ -71,8 +71,10 @@ class UQ_EngineSelection : public  SimCenterAppWidget
   void clear(void);
   
  signals:
-  void onUQ_EngineChanged(void);
+  void onUQ_EngineChanged(bool);
   void onNumModelsChanged(int);
+
+  // void remoteRunningCapability(bool);
 
  public slots:
   void engineSelectionChanged(const QString &arg1);
@@ -90,9 +92,9 @@ private:
    UQ_Engine *theUQpyEngine;
    UQ_Engine *theUCSD_Engine;
    UQ_Engine *thefilterEngine;
+   UQ_Engine *theCustomEngine;
 
-   InputWidgetEDP *theEdpWidget;
-
+  InputWidgetEDP *theEdpWidget;
 };
 
 #endif // WIND_SELECTION_H

@@ -94,7 +94,7 @@ signals:
     void attemptLoginReturn(bool);
     void logoutReturn(bool);
 
-    void onUQ_EngineChanged(void);
+    void onUQ_EngineChanged(bool);
 
     void errorMessage(QString message);
     void fatalMessage(QString message);
@@ -142,7 +142,7 @@ signals:
     int numTries;
     QPushButton *loginButton;         // login button on main screen
     QPushButton *loginSubmitButton;   // submit button on login screen
-
+    QPushButton *runDesignSafeButton;
     QThread *thread;
     QNetworkAccessManager *manager;
 
