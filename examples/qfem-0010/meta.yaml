@@ -1,0 +1,9 @@
+archive: $SIMCENTER_DEV
+archive_location: quoFEM/examples/qfem-0010
+collection-title: Simple Truss
+id: qfem-0010
+medium: quoFEM
+programming-language: FEAP
+system: quoFEM
+title: Forward Propagation - FEAP
+type: book

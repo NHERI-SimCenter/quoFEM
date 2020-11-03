@@ -1,0 +1,49 @@
+references:
+- id: qfem-0001
+  status:
+    - passing: true
+      build: win-2020-10-31
+      notes: ~
+- id: qfem-0002
+  status:
+    - passing: false
+      build: win-2020-10-31
+      notes: 'Failing to load *.py files in FEM panel'
+- id: qfem-0003
+  status:
+    - passing: true
+      build: win-2020-10-31
+      notes: ~
+- id: qfem-0004
+  status:
+    - passing: true
+      build: win-2020-10-31
+      notes: ~
+- id: qfem-0005
+  status:
+    - passing: true
+      build: win-2020-10-31
+      notes: ~
+- id: qfem-0006
+  status:
+    - passing: false
+      build: win-2020-10-31
+      notes: Stuck at "Processing Results"
+- id: qfem-0007
+  status:
+    - passing: false
+      build: win-2020-10-31
+      notes: |
+        - Input: Crashes when loading JSON input.
+          - RV: Unpredictable RV distribution options.
+          - RV: Odd behavior on selection of "ContinuousDesign".
+- id: qfem-0008
+  status:
+    - build: win-2020-10-31
+      passing: NA
+      
+- id: qfem-0009
+  status:
+    - build: win-2020-10-31
+      passing: NA
+      

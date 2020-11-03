@@ -1,7 +1,0 @@
-files:
-- TrussModel.tcl
-- TrussPost.tcl
-id: quo-03
-synopsis: This example uses quoFEM to perform a second-order reliability analysis
-  (SORM) of an OpenSees FE model.
-title: Reliability Analysis

@@ -1,0 +1,8 @@
+archive: $SIMCENTER_DEV
+archive_location: quoFEM/examples/qfem-0008
+collection-title: 2-Story Frame
+id: qfem-0008
+medium: quoFEM
+system: quoFEM
+title: Bayesian Calibration - Steel Frame
+type: book
