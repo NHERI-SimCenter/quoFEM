@@ -56,9 +56,10 @@ The vertical displacement at node 2 is considered as a response. It is specified
 UQ Workflow
 -----------
 
-To define the uncertainty workflow in quoFEM, select **Sensitivity
-Analysis** for the **SimCenterUQ** engine, and enter the following
-inputs:
+To define the uncertainty workflow in quoFEM, select the **SimCenterUQ** engine
+and specify **Sensitivity Analysis** and **Monte Carlo** for the 
+**UQ Method Category** and **Method** combination boxes, respectively.
+Finally, enter the following parameters for the remaining inputs.
 
 =========== ====
 **Samples** 1000
@@ -82,9 +83,6 @@ The following files make up the **FEM** model definition.
    response quantities to ``results.out`` from an OpenSees process. It
    is supplied to the **Postprocess File** field of the **FEM** tab.
 
-.. raw:: html
-
-   <!-- <div class="admonition warning">Do not place the files in your root, downloads, or desktop folder as when the application runs it will copy the contents on the directories and subdirectories containing these files multiple times. If you are like us, your root, Downloads or Documents folders contains and awful lot of files and when the backend workflow runs you will slowly find you will run out of disk space!</div> -->
 
 Results
 -------

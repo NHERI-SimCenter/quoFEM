@@ -127,4 +127,12 @@ references:
   archive_location: quoFEM/examples/qfem-0013
   title: exampleShearWallCalibration
   type: book
+
+- id: quofem
+  archive: $SIMCENTER_DEV
+  archive_location: quoFEM
+  title: quoFEM.exe
+  type: book
+  URL: 'https://github.com/NHERI-SimCenter/quoFEM'
+  version: 2.2.0
 ...
