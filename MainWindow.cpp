@@ -786,8 +786,17 @@ void MainWindow::onRunButtonClicked() {
     QString uqApp = appDIR +  QDir::separator() + programToExe;
     QString femApp = appDIR +  QDir::separator() + femProgramToExe;
 
-   // QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
+    // if windows add a .exe to non py applications
+    QString os("Linux");
+#ifdef _WIN32
+   if (!femApp.contains(".py"))
+       femApp += ".exe";
+   if (!uqApp.contains(".py"))
+       uqApp += ".exe";
+   os = "Windows";
+#endif
 
+   // QString tDirectory = workingDirectory + QDir::separator() + QString("tmp.SimCenter");
 
     // check the Apps exist
     QFile uqAppFile(uqApp);
@@ -796,7 +805,7 @@ void MainWindow::onRunButtonClicked() {
       return;
     }
 
-    QFile femAppFile(femApp);
+    QFile femAppFile(femApp); 
     if (! femAppFile.exists()) {
       qDebug() << "FEM application: " << femApp;
 
@@ -815,18 +824,30 @@ void MainWindow::onRunButtonClicked() {
       python = pythonLocationVariant.toString();
 
     count = 1;
+
     // Only create workflow driver when not custom fem app, since workflow
     // driver provided as input in that case
+
+    #ifdef Q_OS_WIN
+     QString OperatingSystem="Windows";
+    #else
+     QString OperatingSystem="Mac";
+    #endif
+
     if (application != "Custom")
     {
        if (femApp.contains(".py"))
        {
-          QStringList args{ femApp, inputFilename, "runningLocal", "Mac" };
+
+          QStringList args{ femApp, inputFilename, "runningLocal", OperatingSystem };
+
           this->runApplication(python, args);
        }
        else
        {
-          QStringList args{ inputFilename, "runningLocal", "Mac" };
+
+          QStringList args{ inputFilename, "runningLocal", OperatingSystem };
+
           this->runApplication(femApp, args);
        }
     }
@@ -1397,7 +1418,6 @@ bool MainWindow::inputFromJSON(QJsonObject &jsonObj){
     results->setResultWidget(uq->getResults());
     results->inputFromJSON(jsonObj); // results can fail if no results when file saved
 
-
     return true;
 }
 
@@ -1619,7 +1639,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.2.0 "));
+                       tr("Version 2.2.1 "));
 }
 
 void MainWindow::preferences()
@@ -1635,7 +1655,7 @@ void MainWindow::about()
               sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
              quantification in the structural responses and parameter estimation of input variables in calibration studies.\
              <p>\
-             Version 2.1.0 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
+             Version 2.2.1 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
              will repeatedly invoke the finite element application either locally on the users dekstop machine or remotely\
              on high performance computing resources at the Texas Advanced Computing Center through the NHERI DesignSafe cyberinfrastructure.\
              <p>\

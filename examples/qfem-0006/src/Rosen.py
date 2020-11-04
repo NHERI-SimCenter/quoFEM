@@ -5,7 +5,7 @@
 
 import sys
 
-from params import *
+from RosenParams import *
 
 def rosenbrock(x, y):
 	a = 1.
