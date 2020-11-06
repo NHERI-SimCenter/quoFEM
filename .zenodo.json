@@ -1,0 +1,63 @@
+{
+    "description": "<p>Major Changes include:</p>\n\n<p>Included new sensitivity method: probability model-based global sensitivity analysis (PM-GSA) Included new reliability method: transitional Markov chain Monte Carlo (TMCMC) Option to allow user to include their own UQ engine Option to allow user to include their own FEM engine</p>\n\n<p>Minor Changes includes changes to UI to reduce wasted space</p>", 
+    "license": "BSD-2-Clause", 
+    "title": "NHERI-SimCenter/quoFEM: Version 2.2.0", 
+    "notes": "The SimCenter is supported by a grant from the National Science Foundation (#1612843)", 
+    "keywords": [
+        "uncertainty quantification", 
+        "optimization", 
+        "bayesian calibration", 
+        "finite element", 
+        "parameter estimation", 
+        "reliability", 
+        "sampling", 
+        "sensitivity"
+    ], 
+    "version": "v2.2.0", 
+    "upload_type": "software", 
+    "communities": [
+        {
+            "identifier": "nheri-simcenter"
+        }
+    ], 
+    "publication_date": "2020-10-27", 
+    "creators": [
+        {
+            "affiliation": "University of California, Berkeley", 
+            "name": "Frank McKenna"
+        }, 
+        {
+            "affiliation": "Stanford University", 
+            "name": "Adam Zsarnoczay"
+        }, 
+        {
+            "affiliation": "University of Nevada, Reno", 
+            "name": "Michael Gardner"
+        }, 
+        {
+            "affiliation": "University of California, Berkeley", 
+            "name": "Sang-ri Yi"
+        }, 
+        {
+            "affiliation": "University of California, Berkeley", 
+            "name": "Wael Elhaddad"
+        }, 
+        {
+            "affiliation": "University of California, Berkeley", 
+            "name": "Aakash Satish"
+        }
+    ], 
+    "access_right": "open", 
+    "related_identifiers": [
+        {
+            "scheme": "url", 
+            "identifier": "https://github.com/NHERI-SimCenter/quoFEM/tree/v2.2.0", 
+            "relation": "isSupplementTo"
+        }, 
+        {
+            "scheme": "doi", 
+            "identifier": "10.5281/zenodo.1410700", 
+            "relation": "isVersionOf"
+        }
+    ]
+}
