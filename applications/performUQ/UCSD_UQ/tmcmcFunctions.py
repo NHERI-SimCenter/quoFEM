@@ -5,6 +5,7 @@ affiliation: University of California, San Diego
 """
 
 import numpy as np
+from runFEM import runFEM
 
 def initial_population(N,p):
     IniPop = np.zeros((N,len(p)))
@@ -62,7 +63,8 @@ def MCMC_MH(ParticleNum,Em,Nm_steps,current,likelihood_current,posterior_current
         prior_proposal = log_prior(proposal,AllPars)
         
         if np.isfinite(prior_proposal): #proposal satisfies the prior constraints    
-            likelihood_proposal = log_likelihood(ParticleNum,proposal, variables, resultsLocation)
+            likelihood_proposal = runFEM(ParticleNum,proposal, variables, resultsLocation, log_likelihood)
+            # likelihood_proposal = log_likelihood(ParticleNum, proposal, variables, resultsLocation)
             posterior_proposal = prior_proposal + likelihood_proposal * beta
         else:
             likelihood_proposal = -np.Inf #dont run the FE model

@@ -4,12 +4,9 @@ affiliation: SimCenter*; University of California, San Diego
 
 """
 
-import numpy as np
-import sys
 import os
 import platform
 import subprocess
-from subprocess import call
 from pathlib import Path
 import shutil
 
@@ -25,7 +22,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
             if not os.path.exists(d) or os.stat(s).st_mtime - os.stat(d).st_mtime > 1:
                 shutil.copy2(s, d)
 
-def runFEM(ParticleNum,par, variables, resultsLocation):
+def runFEM(ParticleNum,par, variables, resultsLocation, log_likelihood):
     """ 
     this function runs FE model (model.tcl) for each parameter value (par)
     model.tcl should take parameter input
@@ -34,10 +31,6 @@ def runFEM(ParticleNum,par, variables, resultsLocation):
     
     stringtoappend = ("analysis" + str(ParticleNum))
     analysisPath = Path.joinpath(resultsLocation, stringtoappend)
-#    analysisPath = Path(analysisLocation)
-
-#    print('partNUM: {}'.format(ParticleNum))
-#    print('anaPath: {}'.format(analysisPath))
           
     if os.path.isdir(analysisPath) == True:
         pass
@@ -80,22 +73,12 @@ def runFEM(ParticleNum,par, variables, resultsLocation):
     (output, err) = p.communicate()
     p_status = p.wait()
 
-#        print('Command output: {}'.format(output))
-
-#    try:
-#        result = subprocess.Popen(script, stderr=subprocess.STDOUT, shell=True)
-#        returncode = 0
-#    except subprocess.CalledProcessError as e:
-#        result = e.output
-#        returncode = e.returncode
-#        print('FAILED: {} with output {}'.format(result,returncode))
-
     # load output file (output file should be a column with Ny outputs)
 
     files = [f for f in os.listdir('.') if os.path.isfile(f)]
     for f in files:
         print(f)
     
-    
+    return log_likelihood()
     
     

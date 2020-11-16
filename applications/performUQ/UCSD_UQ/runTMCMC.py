@@ -8,6 +8,7 @@ import numpy as np
 import tmcmcFunctions
 import multiprocessing as mp
 from multiprocessing import Pool
+from runFEM import runFEM
 
 def RunTMCMC(N,AllPars,Nm_steps_max,Nm_steps_maxmax,log_likelihood, variables, resultsLocation):
     
@@ -38,10 +39,15 @@ def RunTMCMC(N,AllPars,Nm_steps_max,Nm_steps_maxmax,log_likelihood, variables, r
     #Evaluate log-likelihood at current samples Sm (in parallel)
     pool = Pool(processes=mp.cpu_count())
     
-    # 500 x 1 array LMT
-    Lmt = pool.starmap(log_likelihood,[(ind,Sm[ind], variables, resultsLocation) for ind in range(N)],)
+    # N x Ny array
+    Lmt = pool.starmap(runFEM,[(ind,Sm[ind], variables, resultsLocation, log_likelihood) for ind in range(N)],)
     pool.close()
     Lm = np.array(Lmt).squeeze()
+    
+    # # 500 x 1 array LMT
+    # Lmt = pool.starmap(log_likelihood,[(ind,Sm[ind], variables, resultsLocation) for ind in range(N)],)
+    # pool.close()
+    # Lm = np.array(Lmt).squeeze()
     
     while beta<1:
         # adaptivly compute beta s.t. ESS = N/2 or ESS = 0.95*prev_ESS
