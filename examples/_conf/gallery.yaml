@@ -1,0 +1,12 @@
+gallery_items:
+    src/input.json:
+      UQ: UQ_Method.uqType
+      FEM: fem.program
+    meta.yaml:
+      title: title
+      synopsis: abstract
+      Series: collection-title
+      src-url: URL
+
+filters: [UQ, FEM, Series]
+

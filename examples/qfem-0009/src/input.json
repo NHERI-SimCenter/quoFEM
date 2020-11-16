@@ -24,15 +24,15 @@
         "uqType": "Sensitivity Analysis"
     },
     "fem": {
-        "dir": "C:/Users/claud/git/sim/quoFEM/examples/qfem-0004/src",
-        "inputFile": "C:/Users/claud/git/sim/quoFEM/examples/qfem-0004/src/TrussModel.tcl",
+        "dir": "{Current_Dir}/.",
+        "inputFile": "{Current_Dir}/TrussModel.tcl",
         "mainInput": "TrussModel.tcl",
         "mainPostprocessScript": "TrussPost.tcl",
         "numInputs": 1,
-        "postprocessScript": "C:/Users/claud/git/sim/quoFEM/examples/qfem-0004/src/TrussPost.tcl",
+        "postprocessScript": "{Current_Dir}/TrussPost.tcl",
         "program": "OpenSees"
     },
-    "localAppDir": "C:/Users/claud/sim/dist-2020b/quoFEM_Windows_Download-2020-10-31",
+    "localAppDir": "C:/Users/claud/sim/dist-2020b/quoFEM-2020-11-03",
     "python": "C:\\Users\\claud\\miniconda3\\envs\\sim\\python.exe",
     "randomVariables": [
         {

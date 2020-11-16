@@ -17,7 +17,7 @@ of the response quantities of interest with respect to the problem’s
 random variables.
 
 
-.. figure:: figures/truss.png
+.. figure:: qfem-0009.png
    :align: center
    :width: 600
    :figclass: align-center

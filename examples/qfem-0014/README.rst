@@ -23,7 +23,7 @@ Kurumbhati and Mukesh Ramancha from UC San Diego, this example looks at
 the following simplified finite element model of a steel building.
 
 
-.. figure:: ../quo-14/figures/frameFigure.png
+.. figure:: qfem-0014.png
    :align: center
    :figclass: align-center
    :width: 400
@@ -97,6 +97,7 @@ The exercise requires two script files - an OpenSees script file which builds th
 
 Solving the problem using quoFEM
 --------------------------------
+
 The steps involved are as follows:
 
 1. Start the application and the **UQ** panel will be highlighted. In the **UQ Engine** drop down menu, select the **UCSD_UQ** engine. In the **Method** category drop down menu the **Transitional Markov chain Monte Carlo** option will be highlighted. In the **Log Likelihood Script** field, enter the path to the script which computes the log-likelihood (i.e., the file called ``postProcessing.py`` in this example), or select **Choose** and navigate to the file. Enter the number of samples desired to be drawn from the posterior distribution in the **# Samples** field.

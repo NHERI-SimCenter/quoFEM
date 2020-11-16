@@ -1,0 +1,25 @@
+filters:
+# - rules: ~
+    # - 's/(qfem-\d{4})/quoFEM\/$1/g'
+    # # - 's/(weuq-\d{4})/WEUQ/$1'
+    # # - 's/(eeuq-\d{4})/EEUQ/$1'
+    # - 's/README\.(md|rst)/index.$1/g'
+    # # - 's/\.base\.git.*//g' 
+    # # - 's/\.git.*//g'
+    # - 's/LICENSE//g'
+    # - 's/.gitignore//g'
+
+- match:
+    id: 'qfem-\d{4}'
+  rules:
+    - 's/README\.(md|rst)/index.$1/g'
+    - 's/\.base\.git.*//g' 
+    - 's/\.git.*//g'
+    - 's/\.base.*//g' 
+    - 's/out//g'
+    - 's/LICENSE//g'
+    - 's/.gitignore//g'
+    # - 's/README\.md/index.md/g'
+    # - 's/\/\..*//g'
+    # - 's/((?:[^/]*/)*)(.*)/$2'
+
