@@ -2,10 +2,10 @@
 references:
 - id: qfem-0001
   abstract: >-
-    This example illustrates how quoFEM interacts with OpenSeesPy. A simple
-    forward propagation procedure is run to estimate the first and second
-    central moments of a FE model's response, given the marginal distributions
-    of various random parameters.
+    This example illustrates how quoFEM interacts with the Tcl interpreter for
+    OpenSees. A simple forward propagation procedure is run to estimate the
+    first and second central moments of a FE model's response, given the
+    marginal distributions of various random parameters.
   archive: $SIMCENTER_DEV
   archive_location: quoFEM/examples/qfem-0001
   collection-title: Simple Truss
@@ -14,14 +14,21 @@ references:
   title: Truss Reliability Analysis
   type: book
   URL: 'https://github.com/NHERI-SimCenter/quoFEM/tree/master/examples/qfem-0001'
+  version: 0.0.1
 
 - id: qfem-0002
+  abstract: >-
+    This example illustrates how quoFEM interacts with OpenSeesPy. A simple
+    forward propagation procedure is run to estimate the first and second
+    central moments of a FE model's response, given the marginal distributions
+    of various random parameters.
   archive: $SIMCENTER_DEV
   archive_location: quoFEM/examples/qfem-0002
   collection-title: Simple Truss
   programming-language: Python
   title: Forward Propagation - OpenSeesPy
   type: book
+  version: 0.0.1
 
 - id: qfem-0003
   abstract: >-
@@ -79,6 +86,10 @@ references:
   type: book
 
 - id: qfem-0008
+  abstract: >-
+    In this example, Bayesian estimation is used to estimate column stiffnesses
+    of a simple steel frame, given data about it's mode shapes and mass
+    distribution.
   archive: $SIMCENTER_DEV
   archive_location: quoFEM/examples/qfem-0008
   collection-title: 2-Story Frame
@@ -89,9 +100,8 @@ references:
 
 - id: qfem-0009
   abstract: >-
-    In this example, Bayesian estimation is used to estimate column stiffnesses
-    of a simple steel frame, given data about it's mode shapes and mass
-    distribution.
+    A global sensitivity analysis is conducted with correlated random variables
+    using the SimCenterUQ engine for sensitivity analysis.
   archive: $SIMCENTER_DEV
   archive_location: quoFEM/examples/qfem-0009
   collection-title: Simple Truss
@@ -101,6 +111,11 @@ references:
   type: book
 
 - id: qfem-0010
+  abstract: >-
+    This example illustrates how quoFEM interacts with the FEAP engine for
+    finite element analysis. A simple forward propagation procedure is run to
+    estimate the first and second central moments of a truss model's response,
+    given the marginal distributions of various random parameters.
   archive: $SIMCENTER_DEV
   archive_location: quoFEM/examples/qfem-0010
   collection-title: Simple Truss
@@ -111,28 +126,39 @@ references:
   type: book
 
 - id: qfem-0011
+  abstract: '~'
   archive: $SIMCENTER_DEV
   archive_location: quoFEM/examples/qfem-0011
   title: exampleBayesianCalibration
   type: book
 
 - id: qfem-0012
+  abstract: '~'
   archive: $SIMCENTER_DEV
   archive_location: quoFEM/examples/qfem-0012
   title: exampleCalibration
   type: book
 
 - id: qfem-0013
+  abstract: '~'
   archive: $SIMCENTER_DEV
   archive_location: quoFEM/examples/qfem-0013
   title: exampleShearWallCalibration
   type: book
 
-- id: quofem
+- id: qfem-0014
+  abstract: >-
+    In this example, Bayesian estimation is used to estimate the lateral story
+    stiffnesses of the two stories of a simple steel frame, given data about its
+    mode shapes and frequencies. The transitional Markov chain Monte Carlo
+    algorithm is used to obtain samples from the posterior probability
+    distribution of the lateral story stiffnesses
   archive: $SIMCENTER_DEV
-  archive_location: quoFEM
-  title: quoFEM.exe
+  archive_location: quoFEM/examples/qfem-0014
+  author:
+    - family: Bangalore Satish
+      given: Aakash
+  collection-title: 2-Story Frame
+  title: Bayesian Calibration using TMCMC
   type: book
-  URL: 'https://github.com/NHERI-SimCenter/quoFEM'
-  version: 2.2.0
 ...
