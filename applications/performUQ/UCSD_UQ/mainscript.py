@@ -20,14 +20,19 @@ workdir_temp = inputArgs[2]
 run_type = inputArgs[3]
 
 dakotaJsonLocation = Path.joinpath(Path(workdir_temp), "dakota.json")
-variables, numberOfSamples, resultsLocation, resultsPath = parseDataFunction(dakotaJsonLocation)
+variables, numberOfSamples, resultsLocation, resultsPath, logLikelihoodDirectoryPath, logLikelihoodFilename = parseDataFunction(dakotaJsonLocation)
 
 print('numVariables {}', format(variables))
 print('numSamples {}', format(numberOfSamples))
 
 import pdfs
 from runTMCMC import RunTMCMC
-from postProcessing import log_likelihood
+# from postProcessing import log_likelihood
+
+sys.path.append(logLikelihoodDirectoryPath)
+logLikeModuleName = os.path.splitext(logLikelihoodFilename)[0]
+from importlib import import_module
+logLikeModule = import_module(logLikeModuleName)
 
 # %%
 
@@ -78,7 +83,7 @@ for i in range(len(variables["names"])):
 ''' Run the Algorithm '''
 
 if __name__ == '__main__':
-    mytrace = RunTMCMC(Np, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variables, resultsLocation)
+    mytrace = RunTMCMC(Np, AllPars, Nm_steps_max, Nm_steps_maxmax, logLikeModule.log_likelihood, variables, resultsLocation)
 
     ''' Write Data to '.csv' file '''
 
