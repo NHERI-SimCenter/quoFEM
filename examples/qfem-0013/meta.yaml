@@ -1,3 +1,4 @@
+abstract: '~'
 archive: $SIMCENTER_DEV
 archive_location: quoFEM/examples/qfem-0013
 id: qfem-0013

@@ -1,3 +1,6 @@
+abstract: This example illustrates how quoFEM interacts with OpenSeesPy. A simple
+  forward propagation procedure is run to estimate the first and second central moments
+  of a FE model's response, given the marginal distributions of various random parameters.
 archive: $SIMCENTER_DEV
 archive_location: quoFEM/examples/qfem-0002
 collection-title: Simple Truss
@@ -5,3 +8,4 @@ id: qfem-0002
 programming-language: Python
 title: Forward Propagation - OpenSeesPy
 type: book
+version: 0.0.1
