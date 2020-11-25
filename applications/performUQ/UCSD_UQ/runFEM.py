@@ -10,6 +10,7 @@ import subprocess
 from pathlib import Path
 import shutil
 
+
 def copytree(src, dst, symlinks=False, ignore=None):
     if not os.path.exists(dst):
         os.makedirs(dst)
@@ -22,47 +23,48 @@ def copytree(src, dst, symlinks=False, ignore=None):
             if not os.path.exists(d) or os.stat(s).st_mtime - os.stat(d).st_mtime > 1:
                 shutil.copy2(s, d)
 
-def runFEM(ParticleNum,par, variables, resultsLocation, log_likelihood):
+
+def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood):
     """ 
     this function runs FE model (model.tcl) for each parameter value (par)
     model.tcl should take parameter input
     model.tcl should output 'output$PN.txt' -> column vector of size 'Ny'
-    """     
-    
+    """
+
     stringtoappend = ("analysis" + str(ParticleNum))
     analysisPath = Path.joinpath(resultsLocation, stringtoappend)
-          
-    if os.path.isdir(analysisPath) == True:
+
+    if os.path.isdir(analysisPath):
         pass
-    else:    
+    else:
         os.mkdir(analysisPath)
-    
-    #copy templatefiles
-    templateDir =  Path.joinpath(resultsLocation, "templatedir")
+
+    # copy templatefiles
+    templateDir = Path.joinpath(resultsLocation, "templatedir")
 
     print('src: {}'.format(templateDir.as_posix()))
     print('dst: {}'.format(analysisPath))
-    
+
     copytree(templateDir.as_posix(), analysisPath)
 
     os.chdir(analysisPath)
-    
+
     # write input file
     ParameterName = variables["names"]
     f = open("params.in", "w")
     f.write('{}\n'.format(len(par)))
-    for i in range(0,len(par)):
+    for i in range(0, len(par)):
         name = str(ParameterName[i])
         value = str(par[i])
-                   
+
         f.write('{} {}\n'.format(name, value))
     f.close()
-    
-    # run FE model for the written input file
-    FNULL = open(os.devnull, 'w')
-#    call("OpenSees parinput" + str(ParticleNum) +".tcl", stdout=FNULL, stderr=subprocess.STDOUT)
 
-    env = os.environ
+    # run FE model for the written input file
+    # FNULL = open(os.devnull, 'w')
+    #    call("OpenSees parinput" + str(ParticleNum) +".tcl", stdout=FNULL, stderr=subprocess.STDOUT)
+
+    # env = os.environ
 
     if platform.system() == 'Windows':
         script = "workflow_driver.bat"
@@ -78,7 +80,5 @@ def runFEM(ParticleNum,par, variables, resultsLocation, log_likelihood):
     files = [f for f in os.listdir('.') if os.path.isfile(f)]
     for f in files:
         print(f)
-    
+
     return log_likelihood()
-    
-    

@@ -4,12 +4,12 @@ affiliation: University of California, San Diego
 
 """
 
-import os
+# import os
 from pathlib import Path
 import re
 
-def parseDataFunction(dakotaJsonLocation):
 
+def parseDataFunction(dakotaJsonLocation):
     # %% read form dakota.json location
     with open(dakotaJsonLocation, 'r') as file_object:
         string_to_parse = file_object.read()
@@ -21,11 +21,11 @@ def parseDataFunction(dakotaJsonLocation):
     numberOfSamples = int(numberOfSamples_pattern_match.group('numParticles'))
 
     # Loglikelihood path and filename
-    
+
     logLikelihoodPathPattern = re.compile(r'"logLikelihoodPath": "(?P<logLikelihoodPath>.+)"')
     logLikelihoodPathPatternMatch = next(logLikelihoodPathPattern.finditer(string_to_parse))
     logLikelihoodPath = logLikelihoodPathPatternMatch.group('logLikelihoodPath')
-    
+
     logLikelihoodFilePattern = re.compile(r'"logLikelihoodFile": "(?P<logLikelihoodFile>.+)"')
     logLikelihoodFilePatternMatch = next(logLikelihoodFilePattern.finditer(string_to_parse))
     logLikelihoodFile = logLikelihoodFilePatternMatch.group('logLikelihoodFile')
