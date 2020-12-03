@@ -108,8 +108,8 @@ def parseDataFunction(dakotaJsonLocation):
 
             # variableDistPara1_pattern = re.compile(r'"Lower Bound": (?P<distPara1>\d*\.?\d*)')
             # variableDistPara2_pattern = re.compile(r'"Upper Bound": (?P<distPara2>\d*\.?\d*)')
-            variableDistPara1_pattern = re.compile(r'"lowerbound": (?P<distPara1>\d*\.?\d*)')
-            variableDistPara2_pattern = re.compile(r'"upperbound": (?P<distPara2>\d*\.?\d*)')
+            variableDistPara1_pattern = re.compile(r'"lowerbound": (?P<distPara1>-?\d*\.?\d*)')
+            variableDistPara2_pattern = re.compile(r'"upperbound": (?P<distPara2>-?\d*\.?\d*)')
 
             variablePara1_match = next(variableDistPara1_pattern.finditer(variablesInfo[variable]))
             variablePara2_match = next(variableDistPara2_pattern.finditer(variablesInfo[variable]))
@@ -121,7 +121,7 @@ def parseDataFunction(dakotaJsonLocation):
 
         elif variableDistType_match.group('distType') == 'Normal':
 
-            variableDistPara1_pattern = re.compile(r'"mean": (?P<distPara1>\d*\.?\d*)')
+            variableDistPara1_pattern = re.compile(r'"mean": (?P<distPara1>-?\d*\.?\d*)')
             variableDistPara2_pattern = re.compile(r'"stdDev": (?P<distPara2>\d*\.?\d*)')
 
             variablePara1_match = next(variableDistPara1_pattern.finditer(variablesInfo[variable]))
@@ -147,10 +147,10 @@ def parseDataFunction(dakotaJsonLocation):
 
         elif variableDistType_match.group('distType') == 'Truncated-Normal':
 
-            variableDistPara1_pattern = re.compile(r'"Mean": (?P<distPara1>\d*\.?\d*)')
+            variableDistPara1_pattern = re.compile(r'"Mean": (?P<distPara1>-?\d*\.?\d*)')
             variableDistPara2_pattern = re.compile(r'"Standard Deviation": (?P<distPara2>\d*\.?\d*)')
-            variableDistPara3_pattern = re.compile(r'"a": (?P<distPara3>\d*\.?\d*)')
-            variableDistPara4_pattern = re.compile(r'"b": (?P<distPara4>\d*\.?\d*)')
+            variableDistPara3_pattern = re.compile(r'"a": (?P<distPara3>-?\d*\.?\d*)')
+            variableDistPara4_pattern = re.compile(r'"b": (?P<distPara4>-?\d*\.?\d*)')
 
             variablePara1_match = next(variableDistPara1_pattern.finditer(variablesInfo[variable]))
             variablePara2_match = next(variableDistPara2_pattern.finditer(variablesInfo[variable]))
