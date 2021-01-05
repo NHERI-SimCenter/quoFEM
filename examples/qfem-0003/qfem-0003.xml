@@ -1,0 +1,13 @@
+<item id="qfem-0003">
+
+    <map id="qfem-0003" base="$SIMCENTER_DEV/quoFEM/examples/qfem-0003" >
+      <str key="title" src="README.rst#.//title" />
+      <set key="doc" cast="path"> <!-- src="README.rst" proc="aurore.find_dependencies" -->
+        <path>README.rst</path>
+        <set unpack="update"  src="README.rst" proc="aurore.find_dependencies" />
+      </set>
+      <str  key="summary">This example uses quoFEM to perform a second-order reliability analysis (SORM) of an OpenSees FE model.</str>
+      <str  key="logo" src="README.rst#.//image/@uri" />
+      <date key="published" >2020-12-17T21:26:53.946614-08:00</date>
+    </map>
+</item>

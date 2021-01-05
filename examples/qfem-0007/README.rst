@@ -14,7 +14,7 @@ Provided by Professor Joel Conte and his doctoral students Maitreya
 Kurumbhati and Mukesh Ramancha from UC San Diego, this example looks at
 the following simplified finite element model of a steel building.
 
-.. figure:: frame/frameFE.png
+.. figure:: qfem-0007.png
    :alt: Schematic model of frame.
    :width: 300px
 

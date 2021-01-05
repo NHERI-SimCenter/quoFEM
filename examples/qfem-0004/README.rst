@@ -84,5 +84,5 @@ figure:
    Sensitivity analysis results for simple truss.
 
 
-.. |Truss schematic diagram| image:: qfem-0006.png
+.. |Truss schematic diagram| image:: qfem-0004.png
 
