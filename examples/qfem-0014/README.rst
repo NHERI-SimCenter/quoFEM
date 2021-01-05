@@ -77,7 +77,7 @@ The exercise requires two script files - an OpenSees script file which builds th
 
 1. :quo-14:`model.tcl <src/model.tcl>`
 
-.. literalinclude:: ../quo-14/src/model.tcl
+.. literalinclude:: ../qfem-0014/src/model.tcl
    :language: tcl
 
 .. note::
@@ -86,7 +86,7 @@ The exercise requires two script files - an OpenSees script file which builds th
 
 2. :quo-14:`postProcessing.py <src/postProcessing.py>`
 
-.. literalinclude:: ../quo-14/src/postProcessing.py
+.. literalinclude:: ../qfem-0014/src/postProcessing.py
    :language: python
 
 .. warning::
@@ -120,7 +120,7 @@ The steps involved are as follows:
 For each variable, specify the prior probability distribution - from the **Distribution** drop down menu, select **Uniform** and then provide the lower bounds and upper bounds shown in the figure below. 
 
 
-.. figure:: ../quo-14/figures/quo-14-RV.png
+.. figure:: ../qfem-0014/figures/quo-14-RV.png
    :align: center
    :figclass: align-center
 
@@ -131,30 +131,30 @@ For each variable, specify the prior probability distribution - from the **Distr
 5. Next click on the **Run** button. This will cause the backend application to launch the **UCSD_UQ** engine, which performs Bayesian calibration using the TMCMC algorithm. When done the **RES** tab will be selected and the results will be displayed as shown in the figure below. The results show the first four moments of the posterior marginal probability distribution of ``k1`` and ``k2``.
 
 
-.. figure:: ../quo-14/figures/quo-14-RES-Summary.png
+.. figure:: ../qfem-0014/figures/quo-14-RES-Summary.png
    :align: center
    :figclass: align-center
 
 
 If the user selects the **Data Values** tab in the results panel, they will be presented with both a graphical plot and a tabular listing of the data.
 
-.. figure:: ../quo-14/figures/quo-14-RES-DataValues1.png
+.. figure:: ../qfem-0014/figures/quo-14-RES-DataValues1.png
    :align: center
    :figclass: align-center
 
 Various views of the graphical display can be obtained by left and right clicking in the columns of the tabular data. 
 
-.. figure:: ../quo-14/figures/quo-14-RES-DataValues2.png
+.. figure:: ../qfem-0014/figures/quo-14-RES-DataValues2.png
    :align: center
    :figclass: align-center
    
 
 If a singular column of the tabular data is pressed with both right and left buttons a histogram and CDF will be displayed, as shown in figure below.
 
-.. figure:: ../quo-14/figures/quo-14-RES-DataValues3.png
+.. figure:: ../qfem-0014/figures/quo-14-RES-DataValues3.png
    :align: center
    :figclass: align-center
 
-.. figure:: ../quo-14/figures/quo-14-RES-DataValues4.png
+.. figure:: ../qfem-0014/figures/quo-14-RES-DataValues4.png
    :align: center
    :figclass: align-center
