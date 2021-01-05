@@ -13,7 +13,10 @@ Provided by Professor Joel Conte and his doctoral students Maitreya
 Kurumbhati and Mukesh Ramancha from UC San Diego, this example looks at
 the following simplified finite element model of a steel building.
 
-| |image0|
+.. figure:: qfem-0008.png
+   :width: 400px
+
+
 | Each floor slab of the building is made of composite metal deck and is
   supported on four steel columns. The story heights are measured at
   :math:`10'` and in plan the side lengths measure :math:`33'-4"` by
@@ -106,5 +109,5 @@ are as follows:
 -  ``Ic2``: Mean :math:`=1404.03`, Std. Dev :math:`=253.584`.
 
 
-.. |image0| image:: qfem-0008.png
+
 

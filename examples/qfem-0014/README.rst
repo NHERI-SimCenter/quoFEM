@@ -3,7 +3,7 @@ Steel Frame: Bayesian Calibration using TMCMC
 =============================================
 
 +---------------+--------------------+
-| Problem files | :quo-14:`/`        |
+| Problem files | :qfem-14:`/`       |
 +---------------+--------------------+
 
 Outline
@@ -78,13 +78,13 @@ The exercise requires two script files - an OpenSees script file which builds th
 1. :quo-14:`model.tcl <src/model.tcl>`
 
 .. literalinclude:: ../qfem-0014/src/model.tcl
-   :language: tcl
+
 
 .. note::
    This tcl script creates a file called ``results.out`` when it runs. This file contains the first eigenvalue and the second component of the first eigenvector obtained from finite element analysis of the structure. 
    
 
-2. :quo-14:`postProcessing.py <src/postProcessing.py>`
+2. :qfem-0014:`postProcessing.py <src/postProcessing.py>`
 
 .. literalinclude:: ../qfem-0014/src/postProcessing.py
    :language: python
@@ -120,7 +120,7 @@ The steps involved are as follows:
 For each variable, specify the prior probability distribution - from the **Distribution** drop down menu, select **Uniform** and then provide the lower bounds and upper bounds shown in the figure below. 
 
 
-.. figure:: ../qfem-0014/figures/quo-14-RV.png
+.. figure:: figures/quo-14-RV.png
    :align: center
    :figclass: align-center
 
@@ -131,20 +131,20 @@ For each variable, specify the prior probability distribution - from the **Distr
 5. Next click on the **Run** button. This will cause the backend application to launch the **UCSD_UQ** engine, which performs Bayesian calibration using the TMCMC algorithm. When done the **RES** tab will be selected and the results will be displayed as shown in the figure below. The results show the first four moments of the posterior marginal probability distribution of ``k1`` and ``k2``.
 
 
-.. figure:: ../qfem-0014/figures/quo-14-RES-Summary.png
+.. figure:: figures/quo-14-RES-Summary.png
    :align: center
    :figclass: align-center
 
 
 If the user selects the **Data Values** tab in the results panel, they will be presented with both a graphical plot and a tabular listing of the data.
 
-.. figure:: ../qfem-0014/figures/quo-14-RES-DataValues1.png
+.. figure:: figures/quo-14-RES-DataValues1.png
    :align: center
    :figclass: align-center
 
 Various views of the graphical display can be obtained by left and right clicking in the columns of the tabular data. 
 
-.. figure:: ../qfem-0014/figures/quo-14-RES-DataValues2.png
+.. figure:: figures/quo-14-RES-DataValues2.png
    :align: center
    :figclass: align-center
    
