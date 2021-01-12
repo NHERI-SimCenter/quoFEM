@@ -75,7 +75,7 @@ Files required
 --------------
 The exercise requires two script files - an OpenSees script file which builds the finite element model and conducts the analysis, and a Python script file which post-processes the output from the finite element analysis. The user should download these file and place it in a *new* folder. The post-processing script calculates the log-likelihood that the input values of the story stiffness produced the set of measurement data. 
 
-1. :quo-14:`model.tcl <src/model.tcl>`
+1. :qfem-0014:`model.tcl <src/model.tcl>`
 
 .. literalinclude:: ../qfem-0014/src/model.tcl
 

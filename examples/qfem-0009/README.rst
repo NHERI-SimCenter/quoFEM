@@ -71,13 +71,13 @@ Model Files
 
 The following files make up the **FEM** model definition.
 
-#. :quo-09:`TrussModel.tcl <src/TrussModel.tcl>`:
+#. :qfem-0009:`TrussModel.tcl <src/TrussModel.tcl>`:
    This file is an OpenSees Tcl script that constructs and runs a finite
    element analysis of the truss for a given realization of the
    problem’s random variables. It is supplied to the **Input File**
    field of the **FEM** tab.
 
-#. :quo-09:`TrussPost.tcl <src/TrussPost.tcl>`:
+#. :qfem-0009:`TrussPost.tcl <src/TrussPost.tcl>`:
    This file is an OpenSees Tcl script that processes the QoI
    identifiers supplied in the **QoI** tab, and writes the relevant
    response quantities to ``results.out`` from an OpenSees process. It
