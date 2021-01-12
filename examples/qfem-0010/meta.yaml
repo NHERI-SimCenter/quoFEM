@@ -1,4 +1,4 @@
-abstract: This example illustrates how quoFEM interacts with the FEAP engine for finite
+summary: This example illustrates how quoFEM interacts with the FEAP engine for finite
   element analysis. A simple forward propagation procedure is run to estimate the
   first and second central moments of a truss model's response, given the marginal
   distributions of various random parameters.

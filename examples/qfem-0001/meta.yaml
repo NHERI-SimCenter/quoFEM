@@ -1,14 +1,6 @@
 URL: https://github.com/NHERI-SimCenter/quoFEM/tree/master/examples/qfem-0001
-abstract: This example illustrates how quoFEM interacts with the Tcl interpreter for
+summary: This example illustrates how quoFEM interacts with the Tcl interpreter for
   OpenSees. A simple forward propagation procedure is run to estimate the first and
   second central moments of a FE model's response, given the marginal distributions
   of various random parameters.
-archive: $SIMCENTER_DEV
-archive_location: quoFEM/examples/qfem-0001
-collection-title: Simple Truss
-id: qfem-0001
-medium: quoFEM
 system: quoFEM
-title: Truss Reliability Analysis
-type: book
-version: 0.0.1

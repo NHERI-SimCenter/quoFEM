@@ -1,4 +1,4 @@
-abstract: A global sensitivity analysis is conducted with correlated random variables
+summary: A global sensitivity analysis is conducted with correlated random variables
   using the SimCenterUQ engine for sensitivity analysis.
 archive: $SIMCENTER_DEV
 archive_location: quoFEM/examples/qfem-0009

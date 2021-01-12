@@ -1,0 +1,10 @@
+<map id="{{ id }}" base="$SIMCENTER_DEV/quoFEM/examples/{{ id }}" >
+    <str key="title" src="README.rst#.//title" />
+    <set key="doc" cast="path">
+    <path>README.rst</path>
+    <set unpack="update"  src="README.rst" proc="aurore.find_dependencies" />
+    </set>
+    <str  key="summary" src="meta.yaml#/summary"/>
+    <str  key="logo" src="README.rst#.//image/@uri" />
+    <date key="published">{{ published }}</date>
+</map>

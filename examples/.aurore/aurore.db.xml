@@ -13,19 +13,19 @@
     </category-scheme>
   </category-schemes>
   <items>
-    <item id="qfem-0001" src="qfem-0001/qfem-0001.xml#qfem-0001" />
-    <item id="qfem-0002" src="qfem-0002/qfem-0002.xml#qfem-0002" />
-    <item id="qfem-0003" src="qfem-0003/qfem-0003.xml#qfem-0003" />
-    <item id="qfem-0004" src="qfem-0004/qfem-0004.xml#qfem-0004" />
-    <item id="qfem-0005" src="qfem-0005/qfem-0005.xml#qfem-0005" />
-    <item id="qfem-0006" src="qfem-0006/qfem-0006.xml#qfem-0006" />
-    <item id="qfem-0007" src="qfem-0007/qfem-0007.xml#qfem-0007" />
-    <item id="qfem-0008" src="qfem-0008/qfem-0008.xml#qfem-0008" />
-    <item id="qfem-0009" src="qfem-0009/qfem-0009.xml#qfem-0009" />
-    <item id="qfem-0010" src="qfem-0010/qfem-0010.xml#qfem-0010" />
-    <item id="qfem-0011" src="qfem-0011/qfem-0011.xml#qfem-0011" />
-    <item id="qfem-0012" src="qfem-0012/qfem-0012.xml#qfem-0012" />
-    <item id="qfem-0013" src="qfem-0013/qfem-0013.xml#qfem-0013" />
-    <item id="qfem-0014" src="qfem-0014/qfem-0014.xml#qfem-0014" />
+    <map id="qfem-0001" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0002" type="qfem" published="2020-12-17T21:26:53.946569-08:00"/>
+    <map id="qfem-0003" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0004" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0005" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0006" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0007" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0008" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0009" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0010" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0011" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0012" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0013" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0014" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
   </items>
 </collection>
