@@ -61,6 +61,15 @@ UCSD_TMMC::UCSD_TMMC(QWidget *parent)
     layout->addWidget(numParticles, 1, 1);
 
     // create label and entry for seed to layout
+    randomSeed = new QLineEdit();
+    randomSeed->setText(tr("0"));
+    randomSeed->setValidator(new QIntValidator);
+    randomSeed->setToolTip("Specify the random seed value");
+
+    layout->addWidget(new QLabel("Seed"), 2, 0);
+    layout->addWidget(randomSeed, 2, 1);
+
+
     logLikelihoodScript = new QLineEdit();
 
     layout->addWidget(new QLabel("Log Likelihood Script"), 0, 0);
@@ -74,7 +83,7 @@ UCSD_TMMC::UCSD_TMMC(QWidget *parent)
     layout->addWidget(chooseFile,0,3);
 
 
-    layout->setRowStretch(2, 1);
+    layout->setRowStretch(3, 1);
     layout->setColumnStretch(4, 1);
     layout->setColumnStretch(2, 1);
     this->setLayout(layout);
@@ -90,6 +99,7 @@ UCSD_TMMC::outputToJSON(QJsonObject &jsonObj){
 
     bool result = true;
     jsonObj["numParticles"]=numParticles->text().toInt();
+    jsonObj["seed"]=randomSeed->text().toInt();
 
     QString logLike = logLikelihoodScript->text();
     QFileInfo fileInfo(logLike);
@@ -104,16 +114,24 @@ UCSD_TMMC::outputToJSON(QJsonObject &jsonObj){
 bool
 UCSD_TMMC::inputFromJSON(QJsonObject &jsonObject){
 
-  bool result = false;
-  if (jsonObject.contains("numParticles") && jsonObject.contains("logLikelihoodFile") && jsonObject.contains("logLikelihoodPath")) {
+  bool result = true;
+  this->clear();
+
+  if (jsonObject.contains("numParticles") && jsonObject.contains("logLikelihoodFile") && jsonObject.contains("logLikelihoodPath") && jsonObject.contains("seed")) {
     int particles=jsonObject["numParticles"].toInt();
     numParticles->setText(QString::number(particles));
+
+    int seed=jsonObject["seed"].toInt();
+    randomSeed->setText(QString::number(seed));
+
     QString file = jsonObject["logLikelihoodFile"].toString();
     QString path = jsonObject["logLikelihoodPath"].toString();
     logLikelihoodScript->setText(file + QDir::separator() + path);
-
-    result = true;
   }
+  else {
+          emit sendErrorMessage("ERROR: TMCMC input - not all data specified");
+          result = false;
+      }
 
   return result;
 }

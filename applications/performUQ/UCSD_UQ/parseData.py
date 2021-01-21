@@ -19,6 +19,12 @@ def parseDataFunction(dakotaJsonLocation):
     numberOfSamples_pattern = re.compile(r'"numParticles": (?P<numParticles>\d+)')
     numberOfSamples_pattern_match = next(numberOfSamples_pattern.finditer(string_to_parse))
     numberOfSamples = int(numberOfSamples_pattern_match.group('numParticles'))
+    
+    # %% Seed
+
+    seed_pattern = re.compile(r'"seed": (?P<seed>\d+)')
+    seed_pattern_match = next(seed_pattern.finditer(string_to_parse))
+    seedval = int(seed_pattern_match.group('seed'))
 
     # Loglikelihood path and filename
 
@@ -162,4 +168,4 @@ def parseDataFunction(dakotaJsonLocation):
             (variables['Par3']).append(variablePara3_match.group('distPara3'))
             (variables['Par4']).append(variablePara4_match.group('distPara4'))
 
-    return variables, numberOfSamples, resultsLocation, resultsPath, logLikelihoodPath, logLikelihoodFile
+    return variables, numberOfSamples, seedval, resultsLocation, resultsPath, logLikelihoodPath, logLikelihoodFile

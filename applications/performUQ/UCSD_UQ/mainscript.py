@@ -11,6 +11,7 @@ import shutil
 from pathlib import Path
 import csv
 from importlib import import_module
+import numpy as np
 
 from parseData import parseDataFunction
 import pdfs
@@ -23,7 +24,7 @@ workdir_temp = inputArgs[2]
 run_type = inputArgs[3]
 
 dakotaJsonLocation = Path.joinpath(Path(workdir_temp), "dakota.json")
-variables, numberOfSamples, resultsLocation, resultsPath, logLikelihoodDirectoryPath, logLikelihoodFilename = \
+variables, numberOfSamples, seedval, resultsLocation, resultsPath, logLikelihoodDirectoryPath, logLikelihoodFilename = \
     parseDataFunction(dakotaJsonLocation)
 
 print('numVariables {}', format(variables))
@@ -39,6 +40,9 @@ logLikeModule = import_module(logLikeModuleName)
 # %%
 
 sys.path.append(resultsPath)
+
+# set the seed
+np.random.seed(seedval)
 
 # number of particles: Np
 Np = numberOfSamples
@@ -86,8 +90,15 @@ for i in range(len(variables["names"])):
 
 if __name__ == '__main__':
     mytrace = RunTMCMC(Np, AllPars, Nm_steps_max, Nm_steps_maxmax, logLikeModule.log_likelihood, variables,
-                       resultsLocation)
-
+                       resultsLocation, seedval)
+    
+    ''' Compute model evidence '''
+    evidence = 1
+    for i in range(len(mytrace)):
+        Wm = mytrace[i][2]
+        evidence = evidence*(sum(Wm)/len(Wm))
+    print("\n\nModel evidence: {:e}\n\n".format(evidence))
+    
     ''' Write Data to '.csv' file '''
 
     dataToWrite = mytrace[-1][0]
