@@ -3,10 +3,12 @@
     "qfem-0001": {
       "id": "qfem-0001",
       "title": "Forward Propagation - OpenSees/Tcl",
+      "base": "qfem-0001",
       "doc": [
-        "qfem-0001/qfem-0001.png",
-        "qfem-0001/README.rst"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0001/README.rst",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0001/qfem-0001.png"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0001/./input.json",
       "summary": "This example illustrates how quoFEM interacts with the Tcl interpreter for OpenSees. A simple forward propagation procedure is run to estimate the first and second central moments of a FE model's response, given the marginal distributions of various random parameters.",
       "logo": "qfem-0001.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
@@ -17,10 +19,12 @@
     "qfem-0002": {
       "id": "qfem-0002",
       "title": "Forward Propagation - OpenSeesPy",
+      "base": "qfem-0002",
       "doc": [
-        "qfem-0002/README.rst",
-        "qfem-0002/qfem-0002.png"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0002/README.rst",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0002/qfem-0002.png"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0002/./input.json",
       "summary": "This example illustrates how quoFEM interacts with OpenSeesPy. A simple forward propagation procedure is run to estimate the first and second central moments of a FE model's response, given the marginal distributions of various random parameters.",
       "logo": "qfem-0002.png",
       "published": "2020-12-17T21:26:53.946569-08:00",
@@ -31,14 +35,16 @@
     "qfem-0003": {
       "id": "qfem-0003",
       "title": "Reliability Analysis",
+      "base": "qfem-0003",
       "doc": [
-        "qfem-0003/figures/trussSORM-RES.png",
-        "qfem-0003/README.rst",
-        "qfem-0003/qfem-0003.png"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0003/qfem-0003.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0003/README.rst",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0003/figures/trussSORM-RES.png"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0003/./input.json",
       "summary": "This example uses quoFEM to perform a second-order reliability analysis (SORM) of an OpenSees FE model.",
       "logo": "qfem-0003.png",
-      "published": "2020-12-17T21:26:53.946614-08:00",
+      "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "qfem-FEM": "OpenSees"
       }
@@ -46,14 +52,16 @@
     "qfem-0004": {
       "id": "qfem-0004",
       "title": "Sensitivity Analysis",
+      "base": "qfem-0004",
       "doc": [
-        "qfem-0004/README.rst",
-        "qfem-0004/figures/trussSensitivity-RES.png",
-        "qfem-0004/qfem-0004.png"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0004/README.rst",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0004/qfem-0004.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0004/figures/trussSensitivity-RES.png"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0004/./input.json",
       "summary": "This example uses quoFEM to perform a global sensitivity analysis of an OpenSees FE model.",
       "logo": "qfem-0004.png",
-      "published": "2020-12-17T21:26:53.946653-08:00",
+      "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "qfem-FEM": "OpenSees"
       }
@@ -61,12 +69,14 @@
     "qfem-0005": {
       "id": "qfem-0005",
       "title": "Basic modeling with Python",
+      "base": "qfem-0005",
       "doc": [
-        "qfem-0005/README.rst"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0005/README.rst"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0005/./input.json",
       "summary": "This example illustrates how Python scripting can be used with quoFEM to express general mathematical models without the use of a dedicated finite element analysis engine.",
       "logo": "None",
-      "published": "2020-12-17T21:26:53.946690-08:00",
+      "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "qfem-FEM": "OpenSeesPy"
       }
@@ -74,12 +84,14 @@
     "qfem-0006": {
       "id": "qfem-0006",
       "title": "Optimization",
+      "base": "qfem-0006",
       "doc": [
-        "qfem-0006/README.rst"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0006/README.rst"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0006/./input.json",
       "summary": "In this example, a **parameter estimation** routine is used to solve a classical optimization problem for which an analytic solution is known.",
       "logo": "None",
-      "published": "2020-12-17T21:26:53.946725-08:00",
+      "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "qfem-FEM": "OpenSeesPy"
       }
@@ -87,13 +99,15 @@
     "qfem-0007": {
       "id": "qfem-0007",
       "title": "Conventional Calibration - Steel Frame",
+      "base": "qfem-0007",
       "doc": [
-        "qfem-0007/README.rst",
-        "qfem-0007/qfem-0007.png"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0007/README.rst",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0007/qfem-0007.png"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0007/./input.json",
       "summary": "In this example, a parameter estimation routine is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
       "logo": "qfem-0007.png",
-      "published": "2020-12-17T21:26:53.946759-08:00",
+      "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "qfem-FEM": "OpenSees"
       }
@@ -101,13 +115,15 @@
     "qfem-0008": {
       "id": "qfem-0008",
       "title": "Bayesian Calibration - Steel Frame",
+      "base": "qfem-0008",
       "doc": [
-        "qfem-0008/README.rst",
-        "qfem-0008/qfem-0008.png"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0008/qfem-0008.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0008/README.rst"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0008/./input.json",
       "summary": "In this example, Bayesian estimation is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
       "logo": "qfem-0008.png",
-      "published": "2020-12-17T21:26:53.946793-08:00",
+      "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "qfem-FEM": "OpenSees"
       }
@@ -115,19 +131,21 @@
     "qfem-0009": {
       "id": "qfem-0009",
       "title": "Two-Dimensional Truss: Global Sensitivity Analysis using SimCenterUQ Engine",
+      "base": "qfem-0009",
       "doc": [
-        "qfem-0009/figures/trussSensitivity-RES-SimUQ2.png",
-        "qfem-0009/truss/truss.png",
-        "qfem-0009/qfem-0009.png",
-        "qfem-0009/figures/trussSensitivity-corr.png",
-        "qfem-0009/figures/trussSensitivity-advanced.png",
-        "qfem-0009/figures/trussSensitivity-input-SimUQ.png",
-        "qfem-0009/figures/trussSensitivity-RES-SimUQ.png",
-        "qfem-0009/README.rst"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0009/truss/truss.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0009/README.rst",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0009/figures/trussSensitivity-advanced.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0009/figures/trussSensitivity-input-SimUQ.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0009/figures/trussSensitivity-RES-SimUQ.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0009/figures/trussSensitivity-corr.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0009/qfem-0009.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0009/figures/trussSensitivity-RES-SimUQ2.png"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0009/./input.json",
       "summary": "A global sensitivity analysis is conducted with correlated random variables using the SimCenterUQ engine for sensitivity analysis.",
       "logo": "qfem-0009.png",
-      "published": "2020-12-17T21:26:53.946827-08:00",
+      "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "qfem-FEM": "OpenSees"
       }
@@ -135,12 +153,14 @@
     "qfem-0010": {
       "id": "qfem-0010",
       "title": "Forward Propagation - FEAP",
+      "base": "qfem-0010",
       "doc": [
-        "qfem-0010/README.rst"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0010/README.rst"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0010/./input.json",
       "summary": "This example illustrates how quoFEM interacts with the FEAP engine for finite element analysis. A simple forward propagation procedure is run to estimate the first and second central moments of a truss model's response, given the marginal distributions of various random parameters.",
       "logo": "None",
-      "published": "2020-12-17T21:26:53.946861-08:00",
+      "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "qfem-FEM": "FEAP"
       }
@@ -148,12 +168,14 @@
     "qfem-0011": {
       "id": "qfem-0011",
       "title": "exampleBayesianCalibration",
+      "base": "qfem-0011",
       "doc": [
-        "qfem-0011/README.rst"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0011/README.rst"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0011/./input.json",
       "summary": "~",
       "logo": "None",
-      "published": "2020-12-17T21:26:53.946895-08:00",
+      "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "qfem-FEM": "OpenSees"
       }
@@ -161,12 +183,14 @@
     "qfem-0012": {
       "id": "qfem-0012",
       "title": "exampleCalibration",
+      "base": "qfem-0012",
       "doc": [
-        "qfem-0012/README.rst"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0012/README.rst"
       ],
-      "summary": "~",
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0012/./input.json",
+      "summary": "",
       "logo": "None",
-      "published": "2020-12-17T21:26:53.946928-08:00",
+      "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "qfem-FEM": "OpenSees"
       }
@@ -174,12 +198,14 @@
     "qfem-0013": {
       "id": "qfem-0013",
       "title": "Shear wall calibration",
+      "base": "qfem-0013",
       "doc": [
-        "qfem-0013/README.rst"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0013/README.rst"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0013/./input.json",
       "summary": "~",
       "logo": "None",
-      "published": "2020-12-17T21:26:53.946962-08:00",
+      "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "qfem-FEM": "OpenSees"
       }
@@ -187,25 +213,27 @@
     "qfem-0014": {
       "id": "qfem-0014",
       "title": "Steel Frame: Bayesian Calibration using TMCMC",
+      "base": "qfem-0014",
       "doc": [
-        "qfem-0014/src/model.tcl",
-        "qfem-0014/figures/quo-14-RES-DataValues2.png",
-        "qfem-0014/figures/quo-14-UQ.png",
-        "qfem-0014/figures/quo-14-RES-Summary.png",
-        "qfem-0014/figures/quo-14-FEM.png",
-        "qfem-0014/figures/quo-14-RV.png",
-        "qfem-0014/figures/quo-14-RES-DataValues1.png",
-        "qfem-0014/qfem-0014.png",
-        "qfem-0014/src/postProcessing.py",
-        "qfem-0014/README.rst",
-        "qfem-0014/figures/quo-14-RES-DataValues4.png",
-        "qfem-0014/figures/quo-14-RES-DataValues3.png"
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/figures/quo-14-FEM.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/../qfem-0014/src/model.tcl",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/figures/quo-14-RES-Summary.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/qfem-0014.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/README.rst",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/figures/quo-14-RES-DataValues1.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/figures/quo-14-UQ.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/../qfem-0014/figures/quo-14-RES-DataValues3.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/figures/quo-14-RV.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/../qfem-0014/src/postProcessing.py",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/figures/quo-14-RES-DataValues2.png",
+        "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/../qfem-0014/figures/quo-14-RES-DataValues4.png"
       ],
+      "entry_point": "/mnt/c/Users/claud/git/sim//quoFEM/examples/qfem-0014/./input.json",
       "summary": "In this example, Bayesian estimation is used to estimate the lateral story stiffnesses of the two stories of a simple steel frame, given data about its mode shapes and frequencies. The transitional Markov chain Monte Carlo algorithm is used to obtain samples from the posterior probability distribution of the lateral story stiffnesses",
       "logo": "qfem-0014.png",
-      "published": "2020-12-17T21:26:53.946995-08:00",
+      "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "None"
+        "qfem-FEM": "OpenSees"
       }
     }
   },
