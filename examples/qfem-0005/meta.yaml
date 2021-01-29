@@ -1,4 +1,4 @@
-abstract: This example illustrates how Python scripting can be used with quoFEM to
+summary: This example illustrates how Python scripting can be used with quoFEM to
   express general mathematical models without the use of a dedicated finite element
   analysis engine.
 archive: $SIMCENTER_DEV
