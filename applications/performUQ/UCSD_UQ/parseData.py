@@ -4,12 +4,12 @@ affiliation: University of California, San Diego
 
 """
 
-import os
+# import os
 from pathlib import Path
 import re
 
-def parseDataFunction(dakotaJsonLocation):
 
+def parseDataFunction(dakotaJsonLocation):
     # %% read form dakota.json location
     with open(dakotaJsonLocation, 'r') as file_object:
         string_to_parse = file_object.read()
@@ -19,6 +19,22 @@ def parseDataFunction(dakotaJsonLocation):
     numberOfSamples_pattern = re.compile(r'"numParticles": (?P<numParticles>\d+)')
     numberOfSamples_pattern_match = next(numberOfSamples_pattern.finditer(string_to_parse))
     numberOfSamples = int(numberOfSamples_pattern_match.group('numParticles'))
+    
+    # %% Seed
+
+    seed_pattern = re.compile(r'"seed": (?P<seed>\d+)')
+    seed_pattern_match = next(seed_pattern.finditer(string_to_parse))
+    seedval = int(seed_pattern_match.group('seed'))
+
+    # Loglikelihood path and filename
+
+    logLikelihoodPathPattern = re.compile(r'"logLikelihoodPath": "(?P<logLikelihoodPath>.+)"')
+    logLikelihoodPathPatternMatch = next(logLikelihoodPathPattern.finditer(string_to_parse))
+    logLikelihoodPath = logLikelihoodPathPatternMatch.group('logLikelihoodPath')
+
+    logLikelihoodFilePattern = re.compile(r'"logLikelihoodFile": "(?P<logLikelihoodFile>.+)"')
+    logLikelihoodFilePatternMatch = next(logLikelihoodFilePattern.finditer(string_to_parse))
+    logLikelihoodFile = logLikelihoodFilePatternMatch.group('logLikelihoodFile')
 
     # %% FEM Input file
 
@@ -98,8 +114,8 @@ def parseDataFunction(dakotaJsonLocation):
 
             # variableDistPara1_pattern = re.compile(r'"Lower Bound": (?P<distPara1>\d*\.?\d*)')
             # variableDistPara2_pattern = re.compile(r'"Upper Bound": (?P<distPara2>\d*\.?\d*)')
-            variableDistPara1_pattern = re.compile(r'"lowerbound": (?P<distPara1>\d*\.?\d*)')
-            variableDistPara2_pattern = re.compile(r'"upperbound": (?P<distPara2>\d*\.?\d*)')
+            variableDistPara1_pattern = re.compile(r'"lowerbound": (?P<distPara1>-?\d*\.?\d*)')
+            variableDistPara2_pattern = re.compile(r'"upperbound": (?P<distPara2>-?\d*\.?\d*)')
 
             variablePara1_match = next(variableDistPara1_pattern.finditer(variablesInfo[variable]))
             variablePara2_match = next(variableDistPara2_pattern.finditer(variablesInfo[variable]))
@@ -111,7 +127,7 @@ def parseDataFunction(dakotaJsonLocation):
 
         elif variableDistType_match.group('distType') == 'Normal':
 
-            variableDistPara1_pattern = re.compile(r'"mean": (?P<distPara1>\d*\.?\d*)')
+            variableDistPara1_pattern = re.compile(r'"mean": (?P<distPara1>-?\d*\.?\d*)')
             variableDistPara2_pattern = re.compile(r'"stdDev": (?P<distPara2>\d*\.?\d*)')
 
             variablePara1_match = next(variableDistPara1_pattern.finditer(variablesInfo[variable]))
@@ -137,10 +153,10 @@ def parseDataFunction(dakotaJsonLocation):
 
         elif variableDistType_match.group('distType') == 'Truncated-Normal':
 
-            variableDistPara1_pattern = re.compile(r'"Mean": (?P<distPara1>\d*\.?\d*)')
+            variableDistPara1_pattern = re.compile(r'"Mean": (?P<distPara1>-?\d*\.?\d*)')
             variableDistPara2_pattern = re.compile(r'"Standard Deviation": (?P<distPara2>\d*\.?\d*)')
-            variableDistPara3_pattern = re.compile(r'"a": (?P<distPara3>\d*\.?\d*)')
-            variableDistPara4_pattern = re.compile(r'"b": (?P<distPara4>\d*\.?\d*)')
+            variableDistPara3_pattern = re.compile(r'"a": (?P<distPara3>-?\d*\.?\d*)')
+            variableDistPara4_pattern = re.compile(r'"b": (?P<distPara4>-?\d*\.?\d*)')
 
             variablePara1_match = next(variableDistPara1_pattern.finditer(variablesInfo[variable]))
             variablePara2_match = next(variableDistPara2_pattern.finditer(variablesInfo[variable]))
@@ -152,4 +168,4 @@ def parseDataFunction(dakotaJsonLocation):
             (variables['Par3']).append(variablePara3_match.group('distPara3'))
             (variables['Par4']).append(variablePara4_match.group('distPara4'))
 
-    return variables, numberOfSamples, resultsLocation, resultsPath
+    return variables, numberOfSamples, seedval, resultsLocation, resultsPath, logLikelihoodPath, logLikelihoodFile
