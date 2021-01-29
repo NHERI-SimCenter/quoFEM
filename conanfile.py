@@ -10,8 +10,8 @@ class quoFEM(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "qmake"
     requires = "jansson/2.11@bincrafters/stable", \
-               "zlib/1.2.11@conan/stable", \
-               "libcurl/7.64.1@bincrafters/stable"
+               "zlib/1.2.11", \
+               "libcurl/7.64.1"
     build_policy = "missing"
 
     def configure(self):
