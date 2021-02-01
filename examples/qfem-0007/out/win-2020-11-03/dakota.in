@@ -1,0 +1,35 @@
+environment 
+ tabular_data 
+ tabular_data_file = 'dakotaTab.out' 
+
+method, 
+ nl2sol
+  convergence_tolerance = 1e-10 
+   max_iterations = 50
+
+variables 
+   continuous_design = 2
+    initial_point = 1500 500 
+    lower_bounds = 500 500 
+    upper_bounds = 2000 2000 
+    descriptors = 'Ic1' 'Ic2' 
+
+interface 
+  analysis_driver = 'workflow_driver1.bat'
+  fork
+   parameters_file = 'paramsDakota.in'
+   results_file = 'results.out' 
+   aprepro 
+   work_directory
+     named 'workdir' 
+     directory_tag
+     directory_save
+     copy_files = 'templatedir/*' 
+  asynchronous evaluation_concurrency = 12
+
+responses
+ calibration_terms = 10
+ response_descriptors = 'eps_l1' 'eps_l2' 'eps_l3' 'eps_l4' 'eps_l5' 'eps_p1' 'eps_p2' 'eps_p3' 'eps_p4' 'eps_p5' 
+ numerical_gradients
+ no_hessians
+

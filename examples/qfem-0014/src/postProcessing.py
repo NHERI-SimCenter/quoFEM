@@ -17,8 +17,8 @@ normalizeData = np.mean(data,axis=1)
 data = data/normalizeData[:,np.newaxis]
 
 # noise in each channel
-sig_channels = np.array([0.05,0.05]) #My x 1,  Ny = number of measurement channels 
-sig = np.array([sig_channels[0]*1079.88,sig_channels[1]*1.414]) # array of size: ny
+sig_channels = np.array([0.05,0.05]) #Ny x 1,  Ny = number of measurement channels 
+sig = np.array([sig_channels[0]*1079.88,sig_channels[1]*1.414]) # array of size: Ny
 sig = sig/normalizeData
 
 def log_likelihood(ParticleNum,par, variables, resultsLocation):
@@ -31,7 +31,6 @@ def log_likelihood(ParticleNum,par, variables, resultsLocation):
     ParameterName = variables['names']
     
     # FE predicted response
-#    FEpred = runFEM(ParticleNum,par[:len(ParameterName)])[:,np.newaxis] #Nyx1
     runFEM(ParticleNum,par[:len(ParameterName)], variables, resultsLocation)
     
     FEpred = np.loadtxt('results.out')/normalizeData
