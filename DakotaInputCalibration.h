@@ -71,6 +71,7 @@ public:
     UQ_Results *getResults(void);
 
     RandomVariablesContainer *getParameters();
+    QString getMethodName();
 
 signals:
 

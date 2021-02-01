@@ -203,12 +203,11 @@ MainWindow::MainWindow(QWidget *parent)
     random = new InputWidgetParameters();
     fem = new InputWidgetFEM(random);
     edp = new InputWidgetEDP(random);
-    uq = new UQ_EngineSelection(edp);
+    uq = new UQ_EngineSelection(random,fem,edp);
     random->setParametersWidget(uq->getParameters());
 
 
     connect(uq, SIGNAL(onNumModelsChanged(int)), fem, SLOT(numModelsChanged(int)));
-
     // create selection widget & add the input widgets
     results = new UQ_Results();
 
@@ -789,10 +788,14 @@ void MainWindow::onRunButtonClicked() {
     // if windows add a .exe to non py applications
     QString os("Linux");
 #ifdef _WIN32
-   if (!femApp.contains(".py"))
+   //if (!femApp.contains(".py"))
+   //    femApp += ".exe";
+   //if (!uqApp.contains(".py"))
+   //    uqApp += ".exe";
+   if (!femApp.contains(".exe"))
        femApp += ".exe";
    if (!uqApp.contains(".py"))
-       uqApp += ".exe";
+       uqApp += ".py";
    os = "Windows";
 #endif
 
@@ -809,7 +812,8 @@ void MainWindow::onRunButtonClicked() {
     if (! femAppFile.exists()) {
       qDebug() << "FEM application: " << femApp;
 
-      errorMessage("FEM Application does not exist, try to reset settings, if fails download application again");
+      errorMessage(femApp);
+      //errorMessage("FEM Application does not exist, try to reset settings, if fails download application again");
       return;
     }
 
@@ -1393,14 +1397,13 @@ bool MainWindow::inputFromJSON(QJsonObject &jsonObj){
         // possibly old code: default is Dakota
     }
 
-
-    if (fem->inputFromJSON(jsonObj) != true) {
-        emit errorMessage(QString("FEM: failed to read input"));
+    if (uq->inputFromJSON(jsonObj) != true) {
+        emit errorMessage(QString("UQ: failed to read input"));
         return false;
     }
 
-    if (uq->inputFromJSON(jsonObj) != true) {
-        emit errorMessage(QString("UQ: failed to read input"));
+    if (fem->inputFromJSON(jsonObj) != true) {
+        emit errorMessage(QString("FEM: failed to read input"));
         return false;
     }
 

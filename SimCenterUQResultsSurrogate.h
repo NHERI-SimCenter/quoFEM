@@ -1,11 +1,11 @@
-#ifndef UQpy_ENGINE_H
-#define UQpy_ENGINE_H
+#ifndef SIMCENTERUQ_RESULTS_Surrogate_H
+#define SIMCENTERUQ_RESULTS_Surrogate_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without 
+Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
@@ -29,48 +29,72 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 
-REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS 
-PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, 
+THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS
+PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,
 UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
 // Written: fmckenna
 
-#include <UQ_Engine.h>
+#include <UQ_Results.h>
+#include <QtCharts/QChart>
+#include <QMessageBox>
+#include <QPushButton>
 
-class UQ_Results;
+
+using namespace QtCharts;
+
+class QTextEdit;
+class QTabWidget;
+class MyTableWidget;
+class MainWindow;
 class RandomVariablesContainer;
 
-class UQpyEngine : public UQ_Engine
+//class QChart;
+
+class SimCenterUQResultsSurrogate : public UQ_Results
 {
     Q_OBJECT
 public:
-    explicit UQpyEngine(QWidget *parent = 0);
-    virtual ~UQpyEngine();
+  explicit SimCenterUQResultsSurrogate(RandomVariablesContainer *, QWidget *parent = 0);
+    ~SimCenterUQResultsSurrogate();
 
-    int getMaxNumParallelTasks(void);
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
-    RandomVariablesContainer *getParameters();
-    UQ_Results *getResults(void);
-
-    QString getProcessingScript();
-    QString getMethodName();
-
-    void clear(void);
+    QWidget *createResultEDPWidget(QString &name, double mean, double stdDev, double kurtosis);
 
 signals:
 
 public slots:
+   void clear(void);
+   void onSpreadsheetCellClicked(int, int);
+   void onSaveSpreadsheetClicked();
+
+   // modified by padhye 08/25/2018
 
 private:
-    RandomVariablesContainer *theRandomVariables;
-    UQ_Results *theResults;
+   RandomVariablesContainer *theRVs;
+   QTabWidget *tabWidget;
+
+   MyTableWidget *spreadsheet=NULL;  // MyTableWidget inherits the QTableWidget
+   QChart *chart;
+   QPushButton* save_spreadheet; // save the data from spreadsheet
+   QLabel *label;
+   QLabel *best_fit_instructions;
+
+   int col1, col2;
+   bool mLeft;
+   QStringList theHeadings;
+
+   QVector<QString>theNames;
+   QVector<double>theMeans;
+   QVector<double>theStdDevs;
+   QVector<double>theKurtosis;
 };
 
-#endif // UQpy_ENGINE_H
+#endif // SIMCENTERUQ_RESULTS_SURROGATE_H

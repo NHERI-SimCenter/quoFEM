@@ -298,3 +298,8 @@ DakotaInputSampling::getParameters(void) {
   theRandomVariables =  new RandomVariablesContainer(classType);
   return theRandomVariables;
 }
+
+QString
+DakotaInputSampling::getMethodName(void){
+  return QString("sampling");
+}

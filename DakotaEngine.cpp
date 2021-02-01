@@ -225,3 +225,9 @@ void
 DakotaEngine::numModelsChanged(int newNum) {
     emit onNumModelsChanged(newNum);
 }
+
+QString
+DakotaEngine::getMethodName() {
+    return theCurrentEngine->getMethodName();
+}
+

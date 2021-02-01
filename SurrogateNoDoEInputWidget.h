@@ -1,5 +1,5 @@
-#ifndef UQpy_ENGINE_H
-#define UQpy_ENGINE_H
+#ifndef SURROGATE_NO_DOE_INPUT_WIDGET_H
+#define SURROGATE_NO_DOE_INPUT_WIDGET_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,38 +39,63 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <UQ_Engine.h>
+#include <UQ_MethodInputWidget.h>
+class QLineEdit;
+class QCheckBox;
+class QPushButton;
+class QComboBox;
+class QLabel;
+class QFrame;
+class InputWidgetParameters;
+class InputWidgetEDP;
+class InputWidgetFEM;
 
-class UQ_Results;
-class RandomVariablesContainer;
-
-class UQpyEngine : public UQ_Engine
+class SurrogateNoDoEInputWidget : public UQ_MethodInputWidget
 {
     Q_OBJECT
 public:
-    explicit UQpyEngine(QWidget *parent = 0);
-    virtual ~UQpyEngine();
+    explicit SurrogateNoDoEInputWidget(InputWidgetParameters *param,InputWidgetFEM *femwidget,InputWidgetEDP *edpwidget, QWidget *parent = 0);
+    ~SurrogateNoDoEInputWidget();
 
-    int getMaxNumParallelTasks(void);
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
-
-    int processResults(QString &filenameResults, QString &filenameTab);
-    RandomVariablesContainer *getParameters();
-    UQ_Results *getResults(void);
-
-    QString getProcessingScript();
-    QString getMethodName();
-
     void clear(void);
 
-signals:
+    int getNumberTasks(void);
+    int parseInputDataForRV(QString name1);
+    int parseOutputDataForQoI(QString name1);
+    int numSamples;
 
 public slots:
-
+    void setOutputDir(bool tog);
+    void doAdvancedGP(bool tog);
 private:
-    RandomVariablesContainer *theRandomVariables;
-    UQ_Results *theResults;
+    QLineEdit *randomSeed;
+    QLineEdit *inpFileDir;
+    QLineEdit *outFileDir;
+    QCheckBox *theCheckButton;
+    QPushButton *chooseOutFile;
+    QLineEdit *initialDoE;
+    QComboBox *gpKernel;
+    QCheckBox *theLinearCheckBox;
+    QCheckBox *theAdvancedCheckBox;
+    QCheckBox *theLogtCheckBox;
+
+    QLabel * theAdvancedTitle;
+    QLabel * theKernelLabel;
+    QLabel * theLinearLabel;
+    QLabel * theLogtLabel;
+    QLabel * theLogtLabel2;
+    QLabel * theInitialLabel;
+    QLabel * errMSG;
+
+    InputWidgetParameters *theParameters;
+    InputWidgetEDP *theEdpWidget;
+    InputWidgetFEM *theFemWidget;
+
+    QFrame * lineA;
+
+    int countColumn(QString name1);
 };
 
-#endif // UQpy_ENGINE_H
+#endif // SURROGATE_NO_DOE_INPUT_WIDGET_H

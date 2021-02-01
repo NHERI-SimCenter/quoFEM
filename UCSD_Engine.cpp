@@ -197,4 +197,7 @@ UCSD_Engine::getProcessingScript() {
     return QString("parseDAKOTA.py");
 }
 
-
+QString
+UCSD_Engine::getMethodName() {
+    return QString("UCSD");
+}

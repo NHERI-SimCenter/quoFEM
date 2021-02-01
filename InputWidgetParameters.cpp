@@ -101,6 +101,14 @@ InputWidgetParameters::setInitialVarNamesAndValues(QStringList theList){
     theParameters->addConstantRVs(varNamesAndValues);
 }
 
+void
+InputWidgetParameters::setGPVarNamesAndValues(QStringList theList){
+
+    varNamesAndValues=theList;
+    theParameters->addUniformRVs(varNamesAndValues);
+}
+
+
 QStringList
 InputWidgetParameters::getParametereNames(void)
 {

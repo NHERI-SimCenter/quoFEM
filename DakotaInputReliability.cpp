@@ -202,3 +202,9 @@ DakotaInputReliability::getParameters(void) {
   theRandomVariables =  new RandomVariablesContainer(classType);
   return theRandomVariables;
 }
+
+
+QString
+DakotaInputReliability::getMethodName(void){
+  return QString("reliability");
+}

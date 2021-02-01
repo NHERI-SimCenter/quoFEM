@@ -1,5 +1,5 @@
-#ifndef UQpy_ENGINE_H
-#define UQpy_ENGINE_H
+#ifndef SimCenterUQ_INPUT_SURROGATE_H
+#define SimCenterUQ_INPUT_SURROGATE_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -37,40 +37,74 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
-
 #include <UQ_Engine.h>
 
-class UQ_Results;
-class RandomVariablesContainer;
+#include <QGroupBox>
+#include <QVector>
+#include <QVBoxLayout>
+#include <QComboBox>
+#include <QPushButton>
 
-class UQpyEngine : public UQ_Engine
+class SimCenterUQSurrogateResults;
+class SimCenterUQResults;
+class QCheckBox;
+class RandomVariablesContainer;
+class QStackedWidget;
+class UQ_MethodInputWidget;
+class InputWidgetParameters;
+class InputWidgetEDP;
+class InputWidgetFEM;
+
+class SimCenterUQInputSurrogate : public UQ_Engine
 {
     Q_OBJECT
 public:
-    explicit UQpyEngine(QWidget *parent = 0);
-    virtual ~UQpyEngine();
+    explicit SimCenterUQInputSurrogate(InputWidgetParameters *param,InputWidgetFEM *femwidget,InputWidgetEDP *edpwidget, QWidget *parent = 0);
+    ~SimCenterUQInputSurrogate();
 
-    int getMaxNumParallelTasks(void);
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &jsonObject);
+    bool inputFromJSON(QJsonObject &jsonObject);
+    bool outputAppDataToJSON(QJsonObject &jsonObject);
+    bool inputAppDataFromJSON(QJsonObject &jsonObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
-    RandomVariablesContainer *getParameters();
-    UQ_Results *getResults(void);
 
-    QString getProcessingScript();
+    UQ_Results *getResults(void);
+    RandomVariablesContainer  *getParameters();
+
+    int getMaxNumParallelTasks(void);
     QString getMethodName();
 
-    void clear(void);
+    QVBoxLayout *mLayout;
 
 signals:
 
 public slots:
+   void clear(void);
+   void onTextInpChanged(const QString &arg1);
+   void numModelsChanged(int numModels);
 
 private:
+    QVBoxLayout *layout;
+    QWidget     *methodSpecific;
+    QComboBox   *inpMethod;
+    QLineEdit   *numSamples;
+    QLineEdit   *randomSeed;
+
+    QComboBox   *uqSelection;
+    QWidget     *uqSpecific;
+
     RandomVariablesContainer *theRandomVariables;
-    UQ_Results *theResults;
+    SimCenterUQSurrogateResults *results;
+
+    QStackedWidget *theStackedWidget;
+    UQ_MethodInputWidget *theInpCurrentMethod;
+    UQ_MethodInputWidget *theDoE, *theData;
+
+    InputWidgetParameters *theParameters;
+    InputWidgetEDP *theEdpWidget;
+    InputWidgetFEM *theFemWidget;
+
 };
 
-#endif // UQpy_ENGINE_H
+#endif // SimCenterUQ_INPUT_SURROGATE_H

@@ -72,6 +72,7 @@ public:
     int getMaxNumParallelTasks(void);
 
     QVBoxLayout *mLayout;
+    QString getMethodName();
 
 signals:
 

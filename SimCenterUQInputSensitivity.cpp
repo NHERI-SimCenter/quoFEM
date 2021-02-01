@@ -65,7 +65,6 @@ SimCenterUQInputSensitivity::SimCenterUQInputSensitivity(QWidget *parent)
 : UQ_Engine(parent),uqSpecific(0)
 {
     layout = new QVBoxLayout();
-
     mLayout = new QVBoxLayout();
 
     //
@@ -76,22 +75,8 @@ SimCenterUQInputSensitivity::SimCenterUQInputSensitivity(QWidget *parent)
     QLabel *label1 = new QLabel();
     label1->setText(QString("Method"));
     samplingMethod = new QComboBox();
-    //samplingMethod->setMaximumWidth(800);
-    //samplingMethod->setMinimumWidth(800);
-    //samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
 
-    /*
-    samplingMethod->addItem(tr("Importance Sensitivity"));
-    samplingMethod->addItem(tr("Gaussian Process Regression"));
-    samplingMethod->addItem(tr("Polynomial Chaos Expansion"));
-    samplingMethod->addItem(tr("Multilevel Monte Carlo"));
-    samplingMethod->addItem(tr("Importance Sensitivity"));
-    samplingMethod->addItem(tr("Quadrature"));
-    samplingMethod->addItem(tr("Sparse Grid Quadrature"));
-    samplingMethod->addItem(tr("Surrogate - Polynomial Chaos"));
-    samplingMethod->addItem(tr("Surrogate - Gaussian Process"));
-    */
 
     methodLayout->addWidget(label1);
     methodLayout->addWidget(samplingMethod,2);
@@ -212,4 +197,9 @@ SimCenterUQInputSensitivity::getParameters(void) {
   QString classType("Uncertain");
   theRandomVariables =  new RandomVariablesContainer(classType,tr("SimCenterUQ"));
   return theRandomVariables;
+}
+
+QString
+SimCenterUQInputSensitivity::getMethodName(void){
+  return QString("sensitivity");
 }
