@@ -73,7 +73,7 @@ QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit){
     return theWidget;
 }
 
-EDP::EDP(QWidget *parent)
+EDP::EDP(QString EDPname, QWidget *parent)
     :QWidget(parent),resultsSet(false),mean(0),stdDev(0)
 {
     //
@@ -83,6 +83,7 @@ EDP::EDP(QWidget *parent)
     mainLayout = new QHBoxLayout;
 
     QWidget *nameWidget = addLabeledLineEdit(QString("Variable Name"), &variableName);
+    variableName->setText(EDPname);
 
     button = new QRadioButton();
     mainLayout->addWidget(button);

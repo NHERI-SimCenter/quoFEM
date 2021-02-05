@@ -70,6 +70,9 @@ public:
      // copy main file to new filename ONLY if varNamesAndValues not empy
     void specialCopyMainInput(QString fileName, QStringList varNamesAndValues);
     int parseInputfilesForRV(QString filnema1);
+    int parseInputfilesForGP(QString filnema1);
+    void setFemGP(bool on);
+    int setFEMdisabled(bool on);
 
   signals:
 
@@ -78,7 +81,6 @@ public:
     void femProgramChanged(const QString& arg1);
     void numModelsChanged(int newNum);
     void customInputNumberChanged(int numCustomInputs);
-
     // void chooseFileName1(void);
     // void chooseFileName2(void);
 
@@ -103,6 +105,8 @@ public:
     QVector<QLineEdit *>postprocessFilenames;
     QVector<QLineEdit *>parametersFilenames;
     QVector<QLineEdit *>customInputFiles;
+
+    bool femGP;
 };
 
 #endif // INPUTWIDGETFEM_H

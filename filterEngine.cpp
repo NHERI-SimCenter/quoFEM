@@ -104,6 +104,9 @@ filterEngine::getProcessingScript() {
     return QString("parsefilter.py");
 }
 
-
+QString
+filterEngine::getMethodName() {
+    return QString("filter.py");
+}
 
 

@@ -46,12 +46,14 @@ class QStackedWidget;
 class UQ_Results;
 class RandomVariablesContainer;
 class InputWidgetEDP;
+class InputWidgetParameters;
+class InputWidgetFEM;
 
 class SimCenterUQEngine : public UQ_Engine
 {
     Q_OBJECT
 public:
-    explicit SimCenterUQEngine(InputWidgetEDP *edpWidget, QWidget *parent = 0);
+    explicit SimCenterUQEngine(InputWidgetParameters *param,InputWidgetFEM *femWidget,InputWidgetEDP *edpWidget, QWidget *parent = 0);
     virtual ~SimCenterUQEngine();
 
     int getMaxNumParallelTasks(void);
@@ -65,6 +67,7 @@ public:
     UQ_Results *getResults(void);
 
     QString getProcessingScript();
+    QString getMethodName();
 
 signals:
     void onUQ_EngineChanged(void);
@@ -79,12 +82,12 @@ private:
    QStackedWidget *theStackedWidget;
 
    UQ_Engine *theCurrentEngine;
-   UQ_Engine *theSamplingEngine;
-   //UQ_Engine *theReliabilityEngine;
-   //UQ_Engine *theCalibrationEngine;
-   //UQ_Engine *theBayesianCalibrationEngine;
+   UQ_Engine *theOldEngine;
+   UQ_Engine *theSurrogateEngine;
    UQ_Engine *theSensitivityEngine;
 
+   InputWidgetParameters *theParameters;
+   InputWidgetFEM *theFemWidget;
    InputWidgetEDP *theEdpWidget;
 };
 

@@ -63,7 +63,8 @@ public:
     RandomVariablesContainer *getParameters();
     UQ_Results *getResults(void);
 
-     QString getProcessingScript();
+    QString getProcessingScript();
+    QString getMethodName();
 
 signals:
     void onUQ_EngineChanged(void);

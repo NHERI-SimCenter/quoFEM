@@ -46,11 +46,13 @@ SOURCES += main.cpp\
         SimCenterUQInputSampling.cpp \
         DakotaInputSensitivity.cpp \
         SimCenterUQInputSensitivity.cpp \
+        SimCenterUQInputSurrogate.cpp \
         UQ_Results.cpp \
         DakotaResultsSampling.cpp \
         SimCenterUQResultsSampling.cpp \
         DakotaResultsSensitivity.cpp \
         SimCenterUQResultsSensitivity.cpp \
+        SimCenterUQResultsSurrogate.cpp \
         DakotaResultsCalibration.cpp \
         DakotaInputCalibration.cpp \
         UQ_Engine.cpp \
@@ -87,7 +89,10 @@ SOURCES += main.cpp\
     UCSD_Engine.cpp \
     UCSD_TMMC.cpp \
     UCSD_Results.cpp \
-    CustomUQ_Results.cpp
+    CustomUQ_Results.cpp \
+    SurrogateNoDoEInputWidget.cpp \
+    SurrogateDoEInputWidget.cpp
+
 
 HEADERS  += MainWindow.h \
     InputWidgetEDP.h \
@@ -99,6 +104,7 @@ HEADERS  += MainWindow.h \
     SimCenterUQInputSampling.h \
     DakotaInputSensitivity.h \
     SimCenterUQInputSensitivity.h \
+    SimCenterUQInputSurrogate.h \
     UQ_Results.h \
     DakotaResultsSampling.h \
     SimCenterUQResultsSampling.h \
@@ -106,6 +112,7 @@ HEADERS  += MainWindow.h \
     DakotaResultsCalibration.h \
     DakotaResultsSensitivity.h \
     SimCenterUQResultsSensitivity.h \
+    SimCenterUQResultsSurrogate.h \
     UQ_Engine.h \
     DakotaEngine.h \
     SimCenterUQEngine.h \
@@ -140,7 +147,9 @@ HEADERS  += MainWindow.h \
     UCSD_Engine.h \
     UCSD_TMMC.h \
     UCSD_Results.h \
-    CustomUQ_Results.h
+    CustomUQ_Results.h \
+    SurrogateNoDoEInputWidget.h \
+    SurrogateDoEInputWidget.h
 
 FORMS    += mainwindow.ui
 

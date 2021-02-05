@@ -300,3 +300,9 @@ DakotaInputBayesianCalibration::getParameters(void) {
   QString classType("Uncertain");
   return new RandomVariablesContainer(classType);
 }
+
+
+QString
+DakotaInputBayesianCalibration::getMethodName(void){
+  return QString("Bayesian calibration");
+}

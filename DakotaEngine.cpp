@@ -68,7 +68,7 @@ DakotaEngine::DakotaEngine(QWidget *parent)
 
     QHBoxLayout *theSelectionLayout = new QHBoxLayout();
     QLabel *label = new QLabel();
-    label->setText(QString("Dakota Method Catagory"));
+    label->setText(QString("Dakota Method Category"));
     theEngineSelectionBox = new QComboBox();
     theEngineSelectionBox->addItem(tr("Forward Propagation"));
     theEngineSelectionBox->addItem(tr("Parameters Estimation"));
@@ -225,3 +225,9 @@ void
 DakotaEngine::numModelsChanged(int newNum) {
     emit onNumModelsChanged(newNum);
 }
+
+QString
+DakotaEngine::getMethodName() {
+    return theCurrentEngine->getMethodName();
+}
+

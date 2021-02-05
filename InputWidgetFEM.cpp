@@ -59,9 +59,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetParameters.h>
 
 InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
-  : SimCenterWidget(parent), theParameters(param), numInputs(1)
+  : SimCenterWidget(parent), theParameters(param), numInputs(2)
 {
     femSpecific = 0;
+    femGP = false;
 
     layout = new QVBoxLayout();        
     QVBoxLayout *name= new QVBoxLayout;
@@ -95,6 +96,7 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
     femSelection->addItem(tr("FEAPpv"));
     femSelection->addItem(tr("OpenSeesPy"));
     femSelection->addItem(tr("Custom"));
+    femSelection->addItem(tr("SurrogateGP"));
 
     connect(femSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(femProgramChanged(QString)));
 
@@ -527,10 +529,26 @@ int InputWidgetFEM::parseInputfilesForRV(QString name1){
     }
       
     // qDebug() << "VARNAMESANDVALUES: " << varNamesAndValues;
-    if (pName != "Custom") {
-      theParameters->setInitialVarNamesAndValues(varNamesAndValues);      
+    if (pName != "Custom" && !femGP) {
+      theParameters->setInitialVarNamesAndValues(varNamesAndValues);
+    } else if (pName != "Custom" && femGP) {
+      theParameters->setGPVarNamesAndValues(varNamesAndValues);
     }
+    return 0;
+}
 
+int
+InputWidgetFEM::setFEMdisabled(bool on){
+    if (on)
+    {
+        femSelection -> setDisabled(true);
+        femSpecific -> setVisible(false);
+
+    } else if (!on)
+    {
+        femSelection -> setDisabled(false);
+        femSpecific -> setVisible(true);
+    }
     return 0;
 }
 
@@ -693,4 +711,9 @@ QVector< QString > InputWidgetFEM::getCustomInputs() const {
    }
 
    return stringOutput;
+}
+
+// for surrogate
+void InputWidgetFEM::setFemGP(bool on){
+     femGP= on;
 }

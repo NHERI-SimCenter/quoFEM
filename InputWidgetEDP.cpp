@@ -126,6 +126,30 @@ InputWidgetEDP::makeEDP(void)
 
 }
 
+void InputWidgetEDP::setGPQoINames(QStringList quiNames) {
+
+    // remove existing boxes
+    int numEDPs = theEDPs.size();
+    for (int i = numEDPs-1; i >= 0; i--) {
+        EDP *theEDP = theEDPs.at(i);
+        theEDP->close();
+        edpLayout->removeWidget(theEDP);
+        theEDPs.remove(i);
+        //theEDP->setParent(0);
+        delete theEDP;
+    }
+
+    int numVar = quiNames.count();
+    for (int i=0; i<numVar; i++) {
+        QString varName = quiNames.at(i);
+        EDP *theEDP = new EDP(varName);
+        theEDPs.append(theEDP);
+        edpLayout->insertWidget(edpLayout->count()-1, theEDP);
+    }
+}
+
+
+
 // For SimcenterUQ\GSA
 QWidget*
 InputWidgetEDP::AdvancedSensitivity(void) {

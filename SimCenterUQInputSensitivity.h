@@ -68,8 +68,10 @@ public:
     RandomVariablesContainer  *getParameters();
 
     int getMaxNumParallelTasks(void);
+    QString getMethodName();
 
     QVBoxLayout *mLayout;
+
 
 signals:
 

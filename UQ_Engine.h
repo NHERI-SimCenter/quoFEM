@@ -56,6 +56,7 @@ public:
     virtual RandomVariablesContainer *getParameters() =0;
     virtual UQ_Results *getResults(void) = 0;
     virtual QString getProcessingScript();
+    virtual QString getMethodName();
 
 signals:
     void onNumModelsChanged(int numModels);

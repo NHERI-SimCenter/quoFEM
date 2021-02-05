@@ -11,7 +11,7 @@ class quoFEM(ConanFile):
     generators = "qmake"
     requires = "jansson/2.11@bincrafters/stable", \
                "zlib/1.2.11", \
-               "libcurl/7.64.1"
+               "libcurl/7.64.1@bincrafters/stable"
     build_policy = "missing"
 
     def configure(self):

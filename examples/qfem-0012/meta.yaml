@@ -1,5 +1,0 @@
-archive: $SIMCENTER_DEV
-archive_location: quoFEM/examples/qfem-0012
-id: qfem-0012
-title: exampleCalibration
-type: book
