@@ -59,7 +59,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetParameters.h>
 
 InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
-  : SimCenterWidget(parent), theParameters(param), numInputs(1)
+  : SimCenterWidget(parent), theParameters(param), numInputs(2)
 {
     femSpecific = 0;
     femGP = false;

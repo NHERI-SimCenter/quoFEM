@@ -70,8 +70,25 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     layout->addWidget(randomSeed, 0, 1);
 
     //
+    // create convergence criteria
+    //
+
+    accuracyMeasure = new QLineEdit();
+    accuracyMeasure->setText(tr("0.02"));
+    accuracyMeasure->setValidator(new QIntValidator);
+    accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
+    accuracyMeasure->setMaximumWidth(150);
+
+    layout->addWidget(new QLabel("Target Accuracy (Normalized Error)"), 1, 0);
+    layout->addWidget(accuracyMeasure, 1, 1);
+
+    //
     // create layout label and entry for # samples
     //
+
+    // QLabel *theConstTitle=new QLabel("\nComputational Constraints");
+    // theConstTitle->setStyleSheet("font-weight: bold");
+    // layout->addWidget(theConstTitle, 2, 0, 1, 3,Qt::AlignBottom);
 
     numSamples = new QLineEdit();
     numSamples->setText(tr("150"));
@@ -79,8 +96,8 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     numSamples->setToolTip("Specify the number of samples");
     numSamples->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Max Number of Samples"), 1, 0);
-    layout->addWidget(numSamples, 1, 1);
+    layout->addWidget(new QLabel("Max Number of Model Runs"), 3, 0);
+    layout->addWidget(numSamples, 3, 1);
 
     //
     // Max computation time (approximate)
@@ -92,22 +109,10 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     timeMeasure->setToolTip("Maximum Computation Time (min.)");
     timeMeasure->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Max Computation Time (min.)    "), 2, 0);
-    layout->addWidget(timeMeasure, 2, 1);
+    layout->addWidget(new QLabel("Max Computation Time (min.)    "), 4, 0);
+    layout->addWidget(timeMeasure, 4, 1);
 
 
-    //
-    // create convergence criteria
-    //
-
-    accuracyMeasure = new QLineEdit();
-    accuracyMeasure->setText(tr("0.02"));
-    accuracyMeasure->setValidator(new QIntValidator);
-    accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
-    accuracyMeasure->setMaximumWidth(150);
-
-    layout->addWidget(new QLabel("Accuracy criteria (NRMSE,%)"), 3, 0);
-    layout->addWidget(accuracyMeasure, 3, 1);
 
     //
     // Advanced options
@@ -116,15 +121,15 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     theAdvancedCheckBox = new QCheckBox();
     theAdvancedTitle=new QLabel("\n    Advanced Options for Gaussian Process Model");
     theAdvancedTitle->setStyleSheet("font-weight: bold; color: grey");
-    layout->addWidget(theAdvancedTitle, 4, 0, 1, 3,Qt::AlignBottom);
-    layout->addWidget(theAdvancedCheckBox, 4, 0,Qt::AlignBottom);
+    layout->addWidget(theAdvancedTitle, 5, 0, 1, 3,Qt::AlignBottom);
+    layout->addWidget(theAdvancedCheckBox, 5, 0,Qt::AlignBottom);
 
     lineA= new QFrame;
     lineA->setFrameShape(QFrame::HLine);
     lineA->setFrameShadow(QFrame::Sunken);
     //lineA->setMinimumWidth(460);
     //lineA->setMaximumWidth(460);
-    layout->addWidget(lineA, 5, 0, 1, 3);
+    layout->addWidget(lineA, 6, 0, 1, 3);
     lineA->setVisible(false);
 
     //
@@ -141,27 +146,13 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     gpKernel->setMaximumWidth(150);
     gpKernel->setCurrentIndex(0);
 
-    layout->addWidget(theKernelLabel, 6, 0);
-    layout->addWidget(gpKernel, 6, 1);
+    layout->addWidget(theKernelLabel, 7, 0);
+    layout->addWidget(gpKernel, 7, 1);
     //theKernelLabel->setStyleSheet("color: grey");
     //gpKernel->setDisabled(1);
     theKernelLabel->setVisible(false);
     gpKernel->setVisible(false);
 
-    //
-    // # of Initial DoE (Space filling)
-    //
-
-    theInitialLabel=new QLabel("Number of Initial DoE");
-
-    initialDoE = new QLineEdit();
-    initialDoE->setValidator(new QIntValidator);
-    initialDoE->setToolTip("Set the number of initial DoE (Space filling)");
-    initialDoE->setMaximumWidth(150);
-    layout->addWidget(theInitialLabel, 7, 0);
-    layout->addWidget(initialDoE, 7, 1);
-    initialDoE->setVisible(false);
-    theInitialLabel->setVisible(false);
 
     //
     // Use Linear trending function
@@ -195,19 +186,34 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     theLogtCheckBox->setVisible(false);
 
     //
+    // # of Initial DoE (Space filling)
+    //
+
+    theInitialLabel=new QLabel("Number of Initial DoE");
+
+    initialDoE = new QLineEdit();
+    initialDoE->setValidator(new QIntValidator);
+    initialDoE->setToolTip("Set the number of initial DoE (Space filling)");
+    initialDoE->setMaximumWidth(150);
+    layout->addWidget(theInitialLabel, 10, 0);
+    layout->addWidget(initialDoE, 10, 1);
+    initialDoE->setVisible(false);
+    theInitialLabel->setVisible(false);
+
+    //
     // Use Existing Initial DoE
     //
 
     theExistingCheckBox = new QCheckBox();
-    theExistingTitle = new QLabel("\n    Use Existing Initial DoE");
+    theExistingTitle = new QLabel("\n    Start with Existing Dataset");
     theExistingTitle ->setStyleSheet("font-weight: bold; color: grey");
-    layout->addWidget(theExistingTitle, 10, 0, 1, 2, Qt::AlignBottom);
-    layout->addWidget(theExistingCheckBox, 10, 0, Qt::AlignBottom);
+    layout->addWidget(theExistingTitle, 11, 0, 1, 2, Qt::AlignBottom);
+    layout->addWidget(theExistingCheckBox, 11, 0, Qt::AlignBottom);
 
     lineB = new QFrame;
     lineB->setFrameShape(QFrame::HLine);
     lineB->setFrameShadow(QFrame::Sunken);
-    layout->addWidget(lineB, 11, 0, 1, 3);
+    layout->addWidget(lineB, 12, 0, 1, 3);
     lineB->setVisible(false);
 
     //
@@ -222,9 +228,9 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     });
     inpFileDir->setMaximumWidth(150);
     theInputLabel=new QLabel("Training Points (Input)");
-    layout->addWidget(theInputLabel,12,0);
-    layout->addWidget(inpFileDir,12,1);
-    layout->addWidget(chooseInpFile,12,2,Qt::AlignLeft);
+    layout->addWidget(theInputLabel,13,0);
+    layout->addWidget(inpFileDir,13,1);
+    layout->addWidget(chooseInpFile,13,2,Qt::AlignLeft);
     theInputLabel->setVisible(false);
     inpFileDir->setVisible(false);
     chooseInpFile->setVisible(false);
@@ -240,23 +246,23 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     });
     outFileDir->setMaximumWidth(150);
     theOutputLabel = new QLabel("System Responses (Output)");
-    layout->addWidget(theOutputLabel,13,0,Qt::AlignTop);
-    layout->addWidget(outFileDir,13,1,Qt::AlignTop);
-    layout->addWidget(chooseOutFile,13,2,Qt::AlignLeft);
+    layout->addWidget(theOutputLabel,14,0,Qt::AlignTop);
+    layout->addWidget(outFileDir,14,1,Qt::AlignTop);
+    layout->addWidget(chooseOutFile,14,2,Qt::AlignLeft);
     theOutputLabel->setVisible(false);
     outFileDir->setVisible(false);
     chooseOutFile->setVisible(false);
 
     errMSG=new QLabel("Your file format is not appropriate");
     errMSG->setStyleSheet({"color: red"});
-    layout->addWidget(errMSG,14,1,1,2,Qt::AlignLeft);
+    layout->addWidget(errMSG,15,1,1,2,Qt::AlignLeft);
     errMSG->hide();
 
     //
     // Finish
     //
 
-    layout->setRowStretch(15, 1);
+    layout->setRowStretch(16, 1);
     layout->setColumnStretch(5, 1);
     this->setLayout(layout);
     connect(theAdvancedCheckBox,SIGNAL(toggled(bool)),this,SLOT(doAdvancedGP(bool)));
@@ -348,15 +354,21 @@ SurrogateDoEInputWidget::checkValidityData(QString name1){
             int  numberOfColumns=1;
             bool previousWasSpace=false;
             for(int i=0; i<line.size(); i++){
-                if(line[i] == ' ' || line[i] == '\t'){
+
+                //if header, skip
+                if (line[i]=='%')
+                    numberOfColumns=-100;
+                    break;
+
+                if(line[i] == ' ' || line[i] == '\t' || line[i] == ','){
                     if(!previousWasSpace)
                         numberOfColumns++;
-
                     previousWasSpace = true;
                 } else {
                     previousWasSpace = false;
                 }
-            }
+            }            
+
             if (numberOfColumns_pre==-100)
             {
                 numberOfColumns_pre=numberOfColumns;

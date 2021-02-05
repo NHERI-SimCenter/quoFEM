@@ -181,7 +181,7 @@ SimCenterUQInputSurrogate::inputFromJSON(QJsonObject &jsonObject)
   //
 
   if (jsonObject.contains("surrogateMethodInfo")) {
-      QJsonObject uq = jsonObject["surrogateMethodData"].toObject();
+      QJsonObject uq = jsonObject["surrogateMethodInfo"].toObject();
       if (uq.contains("method")) {
 
           QString method =uq["method"].toString();

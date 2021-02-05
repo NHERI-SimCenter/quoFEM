@@ -73,7 +73,11 @@ signals:
 public slots:
    void clear(void);
    void onSpreadsheetCellClicked(int, int);
-   void onSaveSpreadsheetClicked();
+   void onSaveSpreadsheetClicked(void);
+   void onSaveModelClicked(void);
+   void onSaveInfoClicked(void);
+   void onSaveXClicked(void);
+   void onSaveYClicked(void);
 
    // modified by padhye 08/25/2018
 
@@ -90,6 +94,7 @@ private:
    int col1, col2;
    bool mLeft;
    QStringList theHeadings;
+   QString workingDir;
 
    QVector<QString>theNames;
    QVector<double>theMeans;

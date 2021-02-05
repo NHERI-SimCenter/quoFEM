@@ -74,6 +74,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QLabel>
+#include <QFrame>
 //#include <InputWidgetFEM.h>
 #include <InputWidgetUQ.h>
 #include <MainWindow.h>
@@ -208,6 +209,7 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
 
     QFileInfo fileTabInfo(filenameTab);
     QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
+    workingDir=fileTabInfo.absolutePath()+ QDir::separator();
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
@@ -247,7 +249,7 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     sa->setFrameShape(QFrame::NoFrame);
 
     QWidget *summary = new QWidget();
-    QVBoxLayout *summaryLayout = new QVBoxLayout();
+    QGridLayout *summaryLayout = new QGridLayout();
     summaryLayout->setContentsMargins(0,0,0,0); // adding back
     summary->setLayout(summaryLayout);
     sa->setWidget(summary);
@@ -256,36 +258,28 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     // read data from file filename
     //
 
-    // open file containing data
-    //std::ifstream fileResults(filenameResults.toStdString().c_str());
-    //if (!fileResults.is_open()) {
-    //    std::cerr << "SimCenterUQResultsSurrogate: Could not open file";
-    //    return -1;
-    //}
+    //
+    // open file
+    //
 
+    QFile file(filenameResults);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        QString message = QString("Error: could not open file") + filenameResults;
+    }
 
-        //
-        // open file
-        //
+    // place contents of file into json object
+    QString val;
+    val=file.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
+    QJsonObject jsonObj = doc.object();
 
-        QFile file(filenameResults);
-        if (!file.open(QFile::ReadOnly | QFile::Text)) {
-            QString message = QString("Error: could not open file") + filenameResults;
-        }
+    // close file
+    file.close();
 
-        // place contents of file into json object
-        QString val;
-        val=file.readAll();
-        QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
-        QJsonObject jsonObj = doc.object();
-
-        // close file
-        file.close();
-
-        // check file contains valid object
-        if (jsonObj.isEmpty()) {
-            QString message = QString("ERROR: file either empty or malformed JSON");
-        }
+    // check file contains valid object
+    if (jsonObj.isEmpty()) {
+        QString message = QString("ERROR: file either empty or malformed JSON");
+    }
 
 
     /********************** LOOKING FOR THE FOLLOWING
@@ -369,171 +363,232 @@ Node_2_Disp Sobol' indices:
 
     //QJsonObject uqObject = jsonObj["UQ_Method"].toObject();
     int nQoI = jsonObj["ydim"].toInt();
-    QJsonObject QoI_tmp = jsonObj["ylabels"].toObject();
+    QJsonArray QoI_tmp = jsonObj["ylabels"].toArray();
+    int nSamp = jsonObj["valSamp"].toInt();
+    int nSim  = jsonObj["valSim"].toInt();
+    double nTime = jsonObj["valTime"].toDouble();
+    double NRMSEthr =jsonObj["thrNRMSE"].toDouble();
+    QString termCode =jsonObj["terminationCode"].toString();
+
+
     QStringList QoInames;
     foreach (QJsonValue str, QoI_tmp) {
         QoInames << str.toString();
     }
 
-    //bool done = false;
-    QGroupBox *groupBox = NULL;
-    //int numEDP = 0;
+    QGridLayout *resultsLayout = new QGridLayout();
 
-    //QHBoxLayout *tableLayout = NULL;
-    //MyTableWidget *table = NULL;
-    QStringList theTableHeadings;
-    theTableHeadings << "Index" << "Value" ;
-    //while (done == false) {
-
-    //QHBoxLayout *gsaLayout = new QHBoxLayout();
-
-    for (int nq=0; nq<nQoI; nq++){
-        QGridLayout * trainingDataLayout = NULL;
-        //std::getline(fileResults, haystack);
-        //if (haystack.find(needleSobol) != std::string::npos) {
-            //QString h(QString::fromStdString(haystack));
-            QString h(QoInames[nq]+" Sobol' Indicies");
-            groupBox = new QGroupBox(h);
-            summaryLayout->addWidget(groupBox);
-            summaryLayout->setSpacing(10);
-            summaryLayout->setMargin(10);
-
-            /***** TABLE LAYOUT OPTION  ******
-            // QTable option
-            table = new MyTableWidget();
-            table->setColumnCount(3);
-            table->setHorizontalHeaderLabels(theTableHeadings);
-            table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-            table->verticalHeader()->setVisible(false);
-            tableLayout = new QHBoxLayout();
-            tableLayout->addWidget(table);
-            tableLayout->addStretch();
-            groupBox->setLayout(tableLayout);
-            ********************************************/
-
-            // Labels & QlineEdit Option in a QGrid
-            trainingDataLayout = new QGridLayout();
-            QLabel *l1 = new QLabel("Index");
-            QLabel *l2 = new QLabel("Value");
-            trainingDataLayout->addWidget(l1, 0,0);
-            trainingDataLayout->addWidget(l2, 0,1);
-            QFont font;
-            font.setBold(true);
-
-            l1->setMaximumHeight(25);
-            l1->setMinimumHeight(25);
-            l1->setAlignment(Qt::AlignCenter);
-            l1->setFont(font);
-
-            l2->setMaximumHeight(25);
-            l2->setMinimumHeight(25);
-            l2->setAlignment(Qt::AlignCenter);
-            l2->setFont(font);
-
-            groupBox->setLayout(trainingDataLayout);
-
-            // set num EDP and read a useleass line
-            //numEDP = 0;
-            //std::getline(fileResults, haystack);
-
-        //} else {
-            //std::istringstream iss(haystack);
-            //QString h(QString::fromStdString(haystack));
-            //if (h.length() == 0) {
-            //    done = true;
-            //} else {
-                //std::string data1, data2, data3, data4;
-
-                //iss >> data1 >> data2 >> data3;
-                //QString d1(QString::fromStdString(data1));
-                //QString d2(QString::fromStdString(data2));
-                //QString d3(QString::fromStdString(data3));
-
-
-            QBarSet *set0 = new QBarSet("Main");
-
-            for (int nc=0; nq<nQoI; nc++) {
-                //QLineEdit *e1 = new QLineEdit(combs[nc]); e1->setReadOnly(true); e1->setAlignment(Qt::AlignCenter);
-                QLabel *e1 = new QLabel("plots"); e1->setAlignment(Qt::AlignCenter);
-             }
-
-            QBarSeries *series = new QBarSeries();
-            series->append(set0);
-
-            QChart *chartSobol = new QChart();
-            chartSobol->addSeries(series);
-            //chart->setTitle("");
-            chartSobol->setAnimationOptions(QChart::SeriesAnimations);
-
-            QStringList categories;
-            foreach (const QString str, QoInames) {
-                categories << str;
-            }
-
-            QBarCategoryAxis *axisX = new QBarCategoryAxis();
-            axisX->append(categories);
-
-
-            chartSobol->addAxis(axisX, Qt::AlignBottom);
-            series->attachAxis(axisX);
-
-            QValueAxis *axisY = new QValueAxis();
-            axisY->setRange(0.0, 1.05);
-            axisY->setTickType(QValueAxis::TickType::TicksDynamic);
-            axisY->setTickInterval(0.5);
-            axisY->setTickAnchor(0.0);
-            chartSobol->addAxis(axisY, Qt::AlignLeft);
-            series->attachAxis(axisY);
-
-            chartSobol->setMargins(QMargins(10,10,10,10));
-            chartSobol->setBackgroundRoundness(0);
-            chartSobol->setMinimumHeight(120);
-            if (nQoI<5) {
-                //chartSobol->setMaximumWidth(400);
-            }
-
-
-            QChartView *chartView = new QChartView(chartSobol);
-            chartView->setRenderHint(QPainter::Antialiasing);
-
-            chartSobol->legend()->setVisible(true);
-            chartSobol->legend()->setAlignment(Qt::AlignRight);
-            //chartView->chart()->legend()->hide();
-            trainingDataLayout->addWidget(chartView, 0,3,nQoI+1,1);
-            trainingDataLayout->setSpacing(5);
-            trainingDataLayout->setMargin(10);
-            //trainingDataLayout->setColumnStretch(0,1);
-            //trainingDataLayout->setColumnStretch(1,1);
-            //trainingDataLayout->setColumnStretch(2,1);
-            //trainingDataLayout->setColumnStretch(0 | 1 | 2, 200);
-            trainingDataLayout->setColumnStretch(0 | 1 | 2, 1);
-                        //
-            // create a widget into which we place the chart and the spreadsheet
-            //
-
-            //QWidget *widget = new QWidget();
-            //QVBoxLayout *gsaLayout = new QVBoxLayout(widget);
-
-            //gsaLayout->addLayout(trainingDataLayout, 1);
-            //gsaLayout->addWidget(chartView, 1);
-            //groupBox->setLayout(gsaLayout);
-
-                /* *** Table Widget option
-                table->insertRow(numEDP);
-                QModelIndex index1 = table->model()->index(numEDP, 0);
-                table->model()->setData(index1, data3.c_str());
-                QModelIndex index2 = table->model()->index(numEDP, 1);
-                table->model()->setData(index2, data1.c_str());
-                QModelIndex index3 = table->model()->index(numEDP, 2);
-                table->model()->setData(index3, data2.c_str());
-                */
-
-                //numEDP++;
-            //}
-        //}
+    QString termMsg="\nSurrogate Modeling Completed! ";
+    if (termCode=="count"){
+        termMsg = termMsg+"- Process ended as the maximum allowable number of simulations is reached";
+    } else if (termCode=="Time"){
+        termMsg = termMsg+"- Process ended as the time limit is exceeded";
+    } else if (termCode=="accuracy"){
+        termMsg = termMsg+"- Model Converged";
+    } else {
+        termMsg = termMsg + "termination code unidentified";
     }
 
-    summaryLayout->addStretch();
+    QLabel *surrogateStatusLabel =new QLabel(termMsg);
+    surrogateStatusLabel-> setStyleSheet({"font-weight: bold"});
+    QFrame *lineA = new QFrame;
+    lineA->setFrameShape(QFrame::HLine);
+    lineA->setFrameShadow(QFrame::Sunken);
+
+    summaryLayout->addWidget(surrogateStatusLabel, 0, 0,1,2);
+    summaryLayout->addWidget(lineA, 1, 0,1,2);
+
+    resultsLayout->addWidget(new QLabel("# training samples"), 0, 0);
+    resultsLayout->addWidget(new QLabel(QString::number(nSamp)), 0, 1);
+    resultsLayout->addWidget(new QLabel("# model simulations"), 1, 0);
+    resultsLayout->addWidget(new QLabel(QString::number(nSim)), 1, 1);
+    resultsLayout->addWidget(new QLabel("Analysis time"), 2, 0);
+    resultsLayout->addWidget(new QLabel(QString::number(nTime/60, 'f', 1).append(" min.")), 2, 1);
+    resultsLayout->addWidget(new QLabel(" "), 3, 0);
+
+    // blank space
+
+    QLabel *accuMeasureLabel =new QLabel("Goodness-of-Fit");
+    accuMeasureLabel-> setStyleSheet({"font-weight: bold"});
+    resultsLayout->addWidget(accuMeasureLabel, 4, 0);
+    resultsLayout->addWidget(new QLabel("Normalized error (NRMSE)"), 5, 0);
+    resultsLayout->addWidget(new QLabel("R2"), 6, 0);
+    resultsLayout->addWidget(new QLabel("Correlation coeff"), 7, 0);
+
+    QLineEdit *NRMSE;
+    QLineEdit *R2;
+    QLineEdit *Corr;
+    QJsonObject valNRMSE = jsonObj["valNRMSE"].toObject();
+    QJsonObject valR2 = jsonObj["valR2"].toObject();
+    QJsonObject valCorrCoeff = jsonObj["valCorrCoeff"].toObject();
+
+    bool warningIdx=false;
+
+    for (int nq=0; nq<nQoI; nq++){
+        NRMSE = new QLineEdit();
+        R2 = new QLineEdit();
+        Corr = new QLineEdit();
+
+        double NRMSEvalue= valNRMSE[QoInames[nq]].toDouble();
+
+        NRMSE -> setText(QString::number(valNRMSE[QoInames[nq]].toDouble(), 'f', 3));
+        R2 -> setText(QString::number(valR2[QoInames[nq]].toDouble(), 'f', 3));
+        Corr -> setText(QString::number(valCorrCoeff[QoInames[nq]].toDouble(), 'f', 3));
+
+        NRMSE->setAlignment(Qt::AlignRight);
+        R2->setAlignment(Qt::AlignRight);
+        Corr->setAlignment(Qt::AlignRight);
+
+        NRMSE->setReadOnly(true);
+        R2->setReadOnly(true);
+        Corr->setReadOnly(true);
+
+        NRMSE ->setMaximumWidth(100);
+        R2 ->setMaximumWidth(100);
+        Corr ->setMaximumWidth(100);
+
+        if (NRMSEvalue>NRMSEthr) {
+            NRMSE -> setStyleSheet({"color: red"});
+            R2 -> setStyleSheet({"color: red"});
+            Corr -> setStyleSheet({"color: red"});
+            warningIdx=true;
+        }
+
+        resultsLayout->addWidget(new QLabel(QoInames[nq]), 4, nq+1);
+        resultsLayout->addWidget(NRMSE, 5, nq+1);
+        resultsLayout->addWidget(R2, 6, nq+1);
+        resultsLayout->addWidget(Corr, 7, nq+1);
+    }
+
+
+    if (warningIdx) {
+        //surrogateStatusLabel->setText("\nSurrogate analysis finished. - The model may not be accurate");
+        QLabel *waringMsgLabel = new QLabel("* Note: Some or all of the QoIs did not converge to the target accuracy (NRMSE="+QString::number(NRMSEthr)+")");
+        resultsLayout->addWidget(waringMsgLabel, 10, 0,1,-1);
+        waringMsgLabel -> setStyleSheet({"color: red"});
+
+    }
+
+    resultsLayout->setRowStretch(8, 1);
+    resultsLayout->setColumnStretch(nQoI+2, 1);
+    summaryLayout->addLayout(resultsLayout,2,0);
+    //
+    // QScatter plot
+    //
+
+    QTabWidget *tabWidgetScatter = new QTabWidget();
+    tabWidgetScatter -> setTabPosition(QTabWidget::East);
+    QJsonObject yExact = jsonObj["yExact"].toObject();
+    QJsonObject yPredi = jsonObj["yPredict"].toObject();
+
+
+    for (int nq=0; nq<nQoI; nq++)
+    {
+    //int nq=0;
+        QScatterSeries *series_CV = new QScatterSeries;
+        // adjust marker size and opacity based on the number of samples
+        if (nSamp < 10) {
+            series_CV->setMarkerSize(15.0);
+            series_CV->setColor(QColor(0, 114, 178, 200));
+        } else if (nSamp < 100) {
+            series_CV->setMarkerSize(11.0);
+            series_CV->setColor(QColor(0, 114, 178, 160));
+        } else if (nSamp < 1000) {
+            series_CV->setMarkerSize(8.0);
+            series_CV->setColor(QColor(0, 114, 178, 100));
+        } else if (nSamp < 10000) {
+            series_CV->setMarkerSize(6.0);
+            series_CV->setColor(QColor(0, 114, 178, 70));
+        } else if (nSamp < 100000) {
+            series_CV->setMarkerSize(5.0);
+            series_CV->setColor(QColor(0, 114, 178, 50));
+        } else {
+            series_CV->setMarkerSize(4.5);
+            series_CV->setColor(QColor(0, 114, 178, 30));
+        }
+
+        series_CV->setBorderColor(QColor(255,255,255,0));
+
+        QChart *chart_CV = new QChart;
+        QChartView *chartView_CV = new QChartView(chart_CV);
+
+        chart_CV->setAnimationOptions(QChart::AllAnimations);
+        chartView_CV->setRenderHint(QPainter::Antialiasing);
+        chartView_CV->chart()->legend()->hide();
+
+        QJsonArray yEx= yExact[QoInames[nq]].toArray();
+        QJsonArray yPr= yPredi[QoInames[nq]].toArray();
+        double maxy=-INFINITY;
+        double miny=INFINITY;
+        for (int i=0; i<nSamp; i++) {
+            series_CV->append(yEx[i].toDouble(), yPr[i].toDouble());
+            maxy = std::max(maxy,std::max(yEx[i].toDouble(),yPr[i].toDouble()));
+            miny = std::min(miny,std::min(yEx[i].toDouble(),yPr[i].toDouble()));
+        }
+        chart_CV->addSeries(series_CV);
+        series_CV->setName("Samples");
+
+        QValueAxis *axisX = new QValueAxis();
+        QValueAxis *axisY = new QValueAxis();
+
+        axisX->setTitleText(QString("Y exact"));
+        axisY->setTitleText(QString("Y predicted (LOOCV)"));
+
+        axisX->setRange(miny, maxy);
+        axisY->setRange(miny, maxy);
+
+        chart_CV->setAxisX(axisX, series_CV);
+        chart_CV->setAxisY(axisY, series_CV);
+
+        tabWidgetScatter->addTab(chartView_CV,QoInames[nq]);
+    }
+    tabWidgetScatter->setMinimumWidth(500);
+    tabWidgetScatter->setMinimumHeight(500);
+    tabWidgetScatter->setMaximumHeight(500);
+    tabWidgetScatter->setMaximumWidth(500);
+
+    QLabel *CVresultsLabel =new QLabel("\nLeave-Out-One Cross-Validation (LOOCV) Prediction");
+    CVresultsLabel-> setStyleSheet({"font-weight: bold"});
+    summaryLayout->addWidget(CVresultsLabel, 3, 0);
+    summaryLayout->addWidget(tabWidgetScatter,4,0);
+
+    QLabel *buttonsLabel =new QLabel("\nSaving Options");
+    buttonsLabel-> setStyleSheet({"font-weight: bold"});
+
+    QHBoxLayout *buttonsLayout = new QHBoxLayout();
+    QPushButton *saveModelButton =  new QPushButton("Save GP Model");
+    QPushButton *saveResultButton =  new QPushButton("Save GP Info");
+    QPushButton *saveXButton =  new QPushButton("RV Data");
+    QPushButton *saveYButton =  new QPushButton("QoI Data");
+
+    connect(saveModelButton,SIGNAL(clicked()),this,SLOT(onSaveModelClicked()));
+    connect(saveResultButton,SIGNAL(clicked()),this,SLOT(onSaveInfoClicked()));
+    connect(saveXButton,SIGNAL(clicked()),this,SLOT(onSaveXClicked()));
+    connect(saveYButton,SIGNAL(clicked()),this,SLOT(onSaveYClicked()));
+
+    saveModelButton->setMinimumWidth(150);
+    saveModelButton->setMaximumWidth(150);
+    saveResultButton->setMaximumWidth(150);
+    saveResultButton->setMinimumWidth(150);
+    saveXButton->setMaximumWidth(90);
+    saveXButton->setMinimumWidth(90);
+    saveYButton->setMaximumWidth(90);
+    saveYButton->setMinimumWidth(90);
+
+    buttonsLayout->addWidget(saveModelButton,0,Qt::AlignLeft);
+    buttonsLayout->addWidget(saveResultButton,1);
+    buttonsLayout->addWidget(saveXButton,2);
+    buttonsLayout->addWidget(saveYButton,3);
+    buttonsLayout->addStretch(true);
+    //buttonsLayout->setStretch(1,1);
+
+    summaryLayout->addWidget(buttonsLabel, 5, 0);
+    summaryLayout->addLayout(buttonsLayout, 6, 0,Qt::AlignTop);
+    summaryLayout->setRowStretch(7, 1);
+    summaryLayout->setColumnStretch(3, 1);
+
+
+    //QHBoxLayout *gsaLayout = new QHBoxLayout();
 
     //
     // create spreadsheet,  a QTableWidget showing RV and results for each run
@@ -605,7 +660,6 @@ Node_2_Disp Sobol' indices:
         rowCount++;
     }
     tabResults.close();
-
 
     // this is where we are connecting edit triggers
     spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -688,12 +742,49 @@ SimCenterUQResultsSurrogate::onSaveSpreadsheetClicked()
             stream<<endl;
         }
     }
-
-    //    QFileDialog::getOpenFileName( this, tr("Open Document"), QDir::currentPath(), tr("Document files (*.doc *.rtf);;All files (*.*)"), 0, QFileDialog::DontUseNativeDialog );
-
-    //  qDebug()<<QDir::currentPath();
-
 }
+
+void
+SimCenterUQResultsSurrogate::onSaveModelClicked()
+{
+
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                   tr("Save Data"), "SimGpModel",
+                                                   tr("Pickle File (*.pkl)"));
+    QFile::copy(workingDir+QString("SimGpModel.pkl"), fileName);
+}
+
+void
+SimCenterUQResultsSurrogate::onSaveInfoClicked()
+{
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                   tr("Save Data"), "GPresults",
+                                                   tr("Output File (*.out)"));
+    QFile::copy(workingDir+QString("GPresults.out"), fileName);
+}
+
+void
+SimCenterUQResultsSurrogate::onSaveXClicked()
+{
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                   tr("Save Data"), "X",
+                                                   tr("Output File (*.txt)"));
+    QFile::copy(workingDir+QString("inputTab.out"), fileName);
+}
+
+void
+SimCenterUQResultsSurrogate::onSaveYClicked()
+{
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                   tr("Save Data"), "Y",
+                                                   tr("Output File (*.txt)"));
+    QFile::copy(workingDir+QString("outputTab.out"), fileName);
+}
+
 
 void SimCenterUQResultsSurrogate::onSpreadsheetCellClicked(int row, int col)
 {
@@ -1282,7 +1373,6 @@ SimCenterUQResultsSurrogate::inputFromJSON(QJsonObject &jsonObject)
     QChartView *chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->chart()->legend()->hide();
-
 
     //
     // create a widget into which we place the chart and the spreadsheet

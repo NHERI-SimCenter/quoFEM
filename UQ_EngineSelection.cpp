@@ -345,9 +345,3 @@ void
 UQ_EngineSelection::numModelsChanged(int newNum) {
     emit onNumModelsChanged(newNum);
 }
-
-void
-UQ_EngineSelection::clear(void)
-{
-  theCurrentEngine->clear();
-}
