@@ -70,7 +70,7 @@ class UQ_EngineSelection : public  SimCenterAppWidget
   bool inputFromJSON(QJsonObject &rvObject);
   bool copyFiles(QString &destName);
 
-  void clear(void);
+  //void clear(void);
   
  signals:
   void onUQ_EngineChanged(bool);
