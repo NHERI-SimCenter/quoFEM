@@ -5,15 +5,16 @@
       "title": "Forward Propagation - OpenSees/Tcl",
       "base": "qfem-0001",
       "doc": [
-        "../examples/qfem-0001/README.rst",
-        "../examples/qfem-0001/qfem-0001.png"
+        "../examples/qfem-0001/qfem-0001.png",
+        "../examples/qfem-0001/README.rst"
       ],
       "entry_point": "../examples/qfem-0001/input.json",
       "summary": "This example illustrates how quoFEM interacts with the Tcl interpreter for OpenSees. A simple forward propagation procedure is run to estimate the first and second central moments of a FE model's response, given the marginal distributions of various random parameters.",
       "logo": "qfem-0001.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "OpenSees"
+        "Simulation": "OpenSees",
+        "Difficulty": "0"
       }
     },
     "qfem-0002": {
@@ -29,7 +30,8 @@
       "logo": "qfem-0002.png",
       "published": "2020-12-17T21:26:53.946569-08:00",
       "categories": {
-        "qfem-FEM": "OpenSeesPy"
+        "Simulation": "OpenSeesPy",
+        "Difficulty": "0"
       }
     },
     "qfem-0003": {
@@ -37,16 +39,17 @@
       "title": "Reliability Analysis",
       "base": "qfem-0003",
       "doc": [
-        "../examples/qfem-0003/qfem-0003.png",
+        "../examples/qfem-0003/figures/trussSORM-RES.png",
         "../examples/qfem-0003/README.rst",
-        "../examples/qfem-0003/figures/trussSORM-RES.png"
+        "../examples/qfem-0003/qfem-0003.png"
       ],
       "entry_point": "../examples/qfem-0003/input.json",
       "summary": "This example uses quoFEM to perform a second-order reliability analysis (SORM) of an OpenSees FE model.",
       "logo": "qfem-0003.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "OpenSees"
+        "Simulation": "OpenSees",
+        "Difficulty": "0"
       }
     },
     "qfem-0004": {
@@ -55,15 +58,16 @@
       "base": "qfem-0004",
       "doc": [
         "../examples/qfem-0004/figures/trussSensitivity-RES.png",
-        "../examples/qfem-0004/README.rst",
-        "../examples/qfem-0004/qfem-0004.png"
+        "../examples/qfem-0004/qfem-0004.png",
+        "../examples/qfem-0004/README.rst"
       ],
       "entry_point": "../examples/qfem-0004/input.json",
       "summary": "This example uses quoFEM to perform a global sensitivity analysis of an OpenSees FE model.",
       "logo": "qfem-0004.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "OpenSees"
+        "Simulation": "OpenSees",
+        "Difficulty": "0"
       }
     },
     "qfem-0005": {
@@ -78,7 +82,8 @@
       "logo": "None",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "OpenSeesPy"
+        "Simulation": "OpenSeesPy",
+        "Difficulty": "0"
       }
     },
     "qfem-0006": {
@@ -93,7 +98,8 @@
       "logo": "None",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "OpenSeesPy"
+        "Simulation": "OpenSeesPy",
+        "Difficulty": "0"
       }
     },
     "qfem-0007": {
@@ -109,7 +115,8 @@
       "logo": "qfem-0007.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "OpenSees"
+        "Simulation": "OpenSees",
+        "Difficulty": "0"
       }
     },
     "qfem-0008": {
@@ -125,7 +132,8 @@
       "logo": "qfem-0008.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "OpenSees"
+        "Simulation": "OpenSees",
+        "Difficulty": "0"
       }
     },
     "qfem-0009": {
@@ -134,20 +142,21 @@
       "base": "qfem-0009",
       "doc": [
         "../examples/qfem-0009/figures/trussSensitivity-RES-SimUQ.png",
-        "../examples/qfem-0009/figures/trussSensitivity-RES-SimUQ2.png",
-        "../examples/qfem-0009/qfem-0009.png",
-        "../examples/qfem-0009/figures/trussSensitivity-advanced.png",
         "../examples/qfem-0009/truss/truss.png",
+        "../examples/qfem-0009/qfem-0009.png",
+        "../examples/qfem-0009/figures/trussSensitivity-RES-SimUQ2.png",
+        "../examples/qfem-0009/figures/trussSensitivity-corr.png",
         "../examples/qfem-0009/README.rst",
-        "../examples/qfem-0009/figures/trussSensitivity-input-SimUQ.png",
-        "../examples/qfem-0009/figures/trussSensitivity-corr.png"
+        "../examples/qfem-0009/figures/trussSensitivity-advanced.png",
+        "../examples/qfem-0009/figures/trussSensitivity-input-SimUQ.png"
       ],
       "entry_point": "../examples/qfem-0009/input.json",
       "summary": "A global sensitivity analysis is conducted with correlated random variables using the SimCenterUQ engine for sensitivity analysis.",
       "logo": "qfem-0009.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "OpenSees"
+        "Simulation": "OpenSees",
+        "Difficulty": "0"
       }
     },
     "qfem-0010": {
@@ -162,7 +171,8 @@
       "logo": "None",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "FEAP"
+        "Simulation": "FEAP",
+        "Difficulty": "0"
       }
     },
     "qfem-0011": {
@@ -177,7 +187,8 @@
       "logo": "None",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "OpenSees"
+        "Simulation": "OpenSees",
+        "Difficulty": "0"
       }
     },
     "qfem-0012": {
@@ -188,11 +199,12 @@
         "../examples/qfem-0012/README.rst"
       ],
       "entry_point": "../examples/qfem-0012/input.json",
-      "summary": "",
+      "summary": "~",
       "logo": "None",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "OpenSees"
+        "Simulation": "OpenSees",
+        "Difficulty": "0"
       }
     },
     "qfem-0013": {
@@ -207,7 +219,8 @@
       "logo": "None",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "OpenSees"
+        "Simulation": "OpenSees",
+        "Difficulty": "0"
       }
     },
     "qfem-0014": {
@@ -215,34 +228,40 @@
       "title": "Steel Frame: Bayesian Calibration using TMCMC",
       "base": "qfem-0014",
       "doc": [
-        "../examples/qfem-0014/figures/quo-14-RV.png",
-        "../examples/qfem-0014/figures/quo-14-RES-Summary.png",
+        "../examples/qfem-0014/README.rst",
         "../examples/qfem-0014/figures/quo-14-RES-DataValues4.png",
+        "../examples/qfem-0014/figures/quo-14-RES-DataValues2.png",
         "../examples/qfem-0014/figures/quo-14-RES-DataValues3.png",
         "../examples/qfem-0014/src/postProcessing.py",
-        "../examples/qfem-0014/figures/quo-14-RES-DataValues2.png",
-        "../examples/qfem-0014/qfem-0014.png",
-        "../examples/qfem-0014/README.rst",
-        "../examples/qfem-0014/figures/quo-14-UQ.png",
-        "../examples/qfem-0014/figures/quo-14-FEM.png",
+        "../examples/qfem-0014/figures/quo-14-RES-Summary.png",
         "../examples/qfem-0014/figures/quo-14-RES-DataValues1.png",
-        "../examples/qfem-0014/src/model.tcl"
+        "../examples/qfem-0014/src/model.tcl",
+        "../examples/qfem-0014/figures/quo-14-FEM.png",
+        "../examples/qfem-0014/figures/quo-14-UQ.png",
+        "../examples/qfem-0014/qfem-0014.png",
+        "../examples/qfem-0014/figures/quo-14-RV.png"
       ],
       "entry_point": "../examples/qfem-0014/input.json",
       "summary": "In this example, Bayesian estimation is used to estimate the lateral story stiffnesses of the two stories of a simple steel frame, given data about its mode shapes and frequencies. The transitional Markov chain Monte Carlo algorithm is used to obtain samples from the posterior probability distribution of the lateral story stiffnesses",
       "logo": "qfem-0014.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
-        "qfem-FEM": "OpenSees"
+        "Simulation": "OpenSees",
+        "Difficulty": "0"
       }
     }
   },
   "categories": {
-    "qfem-FEM": {
+    "Simulation": {
       "OpenSees": "OpenSees",
       "OpenSeesPy": "OpenSeesPy",
       "FEAP": "FEAP",
       "None": "-"
+    },
+    "Difficulty": {
+      "0": "Beginner",
+      "1": "Intermediate",
+      "2": "Advanced"
     }
   }
 }

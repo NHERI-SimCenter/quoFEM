@@ -2,9 +2,9 @@
 Forward Propagation - OpenSees/Tcl
 ==================================
 
-+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| Problem files   | `quo-01 <https://github.com/claudioperez/SimCenterDocumentation/tree/examples/docs/common/user_manual/examples/desktop/quoFEM/src/quo-01>`__   |
-+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------+
++-----------------+------------------+
+| Problem files   | :qfem-0001:`/`   |
++-----------------+------------------+
 
 This example uses quoFEM to estimate the first and second central
 moments of a FE model's response, given the marginal distributions of
@@ -21,6 +21,7 @@ vertical displacement at node 3 using Latin hypercube sampling.
    :width: 400px
 
    Truss schematic diagram
+
 
 The following parameters are defined in the **RV** tab:
 

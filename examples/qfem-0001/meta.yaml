@@ -4,3 +4,4 @@ summary: This example illustrates how quoFEM interacts with the Tcl interpreter 
   second central moments of a FE model's response, given the marginal distributions
   of various random parameters.
 system: quoFEM
+difficulty: 0
