@@ -7,11 +7,15 @@ affiliation: University of California, San Diego
 import os
 import sys
 import shutil
-import pickle
+# import pickle
 from pathlib import Path
 import csv
+from importlib import import_module
+import numpy as np
 
 from parseData import parseDataFunction
+import pdfs
+from runTMCMC import RunTMCMC
 
 inputArgs = sys.argv
 
@@ -20,18 +24,25 @@ workdir_temp = inputArgs[2]
 run_type = inputArgs[3]
 
 dakotaJsonLocation = Path.joinpath(Path(workdir_temp), "dakota.json")
-variables, numberOfSamples, resultsLocation, resultsPath = parseDataFunction(dakotaJsonLocation)
+variables, numberOfSamples, seedval, resultsLocation, resultsPath, logLikelihoodDirectoryPath, logLikelihoodFilename = \
+    parseDataFunction(dakotaJsonLocation)
 
 print('numVariables {}', format(variables))
 print('numSamples {}', format(numberOfSamples))
 
-import pdfs
-from runTMCMC import RunTMCMC
-from postProcessing import log_likelihood
+# from postProcessing import log_likelihood
+
+sys.path.append(logLikelihoodDirectoryPath)
+logLikeModuleName = os.path.splitext(logLikelihoodFilename)[0]
+
+logLikeModule = import_module(logLikeModuleName)
 
 # %%
 
 sys.path.append(resultsPath)
+
+# set the seed
+np.random.seed(seedval)
 
 # number of particles: Np
 Np = numberOfSamples
@@ -78,8 +89,16 @@ for i in range(len(variables["names"])):
 ''' Run the Algorithm '''
 
 if __name__ == '__main__':
-    mytrace = RunTMCMC(Np, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variables, resultsLocation)
-
+    mytrace = RunTMCMC(Np, AllPars, Nm_steps_max, Nm_steps_maxmax, logLikeModule.log_likelihood, variables,
+                       resultsLocation, seedval)
+    
+    ''' Compute model evidence '''
+    evidence = 1
+    for i in range(len(mytrace)):
+        Wm = mytrace[i][2]
+        evidence = evidence*(sum(Wm)/len(Wm))
+    print("\n\nModel evidence: {:e}\n\n".format(evidence))
+    
     ''' Write Data to '.csv' file '''
 
     dataToWrite = mytrace[-1][0]
@@ -105,7 +124,7 @@ if __name__ == '__main__':
     with open(tabFilePath, "w") as f:
         f.write(headings)
         for i in range(Np):
-            string = "{}\t{}\t".format(i+1, 1)
+            string = "{}\t{}\t".format(i + 1, 1)
             for j in range(len(variables['names'])):
                 string += "{}\t".format(dataToWrite[i, j])
             string += "\n"
