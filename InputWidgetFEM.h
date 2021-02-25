@@ -52,12 +52,13 @@ class QGroupBox;
 class QSpinBox;
 
 class InputWidgetParameters;
+class InputWidgetEDP;
 
 class InputWidgetFEM : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetFEM(InputWidgetParameters *theParams, QWidget *parent = 0);
+    explicit InputWidgetFEM(InputWidgetParameters *theParams, InputWidgetEDP *edpwidget, QWidget *parent = 0);
     ~InputWidgetFEM();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -72,7 +73,7 @@ public:
     int parseInputfilesForRV(QString filnema1);
     int parseInputfilesForGP(QString filnema1);
     void setFemGP(bool on);
-    int setFEMdisabled(bool on);
+    int setFEMforGP(QString option);
 
   signals:
 
@@ -98,6 +99,7 @@ public:
     // QLineEdit *file2;
 
     InputWidgetParameters *theParameters;
+    InputWidgetEDP *theEdpWidget;
     QStringList varNamesAndValues;
 
     int numInputs;
@@ -106,7 +108,15 @@ public:
     QVector<QLineEdit *>parametersFilenames;
     QVector<QLineEdit *>customInputFiles;
 
-    bool femGP;
+    // for GP
+    double interpolateForGP(QVector<double> X, QVector<double> Y, double Xval);
+    bool isGP;
+    QVector<double> percVals, thrsVals;
+    QLineEdit *thresVal;
+    QString femOpt;
+    bool isData;
+    QRadioButton * option1Button,* option2Button,* option3Button;
+
 };
 
 #endif // INPUTWIDGETFEM_H

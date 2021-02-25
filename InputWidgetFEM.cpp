@@ -39,6 +39,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "InputWidgetFEM.h"
 #include <QGridLayout>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -52,17 +53,21 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFileInfo>
 #include <QVectorIterator>
 #include <OpenSeesPyParser.h>
+#include <QRadioButton.h>
 
 #include <OpenSeesParser.h>
 #include <FEAPpvParser.h>
 
 #include <InputWidgetParameters.h>
+#include <InputWidgetEDP.h>
 
-InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, QWidget *parent)
-  : SimCenterWidget(parent), theParameters(param), numInputs(1)
+#include <qjsondocument.h>
+
+InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, QWidget *parent)
+  : SimCenterWidget(parent), theParameters(param), theEdpWidget(edpwidget), numInputs(1)
 {
     femSpecific = 0;
-    femGP = false;
+    isGP = false;
 
     layout = new QVBoxLayout();        
     QVBoxLayout *name= new QVBoxLayout;
@@ -176,6 +181,9 @@ InputWidgetFEM::outputToJSON(QJsonObject &jsonObject)
              QFileInfo pFileInfo(fileName3);
              fem["parametersFile"]=pFileInfo.fileName();
              fem["parametersScript"]=fileName3;
+        } else if (femSelection->currentText() == "SurrogateGP") {
+            fem["varThres"]=thresVal->text().toDouble();
+            fem["femOption"]=femOpt;
         }
 
     } else {
@@ -237,6 +245,16 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
             if (femSelection->currentText() == "OpenSeesPy") {
                 QString fileName3=femObject["parametersScript"].toString();
                 parametersFilenames.at(0)->setText(fileName3);
+            } else if (femSelection->currentText() == "SurrogateGP") {
+                femOpt=femObject["femOption"].toString();
+                if (femOpt == "giveError") {
+                    option1Button ->setChecked(true);
+                } else if (femOpt == "continue") {
+                    option2Button ->setChecked(true);
+                } else if (femOpt == "doSimulation") {
+                    option3Button ->setChecked(true);
+                }
+                thresVal->setText(QString::number(femObject["varThres"].toDouble()));
             }
 
 	    if (femSelection->currentText() == "Custom") {
@@ -400,6 +418,11 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
             label1->setText("Input Script");
             file1->setToolTip(tr("Name of OpenSees input script"));
             file2->setToolTip(tr("Name of Python/Tcl script that will process OpenSees output file for UQ engine"));
+        } else if (arg1 == "SurrogateGP"){
+            label1->setText("SurrogateGP Info (.json)");
+            label2->setText("SurrogateGP Model (.pkl)");
+            file1->setToolTip(tr("Name of SurrogateGP model file (.json)"));
+            file2->setToolTip(tr("Name of SurrogateGP info file (.pkl)"));
         } else {
             label1->setText("Input Script");
             file1->setToolTip(tr("Name of OpenSeesPy input script"));
@@ -431,6 +454,229 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
             femLayout->addWidget(file3, 2,1);
             femLayout->addWidget(chooseFile3, 2,2);
 
+            femLayout->setColumnStretch(3,1);
+            femLayout->setColumnStretch(1,3);
+        } else if (arg1 == "SurrogateGP") {
+
+            QString appName;
+            QString mainScriptDir;
+            QString postScriptDir;
+
+            QLabel *optionsLabel = new QLabel("\nOptions when surroagate model gives imprecise prediction at certain sample locations");
+            femLayout->addWidget(optionsLabel, 2,0,1,-1);
+            optionsLabel->setStyleSheet("font-weight: bold;color: black");
+
+            option1Button = new QRadioButton();
+            QLabel *option1Label = new QLabel("     Stop Running");
+            option1Button->setChecked(true);
+            femOpt = "giveError";
+
+            option2Button = new QRadioButton();
+            QLabel *option2Label = new QLabel("     Continue (not recommended)");
+
+            option3Button = new QRadioButton();
+            QLabel *option3Label = new QLabel("     Run Exact FEM Simulation");
+
+            femLayout->addWidget(option1Label, 3,0,1,-1);
+            femLayout->addWidget(option1Button, 3,0);
+            femLayout->addWidget(option2Label, 4,0,1,-1);
+            femLayout->addWidget(option2Button, 4,0);
+            femLayout->addWidget(option3Label, 5,0,1,-1);
+            femLayout->addWidget(option3Button, 5,0);
+            option1Button -> setDisabled(true);
+            option2Button -> setDisabled(true);
+            option3Button -> setDisabled(true);
+            //
+            // For option 3
+            //
+            QLabel *labelVarThres = new QLabel("      Maximum Allowable \n      Normalized Variance");
+            thresVal = new QLineEdit;
+            QLabel *labelThresMsg = new QLabel();
+            labelThresMsg->setStyleSheet("color: red");
+
+            connect(thresVal, &QLineEdit::textChanged, this, [=](QString val) mutable {
+                auto c = percVals[0];
+                double thres=val.toDouble();
+                double percEst = this->interpolateForGP(thrsVals,percVals,thres);
+                if (thres>thrsVals[thrsVals.size()-1]) {
+                    percEst=round(percVals[percVals.size()-1]*1000)/10;
+                } else if (thres<thrsVals[0]) {
+                    percEst=round(percVals[0]*1000)/10;
+                }
+                if (isData) {
+                    labelThresMsg->setText("");
+                } else {
+                    labelThresMsg->setText("      Reference: " + QString::number(percEst) + "% of samples in training range exceed tolerance limit.");
+                }
+            });
+
+            thresVal->setMaximumWidth(150);
+            thresVal->setDisabled(true);
+            labelThresMsg->setVisible(false);
+            femLayout->addWidget(labelVarThres, 9,0);
+            femLayout->addWidget(thresVal,9,1, Qt::AlignVCenter);
+            femLayout->addWidget(labelThresMsg,10,0,1,-1);
+
+            QLabel *labelProgName = new QLabel();
+            QLabel *labelProgDir1 = new QLabel();
+            QLabel *labelProgDir2 =
+                    new QLabel();
+            femLayout->addWidget(labelProgName, 6,0,1,-1);
+            femLayout->addWidget(labelProgDir1, 7,0,1,-1);
+            femLayout->addWidget(labelProgDir2, 8,0,1,-1);
+            labelProgName->setVisible(false);
+            labelProgDir1->setVisible(false);
+            labelProgDir2->setVisible(false);
+
+            connect(option1Button, &QCheckBox::toggled, this, [=](bool tog){
+                if (tog==true)
+                {
+                    femOpt = "giveError";
+                    option2Button->setChecked(false);
+                    option3Button->setChecked(false);
+                    labelVarThres->setVisible(true);
+                    thresVal->setVisible(true);
+                    labelThresMsg->setVisible(true);
+                } else {
+                    labelVarThres->setVisible(false);
+                    thresVal->setVisible(false);
+                }
+            });
+            connect(option2Button, &QCheckBox::toggled, this, [=](bool tog){
+                if (tog==true)
+                {
+                    femOpt = "continue";
+                    option1Button->setChecked(false);
+                    option3Button->setChecked(false);
+                    labelThresMsg->setVisible(false);
+                }
+            });
+            connect(option3Button, &QCheckBox::toggled, this, [=](bool tog){
+
+                if (tog==true)
+                {
+                    femOpt = "doSimulation";
+                    option2Button->setChecked(false);
+                    option1Button->setChecked(false);
+                    labelVarThres->setVisible(true);
+                    thresVal->setVisible(true);
+                    labelThresMsg->setVisible(true);
+                    labelProgName->setVisible(true);
+                    labelProgDir1->setVisible(true);
+                    labelProgDir2->setVisible(true);
+                } else {
+                    labelVarThres->setVisible(false);
+                    thresVal->setVisible(false);
+                    labelThresMsg->setVisible(false);
+                    labelProgName->setVisible(false);
+                    labelProgDir1->setVisible(false);
+                    labelProgDir2->setVisible(false);
+                }
+            });
+
+
+            connect(file1, &QLineEdit::textChanged, this, [=] (QString fileName) mutable {
+                QFile file(fileName);
+                QString appName, mainScriptDir,postScriptDir;
+                QStringList qoiNames;
+
+                //QVector<double> percVal, thrsVal;
+                if (file.open(QFile::ReadOnly | QFile::Text)) {
+                    QString val;
+                    val=file.readAll();
+                    QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
+                    QJsonObject jsonSur = doc.object();
+                    //QFileInfo fileInfo(fileName);
+                    //SCUtils::ResolveAbsolutePaths(jsonObj, fileInfo.dir());
+                    file.close();
+
+                    if (!jsonSur.isEmpty()) {
+                        bool from_data=!jsonSur["doSimulation"].toBool();
+                        //QJsonObject jsonRV = jsonSur["randomVariables"].toObject();
+                        QJsonArray RVArray = jsonSur["randomVariables"].toArray();
+                        QJsonArray QoIArray = jsonSur["ylabels"].toArray();
+
+                        foreach (const QJsonValue & v, RVArray){
+                             QJsonObject jsonRV = v.toObject();
+                             varNamesAndValues.push_back(jsonRV["name"].toString());
+                             varNamesAndValues.push_back(QString::number(jsonRV["value"].toDouble()));
+                        }
+
+                        foreach (const QJsonValue & v, QoIArray){
+                             qoiNames.push_back(v.toString());
+                        }
+
+                        if (from_data) {
+                            isData = true;
+
+                            option1Button -> setDisabled(false);
+                            option1Button -> setChecked(true);
+                            option2Button -> setDisabled(false);
+                            option3Button -> setDisabled(true);
+                            option3Label->setText("     Run Exact FEM simulation (not supported for data-based surrogate model)");
+                            option3Label->setStyleSheet("color: grey");
+
+                            percVals={0};
+                            thrsVals={0};
+                            thresVal->setText("0.02");
+                        } else {
+                            isData = false;
+                            QJsonObject jsonPred = jsonSur["predError"].toObject();
+                            QJsonArray precArray = jsonPred["percent"].toArray();
+                            QJsonArray valsArray = jsonPred["value"].toArray();
+
+                            QVector<double> percVal_tmp, thrsVal_tmp;
+
+                            foreach (const QJsonValue & v, precArray)
+                                 percVal_tmp.push_back(v.toDouble());
+                            foreach (const QJsonValue & v, valsArray)
+                                 thrsVal_tmp.push_back(v.toDouble());
+
+                            percVals=percVal_tmp;
+                            thrsVals=thrsVal_tmp;
+                            // interpolate
+                            QJsonObject jsonFEM = jsonSur["fem"].toObject();
+                            appName = jsonFEM["program"].toString();
+                            mainScriptDir = jsonFEM["inputFile"].toString();
+                            postScriptDir = jsonFEM["postprocessScript"].toString();
+
+                            option1Button -> setDisabled(false);
+                            option1Button -> setChecked(true);
+                            option2Button -> setDisabled(false);
+                            option3Button -> setDisabled(false);
+                            option3Label->setText("     Run Exact FEM simulation");
+                            option3Label->setStyleSheet("color: black");
+
+                            labelProgName->setText("      • Application Name: " + appName);
+                            labelProgDir1->setText("      • Main Script: "+ mainScriptDir);
+                            labelProgDir2->setText("      • Postprocess Script: "+ postScriptDir + "\n");
+                            labelProgName->setVisible(false);
+                            labelProgDir1->setVisible(false);
+                            labelProgDir2->setVisible(false);
+                            //double thres=0.02;
+                            double thres = this->interpolateForGP(percVal_tmp,thrsVal_tmp,0.5);
+                            thresVal->setText(QString::number(thres/100));
+                        }
+                        thresVal->setDisabled(false);
+                        labelThresMsg->setVisible(true);
+                    } else {
+                        appName = "NA";
+                        option1Button -> setDisabled(true);
+                        option2Button -> setDisabled(true);
+                        option3Button -> setDisabled(true);
+                        option3Label->setText("     Run Exact FEM simulation");
+                    }
+                } else {
+                    appName = "NA";
+                    option1Button -> setDisabled(true);
+                    option2Button -> setDisabled(true);
+                    option3Button -> setDisabled(true);
+                    option3Label->setText("     Run Exact FEM simulation");
+                }
+                theParameters->setInitialVarNamesAndValues(varNamesAndValues);
+                theEdpWidget->setGPQoINames(qoiNames);
+                option1Button->setChecked(false);
+            });
             femLayout->setColumnStretch(3,1);
             femLayout->setColumnStretch(1,3);
 
@@ -509,6 +755,7 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
     oldFemSpecific->deleteLater();
 }
 
+
 int InputWidgetFEM::parseInputfilesForRV(QString name1){
     QString fileName1 = name1;
     //  file1->setText(name1);
@@ -529,25 +776,10 @@ int InputWidgetFEM::parseInputfilesForRV(QString name1){
     }
       
     // qDebug() << "VARNAMESANDVALUES: " << varNamesAndValues;
-    if (pName != "Custom" && !femGP) {
+    if (pName != "Custom" && !isGP) {
       theParameters->setInitialVarNamesAndValues(varNamesAndValues);
-    } else if (pName != "Custom" && femGP) {
+    } else if (pName != "Custom" && isGP) {
       theParameters->setGPVarNamesAndValues(varNamesAndValues);
-    }
-    return 0;
-}
-
-int
-InputWidgetFEM::setFEMdisabled(bool on){
-    if (on)
-    {
-        femSelection -> setDisabled(true);
-        femSpecific -> setVisible(false);
-
-    } else if (!on)
-    {
-        femSelection -> setDisabled(false);
-        femSpecific -> setVisible(true);
     }
     return 0;
 }
@@ -713,7 +945,64 @@ QVector< QString > InputWidgetFEM::getCustomInputs() const {
    return stringOutput;
 }
 
-// for surrogate
-void InputWidgetFEM::setFemGP(bool on){
-     femGP= on;
+
+// ==for surrogate
+
+int
+InputWidgetFEM::setFEMforGP(QString option){
+    if (option == "reset")
+    {
+        femSelection -> setDisabled(false);
+        femSelection->setCurrentIndex(1);
+        femSelection->setCurrentIndex(0);
+        femSpecific -> setVisible(true);
+        isGP = false;
+    } else if (option == "GPdata") {
+        femSelection -> setDisabled(true);
+        femSelection->setCurrentIndex(1);
+        femSelection->setCurrentIndex(0);
+        femSpecific -> setVisible(false);
+        isGP = true;
+    } else if (option == "GPmodel")
+    {
+        femSelection -> setDisabled(false);
+        femSelection->setCurrentIndex(1);
+        femSelection->setCurrentIndex(0);
+        femSpecific -> setVisible(true);
+        isGP = true;
+    }
+    return 0;
+}
+
+double InputWidgetFEM::interpolateForGP(QVector<double> X, QVector<double> Y, double Xval){
+    int N = X.count();
+
+    if (X.size()==1) {
+        return 0; // make it %
+    }
+
+    double estY;
+    if (X[0]<X[1]) {
+        for (int np=0; np<N; np++) {
+            if(X[np] > Xval) {
+                if (np==0)
+                    estY = X[0];
+                else
+                    estY = Y[np-1]+(Y[np]-Y[np-1])*(Xval-X[np-1])/(X[np]-X[np-1]);
+                break;
+            }
+        }
+    } else {
+        for (int np=N-1; np>-1; np--) {
+            if(X[np] > Xval) {
+                if (np==0)
+                    estY = X[0];
+                else
+                    estY = Y[np-1]+(Y[np]-Y[np-1])*(Xval-X[np-1])/(X[np]-X[np-1]);
+                break;
+            }
+        }
+    }
+
+    return round(estY*1000)/10; // make it %
 }

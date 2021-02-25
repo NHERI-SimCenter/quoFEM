@@ -119,8 +119,6 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     //
     // Advanced options
     //
-
-
     theAdvancedCheckBox = new QCheckBox();
     theAdvancedTitle=new QLabel("\n    Advanced Options for Gaussian Process Model");
     theAdvancedTitle->setStyleSheet("font-weight: bold; color: gray");
@@ -148,8 +146,6 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     layout->addWidget(theKernelLabel, 5, 0);
     layout->addWidget(gpKernel, 5, 1);
     gpKernel->setCurrentIndex(0);
-    //theKernelLabel->setStyleSheet("color: gray");
-    //gpKernel->setDisabled(1);
     theKernelLabel->setVisible(false);
     gpKernel->setVisible(false);
 
@@ -245,7 +241,7 @@ void SurrogateNoDoEInputWidget::setOutputDir(bool tog)
         outFileDir->setDisabled(0);
         chooseOutFile->setDisabled(0);
         chooseOutFile->setStyleSheet("font-color: white");
-        theFemWidget->setFEMdisabled(true);
+        theFemWidget->setFEMforGP("GPdata");
         parseInputDataForRV(inpFileDir->text());
         parseOutputDataForQoI(outFileDir->text());
     } else {
@@ -254,7 +250,7 @@ void SurrogateNoDoEInputWidget::setOutputDir(bool tog)
         chooseOutFile->setStyleSheet("background-color: lightgrey;border-color:grey");
         theEdpWidget->setGPQoINames(QStringList("") );
         outFileDir->setText(QString("") );
-        theFemWidget->setFEMdisabled(false);
+        theFemWidget->setFEMforGP("GPmodel");
         theFemWidget->femProgramChanged("OpenSees");
         theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
         theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
@@ -302,11 +298,11 @@ int SurrogateNoDoEInputWidget::parseInputDataForRV(QString name1){
 int SurrogateNoDoEInputWidget::parseOutputDataForQoI(QString name1){
     // get number of columns
     double numberOfColumns=countColumn(name1);
-    QStringList quiNames;
+    QStringList qoiNames;
     for (int i=0;i<numberOfColumns;i++) {
-        quiNames.append(QString("QoI_column%1").arg(i+1));
+        qoiNames.append(QString("QoI_column%1").arg(i+1));
     }
-    theEdpWidget->setGPQoINames(quiNames);
+    theEdpWidget->setGPQoINames(qoiNames);
     return 0;
 }
 
@@ -321,62 +317,65 @@ int SurrogateNoDoEInputWidget::countColumn(QString name1){
     while (getline(inFile, line)) {
         int  numberOfColumns=1;
         bool previousWasSpace=false;
-        for(int i=0; i<line.size(); i++){
-            if(line[i] == ' ' || line[i] == '\t'){
+        //for(int i=0; i<line.size(); i++){
+        for(size_t i=0; i<line.size(); i++){
+            if(line[i] == '%' || line[i] == '#'){ // ignore header
+                numberOfColumns = numberOfColumns_pre;
+                break;
+            }
+            if(line[i] == ' ' || line[i] == '\t' || line[i] == ','){
                 if(!previousWasSpace)
                     numberOfColumns++;
-
                 previousWasSpace = true;
             } else {
                 previousWasSpace = false;
             }
         }
-        if (numberOfColumns_pre==-100)
+        if(previousWasSpace)// when there is a blank space at the end of each row
+            numberOfColumns--;
+
+        if (numberOfColumns_pre==-100)  // to pass header
         {
             numberOfColumns_pre=numberOfColumns;
             continue;
         }
-        if (numberOfColumns != numberOfColumns_pre)
+        if (numberOfColumns != numberOfColumns_pre)// Send an error
         {
-            // Send an error
             errMSG->show();
             numberOfColumns_pre=0;
+            break;
         }
     }
-
     // close file
     inFile.close();
     return numberOfColumns_pre;
 }
 
-
-
 bool
 SurrogateNoDoEInputWidget::inputFromJSON(QJsonObject &jsonObject){
 
+    bool result = false;
+    if (jsonObject.contains("inpFile")) {
+        QString fileDir=jsonObject["inpFile"].toString();
+        inpFileDir->setText(fileDir);
+        result = true;
+    } else {
+        return false;
+    }
 
-  bool result = false;
-  if (jsonObject.contains("inpFile")) {
-    QString fileDir=jsonObject["inpFile"].toString();
-    inpFileDir->setText(fileDir);
-    result = true;
-  } else {
-    return false;
-  }
-
-  if (jsonObject.contains("outputData")) {
+    if (jsonObject.contains("outputData")) {
       if (jsonObject["outputData"].toBool()) {
           theCheckButton->setChecked(true);
           QString fileDir=jsonObject["outFile"].toString();
           outFileDir->setText(fileDir);
-          theFemWidget->setFemGP(true);
+          theFemWidget->setFEMforGP("GPdata");
       } else {
           theCheckButton->setChecked(false);
       }
       result = true;
-  } else {
+    } else {
       return false;
-  }
+    }
 
   if (jsonObject.contains("advancedOpt")) {
       theAdvancedCheckBox->setChecked(jsonObject["advancedOpt"].toBool());
@@ -404,8 +403,6 @@ SurrogateNoDoEInputWidget::clear(void)
 {
 
 }
-
-
 
 int
 SurrogateNoDoEInputWidget::getNumberTasks()

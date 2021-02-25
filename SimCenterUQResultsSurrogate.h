@@ -43,8 +43,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtCharts/QChart>
 #include <QMessageBox>
 #include <QPushButton>
-
-
+#include <QScrollArea>
+#include <QJsonObject>
 using namespace QtCharts;
 
 class QTextEdit;
@@ -100,6 +100,16 @@ private:
    QVector<double>theMeans;
    QVector<double>theStdDevs;
    QVector<double>theKurtosis;
+
+   QPushButton *saveModelButton;
+   QPushButton *saveResultButton ;
+   QPushButton *saveXButton;
+   QPushButton *saveYButton;
+
+   QJsonObject jsonObj;
+   bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory);
+   void summarySurrogate(QScrollArea *&summaryLayout);
+
 };
 
 #endif // SIMCENTERUQ_RESULTS_SURROGATE_H

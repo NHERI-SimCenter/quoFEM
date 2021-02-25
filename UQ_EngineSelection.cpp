@@ -201,14 +201,15 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
         emit onUQ_EngineChanged(true);
     }
     else if (arg1 == "SimCenterUQ") {
-        // just initialize
+        // == just initialize
         delete theSimCenterUQEngine;
         theSimCenterUQEngine = new SimCenterUQEngine(theParameters,theFemWidget,theEdpWidget);
         theStackedWidget->insertWidget(1,theSimCenterUQEngine);
         theStackedWidget->setCurrentIndex(1);
+        theEdpWidget->showAdvancedSensitivity();
+        // ==
         theCurrentEngine = theSimCenterUQEngine;
         emit onUQ_EngineChanged(false);
-        theEdpWidget->showAdvancedSensitivity();
 
     } else if (arg1 == "CustomUQ") {
       theStackedWidget->setCurrentIndex(2);
@@ -235,11 +236,9 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
 
     if (thePreviousEngine->getMethodName() == "surrogate")
     {
-        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
+        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP QoIs
         theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
-        theFemWidget->setFemGP(false);
-        theFemWidget->setFEMdisabled(false);
-        theFemWidget->femProgramChanged("OpenSees");
+        theFemWidget->setFEMforGP("reset");// reset FEM
     }
 
     thePreviousEngine = theCurrentEngine;

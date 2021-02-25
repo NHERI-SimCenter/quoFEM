@@ -201,8 +201,8 @@ MainWindow::MainWindow(QWidget *parent)
     //the input widgets
 
     random = new InputWidgetParameters();
-    fem = new InputWidgetFEM(random);
     edp = new InputWidgetEDP(random);
+    fem = new InputWidgetFEM(random,edp);
     uq = new UQ_EngineSelection(random,fem,edp);
     random->setParametersWidget(uq->getParameters());
 
