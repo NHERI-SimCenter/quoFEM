@@ -1,4 +1,4 @@
-<map id="{{ id }}" base="$SIMCENTER_DEV/quoFEM/examples/{{ id }}" >
+<map id="{{ id }}" base="$SIMCENTER_DEV/quoFEM/Examples/{{ id }}" >
     <str key="title" src="README.rst#.//title" />
     <str key="base">{{ id }}</str>
     <set key="doc" cast="path">
