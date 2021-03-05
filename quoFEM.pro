@@ -146,3 +146,47 @@ FORMS    += mainwindow.ui
 
 RESOURCES += \
     styles.qrc
+
+# Path to build directory
+win32 {
+DESTDIR = $$shell_path($$OUT_PWD)
+Release:DESTDIR = $$DESTDIR/release
+Debug:DESTDIR = $$DESTDIR/debug
+
+PATH_TO_BINARY=$$DESTDIR/Examples
+
+} else {
+    mac {
+    PATH_TO_BINARY=$$OUT_PWD/quoFEM.app/Contents/MacOS
+    }
+}
+
+win32 {
+
+# Copies over the examples folder into the build directory
+copydata.commands = $(COPY_DIR) $$shell_quote($$shell_path($$PWD/examples)) $$shell_quote($$shell_path($$PATH_TO_BINARY))
+first.depends = $(first) copydata
+
+# Copies the dll files into the build directory
+# CopyDLLs.commands = $(COPY_DIR) $$shell_quote($$shell_path($$PWD/winDLLS)) $$shell_quote($$shell_path($$DESTDIR))
+
+first.depends += CopyDLLs
+
+export(first.depends)
+#export(CopyDLLs.commands)
+export(copydata.commands)
+
+QMAKE_EXTRA_TARGETS += first copydata CopyDLLs
+
+}else {
+mac {
+
+# Copies over the examples folder into the build directory
+copydata.commands = $(COPY_DIR) \"$$shell_path($$PWD/examples)\" \"$$shell_path($$PATH_TO_BINARY)\"
+first.depends = $(first) copydata
+export(first.depends)
+export(copydata.commands)
+QMAKE_EXTRA_TARGETS += first copydata
+
+}
+}
