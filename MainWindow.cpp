@@ -85,6 +85,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtNetwork/QNetworkRequest>
 #include <QHostInfo>
 
+#include <SimCenterPreferences.h>
 //#include <AgaveCLI.h>
 #include <AgaveCurl.h>
 #include <RemoteJobCreator.h>
@@ -489,12 +490,17 @@ MainWindow::runApplication(QString program, QStringList args) {
     QString pathEnv = procEnv.value("PATH");
     QString pythonPathEnv = procEnv.value("PYTHONPATH");
 
-    QString python("python");
+    SimCenterPreferences *preferences = SimCenterPreferences::getInstance();
+    QString python=preferences->getPython();
+
     QString exportPath("export PATH=$PATH");
+    /*
+    QString python("python");  
     QSettings settings("SimCenter", "Common");
     QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid())
       python = pythonLocationVariant.toString();
+    */
 
     QSettings settingsApplication("SimCenter", QCoreApplication::applicationName());
     QVariant  openseesPathVariant = settingsApplication.value("openseesPath");
@@ -506,6 +512,7 @@ MainWindow::runApplication(QString program, QStringList args) {
             exportPath += ":" + openseesPath;
         }
     }
+
 
     QVariant  dakotaPathVariant = settingsApplication.value("dakotaPath");
     if (dakotaPathVariant.isValid()) {
@@ -1561,9 +1568,53 @@ void MainWindow::createActions() {
     QAction *citeAct = helpMenu->addAction(tr("&How to Cite"), this, &MainWindow::cite);
     QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindow::copyright);
 
+    //
+    // Examples
+    //
+
+    auto pathToExamplesJson = QCoreApplication::applicationDirPath() + QDir::separator() +
+                "Examples" + QDir::separator() + "Examples.json";
+
+    QFile jsonFile(pathToExamplesJson);
+    if (jsonFile.exists()) {
+        qDebug() << "Examples Exist";
+        jsonFile.open(QFile::ReadOnly);
+        QJsonDocument exDoc = QJsonDocument::fromJson(jsonFile.readAll());
+
+        QJsonObject docObj = exDoc.object();
+        QJsonArray examples = docObj["Examples"].toArray();
+        QMenu *exampleMenu = 0;
+        if (examples.size() > 0)
+            exampleMenu = menuBar()->addMenu(tr("&Examples"));
+
+        foreach (const QJsonValue & example, examples) {
+            QJsonObject exampleObj = example.toObject();
+            QString name = exampleObj["name"].toString();
+            QString inputFile = exampleObj["InputFile"].toString();
+            auto action = exampleMenu->addAction(name, this, &MainWindow::loadExamples);
+            action->setProperty("InputFile",inputFile);
+        }
+    } else
+        qDebug() << "No Examples" << pathToExamplesJson;
+
+
     thePreferences = SimCenterPreferences::getInstance();
 }
 
+
+void MainWindow::loadExamples()
+{
+    auto pathToExample = QCoreApplication::applicationDirPath() + QDir::separator() + "Examples" + QDir::separator();
+    pathToExample += QObject::sender()->property("InputFile").toString();
+
+    if(pathToExample.isNull())
+    {
+        qDebug()<<"Error loading examples";
+        return;
+    }
+
+    this->loadFile(pathToExample);
+}
 
 
 void MainWindow::copyright()
