@@ -70,7 +70,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/performUQ)
 # Sources
 add_subdirectory(performUQ)
 add_subdirectory(performSIM)
-
+simcenter_add_file(NAME WorkflowApplications.json)
 
 # Tests (CURRENT NO TESTS, SO COMMENTED OUT...)
 # if(BUILD_TESTING)
