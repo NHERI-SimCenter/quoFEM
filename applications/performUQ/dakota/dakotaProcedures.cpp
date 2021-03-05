@@ -7,7 +7,6 @@
 #include <list>
 #include <vector>
 
-
 struct normalRV {
   std::string name;
   double mean;
@@ -710,6 +709,16 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 		     std::vector<std::string> &edpList,
 		     int evalConcurrency) { 
 
+
+  int evaluationConcurrency = evalConcurrency;
+
+  // test if parallelExe is false, if so set evalConcurrency = 1;  
+  json_t *parallelExe = json_object_get(uqData, "parallelExecution");
+  if (parallelExe != NULL) {
+    if (json_is_false(parallelExe))
+      evaluationConcurrency = 1;
+  }
+  
   const char *type = json_string_value(json_object_get(uqData, "uqType"));
   
   bool sensitivityAnalysis = false;
@@ -746,7 +755,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList, true);
-      writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evalConcurrency);
+      writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
       writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList);
     }
 
@@ -765,7 +774,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
-      writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evalConcurrency);
+      writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
       writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList);
     }
 
@@ -780,7 +789,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
-      writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evalConcurrency);
+      writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
       writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList);
     }
 
@@ -822,7 +831,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       std::string emptyString;
       std::string interfaceString("SimulationInterface");
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
-      writeInterface(dakotaFile, uqData, workflowDriver, interfaceString, evalConcurrency);
+      writeInterface(dakotaFile, uqData, workflowDriver, interfaceString, evaluationConcurrency);
       writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList);
 
     }
@@ -856,7 +865,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       std::string emptyString;
       std::string interfaceString("SimulationInterface");
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
-      writeInterface(dakotaFile, uqData, workflowDriver, interfaceString, evalConcurrency);
+      writeInterface(dakotaFile, uqData, workflowDriver, interfaceString, evaluationConcurrency);
       int numResponse = writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList);
 
       dakotaFile << "method \n polynomial_chaos \n " << pceMethod << intValue;
@@ -926,7 +935,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
-      writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evalConcurrency);
+      writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
       writeResponse(dakotaFile, rootEDP, emptyString, true, true, edpList);
     }
 
@@ -966,7 +975,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
-      writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evalConcurrency);
+      writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
       writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList);
     }
   
@@ -997,7 +1006,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     std::string calibrationString("calibration");
     std::string emptyString;
     writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
-    writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evalConcurrency);
+    writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
     writeResponse(dakotaFile, rootEDP, calibrationString, true, false, edpList);
 
     if (strcmp(factors,"") != 0) {      
@@ -1071,7 +1080,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     std::string calibrationString("calibration");
     std::string emptyString;
     writeRV(dakotaFile, theRandomVariables, emptyString, rvList, false);
-    writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evalConcurrency);
+    writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
     writeResponse(dakotaFile, rootEDP, calibrationString, false, false, edpList);
 
   } else {
