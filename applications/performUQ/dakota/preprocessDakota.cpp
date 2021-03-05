@@ -63,7 +63,7 @@ int main(int argc, const char **argv) {
   int evalConcurrency = 0;
   if (strcmp(runType,"runningLocal") == 0) {
     evalConcurrency = (int)OVERSUBSCRIBE_CORE_MULTIPLIER * std::thread::hardware_concurrency();
-    std::cerr << "EVAL: " << evalConcurrency << "\n";
+    std::cerr << "EVAL CONCURRENCY: " << evalConcurrency << "\n";
   }
 
   int errorWrite = writeDakotaInputFile(dakotaFile, uqData, rootEDP, theRandomVariables, workflow1, rvList, edpList, evalConcurrency);
