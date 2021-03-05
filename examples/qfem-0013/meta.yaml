@@ -1,6 +1,0 @@
-summary: '~'
-archive: $SIMCENTER_DEV
-archive_location: quoFEM/examples/qfem-0013
-id: qfem-0013
-title: exampleShearWallCalibration
-type: book

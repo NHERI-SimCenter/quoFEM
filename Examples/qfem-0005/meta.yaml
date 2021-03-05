@@ -1,0 +1,10 @@
+summary: This example illustrates how Python scripting can be used with quoFEM to
+  express general mathematical models without the use of a dedicated finite element
+  analysis engine.
+archive: $SIMCENTER_DEV
+archive_location: quoFEM/examples/qfem-0005
+collection-title: Rosenbrock
+id: qfem-0005
+title: Basic modeling with Python
+type: book
+difficulty: 0
