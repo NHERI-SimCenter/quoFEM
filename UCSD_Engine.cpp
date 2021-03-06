@@ -117,7 +117,9 @@ void UCSD_Engine::methodChanged(const QString &arg1)
       theCurrentMethod = theTMMC;   
     } 
     else {
-      qDebug() << "ERROR .. UCSD_Engine selection .. type unknown: " << arg1;
+        QString errorMsg = QString("UCSD_Engine Selection type: ") + arg1 + QString(" unknown");
+        emit sendErrorMessage(errorMsg);
+        qDebug() << "ERROR .. UCSD_Engine selection .. type unknown: " << arg1;
     }
 
     // emit signal if engine changed

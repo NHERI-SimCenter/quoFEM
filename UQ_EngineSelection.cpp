@@ -90,7 +90,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *paren
     // theEngineSelectionBox->addItem(tr("UQpy"));
     theEngineSelectionBox->addItem(tr("SimCenterUQ"));    
     theEngineSelectionBox->addItem(tr("CustomUQ"));    
-    theEngineSelectionBox->addItem(tr("UCSD_UQ"));
+    theEngineSelectionBox->addItem(tr("UCSD-UQ"));
 
    //theEngineSelectionBox->addItem(tr("UQpy"));
    // theEngineSelectionBox->addItem(tr("filter"));
@@ -214,7 +214,7 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
       theStackedWidget->setCurrentIndex(2);
       theCurrentEngine = theCustomEngine;
       emit onUQ_EngineChanged(false);
-    } else if (arg1 == "UCSD_UQ") {
+    } else if (arg1 == "UCSD-UQ") {
       theStackedWidget->setCurrentIndex(3);
       theCurrentEngine = theUCSD_Engine;
       emit onUQ_EngineChanged(false);
@@ -272,10 +272,11 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
                 //   index = 2;
             } else if ((type == QString("CustomUQ")) || type == QString("CustomUQEngine")) {
                 index = 2;
-            } else if ((type == QString("UCSD_UQ"))) {
+            } else if ((type == QString("UCSD-UQ"))) {
                 index = 3;
             } else {
-                emit sendErrorMessage("UQ_EngineSelection - no valid type found");
+                QString errorMessage = QString("UQ_Engine Selection - type: ") + type + QString(" not valid");
+                emit sendErrorMessage(errorMessage);
                 return false;
             }
 
