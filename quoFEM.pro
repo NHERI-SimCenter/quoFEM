@@ -25,6 +25,7 @@ win32::LIBS+=Advapi32.lib
 
 win32 {
     RC_ICONS = icons/NHERI-quoFEM-Icon.ico
+    DEFINES += USE_SIMCENTER_PYTHON
 } else {
     mac {
     ICON = icons/NHERI-quoFEM-Icon.icns
