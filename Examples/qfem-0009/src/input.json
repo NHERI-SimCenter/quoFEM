@@ -63,7 +63,7 @@
             "mean": 500,
             "name": "Au",
             "refCount": 1,
-            "stdDev": 20,
+            "stdDev": 25,
             "value": "RV.Au",
             "variableClass": "Uncertain"
         },
@@ -73,7 +73,7 @@
             "mean": 250,
             "name": "Ao",
             "refCount": 1,
-            "stdDev": 20,
+            "stdDev": 10,
             "value": "RV.Ao",
             "variableClass": "Uncertain"
         }
