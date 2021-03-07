@@ -32,9 +32,6 @@
     "EDP": [
         {
             "name": "Node_3_Disp_2"
-        },
-        {
-            "name": "Node_2_Disp_2"
         }
     ],
     "randomVariables": [
