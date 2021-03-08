@@ -1,9 +1,0 @@
-summary: In this example, a parameter estimation routine is used to estimate column
-  stiffnesses of a simple steel frame, given data about it's mode shapes and mass
-  distribution.
-archive: $SIMCENTER_DEV
-archive_location: quoFEM/examples/qfem-0007
-collection-title: 2-Story Frame
-id: qfem-0007
-title: Conventional Calibration - Steel Frame
-type: book

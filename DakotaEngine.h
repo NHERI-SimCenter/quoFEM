@@ -43,6 +43,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 class QComboBox;
 class QStackedWidget;
+class QCheckBox;
 class UQ_Results;
 class RandomVariablesContainer;
 
@@ -77,6 +78,7 @@ public slots:
 private:
    QComboBox   *theEngineSelectionBox;
    QStackedWidget *theStackedWidget;
+   QCheckBox *parallelCheckBox;
 
    UQ_Engine *theCurrentEngine;
    UQ_Engine *theSamplingEngine;

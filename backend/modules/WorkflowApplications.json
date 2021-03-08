@@ -1,0 +1,105 @@
+{
+  "UQApplications": {
+    "API": {
+      "Inputs": [
+      {
+          "id": "inputFile",
+          "type": "string",
+          "description": "name of file containing the input",
+          "default": "input.json"
+      }
+      ],
+      "Outputs": [
+      {
+          "id": "outFile",
+          "type": "string",
+          "description": "name of output file",
+          "default": "EDP.json"
+      },
+      {
+          "id": "tabFile",
+          "type": "string",
+          "description": "name of tab file containing for each simulation the RV values and response values",
+          "default": "EDP.json"
+      }
+      ]
+    },
+    "Applications": [
+      {
+        "Name": "Dakota-UQ",
+        "ExecutablePath": "applications/performUQ/dakota/parseDakota.py",
+        "ApplicationSpecificInputs": [
+        ]
+      },
+	{
+        "Name": "SimCenterUQ-UQ",
+        "ExecutablePath": "applications/performUQ/SimCenterUQ/parseSimCenterUQ.py",
+        "ApplicationSpecificInputs": [
+        ]
+      },
+      {
+        "Name": "Other-UQ",
+        "ExecutablePath": "applications/performUQ/other/runOtherUQ.py",
+        "ApplicationSpecificInputs": [
+        ]
+      },	
+      {
+        "Name": "UCSD-UQ",
+        "ExecutablePath": "applications/performUQ/UCSD_UQ/mainscript.py",
+        "ApplicationSpecificInputs": [
+        ]
+      }
+    ]
+  },
+  "femApplications": {
+    "API": {
+      "Inputs": [
+      {
+          "id": "inputFile",
+          "type": "string",
+          "description": "name of file containing the input",
+          "default": "input.json"
+      }
+      ],
+      "Outputs": [
+      {
+          "id": "outFile",
+          "type": "string",
+          "description": "name of output file",
+          "default": "EDP.json"
+      },
+      {
+          "id": "tabFile",
+          "type": "string",
+          "description": "name of tab file containing for each simulation the RV values and response values",
+          "default": "EDP.json"
+      }
+      ]
+    },
+    "Applications": [
+      {
+        "Name": "OpenSees",
+        "ExecutablePath": "applications/performSIM/OpenSees/createOpenSeesDriver",
+        "ApplicationSpecificInputs": [
+        ]
+      },
+      {
+        "Name": "OpenSeesPy",
+        "ExecutablePath": "applications/performSIM/OpenSeesPy/createOpenSeesPyDriver",
+        "ApplicationSpecificInputs": []
+      },
+      {
+        "Name": "FEAPpv",
+        "ExecutablePath": "applications/performSIM/feappv/createFeapDriver",
+        "ApplicationSpecificInputs": []
+      },
+      {
+        "Name": "Custom",
+        "ExecutablePath": "",
+        "ApplicationSpecificInputs": []
+      }	
+    ]
+  }    
+} 
+
+

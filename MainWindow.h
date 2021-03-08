@@ -110,6 +110,7 @@ signals:
     void preferences();
     void copyright();
     void cite();
+    void loadExamples();
 
  private:
     void setCurrentFile(const QString &fileName);

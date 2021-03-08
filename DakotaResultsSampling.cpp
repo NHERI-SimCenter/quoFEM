@@ -395,11 +395,11 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     QPushButton* save_spreadsheet = new QPushButton();
     save_spreadsheet->setText("Save Data");
     save_spreadsheet->setToolTip(tr("Save data into file in a CSV format"));
-    save_spreadsheet->resize(30,30);
+    //save_spreadsheet->resize(30,30);
     connect(save_spreadsheet,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetClicked()));
 
     layout->addWidget(chartView, 0,0,1,1);
-    layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
+    layout->addWidget(save_spreadsheet,1,0,1,1); // Qt::AlignLeft);
     layout->addWidget(spreadsheet,2,0,1,1);
 
     //
