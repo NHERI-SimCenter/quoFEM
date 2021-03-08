@@ -2,15 +2,29 @@
   "items": {
     "qfem-0001": {
       "id": "qfem-0001",
-      "title": "Forward Propagation - OpenSees/Tcl",
+      "title": "Two-Dimensional Truss: Sampling, Reliability and Sensitivity",
       "base": "qfem-0001",
       "doc": [
-        "qfem-0001/qfem-0001.png",
-        "qfem-0001/README.rst"
+        "qfem-0001/figures/trussSens-UQ.png",
+        "qfem-0001/figures/trussQoI.png",
+        "qfem-0001/figures/trussRES2.png",
+        "qfem-0001/src/TrussPost.tcl",
+        "qfem-0001/figures/trussSensitivity-RES.png",
+        "qfem-0001/figures/trussFEM.png",
+        "qfem-0001/figures/trussSORM-UQ.png",
+        "qfem-0001/src/TrussModel.tcl",
+        "qfem-0001/figures/trussRES1.png",
+        "qfem-0001/figures/trussSORM-RES.png",
+        "qfem-0001/figures/trussRES5.png",
+        "qfem-0001/README.rst",
+        "qfem-0001/figures/trussRV.png",
+        "qfem-0001/figures/truss.png",
+        "qfem-0001/figures/trussUQ.png",
+        "qfem-0001/src/TrussPost.py"
       ],
       "entry_point": "qfem-0001/input.json",
       "summary": "This example illustrates how quoFEM interacts with the Tcl interpreter for OpenSees. A simple forward propagation procedure is run to estimate the first and second central moments of a FE model's response, given the marginal distributions of various random parameters.",
-      "logo": "qfem-0001.png",
+      "logo": "figures/truss.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "Simulation": "OpenSees",
@@ -22,8 +36,8 @@
       "title": "Forward Propagation - OpenSeesPy",
       "base": "qfem-0002",
       "doc": [
-        "qfem-0002/qfem-0002.png",
-        "qfem-0002/README.rst"
+        "qfem-0002/README.rst",
+        "qfem-0002/qfem-0002.png"
       ],
       "entry_point": "qfem-0002/input.json",
       "summary": "This example illustrates how quoFEM interacts with OpenSeesPy. A simple forward propagation procedure is run to estimate the first and second central moments of a FE model's response, given the marginal distributions of various random parameters.",
@@ -39,13 +53,12 @@
       "title": "Reliability Analysis",
       "base": "qfem-0003",
       "doc": [
-        "qfem-0003/figures/trussSORM-RES.png",
-        "qfem-0003/qfem-0003.png",
-        "qfem-0003/README.rst"
+        "qfem-0003/README.rst",
+        "qfem-0003/figures/trussSORM-RES.png"
       ],
       "entry_point": "qfem-0003/input.json",
       "summary": "This example uses quoFEM to perform a second-order reliability analysis (SORM) of an OpenSees FE model.",
-      "logo": "qfem-0003.png",
+      "logo": "figures/trussSORM-RES.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "Simulation": "OpenSees",
@@ -75,11 +88,12 @@
       "title": "Basic modeling with Python",
       "base": "qfem-0005",
       "doc": [
+        "qfem-0005/qfem-0005.png",
         "qfem-0005/README.rst"
       ],
       "entry_point": "qfem-0005/input.json",
       "summary": "This example illustrates how Python scripting can be used with quoFEM to express general mathematical models without the use of a dedicated finite element analysis engine.",
-      "logo": "None",
+      "logo": "qfem-0005.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "Simulation": "OpenSeesPy",
@@ -121,7 +135,7 @@
     },
     "qfem-0008": {
       "id": "qfem-0008",
-      "title": "Bayesian Calibration - Steel Frame",
+      "title": "Steel Frame Calibration with DREAM",
       "base": "qfem-0008",
       "doc": [
         "qfem-0008/qfem-0008.png",
@@ -141,14 +155,14 @@
       "title": "Two-Dimensional Truss: Global Sensitivity Analysis using SimCenterUQ Engine",
       "base": "qfem-0009",
       "doc": [
-        "qfem-0009/figures/trussSensitivity-corr.png",
-        "qfem-0009/figures/trussSensitivity-RES-SimUQ2.png",
+        "qfem-0009/README.rst",
         "qfem-0009/truss/truss.png",
-        "qfem-0009/qfem-0009.png",
-        "qfem-0009/figures/trussSensitivity-advanced.png",
-        "qfem-0009/figures/trussSensitivity-RES-SimUQ.png",
         "qfem-0009/figures/trussSensitivity-input-SimUQ.png",
-        "qfem-0009/README.rst"
+        "qfem-0009/figures/trussSensitivity-RES-SimUQ2.png",
+        "qfem-0009/figures/trussSensitivity-corr.png",
+        "qfem-0009/qfem-0009.png",
+        "qfem-0009/figures/trussSensitivity-RES-SimUQ.png",
+        "qfem-0009/figures/trussSensitivity-advanced.png"
       ],
       "entry_point": "qfem-0009/input.json",
       "summary": "A global sensitivity analysis is conducted with correlated random variables using the SimCenterUQ engine for sensitivity analysis.",
@@ -228,17 +242,17 @@
       "title": "Steel Frame: Bayesian Calibration using TMCMC",
       "base": "qfem-0014",
       "doc": [
+        "qfem-0014/README.rst",
         "qfem-0014/figures/quo-14-RES-DataValues3.png",
         "qfem-0014/figures/quo-14-RES-DataValues4.png",
-        "qfem-0014/figures/quo-14-RES-DataValues2.png",
-        "qfem-0014/figures/quo-14-RES-DataValues1.png",
+        "qfem-0014/src/model.tcl",
         "qfem-0014/figures/quo-14-RES-Summary.png",
         "qfem-0014/figures/quo-14-FEM.png",
-        "qfem-0014/src/model.tcl",
         "qfem-0014/figures/quo-14-RV.png",
-        "qfem-0014/README.rst",
-        "qfem-0014/figures/quo-14-UQ.png",
+        "qfem-0014/figures/quo-14-RES-DataValues2.png",
         "qfem-0014/src/postProcessing.py",
+        "qfem-0014/figures/quo-14-RES-DataValues1.png",
+        "qfem-0014/figures/quo-14-UQ.png",
         "qfem-0014/qfem-0014.png"
       ],
       "entry_point": "qfem-0014/input.json",

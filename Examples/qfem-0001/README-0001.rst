@@ -1,27 +1,30 @@
 
-Forward Propagation - OpenSeesPy
-================================
+Forward Propagation - OpenSees/Tcl
+==================================
 
-+-----------------+------------------------------------------+
-| Problem files   | :github:`Github <Examples/qfem-0002/>`   |
-+-----------------+------------------------------------------+
++-----------------+--------------------------------------------------------+
+| Problem files   | :github:`Download <Examples/qfem-0001/download.zip>`   |
++-----------------+--------------------------------------------------------+
 
-This example illustrates how quoFEM interacts with OpenSeesPy. A simple
-forward propagation procedure is run to estimate the first and second
-central moments of a FE model's response, given the marginal
-distributions of various random parameters.
+This example uses quoFEM to estimate the first and second central
+moments of a FE model's response, given the marginal distributions of
+various random parameters.
 
 Consider the problem of uncertainty quantification in a two-dimensional
 truss structure shown in the following figure. Two input scripts are
 used to define a forward propagation procedure to be coordinated by
 quoFEM which will estimate the mean and standard deviation of the
-vertical displacement at node 3 using Latin hypercube sampling. 
+vertical displacement at node 3 using Latin hypercube sampling.
 
-.. figure:: qfem-0002.png
-   :align: center 
-   :width: 500px
+.. figure:: qfem-0001.png
+   :alt: Truss schematic diagram
+   :width: 400px
+   :align: center
 
-The following parameters are defined in the **RV** tab of quoFEM:
+   Truss schematic diagram
+
+
+The following parameters are defined in the **RV** tab:
 
 1. Elastic modulus, ``E``: **Weibull** distribution with a scale
    parameter :math:`(\lambda)` of :math:`210.0`, shape parameter
@@ -60,23 +63,17 @@ Model Files
 
 The following files make up the **FEM** model definition.
 
-#. `model.py <https://raw.githubusercontent.com/claudioperez/SimCenterExamples/master/static/truss/model.py>`__:
-   This file is a Python script which takes a given realization of the
-   problem's random variables, and runs a finite element analysis of the
-   truss with OpenSeesPy. It is supplied to the **Input Script** field
-   of the **FEM** tab, and obviates the need for supplying a
-   **Postprocess Script**. When this script is invoked in the workflow,
-   it receives the list of the identifiers supplied in the **QoI** tab
-   through the operating system's ``stdout`` variable, and a set of
-   random variable realizations by star-importing the **Parameters
-   File** from the **FEM** tab.
+#. `model.tcl <https://raw.githubusercontent.com/claudioperez/SimCenterExamples/master/static/truss/model.tcl>`__:
+   This file is an OpenSees Tcl script that constructs and runs a finite
+   element analysis of the truss for a given realization of the
+   problem's random variables. It is supplied to the **Input File**
+   field of the **FEM** tab.
 
-#. `params.py <https://raw.githubusercontent.com/claudioperez/SimCenterExamples/master/static/truss/params.py>`__:
-   This file is a Python script which defines the problem's random
-   variables as objects in the Python runtime. It is supplied to the
-   **Parameters File** field of the **FEM** tab. *The literal values
-   which are assigned to variables in this file will be varied at
-   runtime by the UQ engine.*
+#. `post.tcl <https://raw.githubusercontent.com/claudioperez/SimCenterExamples/master/static/truss/post.tcl>`__:
+   This file is an OpenSees Tcl script that processes the QoI
+   identifiers supplied in the **QoI** tab, and writes the relevant
+   response quantities to ``results.out`` from an OpenSees process. It
+   is supplied to the **Postprocess File** field of the **FEM** tab.
 
 
 Results
