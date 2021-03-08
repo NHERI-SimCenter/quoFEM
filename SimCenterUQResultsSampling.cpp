@@ -433,11 +433,14 @@ SimCenterUQResultsSampling::onSaveSpreadsheetClicked()
                                                     tr("All Files (*)"));
 
     QFile file(fileName);
-    if (file.open(QIODevice::ReadWrite))
+    if (file.open(QIODevice::WriteOnly))
     {
         QTextStream stream(&file);
         for (int j=0; j<columnCount; j++)
         {
+	  if (j == columnCount -1)
+            stream <<theHeadings.at(j);	    
+	  else
             stream <<theHeadings.at(j)<<", ";
         }
         stream <<endl;
@@ -447,10 +450,14 @@ SimCenterUQResultsSampling::onSaveSpreadsheetClicked()
             {
                 QTableWidgetItem *item_value = spreadsheet->item(i,j);
                 double value = item_value->text().toDouble();
-                stream << value << ", ";
+		if (j == columnCount-1)		
+		  stream << value ;
+		else
+		  stream << value << ", ";		  
             }
             stream<<endl;
         }
+	file.close();
     }
 }
 
