@@ -6,7 +6,7 @@ affiliation: University of California, San Diego
 
 # import os
 from pathlib import Path
-import re
+# import re
 import json
 
 
@@ -44,6 +44,9 @@ def parseDataFunction(dakotaJsonLocation):
     numberOfSamples = uqInputs['numParticles']
     logLikelihoodPath = uqInputs['logLikelihoodPath']
     logLikelihoodFile = uqInputs['logLikelihoodFile']
+    
+    # print('\n\nLoglikelihood directory path is: {}'.format(logLikelihoodPath))
+    # print('\n\nLoglikelihood filename is: {}'.format(logLikelihoodFile))
 
     workingDirPath = Path(workingDirInputs)
     resultsLocation = Path.joinpath(workingDirPath, "tmp.SimCenter")
@@ -52,8 +55,8 @@ def parseDataFunction(dakotaJsonLocation):
     localAppDirPath = Path(localAppDirInputs)
     PythonDirPath = Path(pythonInputs)
 
-    print('\n\nThe seed is: {:d}\n\n'.format(seedval))
-    print('\n\nThe number of samples is: {:d}\n\n'.format(numberOfSamples), type(numberOfSamples))
+    # print('\n\nThe seed is: {:d}\n\n'.format(seedval))
+    # print('\n\nThe number of samples is: {:d}\n\n'.format(numberOfSamples), type(numberOfSamples))
 
     inputFileList = []
     nModels = femInputs['numInputs']
@@ -64,9 +67,9 @@ def parseDataFunction(dakotaJsonLocation):
     else:
         inputFileList.append(femInputs['inputFile'])
 
-    print('\n\ninputFileList: ', inputFileList)
-
-    print('\n\nThe number of models is: {:d}\n\n'.format(nModels))
+    # print('\n\ninputFileList: ', inputFileList)
+    #
+    # print('\n\nThe number of models is: {:d}\n\n'.format(nModels))
 
     # %% Number of Samples
 
