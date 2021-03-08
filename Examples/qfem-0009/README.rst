@@ -3,7 +3,7 @@ Two-Dimensional Truss: Global Sensitivity Analysis using SimCenterUQ Engine
 ===========================================================================
 
 +----------------+------------------------------------------+
-| Problem files  | :github:`Github <Examples/qfem-0009/`    |
+| Problem files  | :github:`Github <Examples/qfem-0009/>`   |
 +----------------+------------------------------------------+
 
 
