@@ -1,0 +1,5 @@
+summary: This example illustrates how quoFEM interacts with OpenSeesPy. A simple
+  forward propagation procedure is run to estimate the first and second central moments
+  of a FE model's response, given the marginal distributions of various random parameters.
+published: 
+difficulty: 0

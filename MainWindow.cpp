@@ -85,6 +85,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtNetwork/QNetworkRequest>
 #include <QHostInfo>
 
+#include <SimCenterPreferences.h>
 //#include <AgaveCLI.h>
 #include <AgaveCurl.h>
 #include <RemoteJobCreator.h>
@@ -488,12 +489,17 @@ MainWindow::runApplication(QString program, QStringList args) {
     QString pathEnv = procEnv.value("PATH");
     QString pythonPathEnv = procEnv.value("PYTHONPATH");
 
-    QString python("python");
+    SimCenterPreferences *preferences = SimCenterPreferences::getInstance();
+    QString python=preferences->getPython();
+
     QString exportPath("export PATH=$PATH");
+    /*
+    QString python("python");  
     QSettings settings("SimCenter", "Common");
     QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid())
       python = pythonLocationVariant.toString();
+    */
 
     QSettings settingsApplication("SimCenter", QCoreApplication::applicationName());
     QVariant  openseesPathVariant = settingsApplication.value("openseesPath");
@@ -505,6 +511,7 @@ MainWindow::runApplication(QString program, QStringList args) {
             exportPath += ":" + openseesPath;
         }
     }
+
 
     QVariant  dakotaPathVariant = settingsApplication.value("dakotaPath");
     if (dakotaPathVariant.isValid()) {
@@ -1564,9 +1571,53 @@ void MainWindow::createActions() {
     QAction *citeAct = helpMenu->addAction(tr("&How to Cite"), this, &MainWindow::cite);
     QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindow::copyright);
 
+    //
+    // Examples
+    //
+
+    auto pathToExamplesJson = QCoreApplication::applicationDirPath() + QDir::separator() +
+                "Examples" + QDir::separator() + "Examples.json";
+
+    QFile jsonFile(pathToExamplesJson);
+    if (jsonFile.exists()) {
+        qDebug() << "Examples Exist";
+        jsonFile.open(QFile::ReadOnly);
+        QJsonDocument exDoc = QJsonDocument::fromJson(jsonFile.readAll());
+
+        QJsonObject docObj = exDoc.object();
+        QJsonArray examples = docObj["Examples"].toArray();
+        QMenu *exampleMenu = 0;
+        if (examples.size() > 0)
+            exampleMenu = menuBar()->addMenu(tr("&Examples"));
+
+        foreach (const QJsonValue & example, examples) {
+            QJsonObject exampleObj = example.toObject();
+            QString name = exampleObj["name"].toString();
+            QString inputFile = exampleObj["InputFile"].toString();
+            auto action = exampleMenu->addAction(name, this, &MainWindow::loadExamples);
+            action->setProperty("InputFile",inputFile);
+        }
+    } else
+        qDebug() << "No Examples" << pathToExamplesJson;
+
+
     thePreferences = SimCenterPreferences::getInstance();
 }
 
+
+void MainWindow::loadExamples()
+{
+    auto pathToExample = QCoreApplication::applicationDirPath() + QDir::separator() + "Examples" + QDir::separator();
+    pathToExample += QObject::sender()->property("InputFile").toString();
+
+    if(pathToExample.isNull())
+    {
+        qDebug()<<"Error loading examples";
+        return;
+    }
+
+    this->loadFile(pathToExample);
+}
 
 
 void MainWindow::copyright()
@@ -1642,7 +1693,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.2.1 "));
+                       tr("Version 2.2.2 "));
 }
 
 void MainWindow::preferences()
@@ -1658,7 +1709,7 @@ void MainWindow::about()
               sampling and optimization methods. These methods will allow users to provide, for example, uncertainty\
              quantification in the structural responses and parameter estimation of input variables in calibration studies.\
              <p>\
-             Version 2.2.1 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
+             Version 2.2.2 of this tool utilizes the Dakota software to provide the UQ and optimization methods. Dakota\
              will repeatedly invoke the finite element application either locally on the users dekstop machine or remotely\
              on high performance computing resources at the Texas Advanced Computing Center through the NHERI DesignSafe cyberinfrastructure.\
              <p>\

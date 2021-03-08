@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = quoFEM
 TEMPLATE = app
 
-VERSION=2.1.0
+VERSION=2.2.2
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 INCLUDEPATH += ../SimCenterCommon/RandomVariables
@@ -25,6 +25,7 @@ win32::LIBS+=Advapi32.lib
 
 win32 {
     RC_ICONS = icons/NHERI-quoFEM-Icon.ico
+    DEFINES += USE_SIMCENTER_PYTHON
 } else {
     mac {
     ICON = icons/NHERI-quoFEM-Icon.icns
@@ -155,3 +156,47 @@ FORMS    += mainwindow.ui
 
 RESOURCES += \
     styles.qrc
+
+# Path to build directory
+win32 {
+DESTDIR = $$shell_path($$OUT_PWD)
+Release:DESTDIR = $$DESTDIR/release
+Debug:DESTDIR = $$DESTDIR/debug
+
+PATH_TO_BINARY=$$DESTDIR/Examples
+
+} else {
+    mac {
+    PATH_TO_BINARY=$$OUT_PWD/quoFEM.app/Contents/MacOS
+    }
+}
+
+win32 {
+
+# Copies over the examples folder into the build directory
+copydata.commands = $(COPY_DIR) $$shell_quote($$shell_path($$PWD/Examples)) $$shell_quote($$shell_path($$PATH_TO_BINARY))
+first.depends = $(first) copydata
+
+# Copies the dll files into the build directory
+# CopyDLLs.commands = $(COPY_DIR) $$shell_quote($$shell_path($$PWD/winDLLS)) $$shell_quote($$shell_path($$DESTDIR))
+
+first.depends += CopyDLLs
+
+export(first.depends)
+#export(CopyDLLs.commands)
+export(copydata.commands)
+
+QMAKE_EXTRA_TARGETS += first copydata CopyDLLs
+
+}else {
+mac {
+
+# Copies over the examples folder into the build directory
+copydata.commands = $(COPY_DIR) \"$$shell_path($$PWD/Examples)\" \"$$shell_path($$PATH_TO_BINARY)\"
+first.depends = $(first) copydata
+export(first.depends)
+export(copydata.commands)
+QMAKE_EXTRA_TARGETS += first copydata
+
+}
+}

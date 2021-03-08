@@ -1,0 +1,86 @@
+{
+    "Applications": {
+        "UQ": {
+            "Application": "SimCenterUQ-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "name": "Node_3_Disp_2"
+        },
+        {
+            "name": "Node_2_Disp_2"
+        }
+    ],
+    "UQ_Method": {
+        "samplingMethodData": {
+            "method": "Monte Carlo",
+            "samples": 500,
+            "seed": 536
+        },
+        "uqEngine": "SimCenterUQ",
+        "uqType": "Sensitivity Analysis"
+    },
+    "fem": {
+        "dir": "{Current_Dir}/.",
+        "inputFile": "{Current_Dir}/TrussModel.tcl",
+        "mainInput": "TrussModel.tcl",
+        "mainPostprocessScript": "TrussPost.tcl",
+        "numInputs": 1,
+        "postprocessScript": "{Current_Dir}/TrussPost.tcl",
+        "program": "OpenSees"
+    },
+    "localAppDir": "",
+    "python": "",
+    "randomVariables": [
+        {
+            "distribution": "Weibull",
+            "inputType": "Parameters",
+            "name": "E",
+            "refCount": 1,
+            "scaleparam": 210,
+            "shapeparam": 20,
+            "value": "RV.E",
+            "variableClass": "Uncertain"
+        },
+        {
+            "alphas": 2,
+            "betas": 2,
+            "distribution": "Beta",
+            "inputType": "Parameters",
+            "lowerbound": 20,
+            "name": "P",
+            "refCount": 1,
+            "upperbound": 30,
+            "value": "RV.P",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 500,
+            "name": "Au",
+            "refCount": 1,
+            "stdDev": 25,
+            "value": "RV.Au",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Moments",
+            "mean": 250,
+            "name": "Ao",
+            "refCount": 1,
+            "stdDev": 10,
+            "value": "RV.Ao",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.2.0",
+    "uqResults": {
+        "resultType": "SimCenterUQResultsSensitivity"
+    },
+    "workingDir": ""
+}

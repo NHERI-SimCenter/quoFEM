@@ -1,0 +1,4 @@
+summary: This example uses quoFEM to perform a second-order reliability analysis
+  (SORM) of an OpenSees FE model.
+programming-language: Tcl
+difficulty: 0

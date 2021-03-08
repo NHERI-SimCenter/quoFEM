@@ -1,0 +1,7 @@
+summary: '~'
+archive: $SIMCENTER_DEV
+archive_location: quoFEM/examples/qfem-0011
+id: qfem-0011
+title: exampleBayesianCalibration
+type: book
+difficulty: 0
