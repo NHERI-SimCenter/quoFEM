@@ -107,7 +107,7 @@ SimCenterUQEngine::SimCenterUQEngine(InputWidgetParameters *param,InputWidgetFEM
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
     theCurrentEngine = theSensitivityEngine;
-    //theOldEngine = theCurrentEngine;
+    theOldEngine = theCurrentEngine;
 
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
           SLOT(engineSelectionChanged(QString)));

@@ -108,6 +108,10 @@ InputWidgetParameters::setGPVarNamesAndValues(QStringList theList){
 
     varNamesAndValues=theList;
     theParameters->addUniformRVs(varNamesAndValues);
+    theParameters->setCorrelationDisabled(true);
+    if (theList.isEmpty()) {
+        theParameters->setCorrelationDisabled(false);
+    }
 }
 
 

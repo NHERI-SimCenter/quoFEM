@@ -65,8 +65,6 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     // Input
     //
 
-    QHBoxLayout *theInputLayout = new QHBoxLayout();
-
     inpFileDir = new QLineEdit();
     QPushButton *chooseInpFile = new QPushButton("Choose");
     connect(chooseInpFile, &QPushButton::clicked, this, [=](){
@@ -111,7 +109,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     layout->addWidget(theCheckButton,1,5,Qt::AlignTop);
     layout->addWidget(theLabel,1,6,Qt::AlignTop);
 
-    errMSG=new QLabel("Your file format is not appropreate");
+    errMSG=new QLabel("File format is not appropreate");
     errMSG->setStyleSheet({"color: red"});
     layout->addWidget(errMSG,2,1,Qt::AlignLeft);
     errMSG->hide();

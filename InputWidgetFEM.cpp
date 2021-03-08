@@ -54,7 +54,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QVectorIterator>
 #include <OpenSeesPyParser.h>
 #include <QRadioButton.h>
-
+#include <QGroupBox.h>
 #include <OpenSeesParser.h>
 #include <FEAPpvParser.h>
 
@@ -462,37 +462,20 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
             QString mainScriptDir;
             QString postScriptDir;
 
-            QLabel *optionsLabel = new QLabel("\nOptions when surroagate model gives imprecise prediction at certain sample locations");
-            femLayout->addWidget(optionsLabel, 2,0,1,-1);
-            optionsLabel->setStyleSheet("font-weight: bold;color: black");
-
-            option1Button = new QRadioButton();
-            QLabel *option1Label = new QLabel("     Stop Running");
-            option1Button->setChecked(true);
-            femOpt = "giveError";
-
-            option2Button = new QRadioButton();
-            QLabel *option2Label = new QLabel("     Continue (not recommended)");
-
-            option3Button = new QRadioButton();
-            QLabel *option3Label = new QLabel("     Run Exact FEM Simulation");
-
-            femLayout->addWidget(option1Label, 3,0,1,-1);
-            femLayout->addWidget(option1Button, 3,0);
-            femLayout->addWidget(option2Label, 4,0,1,-1);
-            femLayout->addWidget(option2Button, 4,0);
-            femLayout->addWidget(option3Label, 5,0,1,-1);
-            femLayout->addWidget(option3Button, 5,0);
-            option1Button -> setDisabled(true);
-            option2Button -> setDisabled(true);
-            option3Button -> setDisabled(true);
             //
             // For option 3
             //
-            QLabel *labelVarThres = new QLabel("      Maximum Allowable \n      Normalized Variance");
+            //QLabel *labelVarThres = new QLabel("Maximum Allowable \nNormalized Variance  ");
+            QLabel *labelVarThres = new QLabel("Maximum Allowable Normalized Variance  ");
             thresVal = new QLineEdit;
             QLabel *labelThresMsg = new QLabel();
             labelThresMsg->setStyleSheet("color: red");
+
+            femLayout->addWidget(new QLabel(""),2,0);
+            QGroupBox *groupBox = new QGroupBox("Options");
+            QGridLayout *optionsLayout = new QGridLayout();
+            femLayout->addWidget(groupBox,3,0,1,3);
+            groupBox->setLayout(optionsLayout);
 
             connect(thresVal, &QLineEdit::textChanged, this, [=](QString val) mutable {
                 auto c = percVals[0];
@@ -503,30 +486,59 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
                 } else if (thres<thrsVals[0]) {
                     percEst=round(percVals[0]*1000)/10;
                 }
-                if (isData) {
-                    labelThresMsg->setText("");
-                } else {
-                    labelThresMsg->setText("      Reference: " + QString::number(percEst) + "% of samples in training range exceed tolerance limit.");
+                if (!isData) {
+                    labelThresMsg->setText("Note: around " + QString::number(percEst) + "% of new samples in training range will exceed the tolerance limit.");
                 }
             });
 
-            thresVal->setMaximumWidth(150);
+            thresVal->setMaximumWidth(100);
             thresVal->setDisabled(true);
+            optionsLayout->addWidget(labelVarThres, 0,0);
+            optionsLayout->addWidget(thresVal,0,1, Qt::AlignVCenter);
+            optionsLayout->addWidget(labelThresMsg,1,0,1,-1);
+
+
+            //QLabel *optionsLabel = new QLabel("Options when surroagate model gives imprecise prediction at certain sample locations");
+            QLabel *optionsLabel = new QLabel("When surroagate model gives imprecise prediction at certain sample locations");
+            //QLabel *optionsLabel = new QLabel("When the tolerance limit is exceeded");
+            optionsLayout->addWidget(optionsLabel, 2,0,1,-1);
+            //optionsLabel->setStyleSheet("font-weight: bold;color: black");
+
+            option1Button = new QRadioButton();
+            QLabel *option1Label = new QLabel("     Stop Analysis");
+            option1Button->setChecked(true);
+            femOpt = "giveError";
+
+            option2Button = new QRadioButton();
+            QLabel *option2Label = new QLabel("     Continue (not recommended)");
+
+            option3Button = new QRadioButton();
+            QLabel *option3Label = new QLabel("     Run Exact FEM Simulation");
+
+            optionsLayout->addWidget(option1Label, 3,0,1,-1);
+            optionsLayout->addWidget(option1Button, 3,0);
+            optionsLayout->addWidget(option2Label, 4,0,1,-1);
+            optionsLayout->addWidget(option2Button, 4,0);
+            optionsLayout->addWidget(option3Label, 5,0,1,-1);
+            optionsLayout->addWidget(option3Button, 5,0);
+            option1Button -> setDisabled(true);
+            option2Button -> setDisabled(true);
+            option3Button -> setDisabled(true);
             labelThresMsg->setVisible(false);
-            femLayout->addWidget(labelVarThres, 9,0);
-            femLayout->addWidget(thresVal,9,1, Qt::AlignVCenter);
-            femLayout->addWidget(labelThresMsg,10,0,1,-1);
 
             QLabel *labelProgName = new QLabel();
             QLabel *labelProgDir1 = new QLabel();
             QLabel *labelProgDir2 =
                     new QLabel();
-            femLayout->addWidget(labelProgName, 6,0,1,-1);
-            femLayout->addWidget(labelProgDir1, 7,0,1,-1);
-            femLayout->addWidget(labelProgDir2, 8,0,1,-1);
+            optionsLayout->addWidget(labelProgName, 6,0,1,-1);
+            optionsLayout->addWidget(labelProgDir1, 7,0,1,-1);
+            optionsLayout->addWidget(labelProgDir2, 8,0,1,-1);
             labelProgName->setVisible(false);
             labelProgDir1->setVisible(false);
             labelProgDir2->setVisible(false);
+            optionsLayout->setColumnStretch(3, 1);
+            //optionsLayout->setRowStretch(9, 1);
+
 
             connect(option1Button, &QCheckBox::toggled, this, [=](bool tog){
                 if (tog==true)
@@ -534,12 +546,12 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
                     femOpt = "giveError";
                     option2Button->setChecked(false);
                     option3Button->setChecked(false);
-                    labelVarThres->setVisible(true);
-                    thresVal->setVisible(true);
-                    labelThresMsg->setVisible(true);
+                    //labelVarThres->setVisible(true);
+                    //thresVal->setVisible(true);
+                    //labelThresMsg->setVisible(true);
                 } else {
-                    labelVarThres->setVisible(false);
-                    thresVal->setVisible(false);
+                    //labelVarThres->setVisible(false);
+                    //thresVal->setVisible(false);
                 }
             });
             connect(option2Button, &QCheckBox::toggled, this, [=](bool tog){
@@ -548,7 +560,7 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
                     femOpt = "continue";
                     option1Button->setChecked(false);
                     option3Button->setChecked(false);
-                    labelThresMsg->setVisible(false);
+                    //labelThresMsg->setVisible(false);
                 }
             });
             connect(option3Button, &QCheckBox::toggled, this, [=](bool tog){
@@ -558,16 +570,16 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
                     femOpt = "doSimulation";
                     option2Button->setChecked(false);
                     option1Button->setChecked(false);
-                    labelVarThres->setVisible(true);
-                    thresVal->setVisible(true);
-                    labelThresMsg->setVisible(true);
+                    //labelVarThres->setVisible(true);
+                    //thresVal->setVisible(true);
+                    //labelThresMsg->setVisible(true);
                     labelProgName->setVisible(true);
                     labelProgDir1->setVisible(true);
                     labelProgDir2->setVisible(true);
                 } else {
-                    labelVarThres->setVisible(false);
-                    thresVal->setVisible(false);
-                    labelThresMsg->setVisible(false);
+                    //labelVarThres->setVisible(false);
+                    //thresVal->setVisible(false);
+                    //labelThresMsg->setVisible(false);
                     labelProgName->setVisible(false);
                     labelProgDir1->setVisible(false);
                     labelProgDir2->setVisible(false);
@@ -608,14 +620,13 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
 
                         if (from_data) {
                             isData = true;
-
                             option1Button -> setDisabled(false);
                             option1Button -> setChecked(true);
                             option2Button -> setDisabled(false);
                             option3Button -> setDisabled(true);
+                            labelThresMsg->setVisible(false);
                             option3Label->setText("     Run Exact FEM simulation (not supported for data-based surrogate model)");
                             option3Label->setStyleSheet("color: grey");
-
                             percVals={0};
                             thrsVals={0};
                             thresVal->setText("0.02");
@@ -624,7 +635,6 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
                             QJsonObject jsonPred = jsonSur["predError"].toObject();
                             QJsonArray precArray = jsonPred["percent"].toArray();
                             QJsonArray valsArray = jsonPred["value"].toArray();
-
                             QVector<double> percVal_tmp, thrsVal_tmp;
 
                             foreach (const QJsonValue & v, precArray)
@@ -644,21 +654,21 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
                             option1Button -> setChecked(true);
                             option2Button -> setDisabled(false);
                             option3Button -> setDisabled(false);
+                            labelThresMsg -> setVisible(true);
                             option3Label->setText("     Run Exact FEM simulation");
                             option3Label->setStyleSheet("color: black");
 
                             labelProgName->setText("      • Application Name: " + appName);
                             labelProgDir1->setText("      • Main Script: "+ mainScriptDir);
-                            labelProgDir2->setText("      • Postprocess Script: "+ postScriptDir + "\n");
+                            labelProgDir2->setText("      • Postprocess Script: "+ postScriptDir );
                             labelProgName->setVisible(false);
                             labelProgDir1->setVisible(false);
                             labelProgDir2->setVisible(false);
                             //double thres=0.02;
                             double thres = this->interpolateForGP(percVal_tmp,thrsVal_tmp,0.5);
                             thresVal->setText(QString::number(thres/100));
-                        }
+                        }                        
                         thresVal->setDisabled(false);
-                        labelThresMsg->setVisible(true);
                     } else {
                         appName = "NA";
                         option1Button -> setDisabled(true);
@@ -671,6 +681,7 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
                     option1Button -> setDisabled(true);
                     option2Button -> setDisabled(true);
                     option3Button -> setDisabled(true);
+                    labelThresMsg -> setVisible(false);
                     option3Label->setText("     Run Exact FEM simulation");
                 }
                 theParameters->setInitialVarNamesAndValues(varNamesAndValues);

@@ -79,7 +79,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
     accuracyMeasure->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Target Accuracy (Normalized Error)"), 1, 0);
+    layout->addWidget(new QLabel("Target Accuracy (Normalized Error) "), 1, 0);
     layout->addWidget(accuracyMeasure, 1, 1);
 
     //
@@ -102,10 +102,10 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     timeMeasure = new QLineEdit();
     timeMeasure->setText(tr("60"));
     timeMeasure->setValidator(new QIntValidator);
-    timeMeasure->setToolTip("Maximum Computation Time (min.)");
+    timeMeasure->setToolTip("Max Computation Time (minutes)");
     timeMeasure->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Max Computation Time (min.)    "), 4, 0);
+    layout->addWidget(new QLabel("Max Computation Time (minutes)    "), 4, 0);
     layout->addWidget(timeMeasure, 4, 1);
 
     //
@@ -150,6 +150,8 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     theLinearLabel=new QLabel("Use linear trend function");
 
     theLinearCheckBox = new QCheckBox();
+    theLinearCheckBox->setToolTip("Default is no trending function");
+
     layout->addWidget(theLinearLabel, 8, 0);
     layout->addWidget(theLinearCheckBox, 8, 1);
     theLinearLabel->setVisible(false);
@@ -174,7 +176,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     // # of Initial DoE (Space filling)
     //
 
-    theInitialLabel=new QLabel("Number of Initial DoE");
+    theInitialLabel=new QLabel("Number of Initial Samples (DoE)");
 
     initialDoE = new QLineEdit();
     initialDoE->setValidator(new QIntValidator);

@@ -168,7 +168,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
   if ((line.length() != 0) && (!line.contains("Warning: unit probability", Qt::CaseInsensitive))){
       qDebug() << line.length() << " " << line;
-      emit sendErrorMessage(QString(QString("Error Rnning Dakota: ") + line));
+      emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
       return 0;
   }
 
