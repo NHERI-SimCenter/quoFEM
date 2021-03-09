@@ -188,7 +188,7 @@ DakotaEngine::inputFromJSON(QJsonObject &jsonObject) {
     QString selection = jsonObject["uqType"].toString();
     bool doParallel = true;
     if (jsonObject.contains("parallelExecution"))
-        bool doParallel = jsonObject["parallelExecution"].toBool();
+        doParallel = jsonObject["parallelExecution"].toBool();
 
     parallelCheckBox->setChecked(doParallel);
 
