@@ -490,17 +490,96 @@ MainWindow::runApplication(QString program, QStringList args) {
     QString pathEnv = procEnv.value("PATH");
     QString pythonPathEnv = procEnv.value("PYTHONPATH");
 
+    QString python = QString("python");
+    QString exportPath("export PATH=");
+    bool colonYes = false;
+
+    SimCenterPreferences *preferences = SimCenterPreferences::getInstance();
+    python = preferences->getPython();
+
+    QFileInfo pythonFile(python);
+    if (pythonFile.exists()) {
+        QString pythonPath = pythonFile.absolutePath();
+        colonYes=true;
+        exportPath += pythonPath;
+        pathEnv = pythonPath + ';' + pathEnv;
+    } else {
+        emit errorMessage("NO VALID PYTHON - Read the Manual & Check your Preferences");
+        return false;
+    }
+
+    QSettings settingsApplication("SimCenter", QCoreApplication::applicationName());
+    QVariant  openseesPathVariant = settingsApplication.value("openseesPath");
+    if (openseesPathVariant.isValid()) {
+        QFileInfo openseesFile(openseesPathVariant.toString());
+        if (openseesFile.exists()) {
+            QString openseesPath = openseesFile.absolutePath();
+#ifdef Q_OS_WIN
+            pathEnv = openseesPath + ';' + pathEnv;
+#else
+            pathEnv = openseesPath + ':' + pathEnv;
+#endif
+            if (colonYes == false) {
+                colonYes = true;
+            } else {
+#ifdef Q_OS_WIN
+                exportPath += ";";
+#else
+                exportPath += ":";
+#endif
+            }
+            exportPath += openseesPath;
+        }
+    }
+
+    QVariant  dakotaPathVariant = settingsApplication.value("dakotaPath");
+    if (dakotaPathVariant.isValid()) {
+        QFileInfo dakotaFile(dakotaPathVariant.toString());
+        if (dakotaFile.exists()) {
+            QString dakotaPath = dakotaFile.absolutePath();
+            if (colonYes == false) {
+                colonYes = true;
+            } else {
+#ifdef Q_OS_WIN
+                exportPath += ";";
+#else
+                exportPath += ":";
+#endif
+            }
+
+#ifdef Q_OS_WIN
+            pathEnv = dakotaPath + ';' + pathEnv;
+#else
+            pathEnv = dakotaPath + ':' + pathEnv;
+#endif
+            exportPath += dakotaPath;
+            QString dakotaPathPath = QFileInfo(dakotaPath).absolutePath() + QDir::separator() +
+                    "share" + QDir::separator() + "Dakota" + QDir::separator() + "Python";
+            pythonPathEnv = dakotaPathPath + ";" + pythonPathEnv;
+
+        }
+    }
+
+    if (colonYes == true) {
+#ifdef Q_OS_WIN
+        exportPath += ";";
+#else
+        exportPath += ":";
+#endif
+    }
+
+    exportPath += "$PATH";
+
+    procEnv.insert("PATH", pathEnv);
+    procEnv.insert("PYTHONPATH", pythonPathEnv);
+    proc->setProcessEnvironment(procEnv);    
+
+
+    /*************** OLD CODE .. NEW .. ABOVE IS IN LOCALAPPLICATION .. BEGIN SWAP OUT
     SimCenterPreferences *preferences = SimCenterPreferences::getInstance();
     QString python=preferences->getPython();
 
     QString exportPath("export PATH=$PATH");
-    /*
-    QString python("python");  
-    QSettings settings("SimCenter", "Common");
-    QVariant  pythonLocationVariant = settings.value("pythonExePath");
-    if (pythonLocationVariant.isValid())
-      python = pythonLocationVariant.toString();
-    */
 
     QSettings settingsApplication("SimCenter", QCoreApplication::applicationName());
     QVariant  openseesPathVariant = settingsApplication.value("openseesPath");
@@ -530,7 +609,8 @@ MainWindow::runApplication(QString program, QStringList args) {
     procEnv.insert("PATH", pathEnv);
     procEnv.insert("PYTHONPATH", pythonPathEnv);
     proc->setProcessEnvironment(procEnv);
-
+    *************************************** OLD CODE SWAP OUT   ***********************/
+    
 #ifdef Q_OS_WIN
 
     //python = QString('\"') + python + QString('\"');
