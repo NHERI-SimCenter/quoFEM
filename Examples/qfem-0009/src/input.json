@@ -32,39 +32,49 @@
         "postprocessScript": "{Current_Dir}/TrussPost.tcl",
         "program": "OpenSees"
     },
-    "localAppDir": "C:/Users/claud/sim/dist-2020b/quoFEM-2020-11-03",
-    "python": "C:\\Users\\claud\\miniconda3\\envs\\sim\\python.exe",
+    "localAppDir": "",
+    "python": "",
     "randomVariables": [
         {
-            "distribution": "Constant",
+            "distribution": "Weibull",
             "inputType": "Parameters",
             "name": "E",
             "refCount": 1,
-            "value": 205,
+            "scaleparam": 210,
+            "shapeparam": 20,
+            "value": "RV.E",
             "variableClass": "Uncertain"
         },
         {
-            "distribution": "Constant",
+            "alphas": 2,
+            "betas": 2,
+            "distribution": "Beta",
             "inputType": "Parameters",
+            "lowerbound": 20,
             "name": "P",
             "refCount": 1,
-            "value": 25,
+            "upperbound": 30,
+            "value": "RV.P",
             "variableClass": "Uncertain"
         },
         {
-            "distribution": "Constant",
+            "distribution": "Normal",
             "inputType": "Parameters",
+            "mean": 500,
             "name": "Au",
             "refCount": 1,
-            "value": 500,
+            "stdDev": 25,
+            "value": "RV.Au",
             "variableClass": "Uncertain"
         },
         {
-            "distribution": "Constant",
-            "inputType": "Parameters",
+            "distribution": "Normal",
+            "inputType": "Moments",
+            "mean": 250,
             "name": "Ao",
             "refCount": 1,
-            "value": 250,
+            "stdDev": 10,
+            "value": "RV.Ao",
             "variableClass": "Uncertain"
         }
     ],
@@ -72,5 +82,5 @@
     "uqResults": {
         "resultType": "SimCenterUQResultsSensitivity"
     },
-    "workingDir": "C:/Users/claud/Documents/quoFEM/LocalWorkDir"
+    "workingDir": ""
 }

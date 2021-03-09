@@ -32,9 +32,6 @@
     "EDP": [
         {
             "name": "Node_3_Disp_2"
-        },
-        {
-            "name": "Node_2_Disp_2"
         }
     ],
     "randomVariables": [
@@ -66,7 +63,7 @@
             "distribution": "Lognormal",
             "mean": 250.0,
             "refCount": 1,
-            "stdDev": 50.0,
+            "stdDev": 10.0,
             "value": "RV.Ao",
             "variableClass": "Uncertain"
         },
@@ -76,7 +73,7 @@
             "distribution": "Normal",
             "mean": 500.0,
             "refCount": 1,
-            "stdDev": 100.0,
+            "stdDev": 25.0,
             "value": "RV.Au",
             "variableClass": "Uncertain"
         }

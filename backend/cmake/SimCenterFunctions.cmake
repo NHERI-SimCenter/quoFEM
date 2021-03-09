@@ -141,7 +141,7 @@ function(simcenter_add_executable)
         get_module_library_name(depModLibraryName ${depMod})
         if(NOT TARGET ${depModLibraryName})
             message(STATUS "Skipping ${ARG_NAME} since dependent module ${depMod} was not built")
-            #return()
+            return()
         endif()
     endforeach()
 

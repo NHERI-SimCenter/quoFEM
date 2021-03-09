@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = quoFEM
 TEMPLATE = app
 
-VERSION=2.1.0
+VERSION=2.2.2
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 INCLUDEPATH += ../SimCenterCommon/RandomVariables
@@ -25,6 +25,7 @@ win32::LIBS+=Advapi32.lib
 
 win32 {
     RC_ICONS = icons/NHERI-quoFEM-Icon.ico
+    DEFINES += USE_SIMCENTER_PYTHON
 } else {
     mac {
     ICON = icons/NHERI-quoFEM-Icon.icns
@@ -164,7 +165,7 @@ PATH_TO_BINARY=$$DESTDIR/Examples
 win32 {
 
 # Copies over the examples folder into the build directory
-copydata.commands = $(COPY_DIR) $$shell_quote($$shell_path($$PWD/examples)) $$shell_quote($$shell_path($$PATH_TO_BINARY))
+copydata.commands = $(COPY_DIR) $$shell_quote($$shell_path($$PWD/Examples)) $$shell_quote($$shell_path($$PATH_TO_BINARY))
 first.depends = $(first) copydata
 
 # Copies the dll files into the build directory
@@ -182,7 +183,7 @@ QMAKE_EXTRA_TARGETS += first copydata CopyDLLs
 mac {
 
 # Copies over the examples folder into the build directory
-copydata.commands = $(COPY_DIR) \"$$shell_path($$PWD/examples)\" \"$$shell_path($$PATH_TO_BINARY)\"
+copydata.commands = $(COPY_DIR) \"$$shell_path($$PWD/Examples)\" \"$$shell_path($$PATH_TO_BINARY)\"
 first.depends = $(first) copydata
 export(first.depends)
 export(copydata.commands)

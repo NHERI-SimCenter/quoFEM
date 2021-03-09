@@ -126,7 +126,8 @@ UCSD_TMMC::inputFromJSON(QJsonObject &jsonObject){
 
     QString file = jsonObject["logLikelihoodFile"].toString();
     QString path = jsonObject["logLikelihoodPath"].toString();
-    logLikelihoodScript->setText(file + QDir::separator() + path);
+    logLikelihoodScript->setText(path + QDir::separator() + file);
+    //logLikelihoodScript->setText(file + QDir::separator() + path);
   }
   else {
           emit sendErrorMessage("ERROR: TMCMC input - not all data specified");

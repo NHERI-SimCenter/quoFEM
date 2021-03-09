@@ -8,7 +8,7 @@ import openseespy.opensees as ops
 
 ops.wipe()
 
-from params import *
+from TrussParams import *
 
 def run_analysis():
 
