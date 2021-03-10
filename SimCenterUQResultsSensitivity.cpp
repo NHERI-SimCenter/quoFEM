@@ -468,6 +468,7 @@ void
 SimCenterUQResultsSensitivity::onSaveSpreadsheetClicked()
 {
 
+
     int rowCount = spreadsheet->rowCount();
     int columnCount = spreadsheet->columnCount();
 
@@ -475,13 +476,17 @@ SimCenterUQResultsSensitivity::onSaveSpreadsheetClicked()
                                                     tr("Save Data"), "",
                                                     tr("All Files (*)"));
 
+
     QFile file(fileName);
-    if (file.open(QIODevice::ReadWrite))
+    if (file.open(QIODevice::WriteOnly))
     {
         QTextStream stream(&file);
         for (int j=0; j<columnCount; j++)
         {
-            stream <<theHeadings.at(j)<<", ";
+            if (j == columnCount -1)
+                stream <<theHeadings.at(j);     
+            else
+                stream <<theHeadings.at(j)<<", ";
         }
         stream <<endl;
         for (int i=0; i<rowCount; i++)
@@ -490,16 +495,15 @@ SimCenterUQResultsSensitivity::onSaveSpreadsheetClicked()
             {
                 QTableWidgetItem *item_value = spreadsheet->item(i,j);
                 double value = item_value->text().toDouble();
-                stream << value << ", ";
-                //     qDebug()<<value;
+        if (j == columnCount-1)     
+          stream << value ;
+        else
+          stream << value << ", ";        
             }
             stream<<endl;
         }
+    file.close();
     }
-
-    //    QFileDialog::getOpenFileName( this, tr("Open Document"), QDir::currentPath(), tr("Document files (*.doc *.rtf);;All files (*.*)"), 0, QFileDialog::DontUseNativeDialog );
-
-    //  qDebug()<<QDir::currentPath();
 
 }
 
@@ -703,8 +707,6 @@ void SimCenterUQResultsSensitivity::gsaGraph(QScrollArea *&sa)
 
     summaryLayout->addStretch();
 }
-
-
 
 void SimCenterUQResultsSensitivity::onSpreadsheetCellClicked(int row, int col)
 {
