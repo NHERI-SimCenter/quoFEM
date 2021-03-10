@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\yisan\Desktop\Development\quoFEM\backend\build\CMakeFiles\37c148d4d2e8d1bd934aac887673e418\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{7275CE3B-F67C-3776-A938-407D617A409D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

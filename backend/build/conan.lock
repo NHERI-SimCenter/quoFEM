@@ -1,0 +1,20 @@
+{
+ "profile_host": "[settings]\narch=x86_64\narch_build=x86_64\nbuild_type=Release\ncompiler=Visual Studio\ncompiler.runtime=MD\ncompiler.version=16\nos=Windows\nos_build=Windows\n[options]\n[build_requires]\n[env]\n",
+ "graph_lock": {
+  "nodes": {
+   "0": {
+    "pref": "SimCenterBackendApplications/1.1.0:29d4fde4d5b2805c28baa25c2818749df0f49269",
+    "options": "shared=False\njansson:shared=False\njansson:use_urandom=True\njansson:use_windows_cryptoapi=True",
+    "requires": [
+     "1"
+    ],
+    "path": "C:\\Users\\yisan\\Desktop\\Development\\quoFEM\\backend\\conanfile.py"
+   },
+   "1": {
+    "pref": "jansson/2.11@bincrafters/stable#0:8d1447e4c7a19883a967dfa4ee540ff8ca3170f5#f42c678fd537d53834e0cc42348ab6d7",
+    "options": "shared=False\nuse_urandom=True\nuse_windows_cryptoapi=True"
+   }
+  }
+ },
+ "version": "0.3"
+}

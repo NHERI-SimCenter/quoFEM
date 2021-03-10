@@ -166,10 +166,25 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
      fileError.close();
   }
 
-  if ((line.length() != 0) && (!line.contains("Warning: unit probability", Qt::CaseInsensitive))){
+  /*
+  if ((line.length() != 0) && (!line.contains("Warning: unit probability", Qt::CaseInsensitive))
+                               && !line.contains("Warning: maximum back-tracking", Qt::CaseInsensitive)
+                               && !line.contains("Warning: maximum Newton iterations ", Qt::CaseInsensitive)){
       qDebug() << line.length() << " " << line;
       emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
       return 0;
+  }
+  */
+  if ((line.length() != 0)) {
+          if (line.contains("Warning:", Qt::CaseInsensitive)) {
+                qDebug() << line.length() << " " << line;
+                  emit sendErrorMessage(QString(QString("Dakota ") + line));
+          } else {
+                  qDebug() << line.length() << " " << line;
+                  emit sendErrorMessage(QString(QString("Dakota: ") + line));
+                  return 0;
+            }
+
   }
 
   QFileInfo filenameResultsInfo(filenameResults);
