@@ -234,7 +234,7 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI or a permission issue. Check out Jobs Directory");
         return 0;
     }
 

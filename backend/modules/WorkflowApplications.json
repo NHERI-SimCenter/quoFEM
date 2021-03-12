@@ -87,7 +87,7 @@
         "Name": "OpenSeesPy",
         "ExecutablePath": "applications/performSIM/OpenSeesPy/createOpenSeesPyDriver",
         "ApplicationSpecificInputs": []
-      }
+      },
       {
         "Name": "SurrogateGP",
         "ExecutablePath": "applications/performSIM/surrogateGP/createGpDriver.exe",

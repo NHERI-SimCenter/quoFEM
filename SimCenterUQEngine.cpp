@@ -107,7 +107,6 @@ SimCenterUQEngine::SimCenterUQEngine(InputWidgetParameters *param,InputWidgetFEM
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
     theCurrentEngine = theSensitivityEngine;
-    theOldEngine = theCurrentEngine;
 
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
           SLOT(engineSelectionChanged(QString)));
@@ -124,6 +123,7 @@ SimCenterUQEngine::~SimCenterUQEngine()
 
 void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
 {
+    QString thePreviousName = theCurrentEngine->getMethodName();
     UQ_Engine *theOldEngine = theCurrentEngine;
 
     if ((arg1 == QString("Sensitivity")) || (arg1 == QString("Sensitivity Analysis"))) {
@@ -156,8 +156,7 @@ void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
     if (theCurrentEngine != theOldEngine)
         emit onUQ_EngineChanged();
 
-
-    if (theOldEngine->getMethodName() == "surrogate")
+    if (thePreviousName == "surrogate")
     {
         theEdpWidget->setGPQoINames(QStringList({}) );// remove GP QoIs
         theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs

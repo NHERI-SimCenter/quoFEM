@@ -91,8 +91,8 @@ DakotaResultsReliability::DakotaResultsReliability(RandomVariablesContainer *the
   : UQ_Results(parent), theRVs(theRandomVariables), numSpreadsheetRows(0), numSpreadsheetCols(0)
 {
   chart = new QChart();
-  chart->setAnimationOptions(QChart::AllAnimations);
   QChartView *chartView = new QChartView(chart);
+  chart->setAnimationOptions(QChart::AllAnimations);
   chartView->setRenderHint(QPainter::Antialiasing);
   chartView->chart()->legend()->hide();
 
@@ -137,11 +137,6 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
   // clear current
   this->clear();
 
-  numSpreadsheetCols = 1;
-  numSpreadsheetRows = 0;
-
-  theHeadings << "%";
-  spreadsheet->setColumnCount(1);
 
 
   //
@@ -176,14 +171,24 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
   }
   */
   if ((line.length() != 0)) {
-          if (line.contains("Warning:", Qt::CaseInsensitive)) {
+
+
+
+          if (line.contains("-- Expected 1 function value(s) but found ", Qt::CaseInsensitive)) {
+              // Multiple output by user
+              qDebug() << line.length() << " " << line;
+              emit sendErrorMessage(QString("Dakota Error: Current reliability option supports only single output. Please try with Mean Value option or with a single output. "));
+              return 0;
+          } else if (line.contains("Warning:", Qt::CaseInsensitive)) {
+              // Warning
                 qDebug() << line.length() << " " << line;
                   emit sendErrorMessage(QString(QString("Dakota ") + line));
           } else {
-                  qDebug() << line.length() << " " << line;
-                  emit sendErrorMessage(QString(QString("Dakota: ") + line));
-                  return 0;
-            }
+              // Other errors
+                qDebug() << line.length() << " " << line;
+                emit sendErrorMessage(QString(QString("Dakota ") + line));
+                return 0;
+          }
 
   }
 
@@ -205,8 +210,8 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
     return -1;
   }
   
+    emit sendErrorMessage((QString("")));
 
-  
   /* **************************************** LOOKING FOR THE FOLLOWING
      -----------------------------------------------------------------
      Cumulative Distribution Function (CDF) for response_fn_1:
@@ -219,28 +224,38 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
      
   *************************************************************************** */
 
+  numSpreadsheetCols = 2;
+  numSpreadsheetRows = 0;
+
+  spreadsheet->setColumnCount(2);
+
   const std::string needleStart = "Cumulative Distribution Function (CDF)";
+  const std::string needleEnd = "---------------------------------------";
+
   std::string haystack;
+  bool isStartOrEnd = true;
+  int numCols = 2;
 
   while(fileResults.eof() != true) {
 
       std::vector<double>col1;
       std::vector<double>col2;
 
+    if (isStartOrEnd) {
+        // to remove all the text before and after the results we are interested in
+          while (std::getline(fileResults, haystack)) {
+              if (haystack.find(needleStart) != std::string::npos) {
+                  break;
+              }
+              else {
+                  if (numSpreadsheetRows > 0);
+              }
+          }
 
-      while (std::getline(fileResults, haystack)) {
-          if (haystack.find(needleStart) != std::string::npos) {
+          if (fileResults.eof()) {
               break;
           }
-          else {
-              if (numSpreadsheetRows > 0)
-                  ;
-          }
-      }
-
-      if (fileResults.eof()) {
-          break;
-      }
+     }
 
       // get descriptor name
       std::istringstream iss(haystack);
@@ -250,45 +265,60 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
           iss >> subs;
       } while (iss);
 
-      theHeadings << subs.c_str();
+      theHeadings << QString("Pr(")+QString(subs.c_str()).remove(QChar(':'))+QString(")");
+      theHeadings << QString(subs.c_str()).remove(QChar(':'));
 
       // read next 2 lines of drivel
       std::getline(fileResults, haystack);
       std::getline(fileResults, haystack);
 
       // for some reason
-      ;// std::getline(fileResults, haystack);
+      // std::getline(fileResults, haystack);
 
-      const std::string needleEnd = "---------------------------------------";
-
-       spreadsheet->insertColumn(numSpreadsheetCols);
-       numSpreadsheetCols++;
 
        qDebug() << "numCOL" << numSpreadsheetCols;
        QMap<float,float> data;
        // now read the data till end of data encountered
        int numRows = 0;
        while (std::getline(fileResults, haystack)) {
-           if (haystack.find(needleEnd) != std::string::npos) {
+           if ((haystack.find(needleEnd) != std::string::npos)) {
+               // wrap up
                qDebug() << "FOUND END";
+               isStartOrEnd = true;
                break;
-
+           } else if (haystack.find(needleStart) != std::string::npos) {
+               // move on to the next EDP
+               isStartOrEnd = false;
+               spreadsheet->insertColumn(numCols);
+               spreadsheet->insertColumn(numCols);
+               numCols = numCols+2;
+               break;
            } else {
                // read column entries
-               if (numSpreadsheetCols == 2)
-                   spreadsheet->insertRow(numRows);
                std::string data1, data2, data3, data4;
                std::istringstream is(haystack);
 
                is >> data1 >> data2 >> data3 >> data4;
-               if (numSpreadsheetCols == 2) {
-                   data.insert(std::stod(data2),std::stod(data1));
-                   QModelIndex index = spreadsheet->model()->index(numRows, numSpreadsheetCols-2);
-                   spreadsheet->model()->setData(index, data2.c_str());
+
+               //if (!data1.empty() && (((data1.find("e-"))!= std::string::npos)||((data1.find("e+"))!= std::string::npos))) {
+               if (data1.empty()) {
+
                }
-               QModelIndex index = spreadsheet->model()->index(numRows, numSpreadsheetCols-1);
-               spreadsheet->model()->setData(index, data1.c_str());
-               numRows++;
+               else if (data1.find("Warning:") != std::string::npos) {
+                   emit sendErrorMessage(QString(QString("Dakota ") + QString::fromStdString(haystack)));
+               } else {
+                   if (numSpreadsheetCols == 2)
+                       spreadsheet->insertRow(numRows);
+                   data.insert(std::stod(data2),std::stod(data1));
+                   //QModelIndex index = spreadsheet->model()->index(numRows, numSpreadsheetCols-2);
+                   QModelIndex index = spreadsheet->model()->index(numRows, numCols-2);
+                   spreadsheet->model()->setData(index, data2.c_str());
+                   //QModelIndex index2 = spreadsheet->model()->index(numRows, numSpreadsheetCols-1);
+                   QModelIndex index2 = spreadsheet->model()->index(numRows, numCols-1);
+                   spreadsheet->model()->setData(index2, data1.c_str());
+                   numRows++;
+               }
+               //}
            }
        }
        //QMap<QString, int>::iterator i;
@@ -299,6 +329,8 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
            */
 
        numSpreadsheetRows = numRows;
+       numSpreadsheetCols = numCols;
+
   }
 
   spreadsheet->setHorizontalHeaderLabels(theHeadings);
@@ -367,7 +399,13 @@ void DakotaResultsReliability::onSpreadsheetCellClicked(int row, int col)
         return;
     else
         col2 = col;
-
+        if (col2%2 == 1) {
+            col2 = col2;
+            col1 = col2-1;
+        } else {
+            col2 = col2+1;
+            col1 = col2-1;
+        }
     //
     // remove old
     //
