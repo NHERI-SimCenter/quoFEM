@@ -98,7 +98,7 @@ figure:
    Sensitivity analysis results for simple truss.
 
 
-.. |Truss schematic diagram| image:: truss/truss.png
+.. |Truss schematic diagram| image:: ./qfem-0009.png
 
 
 Comparison with Dakota engine
