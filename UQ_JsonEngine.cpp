@@ -140,3 +140,8 @@ QString
 UQ_JsonEngine::getProcessingScript() {
   return QString("runCustomUQ.py");
 }
+
+QString
+UQ_JsonEngine::getMethodName() {
+  return QString("runCustomUQ");
+}

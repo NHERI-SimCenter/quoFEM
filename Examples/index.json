@@ -263,6 +263,33 @@
         "Simulation": "OpenSees",
         "Difficulty": "0"
       }
+    },
+    "qfem-0015": {
+      "id": "qfem-0015",
+      "title": "Surrogate Modeling for Building Earthquake response",
+      "base": "qfem-0015",
+      "doc": [
+        "qfem-0015/figures/input-UQ.JPG",
+        "qfem-0015/src/BuildModel.py",
+        "qfem-0015/src/RSN30.json",
+        "qfem-0015/src/cantilever.py",
+        "qfem-0015/src/CWH.py",
+        "qfem-0015/src/CWHMaterials.py",
+        "qfem-0015/src/EDP_specs.json",
+        "qfem-0015/src/hysteresis.m",
+        "qfem-0015/src/ModelInfo.py",
+        "qfem-0015/src/params.py",
+        "qfem-0015/src/RunAnalysis.py",
+        "qfem-0015/README.rst",
+      ],
+      "entry_point": "qfem-0015/input.json",
+      "summary": "In this example, Surrogate ...",
+      "logo": "qfem-0015.png",
+      "published": "2020-12-17T21:26:53.946381-08:00",
+      "categories": {
+        "Simulation": "OpenSeesPy",
+        "Difficulty": "1"
+      }
     }
   },
   "categories": {

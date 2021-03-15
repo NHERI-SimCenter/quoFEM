@@ -70,7 +70,7 @@ DakotaEngine::DakotaEngine(QWidget *parent)
 
     QHBoxLayout *theSelectionLayout = new QHBoxLayout();
     QLabel *label = new QLabel();
-    label->setText(QString("Dakota Method Catagory"));
+    label->setText(QString("Dakota Method Category"));
     theEngineSelectionBox = new QComboBox();
     theEngineSelectionBox->addItem(tr("Forward Propagation"));
     theEngineSelectionBox->addItem(tr("Parameters Estimation"));
@@ -188,7 +188,7 @@ DakotaEngine::inputFromJSON(QJsonObject &jsonObject) {
     QString selection = jsonObject["uqType"].toString();
     bool doParallel = true;
     if (jsonObject.contains("parallelExecution"))
-        bool doParallel = jsonObject["parallelExecution"].toBool();
+        doParallel = jsonObject["parallelExecution"].toBool();
 
     parallelCheckBox->setChecked(doParallel);
 
@@ -246,3 +246,9 @@ void
 DakotaEngine::numModelsChanged(int newNum) {
     emit onNumModelsChanged(newNum);
 }
+
+QString
+DakotaEngine::getMethodName() {
+    return theCurrentEngine->getMethodName();
+}
+

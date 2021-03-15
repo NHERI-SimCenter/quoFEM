@@ -60,6 +60,10 @@ UQ_Engine::getProcessingScript() {
 }
 
 
+QString
+UQ_Engine::getMethodName() {
+    return QString("UNKNOWN");
+}
 
 
 

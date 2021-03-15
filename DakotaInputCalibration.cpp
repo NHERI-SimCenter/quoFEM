@@ -216,3 +216,8 @@ DakotaInputCalibration::getParameters(void) {
   QString classType("Design");
   return new RandomVariablesContainer(classType,QString("Dakota"));
 }
+
+QString
+DakotaInputCalibration::getMethodName(void){
+  return QString("calibration");
+}

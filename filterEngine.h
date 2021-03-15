@@ -60,6 +60,7 @@ public:
     UQ_Results *getResults(void);
 
     QString getProcessingScript();
+    QString getMethodName();
 
     void clear(void);
 

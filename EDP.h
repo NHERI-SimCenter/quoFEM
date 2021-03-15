@@ -52,7 +52,7 @@ class EDP : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EDP(QWidget *parent = 0);
+    explicit EDP(QString EDPname="", QWidget *parent = 0);
     ~EDP();
 
     bool outputToJSON(QJsonObject &rvObject);

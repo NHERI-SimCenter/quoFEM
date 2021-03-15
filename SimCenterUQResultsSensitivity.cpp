@@ -241,15 +241,6 @@ int SimCenterUQResultsSensitivity::processResults(QString &filenameResults, QStr
 
     // create a scrollable windows, place summary inside it
     QScrollArea *sa = new QScrollArea;
-    sa->setWidgetResizable(true);
-    sa->setLineWidth(0);
-    sa->setFrameShape(QFrame::NoFrame);
-
-    QWidget *summary = new QWidget();
-    QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summaryLayout->setContentsMargins(0,0,0,0); // adding back
-    summary->setLayout(summaryLayout);
-    sa->setWidget(summary);
 
     //
     // read data from file filename
@@ -298,7 +289,6 @@ Node_2_Disp Sobol' indices:
     */
 
     std::string readline;
-    QVector<QString> combs, QoInames;
     // Heading
     //fileResults.getline(a,0);
     //fileResults.getline(a,0);
@@ -308,7 +298,7 @@ Node_2_Disp Sobol' indices:
     //fileResults >> a;
     getline(fileResults, readline);// header
     getline(fileResults, readline);// value
-    int ncomb=atoi(readline.c_str());
+    ncomb=atoi(readline.c_str());
 
     getline(fileResults, readline);// header
     for (int nc=0; nc<ncomb; nc++) {
@@ -318,7 +308,7 @@ Node_2_Disp Sobol' indices:
 
     getline(fileResults, readline);// header
     getline(fileResults, readline);// value
-    int nQoI=atoi(readline.c_str());
+    nQoI=atoi(readline.c_str());
 
     getline(fileResults, readline);// header
     for (int nq=0; nq<nQoI; nq++) {
@@ -327,7 +317,6 @@ Node_2_Disp Sobol' indices:
     }
 
     getline(fileResults, readline);// header
-    QVector<QVector<double>> sobols ;
     for (int nq=0; nq<nQoI; nq++) {
         QVector<double> sobols_vec;
         getline(fileResults, readline);// value
@@ -339,17 +328,204 @@ Node_2_Disp Sobol' indices:
 
 
     //bool done = false;
-    QGroupBox *groupBox = NULL;
+    //QGroupBox *groupBox = NULL;
     //int numEDP = 0;
 
     //QHBoxLayout *tableLayout = NULL;
     //MyTableWidget *table = NULL;
-    QStringList theTableHeadings;
-    theTableHeadings << "Random Variable" << "Main" << "Total";
     //while (done == false) {
 
     //QHBoxLayout *gsaLayout = new QHBoxLayout();
 
+    //HEREHEREHEREHEREHERE
+    gsaGraph(*&sa);
+
+
+    fileResults.close();
+
+    //
+    // create spreadsheet,  a QTableWidget showing RV and results for each run
+    //
+
+    spreadsheet = new MyTableWidget();
+
+    // open file containing tab data
+    std::ifstream tabResults(filenameTab.toStdString().c_str());
+    if (!tabResults.is_open()) {
+        qDebug() << "Could not open file";
+        return -1;
+    }
+
+    //
+    // read first line and set headings (ignoring second column for now)
+    //
+
+    std::string inputLine;
+    std::getline(tabResults, inputLine);
+    std::istringstream iss(inputLine);
+    int colCount = 0;
+
+    theHeadings << "Run #";
+
+    bool includesInterface = false;
+    do {
+        std::string subs;
+        iss >> subs;
+        if (colCount > 0) {
+            //if (subs != " ") {
+                //if (subs != "interface")
+                    theHeadings << subs.c_str();
+                //else
+                    //includesInterface = true;
+            //}
+        }
+        colCount++;
+    } while (iss);
+
+    if (includesInterface == true)
+        colCount = colCount-2;
+    else
+        colCount = colCount -1;
+
+    spreadsheet->setColumnCount(colCount);
+    spreadsheet->setHorizontalHeaderLabels(theHeadings);
+    spreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    spreadsheet->verticalHeader()->setVisible(false);
+
+    // now until end of file, read lines and place data into spreadsheet
+
+    int rowCount = 0;
+    while (std::getline(tabResults, inputLine)) {
+        std::istringstream is(inputLine);
+        int col=0;
+        //qDebug()<<"\n the inputLine is        "<<inputLine.c_str();
+
+        spreadsheet->insertRow(rowCount);
+        for (int i=0; i<colCount+2; i++) {
+            std::string data;
+            is >> data;
+            //if ((includesInterface == true && i != 1) || (includesInterface == false)) {
+                QModelIndex index = spreadsheet->model()->index(rowCount, col);
+                spreadsheet->model()->setData(index, data.c_str());
+                col++;
+            //}
+        }
+        rowCount++;
+    }
+    tabResults.close();
+
+
+    // this is where we are connecting edit triggers
+    spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
+
+    //
+    // create a chart, setting data points from first and last col of spreadsheet
+    //
+
+    chart = new QChart();
+    chart->setAnimationOptions(QChart::AllAnimations);
+
+    // by default the constructor is called and it plots the graph of the last column on Y-axis w.r.t first column on the
+    // X-axis
+    this->onSpreadsheetCellClicked(0,colCount-1);
+
+    // to control the properties, how your graph looks you must click and study the onSpreadsheetCellClicked
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    chartView->chart()->legend()->hide();
+
+
+    QWidget *widget = new QWidget();
+    QGridLayout *layout = new QGridLayout(widget);
+    QPushButton* save_spreadsheet = new QPushButton();
+    save_spreadsheet->setText("Save Data");
+    save_spreadsheet->setToolTip(tr("Save data into file in a CSV format"));
+    save_spreadsheet->resize(30,30);
+    connect(save_spreadsheet,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetClicked()));
+
+    layout->addWidget(chartView, 0,0,1,1);
+    layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
+    layout->addWidget(spreadsheet,2,0,1,1);
+
+    //
+    // add summary, detained info and spreadsheet with chart to the tabed widget
+    //
+
+    tabWidget->addTab(sa,tr("Summary"));
+    tabWidget->addTab(widget, tr("Data Values"));
+    tabWidget->adjustSize();
+
+    emit sendStatusMessage(tr(""));
+
+    return 0;
+}
+
+
+void
+SimCenterUQResultsSensitivity::onSaveSpreadsheetClicked()
+{
+
+
+    int rowCount = spreadsheet->rowCount();
+    int columnCount = spreadsheet->columnCount();
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                    tr("Save Data"), "",
+                                                    tr("All Files (*)"));
+
+
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly))
+    {
+        QTextStream stream(&file);
+        for (int j=0; j<columnCount; j++)
+        {
+            if (j == columnCount -1)
+                stream <<theHeadings.at(j);     
+            else
+                stream <<theHeadings.at(j)<<", ";
+        }
+        stream <<endl;
+        for (int i=0; i<rowCount; i++)
+        {
+            for (int j=0; j<columnCount; j++)
+            {
+                QTableWidgetItem *item_value = spreadsheet->item(i,j);
+                double value = item_value->text().toDouble();
+        if (j == columnCount-1)     
+          stream << value ;
+        else
+          stream << value << ", ";        
+            }
+            stream<<endl;
+        }
+    file.close();
+    }
+
+}
+
+
+void SimCenterUQResultsSensitivity::gsaGraph(QScrollArea *&sa)
+{
+
+
+    sa->setWidgetResizable(true);
+    sa->setLineWidth(0);
+    sa->setFrameShape(QFrame::NoFrame);
+
+    QWidget *summary = new QWidget();
+    QVBoxLayout *summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0); // adding back
+    summary->setLayout(summaryLayout);
+    sa->setWidget(summary);
+
+    QStringList theTableHeadings;
+    theTableHeadings << "Random Variable" << "Main" << "Total";
+
+    QGroupBox *groupBox = NULL;
     for (int nq=0; nq<nQoI; nq++){
         QGridLayout * trainingDataLayout = NULL;
         //std::getline(fileResults, haystack);
@@ -530,169 +706,6 @@ Node_2_Disp Sobol' indices:
     }
 
     summaryLayout->addStretch();
-
-    fileResults.close();
-
-    //
-    // create spreadsheet,  a QTableWidget showing RV and results for each run
-    //
-
-    spreadsheet = new MyTableWidget();
-
-    // open file containing tab data
-    std::ifstream tabResults(filenameTab.toStdString().c_str());
-    if (!tabResults.is_open()) {
-        qDebug() << "Could not open file";
-        return -1;
-    }
-
-    //
-    // read first line and set headings (ignoring second column for now)
-    //
-
-    std::string inputLine;
-    std::getline(tabResults, inputLine);
-    std::istringstream iss(inputLine);
-    int colCount = 0;
-
-    theHeadings << "Run #";
-
-    bool includesInterface = false;
-    do {
-        std::string subs;
-        iss >> subs;
-        if (colCount > 0) {
-            //if (subs != " ") {
-                //if (subs != "interface")
-                    theHeadings << subs.c_str();
-                //else
-                    //includesInterface = true;
-            //}
-        }
-        colCount++;
-    } while (iss);
-
-    if (includesInterface == true)
-        colCount = colCount-2;
-    else
-        colCount = colCount -1;
-
-    spreadsheet->setColumnCount(colCount);
-    spreadsheet->setHorizontalHeaderLabels(theHeadings);
-    spreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    spreadsheet->verticalHeader()->setVisible(false);
-
-    // now until end of file, read lines and place data into spreadsheet
-
-    int rowCount = 0;
-    while (std::getline(tabResults, inputLine)) {
-        std::istringstream is(inputLine);
-        int col=0;
-        //qDebug()<<"\n the inputLine is        "<<inputLine.c_str();
-
-        spreadsheet->insertRow(rowCount);
-        for (int i=0; i<colCount+2; i++) {
-            std::string data;
-            is >> data;
-            //if ((includesInterface == true && i != 1) || (includesInterface == false)) {
-                QModelIndex index = spreadsheet->model()->index(rowCount, col);
-                spreadsheet->model()->setData(index, data.c_str());
-                col++;
-            //}
-        }
-        rowCount++;
-    }
-    tabResults.close();
-
-
-    // this is where we are connecting edit triggers
-    spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-    connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
-
-    //
-    // create a chart, setting data points from first and last col of spreadsheet
-    //
-
-    chart = new QChart();
-    chart->setAnimationOptions(QChart::AllAnimations);
-
-    // by default the constructor is called and it plots the graph of the last column on Y-axis w.r.t first column on the
-    // X-axis
-    this->onSpreadsheetCellClicked(0,colCount-1);
-
-    // to control the properties, how your graph looks you must click and study the onSpreadsheetCellClicked
-
-    QChartView *chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->chart()->legend()->hide();
-
-
-    QWidget *widget = new QWidget();
-    QGridLayout *layout = new QGridLayout(widget);
-    QPushButton* save_spreadsheet = new QPushButton();
-    save_spreadsheet->setText("Save Data");
-    save_spreadsheet->setToolTip(tr("Save data into file in a CSV format"));
-    save_spreadsheet->resize(30,30);
-    connect(save_spreadsheet,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetClicked()));
-
-    layout->addWidget(chartView, 0,0,1,1);
-    layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
-    layout->addWidget(spreadsheet,2,0,1,1);
-
-    //
-    // add summary, detained info and spreadsheet with chart to the tabed widget
-    //
-
-    tabWidget->addTab(sa,tr("Summary"));
-    tabWidget->addTab(widget, tr("Data Values"));
-    tabWidget->adjustSize();
-
-    emit sendStatusMessage(tr(""));
-
-    return 0;
-}
-
-
-void
-SimCenterUQResultsSensitivity::onSaveSpreadsheetClicked()
-{
-
-    int rowCount = spreadsheet->rowCount();
-    int columnCount = spreadsheet->columnCount();
-
-    QString fileName = QFileDialog::getSaveFileName(this,
-                                                    tr("Save Data"), "",
-                                                    tr("All Files (*)"));
-
-
-    QFile file(fileName);
-    if (file.open(QIODevice::WriteOnly))
-    {
-        QTextStream stream(&file);
-        for (int j=0; j<columnCount; j++)
-        {
-	  if (j == columnCount -1)
-            stream <<theHeadings.at(j);	    
-	  else
-            stream <<theHeadings.at(j)<<", ";
-        }
-        stream <<endl;
-        for (int i=0; i<rowCount; i++)
-        {
-            for (int j=0; j<columnCount; j++)
-            {
-                QTableWidgetItem *item_value = spreadsheet->item(i,j);
-                double value = item_value->text().toDouble();
-		if (j == columnCount-1)		
-		  stream << value ;
-		else
-		  stream << value << ", ";		  
-            }
-            stream<<endl;
-        }
-	file.close();
-    }
 }
 
 void SimCenterUQResultsSensitivity::onSpreadsheetCellClicked(int row, int col)
@@ -1142,18 +1155,32 @@ SimCenterUQResultsSensitivity::outputToJSON(QJsonObject &jsonObject)
     // add summary data
     //
 
-    QJsonArray resultsData;
-    int numEDP = theNames.count();
-    for (int i=0; i<numEDP; i++) {
-        QJsonObject edpData;
-        edpData["name"]=theNames.at(i);
-        edpData["mean"]=theMeans.at(i);
-        edpData["stdDev"]=theStdDevs.at(i);
-        edpData["kurtosis"]=theKurtosis.at(i);
-        resultsData.append(edpData);
-    }
 
-    jsonObject["summary"]=resultsData;
+    QJsonArray sobols_vec;
+    for (int nq=0; nq<nQoI; nq++){
+        for (int nc=0; nc<ncomb; nc++){
+            sobols_vec.append(sobols[nq][nc]);
+        }
+        for (int nc=0; nc<ncomb; nc++){
+            sobols_vec.append(sobols[nq][nc+ncomb]);
+        }
+    }
+    jsonObject["sobols"]=sobols_vec;
+
+    QJsonArray QoIlist;
+    for (int nq=0; nq<nQoI; nq++){
+        QoIlist.append(QoInames[nq]);
+    }
+    jsonObject["QoIlist"]=QoIlist;
+
+    QJsonArray comblist;
+    for (int nc=0; nc<ncomb; nc++){
+        comblist.append(combs[nc]);
+    }
+    jsonObject["Comblist"]=comblist;
+
+    jsonObject["numQoI"]=nQoI;
+    jsonObject["numCombs"]=ncomb;
 
     //
     // add spreadsheet data
@@ -1166,6 +1193,7 @@ SimCenterUQResultsSensitivity::outputToJSON(QJsonObject &jsonObject)
 
     spreadsheetData["numRow"]=numRow;
     spreadsheetData["numCol"]=numCol;
+
 
     QJsonArray headingsArray;
     for (int i = 0; i <theHeadings.size(); ++i) {
@@ -1213,27 +1241,39 @@ SimCenterUQResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
     QVBoxLayout *summaryLayout = new QVBoxLayout();
     summary->setLayout(summaryLayout);
 
-    QJsonArray edpArray = jsonObject["summary"].toArray();
-    foreach (const QJsonValue &edpValue, edpArray) {
-        QString name;
-        double mean, stdDev;
-        QJsonObject edpObject = edpValue.toObject();
-        QJsonValue theNameValue = edpObject["name"];
-        name = theNameValue.toString();
 
-        QJsonValue theMeanValue = edpObject["mean"];
-        mean = theMeanValue.toDouble();
+    //
+    // sobols
+    //
 
-        QJsonValue theStdDevValue = edpObject["stdDev"];
-        stdDev = theStdDevValue.toDouble();
+    nQoI=jsonObject["numQoI"].toInt();
+    ncomb=jsonObject["numCombs"].toInt();
 
-        QJsonValue theKurtosis = edpObject["kurtosis"];
-        double kurtosis = theKurtosis.toDouble();
-
-        QWidget *theWidget = this->createResultEDPWidget(name, mean, stdDev, kurtosis);
-        summaryLayout->addWidget(theWidget);
+    QJsonArray sobols_vals=jsonObject["sobols"].toArray();
+    int n=0;
+    for (int nq=0; nq<nQoI; nq++){
+        QVector<double> sobols_vec;
+        for (int nc=0; nc<ncomb; nc++){
+            sobols_vec.push_back(sobols_vals[n++].toDouble());
+        }
+        for (int nc=0; nc<ncomb; nc++){
+            sobols_vec.push_back(sobols_vals[n++].toDouble());
+        }
+        sobols.push_back(sobols_vec);
     }
-    summaryLayout->addStretch();
+
+    QJsonArray QoIlist=jsonObject["QoIlist"].toArray();
+    for (int nq=0; nq<nQoI; nq++) {
+        QoInames.push_back(QoIlist[nq].toString());
+    }
+
+    QJsonArray comblist=jsonObject["Comblist"].toArray();
+    for (int nc=0; nc<ncomb; nc++) {
+        combs.push_back(comblist[nc].toString());
+    }
+
+    QScrollArea *sa = new QScrollArea;
+    gsaGraph(*&sa);
 
 
     //
@@ -1297,7 +1337,7 @@ SimCenterUQResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
     // add 3 Widgets to TabWidget
     //
 
-    tabWidget->addTab(summary,tr("Summary"));
+    tabWidget->addTab(sa,tr("Summary"));
     tabWidget->addTab(widget, tr("Data Values"));
 
     tabWidget->adjustSize();

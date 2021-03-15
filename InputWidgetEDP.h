@@ -62,6 +62,7 @@ public:
 
     int processResults(double *data);
     int getNumEDP(void);  
+    void setGPQoINames(QStringList quiNames);
     void hideAdvancedSensitivity(void);
     void showAdvancedSensitivity(void);
 

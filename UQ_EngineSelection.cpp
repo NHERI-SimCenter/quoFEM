@@ -67,17 +67,17 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <filterEngine.h>
 #include <sectiontitle.h>
 #include <InputWidgetEDP.h>
+#include <InputWidgetParameters.h>
+#include <InputWidgetFEM.h>
 
-UQ_EngineSelection::UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *parent)
-    : SimCenterAppWidget(parent), theCurrentEngine(0), theEdpWidget(edpwidget)
+UQ_EngineSelection::UQ_EngineSelection(InputWidgetParameters *param,InputWidgetFEM *femwidget,InputWidgetEDP *edpwidget, QWidget *parent)
+    : SimCenterAppWidget(parent), theCurrentEngine(0), theParameters(param), theFemWidget(femwidget), theEdpWidget(edpwidget)
 {
     QVBoxLayout *layout = new QVBoxLayout();
 
     //
     // the selection part
     //
-
-
 
     QHBoxLayout *theSelectionLayout = new QHBoxLayout();
     theSelectionLayout->setMargin(10);
@@ -117,14 +117,14 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *paren
     //
 
     theDakotaEngine = new DakotaEngine();
-    theSimCenterUQEngine = new SimCenterUQEngine(theEdpWidget);
+    theSimCenterUQEngine = new SimCenterUQEngine(theParameters,theFemWidget,theEdpWidget);
     theCustomEngine = new UQ_JsonEngine();
     //theUQpyEngine = new UQpyEngine();
     theUCSD_Engine = new UCSD_Engine();
 
     theStackedWidget->addWidget(theDakotaEngine);
     theStackedWidget->addWidget(theSimCenterUQEngine);
-    theStackedWidget->addWidget(theCustomEngine);        
+    theStackedWidget->addWidget(theCustomEngine);
     //theStackedWidget->addWidget(theUQpyEngine);
     theStackedWidget->addWidget(theUCSD_Engine);
 
@@ -132,6 +132,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *paren
     this->setLayout(layout);
     layout->setMargin(0);
     theCurrentEngine=theDakotaEngine;
+    thePreviousEngine=theCurrentEngine;
 
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
             SLOT(engineSelectionChanged(QString)));
@@ -199,17 +200,17 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
         theCurrentEngine = theDakotaEngine;
         emit onUQ_EngineChanged(true);
     }
-
     else if (arg1 == "SimCenterUQ") {
+        // == just initialize
+        delete theSimCenterUQEngine;
+        theSimCenterUQEngine = new SimCenterUQEngine(theParameters,theFemWidget,theEdpWidget);
+        theStackedWidget->insertWidget(1,theSimCenterUQEngine);
         theStackedWidget->setCurrentIndex(1);
+        theEdpWidget->showAdvancedSensitivity();
+        // ==
         theCurrentEngine = theSimCenterUQEngine;
         emit onUQ_EngineChanged(false);
-        theEdpWidget->showAdvancedSensitivity();
-    // }
-    // else if (arg1 == "UQpy") {
-    //     theStackedWidget->setCurrentIndex(2);
-    //     theCurrentEngine = theUQpyEngine;
-    //     emit onUQ_EngineChanged();
+
     } else if (arg1 == "CustomUQ") {
       theStackedWidget->setCurrentIndex(2);
       theCurrentEngine = theCustomEngine;
@@ -218,15 +219,29 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
       theStackedWidget->setCurrentIndex(3);
       theCurrentEngine = theUCSD_Engine;
       emit onUQ_EngineChanged(false);
+
+      //} else if (arg1 == "UQpy") {
+      //     theStackedWidget->setCurrentIndex(2);
+      //     theCurrentEngine = theUQpyEngine;
+      //     emit onUQ_EngineChanged();
+
     } else {
       qDebug() << "ERROR .. UQ_EngineSelection selection .. type unknown: " << arg1;
     }
 
     qDebug() << arg1;
-    
-    
+
     connect(theCurrentEngine,SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
-    //connect(theCurrentEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
+
+
+    if (thePreviousEngine->getMethodName() == "surrogate")
+    {
+        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP QoIs
+        theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
+        theFemWidget->setFEMforGP("reset");// reset FEM
+    }
+
+    thePreviousEngine = theCurrentEngine;
 }
 
 
@@ -329,10 +344,4 @@ UQ_EngineSelection::getNumParallelTasks() {
 void
 UQ_EngineSelection::numModelsChanged(int newNum) {
     emit onNumModelsChanged(newNum);
-}
-
-void
-UQ_EngineSelection::clear(void)
-{
-  theCurrentEngine->clear();
 }

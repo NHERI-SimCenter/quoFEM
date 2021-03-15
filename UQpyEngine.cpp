@@ -104,6 +104,9 @@ UQpyEngine::getProcessingScript() {
     return QString("parseUQpy.py");
 }
 
-
+QString
+UQpyEngine::getMethodName() {
+  return QString("UQpy");
+}
 
 
