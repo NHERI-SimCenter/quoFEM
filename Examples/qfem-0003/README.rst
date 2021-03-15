@@ -2,9 +2,9 @@
 Reliability Analysis
 ====================
 
-+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| Problem files   | `quo-03 <https://github.com/claudioperez/SimCenterDocumentation/tree/examples/docs/common/user_manual/examples/desktop/quoFEM/src/quo-03>`__   |
-+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------+
++-----------------+--------------------------------------------+
+| Problem files   | :github:`Download <Examples/qfem-0003/>`   |
++-----------------+--------------------------------------------+
 
 This example uses quoFEM to perform a second-order reliability analysis
 (SORM) of an OpenSees FE model.
@@ -12,11 +12,14 @@ This example uses quoFEM to perform a second-order reliability analysis
 Consider the stochastic response of a two-dimensional truss structure
 shown in the following figure with uncertain section dimensions,
 material moduli, and loading magnitude. Two input scripts are used to
-define a `local
-reliability </common/user_manual/usage/desktop/DakotaReliability.html>`__
+define a `local reliability </common/user_manual/usage/desktop/DakotaReliability.html>`__
 procedure to be coordinated by quoFEM which will estimate response
 magnitudes whose probabilities of exceedance are 0.02, 0.2, 0.4, 0.6,
-0.8, and 0.99. |Simple truss model.|
+0.8, and 0.99.
+
+.. figure:: qfem-0003.png
+   :width: 500px
+   :align:center
 
 The following parameters are defined in the **RV** tab of quoFEM:
 
@@ -89,5 +92,4 @@ figure:
    Sensitivity analysis results.
 
 
-.. |Simple truss model.| image:: qfem-0003.png
 
