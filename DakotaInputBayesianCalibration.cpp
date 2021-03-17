@@ -263,17 +263,13 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
         int j = uq["jumpStep"].toInt();
         jumpStep->setText(QString::number(j));
 
+        bool readCalDataBool = false;
         if (uq.contains("readCalibrationData")) {
             if(uq["readCalibrationData"].toBool()) {
-                readCalibrationDataCheckBox->setChecked(true);
-            }
-            else {
-                readCalibrationDataCheckBox->setChecked(false);
+                readCalDataBool = true;
             }
         }
-        else {
-            readCalibrationDataCheckBox->setChecked(false);
-        }
+        readCalibrationDataCheckBox->setChecked(readCalDataBool);
 
 
 //        if (jsonObject.contains("advancedOpt")) {

@@ -196,17 +196,13 @@ DakotaInputCalibration::inputFromJSON(QJsonObject &jsonObject)
     calibrationMethod->setCurrentIndex(index);
     scalingFactors->setText(fact);
 
+    bool readCalDataBool = false;
     if (uq.contains("readCalibrationData")) {
         if(uq["readCalibrationData"].toBool()) {
-            readCalibrationDataCheckBox->setChecked(true);
-        }
-        else {
-            readCalibrationDataCheckBox->setChecked(false);
+            readCalDataBool = true;
         }
     }
-    else {
-        readCalibrationDataCheckBox->setChecked(false);
-    }
+    readCalibrationDataCheckBox->setChecked(readCalDataBool);
     return result;
 
 }
