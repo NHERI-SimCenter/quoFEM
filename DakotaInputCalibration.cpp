@@ -204,6 +204,9 @@ DakotaInputCalibration::inputFromJSON(QJsonObject &jsonObject)
             readCalibrationDataCheckBox->setChecked(false);
         }
     }
+    else {
+        readCalibrationDataCheckBox->setChecked(false);
+    }
     return result;
 
 }

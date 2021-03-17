@@ -271,6 +271,9 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
                 readCalibrationDataCheckBox->setChecked(false);
             }
         }
+        else {
+            readCalibrationDataCheckBox->setChecked(false);
+        }
 
 
 //        if (jsonObject.contains("advancedOpt")) {
