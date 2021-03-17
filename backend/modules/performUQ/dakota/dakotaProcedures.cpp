@@ -674,6 +674,7 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
     numResponses = json_array_size(rootEDP);
 
     int numFieldResponses = 0;
+    int numScalarResponses = 0;
 
     if (idResponse.compare("calibration") != 0)
       dakotaFile << " response_functions = " << numResponses << "\n response_descriptors = ";
@@ -700,10 +701,16 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
               if (varType.compare("field") == 0) {
                   numFieldResponses++;
               }
+              else {
+              numScalarResponses++;
+              }
           }
       }
 
       if (numFieldResponses > 0) {
+          if (numScalarResponses > 0) {
+          dakotaFile << "\n  scalar_calibration_terms = " << numScalarResponses;
+          }
           dakotaFile << "\n\n  # Define field terms";
           dakotaFile << "\n  field_calibration_terms = " << numFieldResponses << "\n  lengths = ";
           for (int j = 0; j < numResponses; j++) {
