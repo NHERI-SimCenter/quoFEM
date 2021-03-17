@@ -89,9 +89,7 @@ if os.path.isfile("readCalibrationData.cal"):
     with open(inputFile, 'r') as f:
         jsonInputs = json.load(f)
     edpArray = jsonInputs['EDP']
-    edpNames = []
-    for edp in edpArray:
-        edpNames.append(edp["name"])
+    edpNames = [edp["name"] for edp in edpArray]
 
     for edpName in edpNames:
         datFileList = glob.glob("{}.*.dat".format(edpName))

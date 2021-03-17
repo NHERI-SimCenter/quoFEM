@@ -732,18 +732,8 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
           dakotaFile << "\n\n  # Specify to read calibration data";
           dakotaFile << "\n  calibration_data";
 
-          // Create a file containing the names of the calibration data files
+          // Create an empty file to indicate that calibration data files must be moved to upper directory
           std::ofstream calFile("readCalibrationData.cal");
-//          for (auto &p : fs::recursive_directory_iterator(".")) {
-//              if (p.path().extension() == ".dat") {
-//                  for (int j=0; j < numResponses; j++) {
-//                      calFile << "{}*.dat\n";
-//                  }
-//              }
-//          }
-
-////          calFile << "stress.1.dat\n";
-////          calFile << "stress.coords\n";
           calFile.close();
           }
       }
