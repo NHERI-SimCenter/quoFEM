@@ -47,6 +47,7 @@ class QGridLayout;
 class QComboBox;
 class QPushButton;
 class QLineEdit;
+class QCheckBox;
 
 class RandomVariablesContainer;
 
@@ -83,6 +84,9 @@ private:
     QLineEdit   *randomSeed;
     QLineEdit   *burnInSamples;
     QLineEdit   *jumpStep;
+//    QLineEdit   *calibrationData;
+    QCheckBox   *calibrateErrorCheckBox;
+    QCheckBox   *readCalibrationDataCheckBox;
     //QComboBox   *emulator;
     //QLineEdit   *maxIterations;
     //QLineEdit   *convTol;

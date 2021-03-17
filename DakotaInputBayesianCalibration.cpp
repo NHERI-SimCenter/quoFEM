@@ -128,6 +128,21 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
 
     layout->addWidget(new QLabel("Seed"), 6, 0);
     layout->addWidget(randomSeed, 6, 1);
+
+//    calibrationData = new QLineEdit();
+//    layout->addWidget(new QLabel("Calibration data file"), 7, 0);
+//    layout->addWidget(calibrationData, 7, 1, 1, 2);
+
+    readCalibrationDataCheckBox = new QCheckBox();
+    readCalibrationDataCheckBox->setChecked(false);
+    layout->addWidget(new QLabel("Read calibration data from file"), 7, 0);
+    layout->addWidget(readCalibrationDataCheckBox, 7, 1);
+
+//    calibrateErrorCheckBox = new QCheckBox();
+//    calibrateErrorCheckBox->setChecked(false);
+//    layout->addWidget(new QLabel("Calibrate error multipliers"), 8, 0);
+//    layout->addWidget(calibrateErrorCheckBox, 8, 1);
+
     /*
     emulator = new QComboBox();
     emulator->addItem(tr("Gaussian Process"));
@@ -165,9 +180,9 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
 
     layout->setColumnStretch(1, 2);
     layout->setColumnStretch(2, 1);
-    layout->setColumnStretch(3,4);
+    layout->setColumnStretch(3, 4);
 
-    layout->setRowStretch(7,1);
+    layout->setRowStretch(9, 1);
 
     this->setLayout(layout);
 }
@@ -194,12 +209,16 @@ DakotaInputBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
     bool result = true;
     QJsonObject uq;
     uq["method"]=calibrationMethod->currentText();
+    uq["chains"]=chains->text().toInt();
     uq["chainSamples"]=chainSamples->text().toInt();
-    uq["seed"]=randomSeed->text().toDouble();
     uq["burnInSamples"]=burnInSamples->text().toInt();
     uq["jumpStep"]=jumpStep->text().toInt();
+    uq["seed"]=randomSeed->text().toDouble();
+    uq["readCalibrationData"]=readCalibrationDataCheckBox->isChecked();
+//    uq["calibrateErrorMultipliers"]=calibrateErrorCheckBox->isChecked();
+
     //uq["mcmcMethod"]=mcmcMethod->currentText();
-    uq["chains"]=chains->text().toInt();
+
     //uq["emulator"]=emulator->currentText();
     //uq["maxIter"]=maxIterations->text().toInt();
     //uq["tol"]=convTol->text().toDouble();
@@ -214,7 +233,7 @@ DakotaInputBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
 bool
 DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 {
-    bool result = true;
+//    bool result = true;
     this->clear();
 
     if (jsonObject.contains("bayesianCalibrationMethodData")) {
@@ -244,6 +263,29 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
         int j = uq["jumpStep"].toInt();
         jumpStep->setText(QString::number(j));
 
+        if (uq.contains("readCalibrationData")) {
+            if(uq["readCalibrationData"].toBool()) {
+                readCalibrationDataCheckBox->setChecked(true);
+            }
+            else {
+                readCalibrationDataCheckBox->setChecked(false);
+            }
+        }
+
+
+//        if (jsonObject.contains("advancedOpt")) {
+//            if (jsonObject["advancedOpt"].toBool()) {
+//              theAdvancedCheckBox->setChecked(true);
+
+        if (uq.contains("calibrateErrorMultipliers"))
+            qDebug() << "\n\n Contains calibrateErrorMultipliers, state: " << uq["calibrateErrorMultipliers"].toBool();
+            if (uq["calibrateErrorMultipliers"].toBool()) {
+                calibrateErrorCheckBox->setChecked(true);
+                qDebug() << "calibrateErrorCheckBox setChecked to true";
+            }
+
+
+
         //QString em = uq["emulator"].toString();
         //index =emulator->findText(em);
         //emulator->setCurrentIndex(index);
@@ -258,7 +300,7 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
         //scalingFactors->setText(fact);
 
     } else {
-        emit sendErrorMessage("ERROR: Bayesian Calibration INput - no \"bayesian_calibration_method\" data");
+        emit sendErrorMessage("ERROR: Bayesian Calibration Input - no \"bayesian_calibration_method\" data");
         return false;
     }
 
