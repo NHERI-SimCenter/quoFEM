@@ -70,6 +70,9 @@ private:
    // EDPData *theData;
     QRadioButton *button;
     QLineEdit *variableName;
+    QLineEdit *varLength;
+//    QLineEdit *varNumIndCoords;
+//    QLineEdit *varExperimentVarianceType;
     QHBoxLayout *mainLayout;
     bool resultsSet;
     QLineEdit *mean;

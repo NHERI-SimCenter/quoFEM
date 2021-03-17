@@ -46,6 +46,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFrame>
 #include <QRadioButton>
 #include <QDebug>
+#include <QGridLayout>
+#include <QValidator>
 
 //
 // headers for EDPDistribution subclasses that user can select
@@ -73,6 +75,74 @@ QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit){
     return theWidget;
 }
 
+QWidget *addOneEDP(QString theLabelName, QLineEdit **theLineEdit,
+                   QString theLabelLength, QLineEdit **theLength){
+//QWidget *addOneEDP(QString theLabelName, QLineEdit **theLineEdit,
+//                   QString theLabelLength, QLineEdit **theLength,
+//                   QString theLabelIndCoords, QLineEdit **theIndCoords,
+//                   QString theLabelVarType, QLineEdit **theVarType){
+
+//    QVBoxLayout *theLayout = new QVBoxLayout();
+    QGridLayout *theLayout = new QGridLayout();
+    QLabel *theLabel = new QLabel();
+    theLabel->setText(theLabelName);
+    QLineEdit *theEdit = new QLineEdit();
+    theLabel->setMaximumWidth(200);
+    theLabel->setMinimumWidth(40);
+    theEdit->setMaximumWidth(200);
+    theEdit->setMinimumWidth(40);
+
+    int bottom = 1;
+    QIntValidator *posIntValidator = new QIntValidator();
+    posIntValidator->setBottom(bottom);
+
+    QLabel *lengthLabel = new QLabel();
+    lengthLabel->setText(theLabelLength);
+    QLineEdit *lengthEdit = new QLineEdit();
+    lengthEdit->setText("1");
+    lengthEdit->setValidator(posIntValidator);
+
+//    QLabel *numIndCoordsLabel = new QLabel();
+//    numIndCoordsLabel->setText(theLabelIndCoords);
+//    QLineEdit *numIndCoordsEdit = new QLineEdit();
+//    numIndCoordsEdit->setValidator(posIntValidator);
+
+//    QLabel *expVarTypeLabel = new QLabel();
+//    expVarTypeLabel->setText(theLabelVarType);
+//    QLineEdit *expVarTypeEdit = new QLineEdit();
+
+    theLayout->addWidget(theLabel, 0, 0);
+    theLayout->addWidget(theEdit, 1, 0);
+    theLayout->addWidget(lengthLabel, 0, 1);
+    theLayout->addWidget(lengthEdit, 1, 1);
+//    theLayout->addWidget(numIndCoordsLabel, 0, 2);
+//    theLayout->addWidget(numIndCoordsEdit, 1, 2);
+//    theLayout->addWidget(expVarTypeLabel, 0, 3);
+//    theLayout->addWidget(expVarTypeEdit, 1, 3);
+
+//    theLayout->setSpacing(0);
+    theLayout->setHorizontalSpacing(10);
+    theLayout->setVerticalSpacing(0);
+    theLayout->setMargin(0);
+
+    theLayout->setColumnStretch(0, 4);
+    theLayout->setColumnStretch(1, 1);
+    theLayout->setColumnStretch(2, 1);
+    theLayout->setColumnStretch(3, 1);
+
+    QWidget *theWidget = new QWidget();
+    theWidget->setLayout(theLayout);
+
+    *theLineEdit = theEdit;
+    *theLength = lengthEdit;
+//    *theIndCoords = numIndCoordsEdit;
+//    *theVarType = expVarTypeEdit;
+    return theWidget;
+}
+
+// abs - changing the EDP method to support field data
+//EDP::EDP(QString EDPname, QWidget *parent)
+//    :QWidget(parent),resultsSet(false),mean(0),stdDev(0)
 EDP::EDP(QString EDPname, QWidget *parent)
     :QWidget(parent),resultsSet(false),mean(0),stdDev(0)
 {
@@ -82,7 +152,13 @@ EDP::EDP(QString EDPname, QWidget *parent)
 
     mainLayout = new QHBoxLayout;
 
-    QWidget *nameWidget = addLabeledLineEdit(QString("Variable Name"), &variableName);
+    // abs - changing the widget for EDP definition
+//    QWidget *nameWidget = addLabeledLineEdit(QString("Variable Name"), &variableName);
+    QWidget *nameWidget = addOneEDP(QString("Variable Name"), &variableName, QString("Length"), &varLength);
+//    QWidget *nameWidget = addOneEDP(QString("Variable Name"), &variableName, QString("Length"), &varLength,
+//                                    QString("# Coordinates"), &varNumIndCoords,
+//                                    QString("Variance Type"), &varExperimentVarianceType);
+
     variableName->setText(EDPname);
 
     button = new QRadioButton();
@@ -113,6 +189,17 @@ bool EDP::outputToJSON(QJsonObject &jsonObject){
         jsonObject["mean"]=mean->text().toDouble();
         jsonObject["stdDev"]=stdDev->text().toDouble();
     }
+
+    // abs - adding for new EDP definition
+    if (varLength->text().toInt() > 1) {
+        jsonObject["type"]="field";
+//        jsonObject["numIndCoords"]=varNumIndCoords->text().toInt();
+    } else {
+        jsonObject["type"]="scalar";
+    }
+    jsonObject["length"]=varLength->text().toInt();
+//    jsonObject["expVarianceType"]=varExperimentVarianceType->text().simplified();
+
     return true;
 }
 
@@ -134,6 +221,24 @@ bool EDP::inputFromJSON(QJsonObject &jsonObject){
 
         mainLayout->insertWidget(3, stdDevWidget);
         mainLayout->addStretch();
+    }
+
+    // abs - adding for new EDP definition
+    if (jsonObject.contains("type")) {
+        QJsonValue theVarLength = jsonObject["length"];
+        // add the length
+        varLength->setText(QString::number(theVarLength.toInt()));
+//        QJsonValue theVarType = jsonObject["expVarianceType"];
+//        varExperimentVarianceType->setText(theVarType.toString().simplified());
+//        if (jsonObject.contains("numIndCoords")) {
+//            QJsonValue theNumIndCoords = jsonObject["numIndCoords"];
+//            varNumIndCoords->setText(QString::number(theNumIndCoords.toInt()));
+//        }
+    }
+    else {
+        varLength->setText("1");
+//        varExperimentVarianceType->setText("");
+//        varNumIndCoords->setText("");
     }
     return true;
 }
