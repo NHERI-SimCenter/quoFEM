@@ -239,7 +239,8 @@
         "qfem-0014/README.rst",
         "qfem-0014/figures/quo-14-UQ.png",
         "qfem-0014/src/postProcessing.py",
-        "qfem-0014/qfem-0014.png"
+        "qfem-0014/qfem-0014.png",
+		"qfem-0014/src/generateData.py"
       ],
       "entry_point": "qfem-0014/input.json",
       "summary": "In this example, Bayesian estimation is used to estimate the lateral story stiffnesses of the two stories of a simple steel frame, given data about its mode shapes and frequencies. The transitional Markov chain Monte Carlo algorithm is used to obtain samples from the posterior probability distribution of the lateral story stiffnesses",
