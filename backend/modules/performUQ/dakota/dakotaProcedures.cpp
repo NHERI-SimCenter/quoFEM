@@ -576,7 +576,7 @@ writeInterface(std::ostream &dakotaFile, json_t *uqData, std::string &workflowDr
 
 int
 writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse, bool numericalGradients, bool numericalHessians,
-	      std::vector<std::string> &edpList, bool readCalibrationData) {
+	      std::vector<std::string> &edpList, bool readCalibrationData, int numExperiments) {
 
   int numResponses = 0;
 
@@ -743,6 +743,11 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
       if (readCalibrationData) {
           dakotaFile << "\n\n  # Specify to read calibration data";
           dakotaFile << "\n  calibration_data";
+          int nExp = numExperiments;
+          if (nExp < 1) {
+          nExp = 1;
+          }
+          dakotaFile << "\n  num_experiments = " << nExp;
 
           // Create an empty file to indicate that calibration data files must be moved to upper directory
           std::ofstream calFile("readCalibrationData.cal");
@@ -822,7 +827,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList, true);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
     }
 
     else if (strcmp(method,"LHS")==0) {
@@ -841,7 +846,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
     }
 
     else if (strcmp(method,"Importance Sampling")==0) {
@@ -856,7 +861,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
     }
 
     else if (strcmp(method,"Gaussian Process Regression")==0) {
@@ -898,7 +903,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       std::string interfaceString("SimulationInterface");
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, interfaceString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
 
     }
 
@@ -932,7 +937,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       std::string interfaceString("SimulationInterface");
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, interfaceString, evaluationConcurrency);
-      int numResponse = writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false);
+      int numResponse = writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
 
       dakotaFile << "method \n polynomial_chaos \n " << pceMethod << intValue;
       dakotaFile << "\n samples_on_emulator = " << samplingSamples << "\n seed = " << samplingSeed << "\n sample_type = "
@@ -1002,7 +1007,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, true, true, edpList, false);
+      writeResponse(dakotaFile, rootEDP, emptyString, true, true, edpList, false, 0);
     }
 
     else if (strcmp(method,"Global Reliability")==0) {
@@ -1042,7 +1047,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, false);
+      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, false, 0);
     }
 
   } else if ((strcmp(type, "Parameters Estimation") == 0)) {
@@ -1059,6 +1064,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     double tol = json_number_value(json_object_get(methodData,"convergenceTol"));
     const char *factors = json_string_value(json_object_get(methodData,"factors"));
     bool readCalibrationDataFile = json_boolean_value(json_object_get(methodData, "readCalibrationData"));
+    int numExperiments = json_integer_value(json_object_get(methodData, "numExperiments"));
 
     dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
 
@@ -1074,7 +1080,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     std::string emptyString;
     writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
     writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-    writeResponse(dakotaFile, rootEDP, calibrationString, true, false, edpList, readCalibrationDataFile);
+    writeResponse(dakotaFile, rootEDP, calibrationString, true, false, edpList, readCalibrationDataFile, numExperiments);
 
     if (strcmp(factors,"") != 0) {
       dakotaFile << "\n  primary_scale_types = \"value\" \n  primary_scales = ";
@@ -1115,6 +1121,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     //    double tol = json_number_value(json_object_get(methodData,"tol"));
 
     bool readCalibrationDataFile = json_boolean_value(json_object_get(methodData, "readCalibrationData"));
+    int numExperiments = json_integer_value(json_object_get(methodData, "numExperiments"));
 
     if (strcmp(method,"DREAM")==0) {
 
@@ -1137,7 +1144,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	mcmcString = "adaptive_metropolis";
       else if (strcmp(mcmc,"Metropolis Hastings")==0)
 	mcmcString = "metropolis_hastings";
-      else if (strcmp(mcmc,"Multilevek")==0)
+      else if (strcmp(mcmc,"Multilevel")==0)
 	mcmcString = "multilevel";
 
       dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
@@ -1150,7 +1157,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     std::string emptyString;
     writeRV(dakotaFile, theRandomVariables, emptyString, rvList, false);
     writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-    writeResponse(dakotaFile, rootEDP, calibrationString, false, false, edpList, readCalibrationDataFile);
+    writeResponse(dakotaFile, rootEDP, calibrationString, false, false, edpList, readCalibrationDataFile, numExperiments);
 
   } else {
     std::cerr << "uqType: NOT KNOWN\n";
