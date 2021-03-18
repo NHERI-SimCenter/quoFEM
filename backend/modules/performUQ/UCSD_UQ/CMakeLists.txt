@@ -1,7 +1,5 @@
-simcenter_add_python_script(SCRIPT createResult.py)
 simcenter_add_python_script(SCRIPT parseData.py)
 simcenter_add_python_script(SCRIPT runFEM.py)
-simcenter_add_python_script(SCRIPT generateData.py)
 simcenter_add_python_script(SCRIPT pdfs.py)
 simcenter_add_python_script(SCRIPT runTMCMC.py)
 simcenter_add_python_script(SCRIPT mainscript.py)
