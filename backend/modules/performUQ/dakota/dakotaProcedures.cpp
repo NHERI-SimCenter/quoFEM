@@ -712,7 +712,12 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
           dakotaFile << "\n  scalar_calibration_terms = " << numScalarResponses;
           }
           dakotaFile << "\n\n  # Define field terms";
-          dakotaFile << "\n  field_calibration_terms = " << numFieldResponses << "\n  lengths = ";
+          if (idResponse.compare("calibration") != 0) {
+            dakotaFile << "\n  field_responses = " << numFieldResponses << "\n  lengths = ";
+          }
+          else {
+            dakotaFile << "\n  field_calibration_terms = " << numFieldResponses << "\n  lengths = ";
+          }
           for (int j = 0; j < numResponses; j++) {
               json_t *theEDP_Item = json_array_get(rootEDP, j);
               std::string varType = json_string_value(json_object_get(theEDP_Item, "type"));
