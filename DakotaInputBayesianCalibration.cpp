@@ -109,7 +109,6 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     layout->addWidget(chains, 1, 1, 1, 2);
 
 
-
     chainSamples = new QLineEdit();
     chainSamples->setText(tr("1000"));
     chainSamples->setValidator(posIntValidator);
@@ -133,20 +132,20 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     layout->addWidget(jumpStep, 4, 1, 1, 2);
 
 
-
     srand(time(NULL));
     int randomNumber = rand() % 1000 + 1;
     randomSeed = new QLineEdit();
     randomSeed->setText(QString::number(randomNumber));
     randomSeed->setValidator(new QIntValidator);
     randomSeed->setToolTip("Set Random Seed Value");
-
     layout->addWidget(new QLabel("Seed"), 5, 0, 1, 2);
     layout->addWidget(randomSeed, 5, 1, 1, 2);
+
 
 //    calibrationData = new QLineEdit();
 //    layout->addWidget(new QLabel("Calibration data file"), 7, 0);
 //    layout->addWidget(calibrationData, 7, 1, 1, 2);
+
 
     readCalibrationDataCheckBox = new QCheckBox();
     readCalibrationDataCheckBox->setChecked(false);
@@ -166,41 +165,36 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     numExperiments->setVisible(false);
     numExperimentsLabel->setVisible(false);
 
+
     layout->addWidget(numExperimentsLabel, 6, 2, 1, 1);
-    layout->addWidget(numExperiments, 6, 3, 1, 1);
+    layout->addWidget(numExperiments, 6, 3, 1, 2);
 
-//    readCalDataWidget = new QHBoxLayout();
-//    readCalDataWidget->addWidget(new QLabel("Read calibration data from file"));
-//    readCalDataWidget->addWidget(readCalibrationDataCheckBox);
-//    readCalDataWidget->addStretch();
-//    readCalDataWidget->addWidget(numExperimentsLabel);
-//    readCalDataWidget->addWidget(numExperiments);
-//    layout->addLayout(readCalDataWidget, 7, 0, 1, 2);
 
-//    readCovarianceDataLabel = new QLabel();
-//    readCovarianceDataLabel->setText(tr("Read error covariance data from file"));
-//    readCovarianceDataCheckBox = new QCheckBox();
-//    readCovarianceDataCheckBox->setChecked(false);
+    readCovarianceDataLabel = new QLabel();
+    readCovarianceDataLabel->setText(tr("Read error covariance from file"));
+    readCovarianceDataCheckBox = new QCheckBox();
+    readCovarianceDataCheckBox->setChecked(false);
 
-//    readCovarianceDataLabel->setVisible(false);
-//    readCovarianceDataCheckBox->setVisible(false);
-//    connect(readCovarianceDataCheckBox,SIGNAL(toggled(bool)),this,SLOT(showCalibrateCovMultiplierCheckBox(bool)));
 
-//    calibrateCovarianceMultiplierLabel = new QLabel();
-//    calibrateCovarianceMultiplierLabel->setText(tr("Calibrate multipliers on error covariance"));
-//    calibrateCovarianceMultiplierCheckBox = new QCheckBox();
-//    calibrateCovarianceMultiplierCheckBox->setChecked(false);
+    readCovarianceDataLabel->setVisible(false);
+    readCovarianceDataCheckBox->setVisible(false);
+    connect(readCovarianceDataCheckBox,SIGNAL(toggled(bool)),this,SLOT(showCalibrateCovMultiplierCheckBox(bool)));
 
-//    calibrateCovarianceMultiplierLabel->setVisible(false);
-//    calibrateCovarianceMultiplierCheckBox->setVisible(false);
 
-//    readErrorCovarianceDataWidget = new QHBoxLayout();
-//    readErrorCovarianceDataWidget->addWidget(readCovarianceDataLabel);
-//    readErrorCovarianceDataWidget->addWidget(readCovarianceDataCheckBox);
-//    readErrorCovarianceDataWidget->addStretch();
-//    readErrorCovarianceDataWidget->addWidget(calibrateCovarianceMultiplierLabel);
-//    readErrorCovarianceDataWidget->addWidget(calibrateCovarianceMultiplierCheckBox);
-//    layout->addLayout(readErrorCovarianceDataWidget, 8, 0, 1, 2);
+    calibrateCovarianceMultiplierLabel = new QLabel();
+    calibrateCovarianceMultiplierLabel->setText(tr("Calibrate multipliers on error covariance"));
+    calibrateCovarianceMultiplierCheckBox = new QCheckBox();
+    calibrateCovarianceMultiplierCheckBox->setChecked(false);
+
+
+    calibrateCovarianceMultiplierLabel->setVisible(false);
+    calibrateCovarianceMultiplierCheckBox->setVisible(false);
+
+
+    layout->addWidget(readCovarianceDataLabel, 7, 0, 1, 1);
+    layout->addWidget(readCovarianceDataCheckBox, 7, 1, 1, 1);
+    layout->addWidget(calibrateCovarianceMultiplierLabel, 7, 2, 1, 2);
+    layout->addWidget(calibrateCovarianceMultiplierCheckBox, 7, 4, 1, 1);
 
 
     /*
@@ -242,18 +236,18 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
 //    layout->setColumnStretch(2, 1);
 //    layout->setColumnStretch(3, 1);
 //    layout->setColumnStretch(4, 3);
-    layout->setColumnStretch(5, 1);
+    layout->setColumnStretch(6, 1);
 
     layout->setRowStretch(9, 1);
 
-//    layout->setColumnMinimumWidth(0, 100);
-//    layout->setColumnMinimumWidth(1, 50);
+    layout->setColumnMinimumWidth(0, 180);
+    layout->setColumnMinimumWidth(1, 20);
 //    layout->setColumnMinimumWidth(2, 50);
 //    layout->setColumnMinimumWidth(3, 50);
-//    layout->setColumnMinimumWidth(4, 100);
-//    layout->setColumnSizeHint
+    layout->setColumnMinimumWidth(4, 14);
 
-    layout->setRowMinimumHeight(6, 20);
+    layout->setRowMinimumHeight(6, 24);
+    layout->setRowMinimumHeight(7, 24);
 
     this->setLayout(layout);
 }
@@ -279,19 +273,19 @@ void DakotaInputBayesianCalibration::showNumExp(bool tog)
     if (tog) {
         numExperiments->setVisible(true);
         numExperimentsLabel->setVisible(true);
-//        readCovarianceDataLabel->setVisible(true);
-//        readCovarianceDataCheckBox->setVisible(true);
-//        if (readCovarianceDataCheckBox->isChecked()) {
-//            calibrateCovarianceMultiplierLabel->setVisible(true);
-//            calibrateCovarianceMultiplierCheckBox->setVisible(true);
-//        }
+        readCovarianceDataLabel->setVisible(true);
+        readCovarianceDataCheckBox->setVisible(true);
+        if (readCovarianceDataCheckBox->isChecked()) {
+            calibrateCovarianceMultiplierLabel->setVisible(true);
+            calibrateCovarianceMultiplierCheckBox->setVisible(true);
+        }
     } else {
         numExperiments->setVisible(false);
         numExperimentsLabel->setVisible(false);
-//        readCovarianceDataLabel->setVisible(false);
-//        readCovarianceDataCheckBox->setVisible(false);
-//        calibrateCovarianceMultiplierLabel->setVisible(false);
-//        calibrateCovarianceMultiplierCheckBox->setVisible(false);
+        readCovarianceDataLabel->setVisible(false);
+        readCovarianceDataCheckBox->setVisible(false);
+        calibrateCovarianceMultiplierLabel->setVisible(false);
+        calibrateCovarianceMultiplierCheckBox->setVisible(false);
     }
 }
 
@@ -321,6 +315,9 @@ DakotaInputBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
     uq["seed"]=randomSeed->text().toDouble();
     uq["readCalibrationData"]=readCalibrationDataCheckBox->isChecked();
     uq["numExperiments"]=numExperiments->text().toInt();
+    uq["readCovariance"]=readCovarianceDataCheckBox->isChecked();
+    uq["calibrateCovarianceMultipliers"]=calibrateCovarianceMultiplierCheckBox->isChecked();
+
 //    uq["calibrateErrorMultipliers"]=calibrateErrorCheckBox->isChecked();
 
     //uq["mcmcMethod"]=mcmcMethod->currentText();
@@ -339,7 +336,7 @@ DakotaInputBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
 bool
 DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 {
-//    bool result = true;
+    bool result = true;
     this->clear();
 
     if (jsonObject.contains("bayesianCalibrationMethodData")) {
@@ -369,6 +366,8 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
         int j = uq["jumpStep"].toInt();
         jumpStep->setText(QString::number(j));
 
+        bool calibrateCovarianceMultipliersBool = false;
+        bool readCovarianceBool = false;
         int numExp = 1;
         bool readCalDataBool = false;
         if (uq.contains("readCalibrationData")) {
@@ -377,22 +376,51 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
                 if (uq.contains("numExperiments")) {
                     numExp = uq["numExperiments"].toInt();
                 }
-                numExperiments->setText(QString::number(numExp));
+                if (uq.contains("readCovariance")) {
+                    readCovarianceBool = uq["readCovariance"].toBool();
+                }
+                if (uq.contains("calibrateCovarianceMultipliers")) {
+                    calibrateCovarianceMultipliersBool = uq["calibrateCovarianceMultipliers"].toBool();
+                }
             }
         }
         readCalibrationDataCheckBox->setChecked(readCalDataBool);
+        numExperiments->setText(QString::number(numExp));
+        readCovarianceDataCheckBox->setChecked(readCovarianceBool);
+        calibrateCovarianceMultiplierCheckBox->setChecked(calibrateCovarianceMultipliersBool);
 
+        if (calibrateCovarianceMultipliersBool) {
+            if (!readCovarianceBool){
+                emit sendErrorMessage("ERROR: Bayesian Calibration Input - covariance data must be read from file to calibrate multipliers");
+                result = false;
+            }
+            else {
+                if (!readCalDataBool) {
+                    emit sendErrorMessage("ERROR: Bayesian Calibration Input - calibration data must also be read from file if calibrating multipliers");
+                    result = false;
+                }
+            }
+        }
+
+        if (readCovarianceBool) {
+            if (!readCalDataBool) {
+                emit sendErrorMessage("ERROR: Bayesian Calibration Input - calibration data must also be read from file if reading error covariance from file");
+                result = false;
+            }
+        }
+
+
+
+//        if (uq.contains("calibrateErrorMultipliers"))
+//            qDebug() << "\n\n Contains calibrateErrorMultipliers, state: " << uq["calibrateErrorMultipliers"].toBool();
+//            if (uq["calibrateErrorMultipliers"].toBool()) {
+//                calibrateCovarianceMultiplierCheckBox->setChecked(true);
+//                qDebug() << "calibrateErrorCheckBox setChecked to true";
+//            }
 
 //        if (jsonObject.contains("advancedOpt")) {
 //            if (jsonObject["advancedOpt"].toBool()) {
 //              theAdvancedCheckBox->setChecked(true);
-
-        if (uq.contains("calibrateErrorMultipliers"))
-            qDebug() << "\n\n Contains calibrateErrorMultipliers, state: " << uq["calibrateErrorMultipliers"].toBool();
-            if (uq["calibrateErrorMultipliers"].toBool()) {
-                calibrateCovarianceMultiplierCheckBox->setChecked(true);
-                qDebug() << "calibrateErrorCheckBox setChecked to true";
-            }
 
 
 
@@ -411,10 +439,10 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 
     } else {
         emit sendErrorMessage("ERROR: Bayesian Calibration Input - no \"bayesian_calibration_method\" data");
-        return false;
+        result = false;
     }
 
-    return true;
+    return result;
 }
 
 void DakotaInputBayesianCalibration::onMethodChanged(const QString &arg1)
