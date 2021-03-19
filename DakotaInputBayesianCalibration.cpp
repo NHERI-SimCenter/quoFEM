@@ -191,6 +191,7 @@ void DakotaInputBayesianCalibration::clear(void)
 bool
 DakotaInputBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
 {
+
     bool result = true;
     QJsonObject uq;
     uq["method"]=calibrationMethod->currentText();

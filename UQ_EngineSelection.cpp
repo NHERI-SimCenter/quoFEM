@@ -73,6 +73,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 UQ_EngineSelection::UQ_EngineSelection(InputWidgetParameters *param,InputWidgetFEM *femwidget,InputWidgetEDP *edpwidget, QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEngine(0), theParameters(param), theFemWidget(femwidget), theEdpWidget(edpwidget)
 {
+
     QVBoxLayout *layout = new QVBoxLayout();
 
     //
@@ -261,7 +262,6 @@ UQ_EngineSelection::outputAppDataToJSON(QJsonObject &jsonObject)
     return true;
 }
 
-
 bool
 UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
 {
@@ -285,7 +285,7 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
                 index = 1;
                 // } else if ((type == QString("UQpy")) || (type == QString("UQpyEngine"))) {
                 //   index = 2;
-            } else if ((type == QString("CustomUQ")) || type == QString("CustomUQEngine")) {
+            } else if ((type == QString("CustomUQ")) || type == QString("CustomUQEngine")  || type == QString("Other-UQ")) {
                 index = 2;
             } else if ((type == QString("UCSD-UQ"))) {
                 index = 3;

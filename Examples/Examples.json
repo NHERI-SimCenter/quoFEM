@@ -44,6 +44,11 @@
             "name":"Building Surrogate Modeling",
             "description":"An Example",
             "InputFile": "qfem-0015/src/input.json"
+        },
+        {
+            "name":"Custom-UQ",
+            "description":"An Example",
+            "InputFile": "qfem-0020/src/input.json"
         }
     ]
 }

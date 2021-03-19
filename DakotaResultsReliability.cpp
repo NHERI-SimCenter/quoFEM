@@ -138,7 +138,6 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
   this->clear();
 
 
-
   //
   // check it actually ran with n errors
   //
@@ -189,6 +188,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
                 emit sendErrorMessage(QString(QString("Dakota ") + line));
                 return 0;
           }
+
 
   }
 
@@ -310,10 +310,8 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
                    if (numSpreadsheetCols == 2)
                        spreadsheet->insertRow(numRows);
                    data.insert(std::stod(data2),std::stod(data1));
-                   //QModelIndex index = spreadsheet->model()->index(numRows, numSpreadsheetCols-2);
                    QModelIndex index = spreadsheet->model()->index(numRows, numCols-2);
                    spreadsheet->model()->setData(index, data2.c_str());
-                   //QModelIndex index2 = spreadsheet->model()->index(numRows, numSpreadsheetCols-1);
                    QModelIndex index2 = spreadsheet->model()->index(numRows, numCols-1);
                    spreadsheet->model()->setData(index2, data1.c_str());
                    numRows++;
@@ -321,16 +319,8 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
                //}
            }
        }
-       //QMap<QString, int>::iterator i;
-       /*
-       qDebug() << "DATA";
-       for (auto i = data.begin(); i != data.end(); ++i)
-           qDebug() << i.key() << ": " << i.value() << endl;
-           */
-
        numSpreadsheetRows = numRows;
        numSpreadsheetCols = numCols;
-
   }
 
   spreadsheet->setHorizontalHeaderLabels(theHeadings);
@@ -542,16 +532,16 @@ DakotaResultsReliability::inputFromJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
-    /*
-    this->clear();
 
+    this->clear();
     //
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
-
+    /*
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
     summary->setLayout(summaryLayout);
+
 
     QJsonArray edpArray = jsonObject["summary"].toArray();
     foreach (const QJsonValue &edpValue, edpArray) {
@@ -574,19 +564,20 @@ DakotaResultsReliability::inputFromJSON(QJsonObject &jsonObject)
         summaryLayout->addWidget(theWidget);
     }
     summaryLayout->addStretch();
-
+    */
 
     //
     // into a spreadsheet place all the data returned
     //
 
-    spreadsheet = new MyTableWidget();
+
+    //spreadsheet = new MyTableWidget();
     QJsonObject spreadsheetData = jsonObject["spreadsheet"].toObject();
     int numRow = spreadsheetData["numRow"].toInt();
     int numCol = spreadsheetData["numCol"].toInt();
     spreadsheet->setColumnCount(numCol);
     spreadsheet->setRowCount(numRow);
-
+    numSpreadsheetRows = numRow;
     QJsonArray headingData= spreadsheetData["headings"].toArray();
     for (int i=0; i<numCol; i++) {
         theHeadings << headingData.at(i).toString();
@@ -603,38 +594,19 @@ DakotaResultsReliability::inputFromJSON(QJsonObject &jsonObject)
             dataCount++;
         }
     }
-    spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
+    //spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
 
-    //
-    // create a chart, setting data points from first and last col of spreadsheet
-    //
+    spreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    this->onSpreadsheetCellClicked(0,1);
 
-    chart = new QChart();
-    chart->setAnimationOptions(QChart::AllAnimations);
-    QScatterSeries *series = new QScatterSeries;
-    col1 = 0;           // col1 is initialied as the first column in spread sheet
-    col2 = numCol-1;    // col2 is initialized as the second column in spread sheet
-    mLeft = true;       // left click
-
-    this->onSpreadsheetCellClicked(0,numCol-1);
-
-    QChartView *chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->chart()->legend()->hide();
-
-
-    //
-    // create a widget into which we place the chart and the spreadsheet
-    //
-
-    QWidget *widget = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout(widget);
-    layout->addWidget(chartView, 1);
-    layout->addWidget(spreadsheet, 1);
+    //QWidget *widget = new QWidget();
+    //QVBoxLayout *layout = new QVBoxLayout(widget);
+    //layout->addWidget(chartView);
+    //layout->addWidget(spreadsheet);
 
     //qDebug()<<"\n debugging the values: result is  \n"<<result<<"\n";
-    */
+
     return result;
 }
 

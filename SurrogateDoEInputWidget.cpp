@@ -210,8 +210,10 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     inpFileDir = new QLineEdit();
     chooseInpFile = new QPushButton("Choose");
     connect(chooseInpFile, &QPushButton::clicked, this, [=](){
-        inpFileDir->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        this->checkValidityData(inpFileDir->text());
+        QString fileName = QFileDialog::getOpenFileName(this, "Open Simulation Model", "", "All files (*.*)");
+        inpFileDir->setText(fileName);
+        this->checkValidityData(fileName);
+        setWindowFilePath(fileName);
     });
     inpFileDir->setMaximumWidth(150);
     theInputLabel=new QLabel("Training Points (Input)");
