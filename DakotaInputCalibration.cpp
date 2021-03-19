@@ -98,11 +98,16 @@ DakotaInputCalibration::DakotaInputCalibration(QWidget *parent)
   layout->addWidget(new QLabel("Scaling Factors"), 3, 0);
   layout->addWidget(scalingFactors, 3, 1);
 
+  readCalibrationDataCheckBox = new QCheckBox();
+  readCalibrationDataCheckBox->setChecked(false);
+  layout->addWidget(new QLabel("Read calibration data from file"), 4, 0);
+  layout->addWidget(readCalibrationDataCheckBox, 4, 1);
+
 
   layout->setColumnStretch(1, 2);
   layout->setColumnStretch(2, 1);
   layout->setColumnStretch(3,4);
-  layout->setRowStretch(4,1);
+  layout->setRowStretch(5,1);
 
   this->setLayout(layout);
 }
@@ -123,6 +128,7 @@ DakotaInputCalibration::outputToJSON(QJsonObject &jsonObject)
     uq["maxIterations"]=maxIterations->text().toInt();
     uq["convergenceTol"]=convergenceTol->text().toDouble();
     uq["factors"]=scalingFactors->text();
+    uq["readCalibrationData"]=readCalibrationDataCheckBox->isChecked();
 
     /*
     if(calibrationMethod->currentText()=="ColinyPattern")
@@ -190,6 +196,13 @@ DakotaInputCalibration::inputFromJSON(QJsonObject &jsonObject)
     calibrationMethod->setCurrentIndex(index);
     scalingFactors->setText(fact);
 
+    bool readCalDataBool = false;
+    if (uq.contains("readCalibrationData")) {
+        if(uq["readCalibrationData"].toBool()) {
+            readCalDataBool = true;
+        }
+    }
+    readCalibrationDataCheckBox->setChecked(readCalDataBool);
     return result;
 
 }

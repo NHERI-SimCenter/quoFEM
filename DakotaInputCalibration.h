@@ -49,6 +49,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPushButton>
 #include <QtGui>
 #include <QDialog>
+#include <QCheckBox>
 
 class QLabel;
 class DakotaCalibrationResults;
@@ -85,6 +86,7 @@ private:
     QLineEdit   *maxIterations;
     QLineEdit   *convergenceTol;
     QLineEdit   *scalingFactors;
+    QCheckBox   *readCalibrationDataCheckBox;
 
     RandomVariablesContainer *theParameters;
     DakotaCalibrationResults *results;
