@@ -107,7 +107,6 @@ SimCenterUQEngine::SimCenterUQEngine(InputWidgetParameters *param,InputWidgetFEM
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
     theCurrentEngine = theSensitivityEngine;
-    theOldEngine = theCurrentEngine;
 
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
           SLOT(engineSelectionChanged(QString)));
@@ -124,26 +123,28 @@ SimCenterUQEngine::~SimCenterUQEngine()
 
 void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
 {
-    //UQ_Engine *theOldEngine = theCurrentEngine;
+    QString thePreviousName = theCurrentEngine->getMethodName();
+    UQ_Engine *theOldEngine = theCurrentEngine;
 
     if ((arg1 == QString("Sensitivity")) || (arg1 == QString("Sensitivity Analysis"))) {
        theStackedWidget->setCurrentIndex(0);
        theCurrentEngine = theSensitivityEngine;
        theEdpWidget->showAdvancedSensitivity();
-       theFemWidget->setFemGP(false);
+       //theFemWidget->setFemGP(false);
 
     } else if ((arg1 == QString("Surrogate")) || (arg1 == QString("Train GP Surrogate Model"))) {
-       // restart UQ for simplicity
+       // == restart UQ for simplicity
        delete theSurrogateEngine;
        theSurrogateEngine = new SimCenterUQInputSurrogate(theParameters,theFemWidget,theEdpWidget);
        theStackedWidget->insertWidget(1,theSurrogateEngine);
+       // ==
+
        theStackedWidget->setCurrentIndex(1);
        theCurrentEngine = theSurrogateEngine;
        theEdpWidget->hideAdvancedSensitivity();
 
        // restart other parts
-       theFemWidget->setFemGP(true);
-       theFemWidget->femProgramChanged(tr("OpenSees"));
+       theFemWidget->setFEMforGP("GPmodel");   // set it to be GP-FEM
        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
        theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
 
@@ -155,15 +156,11 @@ void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
     if (theCurrentEngine != theOldEngine)
         emit onUQ_EngineChanged();
 
-
-    if (theOldEngine->getMethodName() == "surrogate")
+    if (thePreviousName == "surrogate")
     {
-        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
+        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP QoIs
         theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
-        theFemWidget->setFemGP(false);
-        theFemWidget->femProgramChanged(tr("OpenSees")); // restart FEM
-        theFemWidget->setFEMdisabled(false);
-
+        theFemWidget->setFEMforGP("reset");// reset FEM
     }
 }
 

@@ -52,12 +52,13 @@ class QGroupBox;
 class QSpinBox;
 
 class InputWidgetParameters;
+class InputWidgetEDP;
 
 class InputWidgetFEM : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetFEM(InputWidgetParameters *theParams, QWidget *parent = 0);
+    explicit InputWidgetFEM(InputWidgetParameters *theParams, InputWidgetEDP *edpwidget, QWidget *parent = 0);
     ~InputWidgetFEM();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -69,10 +70,11 @@ public:
 
      // copy main file to new filename ONLY if varNamesAndValues not empy
     void specialCopyMainInput(QString fileName, QStringList varNamesAndValues);
-    int parseInputfilesForRV(QString filnema1);
+    //int parseInputfilesForRV(QString filnema1);
+    int parseInputfilesForRV(QString name1);
     int parseInputfilesForGP(QString filnema1);
     void setFemGP(bool on);
-    int setFEMdisabled(bool on);
+    int setFEMforGP(QString option);
 
   signals:
 
@@ -98,6 +100,7 @@ public:
     // QLineEdit *file2;
 
     InputWidgetParameters *theParameters;
+    InputWidgetEDP *theEdpWidget;
     QStringList varNamesAndValues;
 
     int numInputs;
@@ -105,8 +108,18 @@ public:
     QVector<QLineEdit *>postprocessFilenames;
     QVector<QLineEdit *>parametersFilenames;
     QVector<QLineEdit *>customInputFiles;
+    QGridLayout *femLayout;
+    // for GP
+    double interpolateForGP(QVector<double> X, QVector<double> Y, double Xval);
+    double thres;
+    QStringList parseGPInputs(QString file1);
+    bool isGP;
+    QVector<double> percVals, thrsVals;
+    QLineEdit *thresVal;
+    QString femOpt;
+    bool isData;
+    QRadioButton * option1Button,* option2Button,* option3Button;
 
-    bool femGP;
 };
 
 #endif // INPUTWIDGETFEM_H

@@ -1,0 +1,29 @@
+{
+    "Parameters" :  [
+	{
+	    "type" : "ComboBox",
+	    "name" : "Sampling Method",
+	    "values" : ["LHS"]
+	},
+	{
+	    "type" : "SpinBox",
+	    "name" : "Number of Samples"
+	},
+	{
+	    "type" : "SpinBox",
+	    "name" : "Number of Concurrent Tasks"
+	},
+	{
+	    "type" : "SpinBox",
+	    "name" : "Number of Nodes"
+	},
+	{
+	    "type" : "SpinBox",
+	    "name" : "Cores per Task"
+	},
+	{
+	    "type" : "LineEdit",
+	    "name" : "UQ Driver"
+	}	
+    ]
+}

@@ -1,0 +1,192 @@
+{
+    "Applications": {
+        "UQ": {
+            "Application": "SimCenterUQ-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "name": "InterstoryDrift_x"
+        },
+        {
+            "name": "Accel_Roof_x"
+        }
+    ],
+    "UQ_Method": {
+        "surrogateMethodInfo": {
+            "accuracyLimit": 0.02,
+            "advancedOpt": true,
+            "existingDoE": false,
+            "initialDoE": 100,
+            "kernel": "Matern 5/2",
+            "linear": true,
+            "logTransform": true,
+            "method": "Sampling and Simulation",
+            "samples": 100,
+            "seed": 71,
+            "timeLimit": 60
+        },
+        "uqEngine": "SimCenterUQ",
+        "uqType": "Train GP Surrogate Model"
+    },
+    "fem": {
+        "dir": "{Current_Dir}/.",
+        "inputFile": "{Current_Dir}/CWH.py",
+        "mainInput": "CWH.py",
+        "mainPostprocessScript": "",
+        "numInputs": 1,
+        "parametersFile": "params.py",
+        "parametersScript": "{Current_Dir}/params.py",
+        "postprocessScript": "",
+        "program": "OpenSeesPy"
+    },
+    "localAppDir": "C:/Tools/quoFEM/quoFEM",
+    "python": "python",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "materialQuality",
+            "refCount": 4,
+            "upperbound": 1,
+            "value": "RV.materialQuality",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 800,
+            "name": "planArea",
+            "refCount": 4,
+            "upperbound": 2400,
+            "value": "RV.planArea",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.4,
+            "name": "aspectRatio",
+            "refCount": 4,
+            "upperbound": 0.8,
+            "value": "RV.aspectRatio",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.02,
+            "name": "damping",
+            "refCount": 4,
+            "upperbound": 0.1,
+            "value": "RV.damping",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.5,
+            "name": "extDensity_x",
+            "refCount": 4,
+            "upperbound": 0.8,
+            "value": "RV.extDensity_x",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.5,
+            "name": "extDensity_z",
+            "refCount": 4,
+            "upperbound": 0.8,
+            "value": "RV.extDensity_z",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.06,
+            "name": "intDensity",
+            "refCount": 4,
+            "upperbound": 0.08,
+            "value": "RV.intDensity",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "extEcc_x",
+            "refCount": 4,
+            "upperbound": 0.5,
+            "value": "RV.extEcc_x",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "extEcc_z",
+            "refCount": 4,
+            "upperbound": 0.5,
+            "value": "RV.extEcc_z",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "intEcc_x",
+            "refCount": 4,
+            "upperbound": 0.5,
+            "value": "RV.intEcc_x",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "intEcc_z",
+            "refCount": 4,
+            "upperbound": 0.5,
+            "value": "RV.intEcc_z",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 10,
+            "name": "floor1Weight",
+            "refCount": 4,
+            "upperbound": 15.5,
+            "value": "RV.floor1Weight",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 10,
+            "name": "floor2Weight",
+            "refCount": 4,
+            "upperbound": 15.5,
+            "value": "RV.floor2Weight",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 10,
+            "name": "roofWeight",
+            "refCount": 4,
+            "upperbound": 15.5,
+            "value": "RV.roofWeight",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
+    "workingDir": "C:/Workdir/quoFEM",
+    "uqResults": {}
+}

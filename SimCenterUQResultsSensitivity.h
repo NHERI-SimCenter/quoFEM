@@ -43,6 +43,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtCharts/QChart>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QScrollArea>
 
 
 using namespace QtCharts;
@@ -87,7 +88,7 @@ private:
    QLabel *label;
    QLabel *best_fit_instructions;
 
-   int col1, col2;
+   int col1, col2, ncomb, nQoI;
    bool mLeft;
    QStringList theHeadings;
 
@@ -95,6 +96,11 @@ private:
    QVector<double>theMeans;
    QVector<double>theStdDevs;
    QVector<double>theKurtosis;
+   QVector<QVector<double>> sobols;
+   QVector<QString> combs, QoInames;
+
+   void gsaGraph(QScrollArea *&summaryLayout);
+
 };
 
 #endif // SIMCENTERUQ_RESULTS_SENSITIVITY_H

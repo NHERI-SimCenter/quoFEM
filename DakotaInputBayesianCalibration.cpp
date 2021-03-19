@@ -305,6 +305,7 @@ void DakotaInputBayesianCalibration::showCalibrateCovMultiplierCheckBox(bool tog
 bool
 DakotaInputBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
 {
+
     bool result = true;
     QJsonObject uq;
     uq["method"]=calibrationMethod->currentText();

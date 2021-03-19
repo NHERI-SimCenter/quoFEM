@@ -91,8 +91,8 @@ DakotaResultsReliability::DakotaResultsReliability(RandomVariablesContainer *the
   : UQ_Results(parent), theRVs(theRandomVariables), numSpreadsheetRows(0), numSpreadsheetCols(0)
 {
   chart = new QChart();
-  chart->setAnimationOptions(QChart::AllAnimations);
   QChartView *chartView = new QChartView(chart);
+  chart->setAnimationOptions(QChart::AllAnimations);
   chartView->setRenderHint(QPainter::Antialiasing);
   chartView->chart()->legend()->hide();
 
@@ -137,12 +137,6 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
   // clear current
   this->clear();
 
-  numSpreadsheetCols = 1;
-  numSpreadsheetRows = 0;
-
-  theHeadings << "%";
-  spreadsheet->setColumnCount(1);
-
 
   //
   // check it actually ran with n errors
@@ -166,10 +160,36 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
      fileError.close();
   }
 
-  if ((line.length() != 0) && (!line.contains("Warning: unit probability", Qt::CaseInsensitive))){
+  /*
+  if ((line.length() != 0) && (!line.contains("Warning: unit probability", Qt::CaseInsensitive))
+                               && !line.contains("Warning: maximum back-tracking", Qt::CaseInsensitive)
+                               && !line.contains("Warning: maximum Newton iterations ", Qt::CaseInsensitive)){
       qDebug() << line.length() << " " << line;
-      emit sendErrorMessage(QString(QString("Error Rnning Dakota: ") + line));
+      emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
       return 0;
+  }
+  */
+  if ((line.length() != 0)) {
+
+
+
+          if (line.contains("-- Expected 1 function value(s) but found ", Qt::CaseInsensitive)) {
+              // Multiple output by user
+              qDebug() << line.length() << " " << line;
+              emit sendErrorMessage(QString("Dakota Error: Current reliability option supports only single output. Please try with Mean Value option or with a single output. "));
+              return 0;
+          } else if (line.contains("Warning:", Qt::CaseInsensitive)) {
+              // Warning
+                qDebug() << line.length() << " " << line;
+                  emit sendErrorMessage(QString(QString("Dakota ") + line));
+          } else {
+              // Other errors
+                qDebug() << line.length() << " " << line;
+                emit sendErrorMessage(QString(QString("Dakota ") + line));
+                return 0;
+          }
+
+
   }
 
   QFileInfo filenameResultsInfo(filenameResults);
@@ -190,8 +210,8 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
     return -1;
   }
   
+    emit sendErrorMessage((QString("")));
 
-  
   /* **************************************** LOOKING FOR THE FOLLOWING
      -----------------------------------------------------------------
      Cumulative Distribution Function (CDF) for response_fn_1:
@@ -204,28 +224,38 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
      
   *************************************************************************** */
 
+  numSpreadsheetCols = 2;
+  numSpreadsheetRows = 0;
+
+  spreadsheet->setColumnCount(2);
+
   const std::string needleStart = "Cumulative Distribution Function (CDF)";
+  const std::string needleEnd = "---------------------------------------";
+
   std::string haystack;
+  bool isStartOrEnd = true;
+  int numCols = 2;
 
   while(fileResults.eof() != true) {
 
       std::vector<double>col1;
       std::vector<double>col2;
 
+    if (isStartOrEnd) {
+        // to remove all the text before and after the results we are interested in
+          while (std::getline(fileResults, haystack)) {
+              if (haystack.find(needleStart) != std::string::npos) {
+                  break;
+              }
+              else {
+                  if (numSpreadsheetRows > 0);
+              }
+          }
 
-      while (std::getline(fileResults, haystack)) {
-          if (haystack.find(needleStart) != std::string::npos) {
+          if (fileResults.eof()) {
               break;
           }
-          else {
-              if (numSpreadsheetRows > 0)
-                  ;
-          }
-      }
-
-      if (fileResults.eof()) {
-          break;
-      }
+     }
 
       // get descriptor name
       std::istringstream iss(haystack);
@@ -235,55 +265,62 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
           iss >> subs;
       } while (iss);
 
-      theHeadings << subs.c_str();
+      theHeadings << QString("Pr(")+QString(subs.c_str()).remove(QChar(':'))+QString(")");
+      theHeadings << QString(subs.c_str()).remove(QChar(':'));
 
       // read next 2 lines of drivel
       std::getline(fileResults, haystack);
       std::getline(fileResults, haystack);
 
       // for some reason
-      ;// std::getline(fileResults, haystack);
+      // std::getline(fileResults, haystack);
 
-      const std::string needleEnd = "---------------------------------------";
-
-       spreadsheet->insertColumn(numSpreadsheetCols);
-       numSpreadsheetCols++;
 
        qDebug() << "numCOL" << numSpreadsheetCols;
        QMap<float,float> data;
        // now read the data till end of data encountered
        int numRows = 0;
        while (std::getline(fileResults, haystack)) {
-           if (haystack.find(needleEnd) != std::string::npos) {
+           if ((haystack.find(needleEnd) != std::string::npos)) {
+               // wrap up
                qDebug() << "FOUND END";
+               isStartOrEnd = true;
                break;
-
+           } else if (haystack.find(needleStart) != std::string::npos) {
+               // move on to the next EDP
+               isStartOrEnd = false;
+               spreadsheet->insertColumn(numCols);
+               spreadsheet->insertColumn(numCols);
+               numCols = numCols+2;
+               break;
            } else {
                // read column entries
-               if (numSpreadsheetCols == 2)
-                   spreadsheet->insertRow(numRows);
                std::string data1, data2, data3, data4;
                std::istringstream is(haystack);
 
                is >> data1 >> data2 >> data3 >> data4;
-               if (numSpreadsheetCols == 2) {
-                   data.insert(std::stod(data2),std::stod(data1));
-                   QModelIndex index = spreadsheet->model()->index(numRows, numSpreadsheetCols-2);
-                   spreadsheet->model()->setData(index, data2.c_str());
+
+               //if (!data1.empty() && (((data1.find("e-"))!= std::string::npos)||((data1.find("e+"))!= std::string::npos))) {
+               if (data1.empty()) {
+
                }
-               QModelIndex index = spreadsheet->model()->index(numRows, numSpreadsheetCols-1);
-               spreadsheet->model()->setData(index, data1.c_str());
-               numRows++;
+               else if (data1.find("Warning:") != std::string::npos) {
+                   emit sendErrorMessage(QString(QString("Dakota ") + QString::fromStdString(haystack)));
+               } else {
+                   if (numSpreadsheetCols == 2)
+                       spreadsheet->insertRow(numRows);
+                   data.insert(std::stod(data2),std::stod(data1));
+                   QModelIndex index = spreadsheet->model()->index(numRows, numCols-2);
+                   spreadsheet->model()->setData(index, data2.c_str());
+                   QModelIndex index2 = spreadsheet->model()->index(numRows, numCols-1);
+                   spreadsheet->model()->setData(index2, data1.c_str());
+                   numRows++;
+               }
+               //}
            }
        }
-       //QMap<QString, int>::iterator i;
-       /*
-       qDebug() << "DATA";
-       for (auto i = data.begin(); i != data.end(); ++i)
-           qDebug() << i.key() << ": " << i.value() << endl;
-           */
-
        numSpreadsheetRows = numRows;
+       numSpreadsheetCols = numCols;
   }
 
   spreadsheet->setHorizontalHeaderLabels(theHeadings);
@@ -310,27 +347,33 @@ DakotaResultsReliability::onSaveSpreadsheetClicked()
 						  tr("Save Data"), "",
 						  tr("All Files (*)"));
   
-  QFile file(fileName);
-  if (file.open(QIODevice::ReadWrite))
-  {
-      QTextStream stream(&file);
-      for (int j=0; j<columnCount; j++)
-      {
-          stream <<theHeadings.at(j)<<", ";
-      }
-      stream <<endl;
-      for (int i=0; i<rowCount; i++)
-      {
-          for (int j=0; j<columnCount; j++)
-          {
-              QTableWidgetItem *item_value = spreadsheet->item(i,j);
-              double value = item_value->text().toDouble();
-              stream << value << ", ";
-              //     qDebug()<<value;
-          }
-          stream<<endl;
-      }
-  }
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly))
+    {
+        QTextStream stream(&file);
+        for (int j=0; j<columnCount; j++)
+        {
+	  if (j == columnCount -1)
+            stream <<theHeadings.at(j);	    
+	  else
+            stream <<theHeadings.at(j)<<", ";
+        }
+        stream <<endl;
+        for (int i=0; i<rowCount; i++)
+        {
+            for (int j=0; j<columnCount; j++)
+            {
+                QTableWidgetItem *item_value = spreadsheet->item(i,j);
+                double value = item_value->text().toDouble();
+		if (j == columnCount-1)		
+		  stream << value ;
+		else
+		  stream << value << ", ";		  
+            }
+            stream<<endl;
+        }
+	file.close();
+    }
 }
 
 void DakotaResultsReliability::onSpreadsheetCellClicked(int row, int col)
@@ -346,7 +389,13 @@ void DakotaResultsReliability::onSpreadsheetCellClicked(int row, int col)
         return;
     else
         col2 = col;
-
+        if (col2%2 == 1) {
+            col2 = col2;
+            col1 = col2-1;
+        } else {
+            col2 = col2+1;
+            col1 = col2-1;
+        }
     //
     // remove old
     //
@@ -483,16 +532,16 @@ DakotaResultsReliability::inputFromJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
-    /*
-    this->clear();
 
+    this->clear();
     //
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
-
+    /*
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
     summary->setLayout(summaryLayout);
+
 
     QJsonArray edpArray = jsonObject["summary"].toArray();
     foreach (const QJsonValue &edpValue, edpArray) {
@@ -515,19 +564,20 @@ DakotaResultsReliability::inputFromJSON(QJsonObject &jsonObject)
         summaryLayout->addWidget(theWidget);
     }
     summaryLayout->addStretch();
-
+    */
 
     //
     // into a spreadsheet place all the data returned
     //
 
-    spreadsheet = new MyTableWidget();
+
+    //spreadsheet = new MyTableWidget();
     QJsonObject spreadsheetData = jsonObject["spreadsheet"].toObject();
     int numRow = spreadsheetData["numRow"].toInt();
     int numCol = spreadsheetData["numCol"].toInt();
     spreadsheet->setColumnCount(numCol);
     spreadsheet->setRowCount(numRow);
-
+    numSpreadsheetRows = numRow;
     QJsonArray headingData= spreadsheetData["headings"].toArray();
     for (int i=0; i<numCol; i++) {
         theHeadings << headingData.at(i).toString();
@@ -544,38 +594,19 @@ DakotaResultsReliability::inputFromJSON(QJsonObject &jsonObject)
             dataCount++;
         }
     }
-    spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
+    //spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
 
-    //
-    // create a chart, setting data points from first and last col of spreadsheet
-    //
+    spreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    this->onSpreadsheetCellClicked(0,1);
 
-    chart = new QChart();
-    chart->setAnimationOptions(QChart::AllAnimations);
-    QScatterSeries *series = new QScatterSeries;
-    col1 = 0;           // col1 is initialied as the first column in spread sheet
-    col2 = numCol-1;    // col2 is initialized as the second column in spread sheet
-    mLeft = true;       // left click
-
-    this->onSpreadsheetCellClicked(0,numCol-1);
-
-    QChartView *chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->chart()->legend()->hide();
-
-
-    //
-    // create a widget into which we place the chart and the spreadsheet
-    //
-
-    QWidget *widget = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout(widget);
-    layout->addWidget(chartView, 1);
-    layout->addWidget(spreadsheet, 1);
+    //QWidget *widget = new QWidget();
+    //QVBoxLayout *layout = new QVBoxLayout(widget);
+    //layout->addWidget(chartView);
+    //layout->addWidget(spreadsheet);
 
     //qDebug()<<"\n debugging the values: result is  \n"<<result<<"\n";
-    */
+
     return result;
 }
 

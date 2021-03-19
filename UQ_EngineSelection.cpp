@@ -73,6 +73,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 UQ_EngineSelection::UQ_EngineSelection(InputWidgetParameters *param,InputWidgetFEM *femwidget,InputWidgetEDP *edpwidget, QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEngine(0), theParameters(param), theFemWidget(femwidget), theEdpWidget(edpwidget)
 {
+
     QVBoxLayout *layout = new QVBoxLayout();
 
     //
@@ -201,14 +202,15 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
         emit onUQ_EngineChanged(true);
     }
     else if (arg1 == "SimCenterUQ") {
-        // just initialize
+        // == just initialize
         delete theSimCenterUQEngine;
         theSimCenterUQEngine = new SimCenterUQEngine(theParameters,theFemWidget,theEdpWidget);
         theStackedWidget->insertWidget(1,theSimCenterUQEngine);
         theStackedWidget->setCurrentIndex(1);
+        theEdpWidget->showAdvancedSensitivity();
+        // ==
         theCurrentEngine = theSimCenterUQEngine;
         emit onUQ_EngineChanged(false);
-        theEdpWidget->showAdvancedSensitivity();
 
     } else if (arg1 == "CustomUQ") {
       theStackedWidget->setCurrentIndex(2);
@@ -235,11 +237,9 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
 
     if (thePreviousEngine->getMethodName() == "surrogate")
     {
-        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
+        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP QoIs
         theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
-        theFemWidget->setFemGP(false);
-        theFemWidget->setFEMdisabled(false);
-        theFemWidget->femProgramChanged("OpenSees");
+        theFemWidget->setFEMforGP("reset");// reset FEM
     }
 
     thePreviousEngine = theCurrentEngine;
@@ -261,7 +261,6 @@ UQ_EngineSelection::outputAppDataToJSON(QJsonObject &jsonObject)
 
     return true;
 }
-
 
 bool
 UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
@@ -286,7 +285,7 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
                 index = 1;
                 // } else if ((type == QString("UQpy")) || (type == QString("UQpyEngine"))) {
                 //   index = 2;
-            } else if ((type == QString("CustomUQ")) || type == QString("CustomUQEngine")) {
+            } else if ((type == QString("CustomUQ")) || type == QString("CustomUQEngine")  || type == QString("Other-UQ")) {
                 index = 2;
             } else if ((type == QString("UCSD-UQ"))) {
                 index = 3;

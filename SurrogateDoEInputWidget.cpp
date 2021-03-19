@@ -79,16 +79,12 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
     accuracyMeasure->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Target Accuracy (Normalized Error)"), 1, 0);
+    layout->addWidget(new QLabel("Target Accuracy (Normalized Error) "), 1, 0);
     layout->addWidget(accuracyMeasure, 1, 1);
 
     //
     // create layout label and entry for # samples
     //
-
-    // QLabel *theConstTitle=new QLabel("\nComputational Constraints");
-    // theConstTitle->setStyleSheet("font-weight: bold");
-    // layout->addWidget(theConstTitle, 2, 0, 1, 3,Qt::AlignBottom);
 
     numSamples = new QLineEdit();
     numSamples->setText(tr("150"));
@@ -106,13 +102,11 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     timeMeasure = new QLineEdit();
     timeMeasure->setText(tr("60"));
     timeMeasure->setValidator(new QIntValidator);
-    timeMeasure->setToolTip("Maximum Computation Time (min.)");
+    timeMeasure->setToolTip("Max Computation Time (minutes)");
     timeMeasure->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Max Computation Time (min.)    "), 4, 0);
+    layout->addWidget(new QLabel("Max Computation Time (minutes)    "), 4, 0);
     layout->addWidget(timeMeasure, 4, 1);
-
-
 
     //
     // Advanced options
@@ -127,8 +121,6 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     lineA= new QFrame;
     lineA->setFrameShape(QFrame::HLine);
     lineA->setFrameShadow(QFrame::Sunken);
-    //lineA->setMinimumWidth(460);
-    //lineA->setMaximumWidth(460);
     layout->addWidget(lineA, 6, 0, 1, 3);
     lineA->setVisible(false);
 
@@ -148,11 +140,8 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
 
     layout->addWidget(theKernelLabel, 7, 0);
     layout->addWidget(gpKernel, 7, 1);
-    //theKernelLabel->setStyleSheet("color: grey");
-    //gpKernel->setDisabled(1);
     theKernelLabel->setVisible(false);
     gpKernel->setVisible(false);
-
 
     //
     // Use Linear trending function
@@ -161,10 +150,10 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     theLinearLabel=new QLabel("Use linear trend function");
 
     theLinearCheckBox = new QCheckBox();
+    theLinearCheckBox->setToolTip("Default is no trending function");
+
     layout->addWidget(theLinearLabel, 8, 0);
     layout->addWidget(theLinearCheckBox, 8, 1);
-    //theLinearLabel->setStyleSheet("color: grey");
-    //theLinearCheckBox->setDisabled(1);
     theLinearLabel->setVisible(false);
     theLinearCheckBox->setVisible(false);
 
@@ -179,8 +168,6 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     layout->addWidget(theLogtLabel, 9, 0);
     layout->addWidget(theLogtLabel2, 9, 1);
     layout->addWidget(theLogtCheckBox, 9, 1);
-    //theLinearLabel->setStyleSheet("color: grey");
-    //theLinearCheckBox->setDisabled(1);
     theLogtLabel->setVisible(false);
     theLogtLabel2->setVisible(false);
     theLogtCheckBox->setVisible(false);
@@ -189,7 +176,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     // # of Initial DoE (Space filling)
     //
 
-    theInitialLabel=new QLabel("Number of Initial DoE");
+    theInitialLabel=new QLabel("Number of Initial Samples (DoE)");
 
     initialDoE = new QLineEdit();
     initialDoE->setValidator(new QIntValidator);
@@ -217,14 +204,16 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     lineB->setVisible(false);
 
     //
-    // Input
+    // Input data
     //
 
     inpFileDir = new QLineEdit();
     chooseInpFile = new QPushButton("Choose");
     connect(chooseInpFile, &QPushButton::clicked, this, [=](){
-        inpFileDir->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        this->checkValidityData(inpFileDir->text());
+        QString fileName = QFileDialog::getOpenFileName(this, "Open Simulation Model", "", "All files (*.*)");
+        inpFileDir->setText(fileName);
+        this->checkValidityData(fileName);
+        setWindowFilePath(fileName);
     });
     inpFileDir->setMaximumWidth(150);
     theInputLabel=new QLabel("Training Points (Input)");
@@ -235,7 +224,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     inpFileDir->setVisible(false);
     chooseInpFile->setVisible(false);
     //
-    // Output
+    // Output data
     //
 
     outFileDir = new QLineEdit();
@@ -345,41 +334,37 @@ SurrogateDoEInputWidget::checkValidityData(QString name1){
     std::string line;
     errMSG->hide();
 
-    if (inFile.peek() == std::ifstream::traits_type::eof())
-    {
-        errMSG->show();
-    } else {
-        int numberOfColumns_pre = -100;
-        while (getline(inFile, line)) {
-            int  numberOfColumns=1;
-            bool previousWasSpace=false;
-            for(int i=0; i<line.size(); i++){
-
-                //if header, skip
-                if (line[i]=='%')
-                    numberOfColumns=-100;
-                    break;
-
-                if(line[i] == ' ' || line[i] == '\t' || line[i] == ','){
-                    if(!previousWasSpace)
-                        numberOfColumns++;
-                    previousWasSpace = true;
-                } else {
-                    previousWasSpace = false;
-                }
-            }            
-
-            if (numberOfColumns_pre==-100)
-            {
-                numberOfColumns_pre=numberOfColumns;
-                continue;
+    int numberOfColumns_pre = -100;
+    while (getline(inFile, line)) {
+        int  numberOfColumns=1;
+        bool previousWasSpace=false;
+        //for(int i=0; i<line.size(); i++){
+        for(size_t i=0; i<line.size(); i++){
+            if(line[i] == '%' || line[i] == '#'){ // ignore header
+                numberOfColumns = numberOfColumns_pre;
+                break;
             }
-            if (numberOfColumns != numberOfColumns_pre)
-            {
-                // Send an error
-                errMSG->show();
-                numberOfColumns_pre=0;
+            if(line[i] == ' ' || line[i] == '\t' || line[i] == ','){
+                if(!previousWasSpace)
+                    numberOfColumns++;
+                previousWasSpace = true;
+            } else {
+                previousWasSpace = false;
             }
+        }
+        if(previousWasSpace)// when there is a blank space at the end of each row
+            numberOfColumns--;
+
+        if (numberOfColumns_pre==-100)  // to pass header
+        {
+            numberOfColumns_pre=numberOfColumns;
+            continue;
+        }
+        if (numberOfColumns != numberOfColumns_pre)// Send an error
+        {
+            errMSG->show();
+            numberOfColumns_pre=0;
+            break;
         }
     }
     // close file
@@ -418,61 +403,61 @@ SurrogateDoEInputWidget::outputToJSON(QJsonObject &jsonObj){
 bool
 SurrogateDoEInputWidget::inputFromJSON(QJsonObject &jsonObject){
 
-  bool result = false;
-  if (jsonObject.contains("samples") && jsonObject.contains("seed")) {
-    int samples=jsonObject["samples"].toInt();
-    double seed=jsonObject["seed"].toDouble();
-    numSamples->setText(QString::number(samples));
-    randomSeed->setText(QString::number(seed));
+    bool result = false;
+        if (jsonObject.contains("samples") && jsonObject.contains("seed")) {
+        int samples=jsonObject["samples"].toInt();
+        double seed=jsonObject["seed"].toDouble();
+        numSamples->setText(QString::number(samples));
+        randomSeed->setText(QString::number(seed));
     result = true;
-  } else {
-    result = false;
-  }
+    } else {
+        result = false;
+    }
 
-  if (jsonObject.contains("timeLimit") && jsonObject.contains("acuracyLimit")) {
-    int time=jsonObject["timeLimit"].toInt();
-    double accuracy=jsonObject["acuracyLimit"].toDouble();
-    timeMeasure->setText(QString::number(time));
-    accuracyMeasure->setText(QString::number(accuracy));
-    result = true;
-  } else {
-    result = false;
-  }
+    if (jsonObject.contains("timeLimit") && jsonObject.contains("acuracyLimit")) {
+        int time=jsonObject["timeLimit"].toInt();
+        double accuracy=jsonObject["acuracyLimit"].toDouble();
+        timeMeasure->setText(QString::number(time));
+        accuracyMeasure->setText(QString::number(accuracy));
+        result = true;
+    } else {
+        result = false;
+    }
 
-  if (jsonObject.contains("advancedOpt")) {
-      if (jsonObject["advancedOpt"].toBool()) {
-        theAdvancedCheckBox->setChecked(true);
-        QString method =jsonObject["kernel"].toString();
-        int index = gpKernel->findText(method);
-        if (index == -1) {
-            return false;
+    if (jsonObject.contains("advancedOpt")) {
+        if (jsonObject["advancedOpt"].toBool()) {
+            theAdvancedCheckBox->setChecked(true);
+            QString method =jsonObject["kernel"].toString();
+            int index = gpKernel->findText(method);
+            if (index == -1) {
+                return false;
+            }
+            gpKernel->setCurrentIndex(index);
+            theLinearCheckBox->setChecked(jsonObject["linear"].toBool());
+            theLogtCheckBox->setChecked(jsonObject["logTransform"].toBool());
+            double accuracy=jsonObject["initialDoE"].toDouble();
+            initialDoE->setText(QString::number(accuracy));
+        } else {
+            theAdvancedCheckBox->setChecked(false);
         }
-        gpKernel->setCurrentIndex(index);
-        theLinearCheckBox->setChecked(jsonObject["linear"].toBool());
-        theLogtCheckBox->setChecked(jsonObject["logTransform"].toBool());
-        double accuracy=jsonObject["initialDoE"].toDouble();
-        initialDoE->setText(QString::number(accuracy));
-      } else {
-        theAdvancedCheckBox->setChecked(false);
-      }
-    result = true;
-  } else {
+        result = true;
+    } else {
     result = false;
-  }
+    }
 
-  if (jsonObject.contains("existingDoE")) {
-      if (jsonObject["existingDoE"].toBool()) {
-        theExistingCheckBox->setChecked(true);
-        inpFileDir -> setText(jsonObject["inpFile"].toString());
-        outFileDir -> setText(jsonObject["outFile"].toString());
-      } else {
-        theExistingCheckBox->setChecked(false);
-      }
-    result = true;
-  } else {
-    result = false;
-  }
-  return result;
+    if (jsonObject.contains("existingDoE")) {
+        if (jsonObject["existingDoE"].toBool()) {
+            theExistingCheckBox->setChecked(true);
+            inpFileDir -> setText(jsonObject["inpFile"].toString());
+            outFileDir -> setText(jsonObject["outFile"].toString());
+        } else {
+            theExistingCheckBox->setChecked(false);
+        }
+        result = true;
+    } else {
+        result = false;
+    }
+    return result;
 }
 
 void

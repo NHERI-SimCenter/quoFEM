@@ -118,21 +118,22 @@ SimCenterUQInputSurrogate::SimCenterUQInputSurrogate(InputWidgetParameters *para
 
 void SimCenterUQInputSurrogate::onTextInpChanged(const QString &text)
 {
-  if (text=="Sampling and Simulation") {
-     theStackedWidget->setCurrentIndex(0);
-     theInpCurrentMethod = theDoE;
-     theFemWidget->setFEMdisabled(false);
-     theFemWidget->femProgramChanged(tr("OpenSees")); // reset FEM
-     theEdpWidget->setGPQoINames(QStringList({})); // remove GP RVs
-  }
-  else if (text=="Import Data File") {
-      delete theData;
-      theData = new SurrogateNoDoEInputWidget(theParameters,theFemWidget,theEdpWidget);
-      theStackedWidget->insertWidget(1,theData);
-      theStackedWidget->setCurrentIndex(1);
-      theInpCurrentMethod = theData;
-  }
-  theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
+    if (text=="Sampling and Simulation") {
+        theStackedWidget->setCurrentIndex(0);
+        theInpCurrentMethod = theDoE;
+
+        theFemWidget->setFEMforGP("GPmodel"); // reset FEM
+        theEdpWidget->setGPQoINames(QStringList({})); // remove GP RVs
+    }
+    else if (text=="Import Data File") {
+        delete theData;
+        theData = new SurrogateNoDoEInputWidget(theParameters,theFemWidget,theEdpWidget);
+        theStackedWidget->insertWidget(1,theData);
+
+        theStackedWidget->setCurrentIndex(1);
+        theInpCurrentMethod = theData;
+    }
+    theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
 }
 
 

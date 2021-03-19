@@ -1,0 +1,110 @@
+{
+    "Applications": {
+        "UQ": {
+            "Application": "Other-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "name": "Node_3_Disp_2"
+        }
+    ],
+    "UQ_Method": {
+        "Config File": "{Current_Dir}/UQpySimpleExample.json",
+        "Parameters": [
+            {
+                "name": "Sampling Method",
+                "type": "ComboBox",
+                "value": "LHS",
+                "values": [
+                    "LHS"
+                ]
+            },
+            {
+                "name": "Number of Samples",
+                "type": "SpinBox",
+                "value": 50
+            },
+            {
+                "name": "Number of Concurrent Tasks",
+                "type": "SpinBox",
+                "value": 1
+            },
+            {
+                "name": "Number of Nodes",
+                "type": "SpinBox",
+                "value": 1
+            },
+            {
+                "name": "Cores per Task",
+                "type": "SpinBox",
+                "value": 1
+            },
+            {
+                "name": "UQ Driver",
+                "type": "RVLineEdit",
+                "value": "UQpy"
+            }
+        ],
+        "uqEngine": "CustomUQ"
+    },
+    "fem": {
+        "dir": "{Current_Dir}/.",
+        "inputFile": "{Current_Dir}/TrussModel.tcl",
+        "mainInput": "TrussModel.tcl",
+        "mainPostprocessScript": "TrussPost.tcl",
+        "numInputs": 1,
+        "postprocessScript": "{Current_Dir}/TrussPost.tcl",
+        "program": "OpenSees"
+    },
+    "localAppDir": "C:/Users/yisan/Desktop/Development/quoFEM/backend",
+    "python": "C:/Users/yisan/AppData/Local/Programs/Python/Python38/python.exe",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 150,
+            "name": "E",
+            "refCount": 1,
+            "upperbound": 250,
+            "value": "RV.E",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 15,
+            "name": "P",
+            "refCount": 1,
+            "upperbound": 35,
+            "value": "RV.P",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 400,
+            "name": "Au",
+            "refCount": 1,
+            "upperbound": 600,
+            "value": "RV.Au",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 200,
+            "name": "Ao",
+            "refCount": 1,
+            "upperbound": 300,
+            "value": "RV.Ao",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
+    "uqResults": {
+    },
+    "workingDir": "C:/Users/yisan/Documents/quoFEM/LocalWorkDir"
+}
