@@ -17,4 +17,7 @@ conan install .. --build missing
 qmake ../quoFEM.pro
 make
 
+# back to where we started
+cd ..
+
 
