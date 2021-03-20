@@ -36,3 +36,8 @@ Qt is free for open source developers. Download it and start the Qt Creator appl
 ### Acknowledgement
 
 This material is based upon work supported by the National Science Foundation under Grant No. 1612843.
+
+### Contact
+
+NHERI-SimCenter nheri-simcenter@berkeley.edu
+
