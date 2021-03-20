@@ -17,7 +17,20 @@ conan install .. --build missing
 qmake ../quoFEM.pro
 make
 
-# back to where we started
+FILE=quoFEM.exe
+if [ "$(uname)" == "Darwin" ]; then
+   FILE=quoFEM.app
+fi
+
+if [ -e "$FILE" ]; then
+    echo "build succeeded $FILE"
+else 
+    echo "failed to build: $FILE."
+    cd ..    
+    exit 1
+fi
+
 cd ..
+
 
 
