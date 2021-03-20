@@ -7,6 +7,7 @@
 cd backend
 mkdir -p build
 cd build
+conan install .. --build missing
 cmake -DCMAKE_BUILD_TYPE=Release ..
 status=$?; if [[ $status != 0 ]]; then echo "cmake failed"; exit $status; fi
 make
