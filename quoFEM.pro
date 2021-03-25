@@ -29,6 +29,8 @@ win32 {
 } else {
     mac {
     ICON = icons/NHERI-quoFEM-Icon.icns
+    } else {
+      LIBS += -lglut -lGLU -lGL
     }
 }
 
@@ -159,15 +161,15 @@ RESOURCES += \
 
 # Path to build directory
 win32 {
-DESTDIR = $$shell_path($$OUT_PWD)
-Release:DESTDIR = $$DESTDIR/release
-Debug:DESTDIR = $$DESTDIR/debug
+   DESTDIR = $$shell_path($$OUT_PWD)
+   Release:DESTDIR = $$DESTDIR/release
+   Debug:DESTDIR = $$DESTDIR/debug
 
-PATH_TO_BINARY=$$DESTDIR/Examples
+   PATH_TO_BINARY=$$DESTDIR/Examples
 
 } else {
     mac {
-    PATH_TO_BINARY=$$OUT_PWD/quoFEM.app/Contents/MacOS
+        PATH_TO_BINARY=$$OUT_PWD/quoFEM.app/Contents/MacOS
     }
 }
 
@@ -189,14 +191,13 @@ export(copydata.commands)
 QMAKE_EXTRA_TARGETS += first copydata CopyDLLs
 
 }else {
-mac {
 
-# Copies over the examples folder into the build directory
-copydata.commands = $(COPY_DIR) \"$$shell_path($$PWD/Examples)\" \"$$shell_path($$PATH_TO_BINARY)\"
-first.depends = $(first) copydata
-export(first.depends)
-export(copydata.commands)
-QMAKE_EXTRA_TARGETS += first copydata
-
-}
+  mac {
+    # Copies over the examples folder into the build directory
+    copydata.commands = $(COPY_DIR) \"$$shell_path($$PWD/Examples)\" \"$$shell_path($$PATH_TO_BINARY)\"
+    first.depends = $(first) copydata
+    export(first.depends)
+    export(copydata.commands)
+    QMAKE_EXTRA_TARGETS += first copydata
+  }
 }
