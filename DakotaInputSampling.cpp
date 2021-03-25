@@ -60,7 +60,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStackedWidget>
 #include <MonteCarloInputWidget.h>
 #include <LatinHypercubeInputWidget.h>
-#include <ImportanceSamplingInputWidget.h>
+//#include <ImportanceSamplingInputWidget.h>
 #include <GaussianProcessInputWidget.h>
 #include <PCEInputWidget.h>
 #include <MultiFidelityMonteCarlo.h>
@@ -83,7 +83,7 @@ DakotaInputSampling::DakotaInputSampling(QWidget *parent)
     //samplingMethod->setMinimumWidth(800);
     samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
-    samplingMethod->addItem(tr("Importance Sampling"));
+    //samplingMethod->addItem(tr("Importance Sampling"));
     samplingMethod->addItem(tr("Gaussian Process Regression"));
     samplingMethod->addItem(tr("Polynomial Chaos Expansion"));
     // samplingMethod->addItem(tr("Multi Fidelity Monte Carlo"));
@@ -115,8 +115,8 @@ DakotaInputSampling::DakotaInputSampling(QWidget *parent)
     theMC = new MonteCarloInputWidget();
     theStackedWidget->addWidget(theMC);
 
-    theIS = new ImportanceSamplingInputWidget();
-    theStackedWidget->addWidget(theIS);
+    //theIS = new ImportanceSamplingInputWidget();
+    //theStackedWidget->addWidget(theIS);
 
     theGP = new GaussianProcessInputWidget();
     theStackedWidget->addWidget(theGP);
@@ -151,10 +151,10 @@ void DakotaInputSampling::onTextChanged(const QString &text)
     theStackedWidget->setCurrentIndex(1);
     theCurrentMethod = theMC;  
   }
-  else if (text=="Importance Sampling") {
-    theStackedWidget->setCurrentIndex(2);
-    theCurrentMethod = theIS;
-  }
+  //else if (text=="Importance Sampling") {
+  //  theStackedWidget->setCurrentIndex(2);
+  //  theCurrentMethod = theIS;
+  //}
   else if (text=="Gaussian Process Regression") {
     theStackedWidget->setCurrentIndex(3);
     theCurrentMethod = theGP;

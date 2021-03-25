@@ -75,7 +75,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
 
     accuracyMeasure = new QLineEdit();
     accuracyMeasure->setText(tr("0.02"));
-    accuracyMeasure->setValidator(new QIntValidator);
+    accuracyMeasure->setValidator(new QDoubleValidator);
     accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
     accuracyMeasure->setMaximumWidth(150);
 

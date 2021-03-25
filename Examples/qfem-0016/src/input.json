@@ -1,0 +1,142 @@
+{
+    "Applications": {
+        "UQ": {
+            "Application": "SimCenterUQ-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 1,
+            "name": "Node_2_Disp_1_Mean",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "Node_2_Disp_1_Std",
+            "type": "scalar"
+        }
+    ],
+    "UQ_Method": {
+        "surrogateMethodInfo": {
+            "accuracyLimit": 0.02,
+            "advancedOpt": true,
+            "existingDoE": false,
+            "initialDoE": 10,
+            "kernel": "Matern 5/2",
+            "linear": true,
+            "logTransform": true,
+            "method": "Sampling and Simulation",
+            "samples": 150,
+            "seed": 32,
+            "timeLimit": 60
+        },
+        "uqEngine": "SimCenterUQ",
+        "uqType": "Train GP Surrogate Model"
+    },
+    "fem": {
+        "dir": "{Current_Dir}/.",
+        "inputFile": "{Current_Dir}/ShearBuilding_NL.tcl",
+        "mainInput": "ShearBuilding_NL.tcl",
+        "mainPostprocessScript": "postprocess.tcl",
+        "numInputs": 1,
+        "postprocessScript": "{Current_Dir}/postprocess.tcl",
+        "program": "OpenSees"
+    },
+    "localAppDir": "C:/Users/yisan/Desktop/Development/quoFEM/backend",
+    "python": "C:/Users/yisan/AppData/Local/Programs/Python/Python38/python.exe",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 50,
+            "name": "w",
+            "refCount": 1,
+            "upperbound": 150,
+            "value": "RV.w",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 30,
+            "name": "wR",
+            "refCount": 1,
+            "upperbound": 80,
+            "value": "RV.wR",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 250,
+            "name": "k",
+            "refCount": 1,
+            "upperbound": 350,
+            "value": "RV.k",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.05,
+            "name": "alp",
+            "refCount": 1,
+            "upperbound": 0.15,
+            "value": "RV.alp",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 18,
+            "name": "Fy",
+            "refCount": 1,
+            "upperbound": 22,
+            "value": "RV.Fy",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
+    "uqResults": {
+        "resultType": "SimCenterUQResultsSurrogate",
+        "spreadsheet": {
+            "data": [
+                0.019995505444,
+                5.0982055653,
+                0.19999998698,
+                6.2939511141,
+                0.39999999984,
+                7.0099519177,
+                0.6000000025,
+                7.7017767707,
+                0.80000030103,
+                8.5975569431,
+                0.99000058559,
+                11.497190781
+            ],
+            "headings": [
+                "Pr(Node_3_Disp_2)",
+                "Node_3_Disp_2"
+            ],
+            "numCol": 2,
+            "numRow": 6
+        },
+        "summary": {
+            "terminationCode": null,
+            "thrNRMSE": null,
+            "valCorrCoeff": null,
+            "valNRMSE": null,
+            "valR2": null,
+            "valSamp": null,
+            "valSim": null,
+            "valTime": null,
+            "yExact": null,
+            "yPredict": null,
+            "ydim": null,
+            "ylabels": null
+        }
+    },
+    "workingDir": "C:/Users/yisan/Documents/quoFEM/LocalWorkDir"
+}

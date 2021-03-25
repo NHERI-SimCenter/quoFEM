@@ -124,7 +124,10 @@ class GpFromModel(object):
             random.seed(surrogateInfo['seed'])
             self.xrange = np.empty((0, 2), float)
             for rv in inp['randomVariables']:
-                self.xrange = np.vstack((self.xrange ,[rv['lowerbound'], rv['upperbound']]))
+                if  "lowerbound" not in rv:
+                    msg = 'Error in input RV: all RV should be set to Uniform distribution'
+                    errlog.exit(msg)
+                self.xrange = np.vstack((self.xrange, [rv['lowerbound'], rv['upperbound']]))
             self.len = np.abs(np.diff(self.xrange).T[0])
 
             if sum(self.len==0) >0:
@@ -716,7 +719,7 @@ class GpFromModel(object):
                     break
 
             if math.isinf(-max_log_likli) or math.isnan(-max_log_likli):
-                msg = "Error GP optimization failed"
+                msg = "Error GP optimization failed, perhaps QoI values are zero."
                 self.errlog.exit(msg)
 
             m_list = m_list + [m]

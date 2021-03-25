@@ -421,6 +421,7 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
             label2->setText("SurrogateGP Model (.pkl)");
             file1->setToolTip(tr("Name of SurrogateGP model file (.json)"));
             file2->setToolTip(tr("Name of SurrogateGP info file (.pkl)"));
+            optionsLayout = 0;
         } else {
             label1->setText("Input Script");
             file1->setToolTip(tr("Name of OpenSeesPy input script"));
@@ -789,18 +790,27 @@ QStringList InputWidgetFEM::parseGPInputs(QString file1){
     // want to make GP option box
     //
 
-    QLabel *labelVarThres = new QLabel("Maximum Allowable Normalized Variance  ");
-    thresVal = new QLineEdit;
-    QGroupBox *groupBox = new QGroupBox("Options");
-    QGridLayout *optionsLayout = new QGridLayout();
-    groupBox->setLayout(optionsLayout);
 
-    femLayout->addWidget(new QLabel(""),2,0);
-    femLayout->addWidget(groupBox,3,0,1,3);
+    // ... create complicated layout ...
+    if (optionsLayout != nullptr) {
+
+        // completely delete layout and sublayouts
+        QLayoutItem * item;
+        QLayout * sublayout;
+        QWidget * widget;
+        while ((item = optionsLayout->takeAt(0))) {
+            if ((sublayout = item->layout()) != 0) {/* do the same for sublayout*/}
+            else if ((widget = item->widget()) != 0) {widget->hide(); delete widget;}
+            else {delete item;}
+        }
+
+    }
+
 
     QFile file(file1);
     QString appName, mainScriptDir,postScriptDir;
     QStringList qoiNames;
+    thresVal = new QLineEdit;
 
     if (file.open(QFile::ReadOnly | QFile::Text)) {
         QString val;
@@ -849,13 +859,24 @@ QStringList InputWidgetFEM::parseGPInputs(QString file1){
             }
         } else {
             appName = "NA";
+            thresVal->setText("0");
+            return {};
         }
     } else {
         appName = "NA";
+        thresVal->setText("0");
+        return {};
     }
 
+    groupBox = new QGroupBox("Options");
+    optionsLayout = new QGridLayout();
+    groupBox->setLayout(optionsLayout);
+
+    femLayout->addWidget(new QLabel(""),2,0);
+    femLayout->addWidget(groupBox,3,0,1,3);
+
+    QLabel *labelVarThres = new QLabel("Maximum Allowable Normalized Variance  ");
     QLabel *optionsLabel = new QLabel("When surroagate model gives imprecise prediction at certain sample locations");
-    optionsLayout->addWidget(optionsLabel, 2,0,1,-1);
 
     option1Button = new QRadioButton();
     QLabel *option1Label = new QLabel("     Stop Analysis");
@@ -871,6 +892,7 @@ QStringList InputWidgetFEM::parseGPInputs(QString file1){
     optionsLayout->addWidget(labelVarThres, 0,0);
     optionsLayout->addWidget(thresVal,0,1, Qt::AlignVCenter);
     optionsLayout->addWidget(labelThresMsg,1,0,1,-1);
+    optionsLayout->addWidget(optionsLabel, 2,0,1,-1);
     optionsLayout->addWidget(option1Label, 3,0,1,-1);
     optionsLayout->addWidget(option1Button, 3,0);
     optionsLayout->addWidget(option2Label, 4,0,1,-1);

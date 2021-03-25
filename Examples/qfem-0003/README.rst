@@ -87,9 +87,63 @@ selected and the results will be displayed as shown in the following
 figure:
 
 .. figure:: figures/trussSORM-RES.png
-   :alt: Sensitivity analysis results.
 
-   Sensitivity analysis results.
-
+   Reliability analysis (Second order apprximation)
 
 
+
+Other reliability methods
+-------------------------
+
+**First Order** Integration Method: The user can change only the integration method to get the first order approximation (instead of the second order approximation) results.
+
++--------------------------+------------------------------------+
+| **Integration Method**   | First Order Reliability            |
++--------------------------+------------------------------------+
+| **Level Type**           | Probability Levels                 |
++--------------------------+------------------------------------+
+| **Local Method**         | Most Probable Point                |
++--------------------------+------------------------------------+
+| **Reliability Method**   | Local Reliability                  |
++--------------------------+------------------------------------+
+| **MPP Search Method**    | no_approx                          |
++--------------------------+------------------------------------+
+| **Probability Levels**   | [0.02, 0.2, 0.4, 0.6, 0.8, 0.99]   |
++--------------------------+------------------------------------+
+
+.. figure:: figures/trussFORM-RES2.png
+
+   Reliability analysis (First order apprximation)
+
+**Global reliability** and **Importance sampling** methods can to identify probability levels corresponding to given response thresholds.
+
+.. note::
+   Global reliability and importance sampling cannot read **probability thresholds** as inputs.
+
+Global reliability:
+
++--------------------------+------------------------------------+
+| **GP Approx. Method**    | u-space                            |
++--------------------------+------------------------------------+
+| **Response Levels**      | [5.0 6.0 7.0 8.0 9.0]              |
++--------------------------+------------------------------------+
+
+.. figure:: figures/trussGP-RES2.png
+
+   Global reliability results.
+
+Importance Sampling (IS):
+
++--------------------------+------------------------------------+
+| **# Samples**            | 100                                |
++--------------------------+------------------------------------+
+| **Seed**                 | 159                                |
++--------------------------+------------------------------------+
+| **IS Method**            | Basic Simulation                   |
++--------------------------+------------------------------------+
+| **Response Levels**      | [5.0 6.0 7.0 8.0 9.0]              |
++--------------------------+------------------------------------+
+
+.. figure:: figures/trussIS-RES2.png
+
+   Importance Sampling (IS) results.

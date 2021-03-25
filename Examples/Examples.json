@@ -46,9 +46,14 @@
             "InputFile": "qfem-0015/src/input.json"
         },
         {
+            "name":"Building Surrogate Modeling (Steel02)",
+            "description":"An Example",
+            "InputFile": "qfem-0016/src/input.json"
+        },
+        {
             "name":"Custom-UQ",
             "description":"An Example",
-            "InputFile": "qfem-0020/src/input.json"
+            "InputFile": "qfem-0017/src/input.json"
         }
     ]
 }

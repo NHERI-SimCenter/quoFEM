@@ -237,16 +237,6 @@ int DakotaResultsSensitivity::processResults(QString &filenameResults, QString &
     //
 
     // create a scrollable windows, place summary inside it
-    QScrollArea *sa = new QScrollArea;
-    sa->setWidgetResizable(true);
-    sa->setLineWidth(0);
-    sa->setFrameShape(QFrame::NoFrame);
-
-    QWidget *summary = new QWidget();
-    QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summaryLayout->setContentsMargins(0,0,0,0); // adding back
-    summary->setLayout(summaryLayout);
-    sa->setWidget(summary);
 
     //
     // read data from file filename
@@ -290,15 +280,63 @@ Node_2_Disp Sobol' indices:
         return -1;
     }
 
+    //
+    // Read from out file
+    //
+
     const std::string needleSobol = "Sobol'";
     bool done = false;
-    QGroupBox *groupBox = NULL;
-    int numEDP = 0;
-    QGridLayout * trainingDataLayout = NULL;
-    QHBoxLayout *tableLayout = NULL;
-    MyTableWidget *table = NULL;
-    QStringList theTableHeadings;
-    theTableHeadings << "Random Variable" << "Main" << "Total";
+    numEDP = 0;
+    numRV = 0;
+
+    QVector<double> sobols_main_vec;
+    QVector<double> sobols_tot_vec;
+
+    while (done == false) {
+        std::getline(fileResults, haystack);
+        if (haystack.find(needleSobol) != std::string::npos) {
+            //QString h(QString::fromStdString(haystack));
+            edpname_list << QString::fromStdString(haystack);
+            std::getline(fileResults, haystack);
+            if (numEDP>0) {
+                sobols_tot.push_back(sobols_tot_vec);
+                sobols_main.push_back(sobols_main_vec);
+            }
+            numRV = 0;
+            numEDP++;
+            sobols_main_vec.clear();
+            sobols_tot_vec.clear();
+            rvname_list.clear();
+        } else {
+            std::istringstream iss(haystack); // main/total
+            QString h(QString::fromStdString(haystack));
+            if (h.length() == 0) {
+                sobols_tot.push_back(sobols_tot_vec);
+                sobols_main.push_back(sobols_main_vec);
+                done = true;
+            } else {
+                std::string data1, data2, data3, data4;
+
+                iss >> data1 >> data2 >> data3;
+                QString d1(QString::fromStdString(data1)); //main
+                QString d2(QString::fromStdString(data2)); //total
+                QString d3(QString::fromStdString(data3)); // label
+
+                sobols_main_vec.push_back(d1.toDouble());
+                sobols_tot_vec.push_back(d2.toDouble());
+                rvname_list << d3;
+                numRV++;
+            }
+        }
+    }
+
+    fileResults.close();
+
+    QScrollArea *sa = new QScrollArea;
+
+    //HEREHEREHEREHEREHERE
+    gsaChart(*&sa);
+    /*************
     while (done == false) {
         std::getline(fileResults, haystack);
         if (haystack.find(needleSobol) != std::string::npos) {
@@ -307,18 +345,6 @@ Node_2_Disp Sobol' indices:
             groupBox = new QGroupBox(h);
             summaryLayout->addWidget(groupBox);
 
-            /***** TABLE LAYOUT OPTION  ******
-            // QTable option
-            table = new MyTableWidget();
-            table->setColumnCount(3);
-            table->setHorizontalHeaderLabels(theTableHeadings);
-            table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-            table->verticalHeader()->setVisible(false);
-            tableLayout = new QHBoxLayout();
-            tableLayout->addWidget(table);
-            tableLayout->addStretch();
-            groupBox->setLayout(tableLayout);
-            ********************************************/
 
             // Labels & QlineEdit Option in a QGrid
             trainingDataLayout = new QGridLayout();
@@ -366,24 +392,14 @@ Node_2_Disp Sobol' indices:
                 trainingDataLayout->setColumnStretch(2,.5);
                 trainingDataLayout->setColumnStretch(3,1);
 
-                /* *** Table Widget option
-                table->insertRow(numEDP);
-                QModelIndex index1 = table->model()->index(numEDP, 0);
-                table->model()->setData(index1, data3.c_str());
-                QModelIndex index2 = table->model()->index(numEDP, 1);
-                table->model()->setData(index2, data1.c_str());
-                QModelIndex index3 = table->model()->index(numEDP, 2);
-                table->model()->setData(index3, data2.c_str());
-                */
 
                 numEDP++;
             }
         }
     }
+    *************/
 
-    summaryLayout->addStretch();
 
-    fileResults.close();
 
     //
     // create spreadsheet,  a QTableWidget showing RV and results for each run
@@ -504,6 +520,66 @@ Node_2_Disp Sobol' indices:
 
     return 0;
 }
+
+void DakotaResultsSensitivity::gsaChart(QScrollArea *&sa) {
+
+    sa->setWidgetResizable(true);
+    sa->setLineWidth(0);
+    sa->setFrameShape(QFrame::NoFrame);
+
+    QGroupBox *groupBox = NULL;
+    QWidget *summary = new QWidget();
+    QVBoxLayout *summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0); // adding back
+    summary->setLayout(summaryLayout);
+    sa->setWidget(summary);
+
+    QGridLayout * trainingDataLayout = NULL;
+    QStringList theTableHeadings;
+    theTableHeadings << "Random Variable" << "Main" << "Total";
+
+    for (int ne=0; ne< numEDP; ne++) {
+        QString h;
+        groupBox = new QGroupBox(edpname_list[ne]);
+        summaryLayout->addWidget(groupBox);
+        // Labels & QlineEdit Option in a QGrid
+        trainingDataLayout = new QGridLayout();
+        QLabel *l1 = new QLabel("Random Variable");
+        QLabel *l2 = new QLabel("Main");
+        QLabel *l3 = new QLabel("Total");
+        trainingDataLayout->addWidget(l1, 0,0);
+        trainingDataLayout->addWidget(l2, 0,1);
+        trainingDataLayout->addWidget(l3, 0,2);
+        QFont font;
+        font.setBold(true);
+        l1->setAlignment(Qt::AlignCenter);
+        l1->setFont(font);
+        l2->setAlignment(Qt::AlignCenter);
+        l2->setFont(font);
+        l3->setAlignment(Qt::AlignCenter);
+        l3->setFont(font);
+
+        groupBox->setLayout(trainingDataLayout);
+
+        for (int nrv=0; nrv< numRV; nrv++) {
+            std::string data1, data2, data3, data4;
+
+            QLineEdit *e1 = new QLineEdit(rvname_list[nrv]); e1->setReadOnly(true); e1->setAlignment(Qt::AlignCenter);
+            QLineEdit *e2 = new QLineEdit(QString::number(sobols_main[ne][nrv])); e2->setReadOnly(true);  e2->setAlignment(Qt::AlignRight);
+            QLineEdit *e3 = new QLineEdit(QString::number(sobols_tot[ne][nrv])); e3->setReadOnly(true); e3->setAlignment(Qt::AlignRight);
+
+            trainingDataLayout->addWidget(e1, nrv+1,0);
+            trainingDataLayout->addWidget(e2, nrv+1,1);
+            trainingDataLayout->addWidget(e3, nrv+1,2);
+            trainingDataLayout->setColumnStretch(1,.5);
+            trainingDataLayout->setColumnStretch(2,.5);
+            trainingDataLayout->setColumnStretch(3,1);
+        }
+    }
+    summaryLayout->addStretch();
+}
+
+
 
 
 void
@@ -986,18 +1062,31 @@ DakotaResultsSensitivity::outputToJSON(QJsonObject &jsonObject)
     // add summary data
     //
 
-    QJsonArray resultsData;
-    int numEDP = theNames.count();
-    for (int i=0; i<numEDP; i++) {
-        QJsonObject edpData;
-        edpData["name"]=theNames.at(i);
-        edpData["mean"]=theMeans.at(i);
-        edpData["stdDev"]=theStdDevs.at(i);
-        edpData["kurtosis"]=theKurtosis.at(i);
-        resultsData.append(edpData);
+    QJsonArray sobols_tot_vec, sobols_main_vec;
+    for (int nq=0; nq<numEDP; nq++){
+        for (int nc=0; nc<numRV; nc++){
+            sobols_tot_vec.append(sobols_tot[nq][nc]);
+            sobols_main_vec.append(sobols_main[nq][nc]);
+        }
     }
+    jsonObject["sobols_main"]=sobols_main_vec;
+    jsonObject["sobols_tot"]=sobols_tot_vec;
 
-    jsonObject["summary"]=resultsData;
+    QJsonArray QoIlist;
+    for (int nq=0; nq<numEDP; nq++){
+        QoIlist.append(edpname_list[nq]);
+    }
+    jsonObject["QoIlist"]=QoIlist;
+
+    QJsonArray rvlist;
+    for (int nc=0; nc<numRV; nc++){
+        rvlist.append(rvname_list[nc]);
+    }
+    jsonObject["RVlist"]=rvlist;
+
+    jsonObject["numQoI"]=numEDP;
+    jsonObject["numRV"]=numRV;
+
 
     //
     // add spreadsheet data
@@ -1053,6 +1142,7 @@ DakotaResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
 
+    /*
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
     summary->setLayout(summaryLayout);
@@ -1078,6 +1168,41 @@ DakotaResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
         summaryLayout->addWidget(theWidget);
     }
     summaryLayout->addStretch();
+    */
+
+    //
+    // sobols
+    //
+
+    numEDP=jsonObject["numQoI"].toInt();
+    numRV=jsonObject["numRV"].toInt();
+
+    QJsonArray sobols_tot_vals=jsonObject["sobols_tot"].toArray();
+    QJsonArray sobols_main_vals=jsonObject["sobols_main"].toArray();
+
+    int n=0;
+    for (int nq=0; nq<numEDP; nq++){
+        QVector<double> sobols_tot_vec, sobols_main_vec;
+        for (int nc=0; nc<numRV; nc++){
+            sobols_tot_vec.push_back(sobols_tot_vals[nc].toDouble());
+            sobols_main_vec.push_back(sobols_main_vals[nc].toDouble());
+        }
+        sobols_tot.push_back(sobols_tot_vec);
+        sobols_main.push_back(sobols_main_vec);
+    }
+
+    QJsonArray QoIlist=jsonObject["QoIlist"].toArray();
+    for (int nq=0; nq<numEDP; nq++) {
+        edpname_list.push_back(QoIlist[nq].toString());
+    }
+
+    QJsonArray comblist=jsonObject["RVlist"].toArray();
+    for (int nc=0; nc<numRV; nc++) {
+        rvname_list.push_back(comblist[nc].toString());
+    }
+
+    QScrollArea *sa = new QScrollArea;
+    gsaChart(*&sa);
 
 
     //
@@ -1141,7 +1266,7 @@ DakotaResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
     // add 3 Widgets to TabWidget
     //
 
-    tabWidget->addTab(summary,tr("Summary"));
+    tabWidget->addTab(sa,tr("Summary"));
     tabWidget->addTab(widget, tr("Data Values"));
 
     tabWidget->adjustSize();
@@ -1193,3 +1318,6 @@ DakotaResultsSensitivity::createResultEDPWidget(QString &name, double mean, doub
 
     return edp;
 }
+
+
+

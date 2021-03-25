@@ -118,7 +118,7 @@ parseForRV(json_t *root, struct randomVariables &theRandomVariables){
 
       theRandomVariables.normalRVs.push_back(theRV);
       theRandomVariables.numRandomVariables += 1;
-      theRandomVariables.ordering.push_back(i);
+      theRandomVariables.ordering.push_back(1);
       numberRVs++;
 
     }
@@ -133,7 +133,7 @@ parseForRV(json_t *root, struct randomVariables &theRandomVariables){
 
       theRandomVariables.lognormalRVs.push_back(theRV);
       theRandomVariables.numRandomVariables += 1;
-      theRandomVariables.ordering.push_back(i);
+      theRandomVariables.ordering.push_back(2);
       numberRVs++;
 
     }
@@ -149,7 +149,7 @@ parseForRV(json_t *root, struct randomVariables &theRandomVariables){
 
       theRandomVariables.uniformRVs.push_back(theRV);
       theRandomVariables.numRandomVariables += 1;
-      theRandomVariables.ordering.push_back(i);
+      theRandomVariables.ordering.push_back(3);
       numberRVs++;
 
     }
@@ -192,7 +192,7 @@ parseForRV(json_t *root, struct randomVariables &theRandomVariables){
 
       theRandomVariables.weibullRVs.push_back(theRV);
       theRandomVariables.numRandomVariables += 1;
-      theRandomVariables.ordering.push_back(i);
+      theRandomVariables.ordering.push_back(11);
       numberRVs++;
     }
 
@@ -206,7 +206,7 @@ parseForRV(json_t *root, struct randomVariables &theRandomVariables){
 
       theRandomVariables.gammaRVs.push_back(theRV);
       theRandomVariables.numRandomVariables += 1;
-      theRandomVariables.ordering.push_back(i);
+      theRandomVariables.ordering.push_back(8);
       numberRVs++;
     }
 
@@ -220,7 +220,7 @@ parseForRV(json_t *root, struct randomVariables &theRandomVariables){
 
       theRandomVariables.gumbellRVs.push_back(theRV);
       theRandomVariables.numRandomVariables += 1;
-      theRandomVariables.ordering.push_back(i);
+      theRandomVariables.ordering.push_back(9);
       numberRVs++;
     }
 
@@ -237,7 +237,7 @@ parseForRV(json_t *root, struct randomVariables &theRandomVariables){
       std::cerr << theRV.name << " " << theRV.upperBound << " " << theRV.lowerBound << " " << theRV.alphas << " " << theRV.betas;
       theRandomVariables.betaRVs.push_back(theRV);
       theRandomVariables.numRandomVariables += 1;
-      theRandomVariables.ordering.push_back(i);
+      theRandomVariables.ordering.push_back(7);
       numberRVs++;
     }
 
@@ -515,10 +515,21 @@ writeRV(std::ostream &dakotaFile, struct randomVariables &theRandomVariables, st
      //if (theRandomVariables.corrMat[0] != 0) {
 
      if (theRandomVariables.corrMat[0]!=0) {
+
+        std::vector<int> newOrder;
+        for (int i=0; i<18; i++) {
+           for (int j=0; j<theRandomVariables.ordering.size(); j++) {
+             if (i==theRandomVariables.ordering[j]) {
+                newOrder.push_back(j);
+             }
+          }         
+        }
+
+
         dakotaFile<<"uncertain_correlation_matrix\n";
-        for (int i : theRandomVariables.ordering) {
+        for (int i : newOrder) {
           dakotaFile << "    ";
-          for (int j : theRandomVariables.ordering) {
+          for (int j : newOrder) {
             double corrval = theRandomVariables.corrMat[i*theRandomVariables.numRandomVariables+j];
             dakotaFile << corrval << " ";
           }
@@ -847,8 +858,8 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
       writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
-    }
 
+    /*
     else if (strcmp(method,"Importance Sampling")==0) {
 
       const char *isMethod = json_string_value(json_object_get(samplingMethodData,"ismethod"));
@@ -863,8 +874,8 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
       writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
     }
-
-    else if (strcmp(method,"Gaussian Process Regression")==0) {
+    */
+    } else if (strcmp(method,"Gaussian Process Regression")==0) {
 
       int trainingSamples = json_integer_value(json_object_get(samplingMethodData,"trainingSamples"));
       int trainingSeed = json_integer_value(json_object_get(samplingMethodData,"trainingSeed"));
@@ -1041,6 +1052,47 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	  dakotaFile << val << " ";
 	}
 	dakotaFile << "\n\t";
+      }
+      dakotaFile << "\n\n";
+
+      std::string emptyString;
+      writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
+      writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
+      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, false, 0);
+    }
+
+    else if (strcmp(method,"Importance Sampling")==0) {
+
+      const char *isMethod = json_string_value(json_object_get(reliabilityMethodData,"ismethod"));
+      int numSamples = json_integer_value(json_object_get(reliabilityMethodData,"samples"));
+      int seed = json_integer_value(json_object_get(reliabilityMethodData,"seed"));
+
+      json_t *levels =  json_object_get(reliabilityMethodData, "responseLevel");
+      if (levels == NULL) {
+        return 0;
+      }
+
+      int numLevels = json_array_size(levels);
+
+       dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
+       dakotaFile << "method, \n importance_sampling \n " << isMethod << " \n samples = " << numSamples << "\n seed = " << seed << "\n\n";
+
+    //   std::string emptyString;
+    //   writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
+    //   writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
+    //   writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
+      dakotaFile << " \n num_response_levels = ";
+      for (int i=0; i<numResponses; i++)
+        dakotaFile << numLevels << " ";
+
+      dakotaFile << " \n response_levels = " ;
+      for (int j=0; j<numResponses; j++) {
+        for (int i=0; i<numLevels; i++) {
+          json_t *responseLevel = json_array_get(levels,i);
+          double val = json_number_value(responseLevel);
+          dakotaFile << val << " ";
+        }
+        dakotaFile << "\n\t";
       }
       dakotaFile << "\n\n";
 

@@ -119,7 +119,8 @@ public:
     QString femOpt;
     bool isData;
     QRadioButton * option1Button,* option2Button,* option3Button;
-
+    QGroupBox *groupBox;
+    QGridLayout *optionsLayout ;
 };
 
 #endif // INPUTWIDGETFEM_H
