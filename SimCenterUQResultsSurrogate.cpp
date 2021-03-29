@@ -1233,7 +1233,7 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
     tabWidgetScatter->setMaximumHeight(500);
     tabWidgetScatter->setMaximumWidth(500);
 
-    QLabel *CVresultsLabel =new QLabel("\nLeave-Out-One Cross-Validation (LOOCV) Prediction");
+    QLabel *CVresultsLabel =new QLabel("\nLeave-One-Out Cross-Validation (LOOCV) Prediction");
     CVresultsLabel-> setStyleSheet({"font-weight: bold"});
     summaryLayout->addWidget(CVresultsLabel, 3, 0);
     summaryLayout->addWidget(tabWidgetScatter,4,0);

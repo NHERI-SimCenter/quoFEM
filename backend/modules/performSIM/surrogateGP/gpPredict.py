@@ -2,8 +2,7 @@ import time
 import pickle as pickle
 import numpy as np
 import os
-import argparse
-import sys, getopt
+import sys
 import json as json
 import shutil
 import subprocess
@@ -232,9 +231,12 @@ def main(params_dir,surrogate_dir,json_dir,result_file):
 
             os.chdir("../")
 
-            result_values = table[g_idx].tolist()
             with open('results.out', 'w') as f:
-                f.write(' '.join(map(str, result_values)))
+                if table.size==1:
+                    f.write(str(table))
+                else:
+                    result_values = table[g_idx].tolist()
+                    f.write(' '.join(map(str, result_values)))
 
             msg2 = msg0+msg1+'- RUN original model\n'
             print(msg2)
