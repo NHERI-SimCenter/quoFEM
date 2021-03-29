@@ -28,7 +28,7 @@
             "linear": true,
             "logTransform": true,
             "method": "Sampling and Simulation",
-            "samples": 150,
+            "samples": 300,
             "seed": 32,
             "timeLimit": 60
         },
@@ -60,7 +60,7 @@
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 30,
+            "lowerbound": 40,
             "name": "wR",
             "refCount": 1,
             "upperbound": 80,
@@ -70,10 +70,10 @@
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 250,
+            "lowerbound": 240,
             "name": "k",
             "refCount": 1,
-            "upperbound": 350,
+            "upperbound": 360,
             "value": "RV.k",
             "variableClass": "Uncertain"
         },
@@ -100,43 +100,6 @@
     ],
     "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
     "uqResults": {
-        "resultType": "SimCenterUQResultsSurrogate",
-        "spreadsheet": {
-            "data": [
-                0.019995505444,
-                5.0982055653,
-                0.19999998698,
-                6.2939511141,
-                0.39999999984,
-                7.0099519177,
-                0.6000000025,
-                7.7017767707,
-                0.80000030103,
-                8.5975569431,
-                0.99000058559,
-                11.497190781
-            ],
-            "headings": [
-                "Pr(Node_3_Disp_2)",
-                "Node_3_Disp_2"
-            ],
-            "numCol": 2,
-            "numRow": 6
-        },
-        "summary": {
-            "terminationCode": null,
-            "thrNRMSE": null,
-            "valCorrCoeff": null,
-            "valNRMSE": null,
-            "valR2": null,
-            "valSamp": null,
-            "valSim": null,
-            "valTime": null,
-            "yExact": null,
-            "yPredict": null,
-            "ydim": null,
-            "ylabels": null
-        }
     },
     "workingDir": "C:/Users/yisan/Documents/quoFEM/LocalWorkDir"
 }

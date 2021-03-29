@@ -24,7 +24,7 @@
             "linear": true,
             "logTransform": true,
             "method": "Sampling and Simulation",
-            "samples": 100,
+            "samples": 150,
             "seed": 71,
             "timeLimit": 60
         },

@@ -46,7 +46,7 @@ flower2 Weight     10.0         15.5
 roof Weight        10.0         15.5
 ================== ============ =========
 
-And below is the time history of the ground motion excitation.
+Below is the time history of the ground motion excitation.
 
 .. figure:: figures/SUR-GM.PNG
    :align: center

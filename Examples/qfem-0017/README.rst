@@ -2,9 +2,9 @@
 Custom UQ for UQpy
 =============================================
 
-+---------------+----------------------+
-| Problem files | :qfem-0020:`/`       |
-+---------------+----------------------+
++----------------+------------------------------------------+
+| Problem files  | :github:`Github <Examples/qfem-0017/>`   |
++----------------+------------------------------------------+
 
 This example illustrates how quoFEM can interface a custom UQ engine. A simple forward propagation is conducted using UQpy_, a python package for general uncertainty quantification problems. 
 

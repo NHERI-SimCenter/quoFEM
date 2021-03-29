@@ -331,7 +331,7 @@
         "qfem-0016/README.rst"
       ],
       "entry_point": "qfem-0016/input.json",
-      "summary": "This example uses quoFEM to train a Gaussian process-based surrogate model for mean and variance of peak responses and use it for sensitivity analysis",
+      "summary": "This example uses quoFEM to train a Gaussian process-based surrogate model for mean and variance of peak responses and use it for sensitivity analysis.",
       "logo": "figures/SUR2-sturcture.png",
       "published": "2021-03-12T21:26:53.946381-08:00",
       "categories": {
