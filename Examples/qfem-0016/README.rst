@@ -170,8 +170,8 @@ Also correlation between the floor weight and roof weight is assumed to be 0.3.
    :figclass: align-center
    :width: 1200
 
-| **Surrogate model training time**: 59.3 min. (number of simulation model runs: 293)
-| **Analysis time**: 13.3 min. (number of surrogate model evaluations: 1200)
+| **Surrogate model training time**: 58.9 min. (number of simulation model runs: 300)
+| **Analysis time**: 16.3 min. (number of surrogate model evaluations: 1400)
 
 * Reference simulation model results
 
@@ -180,4 +180,4 @@ Also correlation between the floor weight and roof weight is assumed to be 0.3.
    :figclass: align-center
    :width: 1200
 
-| **Analysis time**: 71.1 min. (number of simulation model evaluations: 1200)
+| **Analysis time**: 83.0 min. (number of simulation model runs: 1400)
