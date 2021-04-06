@@ -171,7 +171,8 @@
         "qfem-0009/figures/trussSensitivity-advanced.png",
         "qfem-0009/figures/trussSensitivity-input-SimUQ.png",
         "qfem-0009/figures/trussSensitivity-RES-SimUQ.png",
-        "qfem-0009/figures/trussSensitivity-RES-SimUQ2.png"
+        "qfem-0009/figures/trussSensitivity-RES-SimUQ2.png",
+        "qfem-0009/figures/trussPDF.png"
       ],
       "entry_point": "qfem-0009/input.json",
       "summary": "A global sensitivity analysis is conducted with correlated random variables using the SimCenterUQ engine.",
