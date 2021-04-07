@@ -8,10 +8,10 @@ recorder Element -file $Fofile.out -time -ele 1 force;
 recorder Drift -file $Drfile.out -time -iNode 1 -jNode 2 -dof 1 -perpDirn 3;
 
 
-set xDamp 0.02;
-set lambdaN [eigen 2];
+set xDamp 0.05;
+set lambdaN [eigen 3];
 set lambdaI [lindex $lambdaN [expr 1 -1]];
-set lambdaJ [lindex $lambdaN [expr 2 -1]];
+set lambdaJ [lindex $lambdaN [expr 3 -1]];
 set omegaI [expr pow($lambdaI,0.5)];
 set omegaJ [expr pow($lambdaJ,0.5)];
 set alphaM [expr $xDamp*(2*$omegaI*$omegaJ)/($omegaI+$omegaJ)];
