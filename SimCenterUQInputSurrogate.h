@@ -81,7 +81,7 @@ signals:
 
 public slots:
    void clear(void);
-   void onTextInpChanged(const QString &arg1);
+   void onIndexChanged(const QString &arg1);
    void numModelsChanged(int numModels);
 
 private:

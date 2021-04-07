@@ -113,10 +113,10 @@ SimCenterUQInputSurrogate::SimCenterUQInputSurrogate(InputWidgetParameters *para
 
     this->setLayout(layout);
 
-    connect(inpMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextInpChanged(QString)));
+    connect(inpMethod, SIGNAL(currentIndexChanged(QString)), this, SLOT(onIndexChanged(QString)));
 }
 
-void SimCenterUQInputSurrogate::onTextInpChanged(const QString &text)
+void SimCenterUQInputSurrogate::onIndexChanged(const QString &text)
 {
     if (text=="Sampling and Simulation") {
         theStackedWidget->setCurrentIndex(0);
