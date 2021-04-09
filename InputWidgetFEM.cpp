@@ -110,7 +110,7 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, InputWidgetEDP *edp
 
     // layout->addStretch();
     // layout->setSpacing(10);
-    layout->setMargin(10);
+    //layout->setMargin(10);
     layout->addStretch();
 
     this->setLayout(layout);

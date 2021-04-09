@@ -118,8 +118,8 @@ InputWidgetEDP::makeEDP(void)
     sa->setWidget(edp);
     verticalLayout->addWidget(sa);
 
-    verticalLayout->setSpacing(0);
-    //verticalLayout->setMargin(0);
+    //verticalLayout->setSpacing(0);
+    verticalLayout->setMargin(0);
 
     // show if SimCenterUQ && Sensitivity analysis
     theAdvancedLayout=AdvancedSensitivity();
