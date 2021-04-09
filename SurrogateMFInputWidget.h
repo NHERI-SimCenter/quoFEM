@@ -1,5 +1,5 @@
-#ifndef SimCenterUQ_INPUT_SURROGATE_H
-#define SimCenterUQ_INPUT_SURROGATE_H
+#ifndef SURROGATE_MF_INPUT_WIDGET_H
+#define SURROGATE_MF_INPUT_WIDGET_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -37,74 +37,64 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-#include <UQ_Engine.h>
+// Written: fmckenna
 
-#include <QGroupBox>
-#include <QVector>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QPushButton>
-
-class SimCenterUQSurrogateResults;
-class SimCenterUQResults;
+#include <UQ_MethodInputWidget.h>
+class QLineEdit;
 class QCheckBox;
-class RandomVariablesContainer;
-class QStackedWidget;
-class UQ_MethodInputWidget;
+class QPushButton;
+class QComboBox;
+class QLabel;
+class QFrame;
 class InputWidgetParameters;
 class InputWidgetEDP;
 class InputWidgetFEM;
 
-class SimCenterUQInputSurrogate : public UQ_Engine
+class SurrogateMFInputWidget : public UQ_MethodInputWidget
 {
     Q_OBJECT
 public:
-    explicit SimCenterUQInputSurrogate(InputWidgetParameters *param,InputWidgetFEM *femwidget,InputWidgetEDP *edpwidget, QWidget *parent = 0);
-    ~SimCenterUQInputSurrogate();
+    explicit SurrogateMFInputWidget(InputWidgetParameters *param,InputWidgetFEM *femwidget,InputWidgetEDP *edpwidget, QWidget *parent = 0);
+    ~SurrogateMFInputWidget();
 
-    bool outputToJSON(QJsonObject &jsonObject);
-    bool inputFromJSON(QJsonObject &jsonObject);
-    bool outputAppDataToJSON(QJsonObject &jsonObject);
-    bool inputAppDataFromJSON(QJsonObject &jsonObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
+    void clear(void);
 
-    int processResults(QString &filenameResults, QString &filenameTab);
-
-    UQ_Results *getResults(void);
-    RandomVariablesContainer  *getParameters();
-
-    int getMaxNumParallelTasks(void);
-    QString getMethodName();
-
-    QVBoxLayout *mLayout;
-
-signals:
+    int getNumberTasks(void);
+    int parseInputDataForRV(QString name1);
+    int parseOutputDataForQoI(QString name1);
+    int numSamples;
 
 public slots:
-   void clear(void);
-   void onIndexChanged(const QString &arg1);
-   void numModelsChanged(int numModels);
-
+    void setLowFidDir(bool tog);
+    void doAdvancedGP(bool tog);
 private:
-    QVBoxLayout *layout;
-    QWidget     *methodSpecific;
-    QComboBox   *inpMethod;
-    QLineEdit   *numSamples;
-    QLineEdit   *randomSeed;
+    QLineEdit *randomSeed;
+    QLineEdit *inpFileDir, *inpFileDir_LF;
+    QLineEdit *outFileDir, *outFileDir_LF;
+    QCheckBox *theCheckButton;
+    QLineEdit *initialDoE;
+    QComboBox *gpKernel;
+    QCheckBox *theLinearCheckBox;
+    QCheckBox *theAdvancedCheckBox;
+    QCheckBox *theLogtCheckBox;
 
-    QComboBox   *uqSelection;
-    QWidget     *uqSpecific;
-
-    RandomVariablesContainer *theRandomVariables;
-    SimCenterUQSurrogateResults *results;
-
-    QStackedWidget *theStackedWidget;
-    UQ_MethodInputWidget *theInpCurrentMethod;
-    UQ_MethodInputWidget *theDoE, *theData, *theMultiFidelity;
+    QLabel * theAdvancedTitle;
+    QLabel * theKernelLabel;
+    QLabel * theLinearLabel;
+    QLabel * theLogtLabel;
+    QLabel * theLogtLabel2;
+    QLabel * theInitialLabel;
+    QLabel * modelMSG, * errMSG;
 
     InputWidgetParameters *theParameters;
     InputWidgetEDP *theEdpWidget;
     InputWidgetFEM *theFemWidget;
+    QPushButton *chooseInpFile_LF, *chooseInpFile_HF, *chooseOutFile_LF, *chooseOutFile_HF;
+    QFrame * lineA;
 
+    int countColumn(QString name1);
 };
 
-#endif // SimCenterUQ_INPUT_SURROGATE_H
+#endif // SURROGATE_MF_INPUT_WIDGET_H

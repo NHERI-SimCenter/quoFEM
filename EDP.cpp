@@ -166,7 +166,7 @@ EDP::EDP(QString EDPname, QWidget *parent)
     mainLayout->addWidget(nameWidget);;
     mainLayout->addStretch();
 
-    mainLayout->setSpacing(8);
+    mainLayout->setSpacing(10);
     mainLayout->setMargin(0);
 
     this->setLayout(mainLayout);

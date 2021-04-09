@@ -60,12 +60,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStackedWidget>
 #include <SurrogateDoEInputWidget.h>
 #include <SurrogateNoDoEInputWidget.h>
+#include <SurrogateMFInputWidget.h>
 #include <InputWidgetFEM.h>
 #include <InputWidgetParameters.h>
 #include <InputWidgetEDP.h>
 
 SimCenterUQInputSurrogate::SimCenterUQInputSurrogate(InputWidgetParameters *param,InputWidgetFEM *femwidget,InputWidgetEDP *edpwidget, QWidget *parent)
-: UQ_Engine(parent),uqSpecific(0), theParameters(param), theFemWidget(femwidget), theEdpWidget(edpwidget)
+: UQ_Engine(parent),uqSpecific(0), theParameters(param), theEdpWidget(edpwidget), theFemWidget(femwidget)
 {
 
     layout = new QVBoxLayout();
@@ -81,6 +82,8 @@ SimCenterUQInputSurrogate::SimCenterUQInputSurrogate(InputWidgetParameters *para
     inpMethod = new QComboBox();
     inpMethod->addItem(tr("Sampling and Simulation"));
     inpMethod->addItem(tr("Import Data File"));
+    inpMethod->addItem(tr("Import Multi-fidelity Data File"));
+
     methodLayout1->addWidget(label1);
     methodLayout1->addWidget(inpMethod,2);
     methodLayout1->addStretch(4);
@@ -97,7 +100,8 @@ SimCenterUQInputSurrogate::SimCenterUQInputSurrogate(InputWidgetParameters *para
     theStackedWidget->addWidget(theDoE);
     theData = new SurrogateNoDoEInputWidget(theParameters,theFemWidget,theEdpWidget);
     theStackedWidget->addWidget(theData);
-
+    theMultiFidelity = new SurrogateMFInputWidget(theParameters,theFemWidget,theEdpWidget);
+    theStackedWidget->addWidget(theMultiFidelity);
 
     theStackedWidget->setCurrentIndex(0);
 
@@ -133,6 +137,15 @@ void SimCenterUQInputSurrogate::onIndexChanged(const QString &text)
         theStackedWidget->setCurrentIndex(1);
         theInpCurrentMethod = theData;
     }
+    else if (text=="Import Multi-fidelity Data File") {
+        delete theMultiFidelity;
+        theMultiFidelity = new SurrogateMFInputWidget(theParameters,theFemWidget,theEdpWidget);
+        theStackedWidget->insertWidget(2,theMultiFidelity);
+
+        theStackedWidget->setCurrentIndex(2);
+        theInpCurrentMethod = theMultiFidelity;
+    }
+
     theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
 }
 
