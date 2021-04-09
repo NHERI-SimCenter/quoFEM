@@ -94,7 +94,8 @@ SOURCES += main.cpp\
     UCSD_Results.cpp \
     CustomUQ_Results.cpp \
     SurrogateNoDoEInputWidget.cpp \
-    SurrogateDoEInputWidget.cpp
+    SurrogateDoEInputWidget.cpp \
+    SurrogateMFInputWidget.cpp
 
 
 HEADERS  += MainWindow.h \
@@ -152,7 +153,8 @@ HEADERS  += MainWindow.h \
     UCSD_Results.h \
     CustomUQ_Results.h \
     SurrogateNoDoEInputWidget.h \
-    SurrogateDoEInputWidget.h
+    SurrogateDoEInputWidget.h \
+    SurrogateMFInputWidget.h
 
 FORMS    += mainwindow.ui
 

@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGETFEM_H
-#define INPUTWIDGETFEM_H
+#ifndef SURROGATE_MF_INPUT_WIDGET_H
+#define SURROGATE_MF_INPUT_WIDGET_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,89 +39,62 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterWidget.h>
-
-#include "EDP.h"
-#include <QVector>
-#include <QSpinBox>
-class QGridLayout;
-class QVBoxLayout;
-class QGroupBox;
+#include <UQ_MethodInputWidget.h>
+class QLineEdit;
+class QCheckBox;
+class QPushButton;
 class QComboBox;
-class QGroupBox;
-class QSpinBox;
-
+class QLabel;
+class QFrame;
 class InputWidgetParameters;
 class InputWidgetEDP;
+class InputWidgetFEM;
 
-class InputWidgetFEM : public SimCenterWidget
+class SurrogateMFInputWidget : public UQ_MethodInputWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetFEM(InputWidgetParameters *theParams, InputWidgetEDP *edpwidget, QWidget *parent = 0);
-    ~InputWidgetFEM();
+    explicit SurrogateMFInputWidget(InputWidgetParameters *param,InputWidgetFEM *femwidget,InputWidgetEDP *edpwidget, QWidget *parent = 0);
+    ~SurrogateMFInputWidget();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
-
-    QString getApplicationName();
-    QString getMainInput();
-    QVector< QString > getCustomInputs() const;  
-
-     // copy main file to new filename ONLY if varNamesAndValues not empy
-    void specialCopyMainInput(QString fileName, QStringList varNamesAndValues);
-    //int parseInputfilesForRV(QString filnema1);
-    int parseInputfilesForRV(QString name1);
-    int parseInputfilesForGP(QString filnema1);
-    void setFemGP(bool on);
-    int setFEMforGP(QString option);
-
-  signals:
-
-  public slots:
     void clear(void);
-    void femProgramChanged(const QString& arg1);
-    void numModelsChanged(int newNum);
-    void customInputNumberChanged(int numCustomInputs);
-    // void chooseFileName1(void);
-    // void chooseFileName2(void);
 
-  private:
+    int getNumberTasks(void);
+    int parseInputDataForRV(QString name1);
+    int parseOutputDataForQoI(QString name1);
+    int numSamples;
 
-    QVBoxLayout *layout;
-    QWidget     *femSpecific;
-    QComboBox   *femSelection;
-    QSpinBox * theCustomInputNumber;
-    QVBoxLayout* theCustomLayout;
-    QVBoxLayout* theCustomFileInputs;
-    QWidget* theCustomFileInputWidget;
+public slots:
+    void setLowFidDir(bool tog);
+    void doAdvancedGP(bool tog);
+private:
+    QLineEdit *randomSeed;
+    QLineEdit *inpFileDir, *inpFileDir_LF;
+    QLineEdit *outFileDir, *outFileDir_LF;
+    QCheckBox *theCheckButton;
+    QLineEdit *initialDoE;
+    QComboBox *gpKernel;
+    QCheckBox *theLinearCheckBox;
+    QCheckBox *theAdvancedCheckBox;
+    QCheckBox *theLogtCheckBox;
 
-    //    QLineEdit *file1;
-    // QLineEdit *file2;
+    QLabel * theAdvancedTitle;
+    QLabel * theKernelLabel;
+    QLabel * theLinearLabel;
+    QLabel * theLogtLabel;
+    QLabel * theLogtLabel2;
+    QLabel * theInitialLabel;
+    QLabel * modelMSG, * errMSG;
 
     InputWidgetParameters *theParameters;
     InputWidgetEDP *theEdpWidget;
-    QStringList varNamesAndValues;
+    InputWidgetFEM *theFemWidget;
+    QPushButton *chooseInpFile_LF, *chooseInpFile_HF, *chooseOutFile_LF, *chooseOutFile_HF;
+    QFrame * lineA;
 
-    int numInputs;
-    QVector<QLineEdit *>inputFilenames;
-    QVector<QLineEdit *>postprocessFilenames;
-    QVector<QLineEdit *>parametersFilenames;
-    QVector<QLineEdit *>customInputFiles;
-    QGridLayout *femLayout;
-    // for GP
-    double interpolateForGP(QVector<double> X, QVector<double> Y, double Xval);
-    double thres;
-    QStringList parseGPInputs(QString file1);
-    bool isGP;
-    QVector<double> percVals, thrsVals;
-    QLineEdit *thresVal;
-    QString femOpt;
-    bool isData;
-    QRadioButton * option1Button,* option2Button,* option3Button;
-    QGroupBox *groupBox;
-    QGridLayout *optionsLayout ;
-    QString GPoption;
+    int countColumn(QString name1);
 };
 
-#endif // INPUTWIDGETFEM_H
+#endif // SURROGATE_MF_INPUT_WIDGET_H

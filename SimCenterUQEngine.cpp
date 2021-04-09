@@ -126,6 +126,14 @@ void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
     QString thePreviousName = theCurrentEngine->getMethodName();
     UQ_Engine *theOldEngine = theCurrentEngine;
 
+    // If previous was surrogate, reset everything
+    if (thePreviousName == "surrogate")
+    {
+        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP QoIs
+        theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
+        theFemWidget->setFEMforGP("reset");// reset FEM
+    }
+
     if ((arg1 == QString("Sensitivity")) || (arg1 == QString("Sensitivity Analysis"))) {
        theStackedWidget->setCurrentIndex(0);
        theCurrentEngine = theSensitivityEngine;
@@ -155,13 +163,6 @@ void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
     // emit signal if engine changed
     if (theCurrentEngine != theOldEngine)
         emit onUQ_EngineChanged();
-
-    if (thePreviousName == "surrogate")
-    {
-        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP QoIs
-        theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
-        theFemWidget->setFEMforGP("reset");// reset FEM
-    }
 }
 
 
