@@ -79,7 +79,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     QPushButton *chooseInpFile = new QPushButton("Choose");
     connect(chooseInpFile, &QPushButton::clicked, this, [=](){
         inpFileDir->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        this->parseInputDataForRV(inpFileDir->text());
+        //this->parseInputDataForRV(inpFileDir->text());
     });
     inpFileDir->setMinimumWidth(600);
     inpFileDir->setReadOnly(true);
@@ -94,7 +94,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     QPushButton *chooseOutFile = new QPushButton("Choose");
     connect(chooseOutFile, &QPushButton::clicked, this, [=](){
         outFileDir->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        this->parseOutputDataForQoI(outFileDir->text());
+        //this->parseOutputDataForQoI(outFileDir->text());
     });
     outFileDir->setMinimumWidth(600);
     outFileDir->setReadOnly(true);
@@ -151,7 +151,6 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     theCheckButton = new QCheckBox();
     theLFlayout->addWidget(theCheckLabel,2,1,1,-1);
     theLFlayout->addWidget(theCheckButton,2,1,1,-1);
-
 
 //    modelMSG=new QLabel("Please specify the low-fidelity model at the FEM Tab");
 //    modelMSG->setStyleSheet({"color: red"});
@@ -318,12 +317,14 @@ SurrogateMFInputWidget::outputToJSON(QJsonObject &jsonObj){
 
     bool result = true;
 
-    jsonObj["inpFile"]=inpFileDir->text();
+    jsonObj["inpFile_HF"]=inpFileDir->text();
+    jsonObj["outFile_HF"]=outFileDir->text();
 
-    jsonObj["outputData"]=theCheckButton->isChecked();
-    if (theCheckButton->isChecked())
+    jsonObj["LFfromModel"]=theCheckButton->isChecked();
+    if (!theCheckButton->isChecked())
     {
-        jsonObj["outFile"]=outFileDir->text();
+        jsonObj["inpFile_LF"]=inpFileDir_LF->text();
+        jsonObj["outFile_LF"]=outFileDir_LF->text();
     }
 
     jsonObj["advancedOpt"]=theAdvancedCheckBox->isChecked();
@@ -410,25 +411,30 @@ int SurrogateMFInputWidget::countColumn(QString name1){
 bool
 SurrogateMFInputWidget::inputFromJSON(QJsonObject &jsonObject){
 
-    bool result = false;
-    if (jsonObject.contains("inpFile")) {
-        QString fileDir=jsonObject["inpFile"].toString();
-        inpFileDir->setText(fileDir);
-        result = true;
+    bool result = true;
+
+    if (jsonObject.contains("inpFile_HF")) {
+        inpFileDir->setText(jsonObject["inpFile_HF"].toString());
     } else {
         return false;
     }
 
-    if (jsonObject.contains("outputData")) {
-      if (jsonObject["outputData"].toBool()) {
+    if (jsonObject.contains("outFile_HF")) {
+        outFileDir->setText(jsonObject["outFile_HF"].toString());
+    } else {
+        return false;
+    }
+
+    if (jsonObject.contains("LFfromModel")) {
+      if (jsonObject["LFfromModel"].toBool()) {
           theCheckButton->setChecked(true);
-          QString fileDir=jsonObject["outFile"].toString();
-          outFileDir->setText(fileDir);
-          theFemWidget->setFEMforGP("GPdata");
+          theFemWidget->setFEMforGP("GPmodel");
       } else {
           theCheckButton->setChecked(false);
+          outFileDir_LF->setText(jsonObject["outFile_LF"].toString());
+          inpFileDir_LF->setText(jsonObject["inpFile_LF"].toString());
+          theFemWidget->setFEMforGP("GPdata");
       }
-      result = true;
     } else {
       return false;
     }
@@ -446,7 +452,6 @@ SurrogateMFInputWidget::inputFromJSON(QJsonObject &jsonObject){
         theLinearCheckBox->setChecked(jsonObject["linear"].toBool());
         theLogtCheckBox->setChecked(jsonObject["logTransform"].toBool());
       }
-     result = true;
   } else {
      return false;
   }

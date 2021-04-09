@@ -257,6 +257,7 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
                 } else if (femOpt == "doSimulation") {
                     option3Button ->setChecked(true);
                 }
+
             } else {
                 this->parseInputfilesForRV(fileName1);
             }
@@ -272,8 +273,14 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
               }
               this->parseInputfilesForRV(fileName1);
             }
+
         }
         // call setFilename1 so parser works on input file
+
+        if (isGP) {
+            if (GPoption=="GPdata")
+                femSpecific -> setVisible(false);
+        }
 
     } else {
         emit sendErrorMessage("ERROR: FEM Input - no fem section in input file");
@@ -723,6 +730,7 @@ QVector< QString > InputWidgetFEM::getCustomInputs() const {
 
 int
 InputWidgetFEM::setFEMforGP(QString option){
+    GPoption = option;
     if (option == "reset")
     {
         femSelection -> setDisabled(false);

@@ -121,6 +121,7 @@ public:
     QRadioButton * option1Button,* option2Button,* option3Button;
     QGroupBox *groupBox;
     QGridLayout *optionsLayout ;
+    QString GPoption;
 };
 
 #endif // INPUTWIDGETFEM_H

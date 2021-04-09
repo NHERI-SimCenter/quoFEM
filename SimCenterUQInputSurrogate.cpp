@@ -144,6 +144,8 @@ void SimCenterUQInputSurrogate::onIndexChanged(const QString &text)
 
         theStackedWidget->setCurrentIndex(2);
         theInpCurrentMethod = theMultiFidelity;
+
+        theFemWidget->setFEMforGP("GPdata");
     }
 
     theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
