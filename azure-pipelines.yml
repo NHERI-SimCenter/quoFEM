@@ -8,10 +8,6 @@ pr:
 
 resources:
   repositories:
-  - repository: quoFEM
-    type: github
-    endpoint: quoFEM
-    name: NHERI-SimCenter/quoFEM
   - repository: SimCenterCommon
     type: github
     endpoint: SimCenterCommon
@@ -40,11 +36,16 @@ pool:
   vmImage: $(imageName)
 
 steps:
+
+# checkout repos
+- checkout: self
+- checkout: SimCenterCommon
+
 # Use Python version
 - task: UsePythonVersion@0
-  displayName: Switch to Python 3.7
+  displayName: Switch to Python 3.8
   inputs:
-    versionSpec: '3.7' 
+    versionSpec: '3.8' 
     addToPath: true 
     architecture: 'x64'
 
