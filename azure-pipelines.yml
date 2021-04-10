@@ -39,7 +39,6 @@ steps:
 
 # checkout repos
 - checkout: self
-- checkout: SimCenterCommon
 
 # Use Python version
 - task: UsePythonVersion@0
