@@ -33,7 +33,7 @@ steps:
 
 # checkout repos
 - checkout: self
--checkout github://NHERI-SimCenter/SimCenterCommon
+- checkout: github://NHERI-SimCenter/SimCenterCommon
 
 # Use Python version
 - task: UsePythonVersion@0
