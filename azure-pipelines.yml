@@ -6,12 +6,6 @@ trigger:
 pr:
 - master
 
-resources:
-  repositories:
-  - repository: SimCenterCommon
-    type: github
-    endpoint: SimCenterCommon
-    name: NHERI-SimCenter/SimCenterCommon
 
 variables:
 - group: ConanVariables
@@ -39,6 +33,7 @@ steps:
 
 # checkout repos
 - checkout: self
+-checkout github://NHERI-SimCenter/SimCenterCommon
 
 # Use Python version
 - task: UsePythonVersion@0
