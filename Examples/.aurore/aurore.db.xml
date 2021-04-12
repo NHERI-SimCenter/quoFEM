@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- <collection id="feed-0002" base="$SIMCENTER_DEV/quoFEM" > -->
-<collection id="feed-0002" >
+    <collection id="feed-0002" >
+  <!-- 
+  <tag-scheme key="UV">
+      <tag-scheme key="1">
+          <tag key="1" src="./src/input.json#$.randomVariables[*][?(@.distribution=&#34;Normal&#34;)]">Normal</tag>
+          <tag key="2" src="./src/input.json#$.randomVariables[*][?(@.distribution=&#34;Lognormal&#34;)]">Lognormal</tag>
+          <tag key="3" src="./src/input.json#$.randomVariables[*][?(@.distribution=&#34;Uniform&#34;)]">Uniform</tag>
+          <tag key="4" src="./src/input.json#$.randomVariables[*][?(@.distribution=&#34;Beta&#34;)]">Beta</tag>
+      </tag-scheme>
+      </tag-scheme> 
+  -->
+  <tag-scheme key="">
+      <tag-scheme src="$SIMCENTER_DEV/SimCenterDocumentation/docs/common/requirements/tags.xml#UV" />
+      <tag-scheme src="$SIMCENTER_DEV/SimCenterDocumentation/docs/common/requirements/tags.xml#UR" />
+      <tag-scheme src="$SIMCENTER_DEV/SimCenterDocumentation/docs/common/requirements/tags.xml#UM" />
+  </tag-scheme>
   <category-schemes>
     <category-scheme key="Simulation">
       <var src="./src/input.json#/fem/program" />
