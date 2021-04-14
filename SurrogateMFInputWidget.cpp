@@ -71,35 +71,32 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     theHFbox->setLayout(theHFlayout);
     layout->addWidget(theHFbox,0,0,1,-1);
 
-    //
     // Input
-    //
 
-    inpFileDir = new QLineEdit();
+    inpFileDir_HF = new QLineEdit();
     QPushButton *chooseInpFile = new QPushButton("Choose");
     connect(chooseInpFile, &QPushButton::clicked, this, [=](){
-        inpFileDir->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        inpFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
         //this->parseInputDataForRV(inpFileDir->text());
     });
-    inpFileDir->setMinimumWidth(600);
-    inpFileDir->setReadOnly(true);
+    inpFileDir_HF->setMinimumWidth(600);
+    inpFileDir_HF->setReadOnly(true);
     theHFlayout->addWidget(new QLabel("Training Points (Input) File"),2,0);
-    theHFlayout->addWidget(inpFileDir,2,1,1,3);
+    theHFlayout->addWidget(inpFileDir_HF,2,1,1,3);
     theHFlayout->addWidget(chooseInpFile,2,4);
 
-    //
     // Output
-    //
-    outFileDir = new QLineEdit();
+
+    outFileDir_HF = new QLineEdit();
     QPushButton *chooseOutFile = new QPushButton("Choose");
     connect(chooseOutFile, &QPushButton::clicked, this, [=](){
-        outFileDir->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        outFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
         //this->parseOutputDataForQoI(outFileDir->text());
     });
-    outFileDir->setMinimumWidth(600);
-    outFileDir->setReadOnly(true);
+    outFileDir_HF->setMinimumWidth(600);
+    outFileDir_HF->setReadOnly(true);
     theHFlayout->addWidget(new QLabel("System Results (Output) File     "),3,0,Qt::AlignTop);
-    theHFlayout->addWidget(outFileDir,3,1,1,3,Qt::AlignTop);
+    theHFlayout->addWidget(outFileDir_HF,3,1,1,3,Qt::AlignTop);
     theHFlayout->addWidget(chooseOutFile,3,4,Qt::AlignTop);
 
     theHFlayout->setRowStretch(4, 1);
@@ -109,66 +106,152 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     // Low-fidelity data
     //
 
-
     QGroupBox *theLFbox = new QGroupBox("Low-fidelity dataset");
     QGridLayout *theLFlayout = new QGridLayout();
     theLFbox->setLayout(theLFlayout);
     layout->addWidget(theLFbox,1,0,1,-1);
 
-    //
     // Input
-    //
+
+    int id_lf = 0;
 
     inpFileDir_LF = new QLineEdit();
     chooseInpFile_LF = new QPushButton("Choose");
     connect(chooseInpFile_LF, &QPushButton::clicked, this, [=](){
         inpFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        this->parseInputDataForRV(inpFileDir_LF->text());
+        if (!theCheckButton->isChecked()) {
+            this->parseInputDataForRV(inpFileDir_LF->text());
+        }
     });
     inpFileDir_LF->setMinimumWidth(600);
     inpFileDir_LF->setReadOnly(true);
-    theLFlayout->addWidget(new QLabel("Training Points (Input) File"),0,0);
-    theLFlayout->addWidget(inpFileDir_LF,0,1,1,3);
-    theLFlayout->addWidget(chooseInpFile_LF,0,4);
+    theLFlayout->addWidget(new QLabel("Training Points (Input) File"),id_lf,0);
+    theLFlayout->addWidget(inpFileDir_LF,id_lf,1,1,3);
+    theLFlayout->addWidget(chooseInpFile_LF,id_lf++,4);
 
-    //
-    // Output
-    //
+    // Output - Data
+
     outFileDir_LF = new QLineEdit();
     chooseOutFile_LF = new QPushButton("Choose");
     connect(chooseOutFile_LF, &QPushButton::clicked, this, [=](){
         outFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        this->parseOutputDataForQoI(outFileDir_LF->text());
+        if (!theCheckButton->isChecked()) {
+            this->parseOutputDataForQoI(outFileDir_LF->text());
+        }
     });
     outFileDir_LF->setMinimumWidth(600);
     outFileDir_LF->setReadOnly(true);
-    theLFlayout->addWidget(new QLabel("System Results (Output) File     "),1,0,Qt::AlignTop);
-    theLFlayout->addWidget(outFileDir_LF,1,1,1,3,Qt::AlignTop);
-    theLFlayout->addWidget(chooseOutFile_LF,1,4,Qt::AlignTop);
+    theLFlayout->addWidget(new QLabel("System Results (Output) File     "),id_lf,0,Qt::AlignTop);
+    theLFlayout->addWidget(outFileDir_LF,id_lf,1,1,3,Qt::AlignTop);
+    theLFlayout->addWidget(chooseOutFile_LF,id_lf++,4,Qt::AlignTop);
 
+    //
+    // Output - Model
+    //
 
-    QLabel * theCheckLabel = new QLabel("     Simulate low-fidelity model (Please specify the model at the FEM Tab)");
+    theCheckLabel = new QLabel("     Simulate low-fidelity model");
     theCheckButton = new QCheckBox();
-    theLFlayout->addWidget(theCheckLabel,2,1,1,-1);
-    theLFlayout->addWidget(theCheckButton,2,1,1,-1);
+    theCheckLabel -> setStyleSheet("font-weight: bold; color: grey");
 
-//    modelMSG=new QLabel("Please specify the low-fidelity model at the FEM Tab");
-//    modelMSG->setStyleSheet({"color: red"});
-//    theLFlayout->addWidget(modelMSG,3,1,Qt::AlignLeft);
+    line1= new QFrame;
+    line1->setFrameShape(QFrame::HLine);
+    line1->setFrameShadow(QFrame::Sunken);
+
+    theLFoptions = new QWidget();
+    QGridLayout *theLFoptions_grid = new QGridLayout(theLFoptions);
+    theLFoptions_grid->setMargin(0);
+
+    theLFlayout->addWidget(theCheckLabel,id_lf,1);
+    theLFlayout->addWidget(theCheckButton,id_lf,1);
+    theLFlayout->addWidget(theLFoptions,id_lf++,2,3,-1);
+    theLFlayout->addWidget(line1, id_lf++, 1);
+
+    line1->hide();
 
     theLFlayout->setRowStretch(4, 1);
     theLFlayout->setColumnStretch(5, 1);
+
+
+
+    // FEM model
+
+    int id_fe=0;
+    QLabel * theFEMLabel = new QLabel("   Please specify the model at the FEM Tab");
+    theLFoptions_grid->addWidget(theFEMLabel, id_fe++, 0,1,2);
+    theFEMLabel->setStyleSheet("font-style: italic");
+
+    // Random Seed
+
+    srand(time(NULL));
+    int randomNumber = rand() % 1000 + 1;
+    randomSeed = new QLineEdit();
+    randomSeed->setText(QString::number(randomNumber));
+    randomSeed->setValidator(new QIntValidator);
+    randomSeed->setToolTip("Set the seed");
+    randomSeed->setMaximumWidth(150);
+
+    theLFoptions_grid->addWidget(new QLabel("   Random Seed"), id_fe, 0);
+    theLFoptions_grid->addWidget(randomSeed, id_fe++, 1);
+
+    // create convergence criteria
+
+    accuracyMeasure = new QLineEdit();
+    accuracyMeasure->setText(tr("0.02"));
+    accuracyMeasure->setValidator(new QDoubleValidator);
+    accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
+    accuracyMeasure->setMaximumWidth(150);
+
+    theLFoptions_grid->addWidget(new QLabel("   Target Accuracy (Normalized Error)   "), id_fe, 0);
+    theLFoptions_grid->addWidget(accuracyMeasure, id_fe++, 1);
+
+    // create layout label and entry for # samples
+
+    numSamples = new QLineEdit();
+    numSamples->setText(tr("150"));
+    numSamples->setValidator(new QIntValidator);
+    numSamples->setToolTip("Specify the number of samples");
+    numSamples->setMaximumWidth(150);
+
+    theLFoptions_grid->addWidget(new QLabel("   Max Number of Model Runs"), id_fe, 0);
+    theLFoptions_grid->addWidget(numSamples, id_fe++, 1);
+
+    // Max computation time (approximate)
+
+    timeMeasure = new QLineEdit();
+    timeMeasure->setText(tr("60"));
+    timeMeasure->setValidator(new QIntValidator);
+    timeMeasure->setToolTip("Max Computation Time (minutes)");
+    timeMeasure->setMaximumWidth(150);
+
+    theLFoptions_grid->addWidget(new QLabel("   Max Computation Time (minutes)    "), id_fe, 0);
+    theLFoptions_grid->addWidget(timeMeasure, id_fe++, 1);
+
+
+    // Existing Dataset
+
+    theExistingCheckBox = new QCheckBox();
+    theLFoptions_grid->addWidget(new QLabel("   Start with Existing Dataset"), id_fe, 0);
+    theLFoptions_grid->addWidget(theExistingCheckBox, id_fe++, 1);
+
+
+    // Do DoE
+
+    theDoECheckBox = new QCheckBox();
+    theLFoptions_grid->addWidget(new QLabel("   Do Adaptive Design of Experiments"), id_fe, 0);
+    theLFoptions_grid->addWidget(theDoECheckBox, id_fe++, 1);
+
+    theLFoptions_grid->setRowStretch(id_fe, 1);
+    theLFoptions_grid->setColumnStretch(2, 1);
+    theLFoptions->hide();
 
     //
     // Errors
     //
 
-
     errMSG=new QLabel("Unrecognized file format");
     errMSG->setStyleSheet({"color: red"});
     layout->addWidget(errMSG,2,0,Qt::AlignLeft);
     errMSG->hide();
-
 
     //
     // Advanced options
@@ -185,9 +268,8 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     lineA->setMaximumWidth(420);
     layout->addWidget(lineA, 4, 0, 1, 3);
     lineA->setVisible(false);
-    //
+
     // Selection of GP kernel
-    //
 
     theKernelLabel=new QLabel("Kernel Function");
 
@@ -203,9 +285,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     theKernelLabel->setVisible(false);
     gpKernel->setVisible(false);
 
-    //
     // Use Linear trending function
-    //
 
     theLinearLabel=new QLabel("Use Linear Trend Function");
 
@@ -217,9 +297,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     theLinearLabel->setVisible(false);
     theLinearCheckBox->setVisible(false);
 
-    //
     // Use Log transform
-    //
 
     theLogtLabel=new QLabel("Responses are always positive");
     theLogtLabel2=new QLabel("     (allow log-transform)");
@@ -232,7 +310,6 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     theLogtLabel2->setVisible(false);
     theLogtCheckBox->setVisible(false);
 
-
     //
     // Finish
     //
@@ -243,7 +320,8 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
 
     connect(theCheckButton,SIGNAL(toggled(bool)),this,SLOT(setLowFidDir(bool)));
     connect(theAdvancedCheckBox,SIGNAL(toggled(bool)),this,SLOT(doAdvancedGP(bool)));
-
+    connect(theExistingCheckBox,SIGNAL(toggled(bool)),this,SLOT(doExistingGP(bool)));
+    theExistingCheckBox->setChecked(true);
 
 }
 
@@ -251,6 +329,25 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
 SurrogateMFInputWidget::~SurrogateMFInputWidget()
 {
 
+}
+
+void SurrogateMFInputWidget::doExistingGP(bool tog)
+{
+    if (tog) {
+        inpFileDir_LF->setDisabled(0);
+        outFileDir_LF->setDisabled(0);
+        chooseInpFile_LF->setDisabled(0);
+        chooseInpFile_LF->setStyleSheet("font-color: white");
+        chooseOutFile_LF->setDisabled(0);
+        chooseOutFile_LF->setStyleSheet("font-color: white");
+    } else {
+        inpFileDir_LF->setDisabled(1);
+        outFileDir_LF->setDisabled(1);
+        chooseInpFile_LF->setDisabled(1);
+        chooseInpFile_LF->setStyleSheet("background-color: lightgrey;border-color:grey");
+        chooseOutFile_LF->setDisabled(1);
+        chooseOutFile_LF->setStyleSheet("background-color: lightgrey;border-color:grey");
+    }
 }
 
 // SLOT function
@@ -287,28 +384,25 @@ void SurrogateMFInputWidget::doAdvancedGP(bool tog)
 void SurrogateMFInputWidget::setLowFidDir(bool tog)
 {
     if (tog) {
-        inpFileDir_LF->setDisabled(1);
-        outFileDir_LF->setDisabled(1);
-        chooseInpFile_LF->setDisabled(1);
-        chooseInpFile_LF->setStyleSheet("background-color: lightgrey;border-color:grey");
-        chooseOutFile_LF->setDisabled(1);
-        chooseOutFile_LF->setStyleSheet("background-color: lightgrey;border-color:grey");
+        theExistingCheckBox->setChecked(false);
         theEdpWidget->setGPQoINames(QStringList("") );
         theFemWidget->setFEMforGP("GPmodel");
         theFemWidget->femProgramChanged("OpenSees");
         theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
         theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
         errMSG->hide();
+        theLFoptions->show();
+        line1->show();
+        theCheckLabel -> setStyleSheet("font-weight: bold; color: black");
     } else {
-        inpFileDir_LF->setDisabled(0);
-        outFileDir_LF->setDisabled(0);
-        chooseInpFile_LF->setDisabled(0);
-        chooseInpFile_LF->setStyleSheet("font-color: white");
-        chooseOutFile_LF->setDisabled(0);
-        chooseOutFile_LF->setStyleSheet("font-color: white");
+        theExistingCheckBox->setChecked(true);
         theFemWidget->setFEMforGP("GPdata");
         parseInputDataForRV(inpFileDir_LF->text());
         parseOutputDataForQoI(outFileDir_LF->text());
+        theLFoptions->hide();
+        line1->hide();
+        theCheckLabel -> setStyleSheet("font-weight: bold; color: grey");
+
     }
 }
 
@@ -317,15 +411,31 @@ SurrogateMFInputWidget::outputToJSON(QJsonObject &jsonObj){
 
     bool result = true;
 
-    jsonObj["inpFile_HF"]=inpFileDir->text();
-    jsonObj["outFile_HF"]=outFileDir->text();
+    jsonObj["inpFile_HF"]=inpFileDir_HF->text();
+    jsonObj["outFile_HF"]=outFileDir_HF->text();
+
 
     jsonObj["LFfromModel"]=theCheckButton->isChecked();
-    if (!theCheckButton->isChecked())
+
+    if (theCheckButton->isChecked())
     {
+        jsonObj["samples"]=numSamples->text().toInt();
+        jsonObj["seed"]=randomSeed->text().toInt();
+        jsonObj["timeLimit"]=timeMeasure->text().toDouble();
+        jsonObj["accuracyLimit"]=accuracyMeasure->text().toDouble();
+        jsonObj["existingDoE"]=theExistingCheckBox->isChecked();
+        if (theExistingCheckBox->isChecked())
+        {
+            jsonObj["inpFile_LF"]=inpFileDir_LF->text();
+            jsonObj["outFile_LF"]=outFileDir_LF->text();
+        }
+        jsonObj["doDoE"]=theDoECheckBox->isChecked();
+    } else {
         jsonObj["inpFile_LF"]=inpFileDir_LF->text();
         jsonObj["outFile_LF"]=outFileDir_LF->text();
     }
+
+
 
     jsonObj["advancedOpt"]=theAdvancedCheckBox->isChecked();
     if (theAdvancedCheckBox->isChecked())
@@ -348,7 +458,7 @@ int SurrogateMFInputWidget::parseInputDataForRV(QString name1){
         varNamesAndValues.append("nan");
     }
     theParameters->setGPVarNamesAndValues(varNamesAndValues);
-    numSamples=0;
+    //numSamples=0;
     return 0;
 }
 
@@ -414,13 +524,13 @@ SurrogateMFInputWidget::inputFromJSON(QJsonObject &jsonObject){
     bool result = true;
 
     if (jsonObject.contains("inpFile_HF")) {
-        inpFileDir->setText(jsonObject["inpFile_HF"].toString());
+        inpFileDir_HF->setText(jsonObject["inpFile_HF"].toString());
     } else {
         return false;
     }
 
     if (jsonObject.contains("outFile_HF")) {
-        outFileDir->setText(jsonObject["outFile_HF"].toString());
+        outFileDir_HF->setText(jsonObject["outFile_HF"].toString());
     } else {
         return false;
     }
@@ -429,6 +539,39 @@ SurrogateMFInputWidget::inputFromJSON(QJsonObject &jsonObject){
       if (jsonObject["LFfromModel"].toBool()) {
           theCheckButton->setChecked(true);
           theFemWidget->setFEMforGP("GPmodel");
+
+          if (jsonObject.contains("samples") && jsonObject.contains("seed")) {
+              int samples=jsonObject["samples"].toInt();
+              double seed=jsonObject["seed"].toDouble();
+              numSamples->setText(QString::number(samples));
+              randomSeed->setText(QString::number(seed));
+          } else {
+              result = false;
+          }
+
+          if (jsonObject.contains("timeLimit") && jsonObject.contains("accuracyLimit")) {
+              int time=jsonObject["timeLimit"].toInt();
+              double accuracy=jsonObject["accuracyLimit"].toDouble();
+              timeMeasure->setText(QString::number(time));
+              accuracyMeasure->setText(QString::number(accuracy));
+          } else {
+              result = false;
+          }
+
+          if (jsonObject.contains("existingDoE")) {
+              if (jsonObject["existingDoE"].toBool()) {
+                  theExistingCheckBox->setChecked(true);
+                  inpFileDir_LF -> setText(jsonObject["inpFile_LF"].toString());
+                  outFileDir_LF -> setText(jsonObject["outFile_LF"].toString());
+              } else {
+                  theExistingCheckBox->setChecked(false);
+              }
+          } else {
+              result = false;
+          }
+
+          theDoECheckBox->setChecked(jsonObject["doDoE"].toBool());
+
       } else {
           theCheckButton->setChecked(false);
           outFileDir_LF->setText(jsonObject["outFile_LF"].toString());
@@ -468,5 +611,5 @@ SurrogateMFInputWidget::clear(void)
 int
 SurrogateMFInputWidget::getNumberTasks()
 {
-  return numSamples;
+  return numSamples->text().toInt();
 }
