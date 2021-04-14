@@ -689,7 +689,7 @@ void SimCenterUQResultsSurrogate::onSpreadsheetCellClicked(int row, int col)
 
             double maxPercent = 0;
             for (int i=0; i<NUM_DIVISIONS; i++) {
-                histogram[i]/rowCount;
+                //histogram[i]/rowCount;
                 if (histogram[i] > maxPercent)
                     maxPercent = histogram[i];
             }
@@ -906,7 +906,7 @@ SimCenterUQResultsSurrogate::inputFromJSON(QJsonObject &jsonObject)
 
     chart = new QChart();
     chart->setAnimationOptions(QChart::AllAnimations);
-    QScatterSeries *series = new QScatterSeries;
+    //QScatterSeries *series = new QScatterSeries;
     col1 = 0;           // col1 is initialied as the first column in spread sheet
     col2 = numCol-1;    // col2 is initialized as the second column in spread sheet
     mLeft = true;       // left click
@@ -1167,25 +1167,26 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
     QTabWidget *tabWidgetScatter = new QTabWidget();
     tabWidgetScatter -> setTabPosition(QTabWidget::East);
 
+    int nCVsamps = yExact[QoInames[0]].toArray().size();
 
     for (int nq=0; nq<nQoI; nq++)
     {
     //int nq=0;
         QScatterSeries *series_CV = new QScatterSeries;
         // adjust marker size and opacity based on the number of samples
-        if (nSamp < 10) {
+        if (nCVsamps < 10) {
             series_CV->setMarkerSize(15.0);
             series_CV->setColor(QColor(0, 114, 178, 200));
-        } else if (nSamp < 100) {
+        } else if (nCVsamps < 100) {
             series_CV->setMarkerSize(11.0);
             series_CV->setColor(QColor(0, 114, 178, 160));
-        } else if (nSamp < 1000) {
+        } else if (nCVsamps < 1000) {
             series_CV->setMarkerSize(8.0);
             series_CV->setColor(QColor(0, 114, 178, 100));
-        } else if (nSamp < 10000) {
+        } else if (nCVsamps < 10000) {
             series_CV->setMarkerSize(6.0);
             series_CV->setColor(QColor(0, 114, 178, 70));
-        } else if (nSamp < 100000) {
+        } else if (nCVsamps < 100000) {
             series_CV->setMarkerSize(5.0);
             series_CV->setColor(QColor(0, 114, 178, 50));
         } else {
@@ -1206,7 +1207,7 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         QJsonArray yPr= yPredi[QoInames[nq]].toArray();
         double maxy=-INFINITY;
         double miny=INFINITY;
-        for (int i=0; i<nSamp; i++) {
+        for (int i=0; i<nCVsamps; i++) {
             series_CV->append(yEx[i].toDouble(), yPr[i].toDouble());
             maxy = std::max(maxy,std::max(yEx[i].toDouble(),yPr[i].toDouble()));
             miny = std::min(miny,std::min(yEx[i].toDouble(),yPr[i].toDouble()));

@@ -64,36 +64,28 @@ public:
     int getNumberTasks(void);
     int parseInputDataForRV(QString name1);
     int parseOutputDataForQoI(QString name1);
-    int numSamples;
 
 public slots:
     void setLowFidDir(bool tog);
     void doAdvancedGP(bool tog);
-private:
-    QLineEdit *randomSeed;
-    QLineEdit *inpFileDir, *inpFileDir_LF;
-    QLineEdit *outFileDir, *outFileDir_LF;
-    QCheckBox *theCheckButton;
-    QLineEdit *initialDoE;
-    QComboBox *gpKernel;
-    QCheckBox *theLinearCheckBox;
-    QCheckBox *theAdvancedCheckBox;
-    QCheckBox *theLogtCheckBox;
+    void doExistingGP(bool tog);
 
-    QLabel * theAdvancedTitle;
-    QLabel * theKernelLabel;
-    QLabel * theLinearLabel;
-    QLabel * theLogtLabel;
-    QLabel * theLogtLabel2;
-    QLabel * theInitialLabel;
-    QLabel * modelMSG, * errMSG;
+private:
+    QLineEdit *randomSeed, *numSamples, *accuracyMeasure, *timeMeasure, *initialDoE;
+    QLineEdit *inpFileDir_HF, *inpFileDir_LF, *outFileDir_HF, *outFileDir_LF;
+    QComboBox *gpKernel;
+    QCheckBox *theCheckButton,*theAdvancedCheckBox,*theExistingCheckBox, *theDoECheckBox;
+    QCheckBox *theLinearCheckBox,*theLogtCheckBox;
+
+    QLabel * theAdvancedTitle,* theKernelLabel,* theLinearLabel,* theLogtLabel,* theLogtLabel2,* theInitialLabel;
+    QLabel * modelMSG, * errMSG, * theCheckLabel, *theExistingLabel;
 
     InputWidgetParameters *theParameters;
     InputWidgetEDP *theEdpWidget;
     InputWidgetFEM *theFemWidget;
     QPushButton *chooseInpFile_LF, *chooseInpFile_HF, *chooseOutFile_LF, *chooseOutFile_HF;
-    QFrame * lineA;
-
+    QFrame * lineA,* line1;
+    QWidget *theLFoptions;
     int countColumn(QString name1);
 };
 
