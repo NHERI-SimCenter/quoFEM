@@ -1,4 +1,4 @@
-summary: This example illustrates how customUQ can be used with quoFEM.
+summary: This example illustrates how a third-party UQ engine can be used with quoFEM.
 author:
 - family: Gardner & Yi
   given: Michael & Sangri
