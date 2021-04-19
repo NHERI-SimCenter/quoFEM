@@ -81,6 +81,7 @@ public:
   public slots:
     void clear(void);
     void femProgramChanged(const QString& arg1);
+    void singleFemProgramChanged(const QString& arg1, QWidget *&newFemSpecific);
     void numModelsChanged(int newNum);
     void customInputNumberChanged(int numCustomInputs);
     // void chooseFileName1(void);

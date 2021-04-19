@@ -66,6 +66,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, QWidget *parent)
   : SimCenterWidget(parent), theParameters(param), theEdpWidget(edpwidget), numInputs(1)
 {
+    numInputs = 1;
     femSpecific = 0;
     isGP = false;
 
@@ -102,6 +103,7 @@ InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, InputWidgetEDP *edp
     femSelection->addItem(tr("OpenSeesPy"));
     femSelection->addItem(tr("Custom"));
     femSelection->addItem(tr("SurrogateGP"));
+    femSelection->addItem(tr("MultipleModels"));
 
     connect(femSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(femProgramChanged(QString)));
 
@@ -383,156 +385,137 @@ void InputWidgetFEM::femProgramChanged(const QString &arg1)
       postprocessFilenames.append(postProcessScript);
       newFemSpecific->setLayout(customLayout);
       
-    } else if (numInputs == 1) {
-
-        //QGridLayout *femLayout = new QGridLayout(); // Changed it to local->private for surrogate - may cause problem in multiple model case
-        femLayout = new QGridLayout();
-
-        QLabel *label1 = new QLabel();
-        QLineEdit *file1 = new QLineEdit;
-        QPushButton *chooseFile1 = new QPushButton();
-        chooseFile1->setText(tr("Choose"));
-        connect(chooseFile1, &QPushButton::clicked, this, [=](){
-             file1->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-             if ((arg1 == QString("FEAPpv")) || (arg1 == QString("OpenSees")) || (arg1 == QString("SurrogateGP")) )
-                    this->parseInputfilesForRV(file1->text());
-         });
-
-        chooseFile1->setToolTip(tr("Push to choose a file from your file system"));
-
-        femLayout->addWidget(label1, 0,0);
-        femLayout->addWidget(file1,  0,1);
-        femLayout->addWidget(chooseFile1, 0, 2);
-
-        QLabel *label2 = new QLabel();
-        label2->setText("Postprocess Script");
-        QLineEdit *file2 = new QLineEdit;
-        QPushButton *chooseFile2 = new QPushButton();
-
-        connect(chooseFile2, &QPushButton::clicked, this, [=](){
-            file2->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        });
-         chooseFile2->setText(tr("Choose"));
-        chooseFile2->setToolTip(tr("Push to choose a file from your file system"));
-
-        if (arg1 == QString("FEAPpv")){
-            label1->setText("Input File");
-            file1->setToolTip(tr("Name of FEAPpv input file"));
-            file2->setToolTip(tr("Name of Python script that will process FEAPpv output file for UQ engine"));
-        } else if (arg1 == "OpenSees") {
-            label1->setText("Input Script");
-            file1->setToolTip(tr("Name of OpenSees input script"));
-            file2->setToolTip(tr("Name of Python/Tcl script that will process OpenSees output file for UQ engine"));
-        } else if (arg1 == "SurrogateGP"){
-            label1->setText("SurrogateGP Info (.json)");
-            label2->setText("SurrogateGP Model (.pkl)");
-            file1->setToolTip(tr("Name of SurrogateGP model file (.json)"));
-            file2->setToolTip(tr("Name of SurrogateGP info file (.pkl)"));
-            optionsLayout = 0;
-        } else {
-            label1->setText("Input Script");
-            file1->setToolTip(tr("Name of OpenSeesPy input script"));
-            file2->setToolTip(tr("Name of Python script that will process OpenSeesPy output"));
-        }
-
-        femLayout->addWidget(label2, 1,0);
-        femLayout->addWidget(file2, 1,1);
-        femLayout->addWidget(chooseFile2, 1,2);
-
-
-        if (arg1 == "OpenSeesPy") {
-            QLabel *label3 = new QLabel();
-            label3->setText("Parameters File");
-            QLineEdit *file3 = new QLineEdit;
-            file2->setToolTip(tr("Name of Python script that contains defined parameters"));
-            QPushButton *chooseFile3 = new QPushButton();
-
-            connect(chooseFile3, &QPushButton::clicked, this, [=](){
-                file3->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-                this->parseInputfilesForRV(file3->text());
-            });
-            chooseFile3->setText(tr("Choose"));
-            chooseFile3->setToolTip(tr("Push to choose a file from your file system"));
-
-            parametersFilenames.append(file3);
-
-            femLayout->addWidget(label3, 2,0);
-            femLayout->addWidget(file3, 2,1);
-            femLayout->addWidget(chooseFile3, 2,2);
-
-            femLayout->setColumnStretch(3,1);
-            femLayout->setColumnStretch(1,3);
-        }
-        inputFilenames.append(file1);
-        postprocessFilenames.append(file2);
-        newFemSpecific->setLayout(femLayout);
-        femLayout->setColumnStretch(3,1);
-        femLayout->setColumnStretch(1,3);
-    } else {
-
+    } else if (arg1 == QString("MultipleModels")) {
+        numInputs = 2;
         QVBoxLayout *multiLayout = new QVBoxLayout();
         newFemSpecific->setLayout(multiLayout);
 
         for (int i=0; i< numInputs; i++) {
-            //QGridLayout *femLayout = new QGridLayout(); // Changed it to local->private for surrogate - may cause problem in multiple model case
-            femLayout = new QGridLayout();
 
-            QLabel *label1 = new QLabel();
-            QLabel *label2 = new QLabel();
-            label2->setText("Postprocess Script");
+            QGridLayout *modelLayout = new QGridLayout();
+            QWidget *femWidget = new QWidget();
+            QLabel *modelIdLabel = new QLabel("Model " + QString::number(i+1) + "      ");
+            modelIdLabel-> setStyleSheet("font-weight: bold");
 
-            QLineEdit *file1 = new QLineEdit;
-            QPushButton *chooseFile1 = new QPushButton();
-            chooseFile1->setText(tr("Choose"));
-            connect(chooseFile1, &QPushButton::clicked, this, [=](){
-                file1->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-                this->parseInputfilesForRV(file1->text());
-            });
-
-            if (arg1 == QString("FEAPpv")){
-                label1->setText("Input File");
-                file1->setToolTip(tr("Name of FEAPpv input file"));
-            } else {
-                label1->setText("Input Script");
-                file1->setToolTip(tr("Name of OpenSees input script"));
-            }
-
-            chooseFile1->setToolTip(tr("Push to choose a file from your file system"));
-
-            QLineEdit *file2 = new QLineEdit;
-            QPushButton *chooseFile2 = new QPushButton();
-
-            connect(chooseFile2, &QPushButton::clicked, this, [=](){
-                file2->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-            });
-
-            file2->setToolTip(tr("Name of Python script that will process FEAPpv output file for UQ engine"));
-            chooseFile2->setToolTip(tr("Push to choose a file from your file system"));
-
-            chooseFile2->setText(tr("Choose"));
-
-            femLayout->addWidget(label1, 0,0);
-            femLayout->addWidget(file1,  0,1);
-            femLayout->addWidget(chooseFile1, 0, 2);
-            femLayout->addWidget(label2, 1,0);
-            femLayout->addWidget(file2, 1,1);
-            femLayout->addWidget(chooseFile2, 1,2);
-
-            femLayout->setColumnStretch(3,1);
-            femLayout->setColumnStretch(1,3);
-
-            inputFilenames.append(file1);
-            postprocessFilenames.append(file2);
-            multiLayout->addLayout(femLayout);
-
+            QComboBox *femSelection_ = new QComboBox();
+            femSelection_->addItem(tr("OpenSees"));
+            femSelection_->addItem(tr("FEAPpv"));
+            femSelection_->addItem(tr("OpenSeesPy"));
+            femSelection_->addItem(tr("Custom"));
+            femSelection_->addItem(tr("SurrogateGP"));
+            femSelection_->setMaximumWidth(150);
+            connect(femSelection_, &QComboBox::currentTextChanged, this, [=](const QString &v)  {
+                int current_model_idx = i;
+                modelLayout->removeWidget(femWidget);
+                QWidget *femWidget = new QWidget();
+                singleFemProgramChanged(v, femWidget);
+                modelLayout->addWidget(femWidget,1,0,1,-1);
+                //modelLayout->addWidget(new QLabel(QString::number(current_model_idx)));
+                });
+            femSelection_->setCurrentIndex(0);
+            modelLayout->addWidget(modelIdLabel,0,0);
+            modelLayout->addWidget(femSelection_,0,1);
+            modelLayout->addWidget(femWidget,1,0,1,-1);
+            modelLayout->setColumnStretch(2,1);
+            modelLayout->setRowStretch(2,1);
+            multiLayout->addLayout(modelLayout);
         }
+        multiLayout->setStretch(numInputs, 1);
         newFemSpecific->setLayout(multiLayout);
-    }
 
+    } else {
+        singleFemProgramChanged(arg1, newFemSpecific);
+    }
     layout->insertWidget(1, newFemSpecific);
     femSpecific = newFemSpecific;
     oldFemSpecific->deleteLater();
 }
+
+void InputWidgetFEM::singleFemProgramChanged(const QString &arg1, QWidget *&newFemSpecific) {
+    //QGridLayout *femLayout = new QGridLayout(); // Changed it to local->private for surrogate - may cause problem in multiple model case
+    //femLayout = new QGridLayout();
+    QGridLayout *femLayout = new QGridLayout();
+
+    QLabel *label1 = new QLabel();
+    QLineEdit *file1 = new QLineEdit;
+    QPushButton *chooseFile1 = new QPushButton();
+    chooseFile1->setText(tr("Choose"));
+    connect(chooseFile1, &QPushButton::clicked, this, [=](){
+         file1->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+         if ((arg1 == QString("FEAPpv")) || (arg1 == QString("OpenSees")) || (arg1 == QString("SurrogateGP")) )
+                this->parseInputfilesForRV(file1->text());
+     });
+
+    chooseFile1->setToolTip(tr("Push to choose a file from your file system"));
+
+    femLayout->addWidget(label1, 1,0);
+    femLayout->addWidget(file1,  1,1,1,2);
+    femLayout->addWidget(chooseFile1, 1, 3);
+
+    QLabel *label2 = new QLabel();
+    label2->setText("Postprocess Script");
+    QLineEdit *file2 = new QLineEdit;
+    QPushButton *chooseFile2 = new QPushButton();
+
+    connect(chooseFile2, &QPushButton::clicked, this, [=](){
+        file2->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+    });
+     chooseFile2->setText(tr("Choose"));
+    chooseFile2->setToolTip(tr("Push to choose a file from your file system"));
+
+    if (arg1 == QString("FEAPpv")){
+        label1->setText("Input File");
+        file1->setToolTip(tr("Name of FEAPpv input file"));
+        file2->setToolTip(tr("Name of Python script that will process FEAPpv output file for UQ engine"));
+    } else if (arg1 == "OpenSees") {
+        label1->setText("Input Script");
+        file1->setToolTip(tr("Name of OpenSees input script"));
+        file2->setToolTip(tr("Name of Python/Tcl script that will process OpenSees output file for UQ engine"));
+    } else if (arg1 == "SurrogateGP"){
+        label1->setText("SurrogateGP Info (.json)");
+        label2->setText("SurrogateGP Model (.pkl)");
+        file1->setToolTip(tr("Name of SurrogateGP model file (.json)"));
+        file2->setToolTip(tr("Name of SurrogateGP info file (.pkl)"));
+        optionsLayout = 0;
+    } else {
+        label1->setText("Input Script");
+        file1->setToolTip(tr("Name of OpenSeesPy input script"));
+        file2->setToolTip(tr("Name of Python script that will process OpenSeesPy output"));
+    }
+
+    femLayout->addWidget(label2, 2,0);
+    femLayout->addWidget(file2, 2,1,1,2);
+    femLayout->addWidget(chooseFile2, 2,3);
+
+
+    if (arg1 == "OpenSeesPy") {
+        QLabel *label3 = new QLabel();
+        label3->setText("Parameters File");
+        QLineEdit *file3 = new QLineEdit;
+        file2->setToolTip(tr("Name of Python script that contains defined parameters"));
+        QPushButton *chooseFile3 = new QPushButton();
+
+        connect(chooseFile3, &QPushButton::clicked, this, [=](){
+            file3->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+            this->parseInputfilesForRV(file3->text());
+        });
+        chooseFile3->setText(tr("Choose"));
+        chooseFile3->setToolTip(tr("Push to choose a file from your file system"));
+
+        parametersFilenames.append(file3);
+
+        femLayout->addWidget(label3, 3,0);
+        femLayout->addWidget(file3, 3,1,1,2);
+        femLayout->addWidget(chooseFile3, 3,3);
+    }
+    inputFilenames.append(file1);
+    postprocessFilenames.append(file2);
+    femLayout->addWidget(new QLabel(""), 4,1);
+    femLayout->setColumnStretch(5,1);
+    femLayout->setColumnStretch(1,4);
+    newFemSpecific->setLayout(femLayout);
+}
+
 
 int InputWidgetFEM::parseInputfilesForRV(QString name1){
     QString fileName1 = name1;
