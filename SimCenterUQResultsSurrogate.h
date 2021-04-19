@@ -110,6 +110,8 @@ private:
    bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory);
    void summarySurrogate(QScrollArea *&summaryLayout);
 
+   QString lastPath;
+
 };
 
 #endif // SIMCENTERUQ_RESULTS_SURROGATE_H
