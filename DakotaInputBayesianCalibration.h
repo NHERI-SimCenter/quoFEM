@@ -47,6 +47,9 @@ class QGridLayout;
 class QComboBox;
 class QPushButton;
 class QLineEdit;
+class QCheckBox;
+class QLabel;
+class QHBoxLayout;
 
 class RandomVariablesContainer;
 
@@ -72,6 +75,8 @@ signals:
 public slots:
    void clear(void);
    void onMethodChanged(const QString &arg1);
+   void showNumExp(bool);
+   void showCalibrateCovMultiplierCheckBox(bool);
 
 private:
     QGridLayout *layout;
@@ -83,6 +88,16 @@ private:
     QLineEdit   *randomSeed;
     QLineEdit   *burnInSamples;
     QLineEdit   *jumpStep;
+//    QLineEdit   *calibrationData;
+    QCheckBox   *readCalibrationDataCheckBox;
+    QLineEdit   *numExperiments;
+    QLabel      *numExperimentsLabel;
+    QHBoxLayout *readCalDataWidget;
+    QLabel      *readCovarianceDataLabel;
+    QCheckBox   *readCovarianceDataCheckBox;
+    QLabel      *calibrateCovarianceMultiplierLabel;
+    QCheckBox   *calibrateCovarianceMultiplierCheckBox;
+    QHBoxLayout *readErrorCovarianceDataWidget;
     //QComboBox   *emulator;
     //QLineEdit   *maxIterations;
     //QLineEdit   *convTol;

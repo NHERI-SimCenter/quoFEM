@@ -70,7 +70,8 @@ public:
 
      // copy main file to new filename ONLY if varNamesAndValues not empy
     void specialCopyMainInput(QString fileName, QStringList varNamesAndValues);
-    int parseInputfilesForRV(QString filnema1);
+    //int parseInputfilesForRV(QString filnema1);
+    int parseInputfilesForRV(QString name1);
     int parseInputfilesForGP(QString filnema1);
     void setFemGP(bool on);
     int setFEMforGP(QString option);
@@ -107,16 +108,20 @@ public:
     QVector<QLineEdit *>postprocessFilenames;
     QVector<QLineEdit *>parametersFilenames;
     QVector<QLineEdit *>customInputFiles;
-
+    QGridLayout *femLayout;
     // for GP
     double interpolateForGP(QVector<double> X, QVector<double> Y, double Xval);
+    double thres;
+    QStringList parseGPInputs(QString file1);
     bool isGP;
     QVector<double> percVals, thrsVals;
     QLineEdit *thresVal;
     QString femOpt;
     bool isData;
     QRadioButton * option1Button,* option2Button,* option3Button;
-
+    QGroupBox *groupBox;
+    QGridLayout *optionsLayout ;
+    QString GPoption;
 };
 
 #endif // INPUTWIDGETFEM_H

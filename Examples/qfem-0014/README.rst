@@ -73,24 +73,23 @@ A Gaussian likelihood model is employed. This is done by assuming that the error
 
 Files required
 --------------
-The exercise requires two script files - an OpenSees script file which builds the finite element model and conducts the analysis, and a Python script file which post-processes the output from the finite element analysis. The user should download these file and place it in a *new* folder. The post-processing script calculates the log-likelihood that the input values of the story stiffness produced the set of measurement data. 
+The exercise requires two script files. The user should download these file and place it in a *new* folder. 
 
-1. :qfem-0014:`model.tcl <src/model.tcl>`
+1. :qfem-0014:`model.tcl <src/model.tcl>` - This is an OpenSees script written in tcl which builds the finite element model and conducts the analysis. This script creates a file called ``results.out`` when it runs. This file contains the first eigenvalue and the second component of the first eigenvector obtained from finite element analysis of the structure. 
 
-.. literalinclude:: ../qfem-0014/src/model.tcl
+.. .. literalinclude:: ../qfem-0014/src/model.tcl
 
 
-.. note::
+.. .. note::
    This tcl script creates a file called ``results.out`` when it runs. This file contains the first eigenvalue and the second component of the first eigenvector obtained from finite element analysis of the structure. 
    
 
-2. :qfem-0014:`postProcessing.py <src/postProcessing.py>`
+2. :qfem-0014:`postProcessing.py <src/postProcessing.py>` - This is a Python script which post-processes the output from the finite element analysis and calculates the log-likelihood that the input values of the story stiffness produced the set of measurement data. 
 
-.. literalinclude:: ../qfem-0014/src/postProcessing.py
+.. .. literalinclude:: ../qfem-0014/src/postProcessing.py
    :language: python
 
-.. warning::
-
+.. .. warning::
    Do not place the files in your root, downloads, or desktop folder as when the application runs it will copy the contents on the directories and subdirectories containing these files multiple times. If you are like me, your root, Downloads or Documents folders contains and awful lot of files.
 
 

@@ -2,6 +2,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QJsonObject>
+#include <QJsonArray>
 
 ImportanceSamplingInputWidget::ImportanceSamplingInputWidget(QWidget *parent) : UQ_MethodInputWidget(parent)
 {
@@ -36,6 +37,27 @@ ImportanceSamplingInputWidget::ImportanceSamplingInputWidget(QWidget *parent) : 
     layout->setRowStretch(3, 1);
     layout->setColumnStretch(2, 1);
 
+
+    probabilityLevel = new QLineEdit();
+    probabilityLevel->setText("");
+
+    layout->addWidget(new QLabel("Response Levels"), 3, 0);
+    layout->addWidget(probabilityLevel, 3, 1);
+
+//   // layout->addWidget(new QLabel("Probability Levels"), 3, 1);
+//    layout->addWidget(levelType, 3, 0);
+//    layout->addWidget(probabilityLevel, 3, 1);
+
+    layout->setColumnStretch(2,2);
+    layout->setColumnStretch(3,4);
+    layout->setRowStretch(5,1);
+
+//    for(int i = 1; i < 3; i++)
+//        {
+//           layout->itemAtPosition(i,1)->widget()->hide();
+//           layout->itemAtPosition(i,2)->widget()->hide();
+//        }
+
     this->setLayout(layout);
 }
 
@@ -46,6 +68,13 @@ bool ImportanceSamplingInputWidget::outputToJSON(QJsonObject &jsonObject)
     jsonObject["samples"]=numSamples->text().toInt();
     jsonObject["seed"]=randomSeed->text().toDouble();
     jsonObject["ismethod"]=isMethod->currentData().toString();
+
+    QJsonArray responseLevel;
+    QStringList responseLevelList = QStringList(probabilityLevel->text().split(" "));
+    for (int i = 0; i < responseLevelList.size(); ++i)
+        responseLevel.push_back(responseLevelList.at(i).toDouble());
+    jsonObject["responseLevel"]=responseLevel;
+
     return result;
 }
 
@@ -70,6 +99,24 @@ bool ImportanceSamplingInputWidget::inputFromJSON(QJsonObject &jsonObject)
       else
           isMethod->setCurrentIndex(2);
 
+
+      probabilityLevel->setText("");
+
+      QJsonArray probLevels;
+
+      QJsonValue probLevelVal = jsonObject["responseLevel"];
+      if (probLevelVal.isArray()) {
+
+          QStringList levelList;
+          QJsonArray levels = probLevelVal.toArray();
+
+          for (int i=0; i<levels.count(); i++) {
+              QJsonValue value = levels.at(i);
+              double levelV = value.toDouble();
+              levelList << QString::number(levelV);
+          }
+          probabilityLevel->setText(levelList.join(" "));
+      }
       result = true;
     }
 

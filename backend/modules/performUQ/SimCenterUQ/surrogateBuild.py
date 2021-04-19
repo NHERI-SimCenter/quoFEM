@@ -124,7 +124,10 @@ class GpFromModel(object):
             random.seed(surrogateInfo['seed'])
             self.xrange = np.empty((0, 2), float)
             for rv in inp['randomVariables']:
-                self.xrange = np.vstack((self.xrange ,[rv['lowerbound'], rv['upperbound']]))
+                if  "lowerbound" not in rv:
+                    msg = 'Error in input RV: all RV should be set to Uniform distribution'
+                    errlog.exit(msg)
+                self.xrange = np.vstack((self.xrange, [rv['lowerbound'], rv['upperbound']]))
             self.len = np.abs(np.diff(self.xrange).T[0])
 
             if sum(self.len==0) >0:
@@ -160,11 +163,11 @@ class GpFromModel(object):
                 n_ex=X_tmp.shape[0]
 
                 if X_tmp.shape[1] != x_dim:
-                    msg = 'Error importing input data: Number of dimension inconsistent: have {} RV(s) but have {} column{s}.'.format(x_dim, X_tmp.shape[1])
+                    msg = 'Error importing input data: Number of dimension inconsistent: have {} RV(s) but have {} column(s).'.format(x_dim, X_tmp.shape[1])
                     errlog.exit(msg)
 
                 if Y_tmp.shape[1] != y_dim:
-                    msg = 'Error importing input data: Number of dimension inconsistent: have {} QoI(s) but have {} column{s}.'.format(y_dim, Y_tmp.shape[1])
+                    msg = 'Error importing input data: Number of dimension inconsistent: have {} QoI(s) but have {} column(s).'.format(y_dim, Y_tmp.shape[1])
                     errlog.exit(msg)
 
                 if n_ex !=Y_tmp.shape[0]:
@@ -273,18 +276,21 @@ class GpFromModel(object):
                     msg = 'Consistency check failed. Your data is not consistent to your model response.'
                     errlog.exit(msg)
 
-            if n_ex< n_init:
+            if n_ex < n_init:
                 # simulate
-                Y_tmp2 = np.zeros((n_init-n_ex, y_dim))
-                for ns in range(n_init-n_ex):
+                Y_tmp2 = np.zeros((n_init - n_ex, y_dim))
+                did_break = False
+                for ns in range(n_init - n_ex):
                     Y_tmp2[ns, :] = func(X_tmp2[ns, :][np.newaxis])
                     print(">> {:.2f} sec".format(time.time() - t_init))
                     if time.time() - t_init > thr_t:
                         Y = np.vstack([Y_tmp, Y_tmp2[:ns, :]])
                         X = np.vstack([X_tmp, X_tmp2[:ns, :]])
+                        did_break = True
                         break
 
-                Y=np.vstack([Y_tmp, Y_tmp2])
+                if not did_break:
+                    Y = np.vstack([Y_tmp, Y_tmp2])
                 n_iter = thr_count - n_init + n_ex
             else:
                 # check validity
@@ -502,28 +508,36 @@ class GpFromModel(object):
             for nx in range(x_dim):
                 Xerr[:,nx] = U[:,nx]*(self.xrange[nx,1]-self.xrange[nx,0])+self.xrange[nx,0]
 
-            y_pred = np.zeros((n_err, y_dim))
             y_pred_var = np.zeros((n_err, y_dim))
             y_data_var = np.zeros((n_err, y_dim))
-            y_pred_prior_var = np.zeros((n_err, y_dim))
 
             for ny in range(y_dim):
-                m_tmp=self.m_list[ny].copy()
-                y_var_val = np.var(Y[:,ny])
+                m_tmp = self.m_list[ny].copy()
+                if self.do_logtransform:
+                    #y_var_val = np.var(np.log(Y[:, ny]))
+                    log_mean = np.mean(np.log(Y[:, ny]))
+                    log_var = np.var(np.log(Y[:, ny]))
+                    y_var_val = np.exp(2*log_mean+log_var)*(np.exp(log_var)-1) # in linear space
+                else:
+                    y_var_val = np.var(Y[:, ny])
+
                 for ns in range(n_err):
+                    y_pred_tmp, y_pred_var_tmp = m_tmp.predict(Xerr[ns, :][np.newaxis])
+                    if self.do_logtransform:
+                        y_pred_var[ns, ny] = np.exp(2 * y_pred_tmp + y_pred_var_tmp) * (np.exp(y_pred_var_tmp) - 1)
+                    else:
+                        y_pred_var[ns, ny] = y_pred_var_tmp
 
-                    y_pred[ns,ny], y_pred_var[ns,ny] = m_tmp.predict(Xerr[ns,:][np.newaxis])
-                    y_data_var[ns,ny] = y_var_val
+                    y_data_var[ns, ny] = y_var_val
 
-                    for parname in m_tmp.parameter_names():
-                        if ('Mat52' in parname) and parname.endswith('variance'):
-                            exec('y_pred_prior_var[ns,ny]=m_tmp.' + parname)
+                    #for parname in m_tmp.parameter_names():
+                    #    if ('Mat52' in parname) and parname.endswith('variance'):
+                    #        exec('y_pred_prior_var[ns,ny]=m_tmp.' + parname)
 
-            error_ratio1_Pr = (y_pred_var / y_pred_prior_var)
-            error_ratio2_Pr = (y_pred_var / y_data_var )
-            np.max(error_ratio1_Pr,axis=0)
-            np.max(error_ratio2_Pr,axis=0)
-
+            #error_ratio1_Pr = (y_pred_var / y_pred_prior_var)
+            error_ratio2_Pr = (y_pred_var / y_data_var)
+            #np.max(error_ratio1_Pr, axis=0)
+            np.max(error_ratio2_Pr, axis=0)
             self.perc_thr = np.hstack([np.array([1]),np.arange(10,1000,50),np.array([999])])
             error_sorted=np.sort(np.max(error_ratio2_Pr,axis=1),axis=0)
             self.perc_val = error_sorted[self.perc_thr] # criteria
@@ -705,7 +719,7 @@ class GpFromModel(object):
                     break
 
             if math.isinf(-max_log_likli) or math.isnan(-max_log_likli):
-                msg = "Error GP optimization failed"
+                msg = "Error GP optimization failed, perhaps QoI values are zero."
                 self.errlog.exit(msg)
 
             m_list = m_list + [m]

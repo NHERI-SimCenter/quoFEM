@@ -82,27 +82,61 @@ DakotaInputCalibration::DakotaInputCalibration(QWidget *parent)
   maxIterations->setValidator(new QIntValidator);
   maxIterations->setToolTip("Max number of iterations");
 
-  layout->addWidget(new QLabel("Max # Iterations"), 1,0);
-  layout->addWidget(maxIterations ,1,1);
+  layout->addWidget(new QLabel("Max # Iterations"), 1, 0, 1, 2);
+  layout->addWidget(maxIterations ,1, 1, 1, 2);
     
   convergenceTol = new QLineEdit();
   convergenceTol->setText(QString::number(1.0e-4));
-  layout->addWidget(new QLabel("Convergence Tol"), 2, 0);
-  layout->addWidget(convergenceTol, 2,1);
+  layout->addWidget(new QLabel("Convergence Tol"), 2, 0, 1, 2);
+  layout->addWidget(convergenceTol, 2, 1, 1, 2);
   convergenceTol->setValidator(new QDoubleValidator);
   convergenceTol->setToolTip("Specify the convergence tolerance");
 
 
   scalingFactors = new QLineEdit();
   scalingFactors->setToolTip("Scaling factors on responses, one for each QoI must be provided or values ignored, default is 1.0 for all");
-  layout->addWidget(new QLabel("Scaling Factors"), 3, 0);
-  layout->addWidget(scalingFactors, 3, 1);
+  layout->addWidget(new QLabel("Scaling Factors"), 3, 0, 1, 2);
+  layout->addWidget(scalingFactors, 3, 1, 1, 2);
+
+//  readCalibrationDataCheckBox = new QCheckBox();
+//  readCalibrationDataCheckBox->setChecked(false);
+//  layout->addWidget(new QLabel("Read calibration data from file"), 4, 0);
+//  layout->addWidget(readCalibrationDataCheckBox, 4, 1);
+
+  readCalibrationDataCheckBox = new QCheckBox();
+  readCalibrationDataCheckBox->setChecked(false);
+  layout->addWidget(new QLabel("Read calibration data from file"), 4, 0, 1, 1);
+  layout->addWidget(readCalibrationDataCheckBox, 4, 1, 1, 1);
+  connect(readCalibrationDataCheckBox,SIGNAL(toggled(bool)),this,SLOT(showNumExp(bool)));
 
 
-  layout->setColumnStretch(1, 2);
-  layout->setColumnStretch(2, 1);
-  layout->setColumnStretch(3,4);
-  layout->setRowStretch(4,1);
+  int bottom = 1;
+  QIntValidator *posIntValidator = new QIntValidator();
+  posIntValidator->setBottom(bottom);
+
+  numExperiments = new QLineEdit();
+  numExperiments->setText(tr("1"));
+  numExperiments->setValidator(posIntValidator);
+  numExperiments->setToolTip("Number of calibration data files to read per response");
+
+
+  numExperimentsLabel = new QLabel();
+  numExperimentsLabel->setText(tr("# Experiments"));
+  numExperiments->setVisible(false);
+  numExperimentsLabel->setVisible(false);
+
+
+  layout->addWidget(numExperimentsLabel, 4, 2, 1, 1);
+  layout->addWidget(numExperiments, 4, 3, 1, 2);
+
+
+//  layout->setColumnStretch(1, 2);
+//  layout->setColumnStretch(2, 1);
+//  layout->setColumnStretch(3, 4);
+  layout->setColumnStretch(5, 1);
+  layout->setRowStretch(5,1);
+
+  layout->setRowMinimumHeight(4, 24);
 
   this->setLayout(layout);
 }
@@ -112,6 +146,17 @@ DakotaInputCalibration::getMaxNumParallelTasks(void){
   return 1;
 }
 
+// SLOT function
+void DakotaInputCalibration::showNumExp(bool tog)
+{
+    if (tog) {
+        numExperiments->setVisible(true);
+        numExperimentsLabel->setVisible(true);
+    } else {
+        numExperiments->setVisible(false);
+        numExperimentsLabel->setVisible(false);
+    }
+}
 
 bool
 DakotaInputCalibration::outputToJSON(QJsonObject &jsonObject)
@@ -123,6 +168,8 @@ DakotaInputCalibration::outputToJSON(QJsonObject &jsonObject)
     uq["maxIterations"]=maxIterations->text().toInt();
     uq["convergenceTol"]=convergenceTol->text().toDouble();
     uq["factors"]=scalingFactors->text();
+    uq["readCalibrationData"]=readCalibrationDataCheckBox->isChecked();
+    uq["numExperiments"]=numExperiments->text().toInt();
 
     /*
     if(calibrationMethod->currentText()=="ColinyPattern")
@@ -189,6 +236,19 @@ DakotaInputCalibration::inputFromJSON(QJsonObject &jsonObject)
     int index = calibrationMethod->findText(method);
     calibrationMethod->setCurrentIndex(index);
     scalingFactors->setText(fact);
+
+    int numExp = 1;
+    bool readCalDataBool = false;
+    if (uq.contains("readCalibrationData")) {
+        if(uq["readCalibrationData"].toBool()) {
+            readCalDataBool = true;
+            if (uq.contains("numExperiments")) {
+                numExp = uq["numExperiments"].toInt();
+            }
+        }
+    }
+    readCalibrationDataCheckBox->setChecked(readCalDataBool);
+    numExperiments->setText(QString::number(numExp));
 
     return result;
 

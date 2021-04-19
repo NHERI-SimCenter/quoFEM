@@ -127,7 +127,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     lineA->setFrameShape(QFrame::HLine);
     lineA->setFrameShadow(QFrame::Sunken);
     lineA->setMaximumWidth(420);
-    layout->addWidget(lineA, 4, 0, 1, 3);
+    layout->addWidget(lineA, 4, 0, 1, 2);
     lineA->setVisible(false);
     //
     // Selection of GP kernel

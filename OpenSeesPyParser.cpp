@@ -77,12 +77,16 @@ OpenSeesPyParser::getVariables(QString inFilename)
   while (getline(inFile, line)) {
 
     string equalTo("=");
+    string comment("#");
+
     std::size_t found = line.find(equalTo);
+    std::size_t foundComm = line.find(comment);
+
     if (found != std::string::npos) {
 
       std::string varName = line.substr(0, found);
       varName.erase(std::remove_if(varName.begin(), varName.end(), ::isspace), varName.end());
-      std::string value = line.substr(found+1);
+      std::string value = line.substr(found+1,foundComm-found-1);
       value.erase(std::remove_if(value.begin(), value.end(), ::isspace), value.end());
 
       // strip possible ; from end of value (possible if comment) line

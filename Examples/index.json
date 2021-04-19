@@ -5,22 +5,22 @@
       "title": "Two-Dimensional Truss: Sampling, Reliability and Sensitivity",
       "base": "qfem-0001",
       "doc": [
-        "qfem-0001/figures/trussRES1.png",
         "qfem-0001/README.rst",
-        "qfem-0001/src/TrussModel.tcl",
-        "qfem-0001/figures/trussSens-UQ.png",
-        "qfem-0001/figures/trussRES5.png",
-        "qfem-0001/figures/trussQoI.png",
-        "qfem-0001/src/TrussPost.py",
-        "qfem-0001/figures/trussFEM.png",
-        "qfem-0001/figures/trussRES2.png",
-        "qfem-0001/figures/trussSORM-RES.png",
-        "qfem-0001/figures/truss.png",
-        "qfem-0001/figures/trussRV.png",
-        "qfem-0001/figures/trussSensitivity-RES.png",
         "qfem-0001/src/TrussPost.tcl",
+        "qfem-0001/figures/trussRES2.png",
+        "qfem-0001/figures/trussQoI.png",
+        "qfem-0001/figures/trussSensitivity-RES.png",
+        "qfem-0001/figures/trussSORM-UQ.png",
+        "qfem-0001/figures/trussRV.png",
+        "qfem-0001/src/TrussPost.py",
+        "qfem-0001/figures/trussRES5.png",
+        "qfem-0001/src/TrussModel.tcl",
+        "qfem-0001/figures/trussFEM.png",
+        "qfem-0001/figures/trussSens-UQ.png",
         "qfem-0001/figures/trussUQ.png",
-        "qfem-0001/figures/trussSORM-UQ.png"
+        "qfem-0001/figures/trussRES1.png",
+        "qfem-0001/figures/truss.png",
+        "qfem-0001/figures/trussSORM-RES.png"
       ],
       "entry_point": "qfem-0001/input.json",
       "summary": "This example illustrates how quoFEM interacts with the Tcl interpreter for OpenSees. A simple forward propagation procedure is run to estimate the first and second central moments of a FE model's response, given the marginal distributions of various random parameters.",
@@ -29,14 +29,7 @@
       "categories": {
         "Simulation": "OpenSees",
         "Difficulty": "0"
-      },
-      "tags": [
-        "UV.1.1",
-        "UV.1.2",
-        "UV.1.4",
-        "UM.1.1.1",
-        "UM.1.1"
-      ]
+      }
     },
     "qfem-0002": {
       "id": "qfem-0002",
@@ -53,22 +46,18 @@
       "categories": {
         "Simulation": "OpenSeesPy",
         "Difficulty": "0"
-      },
-      "tags": [
-        "UV.1.1",
-        "UV.1.2",
-        "UV.1.4",
-        "UM.1.1.1",
-        "UM.1.1"
-      ]
+      }
     },
     "qfem-0003": {
       "id": "qfem-0003",
       "title": "Reliability Analysis",
       "base": "qfem-0003",
       "doc": [
-        "qfem-0003/figures/trussSORM-RES.png",
-        "qfem-0003/README.rst"
+        "qfem-0003/README.rst",
+        "qfem-0003/figures/trussSORM-RES2.png",
+        "qfem-0003/figures/trussFORM-RES2.png",
+        "qfem-0003/figures/trussIS-RES2.png",
+        "qfem-0003/figures/trussGP-RES2.png"
       ],
       "entry_point": "qfem-0003/input.json",
       "summary": "This example uses quoFEM to perform a second-order reliability analysis (SORM) of an OpenSees FE model.",
@@ -77,22 +66,16 @@
       "categories": {
         "Simulation": "OpenSees",
         "Difficulty": "0"
-      },
-      "tags": [
-        "UV.1.1",
-        "UV.1.2",
-        "UV.1.4",
-        "UR.1"
-      ]
+      }
     },
     "qfem-0004": {
       "id": "qfem-0004",
       "title": "Sensitivity Analysis",
       "base": "qfem-0004",
       "doc": [
-        "qfem-0004/README.rst",
         "qfem-0004/figures/trussSensitivity-RES.png",
-        "qfem-0004/qfem-0004.png"
+        "qfem-0004/qfem-0004.png",
+        "qfem-0004/README.rst"
       ],
       "entry_point": "qfem-0004/input.json",
       "summary": "This example uses quoFEM to perform a global sensitivity analysis of an OpenSees FE model.",
@@ -101,14 +84,7 @@
       "categories": {
         "Simulation": "OpenSees",
         "Difficulty": "0"
-      },
-      "tags": [
-        "UV.1.1",
-        "UV.1.2",
-        "UV.1.4",
-        "UM.1.1.1",
-        "UM.1.1"
-      ]
+      }
     },
     "qfem-0005": {
       "id": "qfem-0005",
@@ -125,12 +101,7 @@
       "categories": {
         "Simulation": "OpenSeesPy",
         "Difficulty": "0"
-      },
-      "tags": [
-        "UV.1.3",
-        "UM.1.1.1",
-        "UM.1.1"
-      ]
+      }
     },
     "qfem-0006": {
       "id": "qfem-0006",
@@ -146,25 +117,22 @@
       "categories": {
         "Simulation": "OpenSeesPy",
         "Difficulty": "0"
-      },
-      "tags": [
-        "UV.1.3"
-      ]
+      }
     },
     "qfem-0007": {
       "id": "qfem-0007",
       "title": "Steel Frame: Conventional Calibration",
       "base": "qfem-0007",
       "doc": [
-        "qfem-0007/figures/joelCalRV.png",
-        "qfem-0007/figures/joelCalFEM.png",
         "qfem-0007/figures/qfem-0007-res-sum.png",
         "qfem-0007/figures/qfem-0007-res-dat.png",
-        "qfem-0007/README.rst",
-        "qfem-0007/figures/joelCalQoI.png",
-        "qfem-0007/src/Frame2FEM.tcl",
+        "qfem-0007/figures/joelCalRV.png",
         "qfem-0007/figures/joelUQ.png",
-        "qfem-0007/figures/frameFE.png"
+        "qfem-0007/README.rst",
+        "qfem-0007/figures/frameFE.png",
+        "qfem-0007/figures/joelCalFEM.png",
+        "qfem-0007/src/Frame2FEM.tcl",
+        "qfem-0007/figures/joelCalQoI.png"
       ],
       "entry_point": "qfem-0007/input.json",
       "summary": "In this example, a parameter estimation routine is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
@@ -173,16 +141,15 @@
       "categories": {
         "Simulation": "OpenSees",
         "Difficulty": "0"
-      },
-      "tags": []
+      }
     },
     "qfem-0008": {
       "id": "qfem-0008",
       "title": "Steel Frame Calibration with DREAM",
       "base": "qfem-0008",
       "doc": [
-        "qfem-0008/README.rst",
-        "qfem-0008/qfem-0008.png"
+        "qfem-0008/qfem-0008.png",
+        "qfem-0008/README.rst"
       ],
       "entry_point": "qfem-0008/input.json",
       "summary": "In this example, Bayesian estimation is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
@@ -191,10 +158,7 @@
       "categories": {
         "Simulation": "OpenSees",
         "Difficulty": "0"
-      },
-      "tags": [
-        "UV.1.3"
-      ]
+      }
     },
     "qfem-0009": {
       "id": "qfem-0009",
@@ -202,25 +166,21 @@
       "base": "qfem-0009",
       "doc": [
         "qfem-0009/qfem-0009.png",
-        "qfem-0009/figures/trussSensitivity-input-SimUQ.png",
-        "qfem-0009/figures/trussSensitivity-RES-SimUQ2.png",
         "qfem-0009/README.rst",
         "qfem-0009/figures/trussSensitivity-corr.png",
+        "qfem-0009/figures/trussSensitivity-advanced.png",
+        "qfem-0009/figures/trussSensitivity-input-SimUQ.png",
         "qfem-0009/figures/trussSensitivity-RES-SimUQ.png",
-        "qfem-0009/figures/trussSensitivity-advanced.png"
+        "qfem-0009/figures/trussSensitivity-RES-SimUQ2.png"
       ],
       "entry_point": "qfem-0009/input.json",
-      "summary": "A global sensitivity analysis is conducted with correlated random variables using the SimCenterUQ engine for sensitivity analysis.",
+      "summary": "A global sensitivity analysis is conducted with correlated random variables using the SimCenterUQ engine.",
       "logo": "qfem-0009.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
         "Simulation": "OpenSees",
         "Difficulty": "0"
-      },
-      "tags": [
-        "UV.1.1",
-        "UV.1.4"
-      ]
+      }
     },
     "qfem-0010": {
       "id": "qfem-0010",
@@ -236,14 +196,7 @@
       "categories": {
         "Simulation": "FEAP",
         "Difficulty": "0"
-      },
-      "tags": [
-        "UV.1.1",
-        "UV.1.2",
-        "UV.1.4",
-        "UM.1.1.1",
-        "UM.1.1"
-      ]
+      }
     },
     "qfem-0011": {
       "id": "qfem-0011",
@@ -259,8 +212,7 @@
       "categories": {
         "Simulation": "OpenSees",
         "Difficulty": "0"
-      },
-      "tags": []
+      }
     },
     "qfem-0012": {
       "id": "qfem-0012",
@@ -276,8 +228,7 @@
       "categories": {
         "Simulation": "OpenSees",
         "Difficulty": "0"
-      },
-      "tags": []
+      }
     },
     "qfem-0013": {
       "id": "qfem-0013",
@@ -293,26 +244,26 @@
       "categories": {
         "Simulation": "OpenSees",
         "Difficulty": "0"
-      },
-      "tags": []
+      }
     },
     "qfem-0014": {
       "id": "qfem-0014",
       "title": "Steel Frame: Bayesian Calibration using TMCMC",
       "base": "qfem-0014",
       "doc": [
-        "qfem-0014/figures/quo-14-RES-Summary.png",
-        "qfem-0014/README.rst",
-        "qfem-0014/figures/quo-14-RV.png",
-        "qfem-0014/figures/quo-14-RES-DataValues1.png",
-        "qfem-0014/src/model.tcl",
         "qfem-0014/figures/quo-14-FEM.png",
-        "qfem-0014/qfem-0014.png",
-        "qfem-0014/figures/quo-14-UQ.png",
         "qfem-0014/figures/quo-14-RES-DataValues4.png",
         "qfem-0014/figures/quo-14-RES-DataValues3.png",
+        "qfem-0014/src/model.tcl",
+        "qfem-0014/figures/quo-14-RES-Summary.png",
+        "qfem-0014/src/postProcessing.py",
+        "qfem-0014/figures/quo-14-RV.png",
+        "qfem-0014/qfem-0014.png",
+        "qfem-0014/figures/quo-14-RES-DataValues1.png",
+        "qfem-0014/README.rst",
         "qfem-0014/figures/quo-14-RES-DataValues2.png",
-        "qfem-0014/src/postProcessing.py"
+        "qfem-0014/figures/quo-14-UQ.png",
+		"qfem-0014/src/generateData.py"
       ],
       "entry_point": "qfem-0014/input.json",
       "summary": "In this example, Bayesian estimation is used to estimate the lateral story stiffnesses of the two stories of a simple steel frame, given data about its mode shapes and frequencies. The transitional Markov chain Monte Carlo algorithm is used to obtain samples from the posterior probability distribution of the lateral story stiffnesses",
@@ -321,30 +272,96 @@
       "categories": {
         "Simulation": "OpenSees",
         "Difficulty": "0"
-      },
-      "tags": [
-        "UV.1.3"
-      ]
+      }
     },
     "qfem-0015": {
       "id": "qfem-0015",
-      "title": "1 Story Building: Surrogate modeling",
+      "title": "Surrogate Modeling of a Single Story Building Response",
       "base": "qfem-0015",
       "doc": [
-        "qfem-0015/README.rst",
-        "qfem-0015/figures/input-UQ.JPG"
+        "qfem-0015/figures/SUR-Concept.PNG",
+        "qfem-0015/figures/SUR-GM.png",
+        "qfem-0015/figures/SUR-FEMtab.png",
+        "qfem-0015/figures/SUR-QoItab.png",
+        "qfem-0015/figures/SUR-REStab1st1.png",
+        "qfem-0015/figures/SUR-REStab1st2.png",
+        "qfem-0015/figures/SUR-REStab2nd1.png",
+        "qfem-0015/figures/SUR-REStab2nd2.png",
+        "qfem-0015/figures/SUR-REStab3.png",
+        "qfem-0015/figures/SUR-RVtab.png",
+        "qfem-0015/figures/SUR-UQtab1.png",
+        "qfem-0015/figures/SUR-UQtab2.png",
+        "qfem-0015/figures/SUR-VER1.png",
+        "qfem-0015/figures/SUR-VER2.png",
+        "qfem-0015/figures/SUR-VER3.png",
+        "qfem-0015/figures/SUR-VER4.png",
+        "qfem-0015/figures/SUR-VER5.png",
+        "qfem-0015/figures/SUR-VER6.png",
+        "qfem-0015/figures/SUR-VER7.png",
+        "qfem-0015/README.rst"
       ],
       "entry_point": "qfem-0015/input.json",
-      "summary": "In this example, Surogate modeling...",
-      "logo": "figures/input-UQ.JPG",
+      "summary": "This example uses quoFEM to train a Gaussian process-based surrogate model for peak responses of an OpenSeesPy FE model subjected to single earthquake excitation.",
+      "logo": "figures/SUR-Concept.PNG",
       "published": "2021-03-12T21:26:53.946381-08:00",
       "categories": {
         "Simulation": "OpenSeesPy",
         "Difficulty": "1"
-      },
-      "tags": [
-        "UV.1.3"
-      ]
+      }
+    },
+    "qfem-0016": {
+      "id": "qfem-0016",
+      "title": "Surrogate modeling for mean and variance of EQ response",
+      "base": "qfem-0016",
+      "doc": [
+        "qfem-0016/figures/SUR2-sturcture.PNG",
+        "qfem-0016/figures/SUR2-UQtab.png",
+        "qfem-0016/figures/SUR2-FEMtab.png",
+        "qfem-0016/figures/SUR2-RVtab.png",
+        "qfem-0016/figures/SUR2-QoItab.png",
+        "qfem-0016/figures/SUR2-REStab1.png",
+        "qfem-0016/figures/SUR2-REStab2.png",
+        "qfem-0016/figures/SUR2-VER0.png",
+        "qfem-0016/figures/SUR2-VER1.png",
+        "qfem-0016/figures/SUR2-VER2.png",
+        "qfem-0016/figures/SUR2-VER3.png",
+        "qfem-0016/figures/SUR2-VER4.png",
+        "qfem-0016/figures/SUR2-VER5.png",
+        "qfem-0016/figures/SUR2-VER6.png",
+        "qfem-0016/README.rst"
+      ],
+      "entry_point": "qfem-0016/input.json",
+      "summary": "This example uses quoFEM to train a Gaussian process-based surrogate model for mean and variance of peak responses and use it for sensitivity analysis.",
+      "logo": "figures/SUR2-sturcture.png",
+      "published": "2021-03-12T21:26:53.946381-08:00",
+      "categories": {
+        "Simulation": "OpenSeesPy",
+        "Difficulty": "1"
+      }
+    },
+    "qfem-0017": {
+      "id": "qfem-0017",
+      "title": "This is customUQ module",
+      "base": "qfem-0017",
+      "doc": [
+        "qfem-0017/figures/CUS_UQtab.png",
+        "qfem-0017/figures/CUS_UQtab2.png",
+        "qfem-0017/figures/CUS_FEMtab.png",
+        "qfem-0017/figures/CUS_RVtab.png",
+        "qfem-0017/figures/CUS_REStab.png",
+        "qfem-0017/figures/CUS_QoItab.png",
+        "qfem-0017/figures/truss2.png",
+        "qfem-0017/src/UQpySimpleExample.json",
+        "qfem-0017/README.rst"
+      ],
+      "entry_point": "qfem-0017/input.json",
+      "summary": "This example illustrates how customUQ can be used with quoFEM.",
+      "logo": "figures/truss2.png",
+      "published": "2021-03-12T21:26:53.946381-08:00",
+      "categories": {
+        "Simulation": "OpenSees",
+        "Difficulty": "2"
+      }
     }
   },
   "categories": {

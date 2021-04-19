@@ -202,7 +202,7 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     mLeft = true;
     col1 = 0;
     col2 = 0;
-
+    lastPath = "";
     //
     // check it actually ran with errors
     //
@@ -430,6 +430,9 @@ SimCenterUQResultsSurrogate::onSaveSpreadsheetClicked()
             stream<<endl;
         }
     }
+
+    lastPath =  QFileInfo(fileName).path();
+
 }
 
 void
@@ -438,9 +441,10 @@ SimCenterUQResultsSurrogate::onSaveModelClicked()
 
 
     QString fileName = QFileDialog::getSaveFileName(this,
-                                                   tr("Save Data"), "SimGpModel",
+                                                   tr("Save Data"), lastPath+"/SimGpModel",
                                                    tr("Pickle File (*.pkl)"));
     QString fileName2 = fileName;
+
     fileName2.replace(".pkl",".json");
 
     QFileInfo fileInfo(fileName);
@@ -454,6 +458,8 @@ SimCenterUQResultsSurrogate::onSaveModelClicked()
     QString workflowDir2 = path+QString("/templatedir_SIM");
     bool directoryCopied = copyPath(workflowDir1, workflowDir2, true);
 
+    lastPath =  QFileInfo(fileName).path();
+
 }
 
 void
@@ -461,9 +467,10 @@ SimCenterUQResultsSurrogate::onSaveInfoClicked()
 {
 
     QString fileName = QFileDialog::getSaveFileName(this,
-                                                   tr("Save Data"), "GPresults",
+                                                   tr("Save Data"), lastPath+"/GPresults",
                                                    tr("Output File (*.out)"));
     QFile::copy(workingDir+QString("GPresults.out"), fileName);
+    lastPath =  QFileInfo(fileName).path();
 }
 
 void
@@ -471,9 +478,10 @@ SimCenterUQResultsSurrogate::onSaveXClicked()
 {
 
     QString fileName = QFileDialog::getSaveFileName(this,
-                                                   tr("Save Data"), "X",
+                                                   tr("Save Data"), lastPath+"/X",
                                                    tr("Output File (*.txt)"));
     QFile::copy(workingDir+QString("inputTab.out"), fileName);
+    lastPath =  QFileInfo(fileName).path();
 }
 
 void
@@ -481,9 +489,10 @@ SimCenterUQResultsSurrogate::onSaveYClicked()
 {
 
     QString fileName = QFileDialog::getSaveFileName(this,
-                                                   tr("Save Data"), "Y",
+                                                   tr("Save Data"), lastPath+"/Y",
                                                    tr("Output File (*.txt)"));
     QFile::copy(workingDir+QString("outputTab.out"), fileName);
+    lastPath =  QFileInfo(fileName).path();
 }
 
 
@@ -689,7 +698,7 @@ void SimCenterUQResultsSurrogate::onSpreadsheetCellClicked(int row, int col)
 
             double maxPercent = 0;
             for (int i=0; i<NUM_DIVISIONS; i++) {
-                histogram[i]/rowCount;
+                //histogram[i]/rowCount;
                 if (histogram[i] > maxPercent)
                     maxPercent = histogram[i];
             }
@@ -906,7 +915,7 @@ SimCenterUQResultsSurrogate::inputFromJSON(QJsonObject &jsonObject)
 
     chart = new QChart();
     chart->setAnimationOptions(QChart::AllAnimations);
-    QScatterSeries *series = new QScatterSeries;
+    //QScatterSeries *series = new QScatterSeries;
     col1 = 0;           // col1 is initialied as the first column in spread sheet
     col2 = numCol-1;    // col2 is initialized as the second column in spread sheet
     mLeft = true;       // left click
@@ -917,14 +926,23 @@ SimCenterUQResultsSurrogate::inputFromJSON(QJsonObject &jsonObject)
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->chart()->legend()->hide();
 
+
     //
     // create a widget into which we place the chart and the spreadsheet
     //
 
     QWidget *widget = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout(widget);
-    layout->addWidget(chartView, 1);
-    layout->addWidget(spreadsheet, 1);
+    QGridLayout *layout = new QGridLayout(widget);
+    QPushButton* save_spreadsheet = new QPushButton();
+    save_spreadsheet->setText("Save Data");
+    save_spreadsheet->setToolTip(tr("Save data into file in a CSV format"));
+    save_spreadsheet->resize(30,30);
+    connect(save_spreadsheet,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetClicked()));
+
+    layout->addWidget(chartView, 0,0,1,1);
+    layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
+    layout->addWidget(spreadsheet,2,0,1,1);
+
 
     //layout->addWidget(analysis_message,1);
     // add 3 Widgets to TabWidget
@@ -1056,7 +1074,7 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
     QJsonObject valCorrCoeff = jsonObj["valCorrCoeff"].toObject();
     QJsonObject yExact = jsonObj["yExact"].toObject();
     QJsonObject yPredi = jsonObj["yPredict"].toObject();
-
+    bool isMultiFidelity = jsonObj["doMultiFidelity"].toBool();
 
     QStringList QoInames;
     foreach (QJsonValue str, QoI_tmp) {
@@ -1084,23 +1102,33 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
 
     summaryLayout->addWidget(surrogateStatusLabel, 0, 0,1,2);
     summaryLayout->addWidget(lineA, 1, 0,1,2);
-
-    resultsLayout->addWidget(new QLabel("# training samples"), 0, 0);
-    resultsLayout->addWidget(new QLabel(QString::number(nSamp)), 0, 1);
-    resultsLayout->addWidget(new QLabel("# model simulations"), 1, 0);
-    resultsLayout->addWidget(new QLabel(QString::number(nSim)), 1, 1);
-    resultsLayout->addWidget(new QLabel("Analysis time"), 2, 0);
-    resultsLayout->addWidget(new QLabel(QString::number(nTime/60, 'f', 1).append(" min.")), 2, 1);
-    resultsLayout->addWidget(new QLabel(" "), 3, 0);
+    int idSum=0;
+    if (isMultiFidelity) {
+        int nSamp_HF = jsonObj["valSamp_HF"].toInt();
+        resultsLayout->addWidget(new QLabel("# high-fidelity (HF) samples"), idSum, 0);
+        resultsLayout->addWidget(new QLabel(QString::number(nSamp_HF)), idSum++, 1);
+        resultsLayout->addWidget(new QLabel("# low-fidelity (LF) samples"), idSum, 0);
+        resultsLayout->addWidget(new QLabel(QString::number(nSamp)), idSum++, 1);
+        resultsLayout->addWidget(new QLabel("# low-fidelity (LF) model simulations"), idSum, 0);
+        resultsLayout->addWidget(new QLabel(QString::number(nSim)), idSum++, 1);
+    } else {
+        resultsLayout->addWidget(new QLabel("# training samples"), idSum, 0);
+        resultsLayout->addWidget(new QLabel(QString::number(nSamp)), idSum++, 1);
+        resultsLayout->addWidget(new QLabel("# model simulations"), idSum, 0);
+        resultsLayout->addWidget(new QLabel(QString::number(nSim)), idSum++, 1);
+    }
+    resultsLayout->addWidget(new QLabel("Analysis time"), idSum, 0);
+    resultsLayout->addWidget(new QLabel(QString::number(nTime/60, 'f', 1).append(" min.")), idSum++, 1);
+    resultsLayout->addWidget(new QLabel(" "), idSum++, 0);
 
     // blank space
 
     QLabel *accuMeasureLabel =new QLabel("Goodness-of-Fit");
     accuMeasureLabel-> setStyleSheet({"font-weight: bold"});
-    resultsLayout->addWidget(accuMeasureLabel, 4, 0);
-    resultsLayout->addWidget(new QLabel("Normalized error (NRMSE)"), 5, 0);
-    resultsLayout->addWidget(new QLabel("R2"), 6, 0);
-    resultsLayout->addWidget(new QLabel("Correlation coeff"), 7, 0);
+    resultsLayout->addWidget(accuMeasureLabel, idSum++, 0);
+    resultsLayout->addWidget(new QLabel("Normalized error (NRMSE)"), idSum++, 0);
+    resultsLayout->addWidget(new QLabel("R2"), idSum++, 0);
+    resultsLayout->addWidget(new QLabel("Correlation coeff"), idSum++, 0);
 
     QLineEdit *NRMSE;
     QLineEdit *R2;
@@ -1138,22 +1166,22 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
             warningIdx=true;
         }
 
-        resultsLayout->addWidget(new QLabel(QoInames[nq]), 4, nq+1);
-        resultsLayout->addWidget(NRMSE, 5, nq+1);
-        resultsLayout->addWidget(R2, 6, nq+1);
-        resultsLayout->addWidget(Corr, 7, nq+1);
+        resultsLayout->addWidget(new QLabel(QoInames[nq]), idSum-4, nq+1);
+        resultsLayout->addWidget(NRMSE, idSum-3, nq+1);
+        resultsLayout->addWidget(R2, idSum-2, nq+1);
+        resultsLayout->addWidget(Corr, idSum-1, nq+1);
     }
 
-
+    idSum += 1;
     if (warningIdx) {
         //surrogateStatusLabel->setText("\nSurrogate analysis finished. - The model may not be accurate");
         QLabel *waringMsgLabel = new QLabel("* Note: Some or all of the QoIs did not converge to the target accuracy (NRMSE="+QString::number(NRMSEthr)+")");
-        resultsLayout->addWidget(waringMsgLabel, 10, 0,1,-1);
+        resultsLayout->addWidget(waringMsgLabel, idSum++, 0,1,-1);
         waringMsgLabel -> setStyleSheet({"color: red"});
 
     }
 
-    resultsLayout->setRowStretch(8, 1);
+    resultsLayout->setRowStretch(idSum, 1);
     resultsLayout->setColumnStretch(nQoI+2, 1);
     summaryLayout->addLayout(resultsLayout,2,0);
 
@@ -1167,25 +1195,26 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
     QTabWidget *tabWidgetScatter = new QTabWidget();
     tabWidgetScatter -> setTabPosition(QTabWidget::East);
 
+    int nCVsamps = yExact[QoInames[0]].toArray().size();
 
     for (int nq=0; nq<nQoI; nq++)
     {
     //int nq=0;
         QScatterSeries *series_CV = new QScatterSeries;
         // adjust marker size and opacity based on the number of samples
-        if (nSamp < 10) {
+        if (nCVsamps < 10) {
             series_CV->setMarkerSize(15.0);
             series_CV->setColor(QColor(0, 114, 178, 200));
-        } else if (nSamp < 100) {
+        } else if (nCVsamps < 100) {
             series_CV->setMarkerSize(11.0);
             series_CV->setColor(QColor(0, 114, 178, 160));
-        } else if (nSamp < 1000) {
+        } else if (nCVsamps < 1000) {
             series_CV->setMarkerSize(8.0);
             series_CV->setColor(QColor(0, 114, 178, 100));
-        } else if (nSamp < 10000) {
+        } else if (nCVsamps < 10000) {
             series_CV->setMarkerSize(6.0);
             series_CV->setColor(QColor(0, 114, 178, 70));
-        } else if (nSamp < 100000) {
+        } else if (nCVsamps < 100000) {
             series_CV->setMarkerSize(5.0);
             series_CV->setColor(QColor(0, 114, 178, 50));
         } else {
@@ -1206,7 +1235,7 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         QJsonArray yPr= yPredi[QoInames[nq]].toArray();
         double maxy=-INFINITY;
         double miny=INFINITY;
-        for (int i=0; i<nSamp; i++) {
+        for (int i=0; i<nCVsamps; i++) {
             series_CV->append(yEx[i].toDouble(), yPr[i].toDouble());
             maxy = std::max(maxy,std::max(yEx[i].toDouble(),yPr[i].toDouble()));
             miny = std::min(miny,std::min(yEx[i].toDouble(),yPr[i].toDouble()));
@@ -1232,8 +1261,13 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
     tabWidgetScatter->setMinimumHeight(500);
     tabWidgetScatter->setMaximumHeight(500);
     tabWidgetScatter->setMaximumWidth(500);
-
-    QLabel *CVresultsLabel =new QLabel("\nLeave-Out-One Cross-Validation (LOOCV) Prediction");
+    QString CVmsg;
+    if (isMultiFidelity) {
+        CVmsg="\nLeave-One-Out Cross-Validation (LOOCV) Prediction (for the HF sample points)";
+    } else {
+        CVmsg="\nLeave-One-Out Cross-Validation (LOOCV) Prediction";
+    }
+    QLabel *CVresultsLabel =new QLabel(CVmsg);
     CVresultsLabel-> setStyleSheet({"font-weight: bold"});
     summaryLayout->addWidget(CVresultsLabel, 3, 0);
     summaryLayout->addWidget(tabWidgetScatter,4,0);
@@ -1244,22 +1278,22 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
     QHBoxLayout *buttonsLayout = new QHBoxLayout();
     saveModelButton =  new QPushButton("Save GP Model");
     saveResultButton =  new QPushButton("Save GP Info");
-    saveXButton =  new QPushButton("RV Data");
-    saveYButton =  new QPushButton("QoI Data");
+    saveXButton =  new QPushButton("RV Data (LF)");
+    saveYButton =  new QPushButton("QoI Data (LF)");
 
     connect(saveModelButton,SIGNAL(clicked()),this,SLOT(onSaveModelClicked()));
     connect(saveResultButton,SIGNAL(clicked()),this,SLOT(onSaveInfoClicked()));
     connect(saveXButton,SIGNAL(clicked()),this,SLOT(onSaveXClicked()));
     connect(saveYButton,SIGNAL(clicked()),this,SLOT(onSaveYClicked()));
 
-    saveModelButton->setMinimumWidth(150);
-    saveModelButton->setMaximumWidth(150);
-    saveResultButton->setMaximumWidth(150);
-    saveResultButton->setMinimumWidth(150);
-    saveXButton->setMaximumWidth(90);
-    saveXButton->setMinimumWidth(90);
-    saveYButton->setMaximumWidth(90);
-    saveYButton->setMinimumWidth(90);
+    saveModelButton->setMinimumWidth(130);
+    saveModelButton->setMaximumWidth(130);
+    saveResultButton->setMaximumWidth(130);
+    saveResultButton->setMinimumWidth(130);
+    saveXButton->setMaximumWidth(110);
+    saveXButton->setMinimumWidth(110);
+    saveYButton->setMaximumWidth(110);
+    saveYButton->setMinimumWidth(110);
 
     buttonsLayout->addWidget(saveModelButton,0,Qt::AlignLeft);
     buttonsLayout->addWidget(saveResultButton,1);

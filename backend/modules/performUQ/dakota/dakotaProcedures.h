@@ -98,7 +98,8 @@ int writeResponse(std::ostream &dakotaFile,
 		  std::string idResponse, 
 		  bool numericalGradients, 
 		  bool numericalHessians,
-		  std::vector<std::string> &edpList);
+		  std::vector<std::string> &edpList,
+		  bool readCalibrationData);
 
 int writeDakotaInputFile(std::ostream &dakotaFile, 
 			 json_t *uqData, 

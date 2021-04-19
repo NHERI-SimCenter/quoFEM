@@ -290,7 +290,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(fem,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(fem,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(fem,SIGNAL(sendStatusMessage(QString)),this,SLOT(fatalMessage(QString)));
+    connect(fem,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
     connect(random,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(random,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
@@ -301,7 +301,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(results,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
     connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-
     connect(uq,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(uq,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
