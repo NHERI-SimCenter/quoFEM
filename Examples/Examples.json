@@ -49,11 +49,6 @@
             "name":"Surrogate Modeling 2",
             "description":"An Example",
             "InputFile": "qfem-0016/src/input.json"
-        },
-        {
-            "name":"Custom-UQ",
-            "description":"An Example",
-            "InputFile": "qfem-0017/src/input.json"
         }
     ]
 }
