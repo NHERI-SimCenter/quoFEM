@@ -10,7 +10,7 @@ resources:
   repositories:
   - repository: SimCenterCommon
     type: github
-    endpoint: SimCenterCommon
+    endpoint: https://github.com/NHERI-SimCnter/SimCenterCommon
     name: NHERI-SimCenter/SimCenterCommon
 
 variables:
