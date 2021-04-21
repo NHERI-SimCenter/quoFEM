@@ -63,9 +63,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <qjsondocument.h>
 
-FEM::FEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, int id, QString modelName, QWidget *parent)
+FEM::FEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, int tagId, QString modelName, QWidget *parent)
   : SimCenterWidget(parent), theParameters(param), theEdpWidget(edpwidget), numInputs(1)
 {
+    this->tag = tagId;
     femSpecific = 0;
     isGP = false;
 
@@ -75,7 +76,7 @@ FEM::FEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, int id, QStrin
     // text and add button at top
     QHBoxLayout *titleLayout = new QHBoxLayout();
     button = new QRadioButton();
-    QLabel *textFEM=new QLabel(" Model " + QString::number(id) + " " + modelName);
+    QLabel *textFEM=new QLabel(" Model " + QString::number(tag) + " " + modelName);
     textFEM->setStyleSheet("font-weight: bold");
     QSpacerItem *spacer = new QSpacerItem(50,10);
 
@@ -113,43 +114,20 @@ FEM::FEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, int id, QStrin
 
     this->setLayout(layout);
 
+    if (tag==0) {
+        titleWidget->setVisible(false);
+    }
+
 }
 
 void FEM::hideHeader(bool tog) {
     titleWidget->setVisible(!tog);
 }
 
-//FEM::FEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, QString femName, QWidget *parent)
-//  : SimCenterWidget(parent), theParameters(param), theEdpWidget(edpwidget), numInputs(1)
-//{
-//    isForMultimodel = false;
-//    femSpecific = 0;
-//    isGP = false;
-
-//    layout = new QVBoxLayout();
-//    //QVBoxLayout *name= new QVBoxLayout;
-
-//    // text and add button at top
-//    femProgramChanged(femName);
-
-//    layout->addStretch();
-
-//    this->setLayout(layout);
-
-//}
-
 
 FEM::~FEM()
 {
 }
-
-
-//void FEM::clear(void)
-//{
-
-//}
-
-
 
 bool
 FEM::outputToJSON(QJsonObject &jsonObject)
@@ -157,7 +135,7 @@ FEM::outputToJSON(QJsonObject &jsonObject)
     QJsonArray apps;
     jsonObject["subprogram"]=femSelection->currentText();
     //jsonObject["numInputs"]=numInputs;
-
+    jsonObject["modelTag"]=tag;
 
     if (femSelection->currentText() == "Custom") {
        // Add driver script and post-processing script to JSON file
@@ -181,7 +159,8 @@ FEM::outputToJSON(QJsonObject &jsonObject)
        }
        jsonObject["fileInfo"] = apps;
        
-    } else if (numInputs == 1) {
+    //} else if (numInputs == 1) {
+    } else {
         QString fileName1=inputFilenames.at(0)->text();
         QString fileName2=postprocessFilenames.at(0)->text();
 
@@ -208,7 +187,8 @@ FEM::outputToJSON(QJsonObject &jsonObject)
             jsonObject["femOption"]=femOpt;
         }
 
-    } else {
+    }
+    //else{
 //        for (int i=0; i<numInputs; i++) {
 //            QJsonObject obj;
 //            QString fileName1=inputFilenames.at(i)->text();
@@ -229,8 +209,8 @@ FEM::outputToJSON(QJsonObject &jsonObject)
 
 
 //        }
-        jsonObject["fileInfo"] = apps;
-    }
+//        jsonObject["fileInfo"] = apps;
+//    }
 
 //    jsonObject["FEM"]=fem;
 
@@ -586,6 +566,9 @@ int FEM::parseInputfilesForRV(QString name1){
     } else if (pName == "Custom") {
       // No need to do anything here for custom
     }
+
+    if (tag>0)
+        this->addTagId();
       
     // qDebug() << "VARNAMESANDVALUES: " << varNamesAndValues;
     if (pName != "Custom" && !isGP) {
@@ -594,6 +577,16 @@ int FEM::parseInputfilesForRV(QString name1){
       theParameters->setGPVarNamesAndValues(varNamesAndValues);
     }
     return 0;
+}
+
+void FEM::addTagId(void) {
+    //for ( const auto& i : varNamesAndValues  )
+    for (int i=0; i<varNamesAndValues.size();i++)
+    {
+        if (i % 2 == 0) {
+            varNamesAndValues[i] = varNamesAndValues[i] + "." +QString::number(tag);
+        }
+    }
 }
 
 void
@@ -667,13 +660,7 @@ void FEM::customInputNumberChanged(int numCustomInputs) {
   newLayout = nullptr;
 }
 
-/*
-void FEM::chooseFileName1(void)
-{
-    QString fileName1=QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
-    int ok = this->parseInputfilesForRV(fileName1);
-}
-*/
+
 void
 FEM::specialCopyMainInput(QString fileName, QStringList varNames) {
     // if OpenSees or FEAP parse the file for the variables
@@ -758,38 +745,13 @@ QVector< QString > FEM::getCustomInputs() const {
 }
 
 
-// ==for surrogate
+// for surrogate. It makes RVs to be uniform
+void FEM::setAsGP(bool tog){
+    isGP = tog;
+}
 
-//int
-//FEM::setFEMforGP(QString option){
-//    GPoption = option;
-//    if (option == "reset")
-//    {
-//        femSelection -> setDisabled(false);
-//        femSelection->setCurrentIndex(1);
-//        femSelection->setCurrentIndex(0);
-//        varNamesAndValues.clear();
-//        femSpecific -> setVisible(true);
-//        isGP = false;
-//    } else if (option == "GPdata") {
-//        femSelection -> setDisabled(true);
-//        femSelection->setCurrentIndex(1);
-//        femSelection->setCurrentIndex(0);
-//        varNamesAndValues.clear();
-//        femSpecific -> setVisible(false);
-//        isGP = true;
-//    } else if (option == "GPmodel")
-//    {
-//        femSelection -> setDisabled(false);
-//        femSelection->setCurrentIndex(1);
-//        femSelection->setCurrentIndex(0);
-//        varNamesAndValues.clear();
-//        femSpecific -> setVisible(true);
-//        isGP = true;
-//    }
-//    return 0;
-//}
 
+// Simple interpolation to show the percentage value.
 double FEM::interpolateForGP(QVector<double> X, QVector<double> Y, double Xval){
     int N = X.count();
 
@@ -827,9 +789,8 @@ double FEM::interpolateForGP(QVector<double> X, QVector<double> Y, double Xval){
 QStringList FEM::parseGPInputs(QString file1){
 
     //
-    // want to make GP option box
+    // want to make a GP option box
     //
-
 
     // ... create complicated layout ...
     if (optionsLayout != nullptr) {

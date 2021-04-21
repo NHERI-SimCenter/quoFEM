@@ -65,6 +65,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, QWidget *parent)
   : SimCenterWidget(parent), theParameters(param), theEdpWidget(edpwidget), numInputs(1)
 {
+    isGP=false; // normal vs. uniform (only for GP)
     numInputs = 1;
     verticalLayout = new QVBoxLayout();
     this->setLayout(verticalLayout);
@@ -104,7 +105,7 @@ InputWidgetFEM::makeFEM(void)
     femSelection->addItem(tr("OpenSeesPy"));
     femSelection->addItem(tr("Custom"));
     femSelection->addItem(tr("SurrogateGP"));
-    femSelection->addItem(tr("MultipleModels"));
+    //femSelection->addItem(tr("MultipleModels"));
     connect(femSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(femProgramChanged(QString)));
 
     QScrollArea *sa = new QScrollArea;
@@ -158,8 +159,14 @@ InputWidgetFEM::makeFEM(void)
 int
 InputWidgetFEM::setFEMforGP(QString option){
     GPoption = option;
+    int index = femSelection->findText("MultipleModels");
+    if (index>-1) {
+        femSelection->removeItem(index);
+    }
+
     if (option == "reset")
     {
+        numInputs=1;
         femSelection -> setDisabled(false);
         femSelection->setCurrentIndex(1);
         femSelection->setCurrentIndex(0);
@@ -167,6 +174,7 @@ InputWidgetFEM::setFEMforGP(QString option){
         this -> setContentsVisible(true);
         isGP = false;
     } else if (option == "GPdata") {
+        numInputs=1;
         femSelection -> setDisabled(true);
         femSelection->setCurrentIndex(1);
         femSelection->setCurrentIndex(0);
@@ -175,13 +183,25 @@ InputWidgetFEM::setFEMforGP(QString option){
         isGP = true;
     } else if (option == "GPmodel")
     {
+        numInputs=1;
         femSelection -> setDisabled(false);
         femSelection->setCurrentIndex(1);
         femSelection->setCurrentIndex(0);
         varNamesAndValues.clear();
         this -> setContentsVisible(true);
         isGP = true;
+    } else if (option == "GPMFmodel")
+    {
+        numInputs=2;
+        femSelection->addItem(tr("MultipleModels"));
+        int index = femSelection->findText("MultipleModels");
+        femSelection->setCurrentIndex(index);
+        femSelection->setDisabled(true);
+        varNamesAndValues.clear();
+        this -> setContentsVisible(true);
+        isGP = true;
     }
+    theFEMs.at(0)->setAsGP(isGP);
     return 0;
 }
 
@@ -192,14 +212,11 @@ InputWidgetFEM::femProgramChanged(const QString& arg1) {
     this->clear();
     if (arg1 == "MultipleModels")
     {
-        numInputs = 2;
-
         for (int i =0 ; i<numInputs; i++) {
-            this->addFEM(i);
+            this->addFEM(i+1);
         }
         verticalLayout->addStretch();
     } else {
-        numInputs = 1;
         this->addFEM(0);
         theFEMs.at(0)->femProgramChanged(arg1);
     }
@@ -231,66 +248,11 @@ InputWidgetFEM::specialCopyMainInput(QString fileName, QStringList varNames) {
 
     FEM *theFEM = theFEMs.at(0);
     return theFEM->specialCopyMainInput(fileName, varNames);
-
-    // if OpenSees or FEAP parse the file for the variables
-//    if (femSelection->currentText() != "Custom")
-//    {
-//       if (varNames.size() > 0)
-//       {
-//          QString pName = femSelection->currentText();
-//          if (pName == "OpenSees" || pName == "OpenSees-2")
-//          {
-//             OpenSeesParser theParser;
-//             QVectorIterator< QLineEdit* > i(inputFilenames);
-//             while (i.hasNext())
-//                theParser.writeFile(i.next()->text(), fileName, varNames);
-//          }
-//          else if (pName == "FEAPpv")
-//          {
-//             FEAPpvParser theParser;
-//             QVectorIterator< QLineEdit* > i(inputFilenames);
-//             while (i.hasNext())
-//                theParser.writeFile(i.next()->text(), fileName, varNames);
-//          }
-//          else if (pName == "OpenSeesPy")
-//          {
-//             // do things a little different!
-//             QFileInfo file(fileName);
-//             QString fileDir = file.absolutePath();
-//             // qDebug() << "FILENAME: " << fileName << " path: " << fileDir;
-//             // qDebug() << "LENGTHS:" << inputFilenames.count() << parametersFilenames.count() <<
-//             // parametersFilenames.length();
-//             OpenSeesPyParser theParser;
-//             bool hasParams = false;
-//             QVectorIterator< QLineEdit* > i(parametersFilenames);
-//             QString newName = fileDir + QDir::separator() + "tmpSimCenter.params";
-//             while (i.hasNext())
-//             {
-//                QString fileName = i.next()->text();
-//                if (fileName.length() != 0)
-//                {
-//                   theParser.writeFile(fileName, newName, varNames);
-//                   hasParams = true;
-//                }
-//             }
-
-//             if (hasParams == false)
-//             {
-//                QString newName = fileDir + QDir::separator() + "tmpSimCenter.script";
-//                QVectorIterator< QLineEdit* > i(inputFilenames);
-//                while (i.hasNext())
-//                {
-//                   QFile::copy(i.next()->text(), newName);
-//                }
-//             }
-//          }
-//       }
-//    }
 }
 
 void InputWidgetFEM::addFEM(int i)
 {
-    FEM *theFEM = new FEM(theParameters, theEdpWidget, i+1);
+    FEM *theFEM = new FEM(theParameters, theEdpWidget, i);
     theFEMs.append(theFEM);
     femLayout->insertWidget(femLayout->count()-1, theFEM);
 
@@ -298,6 +260,8 @@ void InputWidgetFEM::addFEM(int i)
         theFEMs.at(0)->hideHeader(true);
     else
         theFEMs.at(0)->hideHeader(false);
+
+    theFEM->setAsGP(isGP);
 }
 
 //void InputWidgetFEM::addFEM(QString name)
@@ -409,24 +373,21 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
         this->clear();
 
         if (femSelection->currentText() == "MultipleModels") {
-            QJsonArray femArray = femObject["fem"].toArray();
+            QJsonArray femArray = femObject["submodels"].toArray();
             for (int i=0; i<femArray.size(); i++) {
                 QJsonObject femObject_comp = femArray[i].toObject();
-                FEM *theFEM = new FEM(theParameters, theEdpWidget,i+1);
-                if (theFEM->inputFromJSON(femObject_comp) == true) {
-                    theFEMs.append(theFEM);
-                    femLayout->insertWidget(femLayout->count()-1, theFEM);
-                } else
+                this->addFEM(i+1);
+                if (theFEMs[i]->inputFromJSON(femObject_comp) == true)
+                    femLayout->insertWidget(femLayout->count()-1, theFEMs[i]);
+                else
                     result = false;
             }
         } else {
-            FEM *theFEM = new FEM(theParameters, theEdpWidget,0);
-            if (theFEM->inputFromJSON(femObject) == true) {
-                theFEMs.append(theFEM);
-                femLayout->insertWidget(femLayout->count()-1, theFEM);
-            } else
+            this->addFEM(0);
+            if (theFEMs[0]->inputFromJSON(femObject) == true)
+                femLayout->insertWidget(femLayout->count()-1, theFEMs[0]);
+            else
                 result = false;
-            theFEM->hideHeader(true);
         }
     } else {
         emit sendErrorMessage("ERROR: FEM Input - no fem section in input file");
@@ -443,3 +404,4 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
 //    }
 //    return 0;
 //}
+

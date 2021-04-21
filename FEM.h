@@ -69,8 +69,8 @@ public:
     //int parseInputfilesForRV(QString filnema1);
     int parseInputfilesForRV(QString name1);
     int parseInputfilesForGP(QString filnema1);
-    void setFemGP(bool on);
-    int setFEMforGP(QString option);
+    //void setFemGP(bool on);
+    void setAsGP(bool tog);
     void hideHeader(bool tog);
 
   signals:
@@ -94,6 +94,7 @@ public:
     QVBoxLayout* theCustomFileInputs;
     QWidget* theCustomFileInputWidget;
     QWidget *titleWidget;
+    int tag;
 
     //    QLineEdit *file1;
     // QLineEdit *file2;
@@ -121,6 +122,9 @@ public:
     QGroupBox *groupBox;
     QGridLayout *optionsLayout ;
     QString GPoption, femName;
+
+    // for multiple models
+    void addTagId(void);
 };
 
 #endif // FEM_H

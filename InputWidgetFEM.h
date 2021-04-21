@@ -113,7 +113,6 @@ private:
     double interpolateForGP(QVector<double> X, QVector<double> Y, double Xval);
     double thres;
     QStringList parseGPInputs(QString file1);
-    bool isGP;
     QVector<double> percVals, thrsVals;
     QLineEdit *thresVal;
     QString femOpt;
@@ -122,6 +121,9 @@ private:
     QGroupBox *groupBox;
     QGridLayout *optionsLayout ;
     QString GPoption;
+
+    //flags
+    bool isGP, useMultiModels;
 
 
 };
