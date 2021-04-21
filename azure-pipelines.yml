@@ -6,6 +6,7 @@ trigger:
 pr:
 - master
 
+
 resources:
   repositories:
   - repository: SimCenterCommon
@@ -39,7 +40,7 @@ steps:
 
 # checkout repos
 - checkout: self
-- checkout: SimCenterCommon
+- checkout: github://NHERI-SimCenter/SimCenterCommon
 
 # Use Python version
 - task: UsePythonVersion@0
