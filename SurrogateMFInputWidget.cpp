@@ -62,49 +62,108 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
 {
     auto layout = new QGridLayout();
 
-    //
-    // High-fidelity data
-    //
+    // /////////////////////////////////////
+    // HIGH FIDELITY
+    // /////////////////////////////////////
 
+    // create a high fidelity box
     QGroupBox *theHFbox = new QGroupBox("High-fidelity dataset");
     QGridLayout *theHFlayout = new QGridLayout();
     theHFbox->setLayout(theHFlayout);
     layout->addWidget(theHFbox,0,0,1,-1);
 
+    //
+    // DATA
+    //
+
     // Input
 
+    int id_hf = 0;
     inpFileDir_HF = new QLineEdit();
-    QPushButton *chooseInpFile = new QPushButton("Choose");
-    connect(chooseInpFile, &QPushButton::clicked, this, [=](){
+    chooseInpFile_HF = new QPushButton("Choose");
+    connect(chooseInpFile_HF, &QPushButton::clicked, this, [=](){
         inpFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
         //this->parseInputDataForRV(inpFileDir->text());
     });
     inpFileDir_HF->setMinimumWidth(600);
     inpFileDir_HF->setReadOnly(true);
-    theHFlayout->addWidget(new QLabel("Training Points (Input) File"),2,0);
-    theHFlayout->addWidget(inpFileDir_HF,2,1,1,3);
-    theHFlayout->addWidget(chooseInpFile,2,4);
+    theHFlayout->addWidget(new QLabel("Training Points (Input) File"),id_hf,0);
+    theHFlayout->addWidget(inpFileDir_HF,id_hf,1,1,3);
+    theHFlayout->addWidget(chooseInpFile_HF,id_hf++,4);
 
     // Output
 
     outFileDir_HF = new QLineEdit();
-    QPushButton *chooseOutFile = new QPushButton("Choose");
-    connect(chooseOutFile, &QPushButton::clicked, this, [=](){
+    chooseOutFile_HF = new QPushButton("Choose");
+    connect(chooseOutFile_HF, &QPushButton::clicked, this, [=](){
         outFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
         //this->parseOutputDataForQoI(outFileDir->text());
     });
     outFileDir_HF->setMinimumWidth(600);
     outFileDir_HF->setReadOnly(true);
-    theHFlayout->addWidget(new QLabel("System Results (Output) File     "),3,0,Qt::AlignTop);
-    theHFlayout->addWidget(outFileDir_HF,3,1,1,3,Qt::AlignTop);
-    theHFlayout->addWidget(chooseOutFile,3,4,Qt::AlignTop);
+    theHFlayout->addWidget(new QLabel("System Results (Output) File     "),id_hf,0,Qt::AlignTop);
+    theHFlayout->addWidget(outFileDir_HF,id_hf,1,1,3,Qt::AlignTop);
+    theHFlayout->addWidget(chooseOutFile_HF,id_hf++,4,Qt::AlignTop);
+
+    //
+    // Model
+    //
+
+    theHighSimLabel = new QLabel("     Simulation model");
+    theHighSimButton = new QCheckBox();
+    theHighSimLabel -> setStyleSheet("font-weight: bold; color: grey");
+
+    line0= new QFrame;
+    line0->setFrameShape(QFrame::HLine);
+    line0->setFrameShadow(QFrame::Sunken);
+
+    theHighSimOptions = new QWidget();
+    QGridLayout *theHighSimGrid = new QGridLayout(theHighSimOptions);
+    theHighSimGrid->setMargin(0);
+
+    theHFlayout->addWidget(theHighSimLabel,id_hf,1);
+    theHFlayout->addWidget(theHighSimButton,id_hf,1);
+    theHFlayout->addWidget(theHighSimOptions,id_hf++,2,3,-1);
+    theHFlayout->addWidget(line0, id_hf++, 1);
+
 
     theHFlayout->setRowStretch(4, 1);
     theHFlayout->setColumnStretch(5, 1);
+    line0->hide();
 
-    //
-    // Low-fidelity data
-    //
+    // FEM model
+
+    int id_fe=0;
+    QLabel * theFEMLabelHF = new QLabel("   Please specify the model at the FEM Tab");
+    theHighSimGrid->addWidget(theFEMLabelHF, id_fe++, 0,1,2);
+    theFEMLabelHF->setStyleSheet("font-style: italic");
+
+    // Create layout label and entry for # samples
+
+    numSamples_HF = new QLineEdit();
+    numSamples_HF->setText(tr("30"));
+    numSamples_HF->setValidator(new QIntValidator);
+    numSamples_HF->setToolTip("Specify the number of samples");
+    numSamples_HF->setMaximumWidth(150);
+
+    theHighSimGrid->addWidget(new QLabel("   Max Number of Model Runs"), id_fe, 0);
+    theHighSimGrid->addWidget(numSamples_HF, id_fe++, 1);
+
+
+    // Existing Dataset
+
+    theExistingCheckBox_HF = new QCheckBox();
+    theHighSimGrid->addWidget(new QLabel("   Start with Existing Dataset"), id_fe, 0);
+    theHighSimGrid->addWidget(theExistingCheckBox_HF, id_fe++, 1);
+
+
+    theHighSimGrid->setRowStretch(id_fe, 1);
+    theHighSimGrid->setColumnStretch(2, 1);
+    theHighSimOptions->hide();
+
+    // /////////////////////////////////////
+    // LOW FIDELITY - DATA
+    // /////////////////////////////////////
 
     QGroupBox *theLFbox = new QGroupBox("Low-fidelity dataset");
     QGridLayout *theLFlayout = new QGridLayout();
@@ -113,136 +172,91 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
 
     // Input
 
-    int id_lf = 0;
+    int id = 0;
 
     inpFileDir_LF = new QLineEdit();
     chooseInpFile_LF = new QPushButton("Choose");
     connect(chooseInpFile_LF, &QPushButton::clicked, this, [=](){
         inpFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        if (!theCheckButton->isChecked()) {
+        if (!theLowSimButton->isChecked()) {
             this->parseInputDataForRV(inpFileDir_LF->text());
         }
     });
     inpFileDir_LF->setMinimumWidth(600);
     inpFileDir_LF->setReadOnly(true);
-    theLFlayout->addWidget(new QLabel("Training Points (Input) File"),id_lf,0);
-    theLFlayout->addWidget(inpFileDir_LF,id_lf,1,1,3);
-    theLFlayout->addWidget(chooseInpFile_LF,id_lf++,4);
-
-    // Output - Data
+    theLFlayout->addWidget(new QLabel("Training Points (Input) File"),id,0);
+    theLFlayout->addWidget(inpFileDir_LF,id,1,1,3);
+    theLFlayout->addWidget(chooseInpFile_LF,id++,4);
 
     outFileDir_LF = new QLineEdit();
     chooseOutFile_LF = new QPushButton("Choose");
     connect(chooseOutFile_LF, &QPushButton::clicked, this, [=](){
         outFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        if (!theCheckButton->isChecked()) {
+        if (!theLowSimButton->isChecked()) {
             this->parseOutputDataForQoI(outFileDir_LF->text());
         }
     });
     outFileDir_LF->setMinimumWidth(600);
     outFileDir_LF->setReadOnly(true);
-    theLFlayout->addWidget(new QLabel("System Results (Output) File     "),id_lf,0,Qt::AlignTop);
-    theLFlayout->addWidget(outFileDir_LF,id_lf,1,1,3,Qt::AlignTop);
-    theLFlayout->addWidget(chooseOutFile_LF,id_lf++,4,Qt::AlignTop);
+    theLFlayout->addWidget(new QLabel("System Results (Output) File     "),id,0,Qt::AlignTop);
+    theLFlayout->addWidget(outFileDir_LF,id,1,1,3,Qt::AlignTop);
+    theLFlayout->addWidget(chooseOutFile_LF,id++,4,Qt::AlignTop);
 
-    //
-    // Output - Model
-    //
 
-    theCheckLabel = new QLabel("     Simulate low-fidelity model");
-    theCheckButton = new QCheckBox();
-    theCheckLabel -> setStyleSheet("font-weight: bold; color: grey");
+    // /////////////////////////////////////
+    // LOW FIDELITY - Model
+    // /////////////////////////////////////
+
+    theLowSimLabel = new QLabel("     Simulation model");
+    theLowSimButton = new QCheckBox();
+    theLowSimLabel -> setStyleSheet("font-weight: bold; color: grey");
 
     line1= new QFrame;
     line1->setFrameShape(QFrame::HLine);
     line1->setFrameShadow(QFrame::Sunken);
 
-    theLFoptions = new QWidget();
-    QGridLayout *theLFoptions_grid = new QGridLayout(theLFoptions);
-    theLFoptions_grid->setMargin(0);
+    theLowSimOptions = new QWidget();
+    QGridLayout *theLowSimGrid = new QGridLayout(theLowSimOptions);
+    theLowSimGrid->setMargin(0);
 
-    theLFlayout->addWidget(theCheckLabel,id_lf,1);
-    theLFlayout->addWidget(theCheckButton,id_lf,1);
-    theLFlayout->addWidget(theLFoptions,id_lf++,2,3,-1);
-    theLFlayout->addWidget(line1, id_lf++, 1);
+    theLFlayout->addWidget(theLowSimLabel,id,1);
+    theLFlayout->addWidget(theLowSimButton,id,1);
+    theLFlayout->addWidget(theLowSimOptions,id++,2,3,-1);
+    theLFlayout->addWidget(line1, id++, 1);
 
     line1->hide();
 
     theLFlayout->setRowStretch(4, 1);
     theLFlayout->setColumnStretch(5, 1);
 
-
-
     // FEM model
 
-    int id_fe=0;
-    QLabel * theFEMLabel = new QLabel("   Please specify the model at the FEM Tab");
-    theLFoptions_grid->addWidget(theFEMLabel, id_fe++, 0,1,2);
-    theFEMLabel->setStyleSheet("font-style: italic");
+    id_fe=0;
+    QLabel * theFEMLabel_LF = new QLabel("   Please specify the model at the FEM Tab");
+    theLowSimGrid->addWidget(theFEMLabel_LF, id_fe++, 0,1,2);
+    theFEMLabel_LF->setStyleSheet("font-style: italic");
 
-    // Random Seed
 
-    srand(time(NULL));
-    int randomNumber = rand() % 1000 + 1;
-    randomSeed = new QLineEdit();
-    randomSeed->setText(QString::number(randomNumber));
-    randomSeed->setValidator(new QIntValidator);
-    randomSeed->setToolTip("Set the seed");
-    randomSeed->setMaximumWidth(150);
+    numSamples_LF = new QLineEdit();
+    numSamples_LF->setText(tr("150"));
+    numSamples_LF->setValidator(new QIntValidator);
+    numSamples_LF->setToolTip("Specify the number of samples");
+    numSamples_LF->setMaximumWidth(150);
 
-    theLFoptions_grid->addWidget(new QLabel("   Random Seed"), id_fe, 0);
-    theLFoptions_grid->addWidget(randomSeed, id_fe++, 1);
-
-    // create convergence criteria
-
-    accuracyMeasure = new QLineEdit();
-    accuracyMeasure->setText(tr("0.02"));
-    accuracyMeasure->setValidator(new QDoubleValidator);
-    accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
-    accuracyMeasure->setMaximumWidth(150);
-
-    theLFoptions_grid->addWidget(new QLabel("   Target Accuracy (Normalized Error)   "), id_fe, 0);
-    theLFoptions_grid->addWidget(accuracyMeasure, id_fe++, 1);
-
-    // create layout label and entry for # samples
-
-    numSamples = new QLineEdit();
-    numSamples->setText(tr("150"));
-    numSamples->setValidator(new QIntValidator);
-    numSamples->setToolTip("Specify the number of samples");
-    numSamples->setMaximumWidth(150);
-
-    theLFoptions_grid->addWidget(new QLabel("   Max Number of Model Runs"), id_fe, 0);
-    theLFoptions_grid->addWidget(numSamples, id_fe++, 1);
-
-    // Max computation time (approximate)
-
-    timeMeasure = new QLineEdit();
-    timeMeasure->setText(tr("60"));
-    timeMeasure->setValidator(new QIntValidator);
-    timeMeasure->setToolTip("Max Computation Time (minutes)");
-    timeMeasure->setMaximumWidth(150);
-
-    theLFoptions_grid->addWidget(new QLabel("   Max Computation Time (minutes)    "), id_fe, 0);
-    theLFoptions_grid->addWidget(timeMeasure, id_fe++, 1);
+    theLowSimGrid->addWidget(new QLabel("   Max Number of Model Runs"), id_fe, 0);
+    theLowSimGrid->addWidget(numSamples_LF, id_fe++, 1);
 
 
     // Existing Dataset
 
-    theExistingCheckBox = new QCheckBox();
-    theLFoptions_grid->addWidget(new QLabel("   Start with Existing Dataset"), id_fe, 0);
-    theLFoptions_grid->addWidget(theExistingCheckBox, id_fe++, 1);
+    theExistingCheckBox_LF = new QCheckBox();
+    theLowSimGrid->addWidget(new QLabel("   Start with Existing Dataset"), id_fe, 0);
+    theLowSimGrid->addWidget(theExistingCheckBox_LF, id_fe++, 1);
 
 
-    // Do DoE
-
-    theDoECheckBox = new QCheckBox();
-    theLFoptions_grid->addWidget(new QLabel("   Do Adaptive Design of Experiments"), id_fe, 0);
-    theLFoptions_grid->addWidget(theDoECheckBox, id_fe++, 1);
-
-    theLFoptions_grid->setRowStretch(id_fe, 1);
-    theLFoptions_grid->setColumnStretch(2, 1);
-    theLFoptions->hide();
+    theLowSimGrid->setRowStretch(id_fe, 1);
+    theLowSimGrid->setColumnStretch(2, 1);
+    theLowSimOptions->hide();
 
     //
     // Errors
@@ -253,9 +267,63 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     layout->addWidget(errMSG,2,0,Qt::AlignLeft);
     errMSG->hide();
 
-    //
-    // Advanced options
-    //
+
+    // /////////////////////////////////////
+    // SIMULATION OPTIONS
+    // /////////////////////////////////////
+
+    theSimBox = new QGroupBox("Simulation Options");
+    QGridLayout *theSimGrid = new QGridLayout();
+    theSimBox->setLayout(theSimGrid);
+    layout->addWidget(theSimBox,2,0,1,-1);
+    theSimBox->setVisible(false);
+
+    srand(time(NULL));
+    int randomNumber = rand() % 1000 + 1;
+    randomSeed = new QLineEdit();
+    randomSeed->setText(QString::number(randomNumber));
+    randomSeed->setValidator(new QIntValidator);
+    randomSeed->setToolTip("Set the seed");
+    randomSeed->setMaximumWidth(150);
+
+    theSimGrid->addWidget(new QLabel("   Random Seed"), id_fe, 0);
+    theSimGrid->addWidget(randomSeed, id_fe++, 1);
+
+//    create convergence criteria
+
+    accuracyMeasure = new QLineEdit();
+    accuracyMeasure->setText(tr("0.02"));
+    accuracyMeasure->setValidator(new QDoubleValidator);
+    accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
+    accuracyMeasure->setMaximumWidth(150);
+
+    theSimGrid->addWidget(new QLabel("   Target Accuracy (Normalized Error)   "), id_fe, 0);
+    theSimGrid->addWidget(accuracyMeasure, id_fe++, 1);
+
+//    Max computation time (approximate)
+
+    timeMeasure = new QLineEdit();
+    timeMeasure->setText(tr("60"));
+    timeMeasure->setValidator(new QIntValidator);
+    timeMeasure->setToolTip("Max Computation Time (minutes)");
+    timeMeasure->setMaximumWidth(150);
+
+    theSimGrid->addWidget(new QLabel("   Max Computation Time (minutes)    "), id_fe, 0);
+    theSimGrid->addWidget(timeMeasure, id_fe++, 1);
+
+    // Do DoE
+
+    theDoECheckBox = new QCheckBox();
+    theSimGrid->addWidget(new QLabel("   Do Adaptive Design of Experiments"), id_fe, 0);
+    theSimGrid->addWidget(theDoECheckBox, id_fe++, 1);
+
+    theSimGrid->setColumnStretch(2,1);
+    theSimGrid->setRowStretch(4,1);
+
+    // /////////////////////////////////////
+    // ADVANCED
+    // /////////////////////////////////////
+
     theAdvancedCheckBox = new QCheckBox();
     theAdvancedTitle=new QLabel("\n    Advanced Options for Gaussian Process Model");
     theAdvancedTitle->setStyleSheet("font-weight: bold; color: gray");
@@ -310,6 +378,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     theLogtLabel2->setVisible(false);
     theLogtCheckBox->setVisible(false);
 
+
     //
     // Finish
     //
@@ -318,10 +387,16 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     layout->setColumnStretch(7, 1);
     this->setLayout(layout);
 
-    connect(theCheckButton,SIGNAL(toggled(bool)),this,SLOT(setLowFidDir(bool)));
+    connect(theLowSimButton,SIGNAL(toggled(bool)),this,SLOT(setLowSim(bool)));
+    connect(theHighSimButton,SIGNAL(toggled(bool)),this,SLOT(setHighSim(bool)));
+    //connect(theLowDataButton,SIGNAL(toggled(bool)),this,SLOT(setHighSim(bool)));
+    //connect(theHighDataButton,SIGNAL(toggled(bool)),this,SLOT(setHighData(bool)));
+
     connect(theAdvancedCheckBox,SIGNAL(toggled(bool)),this,SLOT(doAdvancedGP(bool)));
-    connect(theExistingCheckBox,SIGNAL(toggled(bool)),this,SLOT(doExistingGP(bool)));
-    theExistingCheckBox->setChecked(true);
+    connect(theExistingCheckBox_LF,SIGNAL(toggled(bool)),this,SLOT(doExistingLF(bool)));
+    connect(theExistingCheckBox_HF,SIGNAL(toggled(bool)),this,SLOT(doExistingHF(bool)));
+    theExistingCheckBox_LF->setChecked(true);
+    theExistingCheckBox_HF->setChecked(true);
 
 }
 
@@ -331,7 +406,7 @@ SurrogateMFInputWidget::~SurrogateMFInputWidget()
 
 }
 
-void SurrogateMFInputWidget::doExistingGP(bool tog)
+void SurrogateMFInputWidget::doExistingLF(bool tog)
 {
     if (tog) {
         inpFileDir_LF->setDisabled(0);
@@ -347,6 +422,25 @@ void SurrogateMFInputWidget::doExistingGP(bool tog)
         chooseInpFile_LF->setStyleSheet("background-color: lightgrey;border-color:grey");
         chooseOutFile_LF->setDisabled(1);
         chooseOutFile_LF->setStyleSheet("background-color: lightgrey;border-color:grey");
+    }
+}
+
+void SurrogateMFInputWidget::doExistingHF(bool tog)
+{
+    if (tog) {
+        inpFileDir_HF->setDisabled(0);
+        outFileDir_HF->setDisabled(0);
+        chooseInpFile_HF->setDisabled(0);
+        chooseInpFile_HF->setStyleSheet("font-color: white");
+        chooseOutFile_HF->setDisabled(0);
+        chooseOutFile_HF->setStyleSheet("font-color: white");
+    } else {
+        inpFileDir_HF->setDisabled(1);
+        outFileDir_HF->setDisabled(1);
+        chooseInpFile_HF->setDisabled(1);
+        chooseInpFile_HF->setStyleSheet("background-color: lightgrey;border-color:grey");
+        chooseOutFile_HF->setDisabled(1);
+        chooseOutFile_HF->setStyleSheet("background-color: lightgrey;border-color:grey");
     }
 }
 
@@ -381,61 +475,157 @@ void SurrogateMFInputWidget::doAdvancedGP(bool tog)
 }
 
 
-void SurrogateMFInputWidget::setLowFidDir(bool tog)
+void SurrogateMFInputWidget::setLowSim(bool tog)
 {
-    if (tog) {
-        theExistingCheckBox->setChecked(false);
+    theExistingCheckBox_LF->setChecked(!tog);
+
+    if (theLowSimButton->isChecked() && theHighSimButton->isChecked()) {
         theEdpWidget->setGPQoINames(QStringList("") );
-        theFemWidget->setFEMforGP("GPmodel");
-        theFemWidget->femProgramChanged("OpenSees");
+        theFemWidget->setFEMforGP("GPMFmodel");
         theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
         theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
         errMSG->hide();
-        theLFoptions->show();
-        line1->show();
-        theCheckLabel -> setStyleSheet("font-weight: bold; color: black");
-    } else {
-        theExistingCheckBox->setChecked(true);
+        theSimBox->setVisible(true);
+    } else if (!theLowSimButton->isChecked() && !theHighSimButton->isChecked()) {
         theFemWidget->setFEMforGP("GPdata");
+        theSimBox->setVisible(false);
+    } else {
+        theEdpWidget->setGPQoINames(QStringList("") );
+        theFemWidget->setFEMforGP("GPmodel");
+        //theFemWidget->femProgramChanged("OpenSees");
+        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
+        theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
+        errMSG->hide();
+        theSimBox->setVisible(true);
+    }
+
+    if (theLowSimButton->isChecked()) {
+        theLowSimOptions->show();
+        line1->show();
+        theLowSimLabel -> setStyleSheet("font-weight: bold; color: black");
+    } else {
+        theExistingCheckBox_LF->setChecked(true);
         parseInputDataForRV(inpFileDir_LF->text());
         parseOutputDataForQoI(outFileDir_LF->text());
-        theLFoptions->hide();
+        theLowSimOptions->hide();
         line1->hide();
-        theCheckLabel -> setStyleSheet("font-weight: bold; color: grey");
-
+        theLowSimLabel -> setStyleSheet("font-weight: bold; color: grey");
     }
 }
+void SurrogateMFInputWidget::setHighSim(bool tog) {
+
+    theExistingCheckBox_HF->setChecked(!tog);
+
+    if (theLowSimButton->isChecked() && theHighSimButton->isChecked()) {
+        theEdpWidget->setGPQoINames(QStringList("") );
+        theFemWidget->setFEMforGP("GPMFmodel");
+        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
+        theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
+        errMSG->hide();
+        theSimBox->setVisible(true);
+    } else if (!theLowSimButton->isChecked() && !theHighSimButton->isChecked()) {
+        theFemWidget->setFEMforGP("GPdata");
+        theSimBox->setVisible(false);
+    } else {
+        theEdpWidget->setGPQoINames(QStringList("") );
+        theFemWidget->setFEMforGP("GPmodel");
+        //theFemWidget->femProgramChanged("OpenSees");
+        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
+        theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
+        errMSG->hide();
+        theSimBox->setVisible(true);
+    }
+
+    if (theHighSimButton->isChecked()) {
+        theHighSimOptions->show();
+        line0->show();
+        theHighSimLabel -> setStyleSheet("font-weight: bold; color: black");
+    } else {
+        theExistingCheckBox_HF->setChecked(true);
+        parseInputDataForRV(inpFileDir_HF->text());
+        parseOutputDataForQoI(outFileDir_HF->text());
+        theHighSimOptions->hide();
+        line0->hide();
+        theHighSimLabel -> setStyleSheet("font-weight: bold; color: grey");
+    }
+}
+//void SurrogateMFInputWidget::setDataOptions(bool tog)
+//{
+//    if (theLowDataButton->isChecked()) {
+//        theFemWidget->setFEMforGP("GPMFmodel");
+//        errMSG->hide();
+//        theLowDataOptions->show();
+//    } else {
+//        theFemWidget->setFEMforGP("GPMFmodel");
+//        errMSG->hide();
+//        theLowDataOptions->show();
+//    }
+
+
+
+//    } else if (tog) {
+//        theFemWidget->setFEMforGP("GPmodel");
+//        theFemWidget->femProgramChanged("OpenSees");
+//        //theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
+//        //theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
+//        errMSG->hide();
+//        theLowSimOptions->show();
+//        //line1->show();
+//        //theLowDataLabel -> setStyleSheet("font-weight: bold; color: black");
+//    } else {
+//        //theExistingCheckBox_LF->setChecked(true);
+//        theFemWidget->setFEMforGP("GPdata");
+//        parseInputDataForRV(inpFileDir_LF->text());
+//        parseOutputDataForQoI(outFileDir_LF->text());
+//        //theLowSimOptions->hide();
+//        //line1->hide();
+//        //theLowDataLabel -> setStyleSheet("font-weight: bold; color: grey");
+//    }
+//}
 
 bool
 SurrogateMFInputWidget::outputToJSON(QJsonObject &jsonObj){
 
     bool result = true;
 
-    jsonObj["inpFile_HF"]=inpFileDir_HF->text();
-    jsonObj["outFile_HF"]=outFileDir_HF->text();
+    jsonObj["HFfromModel"]=theHighSimButton->isChecked();
 
-
-    jsonObj["LFfromModel"]=theCheckButton->isChecked();
-
-    if (theCheckButton->isChecked())
+    if (theHighSimButton->isChecked())
     {
-        jsonObj["samples"]=numSamples->text().toInt();
-        jsonObj["seed"]=randomSeed->text().toInt();
-        jsonObj["timeLimit"]=timeMeasure->text().toDouble();
-        jsonObj["accuracyLimit"]=accuracyMeasure->text().toDouble();
-        jsonObj["existingDoE"]=theExistingCheckBox->isChecked();
-        if (theExistingCheckBox->isChecked())
+        jsonObj["samples_HF"]=numSamples_HF->text().toInt();
+        jsonObj["existingDoE_HF"]=theExistingCheckBox_HF->isChecked();
+        if (theExistingCheckBox_HF->isChecked())
+        {
+            jsonObj["inpFile_HF"]=inpFileDir_HF->text();
+            jsonObj["outFile_HF"]=outFileDir_HF->text();
+        }
+    } else {
+        jsonObj["inpFile_HF"]=inpFileDir_HF->text();
+        jsonObj["outFile_HF"]=outFileDir_HF->text();
+    }
+
+    jsonObj["LFfromModel"]=theLowSimButton->isChecked();
+
+    if (theLowSimButton->isChecked())
+    {
+        jsonObj["samples_LF"]=numSamples_LF->text().toInt();
+        jsonObj["existingDoE_LF"]=theExistingCheckBox_LF->isChecked();
+        if (theExistingCheckBox_LF->isChecked())
         {
             jsonObj["inpFile_LF"]=inpFileDir_LF->text();
             jsonObj["outFile_LF"]=outFileDir_LF->text();
         }
-        jsonObj["doDoE"]=theDoECheckBox->isChecked();
     } else {
         jsonObj["inpFile_LF"]=inpFileDir_LF->text();
         jsonObj["outFile_LF"]=outFileDir_LF->text();
     }
 
-
+    if (theHighSimButton->isChecked() || theLowSimButton->isChecked()) {
+        jsonObj["seed"]=randomSeed->text().toInt();
+        jsonObj["timeLimit"]=timeMeasure->text().toDouble();
+        jsonObj["accuracyLimit"]=accuracyMeasure->text().toDouble();
+        jsonObj["doDoE"]=theDoECheckBox->isChecked();
+    }
 
     jsonObj["advancedOpt"]=theAdvancedCheckBox->isChecked();
     if (theAdvancedCheckBox->isChecked())
@@ -523,63 +713,90 @@ SurrogateMFInputWidget::inputFromJSON(QJsonObject &jsonObject){
 
     bool result = true;
 
-    if (jsonObject.contains("inpFile_HF")) {
-        inpFileDir_HF->setText(jsonObject["inpFile_HF"].toString());
-    } else {
-        return false;
-    }
+    if (jsonObject.contains("HFfromModel")) {
+      if (jsonObject["HFfromModel"].toBool()) {
+          theHighSimButton->setChecked(true);
 
-    if (jsonObject.contains("outFile_HF")) {
-        outFileDir_HF->setText(jsonObject["outFile_HF"].toString());
-    } else {
-        return false;
-    }
-
-    if (jsonObject.contains("LFfromModel")) {
-      if (jsonObject["LFfromModel"].toBool()) {
-          theCheckButton->setChecked(true);
-          theFemWidget->setFEMforGP("GPmodel");
-
-          if (jsonObject.contains("samples") && jsonObject.contains("seed")) {
-              int samples=jsonObject["samples"].toInt();
-              double seed=jsonObject["seed"].toDouble();
-              numSamples->setText(QString::number(samples));
-              randomSeed->setText(QString::number(seed));
+          if (jsonObject.contains("samples_HF")) {
+              int samples=jsonObject["samples_HF"].toInt();
+              numSamples_HF->setText(QString::number(samples));
           } else {
               result = false;
           }
 
-          if (jsonObject.contains("timeLimit") && jsonObject.contains("accuracyLimit")) {
-              int time=jsonObject["timeLimit"].toInt();
-              double accuracy=jsonObject["accuracyLimit"].toDouble();
-              timeMeasure->setText(QString::number(time));
-              accuracyMeasure->setText(QString::number(accuracy));
-          } else {
-              result = false;
-          }
-
-          if (jsonObject.contains("existingDoE")) {
-              if (jsonObject["existingDoE"].toBool()) {
-                  theExistingCheckBox->setChecked(true);
-                  inpFileDir_LF -> setText(jsonObject["inpFile_LF"].toString());
-                  outFileDir_LF -> setText(jsonObject["outFile_LF"].toString());
+          if (jsonObject.contains("existingDoE_HF")) {
+              if (jsonObject["existingDoE_HF"].toBool()) {
+                  theExistingCheckBox_HF->setChecked(true);
+                  inpFileDir_HF -> setText(jsonObject["inpFile_HF"].toString());
+                  outFileDir_HF -> setText(jsonObject["outFile_HF"].toString());
               } else {
-                  theExistingCheckBox->setChecked(false);
+                  theExistingCheckBox_HF->setChecked(false);
               }
           } else {
               result = false;
           }
 
-          theDoECheckBox->setChecked(jsonObject["doDoE"].toBool());
-
       } else {
-          theCheckButton->setChecked(false);
-          outFileDir_LF->setText(jsonObject["outFile_LF"].toString());
-          inpFileDir_LF->setText(jsonObject["inpFile_LF"].toString());
-          theFemWidget->setFEMforGP("GPdata");
+          theLowSimButton->setChecked(false);
+          outFileDir_HF->setText(jsonObject["outFile_HF"].toString());
+          inpFileDir_HF->setText(jsonObject["inpFile_HF"].toString());
       }
     } else {
       return false;
+    }
+
+    if (jsonObject.contains("LFfromModel")) {
+      if (jsonObject["LFfromModel"].toBool()) {
+          theLowSimButton->setChecked(true);
+
+          if (jsonObject.contains("samples_LF")) {
+              int samples=jsonObject["samples_LF"].toInt();
+              numSamples_LF->setText(QString::number(samples));
+          } else {
+              result = false;
+          }
+
+          if (jsonObject.contains("existingDoE_LF")) {
+              if (jsonObject["existingDoE_LF"].toBool()) {
+                  theExistingCheckBox_LF->setChecked(true);
+                  inpFileDir_LF -> setText(jsonObject["inpFile_LF"].toString());
+                  outFileDir_LF -> setText(jsonObject["outFile_LF"].toString());
+              } else {
+                  theExistingCheckBox_LF->setChecked(false);
+              }
+          } else {
+              result = false;
+          }
+
+      } else {
+          theLowSimButton->setChecked(false);
+          outFileDir_LF->setText(jsonObject["outFile_LF"].toString());
+          inpFileDir_LF->setText(jsonObject["inpFile_LF"].toString());
+      }
+    } else {
+      return false;
+    }
+
+    if (jsonObject["LFfromModel"].toBool() || jsonObject["HFfromModel"].toBool())
+    {
+
+        if (jsonObject.contains("seed") && jsonObject.contains("doDoE")) {
+            double seed=jsonObject["seed"].toDouble();
+            randomSeed->setText(QString::number(seed));
+            theDoECheckBox->setChecked(jsonObject["doDoE"].toBool());
+        } else {
+            result = false;
+        }
+
+        if (jsonObject.contains("timeLimit") && jsonObject.contains("accuracyLimit")) {
+            int time=jsonObject["timeLimit"].toInt();
+            double accuracy=jsonObject["accuracyLimit"].toDouble();
+            timeMeasure->setText(QString::number(time));
+            accuracyMeasure->setText(QString::number(accuracy));
+        } else {
+            result = false;
+        }
+
     }
 
   if (jsonObject.contains("advancedOpt")) {
@@ -611,5 +828,5 @@ SurrogateMFInputWidget::clear(void)
 int
 SurrogateMFInputWidget::getNumberTasks()
 {
-  return numSamples->text().toInt();
+  return numSamples_LF->text().toInt();
 }
