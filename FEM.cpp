@@ -52,9 +52,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <sectiontitle.h>
 #include <QFileInfo>
 #include <QVectorIterator>
+#include <QRadioButton>
+#include <QGroupBox>
 #include <OpenSeesPyParser.h>
-#include <QRadioButton.h>
-#include <QGroupBox.h>
 #include <OpenSeesParser.h>
 #include <FEAPpvParser.h>
 

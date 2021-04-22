@@ -1,0 +1,55 @@
+[settings]
+    arch=x86_64
+    build_type=Release
+    compiler=Visual Studio
+    compiler.runtime=MD
+    compiler.version=16
+    os=Windows
+
+[requires]
+    jansson/2.Y.Z
+    libcurl/7.Y.Z
+    zlib/1.Y.Z
+
+[options]
+
+
+[full_settings]
+    arch=x86_64
+    build_type=Release
+    compiler=Visual Studio
+    compiler.runtime=MD
+    compiler.version=16
+    os=Windows
+
+[full_requires]
+    jansson/2.13.1:8d1447e4c7a19883a967dfa4ee540ff8ca3170f5
+    libcurl/7.72.0:7852803337fa1627d566476b4dcc8ec95d1052fc
+    zlib/1.2.11:3fb49604f9c2f729b85ba3115852006824e72cab
+
+[full_options]
+    jansson:shared=False
+    jansson:use_urandom=True
+    jansson:use_windows_cryptoapi=True
+    libcurl:darwin_ssl=deprecated
+    libcurl:shared=False
+    libcurl:with_brotli=False
+    libcurl:with_c_ares=False
+    libcurl:with_largemaxwritesize=False
+    libcurl:with_ldap=False
+    libcurl:with_libssh2=False
+    libcurl:with_nghttp2=False
+    libcurl:with_openssl=False
+    libcurl:with_ssl=schannel
+    libcurl:with_winssl=True
+    libcurl:with_wolfssl=deprecated
+    libcurl:with_zlib=True
+    libcurl:with_zstd=False
+    zlib:minizip=False
+    zlib:shared=False
+
+[recipe_hash]
+
+
+[env]
+
