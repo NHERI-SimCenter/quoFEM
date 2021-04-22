@@ -228,8 +228,7 @@ InputWidgetFEM::femProgramChanged(const QString& arg1) {
 
 QString InputWidgetFEM::getApplicationName(void) {
 
-    FEM *theFEM = theFEMs.at(0);
-    return theFEM->getApplicationName();
+    return femSelection->currentText();
 }
 
 

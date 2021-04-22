@@ -133,7 +133,7 @@ bool
 FEM::outputToJSON(QJsonObject &jsonObject)
 {
     QJsonArray apps;
-    jsonObject["subprogram"]=femSelection->currentText();
+    jsonObject["program"]=femSelection->currentText();
     //jsonObject["numInputs"]=numInputs;
     jsonObject["modelTag"]=tag;
 
@@ -225,8 +225,8 @@ FEM::inputFromJSON(QJsonObject &femObject)
 
     //if (femObject.contains("subprogram")) {
         QString program;
-        if (femObject.contains("subprogram")) {
-            program=femObject["subprogram"].toString();
+        if (femObject.contains("program")) {
+            program=femObject["program"].toString();
         } else {
             program=femObject["program"].toString();
         }
