@@ -782,8 +782,7 @@ double FEM::interpolateForGP(QVector<double> X, QVector<double> Y, double Xval){
         }
     }
 
-    //return std::round(estY*1000)/10; // make it %
-    return std::ceil(estY*1000 - 0.5)/10;
+    return (estY*100); // make it %
 }
 
 
@@ -960,14 +959,13 @@ QStringList FEM::parseGPInputs(QString file1){
         double thres=val.toDouble();
         double percEst = this->interpolateForGP(thrsVals,percVals,thres);
         if (thres>thrsVals[thrsVals.size()-1]) {
-            //percEst=std::round(percVals[percVals.size()-1]*1000)/10;
-            percEst=std::ceil(percVals[percVals.size()-1]*1000 - 0.5)/10;
+            percEst=percVals[percVals.size()-1]*100;
         } else if (thres<thrsVals[0]) {
-            //percEst=std::round(percVals[0]*1000)/10;
-            percEst=std::ceil(percVals[0]*1000 - 0.5)/10;
+            percEst=percVals[0]*100;
         }
+
         if (!isData) {
-            labelThresMsg->setText("Note: around " + QString::number(percEst) + "% of new samples in training range will exceed the tolerance limit.");
+            labelThresMsg->setText("Note: around " + QString::number(percEst, 'f', 1) + "% of new samples in training range will exceed the tolerance limit.");
         }
     });
 
@@ -1005,7 +1003,7 @@ QStringList FEM::parseGPInputs(QString file1){
             labelProgDir2->setVisible(false);
         }
     });
-    thresVal->setText(QString::number(thres/100));
+    thresVal->setText(QString::number(thres/100,'f',2));
     //theParameters->setInitialVarNamesAndValues(varNamesAndValues);
     theEdpWidget->setGPQoINames(qoiNames);
     option1Button->setChecked(false);
