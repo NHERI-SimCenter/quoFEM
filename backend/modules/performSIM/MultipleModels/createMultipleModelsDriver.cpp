@@ -46,9 +46,13 @@ int main(int argc, const char **argv) {
     std::cerr << "createOpenSeesDriver:: input file: " << inputFile << " does not exist\n";
     exit(801);
   }
+
+
+
   
   //current_path(currentPath);
   auto path = std::filesystem::current_path(); //getting path
+
 
   //  std::string fileName = std::filesystem::path(inputFile).filename()
   std::filesystem::path fileNameP = std::filesystem::path(inputFile).filename();
@@ -62,7 +66,25 @@ int main(int argc, const char **argv) {
   std::filesystem::current_path(fullPath); //getting path
   path = std::filesystem::current_path(); //getting path
   std::cerr << "PATH: " << path << '\n';
-  
+
+  //
+  // Get WorkflowApplication.json
+  //
+
+
+  std::string workflowAppsDir = std::filesystem::path(thisProgram).parent_path().parent_path().parent_path().generic_string() + "/WorkflowApplications.json";
+  // IS THIS FINE?^
+  json_error_t error;
+  json_t *workflowApps = json_load_file(workflowAppsDir.c_str(), 0, &error);
+  std::cerr << "PATH: " << workflowAppsDir << '\n';
+  if (workflowApps == NULL) {
+    std::cerr << "createMultipleModelsDriver:: workflowApplications file " << workflowApps << " is not valid JSON\n";
+    exit(801); 
+  } 
+  json_t *workflowFems = json_object_get(json_object_get(workflowApps,"femApplications"),"Applications");
+  const int numWorkflowFems = json_array_size(workflowFems);
+  std::cerr << "numWORKFLOWFEMS: " << numWorkflowFems << '\n';
+
   //
   // open input file to get RV's and EDP names
   //
@@ -70,7 +92,6 @@ int main(int argc, const char **argv) {
   std::vector<std::string> rvList;  
   std::vector<std::string> edpList;
   
-  json_error_t error;
   json_t *rootInput = json_load_file(inputFile.c_str(), 0, &error);
   if (rootInput == NULL) {
     std::cerr << "createMultipleModelsDriver:: input file " << inputFile << " is not valid JSON\n";
@@ -88,7 +109,7 @@ int main(int argc, const char **argv) {
     int tag = i+1;
 
     // ====================================================================================
-    // 
+    // Copy templatedir
     // ====================================================================================
     
     std::string workDir = std::filesystem::path(fullPath).parent_path().generic_string();
@@ -99,8 +120,8 @@ int main(int argc, const char **argv) {
       std::filesystem::copy_options::update_existing
       | std::filesystem::copy_options::recursive;
 
-  std::cerr << "PATH1: " << sub_template << '\n';
-  std::cerr << "PATH2: " << fullPath << '\n';
+    std::cerr << "PATH1: " << sub_template << '\n';
+    std::cerr << "PATH2: " << fullPath << '\n';
 
     try
     {
@@ -203,16 +224,80 @@ int main(int argc, const char **argv) {
     json_object_set(copiedInput, "randomVariables", copiedRV);
 
 
-    //std::string fileName = "./test" + std::to_string(tag) +".json";
+    std::string jsonFileName = "dakota."+ std::to_string(tag) +".json";
     //int rc = json_dump_file(copiedInput, fileName.c_str(), JSON_INDENT(1));
-    int rc = json_dump_file(copiedInput, "./dakota_new.json",  JSON_INDENT(1));
+    int rc = json_dump_file(copiedInput, ("./" + jsonFileName).c_str(),  JSON_INDENT(1));
     if (rc) {
         fprintf(stderr, "cannot save json to file\n");
     }
+
+   // ====================================================================================
+   // create workflow driver
+   // ====================================================================================
+
+
+    const std::string programName = json_string_value(json_object_get(json_object_get(copiedInput, "fem"), "program"));
+    std::string programExePath;
+    std::cout << programName << programExePath <<"\n";    
+
+    for (int j=0; j<numWorkflowFems; j++) {
+
+      json_t *Fem = json_array_get(workflowFems,j);
+
+      const std::string FemName = json_string_value(json_object_get(Fem,"Name"));
+      std::cout << FemName << programExePath <<"\n";    
+
+      if (FemName.compare(programName) == 0){
+        std::cout << "caught" << programExePath <<"\n";    
+          programExePath = json_string_value(json_object_get(Fem,"ExecutablePath"));
+          break;
+      }
+    }
+    std::cout << "  ================================================= " << programExePath <<"\n";    
+
+
+    if (osType.compare("Windows") == 0) {
+       programExePath = std::string("\"") + std::filesystem::path(workflowAppsDir).parent_path().parent_path().generic_string() +std::string("/")+  programExePath + std::string(".exe\"");
+    } else {
+       programExePath = std::string("\"") + std::filesystem::path(workflowAppsDir).parent_path().parent_path().generic_string()+std::string("/")+  programExePath;
+
+    }
+    std::cout << "  ================================================= " << programExePath <<"\n";    
+
+    std::string commandWorkflowCreator  = programExePath + " " + sub_template +std::string("/")+ jsonFileName + " " +runType + " " + osType ;
+    std::cout << "  ================================================= " << commandWorkflowCreator <<"\n";    
+    system(commandWorkflowCreator.c_str());
+
+
+
+
+    // std::string dpreproCommand;
+    // std::string openSeesCommand;
+    // std::string pythonCommand;
+    // std::string feapCommand;
+    // std::string moveCommand;
+
+    // if (osType.compare("Windows") == 0) {
+    //   dpreproCommand = std::string("../simCenterSub.exe\"");
+    // } else {
+    //   dpreproCommand = std::string("../simCenterSub\"");
+    // }
+
+    // if (programName.compare("OpenSees") == 0 {
+    //     "../createOpenSeesDriver"
+
+    // }
+
+
+
+
+
   }
   std::filesystem::current_path(fullPath); //getting path
 
 }
+
+
 
 
 
