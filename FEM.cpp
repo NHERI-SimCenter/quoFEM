@@ -782,7 +782,8 @@ double FEM::interpolateForGP(QVector<double> X, QVector<double> Y, double Xval){
         }
     }
 
-    return std::round(estY*1000)/10; // make it %
+    //return std::round(estY*1000)/10; // make it %
+    return std::ceil(estY*1000 - 0.5)/10;
 }
 
 
@@ -959,9 +960,11 @@ QStringList FEM::parseGPInputs(QString file1){
         double thres=val.toDouble();
         double percEst = this->interpolateForGP(thrsVals,percVals,thres);
         if (thres>thrsVals[thrsVals.size()-1]) {
-            percEst=std::round(percVals[percVals.size()-1]*1000)/10;
+            //percEst=std::round(percVals[percVals.size()-1]*1000)/10;
+            percEst=std::ceil(percVals[percVals.size()-1]*1000 - 0.5)/10;
         } else if (thres<thrsVals[0]) {
-            percEst=std::round(percVals[0]*1000)/10;
+            //percEst=std::round(percVals[0]*1000)/10;
+            percEst=std::ceil(percVals[0]*1000 - 0.5)/10;
         }
         if (!isData) {
             labelThresMsg->setText("Note: around " + QString::number(percEst) + "% of new samples in training range will exceed the tolerance limit.");
