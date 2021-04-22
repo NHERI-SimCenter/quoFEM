@@ -13,7 +13,7 @@ class simCenterBackendApps(ConanFile):
     # default_options = {"shared": False}    
     generators = "cmake"
     build_policy = "missing"
-    requires = "jansson/2.11@bincrafters/stable"
+    requires = "jansson/2.13.1"
                
 
     # Custom attributes for Bincrafters recipe conventions
