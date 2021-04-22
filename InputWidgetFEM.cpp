@@ -125,11 +125,11 @@ InputWidgetFEM::makeFEM(void)
     this->addFEM(0);
 
     sa->setWidget(fem);
+    verticalLayout->setMargin(0);
     verticalLayout->addWidget(sa);
+    verticalLayout->addStretch(0);
 
     //verticalLayout->setSpacing(0);
-    verticalLayout->setMargin(0);
-
 }
 
 //void InputWidgetFEM::setFemNames(QStringList femNames) {
@@ -193,12 +193,12 @@ InputWidgetFEM::setFEMforGP(QString option){
     } else if (option == "GPMFmodel")
     {
         numInputs=2;
+        this -> setContentsVisible(true);
         femSelection->addItem(tr("MultipleModels"));
         int index = femSelection->findText("MultipleModels");
         femSelection->setCurrentIndex(index);
         femSelection->setDisabled(true);
         varNamesAndValues.clear();
-        this -> setContentsVisible(true);
         isGP = true;
     }
     theFEMs.at(0)->setAsGP(isGP);
@@ -215,7 +215,7 @@ InputWidgetFEM::femProgramChanged(const QString& arg1) {
         for (int i =0 ; i<numInputs; i++) {
             this->addFEM(i+1);
         }
-        verticalLayout->addStretch();
+        //verticalLayout->addStretch();
     } else {
         this->addFEM(0);
         theFEMs.at(0)->femProgramChanged(arg1);
