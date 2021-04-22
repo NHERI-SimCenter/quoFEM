@@ -41,7 +41,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QComboBox>
 #include <QCheckBox>
 #include <QPushButton>
-#include <QScrollArea>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QLabel>
