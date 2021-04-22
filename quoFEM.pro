@@ -29,6 +29,7 @@ win32 {
 } else {
     mac {
     ICON = icons/NHERI-quoFEM-Icon.icns
+    QMAKE_INFO_PLIST=$$PWD/Info.plist    
     } else {
       LIBS += -lglut -lGLU -lGL
     }
