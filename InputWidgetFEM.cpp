@@ -63,7 +63,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, QWidget *parent)
-  : SimCenterWidget(parent), theParameters(param), theEdpWidget(edpwidget), numInputs(1)
+  : SimCenterWidget(parent), numInputs(1), theEdpWidget(edpwidget), theParameters(param)
 {
     isGP=false; // normal vs. uniform (only for GP)
     numInputs = 1;

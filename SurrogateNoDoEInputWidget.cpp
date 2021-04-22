@@ -57,7 +57,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetFEM.h>
 
 SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *param,InputWidgetFEM *femwidget,InputWidgetEDP *edpwidget, QWidget *parent)
-: UQ_MethodInputWidget(parent), theParameters(param), theFemWidget(femwidget), theEdpWidget(edpwidget)
+: UQ_MethodInputWidget(parent), theParameters(param), theEdpWidget(edpwidget), theFemWidget(femwidget)
 {
     auto layout = new QGridLayout();
 

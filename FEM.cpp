@@ -52,9 +52,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <sectiontitle.h>
 #include <QFileInfo>
 #include <QVectorIterator>
+#include <QRadioButton>
+#include <QGroupBox>
 #include <OpenSeesPyParser.h>
-#include <QRadioButton.h>
-#include <QGroupBox.h>
 #include <OpenSeesParser.h>
 #include <FEAPpvParser.h>
 
@@ -759,7 +759,7 @@ double FEM::interpolateForGP(QVector<double> X, QVector<double> Y, double Xval){
         return 0; // make it %
     }
 
-    double estY;
+    double estY=0;
     if (X[0]<X[1]) {
         for (int np=0; np<N; np++) {
             if(X[np] > Xval) {
@@ -782,7 +782,7 @@ double FEM::interpolateForGP(QVector<double> X, QVector<double> Y, double Xval){
         }
     }
 
-    return round(estY*1000)/10; // make it %
+    return (estY*100); // make it %
 }
 
 
@@ -792,15 +792,14 @@ QStringList FEM::parseGPInputs(QString file1){
     // want to make a GP option box
     //
 
-    // ... create complicated layout ...
+    // completely delete layout and sublayouts
     if (optionsLayout != nullptr) {
 
-        // completely delete layout and sublayouts
         QLayoutItem * item;
         QLayout * sublayout;
         QWidget * widget;
         while ((item = optionsLayout->takeAt(0))) {
-            if ((sublayout = item->layout()) != 0) {/* do the same for sublayout*/}
+            if ((sublayout = item->layout()) != 0) {/* do the same for sublayout?*/}
             else if ((widget = item->widget()) != 0) {widget->hide(); delete widget;}
             else {delete item;}
         }
@@ -957,16 +956,16 @@ QStringList FEM::parseGPInputs(QString file1){
     //
 
     connect(thresVal, &QLineEdit::textChanged, this, [=](QString val) mutable {
-        auto c = percVals[0];
         double thres=val.toDouble();
         double percEst = this->interpolateForGP(thrsVals,percVals,thres);
         if (thres>thrsVals[thrsVals.size()-1]) {
-            percEst=round(percVals[percVals.size()-1]*1000)/10;
+            percEst=percVals[percVals.size()-1]*100;
         } else if (thres<thrsVals[0]) {
-            percEst=round(percVals[0]*1000)/10;
+            percEst=percVals[0]*100;
         }
+
         if (!isData) {
-            labelThresMsg->setText("Note: around " + QString::number(percEst) + "% of new samples in training range will exceed the tolerance limit.");
+            labelThresMsg->setText("Note: around " + QString::number(percEst, 'f', 1) + "% of new samples in training range will exceed the tolerance limit.");
         }
     });
 
@@ -1004,7 +1003,7 @@ QStringList FEM::parseGPInputs(QString file1){
             labelProgDir2->setVisible(false);
         }
     });
-    thresVal->setText(QString::number(thres/100));
+    thresVal->setText(QString::number(thres/100,'f',2));
     //theParameters->setInitialVarNamesAndValues(varNamesAndValues);
     theEdpWidget->setGPQoINames(qoiNames);
     option1Button->setChecked(false);
