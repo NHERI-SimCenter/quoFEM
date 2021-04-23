@@ -60,3 +60,7 @@ nataf_gsa
 preprocessDakota
 
 .vs/
+backend/applications
+backend/build
+applications/build
+applications/applications
