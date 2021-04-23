@@ -2,9 +2,9 @@
 Reliability Analysis
 ====================
 
-+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| Problem files   | `quo-03 <https://github.com/claudioperez/SimCenterDocumentation/tree/examples/docs/common/user_manual/examples/desktop/quoFEM/src/quo-03>`__   |
-+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------+
++-----------------+--------------------------------------------+
+| Problem files   | :github:`Download <Examples/qfem-0003/>`   |
++-----------------+--------------------------------------------+
 
 This example uses quoFEM to perform a second-order reliability analysis
 (SORM) of an OpenSees FE model.
@@ -12,11 +12,14 @@ This example uses quoFEM to perform a second-order reliability analysis
 Consider the stochastic response of a two-dimensional truss structure
 shown in the following figure with uncertain section dimensions,
 material moduli, and loading magnitude. Two input scripts are used to
-define a `local
-reliability </common/user_manual/usage/desktop/DakotaReliability.html>`__
+define a `local reliability </common/user_manual/usage/desktop/DakotaReliability.html>`__
 procedure to be coordinated by quoFEM which will estimate response
 magnitudes whose probabilities of exceedance are 0.02, 0.2, 0.4, 0.6,
-0.8, and 0.99. |Simple truss model.|
+0.8, and 0.99.
+
+.. figure:: qfem-0003.png
+   :width: 500px
+   :align:center
 
 The following parameters are defined in the **RV** tab of quoFEM:
 
@@ -84,10 +87,63 @@ selected and the results will be displayed as shown in the following
 figure:
 
 .. figure:: figures/trussSORM-RES.png
-   :alt: Sensitivity analysis results.
 
-   Sensitivity analysis results.
+   Reliability analysis (Second order apprximation)
 
 
-.. |Simple truss model.| image:: qfem-0003.png
 
+Other reliability methods
+-------------------------
+
+**First Order** Integration Method: The user can change only the integration method to get the first order approximation (instead of the second order approximation) results.
+
++--------------------------+------------------------------------+
+| **Integration Method**   | First Order Reliability            |
++--------------------------+------------------------------------+
+| **Level Type**           | Probability Levels                 |
++--------------------------+------------------------------------+
+| **Local Method**         | Most Probable Point                |
++--------------------------+------------------------------------+
+| **Reliability Method**   | Local Reliability                  |
++--------------------------+------------------------------------+
+| **MPP Search Method**    | no_approx                          |
++--------------------------+------------------------------------+
+| **Probability Levels**   | [0.02, 0.2, 0.4, 0.6, 0.8, 0.99]   |
++--------------------------+------------------------------------+
+
+.. figure:: figures/trussFORM-RES2.png
+
+   Reliability analysis (First order apprximation)
+
+**Global reliability** and **Importance sampling** methods can to identify probability levels corresponding to given response thresholds.
+
+.. note::
+   Global reliability and importance sampling cannot read **probability thresholds** as inputs.
+
+Global reliability:
+
++--------------------------+------------------------------------+
+| **GP Approx. Method**    | u-space                            |
++--------------------------+------------------------------------+
+| **Response Levels**      | [5.0 6.0 7.0 8.0 9.0]              |
++--------------------------+------------------------------------+
+
+.. figure:: figures/trussGP-RES2.png
+
+   Global reliability results.
+
+Importance Sampling (IS):
+
++--------------------------+------------------------------------+
+| **# Samples**            | 100                                |
++--------------------------+------------------------------------+
+| **Seed**                 | 159                                |
++--------------------------+------------------------------------+
+| **IS Method**            | Basic Simulation                   |
++--------------------------+------------------------------------+
+| **Response Levels**      | [5.0 6.0 7.0 8.0 9.0]              |
++--------------------------+------------------------------------+
+
+.. figure:: figures/trussIS-RES2.png
+
+   Importance Sampling (IS) results.

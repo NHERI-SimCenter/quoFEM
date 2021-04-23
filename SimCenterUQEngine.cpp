@@ -51,15 +51,20 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDebug>
 
 #include <SimCenterUQInputSampling.h>
+#include <SimCenterUQInputSurrogate.h>
+
 //#include <SimCenterUQInputReliability.h>
 #include <SimCenterUQInputSensitivity.h>
 //#include <SimCenterUQInputCalibration.h>
+
 //#include <SimCenterUQInputBayesianCalibration.h>
 
 #include "InputWidgetEDP.h"
+#include "InputWidgetParameters.h"
+#include "InputWidgetFEM.h"
 
-SimCenterUQEngine::SimCenterUQEngine(InputWidgetEDP *edpWidget, QWidget *parent)
-: UQ_Engine(parent), theCurrentEngine(0), theEdpWidget(edpWidget)
+SimCenterUQEngine::SimCenterUQEngine(InputWidgetParameters *param,InputWidgetFEM *femWidget,InputWidgetEDP *edpWidget, QWidget *parent)
+: UQ_Engine(parent), theCurrentEngine(0), theParameters(param), theFemWidget(femWidget), theEdpWidget(edpWidget)
 {
 
     QVBoxLayout *layout = new QVBoxLayout();
@@ -70,13 +75,10 @@ SimCenterUQEngine::SimCenterUQEngine(InputWidgetEDP *edpWidget, QWidget *parent)
 
     QHBoxLayout *theSelectionLayout = new QHBoxLayout();
     QLabel *label = new QLabel();
-    label->setText(QString("SimCenterUQ Method Catagory"));
+    label->setText(QString("SimCenterUQ Method Category"));
     theEngineSelectionBox = new QComboBox();
-    //theEngineSelectionBox->addItem(tr("Forward Propagation"));
-    //theEngineSelectionBox->addItem(tr("Parameters Estimation"));
-    //theEngineSelectionBox->addItem(tr("Inverse Problem"));
-    //theEngineSelectionBox->addItem(tr("Reliability Analysis"));
     theEngineSelectionBox->addItem(tr("Sensitivity Analysis"));
+    theEngineSelectionBox->addItem(tr("Train GP Surrogate Model"));
     theEngineSelectionBox->setMinimumWidth(600);
 
     theSelectionLayout->addWidget(label);
@@ -94,26 +96,22 @@ SimCenterUQEngine::SimCenterUQEngine(InputWidgetEDP *edpWidget, QWidget *parent)
     // create the individual widgets add to stacked widget
     //
 
-    theSamplingEngine = new SimCenterUQInputSampling();
-    //theReliabilityEngine = new SimCenterUQInputReliability();
-    //theCalibrationEngine = new SimCenterUQInputCalibration();
-    //theBayesianCalibrationEngine = new SimCenterUQInputBayesianCalibration();
+    //theSamplingEngine = new SimCenterUQInputSampling();
     theSensitivityEngine = new SimCenterUQInputSensitivity();
+    theSurrogateEngine = new SimCenterUQInputSurrogate(theParameters,theFemWidget,theEdpWidget);
 
-    //theStackedWidget->addWidget(theSamplingEngine);
-    //theStackedWidget->addWidget(theCalibrationEngine);
-    //theStackedWidget->addWidget(theBayesianCalibrationEngine);
-    //theStackedWidget->addWidget(theReliabilityEngine);
     theStackedWidget->addWidget(theSensitivityEngine);
+    theStackedWidget->addWidget(theSurrogateEngine);
+
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
-    theCurrentEngine=theSensitivityEngine;
+    theCurrentEngine = theSensitivityEngine;
 
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
           SLOT(engineSelectionChanged(QString)));
 
-    connect(theSamplingEngine, SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
+    //connect(theSamplingEngine, SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
 
 }
 
@@ -125,26 +123,39 @@ SimCenterUQEngine::~SimCenterUQEngine()
 
 void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
 {
+    QString thePreviousName = theCurrentEngine->getMethodName();
     UQ_Engine *theOldEngine = theCurrentEngine;
 
-    if ((arg1 == QString("Sampling")) || (arg1 == QString("Forward Propagation"))) {
-      //theStackedWidget->setCurrentIndex(0);
-      //theCurrentEngine = theSamplingEngine;
-    } else if ((arg1 == QString("Calibration"))
-               || (arg1 == QString("Parameters Estimation"))
-               || (arg1 == QString("Parameter Estimation"))) {
+    // If previous was surrogate, reset everything
+    if (thePreviousName == "surrogate")
+    {
+        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP QoIs
+        theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
+        theFemWidget->setFEMforGP("reset");// reset FEM
+    }
 
-      //theStackedWidget->setCurrentIndex(1);
-      //theCurrentEngine = theCalibrationEngine;
-    } else if ((arg1 == QString("Bayesian Calibration")) || (arg1 == QString("Inverse Problem"))) {
-      //theStackedWidget->setCurrentIndex(2);
-      //theCurrentEngine = theBayesianCalibrationEngine;
-    } else if ((arg1 == QString("Reliability")) || (arg1 == QString("Reliability Analysis"))) {
-      //theStackedWidget->setCurrentIndex(3);
-      //theCurrentEngine = theReliabilityEngine;
-    } else if ((arg1 == QString("Sensitivity")) || (arg1 == QString("Sensitivity Analysis"))) {
-      theStackedWidget->setCurrentIndex(0);
-      theCurrentEngine = theSensitivityEngine;
+    if ((arg1 == QString("Sensitivity")) || (arg1 == QString("Sensitivity Analysis"))) {
+       theStackedWidget->setCurrentIndex(0);
+       theCurrentEngine = theSensitivityEngine;
+       theEdpWidget->showAdvancedSensitivity();
+       //theFemWidget->setFemGP(false);
+
+    } else if ((arg1 == QString("Surrogate")) || (arg1 == QString("Train GP Surrogate Model"))) {
+       // == restart UQ for simplicity
+       delete theSurrogateEngine;
+       theSurrogateEngine = new SimCenterUQInputSurrogate(theParameters,theFemWidget,theEdpWidget);
+       theStackedWidget->insertWidget(1,theSurrogateEngine);
+       // ==
+
+       theStackedWidget->setCurrentIndex(1);
+       theCurrentEngine = theSurrogateEngine;
+       theEdpWidget->hideAdvancedSensitivity();
+
+       // restart other parts
+       theFemWidget->setFEMforGP("GPmodel");   // set it to be GP-FEM
+       theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
+       theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
+
     } else {
       qDebug() << "ERROR .. SimCenterUQEngine selection .. type unknown: " << arg1;
     }
@@ -225,4 +236,9 @@ SimCenterUQEngine::getProcessingScript() {
 void
 SimCenterUQEngine::numModelsChanged(int newNum) {
     emit onNumModelsChanged(newNum);
+}
+
+QString
+SimCenterUQEngine::getMethodName() {
+    return theCurrentEngine->getMethodName();
 }

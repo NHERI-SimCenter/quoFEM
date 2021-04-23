@@ -2,9 +2,9 @@
 Sensitivity Analysis
 ====================
 
-+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| Problem files   | `quo-04 <https://github.com/claudioperez/SimCenterDocumentation/tree/examples/docs/common/user_manual/examples/desktop/quoFEM/src/quo-04>`__   |
-+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------+
++-----------------+--------------------------------------------+
+| Problem files   | :github:`Download <Examples/qfem-0004/>`   |
++-----------------+--------------------------------------------+
 
 This example uses quoFEM to perform a global sensitivity analysis of an
 OpenSees FE model.
@@ -14,7 +14,11 @@ that shown in the following figure. A `sensitivity
 analysis </common/user_manual/usage/desktop/DakotaSensitivity.html>`__
 procedure is coordinated by quoFEM which will estimate the sensitivities
 of the response quantities of interest with respect to the problem's
-random variables. |Truss schematic diagram|
+random variables.
+
+.. figure:: qfem-0004.png
+   :width: 500px
+   :align: center
 
 The following parameters are defined in the **RV** tab of quoFEM:
 
@@ -67,9 +71,6 @@ The following files make up the **FEM** model definition.
    response quantities to ``results.out`` from an OpenSees process. It
    is supplied to the **Postprocess File** field of the **FEM** tab.
 
-.. raw:: html
-
-   <!-- <div class="admonition warning">Do not place the files in your root, downloads, or desktop folder as when the application runs it will copy the contents on the directories and subdirectories containing these files multiple times. If you are like us, your root, Downloads or Documents folders contains and awful lot of files and when the backend workflow runs you will slowly find you will run out of disk space!</div> -->
 
 Results
 -------
@@ -84,5 +85,4 @@ figure:
    Sensitivity analysis results for simple truss.
 
 
-.. |Truss schematic diagram| image:: qfem-0004.png
 

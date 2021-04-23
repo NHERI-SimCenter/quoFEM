@@ -47,6 +47,8 @@ class RandomVariablesContainer;
 class UQ_Results;
 class UQ_Engine;
 class InputWidgetEDP;
+class InputWidgetParameters;
+class InputWidgetFEM;
 
 class UQ_EngineSelection : public  SimCenterAppWidget
 {
@@ -54,7 +56,7 @@ class UQ_EngineSelection : public  SimCenterAppWidget
 
     public:
 
-  explicit UQ_EngineSelection(InputWidgetEDP *edpwidget, QWidget *parent = 0);
+  explicit UQ_EngineSelection(InputWidgetParameters *param, InputWidgetFEM *femwidget,InputWidgetEDP *edpwidget, QWidget *parent = 0);
   ~UQ_EngineSelection();
 
   RandomVariablesContainer  *getParameters();
@@ -68,7 +70,7 @@ class UQ_EngineSelection : public  SimCenterAppWidget
   bool inputFromJSON(QJsonObject &rvObject);
   bool copyFiles(QString &destName);
 
-  void clear(void);
+//  void clear(void);
   
  signals:
   void onUQ_EngineChanged(bool);
@@ -94,7 +96,12 @@ private:
    UQ_Engine *thefilterEngine;
    UQ_Engine *theCustomEngine;
 
-  InputWidgetEDP *theEdpWidget;
+   InputWidgetParameters *theParameters;
+   InputWidgetEDP *theEdpWidget;
+   InputWidgetFEM *theFemWidget;
+
+   UQ_Engine *thePreviousEngine;
+
 };
 
 #endif // WIND_SELECTION_H

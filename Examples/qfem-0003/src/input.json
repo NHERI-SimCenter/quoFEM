@@ -63,7 +63,7 @@
             "distribution": "Lognormal",
             "mean": 250.0,
             "refCount": 1,
-            "stdDev": 10.0,
+            "stdDev": 50.0,
             "value": "RV.Ao",
             "variableClass": "Uncertain"
         },
@@ -73,7 +73,7 @@
             "distribution": "Normal",
             "mean": 500.0,
             "refCount": 1,
-            "stdDev": 25.0,
+            "stdDev": 100.0,
             "value": "RV.Au",
             "variableClass": "Uncertain"
         }

@@ -70,6 +70,7 @@ public:
     int getMaxNumParallelTasks(void);
 
     QVBoxLayout *mLayout;
+    QString getMethodName();
 
 signals:
 
@@ -94,6 +95,7 @@ private:
     UQ_MethodInputWidget *theCurrentMethod;
     UQ_MethodInputWidget *theLocal;
     UQ_MethodInputWidget *theGlobal;
+    UQ_MethodInputWidget *theIS;
 };
 
 #endif // DAKOTA_INPUT_RELIABILITY_H
