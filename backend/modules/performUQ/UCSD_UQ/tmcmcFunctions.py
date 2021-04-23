@@ -69,8 +69,10 @@ def MCMC_MH(ParticleNum, Em, Nm_steps, current, likelihood_current, posterior_cu
         prior_proposal = log_prior(proposal, AllPars)
 
         if np.isfinite(prior_proposal):  # proposal satisfies the prior constraints
-            likelihood_proposal = runFEM(ParticleNum, proposal, variables, resultsLocation, log_likelihood)
             # likelihood_proposal = log_likelihood(ParticleNum, proposal, variables, resultsLocation)
+            likelihood_proposal = runFEM(ParticleNum, proposal, variables, resultsLocation, log_likelihood)
+            if np.isnan(likelihood_proposal):
+                likelihood_proposal = -np.Inf
             posterior_proposal = prior_proposal + likelihood_proposal * beta
         else:
             likelihood_proposal = -np.Inf  # dont run the FE model

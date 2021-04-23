@@ -55,6 +55,7 @@ public:
 
     void setParametersWidget(RandomVariablesContainer *theParameters);
     void setInitialVarNamesAndValues(QStringList varNamesAndValues);
+    void setGPVarNamesAndValues(QStringList theList);
     QStringList getParametereNames(void);
 
 signals:

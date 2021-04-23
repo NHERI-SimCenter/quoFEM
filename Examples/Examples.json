@@ -39,6 +39,16 @@
             "name":"Steel Frame Calibration with TMCMC",
             "description":"An Example",
             "InputFile": "qfem-0014/src/input.json"
+        },
+        {
+            "name":"Surrogate Modeling 1",
+            "description":"An Example",
+            "InputFile": "qfem-0015/src/input.json"
+        },
+        {
+            "name":"Surrogate Modeling 2",
+            "description":"An Example",
+            "InputFile": "qfem-0016/src/input.json"
         }
     ]
 }

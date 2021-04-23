@@ -299,3 +299,9 @@ SimCenterUQInputSampling::getParameters(void) {
   theRandomVariables =  new RandomVariablesContainer(classType,tr("SimCenterUQ"));
   return theRandomVariables;
 }
+
+
+QString
+SimCenterUQInputSampling::getMethodName(void){
+  return QString("sampling");
+}

@@ -68,6 +68,7 @@ public:
   UQ_Results * getResults(void) override;
   
   QString getProcessingScript() override;
+  QString getMethodName() override;
 
 signals:
   void onUQ_EngineChanged();    

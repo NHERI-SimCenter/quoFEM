@@ -2,9 +2,9 @@
 Two-Dimensional Truss: Global Sensitivity Analysis using SimCenterUQ Engine
 ===========================================================================
 
-+----------------+-----------------+
-| Problem files  | :qfem-09:`/`    |
-+----------------+-----------------+
++----------------+------------------------------------------+
+| Problem files  | :github:`Github <Examples/qfem-0009/>`   |
++----------------+------------------------------------------+
 
 
 This example uses quoFEM to perform a global sensitivity analysis of an
@@ -98,7 +98,7 @@ figure:
    Sensitivity analysis results for simple truss.
 
 
-.. |Truss schematic diagram| image:: truss/truss.png
+.. |Truss schematic diagram| image:: ./qfem-0009.png
 
 
 Comparison with Dakota engine

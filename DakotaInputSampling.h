@@ -72,6 +72,7 @@ public:
     int getMaxNumParallelTasks(void);
 
     QVBoxLayout *mLayout;
+    QString getMethodName();
 
 signals:
 
@@ -98,7 +99,7 @@ private:
     UQ_MethodInputWidget *theCurrentMethod;
     UQ_MethodInputWidget *theMC;
     UQ_MethodInputWidget *theLHS;
-    UQ_MethodInputWidget *theIS;
+    //UQ_MethodInputWidget *theIS;
     UQ_MethodInputWidget *theGP;
     UQ_MethodInputWidget *thePCE;
     UQ_MethodInputWidget *theMFMC;

@@ -213,3 +213,7 @@ DakotaInputSensitivity::getParameters(void) {
   theRandomVariables =  new RandomVariablesContainer(classType);
   return theRandomVariables;
 }
+QString
+DakotaInputSensitivity::getMethodName(void){
+  return QString("sensitivity");
+}

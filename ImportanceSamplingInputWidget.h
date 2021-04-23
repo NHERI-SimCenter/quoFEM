@@ -27,6 +27,9 @@ private:
     QLineEdit *randomSeed;
     QLineEdit *numSamples;
     QComboBox* isMethod;
+    QLineEdit *reliabilityLevel;
+    QLineEdit *probabilityLevel;
+    QComboBox *levelType;
 };
 
 #endif // IMPORTANCESAMPLINGINPUTWIDGET_H

@@ -2,9 +2,9 @@
 Forward Propagation - OpenSeesPy
 ================================
 
-+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| Problem files   | `quo-02 <https://github.com/claudioperez/SimCenterDocumentation/tree/examples/docs/common/user_manual/examples/desktop/quoFEM/src/quo-02>`__   |
-+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------+
++-----------------+------------------------------------------+
+| Problem files   | :github:`Github <Examples/qfem-0002/>`   |
++-----------------+------------------------------------------+
 
 This example illustrates how quoFEM interacts with OpenSeesPy. A simple
 forward propagation procedure is run to estimate the first and second
@@ -15,8 +15,11 @@ Consider the problem of uncertainty quantification in a two-dimensional
 truss structure shown in the following figure. Two input scripts are
 used to define a forward propagation procedure to be coordinated by
 quoFEM which will estimate the mean and standard deviation of the
-vertical displacement at node 3 using Latin hypercube sampling. |Truss
-schematic diagram|
+vertical displacement at node 3 using Latin hypercube sampling. 
+
+.. figure:: qfem-0002.png
+   :align: center 
+   :width: 500px
 
 The following parameters are defined in the **RV** tab of quoFEM:
 
@@ -100,5 +103,4 @@ the tabular data is selected with simultaneous right and left clicks, a
 frequency and CDF will be displayed.
 
 
-.. |Truss schematic diagram| image:: qfem-0002.png
 

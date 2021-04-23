@@ -17,6 +17,7 @@ import sys
 import platform
 from subprocess import Popen, PIPE
 import subprocess
+import glob
 
 
 inputArgs = sys.argv
@@ -82,6 +83,21 @@ os.chmod(workflow_driver1, st.st_mode | stat.S_IEXEC)
 
 # copy the dakota input file to the main working dir for the structure
 shutil.move("dakota.in", "../")
+
+# If calibration data files exist, copy to the main working directory
+if os.path.isfile("readCalibrationData.cal"):
+    with open(inputFile, 'r') as f:
+        jsonInputs = json.load(f)
+    edpArray = jsonInputs['EDP']
+    edpNames = [edp["name"] for edp in edpArray]
+
+    for edpName in edpNames:
+        datFileList = glob.glob("{}.*.dat".format(edpName))
+        for datFile in datFileList:
+            if datFile.split(".")[1].isdigit():
+                shutil.move(datFile, "../")
+
+    os.remove("readCalibrationData.cal")
 
 # change dir to the main working dir for the structure
 os.chdir("../")

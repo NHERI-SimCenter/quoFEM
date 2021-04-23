@@ -35,7 +35,8 @@ if run_type in ['runningLocal',]:
     # MAC
     if (sys.platform == 'darwin'):
         OpenSees = 'OpenSees'
-        natafExe = 'nataf_gsa'        
+        surrogate = 'surrogateBuild.py' 
+        natafExe = 'nataf_gsa'          
         Feap = 'feappv'
         Dakota = 'dakota'
         workflow_driver = 'workflow_driver'
@@ -45,7 +46,8 @@ if run_type in ['runningLocal',]:
     else:
         OpenSees = 'OpenSees'
         Feap = 'Feappv41.exe'
-        natafExe = 'nataf_gsa.exe'        
+        surrogate = 'surrogateBuild.py'  
+        natafExe = 'nataf_gsa.exe'      
         Dakota = 'dakota'
         workflow_driver = 'workflow_driver.bat'
         osType = 'Windows'
@@ -119,9 +121,13 @@ if run_type in ['runningLocal']:
     '''
     LATER, CHANGE THE LOCATION
     '''
+    #  
+    if uq_data['uqType'] == 'Train GP Surrogate Model':
+        simCenterUQCommand = 'python "{}/{}" {} {} {}'.format(myScriptDir,surrogate,workdir_main,osType,run_type)
+    elif uq_data['uqType'] == 'Sensitivity Analysis':
+        simCenterUQCommand = '"{}/{}" {} {} {}'.format(myScriptDir,natafExe,workdir_main,osType,run_type)
+  
 
-    simCenterUQCommand = '"{}/{}" {} {} {}'.format(myScriptDir,natafExe,workdir_main,osType,run_type)
-        
     print('running SimCenterUQ: ', simCenterUQCommand)
 
     # subprocess.Popen(simCenterUQCommand, shell=True).wait()

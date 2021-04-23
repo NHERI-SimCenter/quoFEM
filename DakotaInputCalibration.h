@@ -49,6 +49,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPushButton>
 #include <QtGui>
 #include <QDialog>
+#include <QCheckBox>
 
 class QLabel;
 class DakotaCalibrationResults;
@@ -71,6 +72,7 @@ public:
     UQ_Results *getResults(void);
 
     RandomVariablesContainer *getParameters();
+    QString getMethodName();
 
 signals:
 
@@ -78,12 +80,16 @@ public slots:
    void clear(void);
    void methodChanged(const QString &arg1);
    void comboboxItemChanged(QString value);
+   void showNumExp(bool);
 
 private:
     QComboBox   *calibrationMethod;
     QLineEdit   *maxIterations;
     QLineEdit   *convergenceTol;
     QLineEdit   *scalingFactors;
+    QCheckBox   *readCalibrationDataCheckBox;
+    QLineEdit   *numExperiments;
+    QLabel      *numExperimentsLabel;
 
     RandomVariablesContainer *theParameters;
     DakotaCalibrationResults *results;

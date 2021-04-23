@@ -6,6 +6,8 @@ affiliation: University of California, San Diego
 
 # import standard python modules
 import numpy as np
+
+# import other python modules
 from generateData import data
 
 # %%

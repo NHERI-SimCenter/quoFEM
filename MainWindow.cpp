@@ -202,14 +202,13 @@ MainWindow::MainWindow(QWidget *parent)
     //the input widgets
 
     random = new InputWidgetParameters();
-    fem = new InputWidgetFEM(random);
     edp = new InputWidgetEDP(random);
-    uq = new UQ_EngineSelection(edp);
+    fem = new InputWidgetFEM(random,edp);
+    uq = new UQ_EngineSelection(random,fem,edp);
     random->setParametersWidget(uq->getParameters());
 
 
     connect(uq, SIGNAL(onNumModelsChanged(int)), fem, SLOT(numModelsChanged(int)));
-
     // create selection widget & add the input widgets
     results = new UQ_Results();
 
@@ -291,7 +290,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(fem,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(fem,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(fem,SIGNAL(sendStatusMessage(QString)),this,SLOT(fatalMessage(QString)));
+    connect(fem,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
     connect(random,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(random,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
@@ -302,7 +301,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(results,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
     connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-
     connect(uq,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(uq,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
@@ -876,10 +874,14 @@ void MainWindow::onRunButtonClicked() {
     // if windows add a .exe to non py applications
     QString os("Linux");
 #ifdef _WIN32
-   if (!femApp.contains(".py"))
+   //if (!femApp.contains(".py"))
+   //    femApp += ".exe";
+   //if (!uqApp.contains(".py"))
+   //    uqApp += ".exe";
+   if (!femApp.contains(".exe"))
        femApp += ".exe";
    if (!uqApp.contains(".py"))
-       uqApp += ".exe";
+       uqApp += ".py";
    os = "Windows";
 #endif
 
@@ -896,7 +898,8 @@ void MainWindow::onRunButtonClicked() {
     if (! femAppFile.exists()) {
       qDebug() << "FEM application: " << femApp;
 
-      errorMessage("FEM Application does not exist, try to reset settings, if fails download application again");
+      errorMessage(femApp);
+      //errorMessage("FEM Application does not exist, try to reset settings, if fails download application again");
       return;
     }
 
@@ -1480,14 +1483,13 @@ bool MainWindow::inputFromJSON(QJsonObject &jsonObj){
         // possibly old code: default is Dakota
     }
 
-
-    if (fem->inputFromJSON(jsonObj) != true) {
-        emit errorMessage(QString("FEM: failed to read input"));
+    if (uq->inputFromJSON(jsonObj) != true) {
+        emit errorMessage(QString("UQ: failed to read input"));
         return false;
     }
 
-    if (uq->inputFromJSON(jsonObj) != true) {
-        emit errorMessage(QString("UQ: failed to read input"));
+    if (fem->inputFromJSON(jsonObj) != true) {
+        emit errorMessage(QString("FEM: failed to read input"));
         return false;
     }
 

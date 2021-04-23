@@ -1,9 +1,10 @@
-Bayesian Calibration - Steel Frame
+
+Steel Frame Calibration with DREAM
 ==================================
 
-+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| Problem files   | `quo-08 <https://github.com/claudioperez/SimCenterDocumentation/tree/examples/docs/common/user_manual/examples/desktop/quoFEM/src/quo-08>`__   |
-+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------+
++-----------------+-----------------------------------------+
+| Problem files   | :github:`Github <Examples/qfem-0008>`   |
++-----------------+-----------------------------------------+
 
 In this example, Bayesian estimation is used to estimate column
 stiffnesses of a simple steel frame, given data about it's mode shapes
@@ -14,7 +15,8 @@ Kurumbhati and Mukesh Ramancha from UC San Diego, this example looks at
 the following simplified finite element model of a steel building.
 
 .. figure:: qfem-0008.png
-   :width: 400px
+   :width: 500px
+   :align: center
 
 
 | Each floor slab of the building is made of composite metal deck and is

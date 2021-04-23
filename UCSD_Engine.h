@@ -69,6 +69,7 @@ public:
     UQ_Results *getResults(void);
 
     QString getProcessingScript();
+    QString getMethodName();
 
 signals:
     void onMethodChanged(void);
