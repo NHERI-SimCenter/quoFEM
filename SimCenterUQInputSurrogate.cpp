@@ -127,7 +127,7 @@ void SimCenterUQInputSurrogate::onIndexChanged(const QString &text)
         theInpCurrentMethod = theDoE;
 
         theFemWidget->setFEMforGP("GPmodel"); // reset FEM
-        theEdpWidget->setGPQoINames(QStringList({})); // remove GP RVs
+        //theEdpWidget->setGPQoINames(QStringList({})); // remove GP RVs
     }
     else if (text=="Import Data File") {
         delete theData;

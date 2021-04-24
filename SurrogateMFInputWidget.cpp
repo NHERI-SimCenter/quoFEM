@@ -62,6 +62,19 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
 {
     auto layout = new QGridLayout();
 
+
+
+
+
+    theHighSimLabel = new QLabel("     Simulation model");
+    theHighSimButton = new QCheckBox();
+    theHighSimLabel -> setStyleSheet("font-weight: bold; color: grey");
+
+    theLowSimLabel = new QLabel("     Simulation model");
+    theLowSimButton = new QCheckBox();
+    theLowSimLabel -> setStyleSheet("font-weight: bold; color: grey");
+
+
     // /////////////////////////////////////
     // HIGH FIDELITY
     // /////////////////////////////////////
@@ -83,7 +96,10 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     chooseInpFile_HF = new QPushButton("Choose");
     connect(chooseInpFile_HF, &QPushButton::clicked, this, [=](){
         inpFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        //this->parseInputDataForRV(inpFileDir->text());
+        if ((!theHighSimButton->isChecked()) && (!theLowSimButton->isChecked()) )
+            this->parseInputDataForRV(inpFileDir_HF->text());
+        else
+            this->countColumn(inpFileDir_HF->text()); // to give error
     });
     inpFileDir_HF->setMinimumWidth(600);
     inpFileDir_HF->setReadOnly(true);
@@ -97,7 +113,10 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     chooseOutFile_HF = new QPushButton("Choose");
     connect(chooseOutFile_HF, &QPushButton::clicked, this, [=](){
         outFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        //this->parseOutputDataForQoI(outFileDir->text());
+        if ((!theHighSimButton->isChecked()) && (!theLowSimButton->isChecked()) )
+            this->parseOutputDataForQoI(outFileDir_HF->text());
+        else
+            this->countColumn(outFileDir_HF->text()); // to give error
     });
     outFileDir_HF->setMinimumWidth(600);
     outFileDir_HF->setReadOnly(true);
@@ -108,10 +127,6 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     //
     // Model
     //
-
-    theHighSimLabel = new QLabel("     Simulation model");
-    theHighSimButton = new QCheckBox();
-    theHighSimLabel -> setStyleSheet("font-weight: bold; color: grey");
 
     line0= new QFrame;
     line0->setFrameShape(QFrame::HLine);
@@ -178,9 +193,12 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     chooseInpFile_LF = new QPushButton("Choose");
     connect(chooseInpFile_LF, &QPushButton::clicked, this, [=](){
         inpFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        if (!theLowSimButton->isChecked()) {
+
+        if ((!theHighSimButton->isChecked()) && (!theLowSimButton->isChecked()) )
             this->parseInputDataForRV(inpFileDir_LF->text());
-        }
+        else
+            this->countColumn(inpFileDir_LF->text()); // to give error
+
     });
     inpFileDir_LF->setMinimumWidth(600);
     inpFileDir_LF->setReadOnly(true);
@@ -192,9 +210,12 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     chooseOutFile_LF = new QPushButton("Choose");
     connect(chooseOutFile_LF, &QPushButton::clicked, this, [=](){
         outFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-        if (!theLowSimButton->isChecked()) {
+
+        if ((!theHighSimButton->isChecked()) && (!theLowSimButton->isChecked()) )
             this->parseOutputDataForQoI(outFileDir_LF->text());
-        }
+        else
+            this->countColumn(outFileDir_LF->text()); // to give error
+
     });
     outFileDir_LF->setMinimumWidth(600);
     outFileDir_LF->setReadOnly(true);
@@ -206,10 +227,6 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     // /////////////////////////////////////
     // LOW FIDELITY - Model
     // /////////////////////////////////////
-
-    theLowSimLabel = new QLabel("     Simulation model");
-    theLowSimButton = new QCheckBox();
-    theLowSimLabel -> setStyleSheet("font-weight: bold; color: grey");
 
     line1= new QFrame;
     line1->setFrameShape(QFrame::HLine);
@@ -665,6 +682,9 @@ int SurrogateMFInputWidget::parseOutputDataForQoI(QString name1){
 
 int SurrogateMFInputWidget::countColumn(QString name1){
     // get number of columns
+    if (name1.isEmpty())
+        return 0;
+
     std::ifstream inFile(name1.toStdString());
     // read lines of input searching for pset using regular expression
     std::string line;
@@ -700,10 +720,17 @@ int SurrogateMFInputWidget::countColumn(QString name1){
         {
             errMSG->show();
             numberOfColumns_pre=0;
-            break;
+            return 0;
         }
     }
     // close file
+    if (numberOfColumns_pre<0)// The FIle is empty
+    {
+        errMSG->show();
+        return 0;
+    }
+
+
     inFile.close();
     return numberOfColumns_pre;
 }

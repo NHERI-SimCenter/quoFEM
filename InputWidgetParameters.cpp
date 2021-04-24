@@ -114,6 +114,12 @@ InputWidgetParameters::setGPVarNamesAndValues(QStringList theList){
     }
 }
 
+void
+InputWidgetParameters::clear(void){
+
+    varNamesAndValues.clear();
+    theParameters->clear();
+}
 
 QStringList
 InputWidgetParameters::getParametereNames(void)

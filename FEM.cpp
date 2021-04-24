@@ -2,7 +2,7 @@
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without 
+Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
@@ -26,10 +26,10 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 
-REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS 
-PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, 
+THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS
+PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,
 UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
@@ -69,7 +69,7 @@ FEM::FEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, int tagId, QSt
     femSpecific = 0;
     isGP = false;
 
-    layout = new QVBoxLayout();        
+    layout = new QVBoxLayout();
     QVBoxLayout *name= new QVBoxLayout;
 
     // text and add button at top
@@ -109,7 +109,7 @@ FEM::FEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, int tagId, QSt
     // layout->addStretch();
     // layout->setSpacing(10);
     //layout->setMargin(10);
-    layout->addStretch();
+    //layout->addStretch();
 
     this->setLayout(layout);
 
@@ -157,7 +157,7 @@ FEM::outputToJSON(QJsonObject &jsonObject)
             apps.append(val->text());
        }
        jsonObject["fileInfo"] = apps;
-       
+
     //} else if (numInputs == 1) {
     } else {
         QString fileName1=inputFilenames.at(0)->text();
@@ -238,7 +238,7 @@ FEM::inputFromJSON(QJsonObject &femObject)
         if (femObject.contains("numInputs") )
             numInputs = femObject["numInputs"].toInt();
 
-        if (numInputs == 1) {	  
+        if (numInputs == 1) {
             QString fileName1=femObject["inputFile"].toString();;
             QString fileName2=femObject["postprocessScript"].toString();
 
@@ -300,10 +300,10 @@ void FEM::femProgramChanged(const QString &arg1)
     //
     // remove old widget and clear file names
     //
-    if (femSpecific != nullptr) {      
+    if (femSpecific != nullptr) {
       layout->removeWidget(femSpecific);
     }
-    
+
     inputFilenames.clear();
     postprocessFilenames.clear();
     parametersFilenames.clear();
@@ -316,29 +316,29 @@ void FEM::femProgramChanged(const QString &arg1)
       theCustomInputNumber = new QSpinBox();
       theCustomLayout = new QVBoxLayout();
       theCustomFileInputs = new QVBoxLayout();
-      theCustomFileInputWidget = new QWidget();      
+      theCustomFileInputWidget = new QWidget();
 
       QLabel *customNumberLabel = new QLabel();
-      customNumberLabel->setText(tr("Number of input files and executables required by driver script"));      
+      customNumberLabel->setText(tr("Number of input files and executables required by driver script"));
       QHBoxLayout *numberLayout = new QHBoxLayout();
       numberLayout->addWidget(customNumberLabel);
       numberLayout->addWidget(theCustomInputNumber);
-      numberLayout->addStretch();
-      
+      //numberLayout->addStretch();
+
       theCustomLayout->addLayout(numberLayout);
 
       theCustomFileInputs = new QVBoxLayout();
       theCustomFileInputWidget = new QWidget();
       theCustomFileInputWidget->setLayout(theCustomFileInputs);
       theCustomLayout->addWidget(theCustomFileInputWidget);
-           
-      QVBoxLayout *customLayout = new QVBoxLayout();      
+
+      QVBoxLayout *customLayout = new QVBoxLayout();
 
       // Add location to add driver script
       SectionTitle *textCustom=new SectionTitle();
       textCustom->setText(tr("Input driver script that runs and post-processes application"));
       QSpacerItem *customSpacer = new QSpacerItem(50,10);
-      
+
       QLabel *driverLabel = new QLabel();
       driverLabel->setText(tr("Driver script"));
       QLineEdit *driverFile = new QLineEdit;
@@ -346,9 +346,9 @@ void FEM::femProgramChanged(const QString &arg1)
       chooseDriver->setText(tr("Choose"));
       connect(chooseDriver, &QPushButton::clicked, this, [=](){
                 driverFile->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
-            });      
+            });
       chooseDriver->setToolTip(tr("Push to choose a file from your file system"));
-      
+
       QGridLayout *driverLayout = new QGridLayout();
       driverLayout->addWidget(driverLabel, 1, 0);
       driverLayout->addWidget(driverFile, 1, 1);
@@ -361,10 +361,10 @@ void FEM::femProgramChanged(const QString &arg1)
       postProcessingLabel->setText("Postprocessing script");
       QLineEdit *postProcessScript = new QLineEdit;
       QPushButton *choosePostProcessing = new QPushButton();
-      
+
       connect(choosePostProcessing, &QPushButton::clicked, this, [=](){
             postProcessScript->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
-							});
+                            });
       choosePostProcessing->setText(tr("Choose"));
       choosePostProcessing->setToolTip(tr("Push to choose a file from your file system"));
 
@@ -373,7 +373,7 @@ void FEM::femProgramChanged(const QString &arg1)
       postProcessLayout->addWidget(postProcessScript, 1, 1);
       postProcessLayout->addWidget(choosePostProcessing, 1, 2);
       postProcessLayout->setColumnStretch(3,1);
-      postProcessLayout->setColumnStretch(1,3);      
+      postProcessLayout->setColumnStretch(1,3);
 
       // Add custom layout for specifying additional inputs
       customLayout->addWidget(textCustom);
@@ -381,14 +381,14 @@ void FEM::femProgramChanged(const QString &arg1)
       customLayout->addLayout(driverLayout);
       customLayout->addLayout(postProcessLayout);
       customLayout->addLayout(theCustomLayout);
-      customLayout->addStretch();
+      //customLayout->addStretch();
 
-      connect(theCustomInputNumber, SIGNAL(valueChanged(int)), this, SLOT(customInputNumberChanged(int)));      
-      theCustomInputNumber->setValue(0);                
+      connect(theCustomInputNumber, SIGNAL(valueChanged(int)), this, SLOT(customInputNumberChanged(int)));
+      theCustomInputNumber->setValue(0);
       inputFilenames.append(driverFile);
       postprocessFilenames.append(postProcessScript);
       newFemSpecific->setLayout(customLayout);
-      
+
     } else if (numInputs == 1) {
 
         //QGridLayout *femLayout = new QGridLayout(); // Changed it to local->private for surrogate - may cause problem in multiple model case
@@ -568,7 +568,7 @@ int FEM::parseInputfilesForRV(QString name1){
 
     if (tag>0)
         this->addTagId();
-      
+
     // qDebug() << "VARNAMESANDVALUES: " << varNamesAndValues;
     if (pName != "Custom" && !isGP) {
       theParameters->setInitialVarNamesAndValues(varNamesAndValues);
@@ -576,6 +576,16 @@ int FEM::parseInputfilesForRV(QString name1){
       theParameters->setGPVarNamesAndValues(varNamesAndValues);
     }
     return 0;
+}
+
+void FEM::parseAllInputfiles(void){
+    theParameters->clear();
+    if (femSelection->currentText() == "OpenSeesPy") {
+        this->parseInputfilesForRV(parametersFilenames.at(0)->text());
+    } else {
+        this->parseInputfilesForRV(inputFilenames.at(0)->text());
+    }
+
 }
 
 void FEM::addTagId(void) {
@@ -604,11 +614,11 @@ void FEM::customInputNumberChanged(int numCustomInputs) {
     if (item->layout() != nullptr) {
       auto sublayout = item->layout();
       while (sublayout->takeAt(0) != nullptr) {
-  	if (sublayout->takeAt(0)->widget() != nullptr) {
-  	  auto widget = sublayout->takeAt(0)->widget();
-  	  sublayout->removeWidget(widget);
-  	  widget->deleteLater();
-  	}
+    if (sublayout->takeAt(0)->widget() != nullptr) {
+      auto widget = sublayout->takeAt(0)->widget();
+      sublayout->removeWidget(widget);
+      widget->deleteLater();
+    }
       }
       tempLayout->removeItem(item);
       item->layout()->deleteLater();
@@ -621,7 +631,7 @@ void FEM::customInputNumberChanged(int numCustomInputs) {
   tempLayout->deleteLater();
   tempLayout = nullptr;
 
-  
+
   // Create new file inputs
   QVBoxLayout * newLayout = new QVBoxLayout();
   customInputFiles.clear();
@@ -633,29 +643,29 @@ void FEM::customInputNumberChanged(int numCustomInputs) {
     chooseFile->setText(tr("Choose"));
     connect(chooseFile, &QPushButton::clicked, this, [=](){
                 inputFile->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
-            });      
+            });
     chooseFile->setToolTip(tr("Push to choose a file from your file system"));
-    
+
     auto inputLayout = new QHBoxLayout();
     inputLayout->addWidget(inputLabel);
     inputLayout->addWidget(inputFile);
     inputLayout->addWidget(chooseFile);
     newLayout->addLayout(inputLayout);
-    customInputFiles.append(inputFile);    
+    customInputFiles.append(inputFile);
   }
-  newLayout->addStretch();  
+  //newLayout->addStretch();
 
   // Replace outdated widget with new one containing new file input layout
   theCustomFileInputs = newLayout;
   theCustomFileInputWidget->layout()->deleteLater();
 
-  theCustomLayout->removeWidget(theCustomFileInputWidget);  
+  theCustomLayout->removeWidget(theCustomFileInputWidget);
   theCustomFileInputWidget->deleteLater();
 
   theCustomFileInputWidget = new QWidget();
   theCustomFileInputWidget->setLayout(theCustomFileInputs);
   theCustomLayout->addWidget(theCustomFileInputWidget);
-    
+
   newLayout = nullptr;
 }
 
@@ -724,9 +734,9 @@ QString FEM::getApplicationName() {
 
 QString FEM::getMainInput() {
   if (inputFilenames.length() != 0) {
-    return inputFilenames.at(0)->text();    
+    return inputFilenames.at(0)->text();
   } else {
-    return(QString(""));    
+    return(QString(""));
   }
 }
 

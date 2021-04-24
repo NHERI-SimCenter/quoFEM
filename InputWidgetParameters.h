@@ -58,6 +58,8 @@ public:
     void setGPVarNamesAndValues(QStringList theList);
     QStringList getParametereNames(void);
 
+    void clear(void);
+
 signals:
 
 public slots:

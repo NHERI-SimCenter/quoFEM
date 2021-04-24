@@ -204,9 +204,9 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
     }
     else if (arg1 == "SimCenterUQ") {
         // == just initialize
-        delete theSimCenterUQEngine;
-        theSimCenterUQEngine = new SimCenterUQEngine(theParameters,theFemWidget,theEdpWidget);
-        theStackedWidget->insertWidget(1,theSimCenterUQEngine);
+        //delete theSimCenterUQEngine;
+        //theSimCenterUQEngine = new SimCenterUQEngine(theParameters,theFemWidget,theEdpWidget);
+        //theStackedWidget->insertWidget(1,theSimCenterUQEngine);
         theStackedWidget->setCurrentIndex(1);
         theEdpWidget->showAdvancedSensitivity();
         // ==
