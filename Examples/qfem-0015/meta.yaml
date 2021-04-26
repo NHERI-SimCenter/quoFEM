@@ -1,11 +1,8 @@
-summary: In this example, Surogate modeling...
-archive: $SIMCENTER_DEV
-archive_location: quoFEM/examples/qfem-0015
+summary: This example constructs a Gaussian process-based surrogate model for the response of a building structure given a ground motion time history. We are interested in the maximum inter-story drift/acceleration response determined in 14 structural parameters.
+
 author:
 - family: Yi
   given: Sangri
 collection-title: Surrogate training - building
-id: qfem-0015
-title: Surrogate Modeling for Building Earthquake response
-type: book
+
 difficulty: 1
