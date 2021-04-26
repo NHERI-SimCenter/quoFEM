@@ -49,6 +49,7 @@ class QFrame;
 class InputWidgetParameters;
 class InputWidgetEDP;
 class InputWidgetFEM;
+class QGroupBox;
 
 class SurrogateMFInputWidget : public UQ_MethodInputWidget
 {
@@ -66,27 +67,37 @@ public:
     int parseOutputDataForQoI(QString name1);
 
 public slots:
-    void setLowFidDir(bool tog);
+    void setLowSim(bool tog);
+    void setHighSim(bool tog);
+
     void doAdvancedGP(bool tog);
-    void doExistingGP(bool tog);
+    void doExistingLF(bool tog);
+    void doExistingHF(bool tog);
 
 private:
-    QLineEdit *randomSeed, *numSamples, *accuracyMeasure, *timeMeasure, *initialDoE;
+    QLineEdit *numSamples_HF, *initialDoE_HF, *randomSeed,  *accuracyMeasure, *timeMeasure;
+    QLineEdit *numSamples_LF, *initialDoE_LF;
     QLineEdit *inpFileDir_HF, *inpFileDir_LF, *outFileDir_HF, *outFileDir_LF;
     QComboBox *gpKernel;
-    QCheckBox *theCheckButton,*theAdvancedCheckBox,*theExistingCheckBox, *theDoECheckBox;
+    QCheckBox *theAdvancedCheckBox,*theExistingCheckBox_HF,*theExistingCheckBox_LF, *theDoECheckBox;
     QCheckBox *theLinearCheckBox,*theLogtCheckBox;
 
     QLabel * theAdvancedTitle,* theKernelLabel,* theLinearLabel,* theLogtLabel,* theLogtLabel2,* theInitialLabel;
-    QLabel * modelMSG, * errMSG, * theCheckLabel, *theExistingLabel;
+    QLabel * modelMSG, * errMSG, *theExistingLabel;
 
     InputWidgetParameters *theParameters;
     InputWidgetEDP *theEdpWidget;
     InputWidgetFEM *theFemWidget;
     QPushButton *chooseInpFile_LF, *chooseInpFile_HF, *chooseOutFile_LF, *chooseOutFile_HF;
-    QFrame * lineA,* line1;
-    QWidget *theLFoptions;
+    QFrame * line0,* line1, * lineA;
     int countColumn(QString name1);
+
+    QLabel *theLowDataLabel,*theLowSimLabel,* theHighSimLabel,* theHighDataLabel;
+    QCheckBox* theLowDataButton, *theLowSimButton, * theHighDataButton, *theHighSimButton;
+    QWidget *theLowSimOptions, *theHighSimOptions;
+    QGroupBox * theSimBox;
+
+
 };
 
 #endif // SURROGATE_MF_INPUT_WIDGET_H

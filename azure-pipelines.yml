@@ -7,6 +7,13 @@ pr:
 - master
 
 
+resources:
+  repositories:
+  - repository: SimCenterCommon
+    type: github
+    endpoint: https://github.com/NHERI-SimCnter/SimCenterCommon
+    name: NHERI-SimCenter/SimCenterCommon
+
 variables:
 - group: ConanVariables
 

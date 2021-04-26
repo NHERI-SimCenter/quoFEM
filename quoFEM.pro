@@ -29,6 +29,7 @@ win32 {
 } else {
     mac {
     ICON = icons/NHERI-quoFEM-Icon.icns
+    QMAKE_INFO_PLIST=$$PWD/Info.plist    
     } else {
       LIBS += -lglut -lGLU -lGL
     }
@@ -40,7 +41,8 @@ include(../SimCenterCommon/Workflow/JsonConfiguredWidgets.pri)
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    EDP.cpp  \
+        EDP.cpp  \
+        FEM.cpp  \
         SidebarWidgetSelection.cpp \
         InputWidgetEDP.cpp \
         InputWidgetFEM.cpp \
@@ -101,6 +103,7 @@ SOURCES += main.cpp\
 HEADERS  += MainWindow.h \
     InputWidgetEDP.h \
     EDP.h \
+    FEM.h \
     InputWidgetFEM.h \
     SidebarWidgetSelection.h \
     UQ_EngineSelection.h \
