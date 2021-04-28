@@ -8,7 +8,7 @@ Custom UQ for UQpy
 
 This example illustrates how quoFEM can interface a custom UQ engine. A simple forward propagation is conducted using UQpy_, a python package for general uncertainty quantification problems. 
 
-.. figure:: figures/truss2.png
+.. figure:: figures/qfem-0017.png
    :align: center
    :figclass: align-center
    :width: 600
@@ -43,7 +43,7 @@ UQ Workflow
 
 Next, provide the configuration input file path.  In the configuration file, users specify the interface for the parameters (type, name, values of each parameters) required for the custom UQ analysis. The provided script will generate 1 combo box to define sample types, 4 spin boxes to define number of samples, concurrent tasks, and notes, and 1 line edit field to specify the UQ Driver.
 
-.. literalinclude:: ../qfem-0017/src/UQpySimpleExample.json
+.. literalinclude:: src/UQpySimpleExample.json
    :language: json
    :caption: UQpySimpleExample.json
 
