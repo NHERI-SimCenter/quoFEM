@@ -574,9 +574,145 @@ writeInterface(std::ostream &dakotaFile, json_t *uqData, std::string &workflowDr
   return 0;
 }
 
+int processCalDataFile(std::istream &calDataFile,
+                       std::vector<std::string> &edpList,
+                       std::vector<int> &lengthList,
+                       int numResponses, int numFieldResponses) {
+
+    // Compute the expected length of each line and cumulative length corresponding to the responses
+    // within each line
+    int lineLength = 0;
+    std::vector<int> cumLenList(numResponses, 0);
+    for (int i = 0; i < numResponses; i++) {
+        lineLength += lengthList[i];
+        cumLenList[i] += lineLength;
+    }
+
+    // Create an ofstream to write the data after removing all commas
+    std::ofstream spacedDataFile;
+    std::string spacedFileName = "quoFEMScalarCalibrationData.cal";
+    spacedDataFile.open(spacedFileName.c_str());
+    // Check if open succeeded
+    if (!spacedDataFile) {
+        std::cerr << "ERROR: unable to open file: " << spacedFileName << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    // Count the number of experiments, check the length of each line, remove commas and write data to a temp file
+    int numExperiments = 0;
+    std::string line;
+    int lineNum = 0;
+    // For each line in the calibration data file
+    while (getline(calDataFile, line)) {
+        // Replace all commas by space and get a string stream for each line
+        std::replace(line.begin(), line.end(), ',', ' ');
+        std::stringstream lineStream(line);
+        if (!line.empty()) {
+            ++lineNum;
+            int wordCount = 0;
+            // Check length of each line
+            // Tokenizing the line - only spaces and periods are considered as separators
+            char *word;
+            // strtok works on c_strings, not strings and expects a cstring as argument on first call
+            word = strtok(const_cast<char *>(line.c_str()), " \t");
+            // strtok returns a pointer to the start of each token and nullptr if the end of the cstring is reached
+            while (word != nullptr) { // while end of cstring is not reached
+                // Increment the word count
+                ++wordCount;
+                // strtok takes nullptr as argument on subsequent calls and returns a pointer to the beginning of
+                // the next token.
+                word = strtok(nullptr, " \t");
+            }
+            if (wordCount != cumLenList[numResponses]) {
+                std::cout << std::endl << "ERROR: The number of calibration terms expected in each line is "
+                          << lineLength
+                          << ", but the length of line " << lineNum << " is " << wordCount << ". Aborting."
+                          << std::endl;
+                spacedDataFile.close();
+                return EXIT_FAILURE;
+            }
+            spacedDataFile << line << std::endl;
+        }
+    }
+    numExperiments = lineNum;
+    spacedDataFile.close();
+
+    // Start making a list of all the calibration data files to be moved to the upper directory
+    std::ofstream calFilesTracker;
+    std::string trackerFileName = "calibrationDataFilesToMove.cal";
+    calFilesTracker.open(trackerFileName.c_str());
+
+    if (numFieldResponses > 0) { // When non-scalar data is used
+        std::string line;
+        // For each line in the calibration data file
+        while (getline(calDataFile, line)) {
+            std::stringstream lineStream(line);
+            if (!line.empty()) {
+                int wordCount = 0;
+                // For each response quantity, create a data file and write the corresponding data to it
+                // Also create a data file with the default error covariance structure for each response quantity
+                for (int responseNum = 0; responseNum < numResponses; responseNum++) {
+                    // Create a file for each response variable data
+                    std::stringstream fName;
+                    fName << edpList[responseNum] << "." << lineNum << ".dat";
+                    std::ofstream outfile;
+                    outfile.open(fName.str().c_str());
+
+                    // Create a default file for error variance
+                    std::stringstream errFileName;
+                    errFileName << edpList[responseNum] << "." << lineNum << ".sigma";
+                    std::ofstream errFile;
+                    errFile.open(errFileName.str().c_str());
+
+                    // Add these filenames to the file containing the list of files to move to upper directory
+                    calFilesTracker << fName.str() << std::endl;
+                    calFilesTracker << errFileName.str() << std::endl;
+
+                    // Get the calibration terms corresponding to length of each response quantity
+                    while (wordCount < cumLenList[responseNum]) {
+                        std::string word;
+                        lineStream >> word;
+                        if (word.empty()) {
+                            std::cout << std::endl << "ERROR: The expected number of calibration terms for  "
+                                      << edpList[responseNum] << " is " << lengthList[responseNum]
+                                      << ", but got " << wordCount << " terms." << std::endl;
+                            return EXIT_FAILURE;
+                        }
+                        else {
+                            outfile << word << std::endl;
+                            wordCount++;
+                            errFile << "1" << std::endl;
+                        }
+                        std::cout << "word count: " << wordCount << ", response num: " << responseNum
+                                  << ", filename: " << fName.str() << ", word: " << word << std::endl;
+                    }
+                    outfile.close();
+                    errFile.close();
+
+//                    // Populate the default error covariance files
+//                    std::ofstream sigmaFile;
+//                    sigmaFile.open(errFileName.str().c_str());
+//                    for (int l=0; l < lengthList[responseNum]; l++) {
+//                        sigmaFile << "1" << std::endl;
+//                    }
+//                    sigmaFile.close();
+                }
+//            std::cout << "Length of line " << lineNum << " is: " << wordCount << std::endl;
+            }
+        }
+    }
+
+    else { // When only scalar data is used - only the space-delimited calibration data file needs to be moved
+        calFilesTracker << spacedFileName << std::endl;
+    }
+
+    calFilesTracker.close();
+    return numExperiments;
+}
+
 int
 writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse, bool numericalGradients, bool numericalHessians,
-	      std::vector<std::string> &edpList, bool readCalibrationData, int numExperiments) {
+	      std::vector<std::string> &edpList, bool readCalibrationData, int numExperiments, std::istream &calDataFile) {
 
   int numResponses = 0;
 
@@ -673,6 +809,8 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
 
     numResponses = json_array_size(rootEDP);
 
+    std::vector<int> lenList(numResponses, 1);
+
     int numFieldResponses = 0;
     int numScalarResponses = 0;
 
@@ -680,14 +818,6 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
       dakotaFile << " response_functions = " << numResponses << "\n response_descriptors = ";
     else
       dakotaFile << " calibration_terms = " << numResponses << "\n response_descriptors = ";
-
-//    for (int j=0; j<numResponses; j++) {
-//      json_t *theEDP_Item = json_array_get(rootEDP,j);
-//      const char *theEDP = json_string_value(json_object_get(theEDP_Item,"name"));
-//      dakotaFile << "'" << theEDP << "' ";
-//      std::string newEDP(theEDP);
-//      edpList.push_back(newEDP);
-//    }
 
       for (int j=0; j<numResponses; j++) {
           json_t *theEDP_Item = json_array_get(rootEDP,j);
@@ -708,15 +838,17 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
       }
 
       if (numFieldResponses > 0) {
-          if (numScalarResponses > 0) {
-          dakotaFile << "\n  scalar_calibration_terms = " << numScalarResponses;
-          }
-          dakotaFile << "\n\n  # Define field terms";
           if (idResponse.compare("calibration") != 0) {
-            dakotaFile << "\n  field_responses = " << numFieldResponses << "\n  lengths = ";
+              if (numScalarResponses > 0) {
+                  dakotaFile << "\n  scalar_responses = " << numScalarResponses;
+              }
+              dakotaFile << "\n  field_responses = " << numFieldResponses << "\n  lengths = ";
           }
           else {
-            dakotaFile << "\n  field_calibration_terms = " << numFieldResponses << "\n  lengths = ";
+              if (numScalarResponses > 0) {
+                  dakotaFile << "\n  scalar_calibration_terms = " << numScalarResponses;
+              }
+              dakotaFile << "\n  field_calibration_terms = " << numFieldResponses << "\n  lengths = ";
           }
           for (int j = 0; j < numResponses; j++) {
               json_t *theEDP_Item = json_array_get(rootEDP, j);
@@ -724,6 +856,7 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
               if (varType.compare("field") == 0) {
                   int len = json_integer_value(json_object_get(theEDP_Item, "length"));
                   dakotaFile << len << " ";
+                  lenList[j] = len;
               }
           }
 
@@ -740,18 +873,35 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
 //      }
     }
 
+      int numExp = processCalDataFile(calDataFile, edpList, lenList, numResponses, numFieldResponses);
+
       if (readCalibrationData) {
           dakotaFile << "\n\n  # Specify to read calibration data";
           dakotaFile << "\n  calibration_data";
-          int nExp = numExperiments;
+          int nExp = numExp;
           if (nExp < 1) {
           nExp = 1;
           }
           dakotaFile << "\n  num_experiments = " << nExp;
 
+//          bool wroteScalar = false;
+          dakotaFile << "\n  experiment_variance_type = ";
+          for (int j = 0; j < numResponses; j++) {
+              if (lenList[j] > 1) {
+                  dakotaFile << "'diagonal' ";
+              }
+              else{
+                  dakotaFile << "'scalar' ";
+//                  if (!wroteScalar) {
+//                      dakotaFile << "'scalar' ";
+//                      wroteScalar = true;
+//                  }
+              }
+          }
+
           // Create an empty file to indicate that calibration data files must be moved to upper directory
-          std::ofstream calFile("readCalibrationData.cal");
-          calFile.close();
+//          std::ofstream calFile("calibrationDataFilesToMove.cal");
+//          calFile.close();
           }
       }
 
@@ -823,11 +973,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
       if (sensitivityAnalysis == true)
 	dakotaFile << "variance_based_decomp \n\n";
-
+      std::ifstream calDataFile;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList, true);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0, calDataFile);
     }
 
     else if (strcmp(method,"LHS")==0) {
@@ -842,11 +992,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
       if (sensitivityAnalysis == true)
 	dakotaFile << "variance_based_decomp \n\n";
-
+      std::ifstream calDataFile;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0, calDataFile);
     }
 
     else if (strcmp(method,"Importance Sampling")==0) {
@@ -857,11 +1007,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
       dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
       dakotaFile << "method, \n importance_sampling \n " << isMethod << " \n samples = " << numSamples << "\n seed = " << seed << "\n\n";
-
+      std::ifstream calDataFile;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0, calDataFile);
     }
 
     else if (strcmp(method,"Gaussian Process Regression")==0) {
@@ -898,12 +1048,12 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 		 << trainingMethod << "\n\n";
 
       dakotaFile << "model \n id_model = 'TrainingModel' \n single \n interface_pointer = 'SimulationInterface'";
-
+      std::ifstream calDataFile;
       std::string emptyString;
       std::string interfaceString("SimulationInterface");
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, interfaceString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0, calDataFile);
 
     }
 
@@ -932,12 +1082,12 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	samplingMethod = "random";
 
       dakotaFile << "environment \n  tabular_data \n tabular_data_file = 'a.out'\n\n"; // a.out for trial data
-
+      std::ifstream calDataFile;
       std::string emptyString;
       std::string interfaceString("SimulationInterface");
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, interfaceString, evaluationConcurrency);
-      int numResponse = writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
+      int numResponse = writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0, calDataFile);
 
       dakotaFile << "method \n polynomial_chaos \n " << pceMethod << intValue;
       dakotaFile << "\n samples_on_emulator = " << samplingSamples << "\n seed = " << samplingSeed << "\n sample_type = "
@@ -1003,11 +1153,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	dakotaFile << "\n\t";
       }
       dakotaFile << "\n\n";
-
+      std::ifstream calDataFile;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, true, true, edpList, false, 0);
+      writeResponse(dakotaFile, rootEDP, emptyString, true, true, edpList, false, 0, calDataFile);
     }
 
     else if (strcmp(method,"Global Reliability")==0) {
@@ -1043,11 +1193,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	dakotaFile << "\n\t";
       }
       dakotaFile << "\n\n";
-
+      std::ifstream calDataFile;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, false, 0);
+      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, false, 0, calDataFile);
     }
 
   } else if ((strcmp(type, "Parameters Estimation") == 0)) {
@@ -1065,8 +1215,9 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     const char *factors = json_string_value(json_object_get(methodData,"factors"));
     bool readCalibrationDataFile = json_boolean_value(json_object_get(methodData, "readCalibrationData"));
     int numExperiments = json_integer_value(json_object_get(methodData, "numExperiments"));
+    std::ifstream calDataFile("/Users/aakash/Desktop/SimCenter/Joel/CalibrationPaper/quoFEMDakota/eigData.csv");
 
-    dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
+      dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
 
     dakotaFile << "method, \n " << methodString << "\n  convergence_tolerance = " << tol
 	       << " \n   max_iterations = " << maxIterations;
@@ -1080,7 +1231,8 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     std::string emptyString;
     writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
     writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-    writeResponse(dakotaFile, rootEDP, calibrationString, true, false, edpList, readCalibrationDataFile, numExperiments);
+    writeResponse(dakotaFile, rootEDP, calibrationString, true, false, edpList, readCalibrationDataFile, numExperiments,
+                  calDataFile);
 
     if (strcmp(factors,"") != 0) {
       dakotaFile << "\n  primary_scale_types = \"value\" \n  primary_scales = ";
@@ -1122,8 +1274,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
     bool readCalibrationDataFile = json_boolean_value(json_object_get(methodData, "readCalibrationData"));
     int numExperiments = json_integer_value(json_object_get(methodData, "numExperiments"));
+    std::ifstream calDataFile("/Users/aakash/Desktop/SimCenter/Joel/CalibrationPaper/quoFEMDakota/calDataField.csv");
+//    std::ifstream calDataFile("/Users/aakash/Desktop/SimCenter/Joel/CalibrationPaper/quoFEMDakota/eigData.csv");
 
-    if (strcmp(method,"DREAM")==0) {
+
+      if (strcmp(method,"DREAM")==0) {
 
       int chains = json_integer_value(json_object_get(methodData,"chains"));
 
@@ -1132,7 +1287,8 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 		 << "\n  chain_samples = " << chainSamples
 		 << "\n  chains = " << chains
 		 << "\n  jump_step = " << jumpStep
-		 << "\n  burn_in_samples = " << burnInSamples << "\n\n";
+		 << "\n  burn_in_samples = " << burnInSamples
+		 << "\n  calibrate_error_multipliers per_response" << "\n\n";
 
     } else {
 
@@ -1157,7 +1313,8 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     std::string emptyString;
     writeRV(dakotaFile, theRandomVariables, emptyString, rvList, false);
     writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-    writeResponse(dakotaFile, rootEDP, calibrationString, false, false, edpList, readCalibrationDataFile, numExperiments);
+    writeResponse(dakotaFile, rootEDP, calibrationString, false, false, edpList, readCalibrationDataFile, numExperiments,
+                  calDataFile);
 
   } else {
     std::cerr << "uqType: NOT KNOWN\n";
@@ -1165,7 +1322,5 @@ writeDakotaInputFile(std::ostream &dakotaFile,
   }
   return 0;
 }
-
-
 
 
