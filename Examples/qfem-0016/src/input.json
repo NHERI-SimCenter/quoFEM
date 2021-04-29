@@ -1,0 +1,105 @@
+{
+    "Applications": {
+        "UQ": {
+            "Application": "SimCenterUQ-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 1,
+            "name": "Node_2_Disp_1_Mean",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "Node_2_Disp_1_Std",
+            "type": "scalar"
+        }
+    ],
+    "UQ_Method": {
+        "surrogateMethodInfo": {
+            "accuracyLimit": 0.02,
+            "advancedOpt": true,
+            "existingDoE": false,
+            "initialDoE": 10,
+            "kernel": "Matern 5/2",
+            "linear": true,
+            "logTransform": true,
+            "method": "Sampling and Simulation",
+            "samples": 300,
+            "seed": 32,
+            "timeLimit": 60
+        },
+        "uqEngine": "SimCenterUQ",
+        "uqType": "Train GP Surrogate Model"
+    },
+    "fem": {
+        "dir": "{Current_Dir}/.",
+        "inputFile": "{Current_Dir}/ShearBuilding_NL.tcl",
+        "mainInput": "ShearBuilding_NL.tcl",
+        "mainPostprocessScript": "postprocess.tcl",
+        "numInputs": 1,
+        "postprocessScript": "{Current_Dir}/postprocess.tcl",
+        "program": "OpenSees"
+    },
+    "localAppDir": "C:/Users/yisan/Desktop/Development/quoFEM/backend",
+    "python": "C:/Users/yisan/AppData/Local/Programs/Python/Python38/python.exe",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 50,
+            "name": "w",
+            "refCount": 1,
+            "upperbound": 150,
+            "value": "RV.w",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 40,
+            "name": "wR",
+            "refCount": 1,
+            "upperbound": 80,
+            "value": "RV.wR",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 240,
+            "name": "k",
+            "refCount": 1,
+            "upperbound": 360,
+            "value": "RV.k",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.05,
+            "name": "alp",
+            "refCount": 1,
+            "upperbound": 0.15,
+            "value": "RV.alp",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 18,
+            "name": "Fy",
+            "refCount": 1,
+            "upperbound": 22,
+            "value": "RV.Fy",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
+    "uqResults": {
+    },
+    "workingDir": "C:/Users/yisan/Documents/quoFEM/LocalWorkDir"
+}

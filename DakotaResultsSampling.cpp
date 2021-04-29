@@ -1027,14 +1027,21 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     chartView->chart()->legend()->hide();
 
 
+    QPushButton* save_spreadsheet = new QPushButton();
+    save_spreadsheet->setText("Save Data");
+    save_spreadsheet->setToolTip(tr("Save data into file in a CSV format"));
+    //save_spreadsheet->resize(30,30);
+    connect(save_spreadsheet,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetClicked()));
+
     //
     // create a widget into which we place the chart and the spreadsheet
     //
 
     QWidget *widget = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout(widget);
-    layout->addWidget(chartView, 1);
-    layout->addWidget(spreadsheet, 1);
+    QGridLayout *layout = new QGridLayout(widget);
+    layout->addWidget(chartView, 0,0,1,1);
+    layout->addWidget(save_spreadsheet,1,0,1,1); // Qt::AlignLeft);
+    layout->addWidget(spreadsheet,2,0,1,1);
 
     //layout->addWidget(analysis_message,1);
     // add 3 Widgets to TabWidget

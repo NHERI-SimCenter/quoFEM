@@ -81,7 +81,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetParameters *param,InputWidgetF
     //
 
     QHBoxLayout *theSelectionLayout = new QHBoxLayout();
-    theSelectionLayout->setMargin(10);
+    //theSelectionLayout->setMargin(10);
     SectionTitle *title=new SectionTitle();
     title->setText(tr("UQ Engine"));
 
@@ -132,6 +132,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetParameters *param,InputWidgetF
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
     layout->setMargin(0);
+
     theCurrentEngine=theDakotaEngine;
     thePreviousEngine=theCurrentEngine;
 

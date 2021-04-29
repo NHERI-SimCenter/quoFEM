@@ -1,0 +1,67 @@
+# This pipeline builds quoFEM
+
+trigger:
+- master
+
+pr:
+- master
+
+
+resources:
+  repositories:
+  - repository: SimCenterCommon
+    type: github
+    endpoint: https://github.com/NHERI-SimCnter/SimCenterCommon
+    name: NHERI-SimCenter/SimCenterCommon
+
+variables:
+- group: ConanVariables
+
+strategy:
+  matrix:
+    linux:
+      imageName: "ubuntu-18.04"
+      CONAN_GCC_VERSIONS: 7
+      CONAN_CLANG_VERSIONS: ""
+    macOSXCatalina:
+      imageName: "macos-10.15"
+      CONAN_APPLE_CLANG_VERSIONS: 11.0
+    windows:
+      imageName: "windows-2019"
+      CONAN_VISUAL_VERSIONS: 16
+      CONAN_VISUAL_RUNTIMES: MD,MDd
+
+  maxParallel: 4
+
+pool:
+  vmImage: $(imageName)
+
+steps:
+
+# checkout repos
+- checkout: self
+- checkout: github://NHERI-SimCenter/SimCenterCommon
+
+# Use Python version
+- task: UsePythonVersion@0
+  displayName: Switch to Python 3.8
+  inputs:
+    versionSpec: '3.8' 
+    addToPath: true 
+    architecture: 'x64'
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install --upgrade setuptools
+    pip install wheel
+    pip install conan --upgrade
+    conan user
+    conan remote add simcenter https://api.bintray.com/conan/nheri-simcenter/simcenter --insert 0
+    conan remote list
+    ls
+  displayName: Conan Installation
+
+- script: |
+    conan install qt/5.15.2 -o qt:qt3d=True -o qt:qtcharts=True -o qt:qttools=True -g virtualrunenv --build missing
+  displayName: Install Qt
+

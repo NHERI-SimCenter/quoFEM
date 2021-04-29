@@ -2,11 +2,11 @@ import time
 import pickle as pickle
 import numpy as np
 import os
-import argparse
-import sys, getopt
+import sys
 import json as json
 import shutil
 import subprocess
+from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
 
 def main(params_dir,surrogate_dir,json_dir,result_file):
     global error_file
@@ -34,7 +34,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file):
     #norm_var_thr = 0.0001
     norm_var_thr = inp_tmp["fem"]["varThres"]
     when_inaccurate = inp_tmp["fem"]["femOption"]
-
+    do_mf = inp_tmp
     #when_inaccurate='do_original'
     #when_inaccurate='give_error'
     #when_inaccurate='do_nothing'
@@ -65,6 +65,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file):
         kern_name = 'Mat32'
     elif kernel == 'Matern 5/2':
         kern_name = 'Mat52'
+    did_mf = sur["doMultiFidelity"]
 
     # from json
     g_name_sur = list()
@@ -167,7 +168,8 @@ def main(params_dir,surrogate_dir,json_dir,result_file):
     y_pred_prior_var = np.zeros(y_dim)
 
     for ny in range(y_dim):
-        y_pred_tmp, y_pred_var_tmp  = m_list[ny].predict(rv_val)
+        #y_pred_tmp, y_pred_var_tmp  = m_list[ny].predict(rv_val)
+        y_pred_tmp, y_pred_var_tmp = predict(m_list[ny],rv_val,did_mf)
         y_pred[ny]=y_pred_tmp
         if did_logtransform:
             # y_var_val = np.var(np.log(m_list[ny].Y))
@@ -178,11 +180,11 @@ def main(params_dir,surrogate_dir,json_dir,result_file):
         else:
             y_data_var[ny] = np.var(m_list[ny].Y)
             y_pred_var[ny] = y_pred_var_tmp
-        for parname in m_list[ny].parameter_names():
-            if (kern_name in parname) and parname.endswith('variance'):
-                exec('y_pred_prior_var[ny]=m_list[ny].' + parname)
+        #for parname in m_list[ny].parameter_names():
+        #    if (kern_name in parname) and parname.endswith('variance'):
+        #        exec('y_pred_prior_var[ny]=m_list[ny].' + parname)
 
-    error_ratio1 = y_pred_var.T / y_pred_prior_var
+    #error_ratio1 = y_pred_var.T / y_pred_prior_var
     error_ratio2 = y_pred_var.T / y_data_var
     idx = np.argmax(error_ratio2) + 1
 
@@ -232,9 +234,12 @@ def main(params_dir,surrogate_dir,json_dir,result_file):
 
             os.chdir("../")
 
-            result_values = table[g_idx].tolist()
             with open('results.out', 'w') as f:
-                f.write(' '.join(map(str, result_values)))
+                if table.size==1:
+                    f.write(str(table))
+                else:
+                    result_values = table[g_idx].tolist()
+                    f.write(' '.join(map(str, result_values)))
 
             msg2 = msg0+msg1+'- RUN original model\n'
             print(msg2)
@@ -265,6 +270,17 @@ def main(params_dir,surrogate_dir,json_dir,result_file):
         y_pred=np.exp(y_pred)
 
     np.savetxt(result_file, np.array([y_pred[g_idx]]), fmt='%.5e')
+
+
+def predict(m, X, did_mf):
+
+    if not did_mf:
+        return m.predict(X)
+    else:
+        X_list = convert_x_list_to_array([X, X])
+        X_list_l = X_list[:X.shape[0]]
+        X_list_h = X_list[X.shape[0]:]
+        return m.predict(X_list_h)
 
 if __name__ == "__main__":
     error_file = open('surrogate.err', "w")

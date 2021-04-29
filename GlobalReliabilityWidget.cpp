@@ -122,7 +122,7 @@ GlobalReliabilityWidget::inputFromJSON(QJsonObject &jsonObject){
 
     bool result = false;
     if ( (jsonObject.contains("gpApproximation"))
-         && (jsonObject.contains("probabilityLevel"))
+         && (jsonObject.contains("responseLevel"))
          ) {
 
         //responseLevel->setText("");

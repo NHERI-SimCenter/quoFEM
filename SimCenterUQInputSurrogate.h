@@ -81,7 +81,7 @@ signals:
 
 public slots:
    void clear(void);
-   void onTextInpChanged(const QString &arg1);
+   void onIndexChanged(const QString &arg1);
    void numModelsChanged(int numModels);
 
 private:
@@ -99,7 +99,7 @@ private:
 
     QStackedWidget *theStackedWidget;
     UQ_MethodInputWidget *theInpCurrentMethod;
-    UQ_MethodInputWidget *theDoE, *theData;
+    UQ_MethodInputWidget *theDoE, *theData, *theMultiFidelity;
 
     InputWidgetParameters *theParameters;
     InputWidgetEDP *theEdpWidget;

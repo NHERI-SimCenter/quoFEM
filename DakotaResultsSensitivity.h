@@ -43,7 +43,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtCharts/QChart>
 #include <QMessageBox>
 #include <QPushButton>
-
+#include <QScrollArea>
 
 using namespace QtCharts;
 
@@ -95,6 +95,13 @@ private:
    QVector<double>theMeans;
    QVector<double>theStdDevs;
    QVector<double>theKurtosis;
+   QVector<QVector<double>> sobols_tot;
+   QVector<QVector<double>> sobols_main;
+
+   QStringList edpname_list, rvname_list;
+   int numEDP,numRV;
+   void gsaChart(QScrollArea *&summaryLayout);
+
 };
 
 #endif // DAKOTA_RESULTS_SENSITIVITY_H

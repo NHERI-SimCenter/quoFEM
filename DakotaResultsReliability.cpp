@@ -231,6 +231,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
   const std::string needleStart = "Cumulative Distribution Function (CDF)";
   const std::string needleEnd = "---------------------------------------";
+  const std::string needleEnd2 = "<<<<< Iterator importance_sampling completed.";
 
   std::string haystack;
   bool isStartOrEnd = true;
@@ -282,6 +283,11 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
        int numRows = 0;
        while (std::getline(fileResults, haystack)) {
            if ((haystack.find(needleEnd) != std::string::npos)) {
+               // wrap up
+               qDebug() << "FOUND END";
+               isStartOrEnd = true;
+               break;
+           } else if ((haystack.find(needleEnd2) != std::string::npos)) {
                // wrap up
                qDebug() << "FOUND END";
                isStartOrEnd = true;
@@ -534,6 +540,28 @@ DakotaResultsReliability::inputFromJSON(QJsonObject &jsonObject)
 
 
     this->clear();
+
+    //
+    // check any data exists
+    //
+
+    QJsonObject &theObject = jsonObject;
+
+    QJsonValue uqValue;
+    if (jsonObject.contains("uqResults")) {
+        uqValue = jsonObject["uqResults"];
+        jsonObject = uqValue.toObject();
+    } else
+        theObject = jsonObject;
+
+
+    QJsonValue spreadsheetValue = theObject["spreadsheet"];
+    QJsonArray dataValue = spreadsheetValue["data"].toArray();
+
+    if (dataValue.isEmpty()) { // ok .. if saved files but did not run a simulation
+        return true;
+    }
+
     //
     // create a summary widget in which place basic output (name, mean, stdDev)
     //

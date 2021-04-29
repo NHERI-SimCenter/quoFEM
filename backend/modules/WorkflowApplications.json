@@ -90,7 +90,7 @@
       },
       {
         "Name": "SurrogateGP",
-        "ExecutablePath": "applications/performSIM/surrogateGP/createGpDriver.exe",
+        "ExecutablePath": "applications/performSIM/surrogateGP/createGpDriver",
         "ApplicationSpecificInputs": []
       },
       {
@@ -102,7 +102,12 @@
         "Name": "Custom",
         "ExecutablePath": "",
         "ApplicationSpecificInputs": []
-      }	
+      }	,
+      {
+        "Name": "MultipleModels",
+        "ExecutablePath": "applications/performSIM/MultipleModels/createMultipleModelsDriver",
+        "ApplicationSpecificInputs": []
+      } 
     ]
   }    
 } 

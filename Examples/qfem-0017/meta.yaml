@@ -1,0 +1,6 @@
+summary: This example illustrates how a third-party UQ engine can be used with quoFEM.
+author:
+- family: Gardner & Yi
+  given: Michael & Sangri
+collection-title: Custom UQ for UQpy
+difficulty: 2

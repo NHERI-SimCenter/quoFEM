@@ -29,6 +29,9 @@ win32 {
 } else {
     mac {
     ICON = icons/NHERI-quoFEM-Icon.icns
+    QMAKE_INFO_PLIST=$$PWD/Info.plist    
+    } else {
+      LIBS += -lglut -lGLU -lGL
     }
 }
 
@@ -38,7 +41,8 @@ include(../SimCenterCommon/Workflow/JsonConfiguredWidgets.pri)
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    EDP.cpp  \
+        EDP.cpp  \
+        FEM.cpp  \
         SidebarWidgetSelection.cpp \
         InputWidgetEDP.cpp \
         InputWidgetFEM.cpp \
@@ -92,12 +96,14 @@ SOURCES += main.cpp\
     UCSD_Results.cpp \
     CustomUQ_Results.cpp \
     SurrogateNoDoEInputWidget.cpp \
-    SurrogateDoEInputWidget.cpp
+    SurrogateDoEInputWidget.cpp \
+    SurrogateMFInputWidget.cpp
 
 
 HEADERS  += MainWindow.h \
     InputWidgetEDP.h \
     EDP.h \
+    FEM.h \
     InputWidgetFEM.h \
     SidebarWidgetSelection.h \
     UQ_EngineSelection.h \
@@ -150,7 +156,8 @@ HEADERS  += MainWindow.h \
     UCSD_Results.h \
     CustomUQ_Results.h \
     SurrogateNoDoEInputWidget.h \
-    SurrogateDoEInputWidget.h
+    SurrogateDoEInputWidget.h \
+    SurrogateMFInputWidget.h
 
 FORMS    += mainwindow.ui
 
@@ -159,15 +166,15 @@ RESOURCES += \
 
 # Path to build directory
 win32 {
-DESTDIR = $$shell_path($$OUT_PWD)
-Release:DESTDIR = $$DESTDIR/release
-Debug:DESTDIR = $$DESTDIR/debug
+   DESTDIR = $$shell_path($$OUT_PWD)
+   Release:DESTDIR = $$DESTDIR/release
+   Debug:DESTDIR = $$DESTDIR/debug
 
-PATH_TO_BINARY=$$DESTDIR/Examples
+   PATH_TO_BINARY=$$DESTDIR/Examples
 
 } else {
     mac {
-    PATH_TO_BINARY=$$OUT_PWD/quoFEM.app/Contents/MacOS
+        PATH_TO_BINARY=$$OUT_PWD/quoFEM.app/Contents/MacOS
     }
 }
 
@@ -189,14 +196,13 @@ export(copydata.commands)
 QMAKE_EXTRA_TARGETS += first copydata CopyDLLs
 
 }else {
-mac {
 
-# Copies over the examples folder into the build directory
-copydata.commands = $(COPY_DIR) \"$$shell_path($$PWD/Examples)\" \"$$shell_path($$PATH_TO_BINARY)\"
-first.depends = $(first) copydata
-export(first.depends)
-export(copydata.commands)
-QMAKE_EXTRA_TARGETS += first copydata
-
-}
+  mac {
+    # Copies over the examples folder into the build directory
+    copydata.commands = $(COPY_DIR) \"$$shell_path($$PWD/Examples)\" \"$$shell_path($$PATH_TO_BINARY)\"
+    first.depends = $(first) copydata
+    export(first.depends)
+    export(copydata.commands)
+    QMAKE_EXTRA_TARGETS += first copydata
+  }
 }

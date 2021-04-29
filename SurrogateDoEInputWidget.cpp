@@ -75,7 +75,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
 
     accuracyMeasure = new QLineEdit();
     accuracyMeasure->setText(tr("0.02"));
-    accuracyMeasure->setValidator(new QIntValidator);
+    accuracyMeasure->setValidator(new QDoubleValidator);
     accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
     accuracyMeasure->setMaximumWidth(150);
 
@@ -104,6 +104,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     timeMeasure->setValidator(new QIntValidator);
     timeMeasure->setToolTip("Max Computation Time (minutes)");
     timeMeasure->setMaximumWidth(150);
+    timeMeasure->setMinimumWidth(150);
 
     layout->addWidget(new QLabel("Max Computation Time (minutes)    "), 4, 0);
     layout->addWidget(timeMeasure, 4, 1);
@@ -113,10 +114,10 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     //
 
     theAdvancedCheckBox = new QCheckBox();
-    theAdvancedTitle=new QLabel("\n    Advanced Options for Gaussian Process Model");
+    theAdvancedTitle=new QLabel("\n    Advanced Options for Gaussian Process Model ");
     theAdvancedTitle->setStyleSheet("font-weight: bold; color: grey");
     layout->addWidget(theAdvancedTitle, 5, 0, 1, 3,Qt::AlignBottom);
-    layout->addWidget(theAdvancedCheckBox, 5, 0,Qt::AlignBottom);
+    layout->addWidget(theAdvancedCheckBox, 5, 0, 1, 3, Qt::AlignBottom);
 
     lineA= new QFrame;
     lineA->setFrameShape(QFrame::HLine);
@@ -166,7 +167,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
 
     theLogtCheckBox = new QCheckBox();
     layout->addWidget(theLogtLabel, 9, 0);
-    layout->addWidget(theLogtLabel2, 9, 1);
+    layout->addWidget(theLogtLabel2, 9, 1,1,2);
     layout->addWidget(theLogtCheckBox, 9, 1);
     theLogtLabel->setVisible(false);
     theLogtLabel2->setVisible(false);
@@ -403,23 +404,22 @@ SurrogateDoEInputWidget::outputToJSON(QJsonObject &jsonObj){
 bool
 SurrogateDoEInputWidget::inputFromJSON(QJsonObject &jsonObject){
 
-    bool result = false;
-        if (jsonObject.contains("samples") && jsonObject.contains("seed")) {
+    bool result = true;
+
+    if (jsonObject.contains("samples") && jsonObject.contains("seed")) {
         int samples=jsonObject["samples"].toInt();
         double seed=jsonObject["seed"].toDouble();
         numSamples->setText(QString::number(samples));
         randomSeed->setText(QString::number(seed));
-    result = true;
     } else {
         result = false;
     }
 
-    if (jsonObject.contains("timeLimit") && jsonObject.contains("acuracyLimit")) {
+    if (jsonObject.contains("timeLimit") && jsonObject.contains("accuracyLimit")) {
         int time=jsonObject["timeLimit"].toInt();
-        double accuracy=jsonObject["acuracyLimit"].toDouble();
+        double accuracy=jsonObject["accuracyLimit"].toDouble();
         timeMeasure->setText(QString::number(time));
         accuracyMeasure->setText(QString::number(accuracy));
-        result = true;
     } else {
         result = false;
     }
@@ -440,7 +440,6 @@ SurrogateDoEInputWidget::inputFromJSON(QJsonObject &jsonObject){
         } else {
             theAdvancedCheckBox->setChecked(false);
         }
-        result = true;
     } else {
     result = false;
     }
@@ -453,7 +452,6 @@ SurrogateDoEInputWidget::inputFromJSON(QJsonObject &jsonObject){
         } else {
             theExistingCheckBox->setChecked(false);
         }
-        result = true;
     } else {
         result = false;
     }

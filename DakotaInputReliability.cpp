@@ -61,6 +61,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStackedWidget>
 #include <LocalReliabilityWidget.h>
 #include <GlobalReliabilityWidget.h>
+#include <ImportanceSamplingInputWidget.h>
 
 DakotaInputReliability::DakotaInputReliability(QWidget *parent)
 : UQ_Engine(parent)
@@ -80,6 +81,7 @@ DakotaInputReliability::DakotaInputReliability(QWidget *parent)
     reliabilityMethod->setMinimumWidth(200);
     reliabilityMethod->addItem(tr("Local Reliability"));
     reliabilityMethod->addItem(tr("Global Reliability"));
+    reliabilityMethod->addItem(tr("Importance Sampling"));
 
     methodLayout->addWidget(label1);
     methodLayout->addWidget(reliabilityMethod,2);
@@ -98,6 +100,9 @@ DakotaInputReliability::DakotaInputReliability(QWidget *parent)
 
     theGlobal = new GlobalReliabilityWidget();
     theStackedWidget->addWidget(theGlobal);
+
+    theIS = new ImportanceSamplingInputWidget();
+    theStackedWidget->addWidget(theIS);
 
     // set current widget to index 0
     theCurrentMethod = theLocal;
@@ -121,9 +126,13 @@ void DakotaInputReliability::onMethodChanged(QString text)
   if (text=="Local Reliability") {
     theStackedWidget->setCurrentIndex(0);
     theCurrentMethod = theLocal;
-  } else {
+  } else if (text=="Global Reliability") {
     theStackedWidget->setCurrentIndex(1);
     theCurrentMethod = theGlobal;
+  }
+  else if (text=="Importance Sampling") {
+    theStackedWidget->setCurrentIndex(2);
+    theCurrentMethod = theIS;
   }
 }
 

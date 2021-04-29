@@ -15,7 +15,7 @@ Kurumbhati and Mukesh Ramancha from UC San Diego, this example looks at
 the following simplified finite element model of a steel building.
 
 
-.. figure:: ../qfem-0007/figures/frameFE.png
+.. figure:: figures/qfem-0007.png
    :align: center
    :width: 400
    :figclass: align-center
@@ -66,8 +66,8 @@ The exercise requires a single OpenSees script file. The user is required to dow
 
 1. :qfem-0007:`Frame2FEM.tcl <src/Frame2FEM.tcl>` 
 
-.. literalinclude:: ../qfem-0007/src/Frame2FEM.tcl
-   :language: tcl
+    .. literalinclude:: src/Frame2FEM.tcl
+       :language: tcl
 
 .. note::
    1. The tcl script when it runs creates a ``results.out``. As a consequence, no postprocessing script is needed. 
@@ -82,14 +82,14 @@ The steps involved:
 1. Start the application and the UQ Selection will be highlighted. In the panel for the UQ selection, keep the UQ engine as that selected, i.e. Dakota. In the UQ Method category drop down menu change the category to **Parameters Estimation**, and the method as **NL2SOL**, the convergence tolerance to ``1.0e-6`` and leave the scaling factors empty (assumes weights of 1.0 on all response values) as shown in the figure.
 
 
-.. figure:: ../qfem-0007/figures/joelUQ.png
+.. figure:: figures/joelUQ.png
    :width: 600
    :align: center
    :figclass: align-center
 
 2. Next select the **FEM** tab from the input panel selection. This will default to the OpenSees FEM engine. For the main script copy the path name to the ``fem.tcl`` file or select **choose** and navigate to the file. 
 
-.. figure:: ../qfem-0007/figures/joelCalFEM.png
+.. figure:: figures/joelCalFEM.png
    :width: 600
    :align: center
    :figclass: align-center
@@ -101,7 +101,7 @@ The steps involved:
 3. Next select the **RV** tab from the input panel. This should be prepopulated with two random variables with same names as those having ``pset`` in the tcl script, i.e. ``Ic1`` and ``Ic2``. For each variable, from the drop down menu change them from having a constant distribution to a continuous design one and then provide the lower bounds, upper bounds and the starting points shown in the figure below.
 
 
-.. figure:: ../qfem-0007/figures/joelCalRV.png
+.. figure:: figures/joelCalRV.png
    :width: 600
    :align: center
    :figclass: align-center
