@@ -99,8 +99,6 @@ int writeResponse(std::ostream &dakotaFile,
 		  bool numericalGradients, 
 		  bool numericalHessians,
 		  std::vector<std::string> &edpList,
-		  bool readCalibrationData,
-		  int numExperiments,
 		  std::istream &calDataFile);
 
 int writeDakotaInputFile(std::ostream &dakotaFile, 
@@ -112,8 +110,22 @@ int writeDakotaInputFile(std::ostream &dakotaFile,
 			 std::vector<std::string> &edpList,
 			 int evalConcurrency);
 
-int processCalDataFile(std::istream &calDataFile,
+//int processCalDataFile(std::istream &calDataFile,
+//                       std::vector<std::string> &edpList,
+//                       std::vector<int> &lengthList,
+//                       int numResponses,
+//                       int numFieldResponses);
+
+//int processCalDataFile(std::istream &calDataFile,
+//                       std::vector<std::string> &edpList,
+//                       std::vector<int> &lengthList,
+//                       int numResponses, int numFieldResponses,
+//                       std::vector<std::string> &errFileList,
+//                       std::stringstream &errType);
+
+int processCalDataFile(const char *calFileName,
                        std::vector<std::string> &edpList,
                        std::vector<int> &lengthList,
-                       int numResponses,
-                       int numFieldResponses);
+                       int numResponses, int numFieldResponses,
+                       std::vector<std::string> &errFileList,
+                       std::stringstream &errType);

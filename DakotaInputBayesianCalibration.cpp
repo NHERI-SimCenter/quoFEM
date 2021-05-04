@@ -155,7 +155,7 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     // Provide calibration data file as input
     QLabel *calDataFileLabel = new QLabel();
     calDataFileLabel->setText("Calibration data file");
-    QLineEdit *calDataFileEdit = new QLineEdit;
+    calDataFileEdit = new QLineEdit;
     QPushButton *chooseCalDataFile = new QPushButton();
 
     connect(chooseCalDataFile, &QPushButton::clicked, this, [=](){

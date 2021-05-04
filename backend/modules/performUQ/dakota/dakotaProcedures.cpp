@@ -585,10 +585,15 @@ writeInterface(std::ostream &dakotaFile, json_t *uqData, std::string &workflowDr
   return 0;
 }
 
-int processCalDataFile(std::istream &calDataFile,
+int processCalDataFile(const char *calFileName,
                        std::vector<std::string> &edpList,
                        std::vector<int> &lengthList,
-                       int numResponses, int numFieldResponses) {
+                       int numResponses, int numFieldResponses,
+                       std::vector<std::string> &errFileList,
+                       std::stringstream &errType) {
+
+    std::ifstream calDataFile;
+    calDataFile.open(calFileName, std::ios_base::in);
 
     // Compute the expected length of each line and cumulative length corresponding to the responses
     // within each line
@@ -599,10 +604,16 @@ int processCalDataFile(std::istream &calDataFile,
         cumLenList[i] += lineLength;
     }
 
-    // Create an ofstream to write the data after removing all commas
-    std::ofstream spacedDataFile;
-    std::string spacedFileName = "quoFEMScalarCalibrationData.cal";
-    spacedDataFile.open(spacedFileName.c_str());
+    // Check if there are any files describing the error covariance structure in errFileList
+    bool readErrorFile = false;
+    if (!errFileList.empty()) {
+        readErrorFile = true;
+    }
+
+    // Create an fstream to write the data after removing all commas
+    std::fstream spacedDataFile;
+    std::string spacedFileName = "quoFEMTempCalibrationDataFile.cal";
+    spacedDataFile.open(spacedFileName.c_str(), std::fstream::out);
     // Check if open succeeded
     if (!spacedDataFile) {
         std::cerr << "ERROR: unable to open file: " << spacedFileName << std::endl;
@@ -622,19 +633,14 @@ int processCalDataFile(std::istream &calDataFile,
             ++lineNum;
             int wordCount = 0;
             // Check length of each line
-            // Tokenizing the line - only spaces and periods are considered as separators
             char *word;
-            // strtok works on c_strings, not strings and expects a cstring as argument on first call
             word = strtok(const_cast<char *>(line.c_str()), " \t");
-            // strtok returns a pointer to the start of each token and nullptr if the end of the cstring is reached
             while (word != nullptr) { // while end of cstring is not reached
-                // Increment the word count
                 ++wordCount;
-                // strtok takes nullptr as argument on subsequent calls and returns a pointer to the beginning of
-                // the next token.
+                spacedDataFile << word << " ";
                 word = strtok(nullptr, " \t");
             }
-            if (wordCount != cumLenList[numResponses]) {
+            if (wordCount != lineLength) {
                 std::cout << std::endl << "ERROR: The number of calibration terms expected in each line is "
                           << lineLength
                           << ", but the length of line " << lineNum << " is " << wordCount << ". Aborting."
@@ -642,79 +648,235 @@ int processCalDataFile(std::istream &calDataFile,
                 spacedDataFile.close();
                 return EXIT_FAILURE;
             }
-            spacedDataFile << line << std::endl;
+
+            // Add error covariance info to the spaced data file
+            if (readErrorFile) { // If error covariance files are present
+                //TODO: read in the user-defined error files
+
+            } else { // If error covariance files are absent
+                for (int i = 0; i < numResponses; ++i) {
+                    spacedDataFile << "1 ";
+                }
+            }
+            spacedDataFile << std::endl;
         }
     }
     numExperiments = lineNum;
     spacedDataFile.close();
+    calDataFile.clear();
+    calDataFile.close();
+
+//    bool check = numFieldResponses > 0;
+//    std::cout << "numFieldResponses > 0: " << check << std::endl;
 
     // Start making a list of all the calibration data files to be moved to the upper directory
-    std::ofstream calFilesTracker;
     std::string trackerFileName = "calibrationDataFilesToMove.cal";
-    calFilesTracker.open(trackerFileName.c_str());
+    std::ofstream calFilesTracker;
+    calFilesTracker.open(trackerFileName.c_str(), std::ofstream::out);
 
     if (numFieldResponses > 0) { // When non-scalar data is used
-        std::string line;
+        std::string calDataLine;
+        std::cout << "Inside condition for non-scalar data" << std::endl;
+        calDataFile.open(spacedFileName.c_str());
+
         // For each line in the calibration data file
-        while (getline(calDataFile, line)) {
-            std::stringstream lineStream(line);
-            if (!line.empty()) {
+        while (getline(calDataFile, calDataLine)) {
+            if (!calDataLine.empty()) {
+//                std::cout << "Line: " << calDataLine << std::endl;
+                std::stringstream lineStream(calDataLine);
                 int wordCount = 0;
+
                 // For each response quantity, create a data file and write the corresponding data to it
-                // Also create a data file with the default error covariance structure for each response quantity
                 for (int responseNum = 0; responseNum < numResponses; responseNum++) {
                     // Create a file for each response variable data
                     std::stringstream fName;
                     fName << edpList[responseNum] << "." << lineNum << ".dat";
                     std::ofstream outfile;
                     outfile.open(fName.str().c_str());
-
-                    // Create a default file for error variance
-                    std::stringstream errFileName;
-                    errFileName << edpList[responseNum] << "." << lineNum << ".sigma";
-                    std::ofstream errFile;
-                    errFile.open(errFileName.str().c_str());
-
-                    // Add these filenames to the file containing the list of files to move to upper directory
-                    calFilesTracker << fName.str() << std::endl;
-                    calFilesTracker << errFileName.str() << std::endl;
-
                     // Get the calibration terms corresponding to length of each response quantity
                     while (wordCount < cumLenList[responseNum]) {
                         std::string word;
                         lineStream >> word;
-                        if (word.empty()) {
-                            std::cout << std::endl << "ERROR: The expected number of calibration terms for  "
-                                      << edpList[responseNum] << " is " << lengthList[responseNum]
-                                      << ", but got " << wordCount << " terms." << std::endl;
+                        outfile << word << std::endl;
+                        wordCount++;
+                    }
+
+                    // Create filename for error variance
+                    std::stringstream errFileName;
+                    errFileName << edpList[responseNum] << "." << lineNum << ".sigma";
+                    std::ofstream errFile;
+                    // Check if an error variance file with the created name is in the list of error files
+                    bool createErrFile = true;
+                    std::string errFileToProcess;
+                    if (readErrorFile) {
+                        for (const auto &path : errFileList) {
+                            std::string base_filename = path.substr(path.find_last_of("/\\") + 1);
+                            std::cout << "Base filename: " << base_filename << std::endl;
+                            if (base_filename == errFileName.str()) {
+                                createErrFile = false;
+                                errFileToProcess = path;
+                                break;
+                            }
+                        }
+                    }
+                    // If not, create error file
+                    if (createErrFile) {
+                        errFile.open(errFileName.str().c_str());
+                        // Write the default error covariance - scalar with variance 1
+                        errFile << "1" << std::endl;
+                        errType << "'scalar' ";
+                    } else { // There is a user supplied error covariance file
+                        // Process the user supplied error covariance file
+                        // Get the dimensions of the contents of this file
+                        std::ifstream errFileUser(errFileToProcess);
+                        int nrow = 0;
+                        int ncol = 0;
+                        std::string fileLine;
+
+                        // Get the first line
+                        getline(errFileUser, fileLine);
+                        while (fileLine.empty()) {
+                            getline(errFileUser, fileLine);
+                        }
+                        // Check if there were any commas
+                        bool commaSeparated = false;
+                        if (fileLine.find(',') != std::string::npos) {
+                            commaSeparated = true;
+                        }
+                        // Get the number of columns of the first row
+                        char *entry;
+                        entry = strtok(const_cast<char *>(fileLine.c_str()), " \t");
+                        while (entry != nullptr) { // while end of cstring is not reached
+                            ++ncol;
+                            entry = strtok(nullptr, " \t");
+                        }
+                        // Create temporary file to hold the space separated error data
+                        std::string tmpErrorFileName = errFileToProcess + ".tmpFile";
+                        std::ofstream tmpErrorFile(tmpErrorFileName);
+
+                        // Now, loop over each line of the user supplied error covariance file
+                        errFileUser.close();
+                        errFileUser.open(errFileToProcess);
+                        while (getline(errFileUser, fileLine)) {
+                            if (!fileLine.empty()) {
+                                nrow++;
+                                std::replace(fileLine.begin(), fileLine.end(), ',', ' ');
+                                // Get the number of columns of each row
+                                int numCols = 0;
+                                char *word;
+                                word = strtok(const_cast<char *>(fileLine.c_str()), " \t");
+                                while (word != nullptr) { // while end of cstring is not reached
+                                    ++numCols;
+                                    if (commaSeparated) {
+                                        tmpErrorFile << word << " ";
+                                    }
+                                    word = strtok(nullptr, " \t");
+                                }
+                                if (numCols != ncol) {
+                                    std::cout << "ERROR: The number of columns must be the same for each row in the "
+                                                 "error covariance file " << errFileToProcess << ". \nThe expected"
+                                              << " length is " << ncol << ", but the length of row " << nrow
+                                              << " is " << numCols << "." << std::endl;
+                                    return EXIT_FAILURE;
+                                }
+                            }
+                        }
+                        errFileUser.close();
+                        tmpErrorFile.close();
+
+                        if (nrow == 1) {
+                            if (ncol == 1) {
+                                errType << "'scalar' ";
+                            } else if (ncol == lengthList[responseNum]) {
+                                errType << "'diagonal' ";
+                            } else {
+                                std::cout << "ERROR: The number of columns does not match the expected number of error "
+                                             "covariance terms. Expected " << lengthList[responseNum] << "terms but "
+                                          << "got " << ncol << " terms." << std::endl;
+                                return EXIT_FAILURE;
+                            }
+                        } else if (nrow == lengthList[responseNum]) {
+                            if (ncol == 1) {
+                                errType << "'diagonal' ";
+                            } else if (ncol == lengthList[responseNum]) {
+                                errType << "'matrix' ";
+                            } else {
+                                std::cout << "ERROR: The number of columns does not match the expected number of error "
+                                             "covariance terms. Expected " << lengthList[responseNum] << "terms but "
+                                          << "got " << ncol << " terms." << std::endl;
+                                return EXIT_FAILURE;
+                            }
+                        } else {
+                            std::cout << "ERROR: The number of rows does not match the expected number of error "
+                                         "covariance terms. Expected " << lengthList[responseNum] << "terms but "
+                                      << "got " << nrow << " terms." << std::endl;
                             return EXIT_FAILURE;
                         }
-                        else {
-                            outfile << word << std::endl;
-                            wordCount++;
-                            errFile << "1" << std::endl;
-                        }
-                        std::cout << "word count: " << wordCount << ", response num: " << responseNum
-                                  << ", filename: " << fName.str() << ", word: " << word << std::endl;
+                        // Add this filename to the list of files to be moved
+                        calFilesTracker << tmpErrorFileName << std::endl;
                     }
-                    outfile.close();
-                    errFile.close();
 
-//                    // Populate the default error covariance files
-//                    std::ofstream sigmaFile;
-//                    sigmaFile.open(errFileName.str().c_str());
-//                    for (int l=0; l < lengthList[responseNum]; l++) {
-//                        sigmaFile << "1" << std::endl;
-//                    }
-//                    sigmaFile.close();
+                    // Add these filenames to the file containing the list of files to move to upper directory
+                    calFilesTracker << fName.str() << std::endl;
+                    if (createErrFile) {
+                        calFilesTracker << errFileName.str() << std::endl;
+                    }
+
+                    // Close the files
+                    outfile.close();
+                    if (errFile.is_open()) {
+                        errFile.close();
+                    }
                 }
-//            std::cout << "Length of line " << lineNum << " is: " << wordCount << std::endl;
+                std::cout << "Here!" << std::endl;
+                std::cout << "Length of line " << lineNum << " is: " << wordCount << std::endl;
             }
         }
-    }
+    } else { // When only scalar data is used - only the space-delimited calibration data file needs to be moved
+        // Create an ofstream to write the data and error covariance
+        std::ofstream scalarCalDataFile;
+        std::string scalarCalDataFileName = "quoFEMScalarCalibrationData.cal";
+        // Add the name of this single file that contains the calibration data and error variance values
+        calFilesTracker << scalarCalDataFileName << std::endl;
 
-    else { // When only scalar data is used - only the space-delimited calibration data file needs to be moved
-        calFilesTracker << spacedFileName << std::endl;
+        // If user supplied error variance files do not exist
+        if (!readErrorFile) {
+            std::rename(spacedFileName.c_str(), scalarCalDataFileName.c_str());
+            errType << "'scalar' ";
+        }
+        else { // If any user supplied error variance files exist
+            scalarCalDataFile.open(scalarCalDataFileName.c_str(), std::fstream::out);
+            spacedDataFile.open(spacedFileName.c_str(), std::fstream::in);
+            // Loop over the number of experiments to check if user specified error variance file exists for that
+            // experiment and that response
+            for (int expNum = 1; expNum <= numExperiments; expNum++) {
+                // For each response quantity, check if there is an error variance file
+                for (int responseNum = 0; responseNum < numResponses; responseNum++) {
+                    // Create filename for error variance
+                    std::stringstream errFileName;
+                    errFileName << edpList[responseNum] << "." << lineNum << ".sigma";
+                    std::ofstream errFile;
+                    // Check if an error variance file with the created name is in the list of error files
+                    bool createErrFile = true;
+                    std::string errFileToProcess;
+                    if (readErrorFile) {
+                        for (const auto &path : errFileList) {
+                            std::string base_filename = path.substr(path.find_last_of("/\\") + 1);
+                            std::cout << "Base filename: " << base_filename << std::endl;
+                            if (base_filename == errFileName.str()) {
+                                createErrFile = false;
+                                errFileToProcess = path;
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            scalarCalDataFile.close();
+            spacedDataFile.close();
+        }
     }
 
     calFilesTracker.close();
@@ -723,8 +885,7 @@ int processCalDataFile(std::istream &calDataFile,
 
 int
 writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse, bool numericalGradients, bool numericalHessians,
-	      std::vector<std::string> &edpList, bool readCalibrationData, int numExperiments, std::istream &calDataFile) {
-
+              std::vector<std::string> &edpList, const char *calFileName) {
   int numResponses = 0;
 
   dakotaFile << "responses\n";
@@ -859,7 +1020,7 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
               if (numScalarResponses > 0) {
                   dakotaFile << "\n  scalar_calibration_terms = " << numScalarResponses;
               }
-              dakotaFile << "\n  field_calibration_terms = " << numFieldResponses << "\n  lengths = ";
+              dakotaFile << "\n  field_calibration_terms = " << numFieldResponses << "\n   lengths = ";
           }
           for (int j = 0; j < numResponses; j++) {
               json_t *theEDP_Item = json_array_get(rootEDP, j);
@@ -883,32 +1044,39 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
 //
 //      }
     }
+      std::vector<std::string> errFilenameList = {};
+      std::stringstream errTypeStringStream;
 
-      int numExp = processCalDataFile(calDataFile, edpList, lenList, numResponses, numFieldResponses);
+      int numExp = processCalDataFile(calFileName, edpList, lenList, numResponses, numFieldResponses, errFilenameList,
+                                      errTypeStringStream);
+
+      bool readCalibrationData = true;
 
       if (readCalibrationData) {
-          dakotaFile << "\n\n  # Specify to read calibration data";
+//          dakotaFile << "\n\n  # Specify to read calibration data";
           dakotaFile << "\n  calibration_data";
           int nExp = numExp;
           if (nExp < 1) {
           nExp = 1;
           }
-          dakotaFile << "\n  num_experiments = " << nExp;
+          dakotaFile << "\n   num_experiments = " << nExp;
 
 //          bool wroteScalar = false;
-          dakotaFile << "\n  experiment_variance_type = ";
-          for (int j = 0; j < numResponses; j++) {
-              if (lenList[j] > 1) {
-                  dakotaFile << "'diagonal' ";
-              }
-              else{
-                  dakotaFile << "'scalar' ";
-//                  if (!wroteScalar) {
-//                      dakotaFile << "'scalar' ";
-//                      wroteScalar = true;
-//                  }
-              }
-          }
+          dakotaFile << "\n   experiment_variance_type = ";
+          dakotaFile << errTypeStringStream.str();
+
+//          for (int j = 0; j < numResponses; j++) {
+//              if (lenList[j] > 1) {
+//                  dakotaFile << "'diagonal' ";
+//              }
+//              else{
+//                  dakotaFile << "'scalar' ";
+////                  if (!wroteScalar) {
+////                      dakotaFile << "'scalar' ";
+////                      wroteScalar = true;
+////                  }
+//              }
+//          }
 
           // Create an empty file to indicate that calibration data files must be moved to upper directory
 //          std::ofstream calFile("calibrationDataFilesToMove.cal");
@@ -984,11 +1152,12 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
       if (sensitivityAnalysis == true)
 	dakotaFile << "variance_based_decomp \n\n";
-      std::ifstream calDataFile;
+
+      const char *calDataFile;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList, true);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calDataFile);
     }
 
     else if (strcmp(method,"LHS")==0) {
@@ -1002,13 +1171,15 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       dakotaFile << "method,\n sampling\n sample_type = lhs \n samples = " << numSamples << " \n seed = " << seed << "\n\n";
 
       if (sensitivityAnalysis == true)
-	dakotaFile << "variance_based_decomp \n\n";
-      std::ifstream calDataFile;
+	  dakotaFile << "variance_based_decomp \n\n";
+
+
+      const char *calDataFile;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
 
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calDataFile);
     }
 
     /*
@@ -1024,10 +1195,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calDataFile);
     }
     */
-    } else if (strcmp(method,"Gaussian Process Regression")==0) {
+//    }
+  else if (strcmp(method,"Gaussian Process Regression")==0) {
 
       int trainingSamples = json_integer_value(json_object_get(samplingMethodData,"trainingSamples"));
       int trainingSeed = json_integer_value(json_object_get(samplingMethodData,"trainingSeed"));
@@ -1061,12 +1233,12 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 		 << trainingMethod << "\n\n";
 
       dakotaFile << "model \n id_model = 'TrainingModel' \n single \n interface_pointer = 'SimulationInterface'";
-      std::ifstream calDataFile;
+      const char *calDataFile;
       std::string emptyString;
       std::string interfaceString("SimulationInterface");
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, interfaceString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calDataFile);
 
     }
 
@@ -1095,12 +1267,12 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	samplingMethod = "random";
 
       dakotaFile << "environment \n  tabular_data \n tabular_data_file = 'a.out'\n\n"; // a.out for trial data
-      std::ifstream calDataFile;
+      const char *calDataFile;
       std::string emptyString;
       std::string interfaceString("SimulationInterface");
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, interfaceString, evaluationConcurrency);
-      int numResponse = writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0, calDataFile);
+      int numResponse = writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calDataFile);
 
       dakotaFile << "method \n polynomial_chaos \n " << pceMethod << intValue;
       dakotaFile << "\n samples_on_emulator = " << samplingSamples << "\n seed = " << samplingSeed << "\n sample_type = "
@@ -1111,7 +1283,9 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       dakotaFile << "\n export_approx_points_file = 'dakotaTab.out'\n\n"; // dakotaTab.out for surrogate evaluations
     }
 
-  } else if ((strcmp(type, "Reliability Analysis") == 0)) {
+  }
+
+  else if ((strcmp(type, "Reliability Analysis") == 0)) {
 
     json_t *reliabilityMethodData = json_object_get(uqData,"reliabilityMethodData");
 
@@ -1166,11 +1340,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	dakotaFile << "\n\t";
       }
       dakotaFile << "\n\n";
-      std::ifstream calDataFile;
+      const char *calDataFile;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, true, true, edpList, false, 0, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, true, true, edpList, calDataFile);
     }
 
     else if (strcmp(method,"Global Reliability")==0) {
@@ -1206,11 +1380,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	dakotaFile << "\n\t";
       }
       dakotaFile << "\n\n";
-      std::ifstream calDataFile;
+      const char *calDataFile;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, false, 0, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, calDataFile);
     }
 
     else if (strcmp(method,"Importance Sampling")==0) {
@@ -1232,7 +1406,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     //   std::string emptyString;
     //   writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
     //   writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-    //   writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, false, 0);
+    //   writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList);
       dakotaFile << " \n num_response_levels = ";
       for (int i=0; i<numResponses; i++)
         dakotaFile << numLevels << " ";
@@ -1248,10 +1422,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       }
       dakotaFile << "\n\n";
 
+      const char *calDataFile;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, false, 0);
+      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, calDataFile);
     }
 
   } else if ((strcmp(type, "Parameters Estimation") == 0)) {
@@ -1267,9 +1442,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     int maxIterations = json_integer_value(json_object_get(methodData,"maxIterations"));
     double tol = json_number_value(json_object_get(methodData,"convergenceTol"));
     const char *factors = json_string_value(json_object_get(methodData,"factors"));
-    bool readCalibrationDataFile = json_boolean_value(json_object_get(methodData, "readCalibrationData"));
-    int numExperiments = json_integer_value(json_object_get(methodData, "numExperiments"));
-    std::ifstream calDataFile("/Users/aakash/Desktop/SimCenter/Joel/CalibrationPaper/quoFEMDakota/eigData.csv");
+//    bool readCalibrationDataFile = json_boolean_value(json_object_get(methodData, "readCalibrationData"));
+//    int numExperiments = json_integer_value(json_object_get(methodData, "numExperiments"));
+    const char *calFileName = json_string_value(json_object_get(methodData, "calibrationDataFile"));
+//    std::ifstream calDataFile(calFileName);
+//    std::ifstream calDataFile("/Users/aakash/Desktop/SimCenter/Joel/CalibrationPaper/quoFEMDakota/eigData.csv");
 
       dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
 
@@ -1285,8 +1462,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     std::string emptyString;
     writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
     writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-    writeResponse(dakotaFile, rootEDP, calibrationString, true, false, edpList, readCalibrationDataFile, numExperiments,
-                  calDataFile);
+    writeResponse(dakotaFile, rootEDP, calibrationString, true, false, edpList, calFileName);
 
     if (strcmp(factors,"") != 0) {
       dakotaFile << "\n  primary_scale_types = \"value\" \n  primary_scales = ";
@@ -1326,10 +1502,12 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     //    int maxIterations = json_integer_value(json_object_get(methodData,"maxIter"));
     //    double tol = json_number_value(json_object_get(methodData,"tol"));
 
-    bool readCalibrationDataFile = json_boolean_value(json_object_get(methodData, "readCalibrationData"));
-    int numExperiments = json_integer_value(json_object_get(methodData, "numExperiments"));
-    std::ifstream calDataFile("/Users/aakash/Desktop/SimCenter/Joel/CalibrationPaper/quoFEMDakota/calDataField.csv");
-//    std::ifstream calDataFile("/Users/aakash/Desktop/SimCenter/Joel/CalibrationPaper/quoFEMDakota/eigData.csv");
+//    bool readCalibrationDataFile = json_boolean_value(json_object_get(methodData, "readCalibrationData"));
+//    int numExperiments = json_integer_value(json_object_get(methodData, "numExperiments"));
+    const char *calFileName = json_string_value(json_object_get(methodData, "calibrationDataFile"));
+//    std::ifstream calDataFile;
+//    calDataFile.open(calFileName, std::ios_base::in);
+
 
 
       if (strcmp(method,"DREAM")==0) {
@@ -1367,8 +1545,8 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     std::string emptyString;
     writeRV(dakotaFile, theRandomVariables, emptyString, rvList, false);
     writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-    writeResponse(dakotaFile, rootEDP, calibrationString, false, false, edpList, readCalibrationDataFile, numExperiments,
-                  calDataFile);
+    writeResponse(dakotaFile, rootEDP, calibrationString, false, false, edpList, calFileName);
+//    calDataFile.close();
 
   } else {
     std::cerr << "uqType: NOT KNOWN\n";

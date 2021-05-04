@@ -112,7 +112,7 @@ DakotaInputCalibration::DakotaInputCalibration(QWidget *parent)
   // Provide calibration data file as input
   QLabel *calDataFileLabel = new QLabel();
   calDataFileLabel->setText("Calibration data file");
-  QLineEdit *calDataFileEdit = new QLineEdit;
+  calDataFileEdit = new QLineEdit;
   QPushButton *chooseCalDataFile = new QPushButton();
 
   connect(chooseCalDataFile, &QPushButton::clicked, this, [=](){
@@ -182,6 +182,10 @@ DakotaInputCalibration::outputToJSON(QJsonObject &jsonObject)
     uq["convergenceTol"]=convergenceTol->text().toDouble();
     uq["factors"]=scalingFactors->text();
     uq["calibrationDataFile"]=calDataFileEdit->text();
+    if (calDataFileEdit->text().isEmpty()) {
+        sendErrorMessage("ERROR: Calibration data file not provided");
+        result = false;
+    }
 
 //    uq["readCalibrationData"]=readCalibrationDataCheckBox->isChecked();
 //    uq["numExperiments"]=numExperiments->text().toInt();
