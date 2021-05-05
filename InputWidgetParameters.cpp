@@ -101,6 +101,7 @@ InputWidgetParameters::setInitialVarNamesAndValues(QStringList theList){
     varNamesAndValues=theList;
     //theParameters->addConstantRVs(varNamesAndValues);
     theParameters->addNormalRVs(varNamesAndValues);
+
 }
 
 void
@@ -136,4 +137,9 @@ void
 InputWidgetParameters::errorMessage(QString message){
     qDebug() << "InputWidgetParameters" << message;
     emit this->sendErrorMessage(message);
+}
+
+void
+InputWidgetParameters::setCorrelationDisabled(bool tog){
+    theParameters->setCorrelationDisabled(tog);
 }

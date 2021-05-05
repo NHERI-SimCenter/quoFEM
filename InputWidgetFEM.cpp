@@ -175,6 +175,7 @@ InputWidgetFEM::setFEMforGP(QString option){
         this -> setContentsVisible(true);
         theFEMs.at(0)->setAsGP(false);
         this->parseAllInputfiles();
+        theParameters->setCorrelationDisabled(false);
     } else if (option == "GPdata") {
         numInputs=1;
         femSelection -> setDisabled(true);
@@ -184,6 +185,7 @@ InputWidgetFEM::setFEMforGP(QString option){
         this -> setContentsVisible(false);
         theFEMs.at(0)->setAsGP(true);
         this->parseAllInputfiles();
+        theParameters->setCorrelationDisabled(true);
     } else if (option == "GPmodel")
     {
         numInputs=1;
@@ -194,6 +196,7 @@ InputWidgetFEM::setFEMforGP(QString option){
         this -> setContentsVisible(true);
         theFEMs.at(0)->setAsGP(true);
         this->parseAllInputfiles();
+        theParameters->setCorrelationDisabled(true);
     } else if (option == "GPMFmodel")
     {
         numInputs=2;
@@ -204,6 +207,7 @@ InputWidgetFEM::setFEMforGP(QString option){
         this -> setContentsVisible(true);
         theFEMs.at(0)->setAsGP(true);
         theFEMs.at(1)->setAsGP(true);
+        theParameters->setCorrelationDisabled(true);
     }
 
     return 0;
@@ -374,6 +378,9 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
 
         // go get the array, and for each component create one, get it to read & then add
         QString program=femObject["program"].toString();
+        if (program=="MultipleModels") {
+            this->setFEMforGP("GPMFmodel");
+        }
         int index = femSelection->findText(program);
         femSelection->setCurrentIndex(index);
         //this->femProgramChanged(program);
