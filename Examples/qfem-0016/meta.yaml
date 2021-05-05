@@ -1,11 +1,7 @@
-summary: In this example, Surogate modeling...
-archive: $SIMCENTER_DEV
-archive_location: quoFEM/examples/qfem-0016
+summary: Surrogate modeling for mean and variance of EQ response
 author:
 - family: Yi
   given: Sangri
 collection-title: Surrogate training - building
-id: qfem-0016
-title: Surrogate Modeling for Building Earthquake response
-type: book
+
 difficulty: 1

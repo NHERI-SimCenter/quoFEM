@@ -1,3 +1,4 @@
+
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -66,37 +67,72 @@ OpenSeesParser::~OpenSeesParser()
 QStringList
 OpenSeesParser::getVariables(QString inFilename)
 {
-  QStringList result;
+    QStringList result;
 
-  ifstream inFile(inFilename.toStdString());
+    ifstream inFile(inFilename.toStdString());
 
-  // read lines of input searching for pset using regular expression 
-  regex pset("pset[ ]+[A-Za-z0-9]+[ ]+[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
-  string line;
-  while (getline(inFile, line)) {
+    // read lines of input searching for pset using regular expression
+    regex pset("pset[ ]+[A-Z_a-z0-9]+[ ]+[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
+    regex psetAny("pset[ ]+[A-Z_a-z0-9]+[ ]+");
+    string line;
+    while (getline(inFile, line)) {
 
-    if (regex_search(line, pset)) {
+        if (regex_search(line, pset)) {
 
-      // if found break into cmd, varName and value (ignore the rest) 
-      istringstream iss(line);
-      string cmd, varName, value;
-      iss >> cmd >> varName >> value;
+            // qDebug() << "REG " << QString::fromStdString(line);
+            // if comment ignore .. c++ regex cannot deal with lookahead .. ugly code results for now
+            bool commented = false;
+            std::string comment("#");
+            std::size_t foundC = line.find(comment);
+            if (foundC != std::string::npos) {
+                std::string p("pset");
+                std::size_t foundP = line.find(p);
+                if (foundC < foundP)
+                    commented = true;
+            }
 
-      // strip possible ; from end of value (possible if comment) line
-      regex delim(";");
-      value = regex_replace(value,delim,"");
-      
-      // add varName and value to results   
-      result.append(QString::fromStdString(varName));
-      result.append(QString::fromStdString(value));
-	
+            if (commented == false) {
+                // if found break into cmd, varName and value (ignore the rest)
+                istringstream iss(line);
+                string cmd, varName, value;
+                iss >> cmd >> varName >> value;
+
+                // strip possible ; from end of value (possible if comment) line
+                regex delim(";");
+                value = regex_replace(value,delim,"");
+
+                // add varName and value to results
+                result.append(QString::fromStdString(varName));
+                result.append(QString::fromStdString(value));
+            }
+
+        } else if (regex_search(line, psetAny)) { // any pset, i.e pset a $val pset a [expr ...
+
+             //qDebug() << "EXPR: " << QString::fromStdString(line);
+             bool commented = false;
+             std::string comment("#");
+             std::size_t foundC = line.find(comment);
+             if (foundC != std::string::npos) {
+                 std::string p("pset");
+                 std::size_t foundP = line.find(p);
+                 if (foundC < foundP)
+                     commented = true;
+             }
+
+             if (commented == false) {
+                 istringstream iss(line);
+                 string cmd, varName;
+                 iss >> cmd >> varName;
+                 result.append(QString::fromStdString(varName));
+                 result.append(QString("0.0"));
+             }
+        }
     }
-  } 
 
-  // close file   
-  inFile.close();
-  
-  return result;
+    // close file
+    inFile.close();
+
+    return result;
 }
 
 void 
@@ -108,22 +144,36 @@ OpenSeesParser::writeFile(QString inFilename, QString outFilename, QStringList v
     ofstream outFile(outFilename.toStdString());
 
     // read lines of input searching for pset using regular expression
-    regex pset("pset[ ]+[A-Za-z0-9]+[ ]+");
+    regex pset("pset[ ]+[A-Z_a-z0-9]+[ ]+");
+
     string line;
     while (getline(inFile, line)) {
 
         if (regex_search(line, pset)) {
 
-            // if found break into cmd, varName and value (ignore the rest)
-            istringstream iss(line);
-            string cmd, varName, value;
-            iss >> cmd >> varName >> value;
+            // if comment ignore .. c++ regex cannot deal with lookahead .. ugly code results for now
+            bool commented = false;
+            std::string comment("#");
+            std::size_t foundC = line.find(comment);
+            if (foundC != std::string::npos) {
+                std::string p("pset");
+                std::size_t foundP = line.find(p);
+                if (foundC < foundP)
+                    commented = true;
+            }
 
-            // if varName in input sting list, modify line otherwise write current line
-            QString val1(QString::fromStdString(varName));
+            if (commented == false) {
 
-            if (varToChange.contains(val1)) {
-                /****drpero cannot handle {} in tcl syntax .. comment out line now instead - python script source new file! ***
+                // if found break into cmd, varName and value (ignore the rest)
+                istringstream iss(line);
+                string cmd, varName, value;
+                iss >> cmd >> varName >> value;
+
+                // if varName in input sting list, modify line otherwise write current line
+                QString val1(QString::fromStdString(varName));
+
+                if (varToChange.contains(val1)) {
+                    /****drpero cannot handle {} in tcl syntax .. comment out line now instead - python script source new file! ***
                 // strip possible ; from end of value (possible if comment) line
                 regex delim(";");
                 value = regex_replace(value,delim,"");
@@ -131,20 +181,23 @@ OpenSeesParser::writeFile(QString inFilename, QString outFilename, QStringList v
                 // write new line format to output
                 outFile << "pset " << varName << " \{" << varName << "\}\n";
                 ********************************************************************************/
-                outFile << "#" << line << "\n";
-                // std::cerr<< "#" << line << "\n";
+                    outFile << "#" << line << "\n";
+                    // std::cerr<< "#" << line << "\n";
 
-            } else {
+                } else {
 
-                // not there, write current line
-                outFile << line << "\n";
+                    // not there, write current line
+                    outFile << line << "\n";
+                }
             }
-        } else
+        } else {
             // just copy line to output
             outFile << line << "\n";
+        }
     }
 
     // close file
     inFile.close();
     outFile.close();
+    return;
 }
