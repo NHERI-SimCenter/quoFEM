@@ -5,6 +5,8 @@ image:
   - Ubuntu1804
   - Visual Studio 2019
 
+stack: python 3.7
+
 for:
   # macOS 
   -
@@ -49,15 +51,16 @@ for:
 
     init:
        - export PATH="$HOME/Qt/5.15.2/gcc_64/bin:$HOME/venv3.8.6/bin:$PATH"
+       - export PATH="/home/appveyor/.local/bin:$PATH"
+       
+    install:
+       - uname
        - sudo update-alternatives --set gcc /usr/bin/gcc-9
        - sudo apt-get -y install libglu1-mesa-dev freeglut3-dev mesa-common-dev libblas-dev liblapack-dev
        - python -m pip install --upgrade pip
        - pip install conan
        - conan user
        - conan remote add simcenter https://nherisimcenter.jfrog.io/artifactory/api/conan/simcenter
-       
-    install:
-       - uname
        - git clone https://github.com/yisangriB/SimCenterCommon.git
        - git clone https://github.com/yisangriB/quoFEM.git
        
