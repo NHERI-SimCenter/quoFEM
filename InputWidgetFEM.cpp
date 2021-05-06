@@ -269,7 +269,7 @@ void InputWidgetFEM::addFEM(int i)
     else
         theFEMs.at(0)->hideHeader(false);
 
-    theFEM->setAsGP(isGP);
+    //theFEM->setAsGP(isGP);
 
 }
 
