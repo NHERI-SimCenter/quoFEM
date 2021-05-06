@@ -142,9 +142,9 @@ void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
 
     } else if ((arg1 == QString("Surrogate")) || (arg1 == QString("Train GP Surrogate Model"))) {
        // == restart UQ for simplicity
-       delete theSurrogateEngine;
-       theSurrogateEngine = new SimCenterUQInputSurrogate(theParameters,theFemWidget,theEdpWidget);
-       theStackedWidget->insertWidget(1,theSurrogateEngine);
+       //delete theSurrogateEngine;
+       //theSurrogateEngine = new SimCenterUQInputSurrogate(theParameters,theFemWidget,theEdpWidget);
+       //theStackedWidget->insertWidget(1,theSurrogateEngine);
        // ==
 
        theStackedWidget->setCurrentIndex(1);
@@ -153,8 +153,8 @@ void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
 
        // restart other parts
        theFemWidget->setFEMforGP("GPmodel");   // set it to be GP-FEM
-       theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
-       theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
+       //theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
+       //theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
 
     } else {
       qDebug() << "ERROR .. SimCenterUQEngine selection .. type unknown: " << arg1;

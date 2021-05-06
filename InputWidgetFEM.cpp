@@ -2,7 +2,7 @@
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without 
+Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
@@ -26,10 +26,10 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 
-REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS 
-PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, 
+THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS
+PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,
 UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
@@ -65,7 +65,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, QWidget *parent)
   : SimCenterWidget(parent), numInputs(1), theEdpWidget(edpwidget), theParameters(param)
 {
-    isGP=false; // normal vs. uniform (only for GP)
     numInputs = 1;
     verticalLayout = new QVBoxLayout();
     this->setLayout(verticalLayout);
@@ -122,14 +121,16 @@ InputWidgetFEM::makeFEM(void)
     //setLayout(layout);
     fem->setLayout(femLayout);
     femLayout->addStretch();
+    femLayout->setDirection(QBoxLayout::TopToBottom);
+    femLayout->setSpacing(0);
     this->addFEM(0);
 
     sa->setWidget(fem);
-    verticalLayout->setMargin(0);
     verticalLayout->addWidget(sa);
-    verticalLayout->addStretch(0);
 
     //verticalLayout->setSpacing(0);
+    verticalLayout->setMargin(0);
+
 }
 
 //void InputWidgetFEM::setFemNames(QStringList femNames) {
@@ -168,40 +169,47 @@ InputWidgetFEM::setFEMforGP(QString option){
     {
         numInputs=1;
         femSelection -> setDisabled(false);
-        femSelection->setCurrentIndex(1);
-        femSelection->setCurrentIndex(0);
-        varNamesAndValues.clear();
+        //this->femProgramChanged("OpenSees");
+        //femSelection->setCurrentIndex(1);
+        //femSelection->setCurrentIndex(0);
         this -> setContentsVisible(true);
-        isGP = false;
+        theFEMs.at(0)->setAsGP(false);
+        this->parseAllInputfiles();
+        theParameters->setCorrelationDisabled(false);
     } else if (option == "GPdata") {
         numInputs=1;
         femSelection -> setDisabled(true);
-        femSelection->setCurrentIndex(1);
-        femSelection->setCurrentIndex(0);
-        varNamesAndValues.clear();
+        //femSelection->setCurrentIndex(1);
+        //femSelection->setCurrentIndex(0);
+        femProgramChanged("OpenSees");
         this -> setContentsVisible(false);
-        isGP = true;
+        theFEMs.at(0)->setAsGP(true);
+        this->parseAllInputfiles();
+        theParameters->setCorrelationDisabled(true);
     } else if (option == "GPmodel")
     {
         numInputs=1;
         femSelection -> setDisabled(false);
-        femSelection->setCurrentIndex(1);
-        femSelection->setCurrentIndex(0);
-        varNamesAndValues.clear();
+        //femSelection->setCurrentIndex(1);
+        //femSelection->setCurrentIndex(0);
+        //femProgramChanged("OpenSees");
         this -> setContentsVisible(true);
-        isGP = true;
+        theFEMs.at(0)->setAsGP(true);
+        this->parseAllInputfiles();
+        theParameters->setCorrelationDisabled(true);
     } else if (option == "GPMFmodel")
     {
         numInputs=2;
-        this -> setContentsVisible(true);
         femSelection->addItem(tr("MultipleModels"));
         int index = femSelection->findText("MultipleModels");
         femSelection->setCurrentIndex(index);
         femSelection->setDisabled(true);
-        varNamesAndValues.clear();
-        isGP = true;
+        this -> setContentsVisible(true);
+        theFEMs.at(0)->setAsGP(true);
+        theFEMs.at(1)->setAsGP(true);
+        theParameters->setCorrelationDisabled(true);
     }
-    theFEMs.at(0)->setAsGP(isGP);
+
     return 0;
 }
 
@@ -251,6 +259,7 @@ InputWidgetFEM::specialCopyMainInput(QString fileName, QStringList varNames) {
 
 void InputWidgetFEM::addFEM(int i)
 {
+
     FEM *theFEM = new FEM(theParameters, theEdpWidget, i);
     theFEMs.append(theFEM);
     femLayout->insertWidget(femLayout->count()-1, theFEM);
@@ -260,7 +269,8 @@ void InputWidgetFEM::addFEM(int i)
     else
         theFEMs.at(0)->hideHeader(false);
 
-    theFEM->setAsGP(isGP);
+    //theFEM->setAsGP(isGP);
+
 }
 
 //void InputWidgetFEM::addFEM(QString name)
@@ -278,12 +288,14 @@ void InputWidgetFEM::addFEM(int i)
 
 void InputWidgetFEM::clear(void)
 {
+
     // loop over random variables, removing from layout & deleting
     for (int i = 0; i <theFEMs.size(); ++i) {
         FEM *theFEM = theFEMs.at(i);
         femLayout->removeWidget(theFEM);
         delete theFEM;
     }
+
     theFEMs.clear();
 }
 
@@ -366,9 +378,12 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
 
         // go get the array, and for each component create one, get it to read & then add
         QString program=femObject["program"].toString();
+        if (program=="MultipleModels") {
+            this->setFEMforGP("GPMFmodel");
+        }
         int index = femSelection->findText(program);
         femSelection->setCurrentIndex(index);
-        this->femProgramChanged(program);
+        //this->femProgramChanged(program);
         this->clear();
 
         if (femSelection->currentText() == "MultipleModels") {
@@ -377,14 +392,17 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
                 QJsonObject femObject_comp = femArray[i].toObject();
                 this->addFEM(i+1);
                 if (theFEMs[i]->inputFromJSON(femObject_comp) == true)
-                    femLayout->insertWidget(femLayout->count()-1, theFEMs[i]);
+                {
+                    femLayout->insertWidget(femLayout->count()-2, theFEMs[i]);
+                }
                 else
                     result = false;
+
             }
         } else {
             this->addFEM(0);
             if (theFEMs[0]->inputFromJSON(femObject) == true)
-                femLayout->insertWidget(femLayout->count()-1, theFEMs[0]);
+                femLayout->insertWidget(femLayout->count()-2, theFEMs[0]);
             else
                 result = false;
         }
@@ -392,8 +410,15 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
         emit sendErrorMessage("ERROR: FEM Input - no fem section in input file");
         return false;
     }
-
     return result;
+}
+
+void InputWidgetFEM::parseAllInputfiles(void){
+    int numFem = theFEMs.size();
+    for (int i = numFem-1; i >= 0; i--) {
+        FEM *theFEM = theFEMs.at(i);
+        theFEM->parseAllInputfiles();
+    }
 }
 
 //int

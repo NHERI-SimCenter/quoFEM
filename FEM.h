@@ -72,6 +72,7 @@ public:
     //void setFemGP(bool on);
     void setAsGP(bool tog);
     void hideHeader(bool tog);
+    void parseAllInputfiles(void);
 
   signals:
 
