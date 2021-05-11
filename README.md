@@ -2,6 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3466061.svg)](https://doi.org/10.5281/zenodo.3466061)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/oc421ri6ts88dci0?svg=true)](https://ci.appveyor.com/project/fmckenna/quofem)
 
 This is a SimCenter research application. It's purpose is to provide
 an application that will allow users to perform uncertainty
@@ -20,19 +21,6 @@ applications, FAQ, and how to collaborate.
 
 The documentation for quoFEM is here https://nheri-simcenter.github.io/quoFEM-Documentation 
 
-### How to Build
-##### 1. Download this repo.
-
-##### 2. Download the SimCenterCommon repo: https://github.com/NHERI-SimCenter/SimCenterCommon
-
-Place the SimCenterCommon Repo in the same directory that you placed the quoFEM repo.
-
-##### 3. Install Qt: https://www.qt.io/
-
-Qt is free for open source developers. Download it and start the Qt Creator application. From Qt Creator open the quoFEM.pro file located in the directory the quoFEM repo was downloaded into and select build to build it. For detailed instructions on using Qt, browse their website.
-
-##### 4. Copy the parseDakota.py file located in localApp directory to the folder containg the application. Mac users note this is not the folder containing quoFEM.app, but a folder inside that folder quoFEM.app/Contents/Mac
-.
 ### Acknowledgement
 
 This material is based upon work supported by the National Science Foundation under Grant No. 1612843.
