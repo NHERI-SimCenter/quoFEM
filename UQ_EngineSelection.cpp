@@ -208,7 +208,7 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
         //theSimCenterUQEngine = new SimCenterUQEngine(theParameters,theFemWidget,theEdpWidget);
         //theStackedWidget->insertWidget(1,theSimCenterUQEngine);
         theStackedWidget->setCurrentIndex(1);
-        theEdpWidget->showAdvancedSensitivity();
+        //theEdpWidget->showAdvancedSensitivity();
         // ==
         theCurrentEngine = theSimCenterUQEngine;
         emit onUQ_EngineChanged(false);

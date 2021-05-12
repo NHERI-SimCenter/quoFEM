@@ -77,6 +77,7 @@ SimCenterUQEngine::SimCenterUQEngine(InputWidgetParameters *param,InputWidgetFEM
     QLabel *label = new QLabel();
     label->setText(QString("SimCenterUQ Method Category"));
     theEngineSelectionBox = new QComboBox();
+    theEngineSelectionBox->addItem(tr("Forward Propagation"));
     theEngineSelectionBox->addItem(tr("Sensitivity Analysis"));
     theEngineSelectionBox->addItem(tr("Train GP Surrogate Model"));
     theEngineSelectionBox->setMinimumWidth(600);
@@ -96,17 +97,20 @@ SimCenterUQEngine::SimCenterUQEngine(InputWidgetParameters *param,InputWidgetFEM
     // create the individual widgets add to stacked widget
     //
 
-    //theSamplingEngine = new SimCenterUQInputSampling();
+    theSamplingEngine = new SimCenterUQInputSampling();
     theSensitivityEngine = new SimCenterUQInputSensitivity();
     theSurrogateEngine = new SimCenterUQInputSurrogate(theParameters,theFemWidget,theEdpWidget);
 
+    theStackedWidget->addWidget(theSamplingEngine);
     theStackedWidget->addWidget(theSensitivityEngine);
     theStackedWidget->addWidget(theSurrogateEngine);
 
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
-    theCurrentEngine = theSensitivityEngine;
+    theCurrentEngine = theSamplingEngine;
+//    this->setLayout(layout);
+//    theCurrentEngine = theSensitivityEngine;
 
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
           SLOT(engineSelectionChanged(QString)));
@@ -134,8 +138,12 @@ void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
         theFemWidget->setFEMforGP("reset");// reset FEM
     }
 
-    if ((arg1 == QString("Sensitivity")) || (arg1 == QString("Sensitivity Analysis"))) {
-       theStackedWidget->setCurrentIndex(0);
+    if (arg1 == QString("Forward Propagation")) {
+        theStackedWidget->setCurrentIndex(0);
+        theCurrentEngine = theSamplingEngine;
+
+    } else if ((arg1 == QString("Sensitivity")) || (arg1 == QString("Sensitivity Analysis"))) {
+       theStackedWidget->setCurrentIndex(1);
        theCurrentEngine = theSensitivityEngine;
        theEdpWidget->showAdvancedSensitivity();
        //theFemWidget->setFemGP(false);
@@ -147,7 +155,7 @@ void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
        //theStackedWidget->insertWidget(1,theSurrogateEngine);
        // ==
 
-       theStackedWidget->setCurrentIndex(1);
+       theStackedWidget->setCurrentIndex(2);
        theCurrentEngine = theSurrogateEngine;
        theEdpWidget->hideAdvancedSensitivity();
 

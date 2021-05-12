@@ -62,10 +62,6 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
 {
     auto layout = new QGridLayout();
 
-
-
-
-
     theHighSimLabel = new QLabel("     Simulation model");
     theHighSimButton = new QCheckBox();
     theHighSimLabel -> setStyleSheet("font-weight: bold; color: grey");
