@@ -17,7 +17,7 @@ of the response quantities of interest with respect to the problem’s
 random variables.
 
 
-.. figure:: qfem-0009.png
+.. figure:: figures/qfem-0009.png
    :align: center
    :width: 400
    :figclass: align-center

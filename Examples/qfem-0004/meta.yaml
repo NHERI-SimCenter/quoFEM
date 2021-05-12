@@ -1,4 +1,3 @@
 summary: This example uses quoFEM to perform a global sensitivity analysis of an
   OpenSees FE model.
-programming-language: Tcl
 difficulty: 0

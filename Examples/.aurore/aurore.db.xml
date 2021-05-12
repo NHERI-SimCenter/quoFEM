@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- <collection id="feed-0002" base="$SIMCENTER_DEV/quoFEM" > -->
-<collection id="feed-0002" >
+    <collection id="feed-0002" >
+  <tag-scheme key="">
+      <tag-scheme src="$SIMCENTER_DEV/SimCenterDocumentation/docs/common/requirements/tags.xml#UV" />
+      <tag-scheme src="$SIMCENTER_DEV/SimCenterDocumentation/docs/common/requirements/tags.xml#UR" />
+      <tag-scheme src="$SIMCENTER_DEV/SimCenterDocumentation/docs/common/requirements/tags.xml#UM" />
+  </tag-scheme>
   <category-schemes>
     <category-scheme key="Simulation">
       <var src="./src/input.json#/fem/program" />
@@ -21,20 +25,22 @@
     </category-scheme>
   </category-schemes>
   <items>
-    <map id="qfem-0001" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0002" type="qfem" published="2020-12-17T21:26:53.946569-08:00"/>
-    <map id="qfem-0003" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0004" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0005" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0006" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0007" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0008" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0009" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0010" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0011" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0012" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0013" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0014" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
-    <map id="qfem-0015" type="qfem" published="2021-03-12T21:26:53.946381-08:00"/>
+    <map id="qfem-0001" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0002" base="qfem" type="qfem" published="2020-12-17T21:26:53.946569-08:00"/>
+    <map id="qfem-0003" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0004" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0005" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0006" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0007" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0008" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0009" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0010" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0011" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0012" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0013" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0014" base="qfem" type="qfem" published="2020-12-17T21:26:53.946381-08:00"/>
+    <map id="qfem-0015" base="qfem" type="qfem" published="2021-03-12T21:26:53.946381-08:00"/>
+    <map id="qfem-0016" base="qfem" type="qfem" published="2021-03-12T21:26:53.946381-08:00"/>
+    <map id="qfem-0017" base="qfem" type="qfem" published="2021-03-12T21:26:53.946381-08:00"/>
   </items>
 </collection>

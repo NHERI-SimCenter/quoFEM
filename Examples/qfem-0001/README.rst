@@ -1,3 +1,4 @@
+.. _qfem-0001:
 
 Two-Dimensional Truss: Sampling, Reliability and Sensitivity
 ============================================================

@@ -71,12 +71,18 @@ The following files make up the **FEM** model definition.
    random variable realizations by star-importing the **Parameters
    File** from the **FEM** tab.
 
+   .. literalinclude:: src/model.py
+      :language: python
+
 #. `params.py <https://raw.githubusercontent.com/claudioperez/SimCenterExamples/master/static/truss/params.py>`__:
    This file is a Python script which defines the problem's random
    variables as objects in the Python runtime. It is supplied to the
    **Parameters File** field of the **FEM** tab. *The literal values
    which are assigned to variables in this file will be varied at
    runtime by the UQ engine.*
+   
+   .. literalinclude:: src/params.py
+      :language: python
 
 
 Results
