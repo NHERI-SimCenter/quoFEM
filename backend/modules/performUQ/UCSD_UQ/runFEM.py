@@ -24,7 +24,8 @@ def copytree(src, dst, symlinks=False, ignore=None):
                 shutil.copy2(s, d)
 
 
-def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood):
+def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calDataFile, numExperiments,
+           covarianceMatrixList, edpNamesList, edpLengthsList, covarianceTypeList):
     """ 
     this function runs FE model (model.tcl) for each parameter value (par)
     model.tcl should take parameter input
@@ -49,15 +50,18 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood):
 
     os.chdir(analysisPath)
 
-    # write input file
+    # write input file and covariance multiplier values list
+    covarianceMultiplierList = []
     ParameterName = variables["names"]
     f = open("params.in", "w")
     f.write('{}\n'.format(len(par)))
     for i in range(0, len(par)):
         name = str(ParameterName[i])
         value = str(par[i])
-
-        f.write('{} {}\n'.format(name, value))
+        if name.split('.')[-1] != 'CovMultiplier':
+            f.write('{} {}\n'.format(name, value))
+        else:
+            covarianceMultiplierList.append(par[i])
     f.close()
 
     # run FE model for the written input file
@@ -81,4 +85,5 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood):
     for f in files:
         print(f)
 
-    return log_likelihood()
+    return log_likelihood(calDataFile, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
+                          covarianceTypeList, covarianceMultiplierList)

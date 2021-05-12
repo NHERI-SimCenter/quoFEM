@@ -12,7 +12,8 @@ from runFEM import runFEM
 from numpy.random import SeedSequence, default_rng
 
 
-def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variables, resultsLocation, seed):
+def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variables, resultsLocation, seed,
+             calDataFile, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, covarianceTypeList):
     """ Runs TMCMC Algorithm """
 
     # Initialize (beta, effective sample size)
@@ -38,11 +39,15 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     # Evaluate log-likelihood at current samples Sm
     if parallelize_MCMC == 'yes':
         pool = Pool(processes=mp.cpu_count())
-        Lmt = pool.starmap(runFEM, [(ind, Sm[ind], variables, resultsLocation, log_likelihood) for ind in range(N)], )
+        Lmt = pool.starmap(runFEM, [(ind, Sm[ind], variables, resultsLocation, log_likelihood, calDataFile,
+                                     numExperiments, covarianceMatrixList,
+                                     edpNamesList, edpLengthsList, covarianceTypeList) for ind in range(N)], )
         pool.close()
         Lm = np.array(Lmt).squeeze()
     else:
-        Lm = np.array([runFEM(ind, Sm[ind], variables, resultsLocation, log_likelihood) for ind in range(N)]).squeeze()
+        Lm = np.array([runFEM(ind, Sm[ind], variables, resultsLocation, log_likelihood, calDataFile,
+                              numExperiments, covarianceMatrixList,
+                              edpNamesList, edpLengthsList, covarianceTypeList) for ind in range(N)]).squeeze()
 
     while beta < 1:
         # adaptivly compute beta s.t. ESS = N/2 or ESS = 0.95*prev_ESS
@@ -87,14 +92,17 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
             pool = Pool(processes=mp.cpu_count())
             results = pool.starmap(tmcmcFunctions.MCMC_MH, [(j1, Em, Nm_steps, Smcap[j1], Lmcap[j1], Postmcap[j1], beta,
                                                              numAccepts, AllPars, log_likelihood, variables,
-                                                             resultsLocation, default_rng(child_seeds[j1])) for j1 in
+                                                             resultsLocation, default_rng(child_seeds[j1]),
+                                                             calDataFile, numExperiments, covarianceMatrixList,
+                                                             edpNamesList, edpLengthsList, covarianceTypeList) for j1 in
                                                             range(N)], )
             pool.close()
         else:
             results = [
                 tmcmcFunctions.MCMC_MH(j1, Em, Nm_steps, Smcap[j1], Lmcap[j1], Postmcap[j1], beta, numAccepts, AllPars,
-                                       log_likelihood, variables, resultsLocation, default_rng(child_seeds[j1])) for j1
-                in range(N)]
+                                       log_likelihood, variables, resultsLocation, default_rng(child_seeds[j1]),
+                                       calDataFile, numExperiments, covarianceMatrixList,
+                                       edpNamesList, edpLengthsList, covarianceTypeList) for j1 in range(N)]
 
         Sm1, Lm1, Postm1, numAcceptsS, all_proposals, all_PLP = zip(*results)
         Sm1 = np.asarray(Sm1)

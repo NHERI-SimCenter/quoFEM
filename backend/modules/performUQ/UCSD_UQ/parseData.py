@@ -1,11 +1,11 @@
 """
-authors: Mukesh Kumar Ramancha, Maitreya Manoj Kurumbhati, and Prof. J.P. Conte 
-affiliation: University of California, San Diego
+authors: Mukesh Kumar Ramancha, Maitreya Manoj Kurumbhati, Prof. J.P. Conte, and Aakash Bangalore Satish(*)
+affiliation: University of California, San Diego, (*) SimCenter, University of California, Berkeley
 
 """
 
-# import os
-from pathlib import Path
+import os
+# from pathlib import Path
 # import re
 import json
 
@@ -21,7 +21,7 @@ def parseDataFunction(dakotaJsonLocation):
 
     # Read in the data of the objects within the json file
     applications = jsonInputs['Applications']
-    edp = jsonInputs['EDP']
+    edpInputs = jsonInputs['EDP']
     uqInputs = jsonInputs['UQ_Method']
     femInputs = jsonInputs['fem']
     localAppDirInputs = jsonInputs['localAppDir']
@@ -44,16 +44,23 @@ def parseDataFunction(dakotaJsonLocation):
     numberOfSamples = uqInputs['numParticles']
     logLikelihoodPath = uqInputs['logLikelihoodPath']
     logLikelihoodFile = uqInputs['logLikelihoodFile']
-    
+
+    calDataPath = uqInputs['calDataFilePath']
+    calDataFile = uqInputs['calDataFile']
+
     # print('\n\nLoglikelihood directory path is: {}'.format(logLikelihoodPath))
     # print('\n\nLoglikelihood filename is: {}'.format(logLikelihoodFile))
 
-    workingDirPath = Path(workingDirInputs)
-    resultsLocation = Path.joinpath(workingDirPath, "tmp.SimCenter")
+    # workingDirPath = Path(workingDirInputs)
+    # resultsLocation = Path.joinpath(workingDirPath, "tmp.SimCenter")
+    workingDirPath = os.path.abspath(workingDirInputs)
+    resultsLocation = os.path.join(workingDirPath, "tmp.SimCenter")
     resultsPath = resultsLocation
 
-    localAppDirPath = Path(localAppDirInputs)
-    PythonDirPath = Path(pythonInputs)
+    # localAppDirPath = Path(localAppDirInputs)
+    # PythonDirPath = Path(pythonInputs)
+    localAppDirPath = os.path.abspath(localAppDirInputs)
+    PythonDirPath = os.path.abspath(pythonInputs)
 
     # print('\n\nThe seed is: {:d}\n\n'.format(seedval))
     # print('\n\nThe number of samples is: {:d}\n\n'.format(numberOfSamples), type(numberOfSamples))
@@ -143,35 +150,44 @@ def parseDataFunction(dakotaJsonLocation):
         variablesList.append(variables)
 
     # if nModels > 1:
-    ind = -1
-    for rv in rvInputs:
-        if nModels == 1:
-            ind = 0
-        else:
-            ind += 1
-            # ind = rv['model']
-        variablesList[ind]['names'].append(rv['name'])
-        variablesList[ind]['distributions'].append(rv['distribution'])
-        if rv['distribution'] == 'Uniform':
-            variablesList[ind]['Par1'].append(rv['lowerbound'])
-            variablesList[ind]['Par2'].append(rv['upperbound'])
+    # ind = -1
+    for ind in range(nModels):
+        for rv in rvInputs:
+            # if nModels == 1:
+            #     ind = 0
+            # else:
+            #     ind += 1
+            variablesList[ind]['names'].append(rv['name'])
+            variablesList[ind]['distributions'].append(rv['distribution'])
+            if rv['distribution'] == 'Uniform':
+                variablesList[ind]['Par1'].append(rv['lowerbound'])
+                variablesList[ind]['Par2'].append(rv['upperbound'])
+                variablesList[ind]['Par3'].append(None)
+                variablesList[ind]['Par4'].append(None)
+            elif rv['distribution'] == 'Normal':
+                variablesList[ind]['Par1'].append(rv['mean'])
+                variablesList[ind]['Par2'].append(rv['stdDev'])
+                variablesList[ind]['Par3'].append(None)
+                variablesList[ind]['Par4'].append(None)
+            elif rv['distribution'] == 'Half-Normal':
+                variablesList[ind]['Par1'].append(rv['Standard Deviation'])
+                variablesList[ind]['Par2'].append(rv['Upper Bound'])
+                variablesList[ind]['Par3'].append(None)
+                variablesList[ind]['Par4'].append(None)
+            elif rv['distribution'] == 'Truncated-Normal':
+                variablesList[ind]['Par1'].append(rv['Mean'])
+                variablesList[ind]['Par2'].append(rv['Standard Deviation'])
+                variablesList[ind]['Par3'].append(rv['a'])
+                variablesList[ind]['Par4'].append(rv['b'])
+
+        for edp in edpInputs:
+            name = edp['name'] + '.CovMultiplier'
+            variablesList[ind]['names'].append(name)
+            variablesList[ind]['distributions'].append('InvGamma')
+            variablesList[ind]['Par1'].append(0.1)
+            variablesList[ind]['Par2'].append(1)
             variablesList[ind]['Par3'].append(None)
             variablesList[ind]['Par4'].append(None)
-        elif rv['distribution'] == 'Normal':
-            variablesList[ind]['Par1'].append(rv['mean'])
-            variablesList[ind]['Par2'].append(rv['stdDev'])
-            variablesList[ind]['Par3'].append(None)
-            variablesList[ind]['Par4'].append(None)
-        elif rv['distribution'] == 'Half-Normal':
-            variablesList[ind]['Par1'].append(rv['Standard Deviation'])
-            variablesList[ind]['Par2'].append(rv['Upper Bound'])
-            variablesList[ind]['Par3'].append(None)
-            variablesList[ind]['Par4'].append(None)
-        elif rv['distribution'] == 'Truncated-Normal':
-            variablesList[ind]['Par1'].append(rv['Mean'])
-            variablesList[ind]['Par2'].append(rv['Standard Deviation'])
-            variablesList[ind]['Par3'].append(rv['a'])
-            variablesList[ind]['Par4'].append(rv['b'])
 
     # variablesSection_pattern = re.compile(r'"randomVariables": \[(.*?)\]', re.DOTALL)
     # variablesSection_match = next(variablesSection_pattern.finditer(string_to_parse))
@@ -254,4 +270,4 @@ def parseDataFunction(dakotaJsonLocation):
     #         (variables['Par4']).append(variablePara4_match.group('distPara4'))
 
     # return variables, numberOfSamples, seedval, resultsLocation, resultsPath, logLikelihoodPath, logLikelihoodFile
-    return variablesList, numberOfSamples, seedval, resultsLocation, resultsPath, logLikelihoodPath, logLikelihoodFile
+    return variablesList, numberOfSamples, seedval, resultsLocation, resultsPath, logLikelihoodPath, logLikelihoodFile, calDataPath, calDataFile, edpInputs
