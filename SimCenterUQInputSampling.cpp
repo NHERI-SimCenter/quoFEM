@@ -68,7 +68,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
 : UQ_Engine(parent),uqSpecific(0)
 {
-    layout = new QVBoxLayout();
+//    layout = new QVBoxLayout();
     mLayout = new QVBoxLayout();
 
     //
@@ -83,19 +83,6 @@ SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
     //samplingMethod->setMinimumWidth(800);
     //samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
-    //samplingMethod->addItem(tr("Importance Sampling"));
-    //samplingMethod->addItem(tr("Gaussian Process Regression"));
-    //samplingMethod->addItem(tr("Polynomial Chaos Expansion"));
-    // samplingMethod->addItem(tr("Multi Fidelity Monte Carlo"));
-
-    /*
-    samplingMethod->addItem(tr("Multilevel Monte Carlo"));
-    samplingMethod->addItem(tr("Importance Sampling"));
-    samplingMethod->addItem(tr("Quadrature"));
-    samplingMethod->addItem(tr("Sparse Grid Quadrature"));
-    samplingMethod->addItem(tr("Surrogate - Polynomial Chaos"));
-    samplingMethod->addItem(tr("Surrogate - Gaussian Process"));
-    */
 
     methodLayout->addWidget(label1);
     methodLayout->addWidget(samplingMethod,2);
@@ -103,42 +90,67 @@ SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
 
     mLayout->addLayout(methodLayout);
 
-    //
-    // qstacked widget to hold all widgets
-    //
-
     theStackedWidget = new QStackedWidget();
-
-    //theLHS = new LatinHypercubeInputWidget();
-    //theStackedWidget->addWidget(theLHS);
 
     theMC = new MonteCarloInputWidget();
     theStackedWidget->addWidget(theMC);
-
-    //theIS = new ImportanceSamplingInputWidget();
-    //theStackedWidget->addWidget(theIS);
-
-    //theGP = new GaussianProcessInputWidget();
-    //theStackedWidget->addWidget(theGP);
-
-    //thePCE = new PCEInputWidget();
-    //theStackedWidget->addWidget(thePCE);
-
-    //theMFMC = new MultiFidelityMonteCarlo();
-    //theStackedWidget->addWidget(theMFMC);
 
     // set current widget to index 0
     theStackedWidget->setCurrentIndex(0);
     theCurrentMethod = theMC;
 
-
     mLayout->addWidget(theStackedWidget);
-    layout->addLayout(mLayout);
 
-    this->setLayout(layout);
+    //
+    // Import paired data
+    //
+
+    checkBoxLayout= new QHBoxLayout;
+    checkBoxLayout->setMargin(0);
+    checkBoxLayout->setAlignment(Qt::AlignTop);
+
+    label2 = new QLabel();
+    label2->setText(QString("Resample from correlated dataset"));
+    importCorrDataCheckBox = new QCheckBox();
+    checkBoxLayout->addWidget(importCorrDataCheckBox,0);
+    checkBoxLayout->addWidget(label2,1);
+    mLayout->addLayout(checkBoxLayout);
+
+    corrDataLayoutWrap= new QWidget;
+    QGridLayout *corrDataLayout= new QGridLayout(corrDataLayoutWrap);
+
+    QFrame * lineA = new QFrame;
+    lineA->setFrameShape(QFrame::HLine);
+    lineA->setFrameShadow(QFrame::Sunken);
+    lineA->setMaximumWidth(250);
+    corrDataLayout->addWidget(lineA,0,0,1,-1);
+
+    corrDataLayout->setMargin(0);
+    QLabel *label3 = new QLabel();
+    label3->setText(QString("Paired RV names"));
+    QLabel *label4 = new QLabel();
+    label4->setText(QString("Please import the samples at the RV tab using the following options: (Input type) data - (Distribution) discrete"));
+    varList = new QLineEdit();
+    varList->setPlaceholderText("e.g. {RV_name1,RV_name2},{RV_name5,RV_name6,RV_name8}");
+    varList->setMaximumWidth(420);
+    varList->setMinimumWidth(420);
+    corrDataLayout->addWidget(label3,1,0);
+    corrDataLayout->addWidget(varList,1,1);
+    corrDataLayout->addWidget(label4,2,0,1,-1);
+
+    corrDataLayout->setRowStretch(3,1);
+    corrDataLayout->setColumnStretch(2,1);
+
+    corrDataLayoutWrap ->setVisible(false);
+    mLayout->addWidget(corrDataLayoutWrap);
+    mLayout->addStretch(2);
+    mLayout->setStretch(3,1);
+
+    this->setLayout(mLayout);
 
     //connect(theMFMC, SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
     connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
+    connect(importCorrDataCheckBox,SIGNAL(toggled(bool)),this,SLOT(showDataOptions(bool)));
 
 }
 
@@ -152,23 +164,35 @@ void SimCenterUQInputSampling::onTextChanged(const QString &text)
     theStackedWidget->setCurrentIndex(0);
     theCurrentMethod = theMC;  
   }
-  else if (text=="Importance Sampling") {
-    theStackedWidget->setCurrentIndex(2);
-    theCurrentMethod = theIS;
-  }
-  else if (text=="Gaussian Process Regression") {
-    theStackedWidget->setCurrentIndex(3);
-    theCurrentMethod = theGP;
-  }
-  else if (text=="Polynomial Chaos Expansion") {
-    theStackedWidget->setCurrentIndex(4);
-    theCurrentMethod = thePCE;
-  }
-  else if (text=="Multi Fidelity Monte Carlo") {
-    theStackedWidget->setCurrentIndex(5);
-    theCurrentMethod = theMFMC;
-  }
+//  else if (text=="Importance Sampling") {
+//    theStackedWidget->setCurrentIndex(2);
+//    theCurrentMethod = theIS;
+//  }
+//  else if (text=="Gaussian Process Regression") {
+//    theStackedWidget->setCurrentIndex(3);
+//    theCurrentMethod = theGP;
+//  }
+//  else if (text=="Polynomial Chaos Expansion") {
+//    theStackedWidget->setCurrentIndex(4);
+//    theCurrentMethod = thePCE;
+//  }
+//  else if (text=="Multi Fidelity Monte Carlo") {
+//    theStackedWidget->setCurrentIndex(5);
+//    theCurrentMethod = theMFMC;
+//  }
 }
+
+void SimCenterUQInputSampling::showDataOptions(bool tog)
+{
+    if (tog) {
+        label2->setStyleSheet("font-weight: bold; color: black");
+        corrDataLayoutWrap->setVisible(true);
+    } else {
+        label2->setStyleSheet("font-weight: bold; color: gray");
+        corrDataLayoutWrap->setVisible(false);
+    }
+}
+
 
 SimCenterUQInputSampling::~SimCenterUQInputSampling()
 {
@@ -200,6 +224,12 @@ SimCenterUQInputSampling::outputToJSON(QJsonObject &jsonObject)
 
     jsonObject["samplingMethodData"]=uq;
 
+    if (importCorrDataCheckBox->isChecked()) {
+        jsonObject["RVdataGroup"] = varList->text();
+    } else {
+        jsonObject["RVdataGroup"] = ""; // empty
+    }
+
     return result;
 }
 
@@ -228,6 +258,15 @@ SimCenterUQInputSampling::inputFromJSON(QJsonObject &jsonObject)
           if (result == false)
               return result;
 
+      }
+    }
+
+   if (jsonObject.contains("RVdataGroup")) {
+      varList->setText(jsonObject["RVdataGroup"].toString());
+      if ((varList->text()).isEmpty()) {
+          importCorrDataCheckBox->setChecked(false);
+      } else {
+          importCorrDataCheckBox->setChecked(true);
       }
   }
   
