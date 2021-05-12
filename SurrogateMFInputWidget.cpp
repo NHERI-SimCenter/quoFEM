@@ -219,7 +219,6 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     theLFlayout->addWidget(outFileDir_LF,id,1,1,3,Qt::AlignTop);
     theLFlayout->addWidget(chooseOutFile_LF,id++,4,Qt::AlignTop);
 
-
     // /////////////////////////////////////
     // LOW FIDELITY - Model
     // /////////////////////////////////////
@@ -562,39 +561,6 @@ void SurrogateMFInputWidget::setHighSim(bool tog) {
         theHighSimLabel -> setStyleSheet("font-weight: bold; color: grey");
     }
 }
-//void SurrogateMFInputWidget::setDataOptions(bool tog)
-//{
-//    if (theLowDataButton->isChecked()) {
-//        theFemWidget->setFEMforGP("GPMFmodel");
-//        errMSG->hide();
-//        theLowDataOptions->show();
-//    } else {
-//        theFemWidget->setFEMforGP("GPMFmodel");
-//        errMSG->hide();
-//        theLowDataOptions->show();
-//    }
-
-
-
-//    } else if (tog) {
-//        theFemWidget->setFEMforGP("GPmodel");
-//        theFemWidget->femProgramChanged("OpenSees");
-//        //theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
-//        //theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
-//        errMSG->hide();
-//        theLowSimOptions->show();
-//        //line1->show();
-//        //theLowDataLabel -> setStyleSheet("font-weight: bold; color: black");
-//    } else {
-//        //theExistingCheckBox_LF->setChecked(true);
-//        theFemWidget->setFEMforGP("GPdata");
-//        parseInputDataForRV(inpFileDir_LF->text());
-//        parseOutputDataForQoI(outFileDir_LF->text());
-//        //theLowSimOptions->hide();
-//        //line1->hide();
-//        //theLowDataLabel -> setStyleSheet("font-weight: bold; color: grey");
-//    }
-//}
 
 bool
 SurrogateMFInputWidget::outputToJSON(QJsonObject &jsonObj){
