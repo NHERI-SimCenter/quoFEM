@@ -110,7 +110,8 @@ SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
     checkBoxLayout->setAlignment(Qt::AlignTop);
 
     label2 = new QLabel();
-    label2->setText(QString("Resample from correlated dataset"));
+    label2->setText(QString("Resample RVs from correlated dataset"));
+    label2->setStyleSheet("font-weight: bold; color: gray");
     importCorrDataCheckBox = new QCheckBox();
     checkBoxLayout->addWidget(importCorrDataCheckBox,0);
     checkBoxLayout->addWidget(label2,1);
@@ -122,21 +123,21 @@ SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
     QFrame * lineA = new QFrame;
     lineA->setFrameShape(QFrame::HLine);
     lineA->setFrameShadow(QFrame::Sunken);
-    lineA->setMaximumWidth(250);
+    lineA->setMaximumWidth(300);
     corrDataLayout->addWidget(lineA,0,0,1,-1);
 
     corrDataLayout->setMargin(0);
     QLabel *label3 = new QLabel();
-    label3->setText(QString("Paired RV names"));
-    QLabel *label4 = new QLabel();
-    label4->setText(QString("Please import the samples at the RV tab using the following options: (Input type) data - (Distribution) discrete"));
+    label3->setText(QString("RV data groups"));
+    //QLabel *label4 = new QLabel();
+    //label4->setText(QString("Please import the samples at the RV tab using the following options: (Input type) data - (Distribution) discrete"));
     varList = new QLineEdit();
     varList->setPlaceholderText("e.g. {RV_name1,RV_name2},{RV_name5,RV_name6,RV_name8}");
     varList->setMaximumWidth(420);
     varList->setMinimumWidth(420);
     corrDataLayout->addWidget(label3,1,0);
     corrDataLayout->addWidget(varList,1,1);
-    corrDataLayout->addWidget(label4,2,0,1,-1);
+    //corrDataLayout->addWidget(label4,2,0,1,-1);
 
     corrDataLayout->setRowStretch(3,1);
     corrDataLayout->setColumnStretch(2,1);
