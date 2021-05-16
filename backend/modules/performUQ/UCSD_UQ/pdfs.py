@@ -100,3 +100,64 @@ class InvGamma:
     def log_pdf_eval(self, x):
         dist = stats.invgamma(self.a, scale=self.b)
         return dist.logpdf(x)
+
+
+class BetaDist:
+    def __init__(self, alpha, beta, lowerbound, upperbound):
+        self.alpha = alpha
+        self.beta = beta
+        self.lowerbound = lowerbound
+        self.upperbound = upperbound
+
+    def generate_rns(self, N):
+        dist = stats.beta(self.alpha, self.beta, self.lowerbound, self.upperbound)
+        return dist.rvs(size=N)
+
+    def log_pdf_eval(self, x):
+        dist = stats.beta(self.alpha, self.beta, self.lowerbound, self.upperbound)
+        return dist.logpdf(x)
+
+
+class LogNormDist:
+    def __init__(self, mu, sigma):
+        self.mu = mu
+        self.sigma = sigma
+        self.s = self.sigma
+        self.loc = 0
+        self.scale = np.exp(mu)
+
+    def generate_rns(self, N):
+        dist = stats.lognorm(s=self.s, loc=self.loc, scale=self.scale)
+        return dist.rvs(size=N)
+
+    def log_pdf_eval(self, x):
+        dist = stats.lognorm(s=self.s, loc=self.loc, scale=self.scale)
+        return dist.logpdf(x)
+
+
+class GumbelDist:
+    def __init__(self, alpha, beta):
+        self.alpha = alpha
+        self.beta = beta
+
+    def generate_rns(self, N):
+        dist = stats.gumbel_r(loc=self.beta, scale=(1/self.alpha))
+        return dist.rvs(size=N)
+
+    def log_pdf_eval(self, x):
+        dist = stats.gumbel_r(loc=self.beta, scale=(1/self.alpha))
+        return dist.logpdf(x)
+
+
+class WeibullDist:
+    def __init__(self, shape, scale):
+        self.shape = shape
+        self.scale = scale
+
+    def generate_rns(self, N):
+        dist = stats.weibull_min(c=self.shape, scale=self.scale)
+        return dist.rvs(size=N)
+
+    def log_pdf_eval(self, x):
+        dist = stats.weibull_min(c=self.shape, scale=self.scale)
+        return dist.logpdf(x)

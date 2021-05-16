@@ -6,6 +6,7 @@ affiliation: University of California, San Diego, *SimCenter, University of Cali
 
 import os
 import json
+import numpy as np
 
 
 def parseDataFunction(dakotaJsonLocation):
@@ -102,6 +103,36 @@ def parseDataFunction(dakotaJsonLocation):
                 variablesList[ind]['Par3'].append(rv['a'])
                 variablesList[ind]['Par4'].append(rv['b'])
                 paramString = "params: {}, {}, {}, {}".format(rv['Mean'], rv['Standard Deviation'], rv['a'], rv['b'])
+            elif rv['distribution'] == 'Beta':
+                variablesList[ind]['Par1'].append(rv['alphas'])
+                variablesList[ind]['Par2'].append(rv['betas'])
+                variablesList[ind]['Par3'].append(rv['lowerbound'])
+                variablesList[ind]['Par4'].append(rv['upperbound'])
+                paramString = "params: {}, {}, {}, {}".format(rv['alphas'], rv['betas'], rv['lowerbound'],
+                                                              rv['upperbound'])
+            elif rv['distribution'] == "Lognormal":
+                meanValue = rv['mean']
+                stdevValue = rv['stdDev']
+                mu = np.log(pow(meanValue, 2) / np.sqrt(pow(stdevValue, 2) + pow(meanValue, 2)))
+                sig = np.sqrt(np.log(pow(stdevValue / meanValue, 2) + 1))
+                variablesList[ind]['Par1'].append(mu)
+                variablesList[ind]['Par2'].append(sig)
+                variablesList[ind]['Par3'].append(None)
+                variablesList[ind]['Par4'].append(None)
+                paramString = "params: {}, {}".format(mu, sig)
+            elif rv['distribution'] == "Gumbel":
+                variablesList[ind]['Par1'].append(rv['alphaparam'])
+                variablesList[ind]['Par2'].append(rv['betaparam'])
+                variablesList[ind]['Par3'].append(None)
+                variablesList[ind]['Par4'].append(None)
+                paramString = "params: {}, {}".format(rv['alphaparam'], rv['betaparam'])
+            elif rv['distribution'] == "Weibull":
+                variablesList[ind]['Par1'].append(rv['shapeparam'])
+                variablesList[ind]['Par2'].append(rv['scaleparam'])
+                variablesList[ind]['Par3'].append(None)
+                variablesList[ind]['Par4'].append(None)
+                paramString = "params: {}, {}".format(rv['shapeparam'], rv['scaleparam'])
+
             print("\t\t\tRV number: {}, name: {}, dist: {}, {}".format(i, rv['name'], rv['distribution'], paramString))
 
         # Adding one prior distribution per EDP for the error covariance multiplier term

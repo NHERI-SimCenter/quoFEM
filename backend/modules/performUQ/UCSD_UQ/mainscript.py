@@ -174,7 +174,7 @@ for expNum in range(1, numExperiments + 1):
         covarianceFile = os.path.join(calDataPath, covarianceFileName)
         print("\t\tChecking to see if user-supplied file '{}' exists in '{}'".format(covarianceFileName, calDataPath))
         if os.path.isfile(covarianceFile):
-            print("\t\tFound a user supplied supplied file.")
+            print("\t\tFound a user supplied file.")
             print("\t\tReading in user supplied covariance matrix from file: '{}'".format(covarianceFile))
             # Check the data in the covariance matrix file
             tmpCovFile = os.path.join(calDataPath, "quoFEMTempCovMatrixFile.sigma")
@@ -262,7 +262,7 @@ for expNum in range(1, numExperiments + 1):
                                                                                           numCols))
             print("\t\tCovariance matrix: {}".format(covMatrix))
         else:
-            print("\t\tDid not find a user supplied supplied file. Using the default variance value.")
+            print("\t\tDid not find a user supplied file. Using the default variance value.")
             print("\t\tThe covariance matrix is an identity matrix multiplied by this value.")
             scalarVariance = np.array(scaleFactors[i])
             covarianceMatrixList.append(scalarVariance)
@@ -324,10 +324,37 @@ for modelNum, variables in enumerate(variablesList):
             AllPars.append(pdfs.TrunNormal(mu=VariableMean, sig=VariableSD, a=VariableLowerLimit, b=VariableUpperLimit))
 
         if variables["distributions"][i] == 'InvGamma':
-            a = float(variables['Par1'][i])
-            b = float(variables['Par2'][i])
+            VariableA = float(variables['Par1'][i])
+            VariableB = float(variables['Par2'][i])
 
-            AllPars.append(pdfs.InvGamma(a=a, b=b))
+            AllPars.append(pdfs.InvGamma(a=VariableA, b=VariableB))
+
+        if variables["distributions"][i] == "Beta":
+            VariableAlpha = float(variables['Par1'][i])
+            VariableBeta = float(variables['Par2'][i])
+            VariableLowerLimit = float(variables['Par3'][i])
+            VariableUpperLimit = float(variables['Par4'][i])
+
+            AllPars.append(pdfs.BetaDist(alpha=VariableAlpha, beta=VariableBeta, lowerbound=VariableLowerLimit,
+                                         upperbound=VariableUpperLimit))
+
+        if variables["distributions"][i] == "Lognormal":
+            VariableMu = float(variables['Par1'][i])
+            VariableSigma = float(variables['Par2'][i])
+
+            AllPars.append(pdfs.LogNormDist(mu=VariableMu, sigma=VariableSigma))
+
+        if variables["distributions"][i] == "Gumbel":
+            VariableAlphaParam = float(variables['Par1'][i])
+            VariableBetaParam = float(variables['Par2'][i])
+
+            AllPars.append(pdfs.GumbelDist(alpha=VariableAlphaParam, beta=VariableBetaParam))
+
+        if variables["distributions"][i] == "Weibull":
+            VariableShapeParam = float(variables['Par1'][i])
+            VariableScaleParam = float(variables['Par2'][i])
+
+            AllPars.append(pdfs.WeibullDist(shape=VariableShapeParam, scale=VariableScaleParam))
 
     # Run the Algorithm
     print('\n\t==========================')
