@@ -94,6 +94,7 @@ DakotaInputCalibration::DakotaInputCalibration(QWidget *parent)
 
 
   scalingFactors = new QLineEdit();
+  scalingFactors->setPlaceholderText("(Optional)");
   scalingFactors->setToolTip("Scaling factors on responses, one for each QoI must be provided or values ignored, default is 1.0 for all");
   layout->addWidget(new QLabel("Scaling Factors"), 3, 0, 1, 2);
   layout->addWidget(scalingFactors, 3, 1, 1, 2);

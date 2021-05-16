@@ -429,6 +429,7 @@ void FEM::femProgramChanged(const QString &arg1)
             label1->setText("Input Script");
             file1->setToolTip(tr("Name of OpenSees input script"));
             file2->setToolTip(tr("Name of Python/Tcl script that will process OpenSees output file for UQ engine"));
+            file2->setPlaceholderText("(Optional)");
         } else if (arg1 == "SurrogateGP"){
             label1->setText("SurrogateGP Info (.json)");
             label2->setText("SurrogateGP Model (.pkl)");
@@ -439,6 +440,7 @@ void FEM::femProgramChanged(const QString &arg1)
             label1->setText("Input Script");
             file1->setToolTip(tr("Name of OpenSeesPy input script"));
             file2->setToolTip(tr("Name of Python script that will process OpenSeesPy output"));
+            file2->setPlaceholderText("(Optional)");
         }
 
         femLayout->addWidget(label2, 1,0);

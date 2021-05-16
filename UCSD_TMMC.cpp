@@ -82,6 +82,7 @@ UCSD_TMMC::UCSD_TMMC(QWidget *parent)
 
     // create label and lineedit for loglikelihood script and add to layout
     logLikelihoodScript = new QLineEdit();
+    logLikelihoodScript->setPlaceholderText("(Optional)");
     layout->addWidget(new QLabel("Log Likelihood Script"), 3, 0);
     layout->addWidget(logLikelihoodScript, 3, 1, 1, 2);
 
@@ -135,6 +136,7 @@ UCSD_TMMC::inputFromJSON(QJsonObject &jsonObject){
 
   if (jsonObject.contains("numParticles") && jsonObject.contains("logLikelihoodFile") && jsonObject.contains("logLikelihoodPath") && jsonObject.contains("seed")
           && jsonObject.contains("calDataFile") && jsonObject.contains("calDataFilePath")) {
+
     int particles=jsonObject["numParticles"].toInt();
     numParticles->setText(QString::number(particles));
 
