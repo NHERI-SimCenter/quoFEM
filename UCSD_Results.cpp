@@ -225,7 +225,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        emit sendErrorMessage("No dakotaTab.out file - TMCMC failed .. possibly no QoI");
         return 0;
     }
 
@@ -320,7 +320,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     // determine summary statistics for each edp
     //
 
-    for (int col = theRVs->getNumRandomVariables()-1; col<colCount; ++col) { // Changed by ABS
+    for (int col=1; col<colCount; ++col) { // Changed by ABS
 //    for (int col = theRVs->getNumRandomVariables()+1; col<colCount; ++col) { // +1 for first col which is nit an RV
         // compute the mean
         double sum_value=0;
