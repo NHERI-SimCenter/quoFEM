@@ -7,7 +7,6 @@ affiliation: SimCenter*; University of California, San Diego
 import os
 import platform
 import subprocess
-from pathlib import Path
 import shutil
 
 
@@ -24,16 +23,18 @@ def copytree(src, dst, symlinks=False, ignore=None):
                 shutil.copy2(s, d)
 
 
-def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calDataFile, numExperiments,
-           covarianceMatrixList, edpNamesList, edpLengthsList, covarianceTypeList):
+def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibrationData, numExperiments,
+           covarianceMatrixList, edpNamesList, edpLengthsList):
     """ 
     this function runs FE model (model.tcl) for each parameter value (par)
     model.tcl should take parameter input
     model.tcl should output 'output$PN.txt' -> column vector of size 'Ny'
     """
 
+    # print("\nParticleNum: {}, parameter values: {} ".format(ParticleNum, par))
+
     stringtoappend = ("analysis" + str(ParticleNum))
-    analysisPath = Path.joinpath(resultsLocation, stringtoappend)
+    analysisPath = os.path.join(resultsLocation, stringtoappend)
 
     if os.path.isdir(analysisPath):
         pass
@@ -41,13 +42,10 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calData
         os.mkdir(analysisPath)
 
     # copy templatefiles
-    templateDir = Path.joinpath(resultsLocation, "templatedir")
+    templateDir = os.path.join(resultsLocation, "templatedir")
+    copytree(templateDir, analysisPath)
 
-    print('src: {}'.format(templateDir.as_posix()))
-    print('dst: {}'.format(analysisPath))
-
-    copytree(templateDir.as_posix(), analysisPath)
-
+    # change to analysis directory
     os.chdir(analysisPath)
 
     # write input file and covariance multiplier values list
@@ -81,9 +79,9 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calData
 
     # load output file (output file should be a column with Ny outputs)
 
-    files = [f for f in os.listdir('.') if os.path.isfile(f)]
-    for f in files:
-        print(f)
+    # files = [f for f in os.listdir('.') if os.path.isfile(f)]
+    # for f in files:
+    #     print(f)
 
-    return log_likelihood(calDataFile, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
-                          covarianceTypeList, covarianceMultiplierList)
+    return log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
+                          covarianceMultiplierList)

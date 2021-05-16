@@ -9,7 +9,7 @@ import scipy.stats as stats
 
 class Uniform:
     # Method with in this uniform class
-    def __init__(self, lower, upper):  # method recieves instance as first argument automatically
+    def __init__(self, lower, upper):  # method receives instance as first argument automatically
         # the below are the instance variables
         self.lower = lower
         self.upper = upper
