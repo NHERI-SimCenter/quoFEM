@@ -63,5 +63,5 @@ def log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNam
                 loglike += 0
             else:
                 loglike += np.sum(multivariate_normal.logpdf(residuals, cov=cov))
-    print('logLikelihood: ', loglike)
+    # print('logLikelihood: ', loglike)
     return loglike
