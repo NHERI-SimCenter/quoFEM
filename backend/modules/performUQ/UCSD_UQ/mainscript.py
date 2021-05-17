@@ -4,6 +4,7 @@ affiliation: University of California, San Diego, *SimCenter, University of Cali
 
 """
 
+# ======================================================================================================================
 import os
 import sys
 import csv
@@ -14,6 +15,7 @@ from parseData import parseDataFunction
 import pdfs
 from runTMCMC import RunTMCMC
 
+# ======================================================================================================================
 inputArgs = sys.argv
 
 mainscript_path = inputArgs[0]
@@ -27,6 +29,7 @@ run_type = inputArgs[3]
 # workdir_temp = "/Users/aakash/Documents/quoFEM/LocalWorkDir/tmp.SimCenter/templatedir"
 
 
+# ======================================================================================================================
 class DataProcessingError(Exception):
     """Raised when errors found when processing user-supplied calibration and covariance data.
 
@@ -38,6 +41,7 @@ class DataProcessingError(Exception):
         self.message = message
 
 
+# ======================================================================================================================
 print("Running quoFEM's UCSD_UQ engine workflow")
 print('CWD: {}'.format(os.path.abspath('.')))
 dakotaJsonLocation = os.path.join(os.path.abspath(workdir_temp), "dakota.json")
@@ -46,6 +50,7 @@ print("Parsing the json input file {}".format(dakotaJsonLocation))
 (variablesList, numberOfSamples, seedval, resultsLocation, resultsPath, logLikelihoodDirectoryPath,
  logLikelihoodFilename, calDataPath, calDataFileName, edpList) = parseDataFunction(dakotaJsonLocation)
 
+# ======================================================================================================================
 print('\n==========================')
 print("Processing log-likelihood script options")
 # If loglikelihood script is provided, use that, otherwise, use default loglikelihood function
@@ -70,6 +75,7 @@ else:
 
 logLikeModule = import_module(logLikeModuleName)
 
+# ======================================================================================================================
 print('\n==========================')
 print('Processing EDP definitions')
 lineLength = 0
@@ -87,6 +93,7 @@ for i in range(len(edpList)):
 print(printString)
 print("Expected length of each line in data file: {}".format(lineLength))
 
+# ======================================================================================================================
 # Process calibration data file
 print('\n==========================')
 print('Processing calibration data file')
@@ -131,6 +138,7 @@ print("\nFinished reading in calibration data. Shape of calibration data: {}\n".
 print('The number of experiments: {}'.format(np.shape(calibrationData)[0]))
 print('The number of calibration terms per experiment: {}'.format(np.shape(calibrationData)[1]))
 
+# ======================================================================================================================
 # Processing covariance matrix options
 print('\n==========================')
 print('Processing options for variance/covariance:')
@@ -145,7 +153,7 @@ print('If the user does not supply variance or covariance data, a default varian
 # For each response variable, compute the variance of the data. These will be the default error variance
 # values used in the calibration process. Values of the multiplier on these default error variance values will be
 # calibrated. There will be one such error variance value per response quantity. If there is only data from one
-# experiment,then the default error std.dev. value is assumed to be 10% of the absolute maximum value of the data
+# experiment,then the default error std.dev. value is assumed to be 5% of the absolute maximum value of the data
 # corresponding to that response quantity.
 scaleFactors = np.zeros_like(edpNamesList, dtype=float)
 if np.shape(calibrationData)[0] > 1:  # if there are more than 1 rows of data, i.e. data from multiple experiments
@@ -269,22 +277,29 @@ for expNum in range(1, numExperiments + 1):
             covarianceTypeList.append('scalar')
             print("\t\tCovariance matrix: {}".format(scalarVariance))
 
+# ======================================================================================================================
 # Starting TMCMC workflow
 print('\n==========================')
-print('Processing the TMCMC algorithm options')
+print('Setting up the TMCMC algorithm')
 
 sys.path.append(resultsPath)
+print("\tResults path: {}".format(resultsPath))
 
 # set the seed
 np.random.seed(seedval)
+print("\tSeed: {}".format(seedval))
 
 # number of particles: Np
 Np = numberOfSamples
+print("\tNumber of particles: {}".format(Np))
 
 # number of max MCMC steps
 Nm_steps_max = 2
 Nm_steps_maxmax = 5
+print("\tNumber of MCMC steps in first stage: {}".format(Nm_steps_max))
+print("\tMax. number of MCMC steps in any stage: {}".format(Nm_steps_maxmax))
 
+# ======================================================================================================================
 print('\n==========================')
 print('Looping over each model')
 # %% For each model:
@@ -438,4 +453,7 @@ print('\n==========================')
 print('Finished looping over each model')
 print('==========================\n')
 
+# ======================================================================================================================
 print("UCSD_UQ engine workflow complete!\n")
+
+# ======================================================================================================================

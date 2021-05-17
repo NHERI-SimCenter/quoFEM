@@ -21,6 +21,8 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     ESS = N
     mytrace = []
 
+    totalNumberOfModelEvaluations = N
+
     # Initialize other TMCMC variables
     Nm_steps = Nm_steps_max
     parallelize_MCMC = 'yes'  # yes or no
@@ -33,9 +35,14 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     print('\n\t\t==========================')
     print("\t\tStage number: {}".format(stageNum))
     print("\t\tSampling from prior")
-    print("\t\tbeta = %9.8f" % beta)
+    if beta < 1e-7:
+        print("\t\tbeta = %9.6e" % beta)
+    else:
+        print("\t\tbeta = %9.8f" % beta)
     print("\t\tESS = %d" % ESS)
     print("\t\tscalem = %.2f" % scalem)
+    print("\n\t\tNumber of model evaluations in this stage: {}".format(N))
+    print("\t\tTotal number of model evaluations so far: {}".format(totalNumberOfModelEvaluations))
     print('\t\t==========================')
 
     # initial samples
@@ -49,7 +56,8 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     if parallelize_MCMC == 'yes':
         pool = Pool(processes=mp.cpu_count())
         Lmt = pool.starmap(runFEM, [(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
-                                     numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList) for ind in range(N)], )
+                                     numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList)
+                                    for ind in range(N)], )
         pool.close()
         Lm = np.array(Lmt).squeeze()
     else:
@@ -61,8 +69,16 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         # adaptively compute beta s.t. ESS = N/2 or ESS = 0.95*prev_ESS
         # plausible weights of Sm corresponding to new beta
         beta, Wm, ESS = tmcmcFunctions.compute_beta(beta, Lm, ESS, threshold=0.95)
+        # beta, Wm, ESS = tmcmcFunctions.compute_beta(beta, Lm, ESS, threshold=0.5)
+        # try:
+        #     beta, Wm = tmcmcFunctions.compute_beta2(beta, Lm)
+        # except tmcmcFunctions.PrematureConvergenceError as err:
+        #     div = "======================================"
+        #     print("\t{}\n\tTMCMC exited with the following error: \n\t{}\n\t{}".format(div, err.message, div))
+        #     break
+
         # print("Beta: {}".format(beta))
-        # print("Weights: {}".format(Wm))
+        # print("Weights: {}".format(Wm/sum(Wm)))
         # print("ESS: {}".format(ESS))
         # print("Samples: {}".format(Sm))
 
@@ -89,7 +105,10 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         # stage m: samples, likelihood, weights, next stage ESS, next stage beta, resampled samples
         mytrace.append([Sm, Lm, Wm, ESS, beta, Smcap])
 
-        print("\t\tbeta = %9.8f" % beta)
+        if beta < 1e-7:
+            print("\t\tbeta = %9.6e" % beta)
+        else:
+            print("\t\tbeta = %9.8f" % beta)
         print("\t\tESS = %d" % ESS)
         print("\t\tscalem = %.2f" % scalem)
 
@@ -99,6 +118,8 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
 
         numProposals = N * Nm_steps
         numAccepts = 0
+
+        totalNumberOfModelEvaluations += numProposals
 
         # seed to reproduce results
         ss = SeedSequence(seed)
@@ -129,9 +150,15 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         all_proposals = np.asarray(all_proposals)
         all_PLP = np.asarray(all_PLP)
 
+        print("\n\t\tNumber of model evaluations in this stage: {}".format(numProposals))
+        print("\t\tTotal number of model evaluations so far: {}".format(totalNumberOfModelEvaluations))
+
         # total observed acceptance rate
         R = numAccepts / numProposals
-        print("\n\t\tacceptance rate = %.6f" % R)
+        if R < 1e-5:
+            print("\n\t\tacceptance rate = %9.5e" % R)
+        else:
+            print("\n\t\tacceptance rate = %.6f" % R)
 
         # Calculate Nm_steps based on observed acceptance rate
         if Adap_calc_Nsteps == 'yes':
@@ -142,6 +169,14 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
             acc_rate = max(1. / numProposals, R)
             Nm_steps = min(Nm_steps_max, 1 + int(np.log(1 - 0.99) / np.log(1 - acc_rate)))
             print("\t\tnext MCMC Nsteps = %d" % Nm_steps)
+
+            # # increase max Nmcmc with stage number
+            # # Nm_steps_max = min(Nm_steps_max + 1, Nm_steps_maxmax)
+            # # print("\t\tadapted max MCMC steps = %d" % Nm_steps_max)
+            #
+            # acc_rate = max(1. / numProposals, R)
+            # Nm_steps = min(Nm_steps_maxmax, 1 + int(np.log(1 - 0.99) / np.log(1 - acc_rate)))
+            # print("\t\tnext MCMC Nsteps = %d" % Nm_steps)
 
         print('\t\t==========================')
 
