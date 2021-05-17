@@ -90,8 +90,11 @@ if os.path.isfile("calibrationDataFilesToMove.cal"):
     datFileList = calDataFileList.readlines()
     for line in datFileList:
         datFile = line.strip()
-        # if datFile.split(".")[1].isdigit():
-        shutil.move(datFile, "../")
+        if datFile.split('.')[-1] == 'tmpFile':
+            shutil.move(datFile, "../{}".format(datFile[:-8]))
+        else:
+            shutil.move(datFile, "../")
+
     # os.remove("calibrationDataFilesToMove.cal")
 
 # change dir to the main working dir for the structure
