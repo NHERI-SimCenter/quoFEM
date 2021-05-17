@@ -627,18 +627,18 @@ int processCalDataFile(const char *calFileName,
     // For each line in the calibration data file
     while (getline(calDataFile, line)) {
         // Replace all commas by space and get a string stream for each line
-        std::replace(line.begin(), line.end(), ',', ' ');
+//        std::replace(line.begin(), line.end(), ',', ' ');
         std::stringstream lineStream(line);
         if (!line.empty()) {
             ++lineNum;
             int wordCount = 0;
             // Check length of each line
             char *word;
-            word = strtok(const_cast<char *>(line.c_str()), " \t");
+            word = strtok(const_cast<char *>(line.c_str()), " \t,");
             while (word != nullptr) { // while end of cstring is not reached
                 ++wordCount;
                 spacedDataFile << word << " ";
-                word = strtok(nullptr, " \t");
+                word = strtok(nullptr, " \t,");
             }
             if (wordCount != lineLength) {
                 std::cout << std::endl << "ERROR: The number of calibration terms expected in each line is "
@@ -716,6 +716,7 @@ int processCalDataFile(const char *calFileName,
                                 createErrFile = false;
                                 errFileToProcess = path;
                                 break;
+                                //TODO:what to do in this case?
                             }
                         }
                     }
@@ -745,10 +746,10 @@ int processCalDataFile(const char *calFileName,
                         }
                         // Get the number of columns of the first row
                         char *entry;
-                        entry = strtok(const_cast<char *>(fileLine.c_str()), " \t");
+                        entry = strtok(const_cast<char *>(fileLine.c_str()), " \t,");
                         while (entry != nullptr) { // while end of cstring is not reached
                             ++ncol;
-                            entry = strtok(nullptr, " \t");
+                            entry = strtok(nullptr, " \t,");
                         }
                         // Create temporary file to hold the space separated error data
                         std::string tmpErrorFileName = errFileToProcess + ".tmpFile";
@@ -760,17 +761,17 @@ int processCalDataFile(const char *calFileName,
                         while (getline(errFileUser, fileLine)) {
                             if (!fileLine.empty()) {
                                 nrow++;
-                                std::replace(fileLine.begin(), fileLine.end(), ',', ' ');
+//                                std::replace(fileLine.begin(), fileLine.end(), ',', ' ');
                                 // Get the number of columns of each row
                                 int numCols = 0;
                                 char *word;
-                                word = strtok(const_cast<char *>(fileLine.c_str()), " \t");
+                                word = strtok(const_cast<char *>(fileLine.c_str()), " \t,");
                                 while (word != nullptr) { // while end of cstring is not reached
                                     ++numCols;
                                     if (commaSeparated) {
                                         tmpErrorFile << word << " ";
                                     }
-                                    word = strtok(nullptr, " \t");
+                                    word = strtok(nullptr, " \t,");
                                 }
                                 if (numCols != ncol) {
                                     std::cout << "ERROR: The number of columns must be the same for each row in the "
@@ -867,6 +868,7 @@ int processCalDataFile(const char *calFileName,
                                 createErrFile = false;
                                 errFileToProcess = path;
                                 break;
+                            //TODO:what to do in this case?
                             }
                         }
                     }
@@ -1045,6 +1047,7 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
 //      }
     }
       std::vector<std::string> errFilenameList = {};
+      //TODO: Read in the error filename list
       std::stringstream errTypeStringStream;
 
       int numExp = processCalDataFile(calFileName, edpList, lenList, numResponses, numFieldResponses, errFilenameList,

@@ -76,7 +76,7 @@ if run_type in ['runningLocal']:
 
 command = Dakota + ' -input dakota.in -output dakota.out -error dakota.err'
 
-#Change permision of workflow driver
+#Change permission of workflow driver
 st = os.stat(workflow_driver)
 os.chmod(workflow_driver, st.st_mode | stat.S_IEXEC)
 os.chmod(workflow_driver1, st.st_mode | stat.S_IEXEC)
