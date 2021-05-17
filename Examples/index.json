@@ -427,6 +427,66 @@
       "tags": [
         "UV.1.3"
       ]
+    },
+    "qfem-0018": {
+      "id": "qfem-0018",
+      "title": "Deterministic Calibration of Material Model",
+      "base": "qfem-0018",
+      "doc": [
+        "qfem-0018/README.rst",
+        "qfem-0018/src/matTestAllParams.tcl",
+        "qfem-0018/src/calDataField.csv",
+		"qfem-0018/figures/StrainHistory.png",
+		"qfem-0018/figures/DeterministicCalibrationResults.png",
+		"qfem-0018/figures/StressResults.png",
+		"qfem-0018/figures/UQ.png",
+		"qfem-0018/figures/FEM.png",
+		"qfem-0018/figures/RV.png",
+		"qfem-0018/figures/QOI.png",
+		"qfem-0018/figures/RES1.png",
+		"qfem-0018/figures/RES2.png"
+      ],
+      "entry_point": "qfem-0018/./input.json",
+      "summary": "This example demonstrates deterministic calibration of a non-linear material model (STEEL02) using data from a cyclic stress-strain test.",
+      "logo": "figures/DeterministicCalibrationResults.png",
+      "published": "2021-03-12T21:26:53.946381-08:00",
+      "categories": {
+        "Simulation": "OpenSees",
+        "Difficulty": "1"
+      },
+      "tags": [
+        "UV.1.3"
+      ]
+    },
+    "qfem-0019": {
+      "id": "qfem-0019",
+      "title": "Bayesian Calibration of Material Model",
+      "base": "qfem-0019",
+      "doc": [
+        "qfem-0019/README.rst",
+        "qfem-0019/src/matTestAllParams.tcl",
+        "qfem-0019/src/calDataField.csv",
+		"qfem-0019/figures/StrainHistory.png",
+		"qfem-0019/figures/DeterministicCalibrationResults.png",
+		"qfem-0019/figures/StressResults.png",
+		"qfem-0019/figures/UQ.png",
+		"qfem-0019/figures/FEM.png",
+		"qfem-0019/figures/RV.png",
+		"qfem-0019/figures/QOI.png",
+		"qfem-0019/figures/RES1.png",
+		"qfem-0019/figures/RES2.png"
+      ],
+      "entry_point": "qfem-0019/./inputDeterministic.json",
+      "summary": "Surrogate modeling for mean and variance of EQ response",
+      "logo": "figures/DeterministicCalibrationResults.PNG",
+      "published": "2021-03-12T21:26:53.946381-08:00",
+      "categories": {
+        "Simulation": "OpenSees",
+        "Difficulty": "1"
+      },
+      "tags": [
+        "UV.1.3"
+      ]
     }
   },
   "categories": {

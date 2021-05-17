@@ -98,6 +98,12 @@ private:
     QLabel      *calibrateCovarianceMultiplierLabel;
     QCheckBox   *calibrateCovarianceMultiplierCheckBox;
     QHBoxLayout *readErrorCovarianceDataWidget;
+    QLabel      *calibratePerResponseLabel;
+    QCheckBox   *calibratePerResponseCheckBox;
+    QLabel      *calibratePerExperimentLabel;
+    QCheckBox   *calibratePerExperimentCheckBox;
+    QLabel      *calibrateMultiplierText;
+    QLineEdit   *calDataFileEdit;
     //QComboBox   *emulator;
     //QLineEdit   *maxIterations;
     //QLineEdit   *convTol;

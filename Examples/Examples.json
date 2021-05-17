@@ -41,7 +41,7 @@
       "InputFile": "qfem-0013/src/input.json"
     },
     {
-      "name": "Steel Frame Calibration with DREAM",
+      "name": "Steel Frame: Bayesian Calibration with DREAM",
       "description": "In this example, Bayesian estimation is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
       "InputFile": "qfem-0008/src/input.json"
     },
@@ -76,14 +76,14 @@
       "InputFile": "qfem-0001/src/input.json"
     },
     {
-      "name": "exampleBayesianCalibration",
+      "name": "Bayesian Calibration of Material Model",
       "description": "~",
-      "InputFile": "qfem-0011/src/input.json"
+      "InputFile": "qfem-0019/input.json"
     },
     {
-      "name": "exampleCalibration",
+      "name": "Deterministic Calibration of Material Model",
       "description": "~",
-      "InputFile": "qfem-0012/src/input.json"
+      "InputFile": "qfem-0018/input.json"
     }
   ]
 }

@@ -57,8 +57,8 @@ UCSD_TMMC::UCSD_TMMC(QWidget *parent)
     numParticles->setValidator(new QIntValidator);
     numParticles->setToolTip("Specify the number of samples");
 
-    layout->addWidget(new QLabel("# Samples"), 1, 0);
-    layout->addWidget(numParticles, 1, 1);
+    layout->addWidget(new QLabel("# Samples"), 0, 0);
+    layout->addWidget(numParticles, 0, 1);
 
     // create label and entry for seed to layout
     randomSeed = new QLineEdit();
@@ -66,24 +66,34 @@ UCSD_TMMC::UCSD_TMMC(QWidget *parent)
     randomSeed->setValidator(new QIntValidator);
     randomSeed->setToolTip("Specify the random seed value");
 
-    layout->addWidget(new QLabel("Seed"), 2, 0);
-    layout->addWidget(randomSeed, 2, 1);
+    layout->addWidget(new QLabel("Seed"), 1, 0);
+    layout->addWidget(randomSeed, 1, 1);
 
+    // create label and lineedit for calibration data file and add to layout
+    calDataFileEdit = new QLineEdit();
+    layout->addWidget(new QLabel("Calibration Data File"), 2, 0);
+    layout->addWidget(calDataFileEdit, 2, 1, 1, 2);
 
+    QPushButton *chooseCalDataFile = new QPushButton("Choose");
+    connect(chooseCalDataFile, &QPushButton::clicked, this, [=](){
+        calDataFileEdit->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
+    });
+    layout->addWidget(chooseCalDataFile, 2, 3);
+
+    // create label and lineedit for loglikelihood script and add to layout
     logLikelihoodScript = new QLineEdit();
-
-    layout->addWidget(new QLabel("Log Likelihood Script"), 0, 0);
-    layout->addWidget(logLikelihoodScript, 0, 1, 1, 2);
+    logLikelihoodScript->setPlaceholderText("(Optional)");
+    layout->addWidget(new QLabel("Log Likelihood Script"), 3, 0);
+    layout->addWidget(logLikelihoodScript, 3, 1, 1, 2);
 
     QPushButton *chooseFile = new QPushButton("Choose");
-
     connect(chooseFile, &QPushButton::clicked, this, [=](){
         logLikelihoodScript->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.py)"));
     });
-    layout->addWidget(chooseFile,0,3);
+    layout->addWidget(chooseFile, 3, 3);
 
 
-    layout->setRowStretch(3, 1);
+    layout->setRowStretch(4, 1);
     layout->setColumnStretch(4, 1);
     layout->setColumnStretch(2, 1);
     this->setLayout(layout);
@@ -108,6 +118,13 @@ UCSD_TMMC::outputToJSON(QJsonObject &jsonObj){
     QString path = fileInfo.absolutePath();
     jsonObj["logLikelihoodPath"]=path;
 
+    QString calFileName = calDataFileEdit->text();
+    QFileInfo calFileInfo(calFileName);
+
+    jsonObj["calDataFile"]=calFileInfo.fileName();
+    QString calFilePath = calFileInfo.absolutePath();
+    jsonObj["calDataFilePath"]=calFilePath;
+
     return result;    
 }
 
@@ -117,7 +134,9 @@ UCSD_TMMC::inputFromJSON(QJsonObject &jsonObject){
   bool result = true;
   this->clear();
 
-  if (jsonObject.contains("numParticles") && jsonObject.contains("logLikelihoodFile") && jsonObject.contains("logLikelihoodPath") && jsonObject.contains("seed")) {
+  if (jsonObject.contains("numParticles") && jsonObject.contains("logLikelihoodFile") && jsonObject.contains("logLikelihoodPath") && jsonObject.contains("seed")
+          && jsonObject.contains("calDataFile") && jsonObject.contains("calDataFilePath")) {
+
     int particles=jsonObject["numParticles"].toInt();
     numParticles->setText(QString::number(particles));
 
@@ -126,8 +145,17 @@ UCSD_TMMC::inputFromJSON(QJsonObject &jsonObject){
 
     QString file = jsonObject["logLikelihoodFile"].toString();
     QString path = jsonObject["logLikelihoodPath"].toString();
-    logLikelihoodScript->setText(path + QDir::separator() + file);
+    if (!(file.trimmed().isEmpty() && path.trimmed().isEmpty())) {
+        logLikelihoodScript->setText(path + QDir::separator() + file);
+    }
     //logLikelihoodScript->setText(file + QDir::separator() + path);
+
+    QString calFile = jsonObject["calDataFile"].toString();
+    QString calFilePath = jsonObject["calDataFilePath"].toString();
+    if (!(calFile.trimmed().isEmpty() && calFilePath.trimmed().isEmpty())) {
+        calDataFileEdit->setText(calFilePath + QDir::separator() + calFile);
+    }
+
   }
   else {
           emit sendErrorMessage("ERROR: TMCMC input - not all data specified");
