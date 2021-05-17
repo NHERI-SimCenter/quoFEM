@@ -68,7 +68,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
 : UQ_Engine(parent),uqSpecific(0)
 {
-//    layout = new QVBoxLayout();
     mLayout = new QVBoxLayout();
 
     //

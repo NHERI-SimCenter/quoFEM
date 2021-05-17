@@ -83,7 +83,6 @@ public slots:
    void showDataOptions(bool);
 
 private:
-    QVBoxLayout *layout;
     QWidget     *methodSpecific;
     QComboBox   *samplingMethod;
     QLineEdit   *numSamples;

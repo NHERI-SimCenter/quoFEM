@@ -129,11 +129,12 @@ void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
 {
     QString thePreviousName = theCurrentEngine->getMethodName();
     UQ_Engine *theOldEngine = theCurrentEngine;
+    theEdpWidget->showAdvancedSensitivity(false);
 
     // If previous was surrogate, reset everything
     if (thePreviousName == "surrogate")
     {
-        theEdpWidget->setGPQoINames(QStringList({}) );// remove GP QoIs
+        //theEdpWidget->setGPQoINames(QStringList({}) );// remove GP QoIs
         theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
         theFemWidget->setFEMforGP("reset");// reset FEM
     }
@@ -145,25 +146,14 @@ void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
     } else if ((arg1 == QString("Sensitivity")) || (arg1 == QString("Sensitivity Analysis"))) {
        theStackedWidget->setCurrentIndex(1);
        theCurrentEngine = theSensitivityEngine;
-       theEdpWidget->showAdvancedSensitivity();
+       theEdpWidget->showAdvancedSensitivity(true);
        //theFemWidget->setFemGP(false);
 
     } else if ((arg1 == QString("Surrogate")) || (arg1 == QString("Train GP Surrogate Model"))) {
-       // == restart UQ for simplicity
-       //delete theSurrogateEngine;
-       //theSurrogateEngine = new SimCenterUQInputSurrogate(theParameters,theFemWidget,theEdpWidget);
-       //theStackedWidget->insertWidget(1,theSurrogateEngine);
-       // ==
-
        theStackedWidget->setCurrentIndex(2);
        theCurrentEngine = theSurrogateEngine;
-       theEdpWidget->hideAdvancedSensitivity();
-
-       // restart other parts
+       // reset other parts
        theFemWidget->setFEMforGP("GPmodel");   // set it to be GP-FEM
-       //theEdpWidget->setGPQoINames(QStringList({}) );// remove GP RVs
-       //theParameters->setGPVarNamesAndValues(QStringList({}));// remove GP RVs
-
     } else {
       qDebug() << "ERROR .. SimCenterUQEngine selection .. type unknown: " << arg1;
     }

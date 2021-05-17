@@ -64,7 +64,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 SimCenterUQInputSensitivity::SimCenterUQInputSensitivity(QWidget *parent)
 : UQ_Engine(parent),uqSpecific(0)
 {
-    layout = new QVBoxLayout();
     mLayout = new QVBoxLayout();
 
     //
@@ -102,11 +101,55 @@ SimCenterUQInputSensitivity::SimCenterUQInputSensitivity(QWidget *parent)
     theCurrentMethod = theMC;
 
     mLayout->addWidget(theStackedWidget);
-    layout->addLayout(mLayout);
 
-    this->setLayout(layout);
+
+    //
+    // Import paired data
+    //
+
+    checkBoxLayout= new QHBoxLayout;
+    checkBoxLayout->setMargin(0);
+    checkBoxLayout->setAlignment(Qt::AlignTop);
+
+    label2 = new QLabel();
+    label2->setText(QString("Resample RVs from correlated dataset"));
+    label2->setStyleSheet("font-weight: bold; color: gray");
+    importCorrDataCheckBox = new QCheckBox();
+    checkBoxLayout->addWidget(importCorrDataCheckBox,0);
+    checkBoxLayout->addWidget(label2,1);
+    mLayout->addLayout(checkBoxLayout);
+
+    corrDataLayoutWrap= new QWidget;
+    QGridLayout *corrDataLayout= new QGridLayout(corrDataLayoutWrap);
+
+    QFrame * lineA = new QFrame;
+    lineA->setFrameShape(QFrame::HLine);
+    lineA->setFrameShadow(QFrame::Sunken);
+    lineA->setMaximumWidth(300);
+    corrDataLayout->addWidget(lineA,0,0,1,-1);
+
+    corrDataLayout->setMargin(0);
+    QLabel *label3 = new QLabel();
+    label3->setText(QString("RV data groups"));
+    varList = new QLineEdit();
+    varList->setPlaceholderText("e.g. {RV_name1,RV_name2},{RV_name5,RV_name6,RV_name8}");
+    varList->setMaximumWidth(420);
+    varList->setMinimumWidth(420);
+    corrDataLayout->addWidget(label3,1,0);
+    corrDataLayout->addWidget(varList,1,1);
+
+    corrDataLayout->setRowStretch(3,1);
+    corrDataLayout->setColumnStretch(2,1);
+
+    corrDataLayoutWrap ->setVisible(false);
+    mLayout->addWidget(corrDataLayoutWrap);
+    mLayout->addStretch(2);
+    mLayout->setStretch(3,1);
+
+    this->setLayout(mLayout);
 
     connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
+    connect(importCorrDataCheckBox,SIGNAL(toggled(bool)),this,SLOT(showDataOptions(bool)));
 
 }
 
@@ -137,7 +180,6 @@ void SimCenterUQInputSensitivity::clear(void)
 
 }
 
-
 bool
 SimCenterUQInputSensitivity::outputToJSON(QJsonObject &jsonObject)
 {
@@ -148,6 +190,12 @@ SimCenterUQInputSensitivity::outputToJSON(QJsonObject &jsonObject)
     theCurrentMethod->outputToJSON(uq);
 
     jsonObject["samplingMethodData"]=uq;
+
+    if (importCorrDataCheckBox->isChecked()) {
+        jsonObject["RVdataGroup"] = varList->text();
+    } else {
+        jsonObject["RVdataGroup"] = ""; // empty
+    }
 
     return result;
 }
@@ -162,10 +210,11 @@ SimCenterUQInputSensitivity::inputFromJSON(QJsonObject &jsonObject)
   //
   // get sampleingMethodData, if not present it's an error
   //
-  
+
   if (jsonObject.contains("samplingMethodData")) {
       QJsonObject uq = jsonObject["samplingMethodData"].toObject();
       if (uq.contains("method")) {
+
           QString method =uq["method"].toString();
           int index = samplingMethod->findText(method);
           if (index == -1) {
@@ -175,6 +224,16 @@ SimCenterUQInputSensitivity::inputFromJSON(QJsonObject &jsonObject)
           result = theCurrentMethod->inputFromJSON(uq);
           if (result == false)
               return result;
+
+      }
+    }
+
+   if (jsonObject.contains("RVdataGroup")) {
+      varList->setText(jsonObject["RVdataGroup"].toString());
+      if ((varList->text()).isEmpty()) {
+          importCorrDataCheckBox->setChecked(false);
+      } else {
+          importCorrDataCheckBox->setChecked(true);
       }
   }
 
@@ -182,8 +241,18 @@ SimCenterUQInputSensitivity::inputFromJSON(QJsonObject &jsonObject)
 }
 
 
-int SimCenterUQInputSensitivity::processResults(QString &filenameResults, QString &filenameTab) {
+void SimCenterUQInputSensitivity::showDataOptions(bool tog)
+{
+    if (tog) {
+        label2->setStyleSheet("font-weight: bold; color: black");
+        corrDataLayoutWrap->setVisible(true);
+    } else {
+        label2->setStyleSheet("font-weight: bold; color: gray");
+        corrDataLayoutWrap->setVisible(false);
+    }
+}
 
+int SimCenterUQInputSensitivity::processResults(QString &filenameResults, QString &filenameTab) {
     return 0;
 }
 
