@@ -27,7 +27,7 @@
     },
     {
       "name": "Steel Frame: Bayesian Calibration with DREAM",
-      "description": "In this example, Bayesian estimation is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
+      "description": "In this example, Bayesian estimation is used to estimate column stiffnesses of a simple steel frame, given data about its mode shapes and mass distribution.",
       "InputFile": "qfem-0008/src/input.json"
     },
     {
@@ -37,7 +37,7 @@
     },
     {
       "name": "Steel Frame: Conventional Calibration",
-      "description": "In this example, a parameter estimation routine is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
+      "description": "In this example, a parameter estimation routine is used to estimate column stiffnesses of a simple steel frame, given data about its mode shapes and mass distribution.",
       "InputFile": "qfem-0007/src/input.json"
     },
     {
@@ -61,14 +61,14 @@
       "InputFile": "qfem-0001/src/input.json"
     },
     {
-      "name": "Bayesian Calibration of Material Model",
-      "description": "~",
-      "InputFile": "qfem-0019/input.json"
+      "name": "Material Model: Bayesian Calibration",
+      "description": "In this example, Bayesian estimation is used to calibrate the parameters values of a material model subjected to cyclic strain history.",
+      "InputFile": "qfem-0019/src/input.json"
     },
     {
-      "name": "Deterministic Calibration of Material Model",
-      "description": "~",
-      "InputFile": "qfem-0018/input.json"
+      "name": "Material Model: Deterministic Calibration",
+      "description": "In this example, non-linear least squares minimization is used to calibrate the parameters values of a material model subjected to cyclic strain history.",
+      "InputFile": "qfem-0018/src/input.json"
     }
   ]
 }
