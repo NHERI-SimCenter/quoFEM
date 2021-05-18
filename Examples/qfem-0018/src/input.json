@@ -15,7 +15,7 @@
     ],
     "UQ_Method": {
         "calibrationMethodData": {
-            "calibrationDataFile": "{Current_Dir}/src/calDataField.csv",
+            "calibrationDataFile": "{Current_Dir}/calDataField.csv",
             "convergenceTol": 0.0001,
             "factors": "",
             "maxIterations": 1000,
@@ -27,7 +27,7 @@
     },
     "fem": {
         "dir": "{Current_Dir}/src",
-        "inputFile": "{Current_Dir}/src/matTestAllParamsReadStrain.tcl",
+        "inputFile": "{Current_Dir}/matTestAllParamsReadStrain.tcl",
         "mainInput": "matTestAllParamsReadStrain.tcl",
         "mainPostprocessScript": "",
         "modelTag": 0,
