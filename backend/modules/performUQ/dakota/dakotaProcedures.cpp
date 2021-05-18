@@ -901,10 +901,10 @@ int processDataFiles(const char *calFileName,
                     else {// If user supplied error variance files do not exist
                         scalarCalDataFile << " " << "1";
                     }
-                    errType << "'scalar' ";
                 }
                 scalarCalDataFile << std::endl;
             }
+            errType << "'scalar' ";
             scalarCalDataFile.close();
             spacedDataFile.close();
         }
@@ -1083,15 +1083,30 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
 
             bool readCalibrationData = true;
             if (readCalibrationData) {
-                dakotaFile << "\n  calibration_data";
-                int nExp = numExp;
-                if (nExp < 1) {
-                    nExp = 1;
+                if (numFieldResponses > 0) {
+                    int nExp = numExp;
+                    if (nExp < 1) {
+                        nExp = 1;
+                    }
+                    dakotaFile << "\n  calibration_data";
+                    dakotaFile << "\n   num_experiments = " << nExp;
+                    if (idResponse.compare("BayesCalibration") == 0) {
+                        dakotaFile << "\n   experiment_variance_type = ";
+                        dakotaFile << errTypeStringStream.str();
+                    }
                 }
-                dakotaFile << "\n   num_experiments = " << nExp;
-                if (idResponse.compare("BayesCalibration") == 0) {
-                    dakotaFile << "\n   experiment_variance_type = ";
-                    dakotaFile << errTypeStringStream.str();
+                else {
+                    int nExp = numExp;
+                    if (nExp < 1) {
+                        nExp = 1;
+                    }
+                    dakotaFile << "\n  calibration_data_file = 'quoFEMScalarCalibrationData.cal'";
+                    dakotaFile << "\n    freeform";
+                    dakotaFile << "\n    num_experiments = " << nExp;
+                    if (idResponse.compare("BayesCalibration") == 0) {
+                        dakotaFile << "\n    experiment_variance_type = ";
+                        dakotaFile << errTypeStringStream.str();
+                    }
                 }
             }
         }
