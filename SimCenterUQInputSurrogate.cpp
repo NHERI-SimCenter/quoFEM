@@ -82,7 +82,7 @@ SimCenterUQInputSurrogate::SimCenterUQInputSurrogate(InputWidgetParameters *para
     inpMethod = new QComboBox();
     inpMethod->addItem(tr("Sampling and Simulation"));
     inpMethod->addItem(tr("Import Data File"));
-    inpMethod->addItem(tr("Import Multi-fidelity Data File"));
+    //inpMethod->addItem(tr("Import Multi-fidelity Data File"));
 
     methodLayout1->addWidget(label1);
     methodLayout1->addWidget(inpMethod,2);
