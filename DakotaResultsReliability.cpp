@@ -174,11 +174,19 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
 
           if (line.contains("-- Expected 1 function value(s) but found ", Qt::CaseInsensitive)) {
-              // Multiple output by user
-              qDebug() << line.length() << " " << line;
-              emit sendErrorMessage(QString("Dakota Error: Current reliability option supports only single output. Please try with Mean Value option or with a single output. "));
-              return 0;
-          } else if (line.contains("Warning:", Qt::CaseInsensitive)) {
+              if (line.at(42)=='0') {
+                  // Multiple output by user
+                  qDebug() << line.length() << " " << line;
+                  emit sendErrorMessage(QString("Dakota Error: No results.out. Check dakota.err file"));
+                  return 0;
+              } else {
+                  // Multiple output by user
+                  qDebug() << line.length() << " " << line;
+                  emit sendErrorMessage(QString("Dakota Error: Current reliability option supports only single output. Please try with Mean Value option or with a single output. "));
+                  return 0;
+              }
+          }
+          if (line.contains("Warning:", Qt::CaseInsensitive)) {
               // Warning
                 qDebug() << line.length() << " " << line;
                   emit sendErrorMessage(QString(QString("Dakota ") + line));
