@@ -1472,6 +1472,8 @@ bool MainWindow::outputToJSON(QJsonObject &jsonObj) {
 
 bool MainWindow::inputFromJSON(QJsonObject &jsonObj){
 
+    emit errorMessage(QString("")); // to clear the message area
+
     if (jsonObj.contains("Applications")) {
 
         QJsonObject theApplicationObject = jsonObj["Applications"].toObject();

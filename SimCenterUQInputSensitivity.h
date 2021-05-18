@@ -44,6 +44,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QVBoxLayout>
 #include <QComboBox>
 #include <QPushButton>
+#include <QLabel>
 
 class SimCenterUQSensitivityResults;
 class SimCenterUQResults;
@@ -78,9 +79,9 @@ signals:
 public slots:
    void clear(void);
    void onMethodChanged(QString);
+   void showDataOptions(bool);
 
 private:
-    QVBoxLayout *layout;
     QWidget     *methodSpecific;
     QComboBox   *samplingMethod;
     QLineEdit   *numSamples;
@@ -96,10 +97,15 @@ private:
     QStackedWidget *theStackedWidget;
     UQ_MethodInputWidget *theCurrentMethod;
     UQ_MethodInputWidget *theMC;
-    UQ_MethodInputWidget *theLHS;
-    UQ_MethodInputWidget *theIS;
-    UQ_MethodInputWidget *theGP;
-    UQ_MethodInputWidget *thePCE;
+//    UQ_MethodInputWidget *theLHS;
+//    UQ_MethodInputWidget *theIS;
+//    UQ_MethodInputWidget *theGP;
+//    UQ_MethodInputWidget *thePCE;
+    QWidget *corrDataLayoutWrap;
+    QCheckBox *importCorrDataCheckBox;
+    QHBoxLayout *checkBoxLayout;
+    QLabel *label2;
+    QLineEdit * varList;
 };
 
 #endif // SIMCENTERUQ_INPUT_SENSITIVITY_H

@@ -79,9 +79,9 @@ myScriptDir = os.path.dirname(os.path.realpath(__file__))
 inputFile = "dakota.json"
 
 osType = platform.system()
-preprocessorCommand = '"{}/preprocessSimCenterUQ" {} {} {} {}'.format(myScriptDir, inputFile, workflow_driver, run_type, osType)
-subprocess.Popen(preprocessorCommand, shell=True).wait()
-print("DONE RUNNING PREPROCESSOR\n")
+#preprocessorCommand = '"{}/preprocessSimCenterUQ" {} {} {} {}'.format(myScriptDir, inputFile, workflow_driver, run_type, osType)
+#subprocess.Popen(preprocessorCommand, shell=True).wait()
+#print("DONE RUNNING PREPROCESSOR\n")
 
 
 # edps = samplingData["edps"]
@@ -126,7 +126,9 @@ if run_type in ['runningLocal']:
         simCenterUQCommand = 'python "{}/{}" {} {} {}'.format(myScriptDir,surrogate,workdir_main,osType,run_type)
     elif uq_data['uqType'] == 'Sensitivity Analysis':
         simCenterUQCommand = '"{}/{}" {} {} {}'.format(myScriptDir,natafExe,workdir_main,osType,run_type)
-  
+    elif uq_data['uqType'] == 'Forward Propagation':
+        simCenterUQCommand = '"{}/{}" {} {} {}'.format(myScriptDir,natafExe,workdir_main,osType,run_type)
+
 
     print('running SimCenterUQ: ', simCenterUQCommand)
 

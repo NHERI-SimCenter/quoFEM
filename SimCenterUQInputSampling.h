@@ -44,7 +44,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QVBoxLayout>
 #include <QComboBox>
 #include <QPushButton>
-
+#include <QLabel>
 class SimCenterUQSamplingResults;
 class SimCenterUQResults;
 class QCheckBox;
@@ -80,9 +80,9 @@ public slots:
    void clear(void);
    void onTextChanged(const QString &arg1);
    void numModelsChanged(int numModels);
+   void showDataOptions(bool);
 
 private:
-    QVBoxLayout *layout;
     QWidget     *methodSpecific;
     QComboBox   *samplingMethod;
     QLineEdit   *numSamples;
@@ -98,11 +98,16 @@ private:
     QStackedWidget *theStackedWidget;
     UQ_MethodInputWidget *theCurrentMethod;
     UQ_MethodInputWidget *theMC;
-    UQ_MethodInputWidget *theLHS;
-    UQ_MethodInputWidget *theIS;
-    UQ_MethodInputWidget *theGP;
-    UQ_MethodInputWidget *thePCE;
-    UQ_MethodInputWidget *theMFMC;
+//    UQ_MethodInputWidget *theLHS;
+//    UQ_MethodInputWidget *theIS;
+//    UQ_MethodInputWidget *theGP;
+//    UQ_MethodInputWidget *thePCE;
+//    UQ_MethodInputWidget *theMFMC;
+    QWidget *corrDataLayoutWrap;
+    QCheckBox *importCorrDataCheckBox;
+    QHBoxLayout *checkBoxLayout;
+    QLabel *label2;
+    QLineEdit * varList;
 };
 
 #endif // SimCenterUQ_INPUT_SAMPLING_H

@@ -215,15 +215,15 @@ void InputWidgetEDP::setDefaultGroup(bool tog)
     }
 }
 
-void InputWidgetEDP::showAdvancedSensitivity(void){
-    verticalLayout->addWidget(theAdvancedLayout);
-    theAdvancedLayout->show();
+void InputWidgetEDP::showAdvancedSensitivity(bool tog){
+    if (tog) {
+        verticalLayout->addWidget(theAdvancedLayout);
+        theAdvancedLayout->show();
+    } else {
+        theAdvancedLayout->hide();
+        theGroupEdit->clear();
+    }
 }
-
-void InputWidgetEDP::hideAdvancedSensitivity(void){
-    theAdvancedLayout->hide();
-}
-
 
 
 void InputWidgetEDP::addEDP(void)

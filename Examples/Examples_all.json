@@ -6,6 +6,16 @@
       "InputFile": "qfem-0005/src/input.json"
     },
     {
+      "name": "Custom UQ for UQpy",
+      "description": "This example illustrates how a third-party UQ engine can be used with quoFEM.",
+      "InputFile": "qfem-0017/src/input.json"
+    }, // inputFromJson empty
+    {
+      "name": "Forward Propagation - FEAP",
+      "description": "This example illustrates how quoFEM interacts with the FEAP engine for finite element analysis. A simple forward propagation procedure is run to estimate the first and second central moments of a truss model's response, given the marginal distributions of various random parameters.",
+      "InputFile": "qfem-0010/src/input.json"
+    }, // no input file
+    {
       "name": "Forward Propagation - OpenSeesPy",
       "description": "This example illustrates how quoFEM interacts with OpenSeesPy. A simple forward propagation procedure is run to estimate the first and second central moments of a FE model's response, given the marginal distributions of various random parameters.",
       "InputFile": "qfem-0002/src/input.json"
@@ -24,6 +34,11 @@
       "name": "Sensitivity Analysis",
       "description": "This example uses quoFEM to perform a global sensitivity analysis of an OpenSees FE model.",
       "InputFile": "qfem-0004/src/input.json"
+    },
+    {
+      "name": "Shear wall calibration",
+      "description": "~",
+      "InputFile": "qfem-0013/src/input.json"
     },
     {
       "name": "Steel Frame: Bayesian Calibration with DREAM",

@@ -195,7 +195,7 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
     // note type output in json and name in pull down are not the same and hence the ||
     //
 
-    theEdpWidget->hideAdvancedSensitivity();
+    theEdpWidget->showAdvancedSensitivity(false);
 
     if (arg1 == "Dakota") {
         theStackedWidget->setCurrentIndex(0);
@@ -203,13 +203,7 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
         emit onUQ_EngineChanged(true);
     }
     else if (arg1 == "SimCenterUQ") {
-        // == just initialize
-        //delete theSimCenterUQEngine;
-        //theSimCenterUQEngine = new SimCenterUQEngine(theParameters,theFemWidget,theEdpWidget);
-        //theStackedWidget->insertWidget(1,theSimCenterUQEngine);
         theStackedWidget->setCurrentIndex(1);
-        theEdpWidget->showAdvancedSensitivity();
-        // ==
         theCurrentEngine = theSimCenterUQEngine;
         emit onUQ_EngineChanged(false);
 
