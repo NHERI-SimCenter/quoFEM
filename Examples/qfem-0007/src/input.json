@@ -5,8 +5,7 @@
             "factors": "",
             "maxIterations": 50,
             "method": "NL2SOL",
-	        "calDataFile": "eigData.csv",
-	        "calDataFilePath": "{Current_Dir}/."
+	        "calibrationDataFile": "{Current_Dir}/eigData.csv"
         },
         "uqEngine": "Dakota",
         "uqType": "Parameters Estimation"
