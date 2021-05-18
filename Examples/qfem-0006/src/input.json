@@ -1,6 +1,7 @@
 {
     "UQ_Method": {
         "calibrationMethodData": {
+			"calibrationDataFile": "{Current_Dir}/minimumValue.txt",
             "convergenceTol": 1e-10,
             "factors": "",
             "maxIterations": 50,
