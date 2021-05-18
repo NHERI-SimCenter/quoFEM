@@ -6,8 +6,6 @@
 #include <sstream>
 #include <list>
 #include <vector>
-//#include <filesystem>
-//namespace fs = std::filesystem;
 
 struct normalRV {
   std::string name;
@@ -651,6 +649,25 @@ int processDataFiles(const char *calFileName,
     calDataFile.clear();
     calDataFile.close();
 
+    //TODO: Read in the error filenames if any
+    std::string filename = calFileName;
+    std::string calDirectory;
+    const size_t last_slash_idx = filename.rfind('\\/');
+    if (std::string::npos != last_slash_idx)
+    {
+        calDirectory = filename.substr(0, last_slash_idx);
+    }
+    for (int expNum = 1; expNum <= numExperiments; expNum++) {
+        for (int responseNum = 0; responseNum < numResponses; responseNum++) {
+            std::stringstream errFileName;
+            errFileName << edpList[responseNum] << "." << expNum << ".sigma";
+            std::ifstream checkFile(errFileName.str());
+            if (checkFile.good()) {
+                errFileList.push_back(errFileName.str());
+            }
+        }
+    }
+
     // Check if there are any files describing the error covariance structure in errFileList
     bool readErrorFile = false;
     if (!errFileList.empty()) {
@@ -711,7 +728,6 @@ int processDataFiles(const char *calFileName,
                         if (readErrorFile) {
                             for (const auto &path : errFileList) {
                                 std::string base_filename = path.substr(path.find_last_of("/\\") + 1);
-                                std::cout << "Base filename: " << base_filename << std::endl;
                                 if (base_filename == errFileName.str()) {
                                     createErrFile = false;
                                     errFileToProcess = path;
@@ -743,11 +759,11 @@ int processDataFiles(const char *calFileName,
                             while (fileLine.empty()) {
                                 getline(errFileUser, fileLine);
                             }
-                            // Check if there were any commas
-                            bool commaSeparated = false;
-                            if (fileLine.find(',') != std::string::npos) {
-                                commaSeparated = true;
-                            }
+//                            // Check if there were any commas
+//                            bool commaSeparated = false;
+//                            if (fileLine.find(',') != std::string::npos) {
+//                                commaSeparated = true;
+//                            }
                             // Get the number of columns of the first row
                             char *entry;
                             entry = strtok(const_cast<char *>(fileLine.c_str()), " \t,");
@@ -772,9 +788,10 @@ int processDataFiles(const char *calFileName,
                                     word = strtok(const_cast<char *>(fileLine.c_str()), " \t,");
                                     while (word != nullptr) { // while end of cstring is not reached
                                         ++numCols;
-                                        if (commaSeparated) {
-                                            tmpErrorFile << word << " ";
-                                        }
+                                        tmpErrorFile << word << " ";
+//                                        if (commaSeparated) {
+//                                            tmpErrorFile << word << " ";
+//                                        }
                                         word = strtok(nullptr, " \t,");
                                     }
                                     if (numCols != ncol) {
@@ -823,8 +840,6 @@ int processDataFiles(const char *calFileName,
                         // =============================================
                     }
                 }
-//                std::cout << "Here!" << std::endl;
-//                std::cout << "Length of line " << lineNum << " is: " << wordCount << std::endl;
             }
         }
     }
@@ -1062,16 +1077,13 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
     }
         if (idResponse.compare("calibration") == 0 || idResponse.compare("BayesCalibration") == 0) {
             std::vector<std::string> errFilenameList = {};
-            //TODO: Read in the error filename list
             std::stringstream errTypeStringStream;
 
             int numExp = processDataFiles(calFileName, edpList, lenList, numResponses, numFieldResponses, errFilenameList,
                                           errTypeStringStream, idResponse);
 
             bool readCalibrationData = true;
-
             if (readCalibrationData) {
-//          dakotaFile << "\n\n  # Specify to read calibration data";
                 dakotaFile << "\n  calibration_data";
                 int nExp = numExp;
                 if (nExp < 1) {
@@ -1082,10 +1094,9 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
                     dakotaFile << "\n   experiment_variance_type = ";
                     dakotaFile << errTypeStringStream.str();
                 }
-
             }
         }
-      }
+    }
 
 
   if (numericalGradients == true)
