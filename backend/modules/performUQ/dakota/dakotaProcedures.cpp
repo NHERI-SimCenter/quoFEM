@@ -1166,7 +1166,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       if (sensitivityAnalysis == true)
 	dakotaFile << "variance_based_decomp \n\n";
 
-      const char *calFileName;
+      const char * calFileName = new char[1];
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList, true);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
@@ -1187,7 +1187,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	  dakotaFile << "variance_based_decomp \n\n";
 
 
-      const char *calFileName;
+      const char * calFileName = new char[1];
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
@@ -1246,7 +1246,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 		 << trainingMethod << "\n\n";
 
       dakotaFile << "model \n id_model = 'TrainingModel' \n single \n interface_pointer = 'SimulationInterface'";
-      const char *calFileName;
+      const char * calFileName = new char[1];
       std::string emptyString;
       std::string interfaceString("SimulationInterface");
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
@@ -1280,7 +1280,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	samplingMethod = "random";
 
       dakotaFile << "environment \n  tabular_data \n tabular_data_file = 'a.out'\n\n"; // a.out for trial data
-      const char *calFileName;
+      const char * calFileName = new char[1];
       std::string emptyString;
       std::string interfaceString("SimulationInterface");
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
@@ -1353,7 +1353,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	dakotaFile << "\n\t";
       }
       dakotaFile << "\n\n";
-      const char *calFileName;
+      const char * calFileName = new char[1];
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
@@ -1393,7 +1393,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	dakotaFile << "\n\t";
       }
       dakotaFile << "\n\n";
-      const char *calFileName;
+      const char * calFileName = new char[1];
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
@@ -1435,7 +1435,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       }
       dakotaFile << "\n\n";
 
-      const char *calFileName;
+      const char * calFileName = new char[1];;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
