@@ -649,7 +649,6 @@ int processDataFiles(const char *calFileName,
     calDataFile.clear();
     calDataFile.close();
 
-    //TODO: Read in the error filenames if any
     std::string filename = calFileName;
     std::string calDirectory;
     const size_t last_slash_idx = filename.rfind('\\/');
@@ -1075,7 +1074,7 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
 //
 //      }
     }
-        if (idResponse.compare("calibration") == 0 || idResponse.compare("BayesCalibration") == 0) {
+        if ((idResponse.compare("calibration") == 0) || (idResponse.compare("BayesCalibration") == 0)) {
             std::vector<std::string> errFilenameList = {};
             std::stringstream errTypeStringStream;
 
@@ -1167,11 +1166,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       if (sensitivityAnalysis == true)
 	dakotaFile << "variance_based_decomp \n\n";
 
-      const char *calDataFile;
+      const char *calFileName;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList, true);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calFileName);
     }
 
     else if (strcmp(method,"LHS")==0) {
@@ -1188,12 +1187,12 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	  dakotaFile << "variance_based_decomp \n\n";
 
 
-      const char *calDataFile;
+      const char *calFileName;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
 
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calFileName);
     }
 
     /*
@@ -1205,11 +1204,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
       dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
       dakotaFile << "method, \n importance_sampling \n " << isMethod << " \n samples = " << numSamples << "\n seed = " << seed << "\n\n";
-      std::ifstream calDataFile;
+      const char *calFileName;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calFileName);
     }
     */
 //    }
@@ -1247,12 +1246,12 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 		 << trainingMethod << "\n\n";
 
       dakotaFile << "model \n id_model = 'TrainingModel' \n single \n interface_pointer = 'SimulationInterface'";
-      const char *calDataFile;
+      const char *calFileName;
       std::string emptyString;
       std::string interfaceString("SimulationInterface");
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, interfaceString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calFileName);
 
     }
 
@@ -1281,12 +1280,12 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	samplingMethod = "random";
 
       dakotaFile << "environment \n  tabular_data \n tabular_data_file = 'a.out'\n\n"; // a.out for trial data
-      const char *calDataFile;
+      const char *calFileName;
       std::string emptyString;
       std::string interfaceString("SimulationInterface");
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, interfaceString, evaluationConcurrency);
-      int numResponse = writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calDataFile);
+      int numResponse = writeResponse(dakotaFile, rootEDP, emptyString, false, false, edpList, calFileName);
 
       dakotaFile << "method \n polynomial_chaos \n " << pceMethod << intValue;
       dakotaFile << "\n samples_on_emulator = " << samplingSamples << "\n seed = " << samplingSeed << "\n sample_type = "
@@ -1354,11 +1353,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	dakotaFile << "\n\t";
       }
       dakotaFile << "\n\n";
-      const char *calDataFile;
+      const char *calFileName;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, true, true, edpList, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, true, true, edpList, calFileName);
     }
 
     else if (strcmp(method,"Global Reliability")==0) {
@@ -1394,11 +1393,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 	dakotaFile << "\n\t";
       }
       dakotaFile << "\n\n";
-      const char *calDataFile;
+      const char *calFileName;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, calFileName);
     }
 
     else if (strcmp(method,"Importance Sampling")==0) {
@@ -1436,11 +1435,11 @@ writeDakotaInputFile(std::ostream &dakotaFile,
       }
       dakotaFile << "\n\n";
 
-      const char *calDataFile;
+      const char *calFileName;
       std::string emptyString;
       writeRV(dakotaFile, theRandomVariables, emptyString, rvList);
       writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
-      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, calDataFile);
+      writeResponse(dakotaFile, rootEDP, emptyString, true, false, edpList, calFileName);
     }
 
   } else if ((strcmp(type, "Parameters Estimation") == 0)) {
