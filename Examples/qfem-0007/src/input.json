@@ -4,7 +4,9 @@
             "convergenceTol": 1e-10,
             "factors": "",
             "maxIterations": 50,
-            "method": "NL2SOL"
+            "method": "NL2SOL",
+	        "calDataFile": "eigData.csv",
+	        "calDataFilePath": "{Current_Dir}/."
         },
         "uqEngine": "Dakota",
         "uqType": "Parameters Estimation"
@@ -35,8 +37,8 @@
     ],
     "fem": {
         "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/Frame2FEM.tcl",
-        "mainInput": "Frame2FEM.tcl",
+        "inputFile": "{Current_Dir}/fem.tcl",
+        "mainInput": "fem.tcl",
         "mainPostprocessScript": "",
         "numInputs": 1,
         "postprocessScript": "",
@@ -46,34 +48,10 @@
     },
     "EDP": [
         {
-            "name": "eps_l1"
+            "name": "lambda"
         },
         {
-            "name": "eps_l2"
-        },
-        {
-            "name": "eps_l3"
-        },
-        {
-            "name": "eps_l4"
-        },
-        {
-            "name": "eps_l5"
-        },
-        {
-            "name": "eps_p1"
-        },
-        {
-            "name": "eps_p2"
-        },
-        {
-            "name": "eps_p3"
-        },
-        {
-            "name": "eps_p4"
-        },
-        {
-            "name": "eps_p5"
+            "name": "phi"
         }
     ],
     "$schema": "https://raw.githubusercontent.com/claudioperez/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",

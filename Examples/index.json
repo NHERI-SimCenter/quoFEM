@@ -169,7 +169,9 @@
         "qfem-0007/figures/qfem-0007.png",
         "qfem-0007/../qfem-0007/figures/joelCalQoI.png",
         "qfem-0007/figures/joelCalFEM.png",
-        "qfem-0007/src/Frame2FEM.tcl"
+        "qfem-0007/src/Frame2FEM.tcl",
+		"qfem-0007/src/fem.tcl",
+		"qfem-0007/src/eigData.csv"
       ],
       "entry_point": "qfem-0007/./input.json",
       "summary": "In this example, a parameter estimation routine is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
