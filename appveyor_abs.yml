@@ -1,11 +1,71 @@
 version: 1.0.{build}
 
 image:
+  - Visual Studio 2019
   - macOS
   - Ubuntu1804
-  - Visual Studio 2019
 
 for:
+  # Visual Studio 2019
+  -
+  
+    matrix:
+      only:
+        - image: Visual Studio 2019
+
+    clone_folder: c:\projects\SimCenter
+
+    init:
+       - cmd: set PYTHON=C:\PYTHON38-x64
+       - cmd: set PYTHONNET_PYDLL=%PYTHON%\python3.8.dll
+       - cmd: set QT=C:\Qt\5.15.2\msvc2019_64\bin
+       - cmd: set PATH=%PYTHON%;%PYTHON%\Scripts;%QT%;%PATH%
+       - cmd: call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+       - cmd: pip.exe install conan
+       - cmd: conan user
+       - cmd: conan profile new default --detect
+       - cmd: conan profile show default
+       - cmd: conan profile update settings.compiler="Visual Studio" default
+       - cmd: conan profile update settings.compiler.version="16" default
+       - cmd: conan remote add simcenter https://nherisimcenter.jfrog.io/artifactory/api/conan/simcenter
+       - cmd: echo %PATH%
+
+    install:
+       - git clone https://github.com/bsaakash/SimCenterCommon.git
+       - git clone https://github.com/bsaakash/quoFEM.git
+       - cmd: dir
+
+    build_script:
+      #
+      # build quoFEM
+      #
+
+      # first UI
+      - cmd: cd quoFEM
+      - cmd: mkdir build
+      - cmd: cd build
+      - cmd: conan install .. --build missing
+      - cmd: qmake ..\quoFEM.pro
+      - cmd: nmake
+      - cmd: cd ..
+      
+      # now quoFEM backend
+      - cmd: cd backend
+      - cmd: mkdir build
+      - cmd: dir
+      - cmd: cd build
+      - cmd: conan install .. --build missing
+      - cmd: cmake .. -G "Visual Studio 16 2019"
+      - cmd: cmake --build . --config Release
+      - cmd: cmake --install .
+      - cmd: cd ..
+      - cmd: cd ..
+
+      - cmd: cd ..
+
+    test_script:
+      -cmd: python --version
+      
   # macOS 
   -
     matrix:
@@ -75,62 +135,4 @@ for:
        - gcc --version
        - python --version
 
-  # Visual Studio 2019
-  -
-  
-    matrix:
-      only:
-        - image: Visual Studio 2019
 
-    clone_folder: c:\projects\SimCenter
-
-    init:
-       - cmd: set PYTHON=C:\PYTHON38-x64
-       - cmd: set PYTHONNET_PYDLL=%PYTHON%\python3.8.dll
-       - cmd: set QT=C:\Qt\5.15.2\msvc2019_64\bin
-       - cmd: set PATH=%PYTHON%;%PYTHON%\Scripts;%QT%;%PATH%
-       - cmd: call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
-       - cmd: pip.exe install conan
-       - cmd: conan user
-       - cmd: conan profile new default --detect
-       - cmd: conan profile show default
-       - cmd: conan profile update settings.compiler="Visual Studio" default
-       - cmd: conan profile update settings.compiler.version="16" default
-       - cmd: conan remote add simcenter https://nherisimcenter.jfrog.io/artifactory/api/conan/simcenter
-       - cmd: echo %PATH%
-
-    install:
-       - git clone https://github.com/bsaakash/SimCenterCommon.git
-       - git clone https://github.com/bsaakash/quoFEM.git
-       - cmd: dir
-
-    build_script:
-      #
-      # build quoFEM
-      #
-
-      # first UI
-      - cmd: cd quoFEM
-      - cmd: mkdir build
-      - cmd: cd build
-      - cmd: conan install .. --build missing
-      - cmd: qmake ..\quoFEM.pro
-      - cmd: nmake
-      - cmd: cd ..
-      
-      # now quoFEM backend
-      - cmd: cd backend
-      - cmd: mkdir build
-      - cmd: dir
-      - cmd: cd build
-      - cmd: conan install .. --build missing
-      - cmd: cmake .. -G "Visual Studio 16 2019"
-      - cmd: cmake --build . --config Release
-      - cmd: cmake --install .
-      - cmd: cd ..
-      - cmd: cd ..
-
-      - cmd: cd ..
-
-    test_script:
-      -cmd: python --version
