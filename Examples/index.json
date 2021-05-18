@@ -174,7 +174,7 @@
 		"qfem-0007/src/eigData.csv"
       ],
       "entry_point": "qfem-0007/./input.json",
-      "summary": "In this example, a parameter estimation routine is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
+      "summary": "In this example, a parameter estimation routine is used to estimate column stiffnesses of a simple steel frame, given data about its mode shapes and mass distribution.",
       "logo": "figures/qfem-0007.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
@@ -189,10 +189,22 @@
       "base": "qfem-0008",
       "doc": [
         "qfem-0008/qfem-0008.png",
-        "qfem-0008/README.rst"
+        "qfem-0008/README.rst",
+		"qfem-0008/src/eigData.csv",
+		"qfem-0008/src/fem.tcl",
+		"qfem-0008/src/lambda.1.sigma",
+		"qfem-0008/src/lambda.2.sigma",
+		"qfem-0008/src/lambda.3.sigma",
+		"qfem-0008/src/lambda.4.sigma",
+		"qfem-0008/src/lambda.5.sigma",
+		"qfem-0008/src/phi.1.sigma",
+		"qfem-0008/src/phi.2.sigma",
+		"qfem-0008/src/phi.3.sigma",
+		"qfem-0008/src/phi.4.sigma",
+		"qfem-0008/src/phi.5.sigma"
       ],
       "entry_point": "qfem-0008/./input.json",
-      "summary": "In this example, Bayesian estimation is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
+      "summary": "In this example, Bayesian estimation is used to estimate column stiffnesses of a simple steel frame, given data about its mode shapes and mass distribution.",
       "logo": "qfem-0008.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
