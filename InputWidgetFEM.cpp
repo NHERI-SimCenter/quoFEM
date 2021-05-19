@@ -104,6 +104,7 @@ InputWidgetFEM::makeFEM(void)
     femSelection->addItem(tr("OpenSeesPy"));
     femSelection->addItem(tr("Custom"));
     femSelection->addItem(tr("SurrogateGP"));
+    femSelection->setMinimumWidth(120);
     //femSelection->addItem(tr("MultipleModels"));
     connect(femSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(femProgramChanged(QString)));
 

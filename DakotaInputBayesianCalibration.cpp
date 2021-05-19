@@ -255,11 +255,11 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
 //    layout->addWidget(calibratePerExperimentCheckBox, 9, 1, 1, 1);
 
 //    layout->setColumnMinimumWidth(0, 50);
-    layout->setColumnMinimumWidth(1, 10);
-    layout->setColumnMinimumWidth(2, 10);
-    layout->setColumnMinimumWidth(3, 10);
+    layout->setColumnMinimumWidth(1, 40);
+    layout->setColumnMinimumWidth(2, 40);
+    layout->setColumnMinimumWidth(3, 40);
 //    layout->setColumnMinimumWidth(4, 300);
-    layout->setColumnMinimumWidth(4, 50);
+    layout->setColumnMinimumWidth(4, 40);
 //    layout->setColumnMinimumWidth(5, 10);
 //    layout->setColumnMinimumWidth(6, 10);
 
