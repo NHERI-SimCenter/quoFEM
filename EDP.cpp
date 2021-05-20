@@ -88,8 +88,8 @@ QWidget *addOneEDP(QString theLabelName, QLineEdit **theLineEdit,
     theLabel->setText(theLabelName);
     QLineEdit *theEdit = new QLineEdit();
     theLabel->setMaximumWidth(200);
-    theLabel->setMinimumWidth(40);
     theEdit->setMaximumWidth(200);
+    theLabel->setMinimumWidth(40);
     theEdit->setMinimumWidth(40);
 
     int bottom = 1;
@@ -101,6 +101,10 @@ QWidget *addOneEDP(QString theLabelName, QLineEdit **theLineEdit,
     QLineEdit *lengthEdit = new QLineEdit();
     lengthEdit->setText("1");
     lengthEdit->setValidator(posIntValidator);
+    lengthEdit->setMaximumWidth(60);
+    lengthLabel->setMaximumWidth(60);
+    lengthEdit->setMinimumWidth(60);
+    lengthLabel->setMinimumWidth(60);
 
 //    QLabel *numIndCoordsLabel = new QLabel();
 //    numIndCoordsLabel->setText(theLabelIndCoords);

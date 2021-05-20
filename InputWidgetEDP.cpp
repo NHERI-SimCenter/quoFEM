@@ -157,8 +157,9 @@ InputWidgetEDP::AdvancedSensitivity(void) {
     //Title
     QVBoxLayout *theAdvancedLayout = new QVBoxLayout(containterWidget);
     SectionTitle *title2=new SectionTitle();
-    title2->setText(tr("Advanced option for global sensitivity analysis"));
+    title2->setText(tr("Advanced Option for Global Sensitivity Analysis"));
     title2->setMinimumWidth(250);
+    theAdvancedLayout->setMargin(0);
 
     //Contents
     QLabel *theLabel = new QLabel();
@@ -178,12 +179,13 @@ InputWidgetEDP::AdvancedSensitivity(void) {
     theGroupLayout->addWidget(theGroupEdit);
 
     theGroupLayout->addStretch();
-    theGroupLayout->setSpacing(10);
-    theGroupLayout->setMargin(0);
+    //theGroupLayout->setSpacing(10);
+    theGroupLayout->setMargin(10);
 
     theAdvancedLayout->addWidget(title2);
     theAdvancedLayout->addLayout(theGroupLayout);
     theAdvancedLayout->setSpacing(10);
+    theAdvancedLayout->addWidget(new QLabel(""));
 
    // connect(theCheckButton,&QCheckBox::toggled,[this](bool i)
    //        {if (i) {theGroupEdit->setDisabled(0);}
