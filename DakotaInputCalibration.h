@@ -86,10 +86,7 @@ private:
     QComboBox   *calibrationMethod;
     QLineEdit   *maxIterations;
     QLineEdit   *convergenceTol;
-    QLineEdit   *scalingFactors;
-//    QCheckBox   *readCalibrationDataCheckBox;
-//    QLineEdit   *numExperiments;
-//    QLabel      *numExperimentsLabel;
+//    QLineEdit   *scalingFactors;
     QLineEdit   *calDataFileEdit;
 
     RandomVariablesContainer *theParameters;
