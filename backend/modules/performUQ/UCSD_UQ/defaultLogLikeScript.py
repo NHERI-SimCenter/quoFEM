@@ -100,6 +100,8 @@ def log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNam
                 sig = np.sqrt(var)
                 ll = -length * np.log(sig) - length / 2 * np.log(2 * np.pi) - 1 / (2 * var) * np.sum(residuals ** 2)
             else:
+                if np.shape(cov)[0] != np.shape(cov)[1]:
+                    cov = np.diag(cov.flatten())
                 # The multivariate normal log-pdf is made up of three terms:
                 # logpdf = -1/2*[(d*log(2*pi)) + (log(abs(det(cov)))) + (residual.T * inverse(cov) * residual) i.e.,
                 # Mahalanobis distance]
