@@ -23,7 +23,7 @@
         "calDataFilePath": "{Current_Dir}/.",
         "logLikelihoodFile": "",
         "logLikelihoodPath": "",
-        "numParticles": 200,
+        "numParticles": 100,
         "seed": 0,
         "uqEngine": "UCSD-UQ",
         "uqType": "Transitional Markov chain Monte Carlo"
