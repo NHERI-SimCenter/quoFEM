@@ -1,5 +1,6 @@
 """
-authors: Dr. Frank McKenna*, Mukesh Kumar Ramancha, Maitreya Manoj Kurumbhati, and Prof. J.P. Conte 
+authors: Dr. Frank McKenna*, Aakash Bangalore Satish*, Mukesh Kumar Ramancha, Maitreya Manoj Kurumbhati,
+and Prof. J.P. Conte
 affiliation: SimCenter*; University of California, San Diego
 
 """
@@ -24,7 +25,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
 
 
 def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibrationData, numExperiments,
-           covarianceMatrixList, edpNamesList, edpLengthsList):
+           covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors):
     """ 
     this function runs FE model (model.tcl) for each parameter value (par)
     model.tcl should take parameter input
@@ -84,4 +85,4 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
     #     print(f)
 
     return log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
-                          covarianceMultiplierList)
+                          covarianceMultiplierList, normalizingFactors)

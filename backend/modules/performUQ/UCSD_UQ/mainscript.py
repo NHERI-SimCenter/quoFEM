@@ -25,10 +25,6 @@ workdir_temp = inputArgs[2]
 run_type = inputArgs[3]
 
 
-# mainscript_dir = '/Users/aakash/SimCenter/quoFEM/backend/modules/performUQ/UCSD_UQ'
-# workdir_temp = "/Users/aakash/Documents/quoFEM/LocalWorkDir/tmp.SimCenter/templatedir"
-
-
 # ======================================================================================================================
 class DataProcessingError(Exception):
     """Raised when errors found when processing user-supplied calibration and covariance data.
@@ -138,6 +134,24 @@ print("\nFinished reading in calibration data. Shape of calibration data: {}\n".
 print('The number of experiments: {}'.format(np.shape(calibrationData)[0]))
 print('The number of calibration terms per experiment: {}'.format(np.shape(calibrationData)[1]))
 
+# Compute the normalizing factors - absolute maximum of the data for each response variable
+print("\nComputing normalizing factors. The normalizing factors used are the absolute maximum of the data for each "
+      "response variable.")
+normalizingFactors = []
+currentPosition = 0
+for j in range(len(edpList)):
+    calibrationDataSlice = calibrationData[:, currentPosition:currentPosition + edpLengthsList[j]]
+    normalizingFactors.append(np.max(np.absolute(calibrationDataSlice)))
+    calibrationData[:, currentPosition:currentPosition + edpLengthsList[j]] = calibrationDataSlice / np.max(
+        np.absolute(calibrationDataSlice))
+    currentPosition += edpLengthsList[j]
+# print("Normalized calibration data: \n{}".format(calibrationData))
+# print("Normalizing factors list: {}".format(normalizingFactors))
+
+print("The normalizing factors computed are: ")
+for j in range(len(edpList)):
+    print("EDP: {}, normalizing factor: {}".format(edpNamesList[j], normalizingFactors[j]))
+
 # ======================================================================================================================
 # Processing covariance matrix options
 print('\n==========================')
@@ -155,19 +169,21 @@ print('If the user does not supply variance or covariance data, a default varian
 # calibrated. There will be one such error variance value per response quantity. If there is only data from one
 # experiment,then the default error std.dev. value is assumed to be 5% of the absolute maximum value of the data
 # corresponding to that response quantity.
-scaleFactors = np.zeros_like(edpNamesList, dtype=float)
-if np.shape(calibrationData)[0] > 1:  # if there are more than 1 rows of data, i.e. data from multiple experiments
-    currentIndex = 0
-    for i in range(len(edpNamesList)):
-        dataSlice = calibrationData[:, currentIndex:currentIndex + edpLengthsList[i]]
-        scaleFactors[i] = np.nanvar(dataSlice)
-        currentIndex += edpLengthsList[i]
-else:
-    currentIndex = 0
-    for i in range(len(edpNamesList)):
-        dataSlice = calibrationData[:, currentIndex:currentIndex + edpLengthsList[i]]
-        scaleFactors[i] = (0.05 * np.max(np.absolute(dataSlice))) ** 2
-        currentIndex += edpLengthsList[i]
+# TODO: check variance scaling options
+# scaleFactors = np.zeros_like(edpNamesList, dtype=float)
+# if np.shape(calibrationData)[0] > 1:  # if there are more than 1 rows of data, i.e. data from multiple experiments
+#     currentIndex = 0
+#     for i in range(len(edpNamesList)):
+#         dataSlice = calibrationData[:, currentIndex:currentIndex + edpLengthsList[i]]
+#         scaleFactors[i] = np.nanvar(dataSlice)
+#         currentIndex += edpLengthsList[i]
+# else:
+#     currentIndex = 0
+#     for i in range(len(edpNamesList)):
+#         dataSlice = calibrationData[:, currentIndex:currentIndex + edpLengthsList[i]]
+#         scaleFactors[i] = (0.05 * np.max(np.absolute(dataSlice))) ** 2
+#         currentIndex += edpLengthsList[i]
+scaleFactors = np.ones_like(edpNamesList, dtype=float)
 
 # Create the covariance matrix
 covarianceMatrixList = []
@@ -378,7 +394,7 @@ for modelNum, variables in enumerate(variablesList):
     if __name__ == '__main__':
         mytrace = RunTMCMC(Np, AllPars, Nm_steps_max, Nm_steps_maxmax, logLikeModule.log_likelihood, variables,
                            resultsLocation, seedval, calibrationData, numExperiments, covarianceMatrixList,
-                           edpNamesList, edpLengthsList)
+                           edpNamesList, edpLengthsList, normalizingFactors)
         print('\n\t==========================')
         print('\tTMCMC algorithm finished running')
         print('\t==========================')

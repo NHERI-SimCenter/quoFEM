@@ -13,7 +13,7 @@ from numpy.random import SeedSequence, default_rng
 
 
 def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variables, resultsLocation, seed,
-             calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList):
+             calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors):
     """ Runs TMCMC Algorithm """
 
     # Initialize (beta, effective sample size)
@@ -35,10 +35,7 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     print('\n\t\t==========================')
     print("\t\tStage number: {}".format(stageNum))
     print("\t\tSampling from prior")
-    if beta < 1e-7:
-        print("\t\tbeta = %9.6e" % beta)
-    else:
-        print("\t\tbeta = %9.8f" % beta)
+    print("\t\tbeta = 0")
     print("\t\tESS = %d" % ESS)
     print("\t\tscalem = %.2f" % scalem)
     print("\n\t\tNumber of model evaluations in this stage: {}".format(N))
@@ -56,20 +53,19 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     if parallelize_MCMC == 'yes':
         pool = Pool(processes=mp.cpu_count())
         Lmt = pool.starmap(runFEM, [(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
-                                     numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList)
-                                    for ind in range(N)], )
+                                     numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
+                                     normalizingFactors) for ind in range(N)], )
         pool.close()
         Lm = np.array(Lmt).squeeze()
     else:
         Lm = np.array([runFEM(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
-                              numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList)
+                              numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors)
                        for ind in range(N)]).squeeze()
 
     while beta < 1:
         # adaptively compute beta s.t. ESS = N/2 or ESS = 0.95*prev_ESS
         # plausible weights of Sm corresponding to new beta
         beta, Wm, ESS = tmcmcFunctions.compute_beta(beta, Lm, ESS, threshold=0.95)
-        # beta, Wm, ESS = tmcmcFunctions.compute_beta(beta, Lm, ESS, threshold=0.5)
         # try:
         #     beta, Wm = tmcmcFunctions.compute_beta2(beta, Lm)
         # except tmcmcFunctions.PrematureConvergenceError as err:
@@ -131,7 +127,7 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
                                                              numAccepts, AllPars, log_likelihood, variables,
                                                              resultsLocation, default_rng(child_seeds[j1]),
                                                              calibrationData, numExperiments, covarianceMatrixList,
-                                                             edpNamesList, edpLengthsList)
+                                                             edpNamesList, edpLengthsList, normalizingFactors)
                                                             for j1 in range(N)], )
             pool.close()
         else:
@@ -139,7 +135,7 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
                 tmcmcFunctions.MCMC_MH(j1, Em, Nm_steps, Smcap[j1], Lmcap[j1], Postmcap[j1], beta, numAccepts, AllPars,
                                        log_likelihood, variables, resultsLocation, default_rng(child_seeds[j1]),
                                        calibrationData, numExperiments, covarianceMatrixList,
-                                       edpNamesList, edpLengthsList) for j1 in range(N)]
+                                       edpNamesList, edpLengthsList, normalizingFactors) for j1 in range(N)]
 
         Sm1, Lm1, Postm1, numAcceptsS, all_proposals, all_PLP = zip(*results)
         Sm1 = np.asarray(Sm1)
@@ -169,14 +165,6 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
             acc_rate = max(1. / numProposals, R)
             Nm_steps = min(Nm_steps_max, 1 + int(np.log(1 - 0.99) / np.log(1 - acc_rate)))
             print("\t\tnext MCMC Nsteps = %d" % Nm_steps)
-
-            # # increase max Nmcmc with stage number
-            # # Nm_steps_max = min(Nm_steps_max + 1, Nm_steps_maxmax)
-            # # print("\t\tadapted max MCMC steps = %d" % Nm_steps_max)
-            #
-            # acc_rate = max(1. / numProposals, R)
-            # Nm_steps = min(Nm_steps_maxmax, 1 + int(np.log(1 - 0.99) / np.log(1 - acc_rate)))
-            # print("\t\tnext MCMC Nsteps = %d" % Nm_steps)
 
         print('\t\t==========================')
 

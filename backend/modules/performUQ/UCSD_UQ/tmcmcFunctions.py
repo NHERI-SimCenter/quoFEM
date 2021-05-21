@@ -32,6 +32,7 @@ def compute_beta(beta, likelihoods, prev_ESS, threshold):
     max_beta = 2.0
     # rN = int(len(likelihoods) * 0.95)   #pymc3 uses 0.5
     rN = threshold * prev_ESS  # purdue prof uses 0.95
+    new_beta = beta
     while max_beta - min_beta > 1e-6:
         new_beta = 0.5 * (max_beta + min_beta)
         # plausible weights of Sm corresponding to new beta
@@ -57,7 +58,7 @@ def compute_beta(beta, likelihoods, prev_ESS, threshold):
 # MCMC
 def MCMC_MH(ParticleNum, Em, Nm_steps, current, likelihood_current, posterior_current, beta, numAccepts, AllPars,
             log_likelihood, variables, resultsLocation, rng, calibrationData, numExperiments, covarianceMatrixList,
-            edpNamesList, edpLengthsList):
+            edpNamesList, edpLengthsList, normalizingFactors):
     all_proposals = []
     all_PLP = []
 
@@ -73,7 +74,7 @@ def MCMC_MH(ParticleNum, Em, Nm_steps, current, likelihood_current, posterior_cu
             # likelihood_proposal = log_likelihood(ParticleNum, proposal, variables, resultsLocation)
             likelihood_proposal = runFEM(ParticleNum, proposal, variables, resultsLocation, log_likelihood,
                                          calibrationData, numExperiments, covarianceMatrixList,
-                                         edpNamesList, edpLengthsList)
+                                         edpNamesList, edpLengthsList, normalizingFactors)
             if np.isnan(likelihood_proposal):
                 likelihood_proposal = -np.Inf
             posterior_proposal = prior_proposal + likelihood_proposal * beta
@@ -82,12 +83,10 @@ def MCMC_MH(ParticleNum, Em, Nm_steps, current, likelihood_current, posterior_cu
             posterior_proposal = -np.Inf
 
         log_acceptance = posterior_proposal - posterior_current
-
         all_proposals.append(proposal)
         all_PLP.append([prior_proposal, likelihood_proposal, posterior_proposal])
 
-        # if np.isfinite(log_acceptance) and (np.log(np.random.uniform()) < log_acceptance):
-        if np.isfinite(log_acceptance) and (np.log(rng.uniform()) < log_acceptance):
+        if np.isfinite(log_acceptance) and (np.log(np.random.uniform()) < log_acceptance):
             # accept
             current = proposal
             posterior_current = posterior_proposal

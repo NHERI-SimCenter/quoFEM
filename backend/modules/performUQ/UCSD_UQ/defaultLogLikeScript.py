@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.stats import multivariate_normal
 
 
 class CovError(Exception):
@@ -14,13 +13,13 @@ class CovError(Exception):
 
 
 def log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
-                   covarianceMultiplierList):
+                   covarianceMultiplierList, normalizingFactors):
     """ Compute the log-likelihood """
-    # Read in the data
+    # Read in the normalized data
     data = calibrationData
 
     # Check if the correct number of covariance terms has been passed in
-    numResponses = len(edpNamesList)
+    numResponses = len(edpLengthsList)
     if len(covarianceMatrixList) != numExperiments * numResponses:
         print("ERROR: The expected number of covariance matrices is {}, but only {} were passed "
               "in.".format(numExperiments * numResponses, len(covarianceMatrixList)))
@@ -28,9 +27,18 @@ def log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNam
                        "in.".format(numExperiments * numResponses, len(covarianceMatrixList)))
 
     # Read in the model prediction
-    prediction = np.genfromtxt('results.out')
+    prediction = np.genfromtxt('results.out').reshape((1, -1))
 
-    # Compute the residuals
+    # Normalize the prediction
+    currentPosition = 0
+    for j in range(len(edpLengthsList)):
+        prediction[:, currentPosition:currentPosition + edpLengthsList[j]] /= normalizingFactors[j]
+        # normalizedPredictionSlice = prediction[:, currentPosition:currentPosition + edpLengthsList[j]] / \
+        #                             normalizingFactors[j]
+        # prediction[:, currentPosition:currentPosition + edpLengthsList[j]] = normalizedPredictionSlice
+        currentPosition += edpLengthsList[j]
+
+    # Compute the normalized residuals
     allResiduals = data - prediction
 
     # Loop over the normalized residuals to compute the log-likelihood
@@ -40,7 +48,8 @@ def log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNam
         currentPosition = 0
         for j in range(numResponses):
             # Get the residuals corresponding to this response variable
-            residuals = allResiduals[i, currentPosition:currentPosition + edpLengthsList[j]]
+            # residuals = allResiduals[i, currentPosition:currentPosition + edpLengthsList[j]]
+            residuals = allResiduals[i, currentPosition:currentPosition + edpLengthsList[j]].reshape((1, -1))
             currentPosition += edpLengthsList[j]
 
             # Get the covariance matrix corresponding to this response variable
@@ -50,18 +59,18 @@ def log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNam
             # Multiply the covariance matrix by the value of the covariance multiplier
             cov *= covarianceMultiplierList[j]
 
-            # Check if there are any infs or nans
-            infNanCheck = np.isinf(cov).any() | np.isnan(cov).any() | np.isinf(residuals).any() | np.isnan(
-                residuals).any()
+            # CASE I & II: Known/Estimate Noise
+            # noise covariance matrix
+            sig = [np.sqrt(cov)]
+            E = np.diag(np.array(sig) ** 2)
+            logdetE = np.log(np.linalg.det(E))
+            Einv = np.linalg.inv(E)
+            N = len(residuals)
+            Ny = 1
+            LL = -0.5 * N * Ny * np.log(2 * np.pi) - 0.5 * N * logdetE + sum(
+                np.diag(-0.5 * residuals.T @ Einv @ residuals))
 
-            # Compute the log-likelihood and add it to the total log-likelihood
-            if infNanCheck:
-                print("WARNING: There were infs or nans, ignoring this prediction of the response.\n"
-                      "inf in cov: {}, nan in cov: {}, inf in residuals: {}, nan in residuals: {}".format(
-                        np.isinf(cov).any(), np.isnan(cov).any(), np.isinf(residuals).any(),
-                        np.isnan(residuals).any()))
-                loglike += 0
-            else:
-                loglike += np.sum(multivariate_normal.logpdf(residuals, cov=cov))
-    # print('logLikelihood: ', loglike)
+            if not np.isnan(LL):
+                loglike += LL
+
     return loglike
