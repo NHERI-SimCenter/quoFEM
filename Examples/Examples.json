@@ -36,7 +36,7 @@
       "InputFile": "qfem-0014/src/input.json"
     },
     {
-      "name": "Steel Frame: Conventional Calibration",
+      "name": "Steel Frame: Deterministic Calibration",
       "description": "In this example, a parameter estimation routine is used to estimate column stiffnesses of a simple steel frame, given data about its mode shapes and mass distribution.",
       "InputFile": "qfem-0007/src/input.json"
     },
@@ -61,7 +61,7 @@
       "InputFile": "qfem-0001/src/input.json"
     },
     {
-      "name": "Material Model: Bayesian Calibration",
+      "name": "Material Model: Bayesian Calibration with TMCMC",
       "description": "In this example, Bayesian estimation is used to calibrate the parameters values of a material model subjected to cyclic strain history.",
       "InputFile": "qfem-0019/src/input.json"
     },

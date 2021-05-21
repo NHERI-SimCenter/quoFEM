@@ -1,7 +1,7 @@
 {
     "Applications": {
         "UQ": {
-            "Application": "Dakota-UQ",
+            "Application": "UCSD-UQ",
             "ApplicationData": {
             }
         }
@@ -14,18 +14,14 @@
         }
     ],
     "UQ_Method": {
-        "bayesianCalibrationMethodData": {
-            "burnInSamples": 0,
-            "calibrationDataFile": "{Current_Dir}/calDataField.csv",
-            "chainSamples": 500,
-            "chains": 3,
-            "jumpStep": 5,
-            "method": "DREAM",
-            "seed": 196
-        },
-        "parallelExecution": true,
-        "uqEngine": "Dakota",
-        "uqType": "Inverse Problem"
+        "calDataFile": "calDataField.csv",
+        "calDataFilePath": "{Current_Dir}/.",
+        "logLikelihoodFile": "",
+        "logLikelihoodPath": "",
+        "numParticles": 100,
+        "seed": 0,
+        "uqEngine": "UCSD-UQ",
+        "uqType": "Transitional Markov chain Monte Carlo"
     },
     "fem": {
         "dir": "{Current_Dir}/.",
@@ -38,14 +34,14 @@
         "program": "OpenSees"
     },
     "localAppDir": "/Users/aakash/SimCenter/quoFEM/backend",
-    "python": "/Library/Frameworks/Python.framework/Versions/3.7/bin/python3",
+    "python": "/Users/aakash/.pyenv/shims/python",
     "randomVariables": [
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
             "lowerbound": 300,
             "name": "fy",
-            "refCount": 1,
+            "refCount": 0,
             "upperbound": 700,
             "value": "RV.fy",
             "variableClass": "Uncertain"
@@ -53,10 +49,10 @@
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 100000,
+            "lowerbound": 150000,
             "name": "E",
-            "refCount": 1,
-            "upperbound": 300000,
+            "refCount": 0,
+            "upperbound": 250000,
             "value": "RV.E",
             "variableClass": "Uncertain"
         },
@@ -66,7 +62,7 @@
             "lowerbound": 0,
             "name": "b",
             "refCount": 0,
-            "upperbound": 1,
+            "upperbound": 0.2,
             "value": "RV.b",
             "variableClass": "Uncertain"
         },
@@ -76,7 +72,7 @@
             "lowerbound": 0,
             "name": "cR1",
             "refCount": 0,
-            "upperbound": 2,
+            "upperbound": 1,
             "value": "RV.cR1",
             "variableClass": "Uncertain"
         },
@@ -86,7 +82,7 @@
             "lowerbound": 0,
             "name": "cR2",
             "refCount": 0,
-            "upperbound": 2,
+            "upperbound": 0.2,
             "value": "RV.cR2",
             "variableClass": "Uncertain"
         },
@@ -96,7 +92,7 @@
             "lowerbound": 0,
             "name": "a1",
             "refCount": 0,
-            "upperbound": 0.5,
+            "upperbound": 0.1,
             "value": "RV.a1",
             "variableClass": "Uncertain"
         },
@@ -106,7 +102,7 @@
             "lowerbound": 0,
             "name": "a3",
             "refCount": 0,
-            "upperbound": 0.5,
+            "upperbound": 0.1,
             "value": "RV.a3",
             "variableClass": "Uncertain"
         }
