@@ -8,40 +8,22 @@
     },
     "EDP": [
         {
-            "name": "eps_lambda_1"
+            "length": 1,
+            "name": "lambda",
+            "type": "scalar"
         },
         {
-            "name": "eps_lambda_2"
-        },
-        {
-            "name": "eps_lambda_3"
-        },
-        {
-            "name": "eps_lambda_4"
-        },
-        {
-            "name": "eps_lambda_5"
-        },
-        {
-            "name": "eps_phi12_1"
-        },
-        {
-            "name": "eps_phi12_2"
-        },
-        {
-            "name": "eps_phi12_3"
-        },
-        {
-            "name": "eps_phi12_4"
-        },
-        {
-            "name": "eps_phi12_5"
+            "length": 1,
+            "name": "phi",
+            "type": "scalar"
         }
     ],
     "UQ_Method": {
-        "logLikelihoodFile": "postProcessing.py",
-        "logLikelihoodPath": "{Current_Dir}/.",
-        "numParticles": 500,
+        "calDataFile": "eigData.csv",
+        "calDataFilePath": "{Current_Dir}/.",
+        "logLikelihoodFile": "",
+        "logLikelihoodPath": "",
+        "numParticles": 100,
         "seed": 0,
         "uqEngine": "UCSD-UQ",
         "uqType": "Transitional Markov chain Monte Carlo"
@@ -51,11 +33,12 @@
         "inputFile": "{Current_Dir}/model.tcl",
         "mainInput": "model.tcl",
         "mainPostprocessScript": "",
+        "modelTag": 0,
         "numInputs": 1,
         "postprocessScript": "",
         "program": "OpenSees"
     },
-    "localAppDir": "/Users/aakash/Desktop/quoFEMRepoCloneForExampleErrorCheck/quoFEM/applications",
+    "localAppDir": "/Users/aakash/SimCenter/quoFEM/backend",
     "python": "/Users/aakash/.pyenv/shims/python",
     "randomVariables": [
         {
@@ -63,7 +46,7 @@
             "inputType": "Parameters",
             "lowerbound": 766.89,
             "name": "k1",
-            "refCount": 1,
+            "refCount": 0,
             "upperbound": 2108.94,
             "value": "RV.k1",
             "variableClass": "Uncertain"
@@ -73,7 +56,7 @@
             "inputType": "Parameters",
             "lowerbound": 383.44,
             "name": "k2",
-            "refCount": 1,
+            "refCount": 0,
             "upperbound": 1150.33,
             "value": "RV.k2",
             "variableClass": "Uncertain"
@@ -81,7 +64,6 @@
     ],
     "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
     "uqResults": {
-        "resultType": "UCSD_Results"
     },
     "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
 }

@@ -169,10 +169,12 @@
         "qfem-0007/figures/qfem-0007.png",
         "qfem-0007/../qfem-0007/figures/joelCalQoI.png",
         "qfem-0007/figures/joelCalFEM.png",
-        "qfem-0007/src/Frame2FEM.tcl"
+        "qfem-0007/src/Frame2FEM.tcl",
+		"qfem-0007/src/fem.tcl",
+		"qfem-0007/src/eigData.csv"
       ],
       "entry_point": "qfem-0007/./input.json",
-      "summary": "In this example, a parameter estimation routine is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
+      "summary": "In this example, a parameter estimation routine is used to estimate column stiffnesses of a simple steel frame, given data about its mode shapes and mass distribution.",
       "logo": "figures/qfem-0007.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
@@ -187,10 +189,22 @@
       "base": "qfem-0008",
       "doc": [
         "qfem-0008/qfem-0008.png",
-        "qfem-0008/README.rst"
+        "qfem-0008/README.rst",
+		"qfem-0008/src/eigData.csv",
+		"qfem-0008/src/fem.tcl",
+		"qfem-0008/src/lambda.1.sigma",
+		"qfem-0008/src/lambda.2.sigma",
+		"qfem-0008/src/lambda.3.sigma",
+		"qfem-0008/src/lambda.4.sigma",
+		"qfem-0008/src/lambda.5.sigma",
+		"qfem-0008/src/phi.1.sigma",
+		"qfem-0008/src/phi.2.sigma",
+		"qfem-0008/src/phi.3.sigma",
+		"qfem-0008/src/phi.4.sigma",
+		"qfem-0008/src/phi.5.sigma"
       ],
       "entry_point": "qfem-0008/./input.json",
-      "summary": "In this example, Bayesian estimation is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
+      "summary": "In this example, Bayesian estimation is used to estimate column stiffnesses of a simple steel frame, given data about its mode shapes and mass distribution.",
       "logo": "qfem-0008.png",
       "published": "2020-12-17T21:26:53.946381-08:00",
       "categories": {
@@ -423,6 +437,66 @@
       "categories": {
         "Simulation": "OpenSees",
         "Difficulty": "2"
+      },
+      "tags": [
+        "UV.1.3"
+      ]
+    },
+    "qfem-0018": {
+      "id": "qfem-0018",
+      "title": "Deterministic Calibration of Material Model",
+      "base": "qfem-0018",
+      "doc": [
+        "qfem-0018/README.rst",
+        "qfem-0018/src/matTestAllParams.tcl",
+        "qfem-0018/src/calDataField.csv",
+		"qfem-0018/figures/StrainHistory.png",
+		"qfem-0018/figures/DeterministicCalibrationResults.png",
+		"qfem-0018/figures/StressResults.png",
+		"qfem-0018/figures/UQ.png",
+		"qfem-0018/figures/FEM.png",
+		"qfem-0018/figures/RV.png",
+		"qfem-0018/figures/QOI.png",
+		"qfem-0018/figures/RES1.png",
+		"qfem-0018/figures/RES2.png"
+      ],
+      "entry_point": "qfem-0018/./input.json",
+      "summary": "This example demonstrates deterministic calibration of a non-linear material model (STEEL02) using data from a cyclic stress-strain test.",
+      "logo": "figures/DeterministicCalibrationResults.png",
+      "published": "2021-03-12T21:26:53.946381-08:00",
+      "categories": {
+        "Simulation": "OpenSees",
+        "Difficulty": "1"
+      },
+      "tags": [
+        "UV.1.3"
+      ]
+    },
+    "qfem-0019": {
+      "id": "qfem-0019",
+      "title": "Bayesian Calibration of Material Model",
+      "base": "qfem-0019",
+      "doc": [
+        "qfem-0019/README.rst",
+        "qfem-0019/src/matTestAllParams.tcl",
+        "qfem-0019/src/calDataField.csv",
+		"qfem-0019/figures/StrainHistory.png",
+		"qfem-0019/figures/DeterministicCalibrationResults.png",
+		"qfem-0019/figures/StressResults.png",
+		"qfem-0019/figures/UQ.png",
+		"qfem-0019/figures/FEM.png",
+		"qfem-0019/figures/RV.png",
+		"qfem-0019/figures/QOI.png",
+		"qfem-0019/figures/RES1.png",
+		"qfem-0019/figures/RES2.png"
+      ],
+      "entry_point": "qfem-0019/./inputDeterministic.json",
+      "summary": "Surrogate modeling for mean and variance of EQ response",
+      "logo": "figures/DeterministicCalibrationResults.PNG",
+      "published": "2021-03-12T21:26:53.946381-08:00",
+      "categories": {
+        "Simulation": "OpenSees",
+        "Difficulty": "1"
       },
       "tags": [
         "UV.1.3"

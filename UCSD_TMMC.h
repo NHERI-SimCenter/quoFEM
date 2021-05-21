@@ -59,6 +59,7 @@ private:
   QLineEdit *numParticles;
   QLineEdit *logLikelihoodScript;
   QLineEdit *randomSeed;
+  QLineEdit *calDataFileEdit;
 };
 
 #endif // UCSD_TMMC_H

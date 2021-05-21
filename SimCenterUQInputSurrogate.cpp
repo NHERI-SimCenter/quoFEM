@@ -82,7 +82,7 @@ SimCenterUQInputSurrogate::SimCenterUQInputSurrogate(InputWidgetParameters *para
     inpMethod = new QComboBox();
     inpMethod->addItem(tr("Sampling and Simulation"));
     inpMethod->addItem(tr("Import Data File"));
-    inpMethod->addItem(tr("Import Multi-fidelity Data File"));
+    //inpMethod->addItem(tr("Import Multi-fidelity Data File"));
 
     methodLayout1->addWidget(label1);
     methodLayout1->addWidget(inpMethod,2);
@@ -127,7 +127,7 @@ void SimCenterUQInputSurrogate::onIndexChanged(const QString &text)
         theInpCurrentMethod = theDoE;
 
         theFemWidget->setFEMforGP("GPmodel"); // reset FEM
-        theEdpWidget->setGPQoINames(QStringList({})); // remove GP RVs
+        //theEdpWidget->setGPQoINames(QStringList({})); // remove GP RVs
     }
     else if (text=="Import Data File") {
         delete theData;

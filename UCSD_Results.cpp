@@ -225,7 +225,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        emit sendErrorMessage("No dakotaTab.out file - TMCMC failed .. possibly no QoI");
         return 0;
     }
 
@@ -320,7 +320,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     // determine summary statistics for each edp
     //
 
-    for (int col = theRVs->getNumRandomVariables()-1; col<colCount; ++col) { // Changed by ABS
+    for (int col=1; col<colCount; ++col) { // Changed by ABS
 //    for (int col = theRVs->getNumRandomVariables()+1; col<colCount; ++col) { // +1 for first col which is nit an RV
         // compute the mean
         double sum_value=0;
@@ -858,8 +858,14 @@ UCSD_Results::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
-    if (spreadsheet == NULL)
-        return true;
+//    if (spreadsheet == NULL)
+//        return true;
+
+    int numEDP = theNames.count();
+
+    // quick return .. noEDP -> no analysis done -> no results out
+    if (numEDP == 0)
+      return true;
 
     jsonObject["resultType"]=QString(tr("UCSD_Results"));
 
@@ -868,7 +874,6 @@ UCSD_Results::outputToJSON(QJsonObject &jsonObject)
     //
 
     QJsonArray resultsData;
-    int numEDP = theNames.count();
     for (int i=0; i<numEDP; i++) {
         QJsonObject edpData;
         edpData["name"]=theNames.at(i);
@@ -878,7 +883,6 @@ UCSD_Results::outputToJSON(QJsonObject &jsonObject)
         edpData["skewness"]=theSkewness.at(i);
         resultsData.append(edpData);
     }
-
     jsonObject["summary"]=resultsData;
 
     //

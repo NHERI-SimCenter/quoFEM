@@ -17,7 +17,7 @@
         "postprocessScript": "{Current_Dir}/TrussPost.tcl",
         "parametersFile": "",
         "parametersScript": "",
-        "program": "FEAP"
+        "program": "FEAPpv"
     },
     "EDP": [
         {

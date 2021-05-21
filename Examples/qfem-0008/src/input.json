@@ -1,13 +1,15 @@
 {
     "UQ_Method": {
         "bayesianCalibrationMethodData": {
-            "burnInSamples": 1000,
-            "chainSamples": 4000,
+            "burnInSamples": 0,
+			"calibrationDataFile": "{Current_Dir}/eigData.csv",
+            "chainSamples": 100,
             "chains": 4,
             "jumpStep": 5,
             "method": "DREAM",
             "seed": 107
         },
+		"parallelExecution": true,
         "uqEngine": "Dakota",
         "uqType": "Inverse Problem"
     },
@@ -46,34 +48,10 @@
     },
     "EDP": [
         {
-            "name": "eps_l1"
+            "name": "lambda"
         },
         {
-            "name": "eps_l2"
-        },
-        {
-            "name": "eps_l3"
-        },
-        {
-            "name": "eps_l4"
-        },
-        {
-            "name": "eps_l5"
-        },
-        {
-            "name": "eps_p1"
-        },
-        {
-            "name": "eps_p2"
-        },
-        {
-            "name": "eps_p3"
-        },
-        {
-            "name": "eps_p4"
-        },
-        {
-            "name": "eps_p5"
+            "name": "phi"
         }
     ],
     "$schema": "https://raw.githubusercontent.com/claudioperez/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",

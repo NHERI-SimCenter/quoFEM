@@ -57,6 +57,9 @@ public:
     void setInitialVarNamesAndValues(QStringList varNamesAndValues);
     void setGPVarNamesAndValues(QStringList theList);
     QStringList getParametereNames(void);
+    void setCorrelationDisabled(bool tog);
+
+    void clear(void);
 
 signals:
 

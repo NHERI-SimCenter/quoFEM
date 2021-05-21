@@ -69,6 +69,8 @@ public:
     QVector< QString > getCustomInputs() const;
     QString getApplicationName(void);
     QString getMainInput(void);
+    void parseAllInputfiles(void);
+
 signals:
 
 public slots:
