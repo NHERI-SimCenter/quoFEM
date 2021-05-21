@@ -13,7 +13,8 @@ from numpy.random import SeedSequence, default_rng
 
 
 def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variables, resultsLocation, seed,
-             calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors):
+             calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors,
+             locShiftList):
     """ Runs TMCMC Algorithm """
 
     # Initialize (beta, effective sample size)
@@ -54,29 +55,20 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         pool = Pool(processes=mp.cpu_count())
         Lmt = pool.starmap(runFEM, [(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
                                      numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
-                                     normalizingFactors) for ind in range(N)], )
+                                     normalizingFactors, locShiftList) for ind in range(N)], )
         pool.close()
         Lm = np.array(Lmt).squeeze()
     else:
         Lm = np.array([runFEM(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
-                              numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors)
+                              numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors,
+                              locShiftList)
                        for ind in range(N)]).squeeze()
 
     while beta < 1:
         # adaptively compute beta s.t. ESS = N/2 or ESS = 0.95*prev_ESS
         # plausible weights of Sm corresponding to new beta
         beta, Wm, ESS = tmcmcFunctions.compute_beta(beta, Lm, ESS, threshold=0.95)
-        # try:
-        #     beta, Wm = tmcmcFunctions.compute_beta2(beta, Lm)
-        # except tmcmcFunctions.PrematureConvergenceError as err:
-        #     div = "======================================"
-        #     print("\t{}\n\tTMCMC exited with the following error: \n\t{}\n\t{}".format(div, err.message, div))
-        #     break
-
-        # print("Beta: {}".format(beta))
-        # print("Weights: {}".format(Wm/sum(Wm)))
-        # print("ESS: {}".format(ESS))
-        # print("Samples: {}".format(Sm))
+        # beta, Wm, ESS = tmcmcFunctions.compute_beta(beta, Lm, ESS, threshold=0.5)
 
         stageNum += 1
         print('\n\t\t==========================')
@@ -127,7 +119,7 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
                                                              numAccepts, AllPars, log_likelihood, variables,
                                                              resultsLocation, default_rng(child_seeds[j1]),
                                                              calibrationData, numExperiments, covarianceMatrixList,
-                                                             edpNamesList, edpLengthsList, normalizingFactors)
+                                                             edpNamesList, edpLengthsList, normalizingFactors, locShiftList)
                                                             for j1 in range(N)], )
             pool.close()
         else:
@@ -135,7 +127,7 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
                 tmcmcFunctions.MCMC_MH(j1, Em, Nm_steps, Smcap[j1], Lmcap[j1], Postmcap[j1], beta, numAccepts, AllPars,
                                        log_likelihood, variables, resultsLocation, default_rng(child_seeds[j1]),
                                        calibrationData, numExperiments, covarianceMatrixList,
-                                       edpNamesList, edpLengthsList, normalizingFactors) for j1 in range(N)]
+                                       edpNamesList, edpLengthsList, normalizingFactors, locShiftList) for j1 in range(N)]
 
         Sm1, Lm1, Postm1, numAcceptsS, all_proposals, all_PLP = zip(*results)
         Sm1 = np.asarray(Sm1)

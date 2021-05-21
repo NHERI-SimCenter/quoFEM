@@ -25,7 +25,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
 
 
 def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibrationData, numExperiments,
-           covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors):
+           covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors, locShiftList):
     """ 
     this function runs FE model (model.tcl) for each parameter value (par)
     model.tcl should take parameter input
@@ -63,12 +63,6 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
             covarianceMultiplierList.append(par[i])
     f.close()
 
-    # run FE model for the written input file
-    # FNULL = open(os.devnull, 'w')
-    #    call("OpenSees parinput" + str(ParticleNum) +".tcl", stdout=FNULL, stderr=subprocess.STDOUT)
-
-    # env = os.environ
-
     if platform.system() == 'Windows':
         script = "workflow_driver.bat"
     else:
@@ -78,11 +72,5 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
     (output, err) = p.communicate()
     p_status = p.wait()
 
-    # load output file (output file should be a column with Ny outputs)
-
-    # files = [f for f in os.listdir('.') if os.path.isfile(f)]
-    # for f in files:
-    #     print(f)
-
     return log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
-                          covarianceMultiplierList, normalizingFactors)
+                          covarianceMultiplierList, normalizingFactors, locShiftList)

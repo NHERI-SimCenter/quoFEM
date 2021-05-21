@@ -13,11 +13,46 @@ class CovError(Exception):
 
 
 def log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
-                   covarianceMultiplierList, normalizingFactors):
-    """ Compute the log-likelihood """
-    # Read in the normalized data
-    data = calibrationData
+                   covarianceMultiplierList, normalizingFactors, locShiftList):
+    """ Compute the log-likelihood
 
+    :param calibrationData: Calibration data consisting of the measured values of response. Each row contains the data
+    from one experiment. The length of each row equals the sum of the lengths of all response quantities.
+    :type calibrationData: numpy ndarray (atleast_2d)
+
+    :param numExperiments: Number of experiments from which data is available, this is equal to the number of rows
+    (i.e., the first index) of the calibration data array
+    :type numExperiments: int
+
+    :param covarianceMatrixList: A list of length numExperiments * numResponses, where each item in the list contains
+    the covariacne matrix or variance value corresponding to that experiment and response quantity
+    :type covarianceMatrixList: list of numpy ndarrays
+
+    :param edpNamesList: A list containing the names of the response quantities
+    :type edpNamesList: list of strings
+
+    :param edpLengthsList: A list containing the length of each response quantity
+    :type edpLengthsList: list of ints
+
+    :param covarianceMultiplierList: A list containing the covariance matrices or variance values. The length of this
+    list is equal to the product of the number of experiments and the number of response quantities.
+    :type covarianceMultiplierList: list of numpy ndarrays
+
+    :param normalizingFactors: A list containing the normalizing factors used to scale (i.e. divide) the model
+    prediction values. The length of this list is equal to the number of response quantities.
+    :type normalizingFactors: list of ints
+
+    :param locShiftList: A list containing the values used to shift the prediction values. The locShift values are 0.0,
+    unless the abs max of the data of that response quantity is 0. In this case, the locShift = 1.0. LocShift values
+    must be added to the response quantities since they are added to the data. The length of this list is equal to the
+    number of response quantities.
+    :type locShiftList: list of ints
+
+    :return: loglikelihood. This is a scalar value, which is equal to the logpdf of a zero-mean multivariate normal
+    distribution and a user-supplied covariance structure. Block-diagonal covariance structures are supported. The value
+    of multipliers on the covariance block corresponding to each response quantity is also calibrated.
+    :rtype: float
+    """
     # Check if the correct number of covariance terms has been passed in
     numResponses = len(edpLengthsList)
     if len(covarianceMatrixList) != numExperiments * numResponses:
@@ -27,19 +62,17 @@ def log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNam
                        "in.".format(numExperiments * numResponses, len(covarianceMatrixList)))
 
     # Read in the model prediction
-    prediction = np.genfromtxt('results.out').reshape((1, -1))
+    prediction = np.atleast_2d(np.genfromtxt('results.out'))
 
-    # Normalize the prediction
+    # Shift and normalize the prediction
     currentPosition = 0
     for j in range(len(edpLengthsList)):
+        prediction[:, currentPosition:currentPosition + edpLengthsList[j]] += locShiftList[j]
         prediction[:, currentPosition:currentPosition + edpLengthsList[j]] /= normalizingFactors[j]
-        # normalizedPredictionSlice = prediction[:, currentPosition:currentPosition + edpLengthsList[j]] / \
-        #                             normalizingFactors[j]
-        # prediction[:, currentPosition:currentPosition + edpLengthsList[j]] = normalizedPredictionSlice
         currentPosition += edpLengthsList[j]
 
     # Compute the normalized residuals
-    allResiduals = data - prediction
+    allResiduals = prediction - calibrationData
 
     # Loop over the normalized residuals to compute the log-likelihood
     loglike = 0
@@ -48,29 +81,38 @@ def log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNam
         currentPosition = 0
         for j in range(numResponses):
             # Get the residuals corresponding to this response variable
-            # residuals = allResiduals[i, currentPosition:currentPosition + edpLengthsList[j]]
-            residuals = allResiduals[i, currentPosition:currentPosition + edpLengthsList[j]].reshape((1, -1))
-            currentPosition += edpLengthsList[j]
+            length = edpLengthsList[j]
+            residuals = allResiduals[i, currentPosition:currentPosition + length]
+            currentPosition += length
 
             # Get the covariance matrix corresponding to this response variable
-            cov = covarianceMatrixList[covListIndex]
+            cov = np.atleast_2d(covarianceMatrixList[covListIndex])
             covListIndex += 1
 
             # Multiply the covariance matrix by the value of the covariance multiplier
             cov *= covarianceMultiplierList[j]
 
-            # CASE I & II: Known/Estimate Noise
-            # noise covariance matrix
-            sig = [np.sqrt(cov)]
-            E = np.diag(np.array(sig) ** 2)
-            logdetE = np.log(np.linalg.det(E))
-            Einv = np.linalg.inv(E)
-            N = len(residuals)
-            Ny = 1
-            LL = -0.5 * N * Ny * np.log(2 * np.pi) - 0.5 * N * logdetE + sum(
-                np.diag(-0.5 * residuals.T @ Einv @ residuals))
-
-            if not np.isnan(LL):
-                loglike += LL
-
+            if np.shape(cov)[0] == np.shape(cov)[1] == 1:
+                # If there is a single variance value that is constant for all residual terms, then this is the case of
+                # having a sample of i.i.d. zero-mean normally distributed observations, and the log-likelihood can be
+                # computed more efficiently
+                var = cov[0][0]
+                sig = np.sqrt(var)
+                ll = -length * np.log(sig) - length / 2 * np.log(2 * np.pi) - 1 / (2 * var) * np.sum(residuals ** 2)
+            else:
+                # The multivariate normal log-pdf is made up of three terms:
+                # logpdf = -1/2*[(d*log(2*pi)) + (log(abs(det(cov)))) + (residual.T * inverse(cov) * residual) i.e.,
+                # Mahalanobis distance]
+                #                = -1/2*[t1 + t2 + t3]
+                t1 = length * np.log(2 * np.pi)
+                eigenValues, eigenVectors = np.linalg.eigh(cov)
+                logdet = np.sum(np.log(eigenValues))
+                eigenValuesReciprocal = 1. / eigenValues
+                z = eigenVectors * np.sqrt(eigenValuesReciprocal)
+                mahalanobisDistance = np.square(np.dot(residuals, z)).sum()
+                ll = -0.5 * (t1 + logdet + mahalanobisDistance)
+            if not np.isnan(ll):
+                loglike += ll
+            else:
+                loglike += -np.inf
     return loglike

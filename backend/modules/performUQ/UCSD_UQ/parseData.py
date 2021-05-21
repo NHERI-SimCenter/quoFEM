@@ -142,6 +142,7 @@ def parseDataFunction(dakotaJsonLocation):
         #       "\t\tand mode are approximately 1.0 and whose standard deviation is approximately 0.1.")
         # a = 100
         # b = 100
+        # The prior with parameters = 100 is too narrow. Using these values instead:
         a = 3
         b = 2
         for i, edp in enumerate(edpInputs):

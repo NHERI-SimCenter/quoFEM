@@ -136,21 +136,31 @@ print('The number of calibration terms per experiment: {}'.format(np.shape(calib
 
 # Compute the normalizing factors - absolute maximum of the data for each response variable
 print("\nComputing normalizing factors. The normalizing factors used are the absolute maximum of the data for each "
-      "response variable.")
+      "response variable. The data and the prediction will be divided by the normalizing factors.")
+locShiftList = []
 normalizingFactors = []
 currentPosition = 0
+locShift = 0.0
 for j in range(len(edpList)):
     calibrationDataSlice = calibrationData[:, currentPosition:currentPosition + edpLengthsList[j]]
-    normalizingFactors.append(np.max(np.absolute(calibrationDataSlice)))
-    calibrationData[:, currentPosition:currentPosition + edpLengthsList[j]] = calibrationDataSlice / np.max(
-        np.absolute(calibrationDataSlice))
+    absMax = np.absolute(np.max(calibrationDataSlice))
+    if absMax == 0:  # This is to handle the case if abs max of data = 0.
+        locShift = 1.0
+        absMax = 1.0
+    locShiftList.append(locShift)
+    normalizingFactors.append(absMax)
+    calibrationDataSlice += locShift
+    calibrationData[:, currentPosition:currentPosition + edpLengthsList[j]] = calibrationDataSlice / absMax
     currentPosition += edpLengthsList[j]
-# print("Normalized calibration data: \n{}".format(calibrationData))
-# print("Normalizing factors list: {}".format(normalizingFactors))
+print("Normalized calibration data: \n{}".format(calibrationData))
 
 print("The normalizing factors computed are: ")
 for j in range(len(edpList)):
     print("EDP: {}, normalizing factor: {}".format(edpNamesList[j], normalizingFactors[j]))
+
+print("\nThe locShift values are: ")
+for j in range(len(edpList)):
+    print("EDP: {}, locShift: {}".format(edpNamesList[j], locShiftList[j]))
 
 # ======================================================================================================================
 # Processing covariance matrix options
@@ -159,31 +169,29 @@ print('Processing options for variance/covariance:')
 print('One variance value or covariance matrix will be used per response quantity per experiment.')
 print('If the user does not supply variance or covariance data, a default variance value will be\n'
       'used per response quantity, which is constant across experiments. The default variance is\n'
-      'computed as the variance of the data, if there is data from more than one experiment. If \n'
+      'computed as the variance of the normalized data, if there is data from more than one experiment. If \n'
       'there is data from only one experiment, then a default variance value is computed by \n'
       'assuming that the standard deviation of the error is 5% of the absolute maximum value of \n'
-      'the corresponding response quantity.')
+      'the corresponding normalized response data.')
 
 # For each response variable, compute the variance of the data. These will be the default error variance
 # values used in the calibration process. Values of the multiplier on these default error variance values will be
 # calibrated. There will be one such error variance value per response quantity. If there is only data from one
 # experiment,then the default error std.dev. value is assumed to be 5% of the absolute maximum value of the data
 # corresponding to that response quantity.
-# TODO: check variance scaling options
-# scaleFactors = np.zeros_like(edpNamesList, dtype=float)
-# if np.shape(calibrationData)[0] > 1:  # if there are more than 1 rows of data, i.e. data from multiple experiments
-#     currentIndex = 0
-#     for i in range(len(edpNamesList)):
-#         dataSlice = calibrationData[:, currentIndex:currentIndex + edpLengthsList[i]]
-#         scaleFactors[i] = np.nanvar(dataSlice)
-#         currentIndex += edpLengthsList[i]
-# else:
-#     currentIndex = 0
-#     for i in range(len(edpNamesList)):
-#         dataSlice = calibrationData[:, currentIndex:currentIndex + edpLengthsList[i]]
-#         scaleFactors[i] = (0.05 * np.max(np.absolute(dataSlice))) ** 2
-#         currentIndex += edpLengthsList[i]
-scaleFactors = np.ones_like(edpNamesList, dtype=float)
+scaleFactors = np.zeros_like(edpNamesList, dtype=float)
+if np.shape(calibrationData)[0] > 1:  # if there are more than 1 rows of data, i.e. data from multiple experiments
+    currentIndex = 0
+    for i in range(len(edpNamesList)):
+        dataSlice = calibrationData[:, currentIndex:currentIndex + edpLengthsList[i]]
+        scaleFactors[i] = np.nanvar(dataSlice)
+        currentIndex += edpLengthsList[i]
+else:
+    currentIndex = 0
+    for i in range(len(edpNamesList)):
+        dataSlice = calibrationData[:, currentIndex:currentIndex + edpLengthsList[i]]
+        scaleFactors[i] = (0.05 * np.max(np.absolute(dataSlice))) ** 2
+        currentIndex += edpLengthsList[i]
 
 # Create the covariance matrix
 covarianceMatrixList = []
@@ -394,7 +402,7 @@ for modelNum, variables in enumerate(variablesList):
     if __name__ == '__main__':
         mytrace = RunTMCMC(Np, AllPars, Nm_steps_max, Nm_steps_maxmax, logLikeModule.log_likelihood, variables,
                            resultsLocation, seedval, calibrationData, numExperiments, covarianceMatrixList,
-                           edpNamesList, edpLengthsList, normalizingFactors)
+                           edpNamesList, edpLengthsList, normalizingFactors, locShiftList)
         print('\n\t==========================')
         print('\tTMCMC algorithm finished running')
         print('\t==========================')

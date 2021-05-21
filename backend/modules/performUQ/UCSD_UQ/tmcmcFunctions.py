@@ -58,7 +58,7 @@ def compute_beta(beta, likelihoods, prev_ESS, threshold):
 # MCMC
 def MCMC_MH(ParticleNum, Em, Nm_steps, current, likelihood_current, posterior_current, beta, numAccepts, AllPars,
             log_likelihood, variables, resultsLocation, rng, calibrationData, numExperiments, covarianceMatrixList,
-            edpNamesList, edpLengthsList, normalizingFactors):
+            edpNamesList, edpLengthsList, normalizingFactors, locShiftList):
     all_proposals = []
     all_PLP = []
 
@@ -74,7 +74,7 @@ def MCMC_MH(ParticleNum, Em, Nm_steps, current, likelihood_current, posterior_cu
             # likelihood_proposal = log_likelihood(ParticleNum, proposal, variables, resultsLocation)
             likelihood_proposal = runFEM(ParticleNum, proposal, variables, resultsLocation, log_likelihood,
                                          calibrationData, numExperiments, covarianceMatrixList,
-                                         edpNamesList, edpLengthsList, normalizingFactors)
+                                         edpNamesList, edpLengthsList, normalizingFactors, locShiftList)
             if np.isnan(likelihood_proposal):
                 likelihood_proposal = -np.Inf
             posterior_proposal = prior_proposal + likelihood_proposal * beta
