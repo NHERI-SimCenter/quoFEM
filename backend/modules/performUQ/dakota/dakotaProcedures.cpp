@@ -1062,7 +1062,7 @@ writeResponse(std::ostream &dakotaFile, json_t *rootEDP,  std::string idResponse
               }
           }
 
-////          bool readFieldCoords = true;
+//          bool readFieldCoords = true;
 //          if (readFieldCoords) {
 //              dakotaFile << "\n  read_field_coordinates" << "\n  num_coordinates_per_field = ";
 //              for (int j = 0; j < numResponses; j++) {
@@ -1469,20 +1469,16 @@ writeDakotaInputFile(std::ostream &dakotaFile,
 
     int maxIterations = json_integer_value(json_object_get(methodData,"maxIterations"));
     double tol = json_number_value(json_object_get(methodData,"convergenceTol"));
-    const char *factors = json_string_value(json_object_get(methodData,"factors"));
-//    bool readCalibrationDataFile = json_boolean_value(json_object_get(methodData, "readCalibrationData"));
-//    int numExperiments = json_integer_value(json_object_get(methodData, "numExperiments"));
+//    const char *factors = json_string_value(json_object_get(methodData,"factors"));
     const char *calFileName = json_string_value(json_object_get(methodData, "calibrationDataFile"));
-//    std::ifstream calDataFile(calFileName);
-//    std::ifstream calDataFile("/Users/aakash/Desktop/SimCenter/Joel/CalibrationPaper/quoFEMDakota/eigData.csv");
 
-      dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
+    dakotaFile << "environment \n tabular_data \n tabular_data_file = 'dakotaTab.out' \n\n";
 
     dakotaFile << "method, \n " << methodString << "\n  convergence_tolerance = " << tol
 	       << " \n   max_iterations = " << maxIterations;
 
-    if (strcmp(factors,"") != 0)
-      dakotaFile << "\n  scaling\n";
+//    if (strcmp(factors,"") != 0)
+//      dakotaFile << "\n  scaling\n";
 
     dakotaFile << "\n\n";
 
@@ -1492,17 +1488,17 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     writeInterface(dakotaFile, uqData, workflowDriver, emptyString, evaluationConcurrency);
     writeResponse(dakotaFile, rootEDP, calibrationString, true, false, edpList, calFileName);
 
-    if (strcmp(factors,"") != 0) {
-      dakotaFile << "\n  primary_scale_types = \"value\" \n  primary_scales = ";
-      std::string factorString(factors);
-      std::stringstream factors_stream(factorString);
-      std::string tmp;
-      while (factors_stream >> tmp) {
-	// maybe some checks, i.e. ,
-	dakotaFile << tmp << " ";
-      }
-      dakotaFile << "\n";
-    }
+//    if (strcmp(factors,"") != 0) {
+//      dakotaFile << "\n  primary_scale_types = \"value\" \n  primary_scales = ";
+//      std::string factorString(factors);
+//      std::stringstream factors_stream(factorString);
+//      std::string tmp;
+//      while (factors_stream >> tmp) {
+//	// maybe some checks, i.e. ,
+//	dakotaFile << tmp << " ";
+//      }
+//      dakotaFile << "\n";
+//    }
 
   } else if ((strcmp(type, "Inverse Problem") == 0)) {
 
@@ -1529,14 +1525,7 @@ writeDakotaInputFile(std::ostream &dakotaFile,
     int jumpStep = json_integer_value(json_object_get(methodData,"jumpStep"));
     //    int maxIterations = json_integer_value(json_object_get(methodData,"maxIter"));
     //    double tol = json_number_value(json_object_get(methodData,"tol"));
-
-//    bool readCalibrationDataFile = json_boolean_value(json_object_get(methodData, "readCalibrationData"));
-//    int numExperiments = json_integer_value(json_object_get(methodData, "numExperiments"));
     const char *calFileName = json_string_value(json_object_get(methodData, "calibrationDataFile"));
-//    std::ifstream calDataFile;
-//    calDataFile.open(calFileName, std::ios_base::in);
-
-
 
       if (strcmp(method,"DREAM")==0) {
 
