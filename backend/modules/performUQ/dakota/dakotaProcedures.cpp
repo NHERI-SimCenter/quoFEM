@@ -880,7 +880,7 @@ int processDataFiles(const char *calFileName,
                     if (readErrorFile) {// If any user supplied error variance files exist
                         for (const auto &path : errFileList) {
                             std::string base_filename = path.substr(path.find_last_of("/\\") + 1);
-                            std::cout << "Base filename: " << base_filename << std::endl;
+//                            std::cout << "Base filename: " << base_filename << std::endl;
                             if (base_filename == errFileName.str()) {
                                 errFileToProcess = path;
                                 break;
