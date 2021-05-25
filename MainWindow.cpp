@@ -986,6 +986,7 @@ void MainWindow::onRemoteRunButtonClicked(){
     // check logged in
     if (loggedIn == false) {
           errorMessage("ERROR - You Need to Login");
+          onLoginButtonClicked();
           return;
     }
 
