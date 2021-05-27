@@ -345,7 +345,10 @@ void FEM::femProgramChanged(const QString &arg1)
       QPushButton *chooseDriver = new QPushButton();
       chooseDriver->setText(tr("Choose"));
       connect(chooseDriver, &QPushButton::clicked, this, [=](){
-                driverFile->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
+                QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)");
+                if (!fileName.isEmpty()) {
+                    driverFile->setText(fileName);
+                }
             });
       chooseDriver->setToolTip(tr("Push to choose a file from your file system"));
 
@@ -363,8 +366,11 @@ void FEM::femProgramChanged(const QString &arg1)
       QPushButton *choosePostProcessing = new QPushButton();
 
       connect(choosePostProcessing, &QPushButton::clicked, this, [=](){
-            postProcessScript->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
-                            });
+          QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)");
+          if (!fileName.isEmpty()) {
+              postProcessScript->setText(fileName);
+          }
+      });
       choosePostProcessing->setText(tr("Choose"));
       choosePostProcessing->setToolTip(tr("Push to choose a file from your file system"));
 
@@ -399,9 +405,13 @@ void FEM::femProgramChanged(const QString &arg1)
         QPushButton *chooseFile1 = new QPushButton();
         chooseFile1->setText(tr("Choose"));
         connect(chooseFile1, &QPushButton::clicked, this, [=](){
-             file1->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-             if ((arg1 == QString("FEAPpv")) || (arg1 == QString("OpenSees")) || (arg1 == QString("SurrogateGP")) )
-                    this->parseInputfilesForRV(file1->text());
+
+             QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
+             if (!fileName.isEmpty()){
+                 file1->setText(fileName);
+                 if ((arg1 == QString("FEAPpv")) || (arg1 == QString("OpenSees")) || (arg1 == QString("SurrogateGP")) )
+                        this->parseInputfilesForRV(fileName);
+             }
          });
 
         chooseFile1->setToolTip(tr("Push to choose a file from your file system"));
@@ -416,7 +426,10 @@ void FEM::femProgramChanged(const QString &arg1)
         QPushButton *chooseFile2 = new QPushButton();
 
         connect(chooseFile2, &QPushButton::clicked, this, [=](){
-            file2->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+            QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
+            if (!fileName.isEmpty()) {
+                file2->setText(fileName);
+            }
         });
          chooseFile2->setText(tr("Choose"));
         chooseFile2->setToolTip(tr("Push to choose a file from your file system"));
@@ -456,8 +469,12 @@ void FEM::femProgramChanged(const QString &arg1)
             QPushButton *chooseFile3 = new QPushButton();
 
             connect(chooseFile3, &QPushButton::clicked, this, [=](){
-                file3->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
-                this->parseInputfilesForRV(file3->text());
+
+                QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
+                if (!fileName.isEmpty()) {
+                    file3->setText(fileName);
+                    this->parseInputfilesForRV(fileName);
+                }
             });
             chooseFile3->setText(tr("Choose"));
             chooseFile3->setToolTip(tr("Push to choose a file from your file system"));
@@ -644,8 +661,11 @@ void FEM::customInputNumberChanged(int numCustomInputs) {
     auto *chooseFile = new QPushButton();
     chooseFile->setText(tr("Choose"));
     connect(chooseFile, &QPushButton::clicked, this, [=](){
-                inputFile->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
-            });
+            QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)");
+            if (!fileName.isEmpty()) {
+                inputFile->setText(fileName);
+            }
+        });
     chooseFile->setToolTip(tr("Push to choose a file from your file system"));
 
     auto inputLayout = new QHBoxLayout();
