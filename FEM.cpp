@@ -345,7 +345,7 @@ void FEM::femProgramChanged(const QString &arg1)
       QPushButton *chooseDriver = new QPushButton();
       chooseDriver->setText(tr("Choose"));
       connect(chooseDriver, &QPushButton::clicked, this, [=](){
-                QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)");
+                QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*)");
                 if (!fileName.isEmpty()) {
                     driverFile->setText(fileName);
                 }
@@ -366,7 +366,7 @@ void FEM::femProgramChanged(const QString &arg1)
       QPushButton *choosePostProcessing = new QPushButton();
 
       connect(choosePostProcessing, &QPushButton::clicked, this, [=](){
-          QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)");
+          QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*)");
           if (!fileName.isEmpty()) {
               postProcessScript->setText(fileName);
           }
@@ -406,7 +406,7 @@ void FEM::femProgramChanged(const QString &arg1)
         chooseFile1->setText(tr("Choose"));
         connect(chooseFile1, &QPushButton::clicked, this, [=](){
 
-             QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
+             QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)");
              if (!fileName.isEmpty()){
                  file1->setText(fileName);
                  if ((arg1 == QString("FEAPpv")) || (arg1 == QString("OpenSees")) || (arg1 == QString("SurrogateGP")) )
@@ -426,7 +426,7 @@ void FEM::femProgramChanged(const QString &arg1)
         QPushButton *chooseFile2 = new QPushButton();
 
         connect(chooseFile2, &QPushButton::clicked, this, [=](){
-            QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
+            QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)");
             if (!fileName.isEmpty()) {
                 file2->setText(fileName);
             }
@@ -470,7 +470,7 @@ void FEM::femProgramChanged(const QString &arg1)
 
             connect(chooseFile3, &QPushButton::clicked, this, [=](){
 
-                QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
+                QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)");
                 if (!fileName.isEmpty()) {
                     file3->setText(fileName);
                     this->parseInputfilesForRV(fileName);
@@ -513,7 +513,7 @@ void FEM::femProgramChanged(const QString &arg1)
 //            QPushButton *chooseFile1 = new QPushButton();
 //            chooseFile1->setText(tr("Choose"));
 //            connect(chooseFile1, &QPushButton::clicked, this, [=](){
-//                file1->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+//                file1->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
 //                this->parseInputfilesForRV(file1->text());
 //            });
 
@@ -531,7 +531,7 @@ void FEM::femProgramChanged(const QString &arg1)
 //            QPushButton *chooseFile2 = new QPushButton();
 
 //            connect(chooseFile2, &QPushButton::clicked, this, [=](){
-//                file2->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+//                file2->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
 //            });
 
 //            file2->setToolTip(tr("Name of Python script that will process FEAPpv output file for UQ engine"));
@@ -661,7 +661,7 @@ void FEM::customInputNumberChanged(int numCustomInputs) {
     auto *chooseFile = new QPushButton();
     chooseFile->setText(tr("Choose"));
     connect(chooseFile, &QPushButton::clicked, this, [=](){
-            QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)");
+            QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*)");
             if (!fileName.isEmpty()) {
                 inputFile->setText(fileName);
             }
