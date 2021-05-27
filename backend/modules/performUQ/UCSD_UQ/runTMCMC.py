@@ -74,6 +74,10 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         print('\n\t\t==========================')
         print("\t\tStage number: {}".format(stageNum))
 
+        # seed to reproduce results
+        ss = SeedSequence(seed)
+        child_seeds = ss.spawn(N+1)
+
         # update model evidence
         evidence = evidence * (sum(Wm) / N)
 
@@ -83,7 +87,9 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
 
         # Resample ###################################################
         # Resampling using plausible weights
-        SmcapIDs = np.random.choice(range(N), N, p=Wm / sum(Wm))
+        # SmcapIDs = np.random.choice(range(N), N, p=Wm / sum(Wm))
+        rng = default_rng(child_seeds[-1])
+        SmcapIDs = rng.choice(range(N), N, p=Wm / sum(Wm))
         # SmcapIDs = resampling.stratified_resample(Wm_n)
         Smcap = Sm[SmcapIDs]
         Lmcap = Lm[SmcapIDs]
@@ -108,10 +114,6 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         numAccepts = 0
 
         totalNumberOfModelEvaluations += numProposals
-
-        # seed to reproduce results
-        ss = SeedSequence(seed)
-        child_seeds = ss.spawn(N)
 
         if parallelize_MCMC == 'yes':
             pool = Pool(processes=mp.cpu_count())
