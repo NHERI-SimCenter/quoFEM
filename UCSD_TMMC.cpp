@@ -78,8 +78,14 @@ UCSD_TMMC::UCSD_TMMC(QWidget *parent)
     layout->addWidget(calDataFileEdit, 2, 1, 1, 2);
 
     QPushButton *chooseCalDataFile = new QPushButton("Choose");
+//    connect(chooseCalDataFile, &QPushButton::clicked, this, [=](){
+//        calDataFileEdit->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
+//    });
     connect(chooseCalDataFile, &QPushButton::clicked, this, [=](){
-        calDataFileEdit->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
+          QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*)");
+          if (!fileName.isEmpty()) {
+              calDataFileEdit->setText(fileName);
+          }
     });
     layout->addWidget(chooseCalDataFile, 2, 3);
 
