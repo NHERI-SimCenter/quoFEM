@@ -95,7 +95,7 @@ DakotaInputSensitivity::DakotaInputSensitivity(QWidget *parent)
 
     methodLayout->addWidget(label1);
     methodLayout->addWidget(samplingMethod,2);
-    methodLayout->addStretch(4);
+    //methodLayout->addStretch(4);
 
     mLayout->addLayout(methodLayout);
 
@@ -118,6 +118,11 @@ DakotaInputSensitivity::DakotaInputSensitivity(QWidget *parent)
 
     mLayout->addWidget(theStackedWidget);
     layout->addLayout(mLayout);
+    QLabel *sampleNumMessage = new QLabel("[Note] Expected number of FEM calls = (#Samples)×(#RVs+2)");
+    layout->addWidget(sampleNumMessage);
+    sampleNumMessage->setStyleSheet("color: gray");
+
+    layout->addStretch(2);
 
     this->setLayout(layout);
 

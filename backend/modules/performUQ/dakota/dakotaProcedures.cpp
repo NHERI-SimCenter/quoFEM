@@ -91,9 +91,6 @@ struct randomVariables {
 
 int
 parseForRV(json_t *root, struct randomVariables &theRandomVariables){
-
-
-
   int numberRVs = 0;
 
   json_t *fileRandomVariables =  json_object_get(root, "randomVariables");
@@ -512,7 +509,9 @@ writeRV(std::ostream &dakotaFile, struct randomVariables &theRandomVariables, st
     // if correlations, (sy)
      //if (theRandomVariables.corrMat[0] != 0) {
 
-     if (theRandomVariables.corrMat[0]!=0) {
+    if (!theRandomVariables.corrMat.empty()) {
+      
+      if (theRandomVariables.corrMat[0]!=0) {
 
         std::vector<int> newOrder;
         for (int i=0; i<18; i++) {
@@ -533,7 +532,8 @@ writeRV(std::ostream &dakotaFile, struct randomVariables &theRandomVariables, st
           }
           dakotaFile << "\n";
         }
-     };
+      }
+    }
     dakotaFile << "\n\n";
 
     return 0;

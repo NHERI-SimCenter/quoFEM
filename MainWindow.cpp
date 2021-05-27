@@ -986,6 +986,7 @@ void MainWindow::onRemoteRunButtonClicked(){
     // check logged in
     if (loggedIn == false) {
           errorMessage("ERROR - You Need to Login");
+          onLoginButtonClicked();
           return;
     }
 
@@ -1774,7 +1775,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.2.2 "));
+                       tr("Version 2.3.0 "));
 }
 
 void MainWindow::preferences()
@@ -1842,7 +1843,7 @@ void MainWindow::manual()
 
 void MainWindow::cite()
 {
-  QString citeText = QString("Frank McKenna, Nikhil Padhye, & Adam Zsarnoczay. (2019, September 30). NHERI-SimCenter/quoFEM: Vesion 2.0.0 (Version v2.0.0). Zenodo. http://doi.org/10.5281/zenodo.3466061");
+  QString citeText = QString("Frank McKenna, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Michael Gardner, & Nikhil Padhye. (2021, May 21). NHERI-SimCenter/quoFEM: Version 2.3.0 (Version v2.3.0). Zenodo. http://doi.org/10.5281/zenodo.4780588");
     QMessageBox msgBox;
     QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     msgBox.setText(citeText);
