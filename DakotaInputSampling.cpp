@@ -79,8 +79,8 @@ DakotaInputSampling::DakotaInputSampling(QWidget *parent)
     QLabel *label1 = new QLabel();
     label1->setText(QString("Method"));
     samplingMethod = new QComboBox();
-    //samplingMethod->setMaximumWidth(800);
-    //samplingMethod->setMinimumWidth(800);
+    samplingMethod->setMaximumWidth(200);
+    samplingMethod->setMinimumWidth(200);
     samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
     //samplingMethod->addItem(tr("Importance Sampling"));
@@ -98,8 +98,8 @@ DakotaInputSampling::DakotaInputSampling(QWidget *parent)
     */
 
     methodLayout->addWidget(label1);
-    methodLayout->addWidget(samplingMethod,2);
-    methodLayout->addStretch(4);
+    methodLayout->addWidget(samplingMethod);
+    methodLayout->addStretch(1);
 
     mLayout->addLayout(methodLayout);
 

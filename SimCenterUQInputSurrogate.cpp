@@ -84,6 +84,9 @@ SimCenterUQInputSurrogate::SimCenterUQInputSurrogate(InputWidgetParameters *para
     inpMethod->addItem(tr("Import Data File"));
     //inpMethod->addItem(tr("Import Multi-fidelity Data File"));
 
+    inpMethod->setMaximumWidth(200);
+    inpMethod->setMinimumWidth(200);
+
     methodLayout1->addWidget(label1);
     methodLayout1->addWidget(inpMethod,2);
     methodLayout1->addStretch(4);
