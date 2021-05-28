@@ -158,9 +158,15 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     calDataFileEdit = new QLineEdit;
     QPushButton *chooseCalDataFile = new QPushButton();
 
+//    connect(chooseCalDataFile, &QPushButton::clicked, this, [=](){
+//          calDataFileEdit->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
+//                          });
     connect(chooseCalDataFile, &QPushButton::clicked, this, [=](){
-          calDataFileEdit->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
-                          });
+          QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*)");
+          if (!fileName.isEmpty()) {
+              calDataFileEdit->setText(fileName);
+          }
+    });
     chooseCalDataFile->setText(tr("Choose"));
     chooseCalDataFile->setToolTip(tr("Push to choose a file from your file system"));
 

@@ -86,7 +86,8 @@ def MCMC_MH(ParticleNum, Em, Nm_steps, current, likelihood_current, posterior_cu
         all_proposals.append(proposal)
         all_PLP.append([prior_proposal, likelihood_proposal, posterior_proposal])
 
-        if np.isfinite(log_acceptance) and (np.log(np.random.uniform()) < log_acceptance):
+        # if np.isfinite(log_acceptance) and (np.log(np.random.uniform()) < log_acceptance):
+        if np.isfinite(log_acceptance) and (np.log(rng.uniform()) < log_acceptance):
             # accept
             current = proposal
             posterior_current = posterior_proposal

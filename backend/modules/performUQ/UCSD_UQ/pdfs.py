@@ -141,11 +141,11 @@ class GumbelDist:
         self.beta = beta
 
     def generate_rns(self, N):
-        dist = stats.gumbel_r(loc=self.beta, scale=(1/self.alpha))
+        dist = stats.gumbel_r(loc=self.beta, scale=(1 / self.alpha))
         return dist.rvs(size=N)
 
     def log_pdf_eval(self, x):
-        dist = stats.gumbel_r(loc=self.beta, scale=(1/self.alpha))
+        dist = stats.gumbel_r(loc=self.beta, scale=(1 / self.alpha))
         return dist.logpdf(x)
 
 
