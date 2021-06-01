@@ -30,39 +30,41 @@ def compute_beta(beta, likelihoods, prev_ESS, threshold):
     old_beta = beta
     min_beta = beta
     max_beta = 2.0
-    #rN = int(len(likelihoods) * 0.95)   #pymc3 uses 0.5
-    rN = threshold*prev_ESS #purdue prof uses 0.95
+    # rN = int(len(likelihoods) * 0.95)   #pymc3 uses 0.5
+    rN = threshold * prev_ESS  # purdue prof uses 0.95
+    new_beta = beta
     while max_beta - min_beta > 1e-6:
-        new_beta = 0.5*(max_beta+min_beta)
-        #plausible weights of Sm corresponding to new beta
-        inc_beta = new_beta-old_beta
-        Wm = np.exp(inc_beta*(likelihoods - likelihoods.max()))
-        ESS = int(1/np.sum((Wm/sum(Wm))**2))
+        new_beta = 0.5 * (max_beta + min_beta)
+        # plausible weights of Sm corresponding to new beta
+        inc_beta = new_beta - old_beta
+        Wm = np.exp(inc_beta * (likelihoods - likelihoods.max()))
+        ESS = int(1 / np.sum((Wm / sum(Wm)) ** 2))
         if ESS == rN:
             break
         elif ESS < rN:
             max_beta = new_beta
         else:
             min_beta = new_beta
-            
+
     if new_beta >= 1:
         new_beta = 1
-        #plausible weights of Sm corresponding to new beta
-        inc_beta = new_beta-old_beta
-        Wm = np.exp(inc_beta*(likelihoods - likelihoods.max()))
-        
+        # plausible weights of Sm corresponding to new beta
+        inc_beta = new_beta - old_beta
+        Wm = np.exp(inc_beta * (likelihoods - likelihoods.max()))
+
     return new_beta, Wm, ESS
 
 
 # MCMC
 def MCMC_MH(ParticleNum, Em, Nm_steps, current, likelihood_current, posterior_current, beta, numAccepts, AllPars,
-            log_likelihood, variables, resultsLocation, rng):
+            log_likelihood, variables, resultsLocation, rng, calibrationData, numExperiments, covarianceMatrixList,
+            edpNamesList, edpLengthsList, normalizingFactors, locShiftList):
     all_proposals = []
     all_PLP = []
 
     # deltas = propose(np.zeros(len(current)), Em, Nm_steps)
-    deltas = rng.multivariate_normal(np.zeros(len(current)),Em,Nm_steps)
-    
+    deltas = rng.multivariate_normal(np.zeros(len(current)), Em, Nm_steps)
+
     for j2 in range(Nm_steps):
         delta = deltas[j2]
         proposal = current + delta
@@ -70,7 +72,9 @@ def MCMC_MH(ParticleNum, Em, Nm_steps, current, likelihood_current, posterior_cu
 
         if np.isfinite(prior_proposal):  # proposal satisfies the prior constraints
             # likelihood_proposal = log_likelihood(ParticleNum, proposal, variables, resultsLocation)
-            likelihood_proposal = runFEM(ParticleNum, proposal, variables, resultsLocation, log_likelihood)
+            likelihood_proposal = runFEM(ParticleNum, proposal, variables, resultsLocation, log_likelihood,
+                                         calibrationData, numExperiments, covarianceMatrixList,
+                                         edpNamesList, edpLengthsList, normalizingFactors, locShiftList)
             if np.isnan(likelihood_proposal):
                 likelihood_proposal = -np.Inf
             posterior_proposal = prior_proposal + likelihood_proposal * beta
@@ -79,7 +83,6 @@ def MCMC_MH(ParticleNum, Em, Nm_steps, current, likelihood_current, posterior_cu
             posterior_proposal = -np.Inf
 
         log_acceptance = posterior_proposal - posterior_current
-
         all_proposals.append(proposal)
         all_PLP.append([prior_proposal, likelihood_proposal, posterior_proposal])
 

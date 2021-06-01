@@ -7,7 +7,7 @@ Steel Frame Calibration with DREAM
 +-----------------+-----------------------------------------+
 
 In this example, Bayesian estimation is used to estimate column
-stiffnesses of a simple steel frame, given data about it's mode shapes
+stiffnesses of a simple steel frame, given data about its mode shapes
 and mass distribution.
 
 Provided by Professor Joel Conte and his doctoral students Maitreya

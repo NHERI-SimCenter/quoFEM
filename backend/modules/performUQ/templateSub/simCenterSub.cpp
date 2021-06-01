@@ -28,11 +28,11 @@ int main(int argc, char **argv)
     exit(-1);
   }
   if (!in.is_open()) {
-    std::cerr << "ERROR: simCenterDprepro could not open: " << argv[1] << "\n";
+    std::cerr << "ERROR: simCenterDprepro could not open: " << argv[2] << "\n";
     exit(-1);
   }
   if (!out.is_open()) {
-    std::cerr << "ERROR: simCenterDprepro could not open: " << argv[1] << "\n";
+    std::cerr << "ERROR: simCenterDprepro could not open: " << argv[3] << "\n";
     exit(-1);
   }
 

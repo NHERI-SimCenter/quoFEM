@@ -99,7 +99,7 @@ int writeResponse(std::ostream &dakotaFile,
 		  bool numericalGradients, 
 		  bool numericalHessians,
 		  std::vector<std::string> &edpList,
-		  bool readCalibrationData);
+		  std::istream &calDataFile);
 
 int writeDakotaInputFile(std::ostream &dakotaFile, 
 			 json_t *uqData, 
@@ -109,3 +109,10 @@ int writeDakotaInputFile(std::ostream &dakotaFile,
 			 std::vector<std::string> &rvList,
 			 std::vector<std::string> &edpList,
 			 int evalConcurrency);
+
+int processDataFiles(const char *calFileName,
+                     std::vector<std::string> &edpList,
+                     std::vector<int> &lengthList,
+                     int numResponses, int numFieldResponses,
+                     std::vector<std::string> &errFileList,
+                     std::stringstream &errType, std::string idResponse);

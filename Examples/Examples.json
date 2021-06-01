@@ -1,89 +1,74 @@
 {
-  "Examples": [
+    "Examples": [
     {
-      "name": "Basic modeling with Python",
-      "description": "This example illustrates how Python scripting can be used with quoFEM to express general mathematical models without the use of a dedicated finite element analysis engine.",
-      "InputFile": "qfem-0005/input.json"
-    },
-    {
-      "name": "Custom UQ for UQpy",
-      "description": "This example illustrates how a third-party UQ engine can be used with quoFEM.",
-      "InputFile": "qfem-0017/input.json"
-    },
-    {
-      "name": "Forward Propagation - FEAP",
-      "description": "This example illustrates how quoFEM interacts with the FEAP engine for finite element analysis. A simple forward propagation procedure is run to estimate the first and second central moments of a truss model's response, given the marginal distributions of various random parameters.",
-      "InputFile": "qfem-0010/input.json"
+      "name": "Two-Dimensional Truss: Sampling, Reliability and Sensitivity",
+      "description": "This example illustrates how quoFEM interacts with the Tcl interpreter for OpenSees. A simple forward propagation procedure is run to estimate the first and second central moments of a FE model's response, given the marginal distributions of various random parameters.",
+      "InputFile": "qfem-0001/src/input.json"
     },
     {
       "name": "Forward Propagation - OpenSeesPy",
       "description": "This example illustrates how quoFEM interacts with OpenSeesPy. A simple forward propagation procedure is run to estimate the first and second central moments of a FE model's response, given the marginal distributions of various random parameters.",
-      "InputFile": "qfem-0002/input.json"
+      "InputFile": "qfem-0002/src/input.json"
+    },
+    {
+      "name": "Basic modeling with Python",
+      "description": "This example illustrates how Python scripting can be used with quoFEM to express general mathematical models without the use of a dedicated finite element analysis engine.",
+      "InputFile": "qfem-0005/src/input.json"
     },
     {
       "name": "Optimization",
       "description": "In this example, a **parameter estimation** routine is used to solve a classical optimization problem for which an analytic solution is known.",
-      "InputFile": "qfem-0006/input.json"
+      "InputFile": "qfem-0006/src/input.json"
     },
     {
       "name": "Reliability Analysis",
       "description": "This example uses quoFEM to perform a second-order reliability analysis (SORM) of an OpenSees FE model.",
-      "InputFile": "qfem-0003/input.json"
+      "InputFile": "qfem-0003/src/input.json"
     },
     {
       "name": "Sensitivity Analysis",
       "description": "This example uses quoFEM to perform a global sensitivity analysis of an OpenSees FE model.",
-      "InputFile": "qfem-0004/input.json"
+      "InputFile": "qfem-0004/src/input.json"
     },
     {
-      "name": "Shear wall calibration",
-      "description": "~",
-      "InputFile": "qfem-0013/input.json"
-    },
-    {
-      "name": "Steel Frame Calibration with DREAM",
-      "description": "In this example, Bayesian estimation is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
-      "InputFile": "qfem-0008/input.json"
+      "name": "Steel Frame: Bayesian Calibration with DREAM",
+      "description": "In this example, Bayesian estimation is used to estimate column stiffnesses of a simple steel frame, given data about its mode shapes and mass distribution.",
+      "InputFile": "qfem-0008/src/input.json"
     },
     {
       "name": "Steel Frame: Bayesian Calibration using TMCMC",
       "description": "In this example, Bayesian estimation is used to estimate the lateral story stiffnesses of the two stories of a simple steel frame, given data about its mode shapes and frequencies. The transitional Markov chain Monte Carlo algorithm is used to obtain samples from the posterior probability distribution of the lateral story stiffnesses",
-      "InputFile": "qfem-0014/input.json"
+      "InputFile": "qfem-0014/src/input.json"
     },
     {
-      "name": "Steel Frame: Conventional Calibration",
-      "description": "In this example, a parameter estimation routine is used to estimate column stiffnesses of a simple steel frame, given data about it's mode shapes and mass distribution.",
-      "InputFile": "qfem-0007/input.json"
+      "name": "Steel Frame: Deterministic Calibration",
+      "description": "In this example, a parameter estimation routine is used to estimate column stiffnesses of a simple steel frame, given data about its mode shapes and mass distribution.",
+      "InputFile": "qfem-0007/src/input.json"
     },
     {
       "name": "Surrogate Modeling for One Story Building Earthquake Response",
       "description": "This example constructs a Gaussian process-based surrogate model for the response of a building structure given a ground motion time history. We are interested in the maximum inter-story drift/acceleration response determined in 14 structural parameters.",
-      "InputFile": "qfem-0015/input.json"
+      "InputFile": "qfem-0015/src/input.json"
     },
     {
       "name": "Surrogate Modeling to Predict Mean and Variance of Earthquake Response",
       "description": "Surrogate modeling for mean and variance of EQ response",
-      "InputFile": "qfem-0016/input.json"
+      "InputFile": "qfem-0016/src/input.json"
     },
     {
       "name": "Two-Dimensional Truss: Global Sensitivity Analysis using SimCenterUQ Engine",
       "description": "A global sensitivity analysis is conducted with correlated random variables using the SimCenterUQ engine for sensitivity analysis.",
-      "InputFile": "qfem-0009/input.json"
+      "InputFile": "qfem-0009/src/input.json"
     },
     {
-      "name": "Two-Dimensional Truss: Sampling, Reliability and Sensitivity",
-      "description": "This example illustrates how quoFEM interacts with the Tcl interpreter for OpenSees. A simple forward propagation procedure is run to estimate the first and second central moments of a FE model's response, given the marginal distributions of various random parameters.",
-      "InputFile": "qfem-0001/input.json"
+      "name": "Material Model: Bayesian Calibration with TMCMC",
+      "description": "In this example, Bayesian estimation is used to calibrate the parameters values of a material model subjected to cyclic strain history.",
+      "InputFile": "qfem-0019/src/input.json"
     },
     {
-      "name": "exampleBayesianCalibration",
-      "description": "~",
-      "InputFile": "qfem-0011/input.json"
-    },
-    {
-      "name": "exampleCalibration",
-      "description": "~",
-      "InputFile": "qfem-0012/input.json"
+      "name": "Material Model: Deterministic Calibration",
+      "description": "In this example, non-linear least squares minimization is used to calibrate the parameters values of a material model subjected to cyclic strain history.",
+      "InputFile": "qfem-0018/src/input.json"
     }
   ]
 }

@@ -200,11 +200,11 @@ int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString
 
 
     QFileInfo fileTabInfo(filenameTab);
-    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("SimCenterUQ.err");
+    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        emit sendErrorMessage("No SimCenterUQ.err file - SimCenterUQ did not run - problem with SimCenterUQ setup or the applicatins failed with inputs provied");
+        emit sendErrorMessage("No dakota.err file - SimCenterUQ did not run - problem with SimCenterUQ setup or the applicatins failed with inputs provied");
         return 0;
     }
     QFile fileError(filenameErrorString);

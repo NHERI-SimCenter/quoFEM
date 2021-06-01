@@ -1278,8 +1278,13 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
     QHBoxLayout *buttonsLayout = new QHBoxLayout();
     saveModelButton =  new QPushButton("Save GP Model");
     saveResultButton =  new QPushButton("Save GP Info");
-    saveXButton =  new QPushButton("RV Data (LF)");
-    saveYButton =  new QPushButton("QoI Data (LF)");
+    saveXButton =  new QPushButton("RV Data");
+    saveYButton =  new QPushButton("QoI Data");
+
+    if (isMultiFidelity) {
+        saveXButton->setText("RV Data (LF)");
+        saveYButton->setText("QoI Data (LF)");
+    }
 
     connect(saveModelButton,SIGNAL(clicked()),this,SLOT(onSaveModelClicked()));
     connect(saveResultButton,SIGNAL(clicked()),this,SLOT(onSaveInfoClicked()));

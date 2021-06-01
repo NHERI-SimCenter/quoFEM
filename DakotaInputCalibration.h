@@ -80,16 +80,14 @@ public slots:
    void clear(void);
    void methodChanged(const QString &arg1);
    void comboboxItemChanged(QString value);
-   void showNumExp(bool);
+//   void showNumExp(bool);
 
 private:
     QComboBox   *calibrationMethod;
     QLineEdit   *maxIterations;
     QLineEdit   *convergenceTol;
-    QLineEdit   *scalingFactors;
-    QCheckBox   *readCalibrationDataCheckBox;
-    QLineEdit   *numExperiments;
-    QLabel      *numExperimentsLabel;
+//    QLineEdit   *scalingFactors;
+    QLineEdit   *calDataFileEdit;
 
     RandomVariablesContainer *theParameters;
     DakotaCalibrationResults *results;
