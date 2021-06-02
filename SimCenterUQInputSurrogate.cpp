@@ -77,19 +77,17 @@ SimCenterUQInputSurrogate::SimCenterUQInputSurrogate(InputWidgetParameters *para
     //
 
     QHBoxLayout *methodLayout1= new QHBoxLayout;
-    QLabel *label1 = new QLabel();
-    label1->setText(QString("Training Dataset"));
     inpMethod = new QComboBox();
     inpMethod->addItem(tr("Sampling and Simulation"));
     inpMethod->addItem(tr("Import Data File"));
-    //inpMethod->addItem(tr("Import Multi-fidelity Data File"));
+    inpMethod->addItem(tr("Import Multi-fidelity Data File"));
+    inpMethod->setMaximumWidth(250);
+    inpMethod->setMinimumWidth(250);
 
-    inpMethod->setMaximumWidth(200);
-    inpMethod->setMinimumWidth(200);
-
-    methodLayout1->addWidget(label1);
+    methodLayout1->addWidget(new QLabel("Training Dataset"));
     methodLayout1->addWidget(inpMethod,2);
-    methodLayout1->addStretch(4);
+
+    methodLayout1->addStretch();
 
     mLayout->addLayout(methodLayout1);
 

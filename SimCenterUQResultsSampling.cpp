@@ -394,6 +394,9 @@ int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->chart()->legend()->hide();
 
+    //
+    // creat buttons to save data
+    //
 
     QWidget *widget = new QWidget();
     QGridLayout *layout = new QGridLayout(widget);
@@ -403,9 +406,17 @@ int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString
     save_spreadsheet->resize(30,30);
     connect(save_spreadsheet,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetClicked()));
 
-    layout->addWidget(chartView, 0,0,1,1);
+    QPushButton* save_columns = new QPushButton();
+    save_columns->setText("Save Each Columns");
+    save_columns->setToolTip(tr("Save data into file in a text file"));
+    save_columns->resize(30,30);
+    connect(save_columns,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetSeparatelyClicked()));
+
+    layout->addWidget(chartView, 0,0,1,3);
     layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
-    layout->addWidget(spreadsheet,2,0,1,1);
+    layout->addWidget(save_columns,1,1,Qt::AlignLeft);
+    layout->addWidget(spreadsheet,2,0,1,3);
+    layout->setColumnStretch(2,1);
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
@@ -459,6 +470,40 @@ SimCenterUQResultsSampling::onSaveSpreadsheetClicked()
         }
 	file.close();
     }
+}
+
+
+void
+SimCenterUQResultsSampling::onSaveSpreadsheetSeparatelyClicked()
+{
+
+    int rowCount = spreadsheet->rowCount();
+    int columnCount = spreadsheet->columnCount();
+
+    QString dirName = QFileDialog::getExistingDirectory(this,
+                                                    tr("Select directory"), "",
+                                                     QFileDialog::ShowDirsOnly
+                                                    | QFileDialog::DontResolveSymlinks);
+
+    for (int j=1; j<columnCount; j++)
+    {
+       QString fileName = dirName + QDir::separator() + theHeadings.at(j) + QString(".txt");
+       QFile file(fileName);
+       if (file.open(QIODevice::WriteOnly))
+       {
+
+           QTextStream stream(&file);
+           stream << "% " << theHeadings.at(j) << endl;
+           for (int i=0; i<rowCount; i++)
+           {
+               QTableWidgetItem *item_value = spreadsheet->item(i,j);
+               double value = item_value->text().toDouble();
+               stream << value <<endl;
+           }
+        file.close();
+       }
+    }
+
 }
 
 void SimCenterUQResultsSampling::onSpreadsheetCellClicked(int row, int col)
@@ -940,9 +985,18 @@ SimCenterUQResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
 
+    QScrollArea *sa = new QScrollArea;
+    sa->setWidgetResizable(true);
+    sa->setLineWidth(0);
+    sa->setFrameShape(QFrame::NoFrame);
+
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0); // adding back
     summary->setLayout(summaryLayout);
+
+    sa->setWidget(summary);
+
 
     QJsonArray edpArray = theObject["summary"].toArray();
     foreach (const QJsonValue &edpValue, edpArray) {
@@ -1018,23 +1072,33 @@ SimCenterUQResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->chart()->legend()->hide();
 
-
-    //
-    // create a widget into which we place the chart and the spreadsheet
-    //
-
     QWidget *widget = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout(widget);
-    layout->addWidget(chartView, 1);
-    layout->addWidget(spreadsheet, 1);
+    QGridLayout *layout = new QGridLayout(widget);
+    QPushButton* save_spreadsheet = new QPushButton();
+    save_spreadsheet->setText("Save Data");
+    save_spreadsheet->setToolTip(tr("Save data into file in a CSV format"));
+    save_spreadsheet->resize(30,30);
+    connect(save_spreadsheet,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetClicked()));
 
-    //layout->addWidget(analysis_message,1);
-    // add 3 Widgets to TabWidget
+
+    QPushButton* save_columns = new QPushButton();
+    save_columns->setText("Save Each Columns");
+    save_columns->setToolTip(tr("Save data into file in a text file"));
+    save_columns->resize(30,30);
+    connect(save_columns,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetSeparatelyClicked()));
+
+    layout->addWidget(chartView, 0,0,1,3);
+    layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
+    layout->addWidget(save_columns,1,1,Qt::AlignLeft);
+    layout->addWidget(spreadsheet,2,0,1,3);
+    layout->setColumnStretch(2,1);
+
+    //
+    // add summary, detained info and spreadsheet with chart to the tabed widget
     //
 
-    tabWidget->addTab(summary,tr("Summary"));
+    tabWidget->addTab(sa,tr("Summary"));
     tabWidget->addTab(widget, tr("Data Values"));
-
     tabWidget->adjustSize();
 
     return result;

@@ -468,7 +468,7 @@ SimCenterUQResultsSurrogate::onSaveInfoClicked()
 
     QString fileName = QFileDialog::getSaveFileName(this,
                                                    tr("Save Data"), lastPath+"/GPresults",
-                                                   tr("Output File (*.out)"));
+                                                   tr("Text File (*.out)"));
     QFile::copy(workingDir+QString("GPresults.out"), fileName);
     lastPath =  QFileInfo(fileName).path();
 }
@@ -479,7 +479,7 @@ SimCenterUQResultsSurrogate::onSaveXClicked()
 
     QString fileName = QFileDialog::getSaveFileName(this,
                                                    tr("Save Data"), lastPath+"/X",
-                                                   tr("Output File (*.txt)"));
+                                                   tr("Text File (*.txt)"));
     QFile::copy(workingDir+QString("inputTab.out"), fileName);
     lastPath =  QFileInfo(fileName).path();
 }

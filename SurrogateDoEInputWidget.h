@@ -66,6 +66,7 @@ private:
     QLineEdit *numSamples;
     QLineEdit *accuracyMeasure;
     QLineEdit *timeMeasure;
+    QCheckBox *parallelCheckBox;
     QLineEdit *initialDoE;
     QComboBox *gpKernel;
     QCheckBox *theLinearCheckBox;
