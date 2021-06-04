@@ -79,6 +79,7 @@ SOURCES += main.cpp\
     CustomizedItemModel.cpp \
     UQ_MethodInputWidget.cpp \
     MonteCarloInputWidget.cpp \
+    ResultsDataChart.cpp \
     MultiFidelityMonteCarlo.cpp \
     LatinHypercubeInputWidget.cpp \
     ImportanceSamplingInputWidget.cpp \
@@ -138,6 +139,7 @@ HEADERS  += MainWindow.h \
     RemoteService.h \
     UQ_MethodInputWidget.h \
     MonteCarloInputWidget.h \
+    ResultsDataChart.h \
     MultiFidelityMonteCarlo.h \
     LatinHypercubeInputWidget.h \
     CustomizedItemModel.h \

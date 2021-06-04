@@ -1,5 +1,5 @@
-#ifndef SimCenterUQ_RESULTS_SAMPLING_H
-#define SimCenterUQ_RESULTS_SAMPLING_H
+#ifndef RESULT_DATA_CHART_H
+#define RESULT_DATA_CHART_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,66 +39,67 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <UQ_Results.h>
 #include <QtCharts/QChart>
-#include <QMessageBox>
-#include <QPushButton>
-#include <ResultsDataChart.h>
-
-
 using namespace QtCharts;
 
-class QTextEdit;
-class QTabWidget;
-class MyTableWidget;
-class MainWindow;
-class RandomVariablesContainer;
+#include "MyTableWidget.h"
+#include "RandomVariablesContainer.h"
+#include <QFileDialog>
 
-//class QChart;
+class QLineEdit;
 
-class SimCenterUQResultsSampling : public UQ_Results
+class ResultsDataChart : public SimCenterWidget
 {
     Q_OBJECT
 public:
-  explicit SimCenterUQResultsSampling(RandomVariablesContainer *, QWidget *parent = 0);
-    ~SimCenterUQResultsSampling();
+    explicit ResultsDataChart(QString filenameTab, QWidget *parent = 0);
+    explicit ResultsDataChart(QJsonObject spreadsheet, QWidget *parent = 0);
+
+    //explicit ResultsDataChart(QWidget *parent = 0);
+    ~ResultsDataChart();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
+    void clear(void);
 
-    int processResults(QString &filenameResults, QString &filenameTab);
-    QWidget *createResultEDPWidget(QString &name, QVector<double> statistics);
+    int getNumberTasks(void);
+
+    QVector<QVector<double>> getStatistics();
+    QVector<QString> getNames();
 
 signals:
 
 public slots:
-   void clear(void);
-//   void onSpreadsheetCellClicked(int, int);
-//   void onSaveSpreadsheetClicked();
-//   void onSaveSpreadsheetSeparatelyClicked();
-   // modified by padhye 08/25/2018
+   void onSpreadsheetCellClicked(int, int);
+   void onSaveSpreadsheetClicked();
+   void onSaveSpreadsheetSeparatelyClicked();
 
 private:
-   RandomVariablesContainer *theRVs;
-   QTabWidget *tabWidget;
 
-   MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
-   QChart *chart;
-   QPushButton* save_spreadheet; // save the data from spreadsheet
-   QLabel *label;
-   QLabel *best_fit_instructions;
+    void readTableFromTab(QString filenameTab);
+    void readTableFromJson(QJsonObject jsonobj);
+    void makeChart(void);
 
-   int col1, col2;
-   bool mLeft;
-   QStringList theHeadings;
+    //QLineEdit *randomSeed;
+    //QLineEdit *numSamples;
+    MyTableWidget *spreadsheet;
+    QTabWidget *tabWidget;
+    QChart *chart;
+    QPushButton* save_spreadheet; // save the data from spreadsheet
+    QLabel *label;
 
-   QVector<QString>theNames;
-   QVector<double>theMeans;
-   QVector<double>theStdDevs;
-   QVector<double>theKurtosis;
-   QVector<double>theSkewness;
+    int col1, col2;
+    bool mLeft;
+    QStringList theHeadings;
 
-   ResultsDataChart * theDataTable;
+    QVector<QString>theNames;
+    QVector<double>theMeans;
+    QVector<double>theStdDevs;
+    QVector<double>theKurtosis;
+    QVector<double>theSkewness;
+
+    int rowCount;
+    int colCount;
 };
 
-#endif // SimCenterUQ_RESULTS_SAMPLING_H
+#endif // RESULT_DATA_CHART_H
