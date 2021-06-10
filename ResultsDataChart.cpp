@@ -36,6 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 #include <QApplication>
+#include <math.h>
 
 #include <ResultsDataChart.h>
 #include <QLineEdit>
