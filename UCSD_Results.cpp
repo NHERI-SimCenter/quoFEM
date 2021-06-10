@@ -240,6 +240,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
 
     sa->setWidget(summary);
 
+    theDataTable = new ResultsDataChart(filenameTab);
     //
     // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
