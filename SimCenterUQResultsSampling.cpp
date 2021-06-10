@@ -117,14 +117,15 @@ void SimCenterUQResultsSampling::clear(void)
             delete theWidget;
         }
     }
-    theHeadings.clear();
+    //theHeadings.clear();
+    //spreadsheet = NULL;
     theMeans.clear();
     theStdDevs.clear();
     theKurtosis.clear();
     theSkewness.clear();
 
     tabWidget->clear();
-    spreadsheet = NULL;
+    theDataTable = NULL;
 }
 
 
@@ -185,9 +186,6 @@ int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString
     emit sendStatusMessage(tr("Processing Sampling Results"));
 
     this->clear();
-    mLeft = true;
-    col1 = 0;
-    col2 = 0;
 
     //
     // check it actually ran with no errors
@@ -305,8 +303,9 @@ SimCenterUQResultsSampling::outputToJSON(QJsonObject &jsonObject)
     // add spreadsheet data
     //
 
-    theDataTable->outputToJSON(jsonObject);
-
+    if(theDataTable != NULL) {
+        theDataTable->outputToJSON(jsonObject);
+    }
     return result;
 }
 

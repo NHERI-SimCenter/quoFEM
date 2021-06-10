@@ -55,6 +55,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QScatterSeries>
 #include <QtCharts/QVXYModelMapper>
+#include <QAreaSeries>
 using namespace QtCharts;
 
 ResultsDataChart::ResultsDataChart(QString filenameTab, QWidget *parent)
@@ -108,7 +109,7 @@ ResultsDataChart::makeChart() {
 
     QChartView *chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->chart()->legend()->hide();
+    //chartView->chart()->legend()->hide();
 
     //
     // creat buttons to save data
@@ -118,14 +119,14 @@ ResultsDataChart::makeChart() {
     //QGridLayout *layout = new QGridLayout(widget);
     QGridLayout *layout = new QGridLayout();
     QPushButton* save_spreadsheet = new QPushButton();
-    save_spreadsheet->setText("Save as CSV");
+    save_spreadsheet->setText("Save Table");
     save_spreadsheet->setToolTip(tr("Save data into file in a CSV format"));
     save_spreadsheet->resize(30,30);
     connect(save_spreadsheet,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetClicked()));
 
     QPushButton* save_columns = new QPushButton();
     save_columns->setText("Save Columns Separately");
-    save_columns->setToolTip(tr("Save data into file in a text file"));
+    save_columns->setToolTip(tr("Select an existing folder"));
     save_columns->resize(30,30);
     connect(save_columns,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetSeparatelyClicked()));
 
@@ -352,7 +353,8 @@ ResultsDataChart::onSaveSpreadsheetClicked()
 
     QString fileName = QFileDialog::getSaveFileName(this,
                                                     tr("Save Data"), "",
-                                                    tr("All Files (*)"));
+                                                    tr("CSV (Comma delimited) (*.csv)"));
+
 
     QFile file(fileName);
     if (file.open(QIODevice::WriteOnly))
@@ -453,7 +455,7 @@ ResultsDataChart::onSaveSpreadsheetSeparatelyClicked()
        {
 
            QTextStream stream(&file);
-           stream << "% " << theHeadings.at(j) << endl;
+           //stream << "% " << theHeadings.at(j) << endl;
            for (int i=0; i<rowCount; i++)
            {
                QTableWidgetItem *item_value = spreadsheet->item(i,j);
@@ -572,6 +574,19 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
 
         }
 
+        // if value is constant, adjust axes
+        if (minX==maxX) {
+            double axisMargin=abs(minX)*0.1;
+            minX=minX-axisMargin;
+            maxX=maxX+axisMargin;
+        }
+        if (minY==maxY) {
+            double axisMargin=abs(minY)*0.1;
+            minY=minY-axisMargin;
+            maxY=maxY+axisMargin;
+        }
+
+
         double xRange=maxX-minX;
         double yRange=maxY-minY;
 
@@ -629,6 +644,13 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
             }
         }
 
+        // if constant
+        if (min==max) {
+            double axisMargin=abs(min)*0.1;
+            min=min-axisMargin;
+            max=max+axisMargin;
+        }
+
         if (mLeft == true) {
 
             // frequency distribution
@@ -670,6 +692,8 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
             chart->setAxisX(axisX, series);
             chart->setAxisY(axisY, series);
 
+            //chart->legend()->setVisible(true);
+            //chart->legend()->setAlignment(Qt::AlignRight);
         /* ************************************* REMVING BUGGY BEST FIT
             //calling external python script to find the best fit, generating the data and then plotting it.
             // this will be done in the application directory
@@ -762,8 +786,6 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
                 file_fitted_data.close();
 
                 chart->addSeries(series_best_fit);
-                chart->legend()->setVisible(true);
-                chart->legend()->setAlignment(Qt::AlignTop);
                 // chart->setTitle("The best fit plot is");
                 QString best_fit_info_file = appDIR +  QDir::separator() + QString("data_fit_info.out");
 
@@ -822,16 +844,34 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
         } else {
             // cumulative distribution
             mergesort(dataValues, rowCount);
+
+            double xAxisMin = min-(max-min)*0.1;
+            double xAxisMax =max+(max-min)*0.1;
+
+            // if constant
+            if (xAxisMin==xAxisMax) {
+                double axisMargin=abs(xAxisMin)*0.1;
+                xAxisMin=xAxisMin-axisMargin;
+                xAxisMax=xAxisMax+axisMargin;
+            }
+
+            series->append(xAxisMin,0);
             for (int i=0; i<rowCount; i++) {
                 series->append(dataValues[i], 1.0*i/rowCount);
+                series->append(dataValues[i], 1.0*(i+1)/rowCount);
                 //qDebug()<<"\n the dataValues[i] and rowCount is     "<<dataValues[i]<<"\t"<<rowCount<<"";
             }
+            series->append(xAxisMax, 1.0);
             delete [] dataValues;
+
+            //QAreaSeries *series2 = new QAreaSeries(series);
+
+
             chart->addSeries(series);
             QValueAxis *axisX = new QValueAxis();
             QValueAxis *axisY = new QValueAxis();
             // padhye, make these consistent changes all across.
-            axisX->setRange(min- (max-min)*0.1, max+(max-min)*0.1);
+            axisX->setRange(xAxisMin, xAxisMax);
             axisY->setRange(0, 1);
             axisY->setTitleText("Cumulative Probability");
             axisX->setTitleText(theHeadings.at(col1));
@@ -841,6 +881,9 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
             series->setName("Cumulative Frequency Distribution");
         }
     }
+
+    //chart->legend()->setVisible(true);
+    //chart->legend()->setAlignment(Qt::AlignRight);
 }
 
 
@@ -898,7 +941,8 @@ ResultsDataChart::inputFromJSON(QJsonObject &jsonObject){
 void
 ResultsDataChart::clear(void)
 {
-
+    //theHeadings.clear();
+    //spreadsheet = NULL;
 }
 
 

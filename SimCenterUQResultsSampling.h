@@ -82,15 +82,12 @@ private:
    RandomVariablesContainer *theRVs;
    QTabWidget *tabWidget;
 
-   MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
-   QChart *chart;
-   QPushButton* save_spreadheet; // save the data from spreadsheet
-   QLabel *label;
-   QLabel *best_fit_instructions;
+   //MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
+   //QChart *chart;
+   //QPushButton* save_spreadheet; // save the data from spreadsheet
+   //QLabel *label;
+   //QLabel *best_fit_instructions;
 
-   int col1, col2;
-   bool mLeft;
-   QStringList theHeadings;
 
    QVector<QString>theNames;
    QVector<double>theMeans;

@@ -44,6 +44,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QMessageBox>
 #include <QPushButton>
 #include <QScrollArea>
+#include <ResultsDataChart.h>
 
 
 using namespace QtCharts;
@@ -73,32 +74,23 @@ signals:
 
 public slots:
    void clear(void);
-   void onSpreadsheetCellClicked(int, int);
-   void onSaveSpreadsheetClicked();
-   void onSaveSpreadsheetSeparatelyClicked();
-
    // modified by padhye 08/25/2018
 
 private:
    RandomVariablesContainer *theRVs;
    QTabWidget *tabWidget;
-
-   MyTableWidget *spreadsheet=NULL;  // MyTableWidget inherits the QTableWidget
-   QChart *chart;
-   QPushButton* save_spreadheet; // save the data from spreadsheet
    QLabel *label;
    QLabel *best_fit_instructions;
 
-   int col1, col2, ncomb, nQoI;
-   bool mLeft;
+   int ncomb, nQoI;
    QStringList theHeadings;
 
    QVector<QString>theNames;
-   QVector<double>theMeans;
-   QVector<double>theStdDevs;
-   QVector<double>theKurtosis;
    QVector<QVector<double>> sobols;
    QVector<QString> combs, QoInames;
+
+   ResultsDataChart* theDataTable;
+
 
    void gsaGraph(QScrollArea *&summaryLayout);
 

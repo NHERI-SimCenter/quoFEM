@@ -165,6 +165,7 @@ int main(int argc, const char **argv) {
   
   workflowDriverFile << dpreproCommand << " params.in SimCenterInput.RV SimCenterInput.tcl\n";
   workflowDriverFile << openSeesCommand << " SimCenterInput.tcl 1> ops.out 2>&1\n";
+  //workflowDriverFile << openSeesCommand << " SimCenterInput.tcl 1>nul 2>nul\n";
 
 
   // depending on script type do something
