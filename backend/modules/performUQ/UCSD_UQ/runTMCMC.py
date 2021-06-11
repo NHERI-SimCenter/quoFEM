@@ -10,6 +10,8 @@ import multiprocessing as mp
 from multiprocessing import Pool
 from runFEM import runFEM
 from numpy.random import SeedSequence, default_rng
+import os
+import csv
 
 
 def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variables, resultsLocation, seed,
@@ -27,6 +29,7 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     # Initialize other TMCMC variables
     Nm_steps = Nm_steps_max
     parallelize_MCMC = 'yes'  # yes or no
+    # parallelize_MCMC = 'no'  # yes or no
     Adap_calc_Nsteps = 'yes'  # yes or no
     Adap_scale_cov = 'yes'  # yes or no
     scalem = 1  # cov scale factor
@@ -71,12 +74,10 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         # beta, Wm, ESS = tmcmcFunctions.compute_beta(beta, Lm, ESS, threshold=0.5)
 
         stageNum += 1
-        print('\n\t\t==========================')
-        print("\t\tStage number: {}".format(stageNum))
 
         # seed to reproduce results
         ss = SeedSequence(seed)
-        child_seeds = ss.spawn(N+1)
+        child_seeds = ss.spawn(N + 1)
 
         # update model evidence
         evidence = evidence * (sum(Wm) / N)
@@ -99,6 +100,21 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         # stage m: samples, likelihood, weights, next stage ESS, next stage beta, resampled samples
         mytrace.append([Sm, Lm, Wm, ESS, beta, Smcap])
 
+        # Write Data to '.csv' files
+        dataToWrite = mytrace[stageNum - 1][0]
+        print("\n\t\tWriting samples from stage {} to csv file".format(stageNum - 1))
+
+        stringToAppend = 'resultsStage{}.csv'.format(stageNum - 1)
+        resultsFilePath = os.path.join(os.path.abspath(resultsLocation), stringToAppend)
+
+        with open(resultsFilePath, 'w', newline='') as csvfile:
+            csvWriter = csv.writer(csvfile)
+            csvWriter.writerows(dataToWrite)
+        print("\t\t\tWrote to file {}".format(resultsFilePath))
+        # Finished writing data
+
+        print('\n\t\t==========================')
+        print("\t\tStage number: {}".format(stageNum))
         if beta < 1e-7:
             print("\t\tbeta = %9.6e" % beta)
         else:
@@ -121,7 +137,8 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
                                                              numAccepts, AllPars, log_likelihood, variables,
                                                              resultsLocation, default_rng(child_seeds[j1]),
                                                              calibrationData, numExperiments, covarianceMatrixList,
-                                                             edpNamesList, edpLengthsList, normalizingFactors, locShiftList)
+                                                             edpNamesList, edpLengthsList, normalizingFactors,
+                                                             locShiftList)
                                                             for j1 in range(N)], )
             pool.close()
         else:
@@ -129,7 +146,8 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
                 tmcmcFunctions.MCMC_MH(j1, Em, Nm_steps, Smcap[j1], Lmcap[j1], Postmcap[j1], beta, numAccepts, AllPars,
                                        log_likelihood, variables, resultsLocation, default_rng(child_seeds[j1]),
                                        calibrationData, numExperiments, covarianceMatrixList,
-                                       edpNamesList, edpLengthsList, normalizingFactors, locShiftList) for j1 in range(N)]
+                                       edpNamesList, edpLengthsList, normalizingFactors, locShiftList) for j1 in
+                range(N)]
 
         Sm1, Lm1, Postm1, numAcceptsS, all_proposals, all_PLP = zip(*results)
         Sm1 = np.asarray(Sm1)
@@ -171,6 +189,18 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
 
     # save to trace
     mytrace.append([Sm, Lm, np.ones(len(Wm)), 'notValid', 1, 'notValid'])
+
+    # Write last stage data to '.csv' file
+    dataToWrite = mytrace[stageNum][0]
+    print("\n\t\tWriting samples from stage {} to csv file".format(stageNum))
+
+    stringToAppend = 'resultsStage{}.csv'.format(stageNum)
+    resultsFilePath = os.path.join(os.path.abspath(resultsLocation), stringToAppend)
+
+    with open(resultsFilePath, 'w', newline='') as csvfile:
+        csvWriter = csv.writer(csvfile)
+        csvWriter.writerows(dataToWrite)
+    print("\t\t\tWrote to file {}".format(resultsFilePath))
 
     # print("\t\tevidence = %.10f" % evidence)
 

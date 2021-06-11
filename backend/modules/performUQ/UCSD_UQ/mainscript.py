@@ -416,20 +416,20 @@ for modelNum, variables in enumerate(variablesList):
         for i in range(len(mytrace)):
             Wm = mytrace[i][2]
             evidence = evidence * (sum(Wm) / len(Wm))
-        print("\t\tModel evidence: {:e}".format(evidence))
+        print("\t\t\tModel evidence: {:e}".format(evidence))
 
-        # Write Data to '.csv' files
-        print("\n\t\tWriting samples from each stage to csv files")
-        for i in range(len(mytrace)):
-            dataToWrite = mytrace[i][0]
-
-            stringToAppend = 'resultsStage{}.csv'.format(i)
-            resultsFilePath = os.path.join(os.path.abspath(resultsLocation), stringToAppend)
-
-            with open(resultsFilePath, 'w', newline='') as csvfile:
-                csvWriter = csv.writer(csvfile)
-                csvWriter.writerows(dataToWrite)
-            print("\t\t\tWrote to file {}".format(resultsFilePath))
+        # # Write Data to '.csv' files
+        # print("\n\t\tWriting samples from each stage to csv files")
+        # for i in range(len(mytrace)):
+        #     dataToWrite = mytrace[i][0]
+        #
+        #     stringToAppend = 'resultsStage{}.csv'.format(i)
+        #     resultsFilePath = os.path.join(os.path.abspath(resultsLocation), stringToAppend)
+        #
+        #     with open(resultsFilePath, 'w', newline='') as csvfile:
+        #         csvWriter = csv.writer(csvfile)
+        #         csvWriter.writerows(dataToWrite)
+        #     print("\t\t\tWrote to file {}".format(resultsFilePath))
 
         # Write the results of the last stage to a file named dakotaTab.out for quoFEM to be able to read the results
         print("\n\t\tWriting posterior samples to 'dakotaTab.out' for quoFEM to read the results")
