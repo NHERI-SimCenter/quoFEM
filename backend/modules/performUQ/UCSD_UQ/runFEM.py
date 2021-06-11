@@ -53,7 +53,7 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
     covarianceMultiplierList = []
     ParameterName = variables["names"]
     f = open("params.in", "w")
-    f.write('{}\n'.format(len(par)))
+    f.write('{}\n'.format(len(par)-len(edpNamesList)))
     for i in range(0, len(par)):
         name = str(ParameterName[i])
         value = str(par[i])
