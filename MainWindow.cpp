@@ -1263,6 +1263,7 @@ void MainWindow::onJobsManagerButtonClicked(){
         jobManager->show();
     } else {
         errorMessage("ERROR - You Need to Login");
+        emit onLoginButtonClicked();
     }
 }
 
