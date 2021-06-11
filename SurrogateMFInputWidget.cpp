@@ -91,7 +91,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     inpFileDir_HF = new QLineEdit();
     chooseInpFile_HF = new QPushButton("Choose");
     connect(chooseInpFile_HF, &QPushButton::clicked, this, [=](){
-        inpFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        inpFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
         if ((!theHighSimButton->isChecked()) && (!theLowSimButton->isChecked()) )
             this->parseInputDataForRV(inpFileDir_HF->text());
         else
@@ -108,7 +108,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     outFileDir_HF = new QLineEdit();
     chooseOutFile_HF = new QPushButton("Choose");
     connect(chooseOutFile_HF, &QPushButton::clicked, this, [=](){
-        outFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        outFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
         if ((!theHighSimButton->isChecked()) && (!theLowSimButton->isChecked()) )
             this->parseOutputDataForQoI(outFileDir_HF->text());
         else
@@ -188,7 +188,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     inpFileDir_LF = new QLineEdit();
     chooseInpFile_LF = new QPushButton("Choose");
     connect(chooseInpFile_LF, &QPushButton::clicked, this, [=](){
-        inpFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        inpFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
 
         if ((!theHighSimButton->isChecked()) && (!theLowSimButton->isChecked()) )
             this->parseInputDataForRV(inpFileDir_LF->text());
@@ -205,7 +205,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     outFileDir_LF = new QLineEdit();
     chooseOutFile_LF = new QPushButton("Choose");
     connect(chooseOutFile_LF, &QPushButton::clicked, this, [=](){
-        outFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        outFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
 
         if ((!theHighSimButton->isChecked()) && (!theLowSimButton->isChecked()) )
             this->parseOutputDataForQoI(outFileDir_LF->text());
@@ -331,6 +331,16 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
 
     theSimGrid->setColumnStretch(2,1);
     theSimGrid->setRowStretch(4,1);
+
+
+    //
+    // Parallel Execution
+    //
+
+    parallelCheckBox = new QCheckBox();
+    parallelCheckBox -> setChecked(true);
+    theSimGrid->addWidget(new QLabel("   Parallel Execution"), id_fe, 0);
+    theSimGrid->addWidget(parallelCheckBox, id_fe++, 1);
 
     // /////////////////////////////////////
     // ADVANCED
@@ -604,6 +614,7 @@ SurrogateMFInputWidget::outputToJSON(QJsonObject &jsonObj){
         jsonObj["timeLimit"]=timeMeasure->text().toDouble();
         jsonObj["accuracyLimit"]=accuracyMeasure->text().toDouble();
         jsonObj["doDoE"]=theDoECheckBox->isChecked();
+        jsonObj["parallelExecution"]=parallelCheckBox->isChecked();
     }
 
     jsonObj["advancedOpt"]=theAdvancedCheckBox->isChecked();
@@ -786,6 +797,11 @@ SurrogateMFInputWidget::inputFromJSON(QJsonObject &jsonObject){
             result = false;
         }
 
+        if (jsonObject.contains("parallelExecution")) {
+            parallelCheckBox->setChecked(jsonObject["parallelExecution"].toBool());
+        } else {
+            parallelCheckBox->setChecked(false); // for compatibility. later change it to error. (sy - june 2021)
+        }
     }
 
   if (jsonObject.contains("advancedOpt")) {

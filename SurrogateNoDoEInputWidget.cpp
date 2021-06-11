@@ -68,7 +68,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     inpFileDir = new QLineEdit();
     QPushButton *chooseInpFile = new QPushButton("Choose");
     connect(chooseInpFile, &QPushButton::clicked, this, [=](){
-        inpFileDir->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        inpFileDir->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
         this->parseInputDataForRV(inpFileDir->text());
     });
     inpFileDir->setMinimumWidth(600);
@@ -98,7 +98,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     outFileDir = new QLineEdit();
     chooseOutFile = new QPushButton("Choose");
     connect(chooseOutFile, &QPushButton::clicked, this, [=](){
-        outFileDir->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        outFileDir->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
         this->parseOutputDataForQoI(outFileDir->text());
     });
     outFileDir->setMinimumWidth(600);
@@ -275,6 +275,8 @@ SurrogateNoDoEInputWidget::outputToJSON(QJsonObject &jsonObj){
         jsonObj["linear"]=theLinearCheckBox->isChecked();
         jsonObj["logTransform"]=theLogtCheckBox->isChecked();
     }
+    jsonObj["parallelExecution"]=false;
+
     return result;    
 }
 

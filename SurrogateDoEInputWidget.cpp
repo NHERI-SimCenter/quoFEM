@@ -57,6 +57,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     //
     // Random Seed
     //
+    int wid = 0; // widget id
 
     srand(time(NULL));
     int randomNumber = rand() % 1000 + 1;
@@ -66,8 +67,8 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     randomSeed->setToolTip("Set the seed");
     randomSeed->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Random Seed"), 0, 0);
-    layout->addWidget(randomSeed, 0, 1);
+    layout->addWidget(new QLabel("Random Seed"), wid, 0);
+    layout->addWidget(randomSeed, wid++, 1);
 
     //
     // create convergence criteria
@@ -79,8 +80,8 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
     accuracyMeasure->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Target Accuracy (Normalized Error) "), 1, 0);
-    layout->addWidget(accuracyMeasure, 1, 1);
+    layout->addWidget(new QLabel("Target Accuracy (Normalized Error) "), wid, 0);
+    layout->addWidget(accuracyMeasure, wid++, 1);
 
     //
     // create layout label and entry for # samples
@@ -92,8 +93,8 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     numSamples->setToolTip("Specify the number of samples");
     numSamples->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Max Number of Model Runs"), 3, 0);
-    layout->addWidget(numSamples, 3, 1);
+    layout->addWidget(new QLabel("Max Number of Model Runs"), wid, 0);
+    layout->addWidget(numSamples, wid++, 1);
 
     //
     // Max computation time (approximate)
@@ -106,8 +107,17 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     timeMeasure->setMaximumWidth(150);
     timeMeasure->setMinimumWidth(150);
 
-    layout->addWidget(new QLabel("Max Computation Time (minutes)    "), 4, 0);
-    layout->addWidget(timeMeasure, 4, 1);
+    layout->addWidget(new QLabel("Max Computation Time (minutes)    "), wid, 0);
+    layout->addWidget(timeMeasure, wid++, 1);
+
+    //
+    // Parallel Execution
+    //
+
+    parallelCheckBox = new QCheckBox();
+    parallelCheckBox -> setChecked(true);
+    layout->addWidget(new QLabel("Parallel Execution"), wid, 0);
+    layout->addWidget(parallelCheckBox, wid++, 1);
 
     //
     // Advanced options
@@ -116,13 +126,13 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     theAdvancedCheckBox = new QCheckBox();
     theAdvancedTitle=new QLabel("\n    Advanced Options for Gaussian Process Model ");
     theAdvancedTitle->setStyleSheet("font-weight: bold; color: grey");
-    layout->addWidget(theAdvancedTitle, 5, 0, 1, 3,Qt::AlignBottom);
-    layout->addWidget(theAdvancedCheckBox, 5, 0, 1, 3, Qt::AlignBottom);
+    layout->addWidget(theAdvancedTitle, wid, 0, 1, 3,Qt::AlignBottom);
+    layout->addWidget(theAdvancedCheckBox, wid++, 0, 1, 3, Qt::AlignBottom);
 
     lineA= new QFrame;
     lineA->setFrameShape(QFrame::HLine);
     lineA->setFrameShadow(QFrame::Sunken);
-    layout->addWidget(lineA, 6, 0, 1, 3);
+    layout->addWidget(lineA, wid++, 0, 1, 3);
     lineA->setVisible(false);
 
     //
@@ -139,8 +149,8 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     gpKernel->setMaximumWidth(150);
     gpKernel->setCurrentIndex(0);
 
-    layout->addWidget(theKernelLabel, 7, 0);
-    layout->addWidget(gpKernel, 7, 1);
+    layout->addWidget(theKernelLabel, wid, 0);
+    layout->addWidget(gpKernel, wid++, 1);
     theKernelLabel->setVisible(false);
     gpKernel->setVisible(false);
 
@@ -153,8 +163,8 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     theLinearCheckBox = new QCheckBox();
     theLinearCheckBox->setToolTip("Default is no trending function");
 
-    layout->addWidget(theLinearLabel, 8, 0);
-    layout->addWidget(theLinearCheckBox, 8, 1);
+    layout->addWidget(theLinearLabel, wid, 0);
+    layout->addWidget(theLinearCheckBox, wid++, 1);
     theLinearLabel->setVisible(false);
     theLinearCheckBox->setVisible(false);
 
@@ -166,9 +176,9 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     theLogtLabel2=new QLabel("     (allow log-transform)");
 
     theLogtCheckBox = new QCheckBox();
-    layout->addWidget(theLogtLabel, 9, 0);
-    layout->addWidget(theLogtLabel2, 9, 1,1,2);
-    layout->addWidget(theLogtCheckBox, 9, 1);
+    layout->addWidget(theLogtLabel, wid, 0);
+    layout->addWidget(theLogtLabel2, wid, 1,1,2);
+    layout->addWidget(theLogtCheckBox, wid++, 1);
     theLogtLabel->setVisible(false);
     theLogtLabel2->setVisible(false);
     theLogtCheckBox->setVisible(false);
@@ -183,8 +193,8 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     initialDoE->setValidator(new QIntValidator);
     initialDoE->setToolTip("Set the number of initial DoE (Space filling)");
     initialDoE->setMaximumWidth(150);
-    layout->addWidget(theInitialLabel, 10, 0);
-    layout->addWidget(initialDoE, 10, 1);
+    layout->addWidget(theInitialLabel, wid, 0);
+    layout->addWidget(initialDoE, wid++, 1);
     initialDoE->setVisible(false);
     theInitialLabel->setVisible(false);
 
@@ -195,13 +205,13 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     theExistingCheckBox = new QCheckBox();
     theExistingTitle = new QLabel("\n    Start with Existing Dataset");
     theExistingTitle ->setStyleSheet("font-weight: bold; color: grey");
-    layout->addWidget(theExistingTitle, 11, 0, 1, 2, Qt::AlignBottom);
-    layout->addWidget(theExistingCheckBox, 11, 0, Qt::AlignBottom);
+    layout->addWidget(theExistingTitle, wid, 0, 1, 2, Qt::AlignBottom);
+    layout->addWidget(theExistingCheckBox, wid++, 0, Qt::AlignBottom);
 
     lineB = new QFrame;
     lineB->setFrameShape(QFrame::HLine);
     lineB->setFrameShadow(QFrame::Sunken);
-    layout->addWidget(lineB, 12, 0, 1, 3);
+    layout->addWidget(lineB, wid++, 0, 1, 3);
     lineB->setVisible(false);
 
     //
@@ -218,9 +228,9 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     });
     inpFileDir->setMaximumWidth(150);
     theInputLabel=new QLabel("Training Points (Input)");
-    layout->addWidget(theInputLabel,13,0);
-    layout->addWidget(inpFileDir,13,1);
-    layout->addWidget(chooseInpFile,13,2,Qt::AlignLeft);
+    layout->addWidget(theInputLabel,wid,0);
+    layout->addWidget(inpFileDir,wid,1);
+    layout->addWidget(chooseInpFile,wid++,2,Qt::AlignLeft);
     theInputLabel->setVisible(false);
     inpFileDir->setVisible(false);
     chooseInpFile->setVisible(false);
@@ -236,23 +246,23 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     });
     outFileDir->setMaximumWidth(150);
     theOutputLabel = new QLabel("System Responses (Output)");
-    layout->addWidget(theOutputLabel,14,0,Qt::AlignTop);
-    layout->addWidget(outFileDir,14,1,Qt::AlignTop);
-    layout->addWidget(chooseOutFile,14,2,Qt::AlignLeft);
+    layout->addWidget(theOutputLabel,wid,0,Qt::AlignTop);
+    layout->addWidget(outFileDir,wid,1,Qt::AlignTop);
+    layout->addWidget(chooseOutFile,wid++,2,Qt::AlignLeft);
     theOutputLabel->setVisible(false);
     outFileDir->setVisible(false);
     chooseOutFile->setVisible(false);
 
     errMSG=new QLabel("Your file format is not appropriate");
     errMSG->setStyleSheet({"color: red"});
-    layout->addWidget(errMSG,15,1,1,2,Qt::AlignLeft);
+    layout->addWidget(errMSG,wid++,1,1,2,Qt::AlignLeft);
     errMSG->hide();
 
     //
     // Finish
     //
 
-    layout->setRowStretch(16, 1);
+    layout->setRowStretch(wid, 1);
     layout->setColumnStretch(5, 1);
     this->setLayout(layout);
     connect(theAdvancedCheckBox,SIGNAL(toggled(bool)),this,SLOT(doAdvancedGP(bool)));
@@ -381,6 +391,7 @@ SurrogateDoEInputWidget::outputToJSON(QJsonObject &jsonObj){
     jsonObj["seed"]=randomSeed->text().toInt();
     jsonObj["timeLimit"]=timeMeasure->text().toDouble();
     jsonObj["accuracyLimit"]=accuracyMeasure->text().toDouble();
+    jsonObj["parallelExecution"]=parallelCheckBox->isChecked();
 
     jsonObj["advancedOpt"]=theAdvancedCheckBox->isChecked();
     if (theAdvancedCheckBox->isChecked())
@@ -422,6 +433,12 @@ SurrogateDoEInputWidget::inputFromJSON(QJsonObject &jsonObject){
         accuracyMeasure->setText(QString::number(accuracy));
     } else {
         result = false;
+    }
+
+    if (jsonObject.contains("parallelExecution")) {
+        parallelCheckBox->setChecked(jsonObject["parallelExecution"].toBool());
+    } else {
+        parallelCheckBox->setChecked(false); // for compatibility. later change it to error. (sy - june 2021)
     }
 
     if (jsonObject.contains("advancedOpt")) {

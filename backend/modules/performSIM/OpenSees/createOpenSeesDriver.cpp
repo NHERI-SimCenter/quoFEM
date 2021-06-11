@@ -167,12 +167,11 @@ int main(int argc, const char **argv) {
     bool suppressOutput = false;
     if (suppressOutput) {
         workflowDriverFile << openSeesCommand << " SimCenterInput.tcl 1> /dev/null 2>&1\n";
+        //workflowDriverFile << openSeesCommand << " SimCenterInput.tcl 1>nul 2>nul\n";
     }
     else {
         workflowDriverFile << openSeesCommand << " SimCenterInput.tcl 1> ops.out 2>&1\n";
     }
-  
-
 
   // depending on script type do something
   if (scriptType == 1) { // python script

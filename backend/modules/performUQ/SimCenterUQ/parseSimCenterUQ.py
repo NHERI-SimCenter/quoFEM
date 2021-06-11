@@ -123,7 +123,8 @@ if run_type in ['runningLocal']:
     '''
     #  
     if uq_data['uqType'] == 'Train GP Surrogate Model':
-        simCenterUQCommand = 'python "{}/{}" {} {} {}'.format(myScriptDir,surrogate,workdir_main,osType,run_type)
+        # simCenterUQCommand = 'python "{}/{}" {} {} {}'.format(myScriptDir,surrogate,workdir_main,osType,run_type)
+        simCenterUQCommand = '{} "{}/{}" {} {} {}'.format(data['python'],myScriptDir,surrogate,workdir_main,osType,run_type)
     elif uq_data['uqType'] == 'Sensitivity Analysis':
         simCenterUQCommand = '"{}/{}" {} {} {}'.format(myScriptDir,natafExe,workdir_main,osType,run_type)
     elif uq_data['uqType'] == 'Forward Propagation':

@@ -323,7 +323,7 @@ void FEM::femProgramChanged(const QString &arg1)
       QHBoxLayout *numberLayout = new QHBoxLayout();
       numberLayout->addWidget(customNumberLabel);
       numberLayout->addWidget(theCustomInputNumber);
-      //numberLayout->addStretch();
+      numberLayout->addStretch();
 
       theCustomLayout->addLayout(numberLayout);
 
@@ -335,7 +335,9 @@ void FEM::femProgramChanged(const QString &arg1)
       QVBoxLayout *customLayout = new QVBoxLayout();
 
       // Add location to add driver script
-      SectionTitle *textCustom=new SectionTitle();
+      QLabel *textCustom=new QLabel();
+      textCustom->setStyleSheet("font-weight: bold");
+
       textCustom->setText(tr("Input driver script that runs and post-processes application"));
       QSpacerItem *customSpacer = new QSpacerItem(50,10);
 

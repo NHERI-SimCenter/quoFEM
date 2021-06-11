@@ -81,6 +81,7 @@ private:
     QComboBox *gpKernel;
     QCheckBox *theAdvancedCheckBox,*theExistingCheckBox_HF,*theExistingCheckBox_LF, *theDoECheckBox;
     QCheckBox *theLinearCheckBox,*theLogtCheckBox;
+    QCheckBox *parallelCheckBox;
 
     QLabel * theAdvancedTitle,* theKernelLabel,* theLinearLabel,* theLogtLabel,* theLogtLabel2,* theInitialLabel;
     QLabel * modelMSG, * errMSG, *theExistingLabel;
