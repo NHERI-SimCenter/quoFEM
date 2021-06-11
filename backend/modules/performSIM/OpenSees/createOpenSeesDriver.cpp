@@ -162,9 +162,16 @@ int main(int argc, const char **argv) {
   }
   
   templateFile << "\"\n\n\n source " << mainInput << "\n";
+    
+    workflowDriverFile << dpreproCommand << " params.in SimCenterInput.RV SimCenterInput.tcl\n";
+    bool suppressOutput = false;
+    if (suppressOutput) {
+        workflowDriverFile << openSeesCommand << " SimCenterInput.tcl 1> /dev/null 2>&1\n";
+    }
+    else {
+        workflowDriverFile << openSeesCommand << " SimCenterInput.tcl 1> ops.out 2>&1\n";
+    }
   
-  workflowDriverFile << dpreproCommand << " params.in SimCenterInput.RV SimCenterInput.tcl\n";
-  workflowDriverFile << openSeesCommand << " SimCenterInput.tcl 1> ops.out 2>&1\n";
 
 
   // depending on script type do something
