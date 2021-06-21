@@ -49,7 +49,8 @@ if __name__ == '__main__':
     logFile.write('\n\n==========================')
     logFile.write("\nParsing the json input file {}".format(dakotaJsonLocation))
     (variablesList, numberOfSamples, seedval, resultsLocation, resultsPath, logLikelihoodDirectoryPath,
-     logLikelihoodFilename, calDataPath, calDataFileName, edpList) = parseDataFunction(dakotaJsonLocation, logFile)
+     logLikelihoodFilename, calDataPath, calDataFileName, edpList, writeOutputs) = parseDataFunction(dakotaJsonLocation,
+                                                                                                     logFile)
     logFile.flush()
     os.fsync(logFile.fileno())
 
@@ -465,6 +466,10 @@ if __name__ == '__main__':
         headings = 'eval_id\tinterface\t'
         for v in variables['names']:
             headings += '{}\t'.format(v)
+        if writeOutputs:  # create headings for outputs
+            for i, edp in enumerate(edpNamesList):
+                for comp in range(edpLengthsList[i]):
+                    headings += '{}_{}\t'.format(edp, comp + 1)
         headings += '\n'
 
         # Get the data from the last stage
@@ -478,6 +483,12 @@ if __name__ == '__main__':
                 string = "{}\t{}\t".format(i + 1, 1)
                 for j in range(len(variables['names'])):
                     string += "{}\t".format(dataToWrite[i, j])
+                if writeOutputs:  # write the output data
+                    analysisNumString = ("analysis" + str(i))
+                    prediction = np.atleast_2d(np.genfromtxt(os.path.join(workdir_main, analysisNumString,
+                                                                          'results.out'))).reshape((1, -1))
+                    for predNum in range(np.shape(prediction)[1]):
+                        string += "{}\t".format(prediction[0, predNum])
                 string += "\n"
                 f.write(string)
 

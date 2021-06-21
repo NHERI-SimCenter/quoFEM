@@ -45,6 +45,7 @@ def parseDataFunction(dakotaJsonLocation, logFile):
     logLikelihoodFile = uqInputs['logLikelihoodFile']
     calDataPath = uqInputs['calDataFilePath']
     calDataFile = uqInputs['calDataFile']
+    writeOutputs = True
 
     # Processing path data
     logFile.write("\n\tProcessing path data")
@@ -160,4 +161,4 @@ def parseDataFunction(dakotaJsonLocation, logFile):
     logFile.flush()
     os.fsync(logFile.fileno())
     return (variablesList, numberOfSamples, seedval, resultsLocation, resultsPath, logLikelihoodPath, logLikelihoodFile,
-            calDataPath, calDataFile, edpInputs)
+            calDataPath, calDataFile, edpInputs, writeOutputs)
