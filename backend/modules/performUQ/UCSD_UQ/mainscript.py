@@ -468,8 +468,11 @@ if __name__ == '__main__':
             headings += '{}\t'.format(v)
         if writeOutputs:  # create headings for outputs
             for i, edp in enumerate(edpNamesList):
-                for comp in range(edpLengthsList[i]):
-                    headings += '{}_{}\t'.format(edp, comp + 1)
+                if edpLengthsList[i] == 1:
+                    headings += '{}\t'.format(edp)
+                else:
+                    for comp in range(edpLengthsList[i]):
+                        headings += '{}_{}\t'.format(edp, comp + 1)
         headings += '\n'
 
         # Get the data from the last stage
