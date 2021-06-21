@@ -227,7 +227,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
     //
 
-    // create a scrollable windows, place summary inside it
+    // create a scrollable window, place summary inside it
     QScrollArea *sa = new QScrollArea;
     sa->setWidgetResizable(true);
     sa->setLineWidth(0);
