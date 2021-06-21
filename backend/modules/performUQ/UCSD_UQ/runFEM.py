@@ -9,6 +9,7 @@ import os
 import platform
 import subprocess
 import shutil
+import numpy as np
 
 
 def copytree(src, dst, symlinks=False, ignore=None):
@@ -53,7 +54,7 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
     covarianceMultiplierList = []
     ParameterName = variables["names"]
     f = open("params.in", "w")
-    f.write('{}\n'.format(len(par)-len(edpNamesList)))
+    f.write('{}\n'.format(len(par) - len(edpNamesList)))
     for i in range(0, len(par)):
         name = str(ParameterName[i])
         value = str(par[i])
@@ -72,5 +73,8 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
     (output, err) = p.communicate()
     p_status = p.wait()
 
-    return log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
-                          covarianceMultiplierList, normalizingFactors, locShiftList)
+    # Read in the model prediction
+    prediction = np.atleast_2d(np.genfromtxt('results.out')).reshape((1, -1))
+
+    return log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrixList, edpNamesList,
+                          edpLengthsList, covarianceMultiplierList, normalizingFactors, locShiftList)

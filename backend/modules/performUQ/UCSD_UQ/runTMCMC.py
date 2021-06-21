@@ -62,7 +62,6 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
             Lmt = pool.starmap(runFEM, [(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
                                          numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
                                          normalizingFactors, locShiftList) for ind in range(N)], )
-            # pool.close()
         else:
             logFile.write("\n\n\nRunning remote")
             logFile.write("\nmax_workers: {}".format(os.cpu_count() - 1))
@@ -72,7 +71,6 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
                           numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
                           normalizingFactors, locShiftList) for ind in range(N)]
             Lmt = list(executor.starmap(runFEM, iterables))
-            executor.shutdown()
         Lm = np.array(Lmt).squeeze()
     else:
         Lm = np.array([runFEM(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
@@ -149,7 +147,6 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
 
         if parallelize_MCMC == 'yes':
             if run_type == "runningLocal":
-                # pool = Pool(processes=mp.cpu_count())
                 results = pool.starmap(tmcmcFunctions.MCMC_MH,
                                        [(j1, Em, Nm_steps, Smcap[j1], Lmcap[j1], Postmcap[j1], beta,
                                          numAccepts, AllPars, log_likelihood, variables,
@@ -158,12 +155,9 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
                                          edpNamesList, edpLengthsList, normalizingFactors,
                                          locShiftList)
                                         for j1 in range(N)], )
-                # pool.close()
             else:
                 logFile.write("\n\n\nRunning remote - MCMC steps")
                 logFile.write("\nmax_workers: {}".format(os.cpu_count() - 1))
-                from mpi4py.futures import MPIPoolExecutor
-                executor = MPIPoolExecutor(max_workers=os.cpu_count() - 1)
                 iterables = [(j1, Em, Nm_steps, Smcap[j1], Lmcap[j1], Postmcap[j1], beta,
                               numAccepts, AllPars, log_likelihood, variables,
                               resultsLocation, default_rng(child_seeds[j1]),
@@ -172,14 +166,13 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
                               locShiftList)
                              for j1 in range(N)]
                 results = list(executor.starmap(tmcmcFunctions.MCMC_MH, iterables))
-                executor.shutdown()
         else:
             results = [
                 tmcmcFunctions.MCMC_MH(j1, Em, Nm_steps, Smcap[j1], Lmcap[j1], Postmcap[j1], beta, numAccepts, AllPars,
                                        log_likelihood, variables, resultsLocation, default_rng(child_seeds[j1]),
                                        calibrationData, numExperiments, covarianceMatrixList,
-                                       edpNamesList, edpLengthsList, normalizingFactors, locShiftList) for j1 in
-                range(N)]
+                                       edpNamesList, edpLengthsList, normalizingFactors, locShiftList)
+                for j1 in range(N)]
 
         Sm1, Lm1, Postm1, numAcceptsS, all_proposals, all_PLP = zip(*results)
         Sm1 = np.asarray(Sm1)
@@ -237,7 +230,7 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     if parallelize_MCMC == 'yes':
         if run_type == "runningLocal":
             pool.close()
-
-    # logFile.write("\n\t\tevidence = %.10f" % evidence)
+        else:
+            executor.shutdown()
 
     return mytrace
