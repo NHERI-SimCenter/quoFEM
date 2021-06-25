@@ -43,8 +43,6 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     logFile.write("\n\t\tESS = %d" % ESS)
     logFile.write("\n\t\tscalem = %.2f" % scalem)
     logFile.write("\n\n\t\tNumber of model evaluations in this stage: {}".format(N))
-    logFile.write("\n\t\tTotal number of model evaluations so far: {}".format(totalNumberOfModelEvaluations))
-    logFile.write('\n\t\t==========================')
     logFile.flush()
     os.fsync(logFile.fileno())
 
@@ -77,6 +75,51 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
                               numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors,
                               locShiftList)
                        for ind in range(N)]).squeeze()
+
+    logFile.write("\n\t\tTotal number of model evaluations so far: {}".format(totalNumberOfModelEvaluations))
+
+    # Write the results of the first stage to a file named dakotaTabPrior.out for quoFEM to be able to read the results
+    logFile.write("\n\n\t\tWriting prior samples to 'dakotaTabPrior.out' for quoFEM to read the results")
+    tabFilePath = os.path.join(resultsLocation, "dakotaTabPrior.out")
+
+    writeOutputs = True
+    # Create the headings, which will be the first line of the file
+    logFile.write("\n\t\t\tCreating headings")
+    headings = 'eval_id\tinterface\t'
+    for v in variables['names']:
+        headings += '{}\t'.format(v)
+    if writeOutputs:  # create headings for outputs
+        for i, edp in enumerate(edpNamesList):
+            if edpLengthsList[i] == 1:
+                headings += '{}\t'.format(edp)
+            else:
+                for comp in range(edpLengthsList[i]):
+                    headings += '{}_{}\t'.format(edp, comp + 1)
+    headings += '\n'
+
+    # Get the data from the first stage
+    logFile.write("\n\t\t\tGetting data from first stage")
+    dataToWrite = Sm
+
+    logFile.write("\n\t\t\tWriting to file {}".format(tabFilePath))
+    with open(tabFilePath, "w") as f:
+        f.write(headings)
+        for i in range(N):
+            string = "{}\t{}\t".format(i + 1, 1)
+            for j in range(len(variables['names'])):
+                string += "{}\t".format(dataToWrite[i, j])
+            if writeOutputs:  # write the output data
+                analysisNumString = ("analysis" + str(i))
+                prediction = np.atleast_2d(np.genfromtxt(os.path.join(resultsLocation, analysisNumString,
+                                                                      'results.out'))).reshape((1, -1))
+                for predNum in range(np.shape(prediction)[1]):
+                    string += "{}\t".format(prediction[0, predNum])
+            string += "\n"
+            f.write(string)
+
+    logFile.write('\n\t\t==========================')
+    logFile.flush()
+    os.fsync(logFile.fileno())
 
     while beta < 1:
         # adaptively compute beta s.t. ESS = N/2 or ESS = 0.95*prev_ESS
@@ -133,18 +176,17 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         logFile.write("\n\t\tESS = %d" % ESS)
         logFile.write("\n\t\tscalem = %.2f" % scalem)
 
-        logFile.flush()
-        os.fsync(logFile.fileno())
-
         # Perturb ###################################################
         # perform MCMC starting at each Smcap (total: N) for Nm_steps
         Em = (scalem ** 2) * Cm  # Proposal dist covariance matrix
 
         numProposals = N * Nm_steps
-        numAccepts = 0
-
         totalNumberOfModelEvaluations += numProposals
+        logFile.write("\n\n\t\tNumber of model evaluations in this stage: {}".format(numProposals))
+        logFile.flush()
+        os.fsync(logFile.fileno())
 
+        numAccepts = 0
         if parallelize_MCMC == 'yes':
             if run_type == "runningLocal":
                 results = pool.starmap(tmcmcFunctions.MCMC_MH,
@@ -183,7 +225,6 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         all_proposals = np.asarray(all_proposals)
         all_PLP = np.asarray(all_PLP)
 
-        logFile.write("\n\n\t\tNumber of model evaluations in this stage: {}".format(numProposals))
         logFile.write("\n\t\tTotal number of model evaluations so far: {}".format(totalNumberOfModelEvaluations))
 
         # total observed acceptance rate
