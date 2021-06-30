@@ -56,7 +56,7 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     # Evaluate log-likelihood at current samples Sm
     if parallelize_MCMC == 'yes':
         if run_type == "runningLocal":
-            pool = Pool(processes=mp.cpu_count())
+            pool = Pool(processes=mp.cpu_count()-1)
             Lmt = pool.starmap(runFEM, [(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
                                          numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
                                          normalizingFactors, locShiftList) for ind in range(N)], )

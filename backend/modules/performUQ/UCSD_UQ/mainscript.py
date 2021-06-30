@@ -10,6 +10,7 @@ import sys
 import csv
 from importlib import import_module
 import numpy as np
+import time
 
 from parseData import parseDataFunction
 import pdfs
@@ -40,7 +41,9 @@ if __name__ == '__main__':
     run_type = inputArgs[3]  # either "runningLocal" or "runningRemote"
 
     # Create a logFile for recording the output
-    logFile = open(os.path.join(workdir_main, "logFileTMCMC"), "w")
+    logFile = open(os.path.join(workdir_main, "logFileTMCMC.txt"), "w")
+    t1 = time.time()
+    logFile.write("Starting analysis at: {}".format(time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())))
 
     # ======================================================================================================================
     logFile.write("\nRunning quoFEM's UCSD_UQ engine workflow")
@@ -518,6 +521,7 @@ if __name__ == '__main__':
 
     # ======================================================================================================================
     logFile.write("\nUCSD_UQ engine workflow complete!\n")
+    logFile.write("\nTime taken: {:0.2f} minutes".format((time.time() - t1) / 60))
     logFile.close()
 
     # ======================================================================================================================
