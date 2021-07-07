@@ -7,6 +7,7 @@ import math
 import pickle  # check - cross platform issue?
 import glob
 import json
+from scipy.stats import lognorm
 
 import numpy as np
 import GPy as GPy
@@ -203,7 +204,7 @@ class GpFromModel(object):
             if self.nuggetVal.shape[0]!=self.y_dim and self.nuggetVal.shape[0]!=0 :
                 msg = 'Error reading json: Number of nugget quantities does not match # QoI'
                 errlog.exit(msg)
-                
+
             if nugget_opt == "Fixed Values":
                 for Vals in self.nuggetVal:
                     if (not np.isscalar(Vals)):
@@ -223,8 +224,6 @@ class GpFromModel(object):
                     elif Bous[0]>Bous[1]:
                         msg = 'Error reading json: the lower bound of a nugget value should be smaller than its upper bound'
                         errlog.exit(msg)
-
-
 
         else:
             self.do_logtransform = False
@@ -1031,7 +1030,17 @@ class GpFromModel(object):
 
 
         if self.do_logtransform:
-            Y_pred = np.exp(Y_pred)
+
+            mu = Y_pred
+            sig2 = Y_pred_var
+
+            median = np.exp(mu)
+            mean = np.exp(mu + sig2/2)
+            var = np.exp(2*mu + sig2)*(np.exp(sig2)-1)
+
+            Y_pred = median
+            Y_pred_var = var
+
             if self.do_mf:
                 if self.mf_case == 'data-model' or self.mf_case == 'data-data':
                     self.Y_hf = np.exp(self.Y_hf)
@@ -1363,6 +1372,8 @@ class GpFromModel(object):
         results["valNRMSE"] = {}
         results["valR2"] = {}
         results["valCorrCoeff"] = {}
+        results["yPredict_CI_lb"] = {}
+        results["yPredict_CI_ub"] = {}
         for ny in range(self.y_dim):
             if not self.do_mf:
                 results["yExact"][self.g_name[ny]] = self.Y[:, ny].tolist()
@@ -1373,6 +1384,22 @@ class GpFromModel(object):
                     results["yExact"][self.g_name[ny]] = self.Y[:, ny].tolist()
 
             results["yPredict"][self.g_name[ny]] = self.Y_loo[:, ny].tolist()
+
+            if not self.do_logtransform:
+                results["yPredict_CI_lb"][self.g_name[ny]] = self.Y_loo[:, ny].tolist()+2*np.sqrt(self.Y_loo_var[:, ny]).tolist()
+                results["yPredict_CI_ub"][self.g_name[ny]] = self.Y_loo[:, ny].tolist()-2*np.sqrt(self.Y_loo_var[:, ny]).tolist()
+            else:
+                def lognormCDF(x, mu=0, sigma=1):
+                    a = (math.log(x) - mu) / math.sqrt(2 * sigma ** 2)
+                    p = 0.5 + 0.5 * math.erf(a)
+                    return p
+
+                mu = np.log(self.Y_loo[:, ny] )
+                sig = np.sqrt(np.log(self.Y_loo_var[:, ny]/pow(self.Y_loo[:, ny] ,2)+1))
+
+                results["yPredict_CI_lb"][self.g_name[ny]] =  lognorm.ppf(0.025, s = sig, scale = np.exp(mu)).tolist()
+                results["yPredict_CI_ub"][self.g_name[ny]] =  lognorm.ppf(0.975, s = sig, scale = np.exp(mu)).tolist()
+
             results["valNugget"][self.g_name[ny]] = float(self.m_list[ny]['Gaussian_noise.variance'])
             results["valNRMSE"][self.g_name[ny]] = self.NRMSE_val[ny]
             results["valR2"][self.g_name[ny]] = self.R2_val[ny]

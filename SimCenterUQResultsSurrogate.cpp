@@ -96,6 +96,8 @@ using namespace QtCharts;
 #include <QXYSeries>
 #include <RandomVariablesContainer.h>
 
+//#include "qcustomplot.h"
+#include <QBoxSet>
 #define NUM_DIVISIONS 10
 
 
@@ -261,14 +263,15 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
         QString message = QString("ERROR: file either empty or malformed JSON");
     }
 
-
-    //QHBoxLayout *gsaLayout = new QHBoxLayout();
+    theDataTable = new ResultsDataChart(filenameTab);
 
     //
     // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
-    theDataTable = new ResultsDataChart(filenameTab);
+
     summarySurrogate(*&sa);
+
+    //QHBoxLayout *gsaLayout = new QHBoxLayout();
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
@@ -504,6 +507,8 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
     QJsonObject valCorrCoeff = jsonObj["valCorrCoeff"].toObject();
     QJsonObject yExact = jsonObj["yExact"].toObject();
     QJsonObject yPredi = jsonObj["yPredict"].toObject();
+    QJsonObject yConfidenceLb = jsonObj["yPredict_CI_lb"].toObject();
+    QJsonObject yConfidenceUb = jsonObj["yPredict_CI_ub"].toObject();
     bool isMultiFidelity = jsonObj["doMultiFidelity"].toBool();
 
     QStringList QoInames;
@@ -665,15 +670,22 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
 
         QJsonArray yEx= yExact[QoInames[nq]].toArray();
         QJsonArray yPr= yPredi[QoInames[nq]].toArray();
+        QJsonArray yLb= yConfidenceLb[QoInames[nq]].toArray();
+        QJsonArray yUb= yConfidenceUb[QoInames[nq]].toArray();
         double maxy=-INFINITY;
         double miny=INFINITY;
         for (int i=0; i<nCVsamps; i++) {
             series_CV->append(yEx[i].toDouble(), yPr[i].toDouble());
             maxy = std::max(maxy,std::max(yEx[i].toDouble(),yPr[i].toDouble()));
             miny = std::min(miny,std::min(yEx[i].toDouble(),yPr[i].toDouble()));
+            QLineSeries *series_err = new QLineSeries;
+            series_err->append(yEx[i].toDouble(), yLb[i].toDouble());
+            series_err->append(yEx[i].toDouble(), yUb[i].toDouble());
+            chart_CV->addSeries(series_err);
         }
         chart_CV->addSeries(series_CV);
         series_CV->setName("Samples");
+
 
         QValueAxis *axisX = new QValueAxis();
         QValueAxis *axisY = new QValueAxis();
@@ -686,6 +698,7 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
 
         chart_CV->setAxisX(axisX, series_CV);
         chart_CV->setAxisY(axisY, series_CV);
+
 
 
         double nugget = valNugget[QoInames[nq]].toDouble();
