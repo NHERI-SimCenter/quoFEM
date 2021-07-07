@@ -261,7 +261,6 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
         QString message = QString("ERROR: file either empty or malformed JSON");
     }
 
-    summarySurrogate(*&sa);
 
     //QHBoxLayout *gsaLayout = new QHBoxLayout();
 
@@ -269,6 +268,7 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
     theDataTable = new ResultsDataChart(filenameTab);
+    summarySurrogate(*&sa);
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
