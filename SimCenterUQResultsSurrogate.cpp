@@ -394,6 +394,12 @@ SimCenterUQResultsSurrogate::inputFromJSON(QJsonObject &jsonObject)
 
     jsonObj = jsonObject["summary"].toObject();
 
+    //
+    // into a spreadsheet place all the data returned
+    //
+
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+
     QScrollArea *sa = new QScrollArea;
     summarySurrogate(*&sa);
     saveModelButton ->setDisabled(true);
@@ -406,11 +412,6 @@ SimCenterUQResultsSurrogate::inputFromJSON(QJsonObject &jsonObject)
     saveYButton ->setStyleSheet({ "background-color: lightgrey; border: none;" });
 
 
-    //
-    // into a spreadsheet place all the data returned
-    //
-
-    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
 
 
     //
@@ -490,12 +491,14 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
 
     //QJsonObject uqObject = jsonObj["UQ_Method"].toObject();
     int nQoI = jsonObj["ydim"].toInt();
+
     QJsonArray QoI_tmp = jsonObj["ylabels"].toArray();
     int nSamp = jsonObj["valSamp"].toInt();
     int nSim  = jsonObj["valSim"].toInt();
     double nTime = jsonObj["valTime"].toDouble();
     double NRMSEthr =jsonObj["thrNRMSE"].toDouble();
     QString termCode =jsonObj["terminationCode"].toString();
+    QJsonObject valNugget = jsonObj["valNugget"].toObject();
     QJsonObject valNRMSE = jsonObj["valNRMSE"].toObject();
     QJsonObject valR2 = jsonObj["valR2"].toObject();
     QJsonObject valCorrCoeff = jsonObj["valCorrCoeff"].toObject();
@@ -651,6 +654,8 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
 
         series_CV->setBorderColor(QColor(255,255,255,0));
 
+        QWidget *container = new QWidget();
+        QGridLayout *chartAndNugget = new QGridLayout(container);
         QChart *chart_CV = new QChart;
         QChartView *chartView_CV = new QChartView(chart_CV);
 
@@ -682,7 +687,20 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         chart_CV->setAxisX(axisX, series_CV);
         chart_CV->setAxisY(axisY, series_CV);
 
-        tabWidgetScatter->addTab(chartView_CV,QoInames[nq]);
+
+        double nugget = valNugget[QoInames[nq]].toDouble();
+        // to get mean value
+        QVector<QVector<double>> statisticsVector = theDataTable->getStatistics();
+
+        chartAndNugget->addWidget(chartView_CV,0,0);
+        if (nugget/statisticsVector[jsonObj["xdim"].toInt()+1+nq][0]<1.e-12) {
+            auto aa = statisticsVector[jsonObj["xdim"].toInt()+1+nq][0];
+            chartAndNugget->addWidget(new QLabel("nugget: 0.000"));
+        } else {
+            chartAndNugget->addWidget(new QLabel("nugget: " + QString::number(nugget,'g',4)),1,0);
+        }
+
+        tabWidgetScatter->addTab(container,QoInames[nq]);
     }
     tabWidgetScatter->setMinimumWidth(500);
     tabWidgetScatter->setMinimumHeight(500);

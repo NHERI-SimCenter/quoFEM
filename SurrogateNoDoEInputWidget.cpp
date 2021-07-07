@@ -151,7 +151,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     // Use Linear trending function
     //
 
-    theLinearLabel=new QLabel("Use Linear Trend Function");
+    theLinearLabel=new QLabel("Add Linear Trend Function");
 
     theLinearCheckBox = new QCheckBox();
     layout->addWidget(theLinearLabel, 6, 0);
@@ -165,8 +165,8 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     // Use Log transform
     //
 
-    theLogtLabel=new QLabel("Responses are always positive");
-    theLogtLabel2=new QLabel("     (allow log-transform)");
+    theLogtLabel=new QLabel("Log-space Transform of QoI");
+    theLogtLabel2=new QLabel("     (check this box only when all response qunatities are always positive)");
 
     theLogtCheckBox = new QCheckBox();
     layout->addWidget(theLogtLabel, 7, 0);
@@ -178,10 +178,37 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
 
 
     //
+    // Nugget function
+    //
+
+    theNuggetLabel=new QLabel("Nugget Values for each QoI");
+    theNuggetSelection = new QComboBox();
+
+    theNuggetSelection->addItem(tr("Optimize"),0);
+    theNuggetSelection->addItem(tr("Fixed Values"),1);
+    theNuggetSelection->addItem(tr("Fixed Bounds"),2);
+    theNuggetSelection->setMaximumWidth(150);
+    theNuggetSelection->setCurrentIndex(0);
+
+    theNuggetVals = new QLineEdit();
+    theNuggetVals->setToolTip("Provide nugget values");
+    //theNuggetVals->setMaximumWidth(150);
+
+    layout->addWidget(theNuggetLabel, 8, 0);
+    layout->addWidget(theNuggetSelection, 8, 1);
+    layout->addWidget(theNuggetVals, 9, 1,1,2);
+
+    theNuggetLabel->setVisible(false);
+    theNuggetSelection->setVisible(false);
+    theNuggetVals->setVisible(false);
+
+    connect(theNuggetSelection,SIGNAL(currentIndexChanged(int)),this,SLOT(showNuggetBox(int)));
+
+    //
     // Finish
     //
 
-    layout->setRowStretch(8, 1);
+    layout->setRowStretch(10, 1);
     layout->setColumnStretch(7, 1);
     this->setLayout(layout);
 
@@ -202,34 +229,49 @@ SurrogateNoDoEInputWidget::~SurrogateNoDoEInputWidget()
 
 }
 
+
+void
+SurrogateNoDoEInputWidget::showNuggetBox(int idx)
+{
+
+    if (idx == 0) {
+        theNuggetVals->hide();
+    } else if (idx==1){
+        theNuggetVals->show();
+        theNuggetVals->setPlaceholderText("QoI1, QoI2,..");
+    } else if (idx==2) {
+        theNuggetVals->show();
+        theNuggetVals->setPlaceholderText("[QoI1_LB,QoI1_UB], [QoI2_LB,QoI2_UB],..");
+    }
+
+};
+
+
 // SLOT function
 void SurrogateNoDoEInputWidget::doAdvancedGP(bool tog)
 {
     if (tog) {
         theAdvancedTitle->setStyleSheet("font-weight: bold; color: black");
-        lineA->setVisible(true);
-        gpKernel->setVisible(true);
-        theLinearCheckBox->setVisible(true);
-        theLogtCheckBox->setVisible(true);
-        theLinearLabel->setVisible(true);
-        theLogtLabel->setVisible(true);
-        theLogtLabel2->setVisible(true);
-        theKernelLabel->setVisible(true);
     } else {
         theAdvancedTitle->setStyleSheet("font-weight: bold; color: gray");
 
-        lineA->setVisible(false);
-        gpKernel->setVisible(false);
-        theLinearCheckBox->setVisible(false);
-        theLogtCheckBox->setVisible(false);
-        theLinearLabel->setVisible(false);
-        theLogtLabel->setVisible(false);
-        theLogtLabel2->setVisible(false);
-        theKernelLabel->setVisible(false);
         gpKernel->setCurrentIndex(0);
+        theNuggetSelection->setCurrentIndex(0);
         theLinearCheckBox->setChecked(false);
         theLogtCheckBox->setChecked(false);
     }
+
+    lineA->setVisible(tog);
+    gpKernel->setVisible(tog);
+    theLinearCheckBox->setVisible(tog);
+    theLogtCheckBox->setVisible(tog);
+    theLinearLabel->setVisible(tog);
+    theLogtLabel->setVisible(tog);
+    theLogtLabel2->setVisible(tog);
+    theKernelLabel->setVisible(tog);
+    theNuggetLabel->setVisible(tog);
+    theNuggetSelection->setVisible(tog);
+
 }
 
 
@@ -274,6 +316,8 @@ SurrogateNoDoEInputWidget::outputToJSON(QJsonObject &jsonObj){
         jsonObj["kernel"]=gpKernel->currentText();
         jsonObj["linear"]=theLinearCheckBox->isChecked();
         jsonObj["logTransform"]=theLogtCheckBox->isChecked();
+        jsonObj["nuggetOpt"]=theNuggetSelection->currentText();
+        jsonObj["nuggetString"]=theNuggetVals->text();
     }
     jsonObj["parallelExecution"]=false;
 
@@ -389,6 +433,24 @@ SurrogateNoDoEInputWidget::inputFromJSON(QJsonObject &jsonObject){
         gpKernel->setCurrentIndex(index);
         theLinearCheckBox->setChecked(jsonObject["linear"].toBool());
         theLogtCheckBox->setChecked(jsonObject["logTransform"].toBool());
+
+
+        if (jsonObject.contains("nuggetOpt")) {
+
+            QString nuggetOpt =jsonObject["nuggetOpt"].toString();
+            index = theNuggetSelection->findText(nuggetOpt);
+            if (index == -1) {
+                return false;
+            }
+            theNuggetSelection->setCurrentIndex(index);
+            if (index!=0){
+                theNuggetVals->setText(jsonObject["nuggetString"].toString());
+            }
+        } else {
+            theNuggetSelection->setCurrentIndex(0);
+
+        }
+
       }
      result = true;
   } else {

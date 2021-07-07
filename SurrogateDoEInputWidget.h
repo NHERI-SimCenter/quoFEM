@@ -46,6 +46,7 @@ class QCheckBox;
 class QLabel;
 class QPushButton;
 class QFrame;
+class QRadioButton;
 
 class SurrogateDoEInputWidget : public UQ_MethodInputWidget
 {
@@ -85,6 +86,11 @@ private:
     QLabel * theOutputLabel;
     QLabel * errMSG;
 
+    QLabel * theNuggetLabel;
+    QComboBox * theNuggetSelection;
+    QCheckBox * theNugCheckBox;
+    QLineEdit * theNuggetVals;
+
     QPushButton *chooseOutFile;
     QPushButton *chooseInpFile;
 
@@ -99,6 +105,7 @@ private slots:
     void doAdvancedGP(bool tog);
     void doExistingGP(bool tog);
     void checkValidityData(QString name1);
+    void showNuggetBox(int idx);
 
 };
 
