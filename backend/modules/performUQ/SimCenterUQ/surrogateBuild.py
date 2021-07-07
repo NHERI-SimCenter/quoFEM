@@ -1397,8 +1397,8 @@ class GpFromModel(object):
                 mu = np.log(self.Y_loo[:, ny] )
                 sig = np.sqrt(np.log(self.Y_loo_var[:, ny]/pow(self.Y_loo[:, ny] ,2)+1))
 
-                results["yPredict_CI_lb"][self.g_name[ny]] =  lognorm.ppf(0.025, s = sig, scale = np.exp(mu)).tolist()
-                results["yPredict_CI_ub"][self.g_name[ny]] =  lognorm.ppf(0.975, s = sig, scale = np.exp(mu)).tolist()
+                results["yPredict_CI_lb"][self.g_name[ny]] =  lognorm.ppf(0.25, s = sig, scale = np.exp(mu)).tolist()
+                results["yPredict_CI_ub"][self.g_name[ny]] =  lognorm.ppf(0.75, s = sig, scale = np.exp(mu)).tolist()
 
             results["valNugget"][self.g_name[ny]] = float(self.m_list[ny]['Gaussian_noise.variance'])
             results["valNRMSE"][self.g_name[ny]] = self.NRMSE_val[ny]

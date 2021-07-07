@@ -89,15 +89,19 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QScatterSeries>
 #include <QtCharts/QVXYModelMapper>
+#include <QtCharts/QLegendMarker>
 using namespace QtCharts;
 #include <math.h>
 #include <QValueAxis>
 
+// for CI
 #include <QXYSeries>
 #include <RandomVariablesContainer.h>
+#include <QPen>
 
 //#include "qcustomplot.h"
-#include <QBoxSet>
+//#include <QBoxSet>
+#include <QAreaSeries>
 #define NUM_DIVISIONS 10
 
 
@@ -666,7 +670,8 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
 
         chart_CV->setAnimationOptions(QChart::AllAnimations);
         chartView_CV->setRenderHint(QPainter::Antialiasing);
-        chartView_CV->chart()->legend()->hide();
+        //chartView_CV->chart()->legend()->hide();
+        //chart.legend().markers(serie_without_marker)[0].setVisible(false);
 
         QJsonArray yEx= yExact[QoInames[nq]].toArray();
         QJsonArray yPr= yPredi[QoInames[nq]].toArray();
@@ -678,31 +683,78 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
             series_CV->append(yEx[i].toDouble(), yPr[i].toDouble());
             maxy = std::max(maxy,std::max(yEx[i].toDouble(),yPr[i].toDouble()));
             miny = std::min(miny,std::min(yEx[i].toDouble(),yPr[i].toDouble()));
-            QLineSeries *series_err = new QLineSeries;
-            series_err->append(yEx[i].toDouble(), yLb[i].toDouble());
-            series_err->append(yEx[i].toDouble(), yUb[i].toDouble());
-            chart_CV->addSeries(series_err);
         }
-        chart_CV->addSeries(series_CV);
-        series_CV->setName("Samples");
 
-
+        // set axis
+        miny = miny - (maxy-miny)*0.1;
+        maxy = maxy + (maxy-miny)*0.1;
         QValueAxis *axisX = new QValueAxis();
         QValueAxis *axisY = new QValueAxis();
-
         axisX->setTitleText(QString("Exact response"));
         axisY->setTitleText(QString("Predicted response (LOOCV)"));
-
         axisX->setRange(miny, maxy);
         axisY->setRange(miny, maxy);
 
+        // draw nugget scale
+        QLineSeries *series_nugget_ub = new QLineSeries;
+        QLineSeries *series_nugget_lb = new QLineSeries;
+        int nd=100;
+        for (int i=0; i<nd+1; i++) {
+            double nugget = valNugget[QoInames[nq]].toDouble();
+            if (nugget == 0) {
+                nugget = (maxy-miny)*1.e-2;
+            }
+            series_nugget_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nugget);
+            series_nugget_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nugget);
+
+        }
+
+        QAreaSeries *series_nugget = new QAreaSeries(series_nugget_ub,series_nugget_lb);
+        chart_CV->addSeries(series_nugget);
+        //series_nugget->setColor(Qt::gray);
+        series_nugget->setColor(QColor(180,180,180,150));
+        chart_CV->setAxisX(axisX, series_nugget);//cos share the X-axis of the sin curve
+        chart_CV->setAxisY(axisY, series_nugget);
+        series_nugget->setName("± Nugget Std.");
+
+        // draw bounds first
+
+        QPen pen;
+        pen.setWidth(series_CV->markerSize()/5);
+        for (int i=0; i<nCVsamps; i++) {
+            QLineSeries *series_err = new QLineSeries;
+            series_err->append(yEx[i].toDouble(), yLb[i].toDouble());
+            series_err->append(yEx[i].toDouble()*(1+1.e-10), yUb[i].toDouble());
+            series_err->setPen(pen);
+            chart_CV->addSeries(series_err);
+            //series_nugget->setColor(QColor(180,180,180,150));
+
+            series_err->setColor(QColor(0, 114, 178, 30));
+            //series_err->setColor(QColor(255,255,255,0.5));
+            series_err->setOpacity(series_CV->opacity());
+            chart_CV->setAxisX(axisX, series_err);//cos share the X-axis of the sin curve
+            chart_CV->setAxisY(axisY, series_err);
+            chart_CV->legend()->markers(series_err)[0]->setVisible(false);
+        }
+
+        // draw values
+
+        chart_CV->addSeries(series_CV);
+        series_CV->setName("Sample Predictions");
         chart_CV->setAxisX(axisX, series_CV);
         chart_CV->setAxisY(axisY, series_CV);
 
+        // legend of quantiles
 
+        QLineSeries *dummy_series_err = new QLineSeries;
+        dummy_series_err->setColor(QColor(0, 114, 178, 30));
+        dummy_series_err->setOpacity(series_CV->opacity());
+        chart_CV->addSeries(dummy_series_err);
+        dummy_series_err->setName("Quantile Bounds");
+
+        // to get mean value
 
         double nugget = valNugget[QoInames[nq]].toDouble();
-        // to get mean value
         QVector<QVector<double>> statisticsVector = theDataTable->getStatistics();
 
         chartAndNugget->addWidget(chartView_CV,0,0);
