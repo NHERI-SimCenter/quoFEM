@@ -1332,10 +1332,10 @@ class GpFromModel(object):
         import json
 
         with open(self.work_dir + '/' + filename + '.pkl', 'wb') as file:
-            pic0kle.dump(self.m_list, file)
+            pickle.dump(self.m_list, file)
             # json.dump(self.m_list, file)
 
-        header_string_x = ' ' + ' '.join([str(9elem) for elem in self.rv_name]) + ' '
+        header_string_x = ' ' + ' '.join([str(elem) for elem in self.rv_name]) + ' '
         header_string_y = ' ' + ' '.join([str(elem) for elem in self.g_name])
         header_string = header_string_x + header_string_y
 
