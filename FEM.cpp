@@ -909,7 +909,7 @@ QStringList FEM::parseGPInputs(QString file1){
     femLayout->addWidget(groupBox,3,0,1,3);
 
     QLabel *labelVarThres = new QLabel("Maximum Allowable Normalized Variance  ");
-    QLabel *optionsLabel = new QLabel("When surroagate model gives imprecise prediction at certain sample locations");
+    QLabel *optionsLabel = new QLabel("When surrogate model gives imprecise prediction at certain sample locations");
 
     option1Button = new QRadioButton();
     QLabel *option1Label = new QLabel("     Stop Analysis");

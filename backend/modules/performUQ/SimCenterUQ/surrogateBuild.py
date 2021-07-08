@@ -238,7 +238,6 @@ class GpFromModel(object):
             self.postFile = femInfo["postprocessScript"]
             self.appName = femInfo["program"]
 
-
         #
         # get x points
         #
@@ -251,7 +250,7 @@ class GpFromModel(object):
             random.seed(surrogateInfo['seed'])
             self.xrange = np.empty((0, 2), float)
             for rv in inp['randomVariables']:
-                if  "lowerbound" not in rv:
+                if "lowerbound" not in rv:
                     msg = 'Error in input RV: all RV should be set to Uniform distribution'
                     errlog.exit(msg)
                 self.xrange = np.vstack((self.xrange, [rv['lowerbound'], rv['upperbound']]))
@@ -266,8 +265,8 @@ class GpFromModel(object):
             #
 
             if self.use_existing:
-                X_tmp = read_txt(self.inpData,errlog)
-                Y_tmp = read_txt(self.outData,errlog)
+                X_tmp = read_txt(self.inpData, errlog)
+                Y_tmp = read_txt(self.outData, errlog)
                 n_ex = X_tmp.shape[0]
 
                 if self.do_mf:
@@ -292,12 +291,13 @@ class GpFromModel(object):
                     errlog.exit(msg)
 
                 if n_ex != Y_tmp.shape[0]:
-                    msg = 'Error importing input data: numbers of input ({}) and output ({}) dataset are inconsistent'.format(n_ex, Y_tmp.shape[0])
+                    msg = 'Error importing input data: numbers of input ({}) and output ({}) dataset are inconsistent'.format(
+                        n_ex, Y_tmp.shape[0])
                     errlog.exit(msg)
 
             else:
                 n_ex = 0
-                if user_init ==0:
+                if user_init == 0:
                     msg = 'Error reading json: # of initial DoE should be greater than 0'
                     errlog.exit(msg)
                 X_tmp = np.zeros((0, x_dim))
@@ -316,11 +316,11 @@ class GpFromModel(object):
 
             # check validity of datafile
             if n_ex > 0:
-                Y_test ,self.id_sim= run_FEM(X_tmp[0, :][np.newaxis] ,self.id_sim, self.rv_name)
+                Y_test, self.id_sim = run_FEM(X_tmp[0, :][np.newaxis], self.id_sim, self.rv_name)
                 if np.sum(abs((Y_test - Y_tmp[0, :][np.newaxis]) / Y_test) > 0.01, axis=1) > 0:
                     msg = 'Consistency check failed. Your data is not consistent to your model response.'
                     errlog.exit(msg)
-                if n_init>0:
+                if n_init > 0:
                     n_init -= 1
                 else:
                     n_iter -= 1
@@ -329,11 +329,12 @@ class GpFromModel(object):
             # generate initial samples
             #
 
-            if n_init>0:
+            if n_init > 0:
                 U = lhs(x_dim, samples=(n_init))
                 X = np.vstack([X_tmp, np.zeros((n_init, x_dim))])
                 for nx in range(x_dim):
-                    X[n_ex:n_ex+n_init, nx] = U[:, nx] * (self.xrange[nx, 1] - self.xrange[nx, 0]) + self.xrange[nx, 0]
+                    X[n_ex:n_ex + n_init, nx] = U[:, nx] * (self.xrange[nx, 1] - self.xrange[nx, 0]) + self.xrange[
+                        nx, 0]
             else:
                 X = X_tmp
 
@@ -346,14 +347,14 @@ class GpFromModel(object):
         else:
 
             n_ex = 0
-            thr_NRMSE = 0.02 # default
+            thr_NRMSE = 0.02  # default
             thr_t = float('inf')
 
             #
             # Read sample locations from directory
             #
 
-            X = read_txt(self.inpData,errlog)
+            X = read_txt(self.inpData, errlog)
 
             if self.do_mf:
                 if X.shape[1] != self.X_hf.shape[1]:
@@ -373,13 +374,11 @@ class GpFromModel(object):
             n_init = thr_count
             n_iter = 0
 
-
         # give error
 
         if thr_count <= 2:
             msg = 'Number of samples should be greater than 2.'
             errlog.exit(msg)
-
 
         if do_doe:
             ac = 1  # pre-screening time = time*ac
@@ -393,8 +392,8 @@ class GpFromModel(object):
         else:
             ac = 1  # pre-screening time = time*ac
             ar = 1  # cluster
-            n_candi = 1 # candidate points
-            n_integ = 1 # integration points
+            n_candi = 1  # candidate points
+            n_integ = 1  # integration points
             user_init = thr_count
 
         #
@@ -441,15 +440,14 @@ class GpFromModel(object):
             #
             t_tmp = time.time()
 
-
-            #if n_init>0:
+            # if n_init>0:
             Y = np.vstack([Y_tmp, np.zeros((n_init, y_dim))])
             for ns in range(n_init):
-                Y[n_ex+ns, :],self.id_sim = run_FEM(X[n_ex+ns, :][np.newaxis],self.id_sim, self.rv_name)
+                Y[n_ex + ns, :], self.id_sim = run_FEM(X[n_ex + ns, :][np.newaxis], self.id_sim, self.rv_name)
                 print(">> {:.2f} sec".format(time.time() - t_init))
                 if time.time() - t_init > thr_t:
-                    Y = Y[:n_ex+ns, :]
-                    X = X[:n_ex+ns, :]
+                    Y = Y[:n_ex + ns, :]
+                    X = X[:n_ex + ns, :]
                     break
 
             t_sim_all = time.time() - t_tmp
@@ -471,14 +469,14 @@ class GpFromModel(object):
 
                 Yt = np.zeros((n_pred, y_dim))
                 for ns in range(n_pred):
-                    Yt[ns, :],self.id_sim = run_FEM(Xt[ns, :][np.newaxis],self.id_sim, self.rv_name)
+                    Yt[ns, :], self.id_sim = run_FEM(Xt[ns, :][np.newaxis], self.id_sim, self.rv_name)
 
         else:
 
             #
             # READ SAMPLES FROM DIRECTORY
             #
-            Y = read_txt(self.outData,errlog)
+            Y = read_txt(self.outData, errlog)
 
             if self.do_mf:
                 if Y.shape[1] != self.Y_hf.shape[1]:
@@ -492,10 +490,11 @@ class GpFromModel(object):
                 errlog.exit(msg)
 
             if X.shape[0] != Y.shape[0]:
-                msg = 'Error importing input data: numbers of input ({}) and output ({}) dataset are inconsistent'.format(X.shape[0], Y.shape[0])
+                msg = 'Error importing input data: numbers of input ({}) and output ({}) dataset are inconsistent'.format(
+                    X.shape[0], Y.shape[0])
                 errlog.exit(msg)
 
-            thr_count  = 0
+            thr_count = 0
             self.t_sim_each = float("inf")
         #
         # GP function
@@ -517,7 +516,8 @@ class GpFromModel(object):
             kg = kr
             self.m_list = list()
             for i in range(y_dim):
-                self.m_list = self.m_list + [GPy.models.GPRegression(X, Y[:, i][np.newaxis].transpose(), kernel=kg.copy())]
+                self.m_list = self.m_list + [
+                    GPy.models.GPRegression(X, Y[:, i][np.newaxis].transpose(), kernel=kg.copy())]
                 for parname in self.m_list[i].parameter_names():
                     if parname.endswith('lengthscale'):
                         exec('self.m_list[i].' + parname + '=self.len')
@@ -532,8 +532,9 @@ class GpFromModel(object):
 
             self.m_list = list()
             for i in range(y_dim):
-                self.m_list = self.m_list + [GPyMultiOutputWrapper(emf.models.GPyLinearMultiFidelityModel(X_list, Y_list, kernel=kgs.copy(), n_fidelities=2), 2, n_optimization_restarts=5)]
-
+                self.m_list = self.m_list + [GPyMultiOutputWrapper(
+                    emf.models.GPyLinearMultiFidelityModel(X_list, Y_list, kernel=kgs.copy(), n_fidelities=2), 2,
+                    n_optimization_restarts=5)]
 
         #
         # Verification measures
@@ -541,7 +542,7 @@ class GpFromModel(object):
 
         self.NRMSE_hist = np.zeros((1, y_dim), float)
         self.NRMSE_idx = np.zeros((1, 1), int)
-        #leng_hist = np.zeros((1, self.m_list[0]._param_array_.shape[0]), int)
+        # leng_hist = np.zeros((1, self.m_list[0]._param_array_.shape[0]), int)
         if self.do_predictive:
             self.NRMSE_pred_hist = np.empty((1, y_dim), float)
 
@@ -554,9 +555,8 @@ class GpFromModel(object):
         print("======== RUNNING GP DoE ===========")
         exit_code = 'count'  # num iter
         i = 0
-        x_new = np.zeros((0,x_dim))
+        x_new = np.zeros((0, x_dim))
         n_new = 0
-
 
         doe_off = False
         while not doe_off:
@@ -602,7 +602,7 @@ class GpFromModel(object):
             if self.do_predictive:
                 Yt_pred = np.zeros((n_pred, y_dim))
                 for ny in range(y_dim):
-                    y_pred_tmp, dummy = self.__predict(self.m_list[ny],Xt)
+                    y_pred_tmp, dummy = self.__predict(self.m_list[ny], Xt)
                     Yt_pred[:, ny] = y_pred_tmp.transpose()
                 if self.do_logtransform:
                     Yt_pred = np.exp(Yt_pred)
@@ -637,7 +637,7 @@ class GpFromModel(object):
                 break
 
             n_new = x_new.shape[0]
-            if not (n_new + self.id_sim < n_init + n_iter +1):
+            if not (n_new + self.id_sim < n_init + n_iter + 1):
                 n_new = n_init + n_iter - self.id_sim
                 x_new = x_new[0:n_new, :]
 
@@ -645,12 +645,11 @@ class GpFromModel(object):
 
             y_new = np.zeros((n_new, y_dim))
             for ny in range(n_new):
-                y_new[ny, :],self.id_sim = run_FEM(x_new[ny, :][np.newaxis],self.id_sim, self.rv_name)
+                y_new[ny, :], self.id_sim = run_FEM(x_new[ny, :][np.newaxis], self.id_sim, self.rv_name)
 
             print(">> {:.2f} s".format(time.time() - t_init))
             X = np.vstack([X, x_new])
             Y = np.vstack([Y, y_new])
-
 
         print("======== RUNNING GP Calibration ===========")
 
@@ -664,7 +663,7 @@ class GpFromModel(object):
                 X_tmp[:, nx] = U[:, nx] * (self.xrange[nx, 1] - self.xrange[nx, 0]) + self.xrange[nx, 0]
 
             for ns in np.arange(n_left):
-                Y_tmp[ns, :],self.id_sim = run_FEM(X_tmp[ns, :][np.newaxis],self.id_sim, self.rv_name)
+                Y_tmp[ns, :], self.id_sim = run_FEM(X_tmp[ns, :][np.newaxis], self.id_sim, self.rv_name)
                 print(">> {:.2f} s".format(time.time() - t_init))
                 if time.time() - t_init > thr_t - self.calib_time:
                     X_tmp = X_tmp[:ns, :]
@@ -686,8 +685,6 @@ class GpFromModel(object):
             #         NRMSE_val = self.__normalized_mean_sq_error(Y_cv, Y)
             #     else:
             #         NRMSE_val = self.__normalized_mean_sq_error(Y_cv, self.Y_hf)
-
-
 
         sim_time = time.time() - t_init
         n_samp = Y.shape[0]
@@ -749,15 +746,15 @@ class GpFromModel(object):
                 # m_tmp = self.m_list[ny].copy()
                 m_tmp = self.m_list[ny]
                 if self.do_logtransform:
-                    #y_var_val = np.var(np.log(Y[:, ny]))
+                    # y_var_val = np.var(np.log(Y[:, ny]))
                     log_mean = np.mean(np.log(Y[:, ny]))
                     log_var = np.var(np.log(Y[:, ny]))
-                    y_var_val = np.exp(2*log_mean+log_var)*(np.exp(log_var)-1) # in linear space
+                    y_var_val = np.exp(2 * log_mean + log_var) * (np.exp(log_var) - 1)  # in linear space
                 else:
                     y_var_val = np.var(Y[:, ny])
 
                 for ns in range(n_err):
-                    y_pred_tmp, y_pred_var_tmp = self.__predict(m_tmp,Xerr[ns, :][np.newaxis])
+                    y_pred_tmp, y_pred_var_tmp = self.__predict(m_tmp, Xerr[ns, :][np.newaxis])
                     if self.do_logtransform:
                         y_pred_var[ns, ny] = np.exp(2 * y_pred_tmp + y_pred_var_tmp) * (np.exp(y_pred_var_tmp) - 1)
                     else:
@@ -765,13 +762,13 @@ class GpFromModel(object):
 
                     y_data_var[ns, ny] = y_var_val
 
-                    #for parname in m_tmp.parameter_names():
+                    # for parname in m_tmp.parameter_names():
                     #    if ('Mat52' in parname) and parname.endswith('variance'):
                     #        exec('y_pred_prior_var[ns,ny]=m_tmp.' + parname)
 
-            #error_ratio1_Pr = (y_pred_var / y_pred_prior_var)
+            # error_ratio1_Pr = (y_pred_var / y_pred_prior_var)
             error_ratio2_Pr = (y_pred_var / y_data_var)
-            #np.max(error_ratio1_Pr, axis=0)
+            # np.max(error_ratio1_Pr, axis=0)
             np.max(error_ratio2_Pr, axis=0)
 
             self.perc_thr = np.hstack([np.array([1]), np.arange(10, 1000, 50), np.array([999])])
@@ -831,7 +828,6 @@ class GpFromModel(object):
                 self.rvVal = self.rvVal + [(rvInfo["upperbound"] + rvInfo["lowerbound"]) / 2]
             else:
                 self.rvVal = self.rvVal + [np.mean(X[:, nx])]
-
 
     def __parameter_calibration(self, m_tmp_list, x_dim, nugget_opt):
 
@@ -979,7 +975,7 @@ class GpFromModel(object):
         # do log transform
         if self.do_logtransform:
 
-            if np.min(Y)<0:
+            if np.min(Y) < 0:
                 msg = 'Error running SimCenterUQ. Response contains negative values. Please uncheck the log-transform option in the UQ tab'
                 errlog.exit(msg)
             Y = np.log(Y)
@@ -1018,6 +1014,7 @@ class GpFromModel(object):
 
                 m_tmp_list[i].set_data(X=X_list_tmp,Y=Y_list_tmp)
 
+
         if do_cal:
             m_list = self.__parameter_calibration(m_tmp_list, x_dim, nugget_opt)
         else:
@@ -1026,8 +1023,7 @@ class GpFromModel(object):
         #
         # cross validation errors
         #
-        Y_pred, Y_pred_var, e2 =  self.__get_cross_validation(X,Y,m_list)
-
+        Y_pred, Y_pred_var, e2 = self.__get_cross_validation(X, Y, m_list)
 
         if self.do_logtransform:
 
@@ -1285,7 +1281,7 @@ class GpFromModel(object):
                     m_tmp.set_XY(X=X_tmp, Y=Y_tmp[:, ny][np.newaxis].transpose())
                     x_loo = X[ns, :][np.newaxis]
                     # Y_pred_tmp, Y_err_tmp = m_tmp.predict(x_loo)
-                    Y_pred_tmp, Y_err_tmp = self.__predict(m_tmp,x_loo)
+                    Y_pred_tmp, Y_err_tmp = self.__predict(m_tmp, x_loo)
                     Y_pred[ns, ny] = Y_pred_tmp
                     Y_pred_var[ns, ny] = Y_err_tmp
                     e2[ns, ny] = pow((Y_pred[ns, ny] - Y[ns, ny]), 2)  # for nD outputs
@@ -1332,15 +1328,14 @@ class GpFromModel(object):
 
         return Y_pred, Y_pred_var, e2
 
-
     def save_model(self, filename):
         import json
 
         with open(self.work_dir + '/' + filename + '.pkl', 'wb') as file:
-            pickle.dump(self.m_list, file)
+            pic0kle.dump(self.m_list, file)
             # json.dump(self.m_list, file)
 
-        header_string_x = ' ' + ' '.join([str(elem) for elem in self.rv_name]) + ' '
+        header_string_x = ' ' + ' '.join([str(9elem) for elem in self.rv_name]) + ' '
         header_string_y = ' ' + ' '.join([str(elem) for elem in self.g_name])
         header_string = header_string_x + header_string_y
 
@@ -1503,7 +1498,8 @@ class GpFromModel(object):
 
         print("Results Saved")
 
-def run_FEM(X,id_sim, rv_name):
+
+def run_FEM(X, id_sim, rv_name):
     x_dim = X.shape[1]
 
     if X.shape[0] > 1:
@@ -1550,11 +1546,10 @@ def run_FEM(X,id_sim, rv_name):
     os.chdir("../")
 
     if np.isnan(np.sum(g)):
-        msg = 'Error running FEM: Response value at workdir.{} is NaN'.format(id_sim+1)
+        msg = 'Error running FEM: Response value at workdir.{} is NaN'.format(id_sim + 1)
         errlog.exit(msg)
 
     return g, id_sim
-
 
 
 def read_txt(text_dir, errlog):
@@ -1622,26 +1617,27 @@ def build_surrogate(work_dir, os_type, run_type):
             'uqType'] + '> but called <Global Surrogate Modeling> program'
         errlog.exit(msg)
 
-
     gp = GpFromModel(work_dir, run_type, os_type, inp, errlog)
     gp.save_model(filename)
+
+
+# ==========================================================================================
 
 # the actual execution
 
 if __name__ == "__main__":
-
-    inputArgs = sys.argv    
+    inputArgs = sys.argv
     work_dir = inputArgs[1].replace(os.sep, '/')
 
-    #global error_file
+    # global error_file
     errlog = errorLog(work_dir)
 
-    #run_type = 'runningLocal'
-    #os_type  = 'windows'
-    #work_dir = 
+    # run_type = 'runningLocal'
+    # os_type  = 'windows'
+    # work_dir =
     os_type = inputArgs[2]
-    #os_type = inputArgs[2]
+    # os_type = inputArgs[2]
     run_type = inputArgs[3]
-    result_file="results.out"
+    result_file = "results.out"
 
-    sys.exit(build_surrogate(work_dir,os_type, run_type))
+    sys.exit(build_surrogate(work_dir, os_type, run_type))

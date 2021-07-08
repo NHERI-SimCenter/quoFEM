@@ -43,6 +43,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QApplication>
+#include <QJsonDocument>
 
 #include <QFileDialog>
 #include <QTabWidget>
@@ -96,7 +97,7 @@ using namespace QtCharts;
 //#define NUM_DIVISIONS 10
 
 UCSD_Results::UCSD_Results(RandomVariablesContainer *theRandomVariables, QWidget *parent)
-  : UQ_Results(parent), theRVs(theRandomVariables)
+    : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
     tabWidget = new QTabWidget(this);
@@ -193,29 +194,29 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     //
 
 
-//    QFileInfo fileTabInfo(filenameTab);
-//    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
+    //    QFileInfo fileTabInfo(filenameTab);
+    //    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
 
-//    QFileInfo filenameErrorInfo(filenameErrorString);
-//    if (!filenameErrorInfo.exists()) {
-//        emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
-//        return 0;
-//    }
-//    QFile fileError(filenameErrorString);
-//    QString line("");
-//    if (fileError.open(QIODevice::ReadOnly)) {
-//       QTextStream in(&fileError);
-//       while (!in.atEnd()) {
-//          line = in.readLine();
-//       }
-//       fileError.close();
-//    }
+    //    QFileInfo filenameErrorInfo(filenameErrorString);
+    //    if (!filenameErrorInfo.exists()) {
+    //        emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+    //        return 0;
+    //    }
+    //    QFile fileError(filenameErrorString);
+    //    QString line("");
+    //    if (fileError.open(QIODevice::ReadOnly)) {
+    //       QTextStream in(&fileError);
+    //       while (!in.atEnd()) {
+    //          line = in.readLine();
+    //       }
+    //       fileError.close();
+    //    }
 
-//    if (line.length() != 0) {
-//        qDebug() << line.length() << " " << line;
-//        emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
-//        return 0;
-//    }
+    //    if (line.length() != 0) {
+    //        qDebug() << line.length() << " " << line;
+    //        emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
+    //        return 0;
+    //    }
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
@@ -223,11 +224,19 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
         return 0;
     }
 
+    QDir fileDirTab = filenameTabInfo.absoluteDir();
+    QFileInfo priorFileInfo(fileDirTab, "dakotaTabPrior.out");
+    QString filenameTabPrior = priorFileInfo.absoluteFilePath();
+    if (!priorFileInfo.exists()) {
+        emit sendErrorMessage("No dakotaTabPrior.out file - TMCMC failed .. possibly no QoI");
+        return 0;
+    }
+
     //
     // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
     //
 
-    // create a scrollable windows, place summary inside it
+    // create a scrollable window, place summary inside it
     QScrollArea *sa = new QScrollArea;
     sa->setWidgetResizable(true);
     sa->setLineWidth(0);
@@ -253,12 +262,80 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     }
     summaryLayout->addStretch();
 
+    theDataTablePrior = new ResultsDataChart(filenameTabPrior);
+    QVector<QVector<double>> statisticsVectorPrior = theDataTablePrior->getStatistics();
+    QVector<QString> namesVectorPrior = theDataTablePrior->getNames();
+    for (int col = 1; col<namesVectorPrior.size(); ++col) {
+        QWidget *theWidgetPrior = this->createResultEDPWidget(namesVectorPrior[col], statisticsVectorPrior[col]);
+        summaryLayout->addWidget(theWidgetPrior);
+    }
+    summaryLayout->addStretch();
+
+    // Read the dakota.json file located in ./templatedir
+    QDir fileDir = filenameTabInfo.absoluteDir();
+    QFileInfo jsonFileInfo(fileDirTab, QString("templatedir") + QDir::separator() + QString("dakota.json"));
+    if (!jsonFileInfo.exists()) {
+        emit sendErrorMessage("No dakota.json file");
+        return 0;
+    }
+    QString filenameJson = jsonFileInfo.absoluteFilePath();
+    QFile dakotaJsonFile(filenameJson);
+    if (!dakotaJsonFile.open(QFile::ReadOnly | QFile::Text)) {
+        QString message = QString("Error: could not open file") + filenameJson;
+        emit sendErrorMessage(message);
+        return 0;
+    }
+    QString val = dakotaJsonFile.readAll();
+    QJsonDocument docJson = QJsonDocument::fromJson(val.toUtf8());
+    QJsonObject jsonObj = docJson.object();
+    dakotaJsonFile.close();
+
+    // get the EDP info from dakota.json file
+    QJsonArray edps = jsonObj["EDP"].toArray();
+    int numEDPs = edps.size();
+    QVector<QString> edpNames;
+    QVector<int> edpLengths;
+    for (int i=0; i<numEDPs; i++) {
+        edpNames.push_back(edps.at(i)["name"].toString());
+        edpLengths.push_back(edps.at(i)["length"].toInt());
+    }
+
+    // create headings for calibration data file
+
+    // find calibration data file name path and file name
+//    QJsonObject uqMethod = jsonObj["UQ_Method"].toObject();
+//    QString calFileName = uqMethod["calDataFile"].toString();
+//    QString calFilePath = uqMethod["calDataFilePath"].toString();
+
+//    QString calDataFile = calFilePath + QDir::separator() + calFileName;
+
+    // Get the quoFEMTempCalibrationDataFile.cal from templatedir
+    QFileInfo calFileInfo(fileDirTab, QString("templatedir") + QDir::separator() + QString("quoFEMTempCalibrationDataFile.cal"));
+    if (!calFileInfo.exists()) {
+            emit sendErrorMessage("No calibration data file");
+            return 0;
+        }
+    QString calFileName = calFileInfo.absoluteFilePath();
+
+    theDataTableCalData = new ResultsDataChart(calFileName);
+    QVector<QVector<double>> statisticsVectorCalData = theDataTableCalData->getStatistics();
+    QVector<QString> namesVectorCalData = theDataTablePrior->getNames();
+    for (int col = 1; col<namesVectorPrior.size(); ++col) {
+        QWidget *theWidgetPrior = this->createResultEDPWidget(namesVectorPrior[col], statisticsVectorPrior[col]);
+        summaryLayout->addWidget(theWidgetPrior);
+    }
+    summaryLayout->addStretch();
+
+
     //
-    // add summary, detained info and spreadsheet with chart to the tabed widget
+    // add summary, detailed info and spreadsheet with chart to the tabbed widget
     //
 
     tabWidget->addTab(sa,tr("Summary"));
-    tabWidget->addTab(theDataTable, tr("Data Values"));
+    tabWidget->addTab(theDataTablePrior, tr("Prior"));
+//    tabWidget->addTab(theDataTable, tr("Data Values"));
+    tabWidget->addTab(theDataTable, tr("Posterior"));
+    tabWidget->addTab(theDataTableCalData, tr("Calibration Data"));
     tabWidget->adjustSize();
 
     emit sendStatusMessage(tr(""));
@@ -274,14 +351,14 @@ UCSD_Results::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
-//    if (spreadsheet == NULL)
-//        return true;
+    //    if (spreadsheet == NULL)
+    //        return true;
 
     int numEDP = theNames.count();
 
     // quick return .. noEDP -> no analysis done -> no results out
     if (numEDP == 0)
-      return true;
+        return true;
 
     jsonObject["resultType"]=QString(tr("UCSD_Results"));
 
@@ -307,6 +384,11 @@ UCSD_Results::outputToJSON(QJsonObject &jsonObject)
     if(theDataTable != NULL) {
         theDataTable->outputToJSON(jsonObject);
     }
+
+    if(theDataTablePrior != NULL) {
+        theDataTablePrior->outputToJSON(jsonObject);
+    }
+
     return result;
 }
 
