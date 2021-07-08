@@ -89,13 +89,19 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QScatterSeries>
 #include <QtCharts/QVXYModelMapper>
+#include <QtCharts/QLegendMarker>
 using namespace QtCharts;
 #include <math.h>
 #include <QValueAxis>
 
+// for CI
 #include <QXYSeries>
 #include <RandomVariablesContainer.h>
+#include <QPen>
 
+//#include "qcustomplot.h"
+//#include <QBoxSet>
+#include <QAreaSeries>
 #define NUM_DIVISIONS 10
 
 
@@ -261,14 +267,15 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
         QString message = QString("ERROR: file either empty or malformed JSON");
     }
 
-    summarySurrogate(*&sa);
-
-    //QHBoxLayout *gsaLayout = new QHBoxLayout();
+    theDataTable = new ResultsDataChart(filenameTab);
 
     //
     // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
-    theDataTable = new ResultsDataChart(filenameTab);
+
+    summarySurrogate(*&sa);
+
+    //QHBoxLayout *gsaLayout = new QHBoxLayout();
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
@@ -394,6 +401,12 @@ SimCenterUQResultsSurrogate::inputFromJSON(QJsonObject &jsonObject)
 
     jsonObj = jsonObject["summary"].toObject();
 
+    //
+    // into a spreadsheet place all the data returned
+    //
+
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+
     QScrollArea *sa = new QScrollArea;
     summarySurrogate(*&sa);
     saveModelButton ->setDisabled(true);
@@ -406,11 +419,6 @@ SimCenterUQResultsSurrogate::inputFromJSON(QJsonObject &jsonObject)
     saveYButton ->setStyleSheet({ "background-color: lightgrey; border: none;" });
 
 
-    //
-    // into a spreadsheet place all the data returned
-    //
-
-    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
 
 
     //
@@ -490,17 +498,21 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
 
     //QJsonObject uqObject = jsonObj["UQ_Method"].toObject();
     int nQoI = jsonObj["ydim"].toInt();
+
     QJsonArray QoI_tmp = jsonObj["ylabels"].toArray();
     int nSamp = jsonObj["valSamp"].toInt();
     int nSim  = jsonObj["valSim"].toInt();
     double nTime = jsonObj["valTime"].toDouble();
     double NRMSEthr =jsonObj["thrNRMSE"].toDouble();
     QString termCode =jsonObj["terminationCode"].toString();
+    QJsonObject valNugget = jsonObj["valNugget"].toObject();
     QJsonObject valNRMSE = jsonObj["valNRMSE"].toObject();
     QJsonObject valR2 = jsonObj["valR2"].toObject();
     QJsonObject valCorrCoeff = jsonObj["valCorrCoeff"].toObject();
     QJsonObject yExact = jsonObj["yExact"].toObject();
     QJsonObject yPredi = jsonObj["yPredict"].toObject();
+    QJsonObject yConfidenceLb = jsonObj["yPredict_CI_lb"].toObject();
+    QJsonObject yConfidenceUb = jsonObj["yPredict_CI_ub"].toObject();
     bool isMultiFidelity = jsonObj["doMultiFidelity"].toBool();
 
     QStringList QoInames;
@@ -628,38 +640,45 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
     {
     //int nq=0;
         QScatterSeries *series_CV = new QScatterSeries;
+        int alpha;
         // adjust marker size and opacity based on the number of samples
         if (nCVsamps < 10) {
+            alpha = 200;
             series_CV->setMarkerSize(15.0);
-            series_CV->setColor(QColor(0, 114, 178, 200));
         } else if (nCVsamps < 100) {
+            alpha = 160;
             series_CV->setMarkerSize(11.0);
-            series_CV->setColor(QColor(0, 114, 178, 160));
-        } else if (nCVsamps < 1000) {
+        } else if (nCVsamps < 1000) {            
+            alpha = 100;
             series_CV->setMarkerSize(8.0);
-            series_CV->setColor(QColor(0, 114, 178, 100));
         } else if (nCVsamps < 10000) {
+            alpha = 70;
             series_CV->setMarkerSize(6.0);
-            series_CV->setColor(QColor(0, 114, 178, 70));
         } else if (nCVsamps < 100000) {
+            alpha = 50;
             series_CV->setMarkerSize(5.0);
-            series_CV->setColor(QColor(0, 114, 178, 50));
         } else {
+            alpha = 30;
             series_CV->setMarkerSize(4.5);
-            series_CV->setColor(QColor(0, 114, 178, 30));
         }
+        series_CV->setColor(QColor(0, 114, 178, alpha));
 
         series_CV->setBorderColor(QColor(255,255,255,0));
 
+        QWidget *container = new QWidget();
+        QGridLayout *chartAndNugget = new QGridLayout(container);
         QChart *chart_CV = new QChart;
         QChartView *chartView_CV = new QChartView(chart_CV);
 
         chart_CV->setAnimationOptions(QChart::AllAnimations);
         chartView_CV->setRenderHint(QPainter::Antialiasing);
-        chartView_CV->chart()->legend()->hide();
+        //chartView_CV->chart()->legend()->hide();
+        //chart.legend().markers(serie_without_marker)[0].setVisible(false);
 
         QJsonArray yEx= yExact[QoInames[nq]].toArray();
         QJsonArray yPr= yPredi[QoInames[nq]].toArray();
+        QJsonArray yLb= yConfidenceLb[QoInames[nq]].toArray();
+        QJsonArray yUb= yConfidenceUb[QoInames[nq]].toArray();
         double maxy=-INFINITY;
         double miny=INFINITY;
         for (int i=0; i<nCVsamps; i++) {
@@ -667,22 +686,108 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
             maxy = std::max(maxy,std::max(yEx[i].toDouble(),yPr[i].toDouble()));
             miny = std::min(miny,std::min(yEx[i].toDouble(),yPr[i].toDouble()));
         }
-        chart_CV->addSeries(series_CV);
-        series_CV->setName("Samples");
 
+        // set axis
+        double inteval = maxy - miny;
+        miny = miny - inteval*0.1;
+        maxy = maxy + inteval*0.1;
         QValueAxis *axisX = new QValueAxis();
         QValueAxis *axisY = new QValueAxis();
-
         axisX->setTitleText(QString("Exact response"));
         axisY->setTitleText(QString("Predicted response (LOOCV)"));
-
         axisX->setRange(miny, maxy);
         axisY->setRange(miny, maxy);
 
+        // draw nugget scale
+        QLineSeries *series_nugget_ub = new QLineSeries;
+        QLineSeries *series_nugget_lb = new QLineSeries;
+        //QLineSeries *series_nugget_core_ub = new QLineSeries;
+        //QLineSeries *series_nugget_core_lb = new QLineSeries;
+        int nd=100;
+        bool nuggetLabel = true;
+        double nuggetwidth = valNugget[QoInames[nq]].toDouble();
+        if (nuggetwidth/inteval < 1.e-5) {
+            nuggetwidth = inteval*1.e-2;
+            nuggetLabel = false;
+        }
+        for (int i=0; i<nd+1; i++) {
+            series_nugget_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetwidth);
+            series_nugget_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetwidth);
+            //series_nugget_core_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetwidth/2);
+            //series_nugget_core_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetwidth/2);
+        }
+
+        QAreaSeries *series_nugget = new QAreaSeries(series_nugget_ub,series_nugget_lb);
+        //QAreaSeries *series_nugget_core = new QAreaSeries(series_nugget_core_ub,series_nugget_core_lb);
+        series_nugget->setName("± Nugget Std.");
+
+        chart_CV->addSeries(series_nugget);
+        //chart_CV->addSeries(series_nugget_core);
+
+        //series_nugget->setColor(Qt::gray);
+        series_nugget->setColor(QColor(180,180,180,alpha/2));
+        //series_nugget_core->setColor(QColor(180,180,180,alpha/2));
+        chart_CV->setAxisX(axisX, series_nugget);// share the X-axis
+        chart_CV->setAxisY(axisY, series_nugget);
+        //chart_CV->setAxisX(axisX, series_nugget_core);// share the X-axis
+        //chart_CV->setAxisY(axisY, series_nugget_core);
+        //chart_CV->legend()->markers(series_nugget_core)[0]->setVisible(false);
+        if (nuggetLabel == false) {
+            //hide label if nugget is zero
+            chart_CV->legend()->markers(series_nugget)[0]->setVisible(false);
+        }
+        //series_nugget_core->setBorderColor(QColor(255,255,255,0));
+        series_nugget->setBorderColor(QColor(255,255,255,0));
+
+        // draw bounds first
+
+        QPen pen;
+        pen.setWidth(series_CV->markerSize()/10);
+        for (int i=0; i<nCVsamps; i++) {
+            QLineSeries *series_err = new QLineSeries;
+            series_err->append(yEx[i].toDouble(), yLb[i].toDouble());
+            series_err->append(yEx[i].toDouble()*(1+1.e-10), yUb[i].toDouble());
+            series_err->setPen(pen);
+            chart_CV->addSeries(series_err);
+            //series_nugget->setColor(QColor(180,180,180,150));
+
+            series_err->setColor(QColor(0, 114, 178, alpha/2));
+            //series_err->setColor(QColor(255,255,255,0.5));
+            //series_err->setOpacity(series_CV->opacity());
+            chart_CV->setAxisX(axisX, series_err);//cos share the X-axis of the sin curve
+            chart_CV->setAxisY(axisY, series_err);
+            chart_CV->legend()->markers(series_err)[0]->setVisible(false);
+        }
+
+        // draw values
+
+        chart_CV->addSeries(series_CV);
+        series_CV->setName("Sample Predictions");
         chart_CV->setAxisX(axisX, series_CV);
         chart_CV->setAxisY(axisY, series_CV);
 
-        tabWidgetScatter->addTab(chartView_CV,QoInames[nq]);
+        // legend of quantiles
+
+        QLineSeries *dummy_series_err = new QLineSeries;
+        dummy_series_err->setColor(QColor(0, 114, 178, 50));
+        //dummy_series_err->setOpacity(series_CV->opacity());
+        chart_CV->addSeries(dummy_series_err);
+        dummy_series_err->setName("Inter-quartile Range");
+
+        // to get mean value
+
+        double nugget = valNugget[QoInames[nq]].toDouble();
+        QVector<QVector<double>> statisticsVector = theDataTable->getStatistics();
+
+        chartAndNugget->addWidget(chartView_CV,0,0);
+        if (nugget/statisticsVector[jsonObj["xdim"].toInt()+1+nq][0]<1.e-12) {
+            auto aa = statisticsVector[jsonObj["xdim"].toInt()+1+nq][0];
+            chartAndNugget->addWidget(new QLabel("nugget: 0.000"));
+        } else {
+            chartAndNugget->addWidget(new QLabel("nugget: " + QString::number(nugget,'g',4)),1,0);
+        }
+
+        tabWidgetScatter->addTab(container,QoInames[nq]);
     }
     tabWidgetScatter->setMinimumWidth(500);
     tabWidgetScatter->setMinimumHeight(500);

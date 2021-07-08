@@ -822,7 +822,7 @@ double FEM::interpolateForGP(QVector<double> X, QVector<double> Y, double Xval){
 QStringList FEM::parseGPInputs(QString file1){
 
     //
-    // want to make a GP option box
+    // make a GP option box
     //
 
     // completely delete layout and sublayouts
@@ -1040,5 +1040,17 @@ QStringList FEM::parseGPInputs(QString file1){
     //theParameters->setInitialVarNamesAndValues(varNamesAndValues);
     theEdpWidget->setGPQoINames(qoiNames);
     option1Button->setChecked(false);
+
+
+
+    //
+    // make a GP result options box
+    //
+
+    QLabel * gpOutputLabel= new QLabel("GP output");
+    QComboBox * gpOutputSelection = new QComboBox();
+    gpOutputSelection->addItem(tr("Optimal (median) estimates"));
+    gpOutputSelection->addItem(tr("Random sample"));
+
     return varNamesAndValues;
 }

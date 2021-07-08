@@ -48,6 +48,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFileDialog>
 #include <iostream>
 #include <fstream>
+#include <QRadioButton>
+
 
 SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
 : UQ_MethodInputWidget(parent)
@@ -158,7 +160,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     // Use Linear trending function
     //
 
-    theLinearLabel=new QLabel("Use linear trend function");
+    theLinearLabel=new QLabel("Add Linear Trend Function");
 
     theLinearCheckBox = new QCheckBox();
     theLinearCheckBox->setToolTip("Default is no trending function");
@@ -172,8 +174,10 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     // Use Log transform
     //
 
-    theLogtLabel=new QLabel("Responses are always positive");
-    theLogtLabel2=new QLabel("     (allow log-transform)");
+    //theLogtLabel=new QLabel("Responses are always positive");
+    //theLogtLabel2=new QLabel("     (allow log-transform)");
+    theLogtLabel=new QLabel("Log-space Transform of QoI");
+    theLogtLabel2=new QLabel("     (check this box only when all response qunatities are always positive)");
 
     theLogtCheckBox = new QCheckBox();
     layout->addWidget(theLogtLabel, wid, 0);
@@ -192,11 +196,41 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     initialDoE = new QLineEdit();
     initialDoE->setValidator(new QIntValidator);
     initialDoE->setToolTip("Set the number of initial DoE (Space filling)");
+    initialDoE->setPlaceholderText("(Optional)");
     initialDoE->setMaximumWidth(150);
     layout->addWidget(theInitialLabel, wid, 0);
     layout->addWidget(initialDoE, wid++, 1);
     initialDoE->setVisible(false);
     theInitialLabel->setVisible(false);
+
+    //
+    // Nugget function
+    //
+
+
+    theNuggetLabel=new QLabel("Nugget Values for each QoI");
+    theNuggetSelection = new QComboBox();
+
+    theNuggetSelection->addItem(tr("Optimize"),0);
+    theNuggetSelection->addItem(tr("Fixed Values"),1);
+    theNuggetSelection->addItem(tr("Fixed Bounds"),2);
+    theNuggetSelection->setMaximumWidth(150);
+    theNuggetSelection->setCurrentIndex(0);
+
+    theNuggetVals = new QLineEdit();
+    theNuggetVals->setToolTip("Provide nugget values");
+    //theNuggetVals->setMaximumWidth(150);
+
+    layout->addWidget(theNuggetLabel, wid, 0);
+    layout->addWidget(theNuggetSelection, wid++, 1);
+    layout->addWidget(theNuggetVals, wid++, 1,1,3);
+
+    theNuggetLabel->setVisible(false);
+    theNuggetSelection->setVisible(false);
+    theNuggetVals->setVisible(false);
+
+    connect(theNuggetSelection,SIGNAL(currentIndexChanged(int)),this,SLOT(showNuggetBox(int)));
+
 
     //
     // Use Existing Initial DoE
@@ -227,7 +261,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
         setWindowFilePath(fileName);
     });
     inpFileDir->setMaximumWidth(150);
-    theInputLabel=new QLabel("Training Points (Input)");
+    theInputLabel=new QLabel("Training Points (Input RV)");
     layout->addWidget(theInputLabel,wid,0);
     layout->addWidget(inpFileDir,wid,1);
     layout->addWidget(chooseInpFile,wid++,2,Qt::AlignLeft);
@@ -245,7 +279,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
         this->checkValidityData(outFileDir->text());
     });
     outFileDir->setMaximumWidth(150);
-    theOutputLabel = new QLabel("System Responses (Output)");
+    theOutputLabel = new QLabel("System Responses (Output QoI)");
     layout->addWidget(theOutputLabel,wid,0,Qt::AlignTop);
     layout->addWidget(outFileDir,wid,1,Qt::AlignTop);
     layout->addWidget(chooseOutFile,wid++,2,Qt::AlignLeft);
@@ -275,65 +309,69 @@ SurrogateDoEInputWidget::~SurrogateDoEInputWidget()
 
 }
 
+void
+SurrogateDoEInputWidget::showNuggetBox(int idx)
+{
+    theNuggetVals->clear();
+    if (idx == 0) {
+        theNuggetVals->hide();
+    } else if (idx==1){
+        theNuggetVals->show();
+        theNuggetVals->setPlaceholderText("QoI1, QoI2,..");
+    } else if (idx==2) {
+        theNuggetVals->show();
+        theNuggetVals->setPlaceholderText("[QoI1_LB,QoI1_UB], [QoI2_LB,QoI2_UB],..");
+    }
+
+};
+
+
 // SLOT function
 void SurrogateDoEInputWidget::doAdvancedGP(bool tog)
 {
     if (tog) {
         theAdvancedTitle->setStyleSheet("font-weight: bold; color: black");
 
-        lineA->setVisible(true);
-        gpKernel-> setVisible(true);
-        theLinearCheckBox-> setVisible(true);
-        theLogtCheckBox-> setVisible(true);
-        initialDoE-> setVisible(true);
-        theLinearLabel->setVisible(true);
-        theLogtLabel->setVisible(true);
-        theLogtLabel2->setVisible(true);
-        theKernelLabel->setVisible(true);
-        theInitialLabel->setVisible(true);
     } else {
         theAdvancedTitle->setStyleSheet("font-weight: bold; color: grey");
 
-        lineA->setVisible(false);
-        gpKernel-> setVisible(false);
-        theLinearCheckBox-> setVisible(false);
-        theLogtCheckBox-> setVisible(false);
-        initialDoE-> setVisible(false);
-        theLinearLabel->setVisible(false);
-        theLogtLabel->setVisible(false);
-        theLogtLabel2->setVisible(false);
-        theKernelLabel->setVisible(false);
-        theInitialLabel->setVisible(false);
         gpKernel->setCurrentIndex(0);
+        theNuggetSelection->setCurrentIndex(0);
         theLinearCheckBox->setChecked(false);
         theLogtCheckBox->setChecked(false);
         initialDoE-> setText("");
     }
+
+        lineA->setVisible(tog);
+        gpKernel-> setVisible(tog);
+        theLinearCheckBox-> setVisible(tog);
+        theLogtCheckBox-> setVisible(tog);
+        initialDoE-> setVisible(tog);
+        theLinearLabel->setVisible(tog);
+        theLogtLabel->setVisible(tog);
+        theLogtLabel2->setVisible(tog);
+        theKernelLabel->setVisible(tog);
+        theInitialLabel->setVisible(tog);
+        theNuggetLabel->setVisible(tog);
+        theNuggetSelection->setVisible(tog);
 }
 
 void SurrogateDoEInputWidget::doExistingGP(bool tog)
 {
     if (tog) {
         theExistingTitle->setStyleSheet("font-weight: bold; color: black");
-        lineB->setVisible(true);
-        inpFileDir->setVisible(true);
-        outFileDir->setVisible(true);
-        theInputLabel->setVisible(true);
-        theOutputLabel->setVisible(true);
-        chooseInpFile->setVisible(true);
-        chooseOutFile->setVisible(true);
     } else {
         theExistingTitle->setStyleSheet("font-weight: bold; color: grey");
-        lineB->setVisible(false);
-        inpFileDir->setVisible(false);
-        outFileDir->setVisible(false);
-        theInputLabel->setVisible(false);
-        theOutputLabel->setVisible(false);
-        chooseInpFile->setVisible(false);
-        chooseOutFile->setVisible(false);
         inpFileDir-> setText("");
         outFileDir-> setText("");
     }
+        lineB->setVisible(tog);
+        inpFileDir->setVisible(tog);
+        outFileDir->setVisible(tog);
+        theInputLabel->setVisible(tog);
+        theOutputLabel->setVisible(tog);
+        chooseInpFile->setVisible(tog);
+        chooseOutFile->setVisible(tog);
 }
 
 void
@@ -401,6 +439,9 @@ SurrogateDoEInputWidget::outputToJSON(QJsonObject &jsonObj){
         jsonObj["initialDoE"]=initialDoE->text().toDouble();
         jsonObj["linear"]=theLinearCheckBox->isChecked();
         jsonObj["logTransform"]=theLogtCheckBox->isChecked();
+        jsonObj["nuggetOpt"]=theNuggetSelection->currentText();
+        jsonObj["nuggetString"]=theNuggetVals->text();
+
     }
 
     jsonObj["existingDoE"]=theExistingCheckBox->isChecked();
@@ -454,8 +495,23 @@ SurrogateDoEInputWidget::inputFromJSON(QJsonObject &jsonObject){
             theLogtCheckBox->setChecked(jsonObject["logTransform"].toBool());
             double accuracy=jsonObject["initialDoE"].toDouble();
             initialDoE->setText(QString::number(accuracy));
+
+            if (jsonObject.contains("nuggetOpt")) {
+                QString nuggetOpt =jsonObject["nuggetOpt"].toString();
+                index = theNuggetSelection->findText(nuggetOpt);
+                if (index == -1) {
+                    return false;
+                }
+                theNuggetSelection->setCurrentIndex(index);
+                if (index!=0){
+                    theNuggetVals->setText(jsonObject["nuggetString"].toString());
+                }
+            } else {
+                theNuggetSelection->setCurrentIndex(index);
+            }
         } else {
             theAdvancedCheckBox->setChecked(false);
+            // for compatibility. Change to give an error later
         }
     } else {
     result = false;
