@@ -41,6 +41,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <UQ_MethodInputWidget.h>
 class QLineEdit;
+class QGroupBox;
 
 class UCSD_TMMC : public UQ_MethodInputWidget
 {
@@ -60,6 +61,8 @@ private:
   QLineEdit *logLikelihoodScript;
   QLineEdit *randomSeed;
   QLineEdit *calDataFileEdit;
+  QGroupBox *requiredInputsGroupBox;
+  QGroupBox *optionalInputsGroupBox;
 };
 
 #endif // UCSD_TMMC_H

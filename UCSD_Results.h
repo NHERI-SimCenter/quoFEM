@@ -97,6 +97,8 @@ private:
    QVector<double>theSkewness;
 
    ResultsDataChart *theDataTable;
+   ResultsDataChart *theDataTablePrior;
+   ResultsDataChart *theDataTableCalData;
 
 };
 
