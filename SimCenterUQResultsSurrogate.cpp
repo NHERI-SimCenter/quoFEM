@@ -640,26 +640,28 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
     {
     //int nq=0;
         QScatterSeries *series_CV = new QScatterSeries;
+        int alpha;
         // adjust marker size and opacity based on the number of samples
         if (nCVsamps < 10) {
+            alpha = 200;
             series_CV->setMarkerSize(15.0);
-            series_CV->setColor(QColor(0, 114, 178, 200));
         } else if (nCVsamps < 100) {
+            alpha = 160;
             series_CV->setMarkerSize(11.0);
-            series_CV->setColor(QColor(0, 114, 178, 160));
-        } else if (nCVsamps < 1000) {
+        } else if (nCVsamps < 1000) {            
+            alpha = 100;
             series_CV->setMarkerSize(8.0);
-            series_CV->setColor(QColor(0, 114, 178, 100));
         } else if (nCVsamps < 10000) {
+            alpha = 70;
             series_CV->setMarkerSize(6.0);
-            series_CV->setColor(QColor(0, 114, 178, 70));
         } else if (nCVsamps < 100000) {
+            alpha = 50;
             series_CV->setMarkerSize(5.0);
-            series_CV->setColor(QColor(0, 114, 178, 50));
         } else {
+            alpha = 30;
             series_CV->setMarkerSize(4.5);
-            series_CV->setColor(QColor(0, 114, 178, 30));
         }
+        series_CV->setColor(QColor(0, 114, 178, alpha));
 
         series_CV->setBorderColor(QColor(255,255,255,0));
 
@@ -686,8 +688,9 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         }
 
         // set axis
-        miny = miny - (maxy-miny)*0.1;
-        maxy = maxy + (maxy-miny)*0.1;
+        double inteval = maxy - miny;
+        miny = miny - inteval*0.1;
+        maxy = maxy + inteval*0.1;
         QValueAxis *axisX = new QValueAxis();
         QValueAxis *axisY = new QValueAxis();
         axisX->setTitleText(QString("Exact response"));
@@ -698,29 +701,48 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         // draw nugget scale
         QLineSeries *series_nugget_ub = new QLineSeries;
         QLineSeries *series_nugget_lb = new QLineSeries;
+        //QLineSeries *series_nugget_core_ub = new QLineSeries;
+        //QLineSeries *series_nugget_core_lb = new QLineSeries;
         int nd=100;
+        bool nuggetLabel = true;
+        double nuggetwidth = valNugget[QoInames[nq]].toDouble();
+        if (nuggetwidth/inteval < 1.e-5) {
+            nuggetwidth = inteval*1.e-2;
+            nuggetLabel = false;
+        }
         for (int i=0; i<nd+1; i++) {
-            double nugget = valNugget[QoInames[nq]].toDouble();
-            if (nugget == 0) {
-                nugget = (maxy-miny)*1.e-2;
-            }
-            series_nugget_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nugget);
-            series_nugget_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nugget);
-
+            series_nugget_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetwidth);
+            series_nugget_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetwidth);
+            //series_nugget_core_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetwidth/2);
+            //series_nugget_core_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetwidth/2);
         }
 
         QAreaSeries *series_nugget = new QAreaSeries(series_nugget_ub,series_nugget_lb);
-        chart_CV->addSeries(series_nugget);
-        //series_nugget->setColor(Qt::gray);
-        series_nugget->setColor(QColor(180,180,180,150));
-        chart_CV->setAxisX(axisX, series_nugget);//cos share the X-axis of the sin curve
-        chart_CV->setAxisY(axisY, series_nugget);
+        //QAreaSeries *series_nugget_core = new QAreaSeries(series_nugget_core_ub,series_nugget_core_lb);
         series_nugget->setName("± Nugget Std.");
+
+        chart_CV->addSeries(series_nugget);
+        //chart_CV->addSeries(series_nugget_core);
+
+        //series_nugget->setColor(Qt::gray);
+        series_nugget->setColor(QColor(180,180,180,alpha/2));
+        //series_nugget_core->setColor(QColor(180,180,180,alpha/2));
+        chart_CV->setAxisX(axisX, series_nugget);// share the X-axis
+        chart_CV->setAxisY(axisY, series_nugget);
+        //chart_CV->setAxisX(axisX, series_nugget_core);// share the X-axis
+        //chart_CV->setAxisY(axisY, series_nugget_core);
+        //chart_CV->legend()->markers(series_nugget_core)[0]->setVisible(false);
+        if (nuggetLabel == false) {
+            //hide label if nugget is zero
+            chart_CV->legend()->markers(series_nugget)[0]->setVisible(false);
+        }
+        //series_nugget_core->setBorderColor(QColor(255,255,255,0));
+        series_nugget->setBorderColor(QColor(255,255,255,0));
 
         // draw bounds first
 
         QPen pen;
-        pen.setWidth(series_CV->markerSize()/5);
+        pen.setWidth(series_CV->markerSize()/10);
         for (int i=0; i<nCVsamps; i++) {
             QLineSeries *series_err = new QLineSeries;
             series_err->append(yEx[i].toDouble(), yLb[i].toDouble());
@@ -729,9 +751,9 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
             chart_CV->addSeries(series_err);
             //series_nugget->setColor(QColor(180,180,180,150));
 
-            series_err->setColor(QColor(0, 114, 178, 30));
+            series_err->setColor(QColor(0, 114, 178, alpha/2));
             //series_err->setColor(QColor(255,255,255,0.5));
-            series_err->setOpacity(series_CV->opacity());
+            //series_err->setOpacity(series_CV->opacity());
             chart_CV->setAxisX(axisX, series_err);//cos share the X-axis of the sin curve
             chart_CV->setAxisY(axisY, series_err);
             chart_CV->legend()->markers(series_err)[0]->setVisible(false);
@@ -747,10 +769,10 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         // legend of quantiles
 
         QLineSeries *dummy_series_err = new QLineSeries;
-        dummy_series_err->setColor(QColor(0, 114, 178, 30));
-        dummy_series_err->setOpacity(series_CV->opacity());
+        dummy_series_err->setColor(QColor(0, 114, 178, 50));
+        //dummy_series_err->setOpacity(series_CV->opacity());
         chart_CV->addSeries(dummy_series_err);
-        dummy_series_err->setName("Quantile Bounds");
+        dummy_series_err->setName("Inter-quartile Range");
 
         // to get mean value
 
