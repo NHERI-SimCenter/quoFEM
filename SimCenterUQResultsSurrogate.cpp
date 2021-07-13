@@ -701,8 +701,6 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         // draw nugget scale
         QLineSeries *series_nugget_ub = new QLineSeries;
         QLineSeries *series_nugget_lb = new QLineSeries;
-        //QLineSeries *series_nugget_core_ub = new QLineSeries;
-        //QLineSeries *series_nugget_core_lb = new QLineSeries;
         int nd=100;
         bool nuggetLabel = true;
         double nuggetwidth = valNugget[QoInames[nq]].toDouble();
@@ -713,25 +711,15 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         for (int i=0; i<nd+1; i++) {
             series_nugget_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetwidth);
             series_nugget_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetwidth);
-            //series_nugget_core_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetwidth/2);
-            //series_nugget_core_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetwidth/2);
         }
 
         QAreaSeries *series_nugget = new QAreaSeries(series_nugget_ub,series_nugget_lb);
-        //QAreaSeries *series_nugget_core = new QAreaSeries(series_nugget_core_ub,series_nugget_core_lb);
         series_nugget->setName("± Nugget Std.");
 
         chart_CV->addSeries(series_nugget);
-        //chart_CV->addSeries(series_nugget_core);
-
-        //series_nugget->setColor(Qt::gray);
         series_nugget->setColor(QColor(180,180,180,alpha/2));
-        //series_nugget_core->setColor(QColor(180,180,180,alpha/2));
         chart_CV->setAxisX(axisX, series_nugget);// share the X-axis
         chart_CV->setAxisY(axisY, series_nugget);
-        //chart_CV->setAxisX(axisX, series_nugget_core);// share the X-axis
-        //chart_CV->setAxisY(axisY, series_nugget_core);
-        //chart_CV->legend()->markers(series_nugget_core)[0]->setVisible(false);
         if (nuggetLabel == false) {
             //hide label if nugget is zero
             chart_CV->legend()->markers(series_nugget)[0]->setVisible(false);

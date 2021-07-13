@@ -227,6 +227,14 @@ int SimCenterUQResultsSensitivity::processResults(QString &filenameResults, QStr
         return 0;
     }
 
+    // If surrogate model is used, display additional info.
+    QDir tempFolder(filenameTabInfo.absolutePath());
+    QFileInfo surrogateTabInfo(tempFolder.filePath("surrogateTab.out"));
+    if (surrogateTabInfo.exists()) {
+        filenameTab = tempFolder.filePath("surrogateTab.out");
+        isSurrogate = true;
+    }
+
     //
     // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
     //
@@ -305,7 +313,8 @@ Node_2_Disp Sobol' indices:
     // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
 
-    theDataTable = new ResultsDataChart(filenameTab);
+    theDataTable = new ResultsDataChart(filenameTab, isSurrogate, theRVs->getNumRandomVariables());
+    //theDataTable = new ResultsDataChart(filenameTab);
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
@@ -529,7 +538,7 @@ SimCenterUQResultsSensitivity::outputToJSON(QJsonObject &jsonObject)
     bool result = true;
 
     jsonObject["resultType"]=QString(tr("SimCenterUQResultsSensitivity"));
-
+    jsonObject["isSurrogate"]=isSurrogate;
     //
     // add summary data
     //
@@ -629,7 +638,9 @@ SimCenterUQResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
     gsaGraph(*&sa);
 
 
-    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+    isSurrogate=jsonObject["isSurrogate"].toBool();
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
+
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget

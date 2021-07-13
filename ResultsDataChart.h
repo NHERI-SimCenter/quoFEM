@@ -45,6 +45,7 @@ using namespace QtCharts;
 #include "MyTableWidget.h"
 #include "RandomVariablesContainer.h"
 #include <QFileDialog>
+#include <QValueAxis>
 
 class QLineEdit;
 
@@ -52,8 +53,8 @@ class ResultsDataChart : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit ResultsDataChart(QString filenameTab, QWidget *parent = 0);
-    explicit ResultsDataChart(QJsonObject spreadsheet, QWidget *parent = 0);
+    explicit ResultsDataChart(QString filenameTab, bool isSur=false, int nrv=0, QWidget *parent = 0);
+    explicit ResultsDataChart(QJsonObject spreadsheet, bool isSur=false, int nrv=0, QWidget *parent = 0);
 
     //explicit ResultsDataChart(QWidget *parent = 0);
     ~ResultsDataChart();
@@ -73,6 +74,7 @@ public slots:
    void onSpreadsheetCellClicked(int, int);
    void onSaveSpreadsheetClicked();
    void onSaveSpreadsheetSeparatelyClicked();
+   void overlappingPlots(bool isCol1Qoi, bool isCol2Qoi,QValueAxis *axisX, QValueAxis *axisY);
 
 private:
 
@@ -97,6 +99,10 @@ private:
     QVector<double>theStdDevs;
     QVector<double>theKurtosis;
     QVector<double>theSkewness;
+
+    bool isSurrogate;
+    int nrv;
+    int nqoi;
 
     int rowCount;
     int colCount;

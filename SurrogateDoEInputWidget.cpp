@@ -317,10 +317,10 @@ SurrogateDoEInputWidget::showNuggetBox(int idx)
         theNuggetVals->hide();
     } else if (idx==1){
         theNuggetVals->show();
-        theNuggetVals->setPlaceholderText("QoI1, QoI2,..");
+        theNuggetVals->setPlaceholderText("QoI₁, QoI₂,..");
     } else if (idx==2) {
         theNuggetVals->show();
-        theNuggetVals->setPlaceholderText("[QoI1_LB,QoI1_UB], [QoI2_LB,QoI2_UB],..");
+        theNuggetVals->setPlaceholderText("[QoI₁ˡᵇ,QoI₁ᵘᵇ], [QoI₂ˡᵇ,QoI₂ᵘᵇ],..");
     }
 
 };

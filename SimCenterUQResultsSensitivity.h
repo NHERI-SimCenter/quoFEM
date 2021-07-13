@@ -91,6 +91,7 @@ private:
 
    ResultsDataChart* theDataTable;
 
+   bool isSurrogate = false;
 
    void gsaGraph(QScrollArea *&summaryLayout);
 

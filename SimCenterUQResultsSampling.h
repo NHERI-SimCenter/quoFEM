@@ -96,6 +96,8 @@ private:
    QVector<double>theSkewness;
 
    ResultsDataChart * theDataTable;
+   bool isSurrogate = false;
+
 };
 
 #endif // SimCenterUQ_RESULTS_SAMPLING_H

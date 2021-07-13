@@ -221,6 +221,14 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
         return 0;
     }
 
+    // If surrogate model is used, display additional info.
+    QDir tempFolder(filenameTabInfo.absolutePath());
+    QFileInfo surrogateTabInfo(tempFolder.filePath("surrogateTab.out"));
+    if (surrogateTabInfo.exists()) {
+        filenameTab = tempFolder.filePath("surrogateTab.out");
+        isSurrogate = true;
+    }
+
     //
     // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
     //
@@ -242,8 +250,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
 
-
-    theDataTable = new ResultsDataChart(filenameTab);
+    theDataTable = new ResultsDataChart(filenameTab, isSurrogate, theRVs->getNumRandomVariables());
 
     //
     // determine summary statistics for each edp
@@ -281,6 +288,7 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
 
 
     jsonObject["resultType"]=QString(tr("SimCenterUQResultsSampling"));
+    jsonObject["isSurrogate"]=isSurrogate;
 
     //
     // add summary data
@@ -356,7 +364,8 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
 
     sa->setWidget(summary);
 
-    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+    isSurrogate=jsonObject["isSurrogate"].toBool();
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
     //
     // determine summary statistics for each edp

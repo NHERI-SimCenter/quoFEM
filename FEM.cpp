@@ -184,6 +184,8 @@ FEM::outputToJSON(QJsonObject &jsonObject)
         } else if (femSelection->currentText() == "SurrogateGP") {
             jsonObject["varThres"]=thresVal->text().toDouble();
             jsonObject["femOption"]=femOpt;
+            jsonObject["predictionOption"]=gpOutputSelection->currentText();
+            jsonObject["gpSeed"]=gpSeed->text();
         }
 
     }
@@ -260,6 +262,8 @@ FEM::inputFromJSON(QJsonObject &femObject)
                 } else if (femOpt == "doSimulation") {
                     option3Button ->setChecked(true);
                 }
+                gpOutputSelection->setCurrentText(femObject["predictionOption"].toString());
+                gpSeed->setText(femObject["gpSeed"].toString());
 
             } else {
                 this->parseInputfilesForRV(fileName1);
@@ -922,8 +926,8 @@ QStringList FEM::parseGPInputs(QString file1){
     labelThresMsg->setStyleSheet("color: red");
 
     thresVal->setMaximumWidth(100);
-    optionsLayout->addWidget(labelVarThres, 0,0);
-    optionsLayout->addWidget(thresVal,0,1, Qt::AlignVCenter);
+    optionsLayout->addWidget(labelVarThres, 0,0,1,2);
+    optionsLayout->addWidget(thresVal,0,2, Qt::AlignVCenter);
     optionsLayout->addWidget(labelThresMsg,1,0,1,-1);
     optionsLayout->addWidget(optionsLabel, 2,0,1,-1);
     optionsLayout->addWidget(option1Label, 3,0,1,-1);
@@ -1048,9 +1052,37 @@ QStringList FEM::parseGPInputs(QString file1){
     //
 
     QLabel * gpOutputLabel= new QLabel("GP output");
-    QComboBox * gpOutputSelection = new QComboBox();
-    gpOutputSelection->addItem(tr("Optimal (median) estimates"));
-    gpOutputSelection->addItem(tr("Random sample"));
+    gpOutputSelection = new QComboBox();
+    gpOutputSelection->addItem(tr("Median (representative) prediction"));
+    gpOutputSelection->addItem(tr("Random samples"));
+
+    optionsLayout->addWidget(new QLabel(""),9,0);
+    optionsLayout->addWidget(gpOutputLabel,10,0);
+    optionsLayout->addWidget(gpOutputSelection,10,1);
+
+    gpSeedLabel= new QLabel("Seed");
+    gpSeed = new QLineEdit();
+    optionsLayout->addWidget(gpSeedLabel,11,0);
+    optionsLayout->addWidget(gpSeed,11,1);
+    gpSeed-> hide();
+    gpSeedLabel->hide();
+    srand(time(NULL));
+    gpSeed->setText(QString::number(rand() % 1000 + 1));
+
+    connect(gpOutputSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(gpShowSeed(QString)));
 
     return varNamesAndValues;
+}
+
+
+void FEM::gpShowSeed(const QString &arg1)
+{
+    if (arg1==tr("Random samples"))
+    {
+        gpSeed-> show();
+        gpSeedLabel->show();
+    } else {
+        gpSeed-> hide();
+        gpSeedLabel->hide();
+    }
 }

@@ -77,8 +77,8 @@ using namespace QtCharts;
 #define NUM_DIVISIONS 10
 
 
-DakotaResultsCalibration::DakotaResultsCalibration(QWidget *parent)
-    : UQ_Results(parent)
+DakotaResultsCalibration::DakotaResultsCalibration(RandomVariablesContainer *theRandomVariables, QWidget *parent)
+    : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
     tabWidget = new QTabWidget(this);
@@ -122,7 +122,7 @@ DakotaResultsCalibration::outputToJSON(QJsonObject &jsonObject)
       return true;
 
     jsonObject["resultType"]=QString(tr("DakotaResultsCalibration"));
-
+    jsonObject["isSurrogate"]=isSurrogate;
     //
     // add summary data
     //
@@ -210,7 +210,8 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
         return true;
     }
 
-    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+    isSurrogate=jsonObject["isSurrogate"].toBool();
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
     tabWidget->addTab(sa,tr("Summary"));
     tabWidget->addTab(dakotaText,tr("General"));
@@ -364,19 +365,27 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
 
     //spreadsheet = new MyTableWidget();
 
-    // open file containing tab data
-    std::ifstream tabResults(filenameTab.toStdString().c_str());
-    if (!tabResults.is_open()) {
-        qDebug() << "Could not open file";
-        return -1;
+    QFileInfo filenameTabInfo(filenameTab);
+    if (!filenameTabInfo.exists()) {
+        emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        return 0;
     }
+
+    // If surrogate model is used, display additional info.
+    QDir tempFolder(filenameTabInfo.absolutePath());
+    QFileInfo surrogateTabInfo(tempFolder.filePath("surrogateTab.out"));
+    if (surrogateTabInfo.exists()) {
+        filenameTab = tempFolder.filePath("surrogateTab.out");
+        isSurrogate = true;
+    }
+
 
 
     //
     // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
 
-    theDataTable = new ResultsDataChart(filenameTab);
+    theDataTable = new ResultsDataChart(filenameTab, isSurrogate, theRVs->getNumRandomVariables());
 
 
     tabWidget->addTab(sa,tr("Summary"));

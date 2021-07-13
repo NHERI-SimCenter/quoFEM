@@ -216,6 +216,14 @@ int DakotaResultsSensitivity::processResults(QString &filenameResults, QString &
         return 0;
     }
 
+    // If surrogate model is used, display additional info.
+    QDir tempFolder(filenameTabInfo.absolutePath());
+    QFileInfo surrogateTabInfo(tempFolder.filePath("surrogateTab.out"));
+    if (surrogateTabInfo.exists()) {
+        filenameTab = tempFolder.filePath("surrogateTab.out");
+        isSurrogate = true;
+    }
+
     //
     // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
     //
@@ -389,7 +397,8 @@ Node_2_Disp Sobol' indices:
     //
 
 
-    theDataTable = new ResultsDataChart(filenameTab);
+    //theDataTable = new ResultsDataChart(filenameTab);
+    theDataTable = new ResultsDataChart(filenameTab, isSurrogate, theRVs->getNumRandomVariables());
 
 
     //
@@ -476,6 +485,7 @@ DakotaResultsSensitivity::outputToJSON(QJsonObject &jsonObject)
     bool result = true;
 
     jsonObject["resultType"]=QString(tr("DakotaResultsSensitivity"));
+    jsonObject["isSurrogate"]=isSurrogate;
 
     if (spreadsheet == NULL)
         return true;
@@ -601,7 +611,10 @@ DakotaResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
     gsaChart(*&sa);
 
 
-    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+    //theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+
+    isSurrogate=jsonObject["isSurrogate"].toBool();
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
     tabWidget->addTab(sa,tr("Summary"));
     tabWidget->addTab(theDataTable, tr("Data Values"));

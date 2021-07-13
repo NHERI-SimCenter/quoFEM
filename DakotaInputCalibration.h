@@ -88,8 +88,7 @@ private:
     QLineEdit   *convergenceTol;
 //    QLineEdit   *scalingFactors;
     QLineEdit   *calDataFileEdit;
-
-    RandomVariablesContainer *theParameters;
+    RandomVariablesContainer *theRandomVariables;
     DakotaCalibrationResults *results;
 };
 
