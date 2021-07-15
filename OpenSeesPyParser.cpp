@@ -82,7 +82,7 @@ OpenSeesPyParser::getVariables(QString inFilename)
     std::size_t found = line.find(equalTo);
     std::size_t foundComm = line.find(comment);
 
-    if (found != std::string::npos) {
+    if ((found != std::string::npos) && (foundComm>found)){
 
       std::string varName = line.substr(0, found);
       varName.erase(std::remove_if(varName.begin(), varName.end(), ::isspace), varName.end());

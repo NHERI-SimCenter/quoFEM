@@ -1254,7 +1254,7 @@ AgaveCurl::deleteJob(const QString &jobID, const QStringList &dirToRemove)
             emit errorMessage(message);
             return false;
         } else if (status == "success") {
-            emit statusMessage("Successfullt deleted job");
+            emit statusMessage("Successfully deleted job");
             return true;
         }
     }

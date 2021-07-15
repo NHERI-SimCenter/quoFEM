@@ -342,6 +342,10 @@ DakotaInputBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
     uq["seed"]=randomSeed->text().toDouble();
     uq["calibrationDataFile"]=calDataFileEdit->text();
 
+    if (chains->text().toInt()<3) {
+        sendErrorMessage("ERROR: Number of chains must be greater than 2");
+        result = false;
+    }
 //    if (uq.contains("calibrationDataFile")) {
 //        QString calDataFile = uq["calibrationDataFile"].toString();
 //        calDataFileEdit->setText(calDataFile);

@@ -45,6 +45,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonObject>
+#include "ResultsDataChart.h"
+
 using namespace QtCharts;
 
 class QTextEdit;
@@ -72,8 +74,6 @@ signals:
 
 public slots:
    void clear(void);
-   void onSpreadsheetCellClicked(int, int);
-   void onSaveSpreadsheetClicked(void);
    void onSaveModelClicked(void);
    void onSaveInfoClicked(void);
    void onSaveXClicked(void);
@@ -85,26 +85,19 @@ private:
    RandomVariablesContainer *theRVs;
    QTabWidget *tabWidget;
 
-   MyTableWidget *spreadsheet=NULL;  // MyTableWidget inherits the QTableWidget
-   QChart *chart;
    QPushButton* save_spreadheet; // save the data from spreadsheet
    QLabel *label;
    QLabel *best_fit_instructions;
 
-   int col1, col2;
-   bool mLeft;
    QStringList theHeadings;
    QString workingDir;
 
-   QVector<QString>theNames;
-   QVector<double>theMeans;
-   QVector<double>theStdDevs;
-   QVector<double>theKurtosis;
 
    QPushButton *saveModelButton;
    QPushButton *saveResultButton ;
    QPushButton *saveXButton;
    QPushButton *saveYButton;
+   ResultsDataChart * theDataTable;
 
    QJsonObject jsonObj;
    bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory);
