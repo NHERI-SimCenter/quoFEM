@@ -64,6 +64,7 @@ SOURCES += main.cpp\
         DakotaEngine.cpp \
         SimCenterUQEngine.cpp \
         UQpyEngine.cpp \
+    bayesplots.cpp \
 	filterEngine.cpp \
         InputWidgetParameters.cpp \
         DakotaResultsBayesianCalibration.cpp \
@@ -125,6 +126,7 @@ HEADERS  += MainWindow.h \
     DakotaEngine.h \
     SimCenterUQEngine.h \
     UQpyEngine.h \
+    bayesplots.h \
     filterEngine.h \
     InputWidgetParameters.h \
     DakotaInputBayesianCalibration.h \
