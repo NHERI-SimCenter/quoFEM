@@ -53,6 +53,7 @@ class QTabWidget;
 class MyTableWidget;
 class MainWindow;
 class RandomVariablesContainer;
+class BayesPlots;
 
 //class QChart;
 
@@ -99,6 +100,8 @@ private:
    ResultsDataChart *theDataTable;
    ResultsDataChart *theDataTablePrior;
    ResultsDataChart *theDataTableCalData;
+
+   BayesPlots *thePlot;
 
 };
 
