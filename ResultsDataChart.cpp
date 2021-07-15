@@ -156,7 +156,7 @@ ResultsDataChart::getStatistics() {
 //    QVector<double> kurtosis_vector;
     QVector<QString> var_names;
 
-    for (int col = 0; col<colCount; ++col) { // +1 for first col which is nit an RV
+    for (int col = 0; col<colCount; ++col) { // +1 for first col which is not an RV
         // compute the mean
         double sum_value=0;
         for(int row=0;row<rowCount;++row) {
@@ -218,6 +218,35 @@ ResultsDataChart::getStatistics() {
     }
     return statistics;
     //summaryLayout->addStretch();
+}
+
+
+QVector<QVector<double>>
+ResultsDataChart::getMinMax() {
+    //
+    // determine min and max value from posterior prediction for each edp
+    //
+    QVector<QVector<double>> minMax;
+
+    for (int col = 0; col<colCount; ++col) {
+        // compute the min and max
+        QTableWidgetItem *item_index = spreadsheet->item(0,col);
+        double min = item_index->text().toDouble();
+        double max = item_index->text().toDouble();
+
+        for(int row=0;row<rowCount;++row) {
+            QTableWidgetItem *item_index = spreadsheet->item(row,col);
+            double value_item = item_index->text().toDouble();
+            if (value_item > max) {
+                max = value_item;
+            }
+            else if (value_item < min) {
+                min = value_item;
+            }
+        }
+        minMax.push_back({min, max});
+    }
+    return minMax;
 }
 
 
