@@ -1340,8 +1340,6 @@ class GpFromModel(object):
             pickle.dump(self.m_list, file)
             # json.dump(self.m_list, file)
 
-        with open(self.work_dir +'/' + filename + '.txt','wb') as file:
-
 
         header_string_x = ' ' + ' '.join([str(elem) for elem in self.rv_name]) + ' '
         header_string_y = ' ' + ' '.join([str(elem) for elem in self.g_name])
@@ -1358,6 +1356,7 @@ class GpFromModel(object):
         results["doSimulation"] = self.do_simulation
         results["doDoE"] = self.do_doe
         results["doLogtransform"] = self.do_logtransform
+        results["doLinear"] = self.do_linear
         results["doMultiFidelity"] = self.do_mf
         results["kernName"] = self.kernel
         results["terminationCode"] = self.exit_code
@@ -1376,7 +1375,12 @@ class GpFromModel(object):
         results["valR2"] = {}
         results["valCorrCoeff"] = {}
         results["yPredict_CI_lb"] = {}
-        results["yPredict_CI_lb"] = {}
+        results["yPredict_CI_ub"] = {}
+        results["xExact"] = {}
+
+        for nx in range(self.x_dim):
+            results["xExact"][self.rv_name[nx]] = self.X[:, nx].tolist()
+
         for ny in range(self.y_dim):
             if not self.do_mf:
                 results["yExact"][self.g_name[ny]] = self.Y[:, ny].tolist()
@@ -1446,6 +1450,18 @@ class GpFromModel(object):
             rv_list = rv_list + [rvs]
         results["randomVariables"] = rv_list
 
+
+
+        ### Used for surrogate
+        results["modelInfo"] = {}
+
+        if not self.do_mf:
+            for i in range(self.y_dim):
+                for parname in self.m_list[i].parameter_names():
+                    print(parname)
+                    results["modelInfo"][parname] = list(eval('self.m_list[i].' + parname))
+
+
         with open('dakota.out', 'w') as fp:
             json.dump(results, fp, indent=1)
 
@@ -1505,6 +1521,7 @@ class GpFromModel(object):
             file.close()
 
         print("Results Saved")
+
 
 def run_FEM(X,id_sim, rv_name):
     x_dim = X.shape[1]
@@ -1630,7 +1647,6 @@ def build_surrogate(work_dir, os_type, run_type):
     gp.save_model(filename)
 
 # the actual execution
-
 
 # ==========================================================================================
 

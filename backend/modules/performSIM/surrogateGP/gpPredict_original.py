@@ -7,7 +7,6 @@ import json as json
 import shutil
 import subprocess
 from scipy.stats import lognorm, norm
-import GPy as GPy
 
 from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
 
@@ -16,6 +15,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
 
     os_type='win'
     run_type ='runninglocal'
+
 
     #
     # create a log file
@@ -46,9 +46,9 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
     when_inaccurate = inp_tmp["fem"]["femOption"]
     do_mf = inp_tmp
 
-    np.random.seed(int(inp_tmp["fem"]["gpSeed"])+int(sampNum))
 
-    # sampNum=0
+    #np.random.seed(int(inp_tmp["fem"]["gpSeed"]))
+    np.random.seed(int(inp_tmp["fem"]["gpSeed"])+int(sampNum))
 
     # if no g and rv,
 
@@ -80,47 +80,15 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
     # from json
     g_name_sur = list()
     ng_sur = 0
-    Y=np.zeros((sur['valSamp'],sur['ydim']))
     for g in sur['ylabels']:
         g_name_sur += [g]
-        Y[:,ng_sur]=np.array(sur['yExact'][g])
         ng_sur += 1
 
     rv_name_sur = list()
     nrv_sur = 0
-    X=np.zeros((sur['valSamp'],sur['xdim']))
     for rv in sur['xlabels']:
         rv_name_sur += [rv]
-        X[:,nrv_sur]=np.array(sur['xExact'][rv])
         nrv_sur += 1
-
-
-
-    # Read pickles
-
-    if kernel == 'Radial Basis':
-        kr = GPy.kern.RBF(input_dim=nrv_sur, ARD=True)
-    elif kernel == 'Exponential':
-        kr = GPy.kern.Exponential(input_dim=nrv_sur, ARD=True)
-    elif kernel == 'Matern 3/2':
-        kr = GPy.kern.Matern32(input_dim=nrv_sur, ARD=True)
-    elif kernel == 'Matern 5/2':
-        kr = GPy.kern.Matern52(input_dim=nrv_sur, ARD=True)
-
-    if sur['doLinear']:
-        kr = kr + GPy.kern.Linear(input_dim=nrv_sur, ARD=True)
-
-    if did_logtransform:
-        Y = np.log(Y)
-
-    if not did_mf:
-        kg = kr
-        m_list = list()
-        for i in range(ng_sur):
-            m_list = m_list + [GPy.models.GPRegression(X, Y[:, i][np.newaxis].transpose(), kernel=kg.copy())]
-            for key, val in sur["modelInfo"].items():
-                exec('m_list[i].' + key + '= np.array(val)')
-
 
     # to read:::
     # kern_name='Mat52'
@@ -182,20 +150,22 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
     # f.close()
 
 
-    # try:
-    #     f = open(surrogate_dir, 'rb')
-    # except OSError:
-    #     msg = 'Could not open/read surrogate model from: ' + surrogate_dir + '\n'
-    #     print(msg)
-    #     error_file.write(msg)
-    #     error_file.close()
-    #     file_object.write(msg0+msg)
-    #     file_object.close()
-    #     exit(-1)
-    # with f:
-    #     m_list = pickle.load(f)
+    try:
+        f = open(surrogate_dir, 'rb')
+    except OSError:
+        msg = 'Could not open/read surrogate model from: ' + surrogate_dir + '\n'
+        print(msg)
+        error_file.write(msg)
+        error_file.close()
+        file_object.write(msg0+msg)
+        file_object.close()
+        exit(-1)
+    with f:
+        m_list = pickle.load(f)
 
 
+    # with open(work_dir + '/' + filename + '.pkl', 'rb') as file:
+    #    m = pickle.load(file)
 
     # read param in file and sort input
 
@@ -319,7 +289,6 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
             error_file.write(msg2)
             file_object.write(msg2)
             error_file.close()
-
             if inp_tmp["fem"]["predictionOption"].lower().startswith("median"):
                 y_pred = y_pred_median[g_idx]
             elif inp_tmp["fem"]["predictionOption"].lower().startswith("rand"):

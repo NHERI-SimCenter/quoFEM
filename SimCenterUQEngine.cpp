@@ -142,13 +142,11 @@ void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
     if (arg1 == QString("Forward Propagation")) {
         theStackedWidget->setCurrentIndex(0);
         theCurrentEngine = theSamplingEngine;
-
     } else if ((arg1 == QString("Sensitivity")) || (arg1 == QString("Sensitivity Analysis"))) {
        theStackedWidget->setCurrentIndex(1);
        theCurrentEngine = theSensitivityEngine;
        theEdpWidget->showAdvancedSensitivity(true);
        //theFemWidget->setFemGP(false);
-
     } else if ((arg1 == QString("Surrogate")) || (arg1 == QString("Train GP Surrogate Model"))) {
        theStackedWidget->setCurrentIndex(2);
        theCurrentEngine = theSurrogateEngine;

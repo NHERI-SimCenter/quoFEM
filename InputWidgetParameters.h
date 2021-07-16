@@ -58,7 +58,7 @@ public:
     void setGPVarNamesAndValues(QStringList theList);
     QStringList getParametereNames(void);
     void setCorrelationDisabled(bool tog);
-
+    int getNumRandomVariables(void);
     void clear(void);
 
 signals:
