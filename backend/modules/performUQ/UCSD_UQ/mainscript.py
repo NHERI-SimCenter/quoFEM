@@ -100,6 +100,45 @@ if __name__ == '__main__':
     logFile.write(printString)
     logFile.write("\nExpected length of each line in data file: {}".format(lineLength))
 
+    # # ======================================================================================================================
+    # # Process calibration data file
+    # logFile.write('\n\n==========================')
+    # logFile.write('\nProcessing calibration data file')
+    # calDataFile = os.path.join(calDataPath, calDataFileName)
+    # logFile.write("\nCalibration data file being processed: {}\n".format(calDataFile))
+    # tempCalDataFile = os.path.join(workdir_template, "quoFEMTempCalibrationDataFile.cal")
+    # f1 = open(tempCalDataFile, "w")
+    # numExperiments = 0
+    # linenum = 0
+    # with open(calDataFile, "r") as f:
+    #     for line in f:
+    #         linenum += 1
+    #         if len(line.strip()) == 0:
+    #             continue
+    #         else:
+    #             line = line.replace(',', ' ')
+    #             # Check length of each line
+    #             words = line.split()
+    #             tempLine = ""
+    #             if len(words) == lineLength:
+    #                 for w in words:
+    #                     tempLine += "{} ".format(w)
+    #                 logFile.write("\nLine {}, length {}: {}".format(linenum, len(words), tempLine))
+    #                 if numExperiments == 0:
+    #                     f1.write(tempLine)
+    #                 else:
+    #                     f1.write("\n")
+    #                     f1.write(tempLine)
+    #                 numExperiments += 1
+    #             else:
+    #                 logFile.write("\nERROR: The number of entries ({}) in line num {} of the file '{}' "
+    #                               "does not match the expected length {}".format(len(words), linenum,
+    #                                                                              calDataFile, lineLength))
+    #                 raise DataProcessingError("ERROR: The number of entries ({}) in line num {} of the file '{}' "
+    #                                           "does not match the expected length {}".format(len(words), linenum,
+    #                                                                                          calDataFile, lineLength))
+    # f1.close()
+
     # ======================================================================================================================
     # Process calibration data file
     logFile.write('\n\n==========================')
@@ -108,6 +147,16 @@ if __name__ == '__main__':
     logFile.write("\nCalibration data file being processed: {}\n".format(calDataFile))
     tempCalDataFile = os.path.join(workdir_template, "quoFEMTempCalibrationDataFile.cal")
     f1 = open(tempCalDataFile, "w")
+    logFile.write("\n\nCreating headings")
+    headings = "Exp_num interface "
+    for i, edpName in enumerate(edpNamesList):
+        if edpLengthsList[i] == 1:
+            headings += "{} ".format(edpName)
+        else:
+            for comp in range(edpLengthsList[i]):
+                headings += "{}_{} ".format(edpName, comp + 1)
+    f1.write(headings)
+    interface = 1
     numExperiments = 0
     linenum = 0
     with open(calDataFile, "r") as f:
@@ -119,17 +168,18 @@ if __name__ == '__main__':
                 line = line.replace(',', ' ')
                 # Check length of each line
                 words = line.split()
-                tempLine = ""
                 if len(words) == lineLength:
+                    numExperiments += 1
+                    tempLine = "\n{} {} ".format(numExperiments, interface)
                     for w in words:
                         tempLine += "{} ".format(w)
                     logFile.write("\nLine {}, length {}: {}".format(linenum, len(words), tempLine))
-                    if numExperiments == 0:
-                        f1.write(tempLine)
-                    else:
-                        f1.write("\n")
-                        f1.write(tempLine)
-                    numExperiments += 1
+                    f1.write(tempLine)
+                    # if numExperiments == 0:
+                    #     f1.write(tempLine)
+                    # else:
+                    #     f1.write("\n")
+                    #     f1.write(tempLine)
                 else:
                     logFile.write("\nERROR: The number of entries ({}) in line num {} of the file '{}' "
                                   "does not match the expected length {}".format(len(words), linenum,
@@ -140,7 +190,7 @@ if __name__ == '__main__':
     f1.close()
 
     # Read in the calibration data
-    calibrationData = np.atleast_2d(np.genfromtxt(tempCalDataFile))
+    calibrationData = np.atleast_2d(np.genfromtxt(tempCalDataFile, skip_header=1, usecols=np.arange(2, 2+lineLength)))
     logFile.write(
         "\nFinished reading in calibration data. Shape of calibration data: {}\n".format(np.shape(calibrationData)))
     logFile.write('\nThe number of experiments: {}'.format(np.shape(calibrationData)[0]))

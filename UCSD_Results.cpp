@@ -39,6 +39,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "UCSD_Results.h"
 //#include "InputWidgetFEM.h"
+#include "bayesplots.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -190,7 +191,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     this->clear();
 
     //
-    // check it actually ran with n errors
+    // check it actually ran with no errors
     //
 
 
@@ -264,12 +265,12 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
 
     theDataTablePrior = new ResultsDataChart(filenameTabPrior);
     QVector<QVector<double>> statisticsVectorPrior = theDataTablePrior->getStatistics();
-    QVector<QString> namesVectorPrior = theDataTablePrior->getNames();
-    for (int col = 1; col<namesVectorPrior.size(); ++col) {
-        QWidget *theWidgetPrior = this->createResultEDPWidget(namesVectorPrior[col], statisticsVectorPrior[col]);
-        summaryLayout->addWidget(theWidgetPrior);
-    }
-    summaryLayout->addStretch();
+//    QVector<QString> namesVectorPrior = theDataTablePrior->getNames();
+//    for (int col = 1; col<namesVectorPrior.size(); ++col) {
+//        QWidget *theWidgetPrior = this->createResultEDPWidget(namesVectorPrior[col], statisticsVectorPrior[col]);
+//        summaryLayout->addWidget(theWidgetPrior);
+//    }
+//    summaryLayout->addStretch();
 
     // Read the dakota.json file located in ./templatedir
     QDir fileDir = filenameTabInfo.absoluteDir();
@@ -320,11 +321,22 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     theDataTableCalData = new ResultsDataChart(calFileName);
     QVector<QVector<double>> statisticsVectorCalData = theDataTableCalData->getStatistics();
     QVector<QString> namesVectorCalData = theDataTablePrior->getNames();
-    for (int col = 1; col<namesVectorPrior.size(); ++col) {
-        QWidget *theWidgetPrior = this->createResultEDPWidget(namesVectorPrior[col], statisticsVectorPrior[col]);
-        summaryLayout->addWidget(theWidgetPrior);
-    }
-    summaryLayout->addStretch();
+//    for (int col = 1; col<namesVectorPrior.size(); ++col) {
+//        QWidget *theWidgetPrior = this->createResultEDPWidget(namesVectorPrior[col], statisticsVectorPrior[col]);
+//        summaryLayout->addWidget(theWidgetPrior);
+//    }
+//    summaryLayout->addStretch();
+
+
+    // Get the range of the predictions
+    QVector<QVector<double>> minMaxVector = theDataTable->getMinMax();
+    QVector<QVector<double>> minMaxVectorPrior = theDataTablePrior->getMinMax();
+
+    QString xLabel = "Component";
+    QString yLabel = "Value";
+
+    BayesPlots *thePlot = new BayesPlots(xLabel, yLabel);
+    thePlot->plotPosterior(minMaxVector, minMaxVectorPrior, statisticsVector, statisticsVectorPrior, statisticsVectorCalData);
 
 
     //
@@ -336,6 +348,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
 //    tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->addTab(theDataTable, tr("Posterior"));
     tabWidget->addTab(theDataTableCalData, tr("Calibration Data"));
+    tabWidget->addTab(thePlot, tr("Plots"));
     tabWidget->adjustSize();
 
     emit sendStatusMessage(tr(""));

@@ -67,6 +67,7 @@ public:
 
     QVector<QVector<double>> getStatistics();
     QVector<QString> getNames();
+    QVector<QVector<double>> getMinMax();
 
 signals:
 
