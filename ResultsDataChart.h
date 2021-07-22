@@ -82,6 +82,8 @@ private:
     void readTableFromTab(QString filenameTab);
     void readTableFromJson(QJsonObject jsonobj);
     void makeChart(void);
+    float my_erfinvf(float a);
+    float my_logf(float a);
 
     //QLineEdit *randomSeed;
     //QLineEdit *numSamples;

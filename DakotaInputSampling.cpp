@@ -156,15 +156,15 @@ void DakotaInputSampling::onTextChanged(const QString &text)
   //  theCurrentMethod = theIS;
   //}
   else if (text=="Gaussian Process Regression") {
-    theStackedWidget->setCurrentIndex(3);
+    theStackedWidget->setCurrentIndex(2);
     theCurrentMethod = theGP;
   }
   else if (text=="Polynomial Chaos Expansion") {
-    theStackedWidget->setCurrentIndex(4);
+    theStackedWidget->setCurrentIndex(3);
     theCurrentMethod = thePCE;
   }
   else if (text=="Multi Fidelity Monte Carlo") {
-    theStackedWidget->setCurrentIndex(5);
+    theStackedWidget->setCurrentIndex(4);
     theCurrentMethod = theMFMC;
   }
 }
