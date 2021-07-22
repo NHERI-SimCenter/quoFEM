@@ -214,7 +214,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
         y_pred_median_tmp, y_pred_var_tmp = predict(m_list[ny],rv_val,did_mf)
         y_samp_tmp = np.random.normal(y_pred_median_tmp,np.sqrt(y_pred_var_tmp))
         if did_logtransform:
-            y_pred_median[ny] = np.exp(y_pred_median_tmp)
+            y_pred_median_tmp[ny] = np.exp(y_pred_median_tmp)
             # y_var_val = np.var(np.log(m_list[ny].Y))
             log_mean = np.mean((m_list[ny].Y))
             log_var = np.var((m_list[ny].Y))
