@@ -231,7 +231,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
 
         else:
             y_data_var[ny] = np.var(m_list[ny].Y)
-            y_pred_median[ny]=y_pred_median
+            y_pred_median[ny]=y_pred_median_tmp
             y_pred_var[ny] = y_pred_var_tmp
             y_samp[ny] = y_samp_tmp
             y_q1[ny] = norm.ppf(0.05, loc=y_pred_median, scale=np.sqrt(y_pred_var_tmp))
