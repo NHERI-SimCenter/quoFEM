@@ -1340,10 +1340,7 @@ class GpFromModel(object):
             pickle.dump(self.m_list, file)
             # json.dump(self.m_list, file)
 
-<<<<<<< HEAD
 
-=======
->>>>>>> aakash/master
         header_string_x = ' ' + ' '.join([str(elem) for elem in self.rv_name]) + ' '
         header_string_y = ' ' + ' '.join([str(elem) for elem in self.g_name])
         header_string = header_string_x + header_string_y
