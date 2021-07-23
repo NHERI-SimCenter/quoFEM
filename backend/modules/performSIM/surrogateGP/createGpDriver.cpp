@@ -131,7 +131,7 @@ int main(int argc, const char **argv) {
       gpCommand = pythonCommand + std::string(" \"") + localDir + std::string("/applications/performSIM/surrogateGP/gpPredict.py\"");
     } else {
       dpreproCommand = std::string("\"") + localDir + std::string("/applications/performUQ/templateSub/simCenterSub\"");
-      gpCommand = pythonCommand + std::string(" \"") + localDir + std::string("/applications/performSIM/surrogateGP/gpPredict\"");
+      gpCommand = pythonCommand + std::string(" \"") + localDir + std::string("/applications/performSIM/surrogateGP/gpPredict.py\"");
     }
     
 

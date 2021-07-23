@@ -323,7 +323,7 @@ void FEM::femProgramChanged(const QString &arg1)
       QHBoxLayout *numberLayout = new QHBoxLayout();
       numberLayout->addWidget(customNumberLabel);
       numberLayout->addWidget(theCustomInputNumber);
-      //numberLayout->addStretch();
+      numberLayout->addStretch();
 
       theCustomLayout->addLayout(numberLayout);
 
@@ -335,7 +335,9 @@ void FEM::femProgramChanged(const QString &arg1)
       QVBoxLayout *customLayout = new QVBoxLayout();
 
       // Add location to add driver script
-      SectionTitle *textCustom=new SectionTitle();
+      QLabel *textCustom=new QLabel();
+      textCustom->setStyleSheet("font-weight: bold");
+
       textCustom->setText(tr("Input driver script that runs and post-processes application"));
       QSpacerItem *customSpacer = new QSpacerItem(50,10);
 
@@ -820,7 +822,7 @@ double FEM::interpolateForGP(QVector<double> X, QVector<double> Y, double Xval){
 QStringList FEM::parseGPInputs(QString file1){
 
     //
-    // want to make a GP option box
+    // make a GP option box
     //
 
     // completely delete layout and sublayouts
@@ -907,7 +909,7 @@ QStringList FEM::parseGPInputs(QString file1){
     femLayout->addWidget(groupBox,3,0,1,3);
 
     QLabel *labelVarThres = new QLabel("Maximum Allowable Normalized Variance  ");
-    QLabel *optionsLabel = new QLabel("When surroagate model gives imprecise prediction at certain sample locations");
+    QLabel *optionsLabel = new QLabel("When surrogate model gives imprecise prediction at certain sample locations");
 
     option1Button = new QRadioButton();
     QLabel *option1Label = new QLabel("     Stop Analysis");
@@ -1038,5 +1040,17 @@ QStringList FEM::parseGPInputs(QString file1){
     //theParameters->setInitialVarNamesAndValues(varNamesAndValues);
     theEdpWidget->setGPQoINames(qoiNames);
     option1Button->setChecked(false);
+
+
+
+    //
+    // make a GP result options box
+    //
+
+    QLabel * gpOutputLabel= new QLabel("GP output");
+    QComboBox * gpOutputSelection = new QComboBox();
+    gpOutputSelection->addItem(tr("Optimal (median) estimates"));
+    gpOutputSelection->addItem(tr("Random sample"));
+
     return varNamesAndValues;
 }
