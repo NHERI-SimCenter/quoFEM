@@ -83,55 +83,7 @@ DakotaResultsCalibration::DakotaResultsCalibration(QWidget *parent)
     // title & add button
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
-    mLeft = true;
-    col1 = 0;
-    col2 = 0;
 
-    summary = new QWidget();
-    summaryLayout = new QVBoxLayout();
-    summaryLayout->setContentsMargins(0,0,0,0);
-    summary->setLayout(summaryLayout);
-    tabWidget->addTab(summary,tr("Summary"));
-
-    dakotaText = new QTextEdit();
-    dakotaText->setReadOnly(true); // make it so user cannot edit the contents
-    tabWidget->addTab(dakotaText, tr("General"));
-
-
-     spreadsheet = new MyTableWidget();
-     spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
-     connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
-
-     spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
-     connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
-
-     chart = new QChart();
-     chart->setAnimationOptions(QChart::AllAnimations);
-
-     QChartView *chartView = new QChartView(chart);
-     chartView->setRenderHint(QPainter::Antialiasing);
-     chartView->chart()->legend()->hide();
-
-     //
-     // create a widget into which we place the chart and the spreadsheet
-     //
-
-     QWidget *widget = new QWidget();
-     QGridLayout *layout = new QGridLayout(widget);
-     QPushButton* save_spreadsheet = new QPushButton();
-     save_spreadsheet->setText("Save Data");
-     save_spreadsheet->setToolTip(tr("Save data into file in a CSV format"));
-     save_spreadsheet->resize(30,30);
-     connect(save_spreadsheet,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetClicked()));
-
-     layout->setContentsMargins(0,0,0,0);
-     layout->setSpacing(3);
-
-     layout->addWidget(chartView, 0,0,1,1);
-     layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
-     layout->addWidget(spreadsheet,2,0,1,1);
-
-     tabWidget->addTab(widget, tr("Data Values"));
 }
 
 DakotaResultsCalibration::~DakotaResultsCalibration()
@@ -152,9 +104,10 @@ void DakotaResultsCalibration::clear(void)
     delete gen;
     delete res;
     */
-    spreadsheet->clear();
-    dakotaText->clear();
-
+//    spreadsheet->clear();
+//    dakotaText->clear();
+    tabWidget->clear();
+    theDataTable = NULL;
 }
 
 bool
@@ -189,35 +142,9 @@ DakotaResultsCalibration::outputToJSON(QJsonObject &jsonObject)
     //
     // add spreadsheet data
     //
-
-    QJsonObject spreadsheetData;
-
-    int numCol = spreadsheet->columnCount();
-    int numRow = spreadsheet->rowCount();
-
-    spreadsheetData["numRow"]=numRow;
-    spreadsheetData["numCol"]=numCol;
-
-    QJsonArray headingsArray;
-    for (int i = 0; i <theHeadings.size(); ++i) {
-        headingsArray.append(QJsonValue(theHeadings.at(i)));
+    if(theDataTable != NULL) {
+        theDataTable->outputToJSON(jsonObject);
     }
-
-    spreadsheetData["headings"]=headingsArray;
-
-    QJsonArray dataArray;
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    for (int row = 0; row < numRow; ++row) {
-        for (int column = 0; column < numCol; ++column) {
-            QTableWidgetItem *theItem = spreadsheet->item(row,column);
-            QString textData = theItem->text();
-            dataArray.append(textData.toDouble());
-        }
-    }
-    QApplication::restoreOverrideCursor();
-    spreadsheetData["data"]=dataArray;
-
-    jsonObject["spreadsheet"] = spreadsheetData;
     return result;
 }
 
@@ -232,9 +159,22 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
        return true;
     }
 
+
     //
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
+
+    QScrollArea *sa = new QScrollArea;
+    sa->setWidgetResizable(true);
+    sa->setLineWidth(0);
+    sa->setFrameShape(QFrame::NoFrame);
+
+    QWidget *summary = new QWidget();
+    QVBoxLayout *summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0); // adding back
+    summary->setLayout(summaryLayout);
+
+    sa->setWidget(summary);
 
     QJsonArray edpArray = jsonObject["summary"].toArray();
     foreach (const QJsonValue &edpValue, edpArray) {
@@ -256,6 +196,8 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
     // into dakotaText place more detailed Dakota text
     //
 
+    dakotaText = new QTextEdit();
+    dakotaText->setReadOnly(true); // make it so user cannot edit the contents
     QJsonValue theValue = jsonObject["general"];
     dakotaText->setText(theValue.toString());
 
@@ -263,40 +205,19 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
     // into a spreadsheet place all the data returned
     //
 
-    QJsonObject spreadsheetData = jsonObject["spreadsheet"].toObject();
-    int numRow = spreadsheetData["numRow"].toInt();
-    int numCol = spreadsheetData["numCol"].toInt();
-    spreadsheet->setColumnCount(numCol);
-    spreadsheet->setRowCount(numRow);
-
-    QJsonArray headingData= spreadsheetData["headings"].toArray();
-    for (int i=0; i<numCol; i++) {
-        theHeadings << headingData.at(i).toString();
+    QJsonValue spreadsheetValue = jsonObject["spreadsheet"];
+    if (spreadsheetValue.isNull()) { // ok .. if saved files but did not run a simulation
+        return true;
     }
 
-    spreadsheet->setHorizontalHeaderLabels(theHeadings);
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
 
-    QJsonArray dataData= spreadsheetData["data"].toArray();
-    int dataCount =0;
-    for (int row =0; row<numRow; row++) {
-        for (int col=0; col<numCol; col++) {
-            QModelIndex index = spreadsheet->model()->index(row, col);
-            spreadsheet->model()->setData(index, dataData.at(dataCount).toDouble());
-            dataCount++;
-        }
-    }
-
-    //
-    // create a chart, setting data points from first and last col of spreadsheet
-    //
-
-    col1 = 0;
-    col2 = numCol-1;
-    mLeft = true;
-    this->onSpreadsheetCellClicked(0,numCol-1);
-
+    tabWidget->addTab(sa,tr("Summary"));
+    tabWidget->addTab(dakotaText,tr("General"));
+    tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
     return result;
+
 }
 
 
@@ -351,6 +272,9 @@ static int mergesort(double *input, int size)
 
 int DakotaResultsCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
+    emit sendStatusMessage(tr("Processing Sampling Results"));
+
+    this->clear();
 
     //
     // open Dakota output file
@@ -362,6 +286,22 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
         qDebug() << "Could not open file: " << filenameResults;
         return -1;
     }
+
+
+    QScrollArea *sa = new QScrollArea;
+    sa->setWidgetResizable(true);
+    sa->setLineWidth(0);
+    sa->setFrameShape(QFrame::NoFrame);
+
+    summary = new QWidget();
+    summaryLayout = new QVBoxLayout();
+    summaryLayout->setContentsMargins(0,0,0,0);
+    summary->setLayout(summaryLayout);
+    sa->setWidget(summary);
+
+    dakotaText = new QTextEdit();
+    dakotaText->setReadOnly(true); // make it so user cannot edit the contents
+
 
     // now ignore every line until Best Parameters
 
@@ -431,332 +371,22 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
         return -1;
     }
 
+
     //
-    // read first line and set headings (ignoring second column for now)
+    // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
 
-    std::string inputLine;
-    std::getline(tabResults, inputLine);
-    std::istringstream iss(inputLine);
-    int colCount = 0;
-    theHeadings << "Run #";
-    do
-    {
-        std::string subs;
-        iss >> subs;
-        if (colCount > 1) {
-            if (subs != " ") {
-                theHeadings << subs.c_str();
-            }
-        }
-        colCount++;
-    } while (iss);
-
-    colCount = colCount-2;
-    spreadsheet->setColumnCount(colCount);
-    spreadsheet->setHorizontalHeaderLabels(theHeadings);
-
-    // now until end of file, read lines and place data into spreadsheet
-
-    int rowCount = 0;
-    while (std::getline(tabResults, inputLine)) {
-        std::istringstream is(inputLine);
-        int col=0;
-        spreadsheet->insertRow(rowCount);
-        for (int i=0; i<colCount+2; i++) {
-            std::string data;
-            is >> data;
-            if (i != 1) {
-                QModelIndex index = spreadsheet->model()->index(rowCount, col);
-                spreadsheet->model()->setData(index, data.c_str());
-                col++;
-            }
-        }
-        rowCount++;
-    }
-    tabResults.close();
+    theDataTable = new ResultsDataChart(filenameTab);
 
 
-    this->onSpreadsheetCellClicked(0,colCount-1);
-
-
+    tabWidget->addTab(sa,tr("Summary"));
+    tabWidget->addTab(dakotaText, tr("General"));
+    tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
     emit sendStatusMessage(tr(""));
 
     return 0;
-}
-
-void
-DakotaResultsCalibration::onSpreadsheetCellClicked(int row, int col)
-{
-    mLeft = spreadsheet->wasLeftKeyPressed();
-
-    // create a new series
-    chart->removeAllSeries();
-    //chart->removeA
-    QAbstractAxis *oldAxisX=chart->axisX();
-    if (oldAxisX != 0)
-        chart->removeAxis(oldAxisX);
-    QAbstractAxis *oldAxisY=chart->axisY();
-    if (oldAxisY != 0)
-        chart->removeAxis(oldAxisY);
-
-
-    // QScatterSeries *series;//= new QScatterSeries;
-
-    int oldCol;
-    if (mLeft == true) {
-        oldCol= col2;
-        col2 = col;
-    } else {
-        oldCol= col1;
-        col1 = col;
-    }
-
-    int rowCount = spreadsheet->rowCount();
-    if (col1 != col2) {
-        QScatterSeries *series = new QScatterSeries;
-
-        // adjust marker size and opacity based on the number of samples
-        if (rowCount < 10) {
-            series->setMarkerSize(15.0);
-            series->setColor(QColor(0, 114, 178, 200));
-        } else if (rowCount < 100) {
-            series->setMarkerSize(11.0);
-            series->setColor(QColor(0, 114, 178, 160));
-        } else if (rowCount < 1000) {
-            series->setMarkerSize(8.0);
-            series->setColor(QColor(0, 114, 178, 100));
-        } else if (rowCount < 10000) {
-            series->setMarkerSize(6.0);
-            series->setColor(QColor(0, 114, 178, 70));
-        } else if (rowCount < 100000) {
-            series->setMarkerSize(5.0);
-            series->setColor(QColor(0, 114, 178, 50));
-        } else {
-            series->setMarkerSize(4.5);
-            series->setColor(QColor(0, 114, 178, 30));
-        }
-        
-        series->setBorderColor(QColor(255,255,255,0));
-
-        for (int i=0; i<rowCount; i++) {
-            QTableWidgetItem *itemX = spreadsheet->item(i,col1);
-            QTableWidgetItem *itemY = spreadsheet->item(i,col2);
-            QTableWidgetItem *itemOld = spreadsheet->item(i,oldCol);
-            itemOld->setData(Qt::BackgroundRole, QColor(Qt::white));
-            itemX->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
-            itemY->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
-
-            series->append(itemX->text().toDouble(), itemY->text().toDouble());
-        }
-        chart->addSeries(series);
-
-        QValueAxis *axisX = new QValueAxis();
-        QValueAxis *axisY = new QValueAxis();
-
-        axisX->setTitleText(theHeadings.at(col1));
-        axisY->setTitleText(theHeadings.at(col2));
-        axisY->setLabelFormat("%e");
-
-        //padhye adding ranges 8/25/2018
-        // finding the range for X and Y axis
-        // now the axes will look a bit clean.
-
-
-        double minX, maxX;
-        double minY, maxY;
-
-        for (int i=0; i<rowCount; i++) {
-            QTableWidgetItem *itemX = spreadsheet->item(i,col1);
-            QTableWidgetItem *itemY = spreadsheet->item(i,col2);
-            double value1 = itemX->text().toDouble();
-            double value2 = itemY->text().toDouble();
-            if (i == 0) {
-                minX=value1;
-                maxX=value1;
-                minY=value2;
-                maxY=value2;
-                        }
-            if(value1<minX){minX=value1;}
-            if(value1>maxX){maxX=value1;}
-            if(value2<minY){minY=value2;}
-            if(value2>maxY){maxY=value2;}
-        }
-
-        // if value is constant, adjust axes
-        if (minX==maxX) {
-            double axisMargin=abs(minX)*0.1;
-            minX=minX-axisMargin;
-            maxX=maxX+axisMargin;
-        }
-        if (minY==maxY) {
-            double axisMargin=abs(minY)*0.1;
-            minY=minY-axisMargin;
-            maxY=maxY+axisMargin;
-        }
-
-        double xRange=maxX-minX;
-        double yRange=maxY-minY;
-
-        if(col1!=0)
-        {
-        axisX->setRange(minX - 0.01*xRange, maxX + 0.1*xRange);
-        }
-        else{
-
-        axisX->setRange(int (minX - 1), int (maxX +1));
-       // axisX->setTickCount(1);
-
-        }
-
-        // adjust y with some fine precision
-        axisY->setRange(minY - 0.2*yRange, maxY + 0.2*yRange);
-
-
-        chart->setAxisX(axisX, series);
-        chart->setAxisY(axisY, series);
-
-    } else {
-
-        QLineSeries *series= new QLineSeries;
-
-        static double NUM_DIVISIONS_FOR_DIVISION = 10.0;
-        double *dataValues = new double[rowCount];
-        double histogram[NUM_DIVISIONS];
-        for (int i=0; i<NUM_DIVISIONS; i++)
-            histogram[i] = 0;
-
-        double min = 0;
-        double max = 0;
-        for (int i=0; i<rowCount; i++) {
-            QTableWidgetItem *itemX = spreadsheet->item(i,col1);
-            QTableWidgetItem *itemOld = spreadsheet->item(i,oldCol);
-            itemOld->setData(Qt::BackgroundRole, QColor(Qt::white));
-            itemX->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
-            double value = itemX->text().toDouble();
-            dataValues[i] =  value;
-
-            if (i == 0) {
-                min = value;
-                max = value;
-            } else if (value < min) {
-                min = value;
-            } else if (value > max) {
-                max = value;
-            }
-        }
-        if (mLeft == true) {
-
-            // frequency distribution
-            double range = max-min;
-            double dRange = range/NUM_DIVISIONS_FOR_DIVISION;
-
-            for (int i=0; i<rowCount; i++) {
-                // compute block belongs to, watch under and overflow due to numerics
-                int block = floor((dataValues[i]-min)/dRange);
-                if (block < 0) block = 0;
-                if (block > NUM_DIVISIONS-1) block = NUM_DIVISIONS-1;
-                histogram[block] += 1;
-            }
-
-            double maxPercent = 0;
-            for (int i=0; i<NUM_DIVISIONS; i++) {
-                histogram[i]/rowCount;
-                if (histogram[i] > maxPercent)
-                    maxPercent = histogram[i];
-            }
-            for (int i=0; i<NUM_DIVISIONS; i++) {
-                series->append(min+i*dRange, 0);
-                series->append(min+i*dRange, histogram[i]);
-                series->append(min+(i+1)*dRange, histogram[i]);
-                series->append(min+(i+1)*dRange, 0);
-            }
-
-            delete [] dataValues;
-
-            chart->addSeries(series);
-            QValueAxis *axisX = new QValueAxis();
-            QValueAxis *axisY = new QValueAxis();
-            axisY->setLabelFormat("%.2f");
-
-
-            axisX->setRange(min, max);
-            axisY->setRange(0, maxPercent);
-            axisY->setTitleText("Frequency %");
-            axisX->setTitleText(theHeadings.at(col1));
-            axisX->setTickCount(NUM_DIVISIONS+1);
-            chart->setAxisX(axisX, series);
-            chart->setAxisY(axisY, series);
-    } else {
-
-            // cumulative distributionn
-            mergesort(dataValues, rowCount);
-
-            for (int i=0; i<rowCount; i++) {
-                series->append(dataValues[i], 1.0*i/rowCount);
-            }
-
-            delete []dataValues;
-
-            chart->addSeries(series);
-            QValueAxis *axisX = new QValueAxis();
-            QValueAxis *axisY = new QValueAxis();
-            axisY->setLabelFormat("%.2f");
-
-
-            axisX->setRange(min, max);
-            axisY->setRange(0, 1);
-            axisY->setTitleText("Cumulative Probability");
-            axisX->setTitleText(theHeadings.at(col1));
-            axisX->setTickCount(NUM_DIVISIONS+1);
-            chart->setAxisX(axisX, series);
-            chart->setAxisY(axisY, series);
-        }
-
-
-    }
-}
-
-void
-DakotaResultsCalibration::onSaveSpreadsheetClicked()
-{
-
-    int rowCount = spreadsheet->rowCount();
-    int columnCount = spreadsheet->columnCount();
-
-    QString fileName = QFileDialog::getSaveFileName(this,
-                                                    tr("Save Data"), "",
-                                                    tr("All Files (*)"));
-
-    QFile file(fileName);
-    if (file.open(QIODevice::WriteOnly))
-    {
-        QTextStream stream(&file);
-        for (int j=0; j<columnCount; j++)
-        {
-	  if (j == columnCount -1)
-            stream <<theHeadings.at(j);	    
-	  else
-            stream <<theHeadings.at(j)<<", ";
-        }
-        stream <<endl;
-        for (int i=0; i<rowCount; i++)
-        {
-            for (int j=0; j<columnCount; j++)
-            {
-                QTableWidgetItem *item_value = spreadsheet->item(i,j);
-                double value = item_value->text().toDouble();
-		if (j == columnCount-1)		
-		  stream << value ;
-		else
-		  stream << value << ", ";		  
-            }
-            stream<<endl;
-        }
-	file.close();
-    }
 }
 
 extern QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit);

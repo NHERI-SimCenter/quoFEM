@@ -1,5 +1,5 @@
-#ifndef SURROGATE_DOE_INPUT_WIDGET_H
-#define SURROGATE_DOE_INPUT_WIDGET_H
+#ifndef RESULT_DATA_CHART_H
+#define RESULT_DATA_CHART_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,21 +39,24 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <UQ_MethodInputWidget.h>
-class QLineEdit;
-class QComboBox;
-class QCheckBox;
-class QLabel;
-class QPushButton;
-class QFrame;
-class QRadioButton;
+#include <QtCharts/QChart>
+using namespace QtCharts;
 
-class SurrogateDoEInputWidget : public UQ_MethodInputWidget
+#include "MyTableWidget.h"
+#include "RandomVariablesContainer.h"
+#include <QFileDialog>
+
+class QLineEdit;
+
+class ResultsDataChart : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit SurrogateDoEInputWidget(QWidget *parent = 0);
-    ~SurrogateDoEInputWidget();
+    explicit ResultsDataChart(QString filenameTab, QWidget *parent = 0);
+    explicit ResultsDataChart(QJsonObject spreadsheet, QWidget *parent = 0);
+
+    //explicit ResultsDataChart(QWidget *parent = 0);
+    ~ResultsDataChart();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
@@ -61,52 +64,43 @@ public:
 
     int getNumberTasks(void);
 
+    QVector<QVector<double>> getStatistics();
+    QVector<QString> getNames();
+    QVector<QVector<double>> getMinMax();
+
+signals:
+
+public slots:
+   void onSpreadsheetCellClicked(int, int);
+   void onSaveSpreadsheetClicked();
+   void onSaveSpreadsheetSeparatelyClicked();
 
 private:
-    QLineEdit *randomSeed;
-    QLineEdit *numSamples;
-    QLineEdit *accuracyMeasure;
-    QLineEdit *timeMeasure;
-    QCheckBox *parallelCheckBox;
-    QLineEdit *initialDoE;
-    QComboBox *gpKernel;
-    QCheckBox *theLinearCheckBox;
-    QCheckBox *theAdvancedCheckBox;
-    QCheckBox *theExistingCheckBox;
-    QCheckBox *theLogtCheckBox;
 
-    QLabel * theAdvancedTitle;
-    QLabel * theExistingTitle;
-    QLabel * theKernelLabel;
-    QLabel * theLinearLabel;
-    QLabel * theLogtLabel;
-    QLabel * theLogtLabel2;
-    QLabel * theInitialLabel;
-    QLabel * theInputLabel;
-    QLabel * theOutputLabel;
-    QLabel * errMSG;
+    void readTableFromTab(QString filenameTab);
+    void readTableFromJson(QJsonObject jsonobj);
+    void makeChart(void);
 
-    QLabel * theNuggetLabel;
-    QComboBox * theNuggetSelection;
-    QCheckBox * theNugCheckBox;
-    QLineEdit * theNuggetVals;
+    //QLineEdit *randomSeed;
+    //QLineEdit *numSamples;
+    MyTableWidget *spreadsheet;
+    QTabWidget *tabWidget;
+    QChart *chart;
+    QPushButton* save_spreadheet; // save the data from spreadsheet
+    QLabel *label;
 
-    QPushButton *chooseOutFile;
-    QPushButton *chooseInpFile;
+    int col1, col2;
+    bool mLeft;
+    QStringList theHeadings;
 
-    QLineEdit * inpFileDir;
-    QLineEdit * outFileDir;
+    QVector<QString>theNames;
+    QVector<double>theMeans;
+    QVector<double>theStdDevs;
+    QVector<double>theKurtosis;
+    QVector<double>theSkewness;
 
-    QFrame *lineA;
-    QFrame *lineB;
-
-
-private slots:
-    void doAdvancedGP(bool tog);
-    void doExistingGP(bool tog);
-    void checkValidityData(QString name1);
-    void showNuggetBox(int idx);
-
+    int rowCount;
+    int colCount;
 };
 
-#endif // SURROGATE_DOE_INPUT_WIDGET_H
+#endif // RESULT_DATA_CHART_H

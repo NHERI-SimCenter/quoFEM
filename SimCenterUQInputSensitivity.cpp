@@ -75,6 +75,8 @@ SimCenterUQInputSensitivity::SimCenterUQInputSensitivity(QWidget *parent)
     label1->setText(QString("Method"));
     samplingMethod = new QComboBox();
     samplingMethod->addItem(tr("Monte Carlo"));
+    samplingMethod->setMaximumWidth(200);
+    samplingMethod->setMinimumWidth(200);
 
 
     methodLayout->addWidget(label1);

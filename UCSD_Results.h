@@ -43,6 +43,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtCharts/QChart>
 #include <QMessageBox>
 #include <QPushButton>
+#include <ResultsDataChart.h>
 
 
 using namespace QtCharts;
@@ -52,6 +53,7 @@ class QTabWidget;
 class MyTableWidget;
 class MainWindow;
 class RandomVariablesContainer;
+class BayesPlots;
 
 //class QChart;
 
@@ -66,14 +68,12 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
-    QWidget *createResultEDPWidget(QString &name, double mean, double stdDev, double skewness, double kurtosis);
+    QWidget *createResultEDPWidget(QString &name, QVector<double> statistics);
 
 signals:
 
 public slots:
    void clear(void);
-   void onSpreadsheetCellClicked(int, int);
-   void onSaveSpreadsheetClicked();
 
    // modified by padhye 08/25/2018
 
@@ -96,6 +96,13 @@ private:
    QVector<double>theStdDevs;
    QVector<double>theKurtosis;
    QVector<double>theSkewness;
+
+   ResultsDataChart *theDataTable;
+   ResultsDataChart *theDataTablePrior;
+   ResultsDataChart *theDataTableCalData;
+
+   BayesPlots *thePlot;
+
 };
 
 #endif // UCSD_RESULTS_H

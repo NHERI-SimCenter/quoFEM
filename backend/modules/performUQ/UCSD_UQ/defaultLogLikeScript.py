@@ -12,7 +12,7 @@ class CovError(Exception):
         self.message = message
 
 
-def log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
+def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
                    covarianceMultiplierList, normalizingFactors, locShiftList):
     """ Compute the log-likelihood
 
@@ -60,9 +60,6 @@ def log_likelihood(calibrationData, numExperiments, covarianceMatrixList, edpNam
               "in.".format(numExperiments * numResponses, len(covarianceMatrixList)))
         raise CovError("ERROR: The expected number of covariance matrices is {}, but only {} were passed "
                        "in.".format(numExperiments * numResponses, len(covarianceMatrixList)))
-
-    # Read in the model prediction
-    prediction = np.atleast_2d(np.genfromtxt('results.out'))
 
     # Shift and normalize the prediction
     currentPosition = 0

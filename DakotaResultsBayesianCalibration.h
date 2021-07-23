@@ -41,6 +41,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <UQ_Results.h>
 #include <QtCharts/QChart>
+#include "ResultsDataChart.h"
 using namespace QtCharts;
 
 class QTextEdit;
@@ -65,8 +66,8 @@ signals:
 
 public slots:
    void clear(void);
-   void onSpreadsheetCellClicked(int, int);
-   void onSaveSpreadsheetClicked();
+   //void onSpreadsheetCellClicked(int, int);
+   //void onSaveSpreadsheetClicked();
 
 private:
    QTabWidget *tabWidget;
@@ -86,6 +87,8 @@ private:
 
    QWidget *summary;
    QVBoxLayout *summaryLayout;
+   ResultsDataChart * theDataTable;
+
 };
 
 #endif // DAKOTA_RESULTS_BAYESIAN_CALIBRATION_H
