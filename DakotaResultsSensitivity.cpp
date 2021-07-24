@@ -98,6 +98,7 @@ DakotaResultsSensitivity::DakotaResultsSensitivity(RandomVariablesContainer *the
     : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
+    theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
 }
@@ -398,7 +399,7 @@ Node_2_Disp Sobol' indices:
 
 
     //theDataTable = new ResultsDataChart(filenameTab);
-    theDataTable = new ResultsDataChart(filenameTab, isSurrogate, theRVs->getNumRandomVariables());
+     theDataTable = new ResultsDataChart(filenameTab, isSurrogate, theRVs->getNumRandomVariables());
 
 
     //

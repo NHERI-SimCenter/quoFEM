@@ -1350,6 +1350,33 @@ class GpFromModel(object):
         np.savetxt(self.work_dir + '/inputTab.out', self.X, header=header_string_x, fmt='%1.4e', comments='%')
         np.savetxt(self.work_dir + '/outputTab.out', self.Y, header=header_string_y, fmt='%1.4e', comments='%')
 
+        y_ub = np.zeros((self.n_samp,self.y_dim))
+        y_lb = np.zeros((self.n_samp,self.y_dim))
+
+
+        if not self.do_logtransform:
+            for ny in range(self.y_dim):
+                y_ub[:,ny] = norm.ppf(0.05, loc=self.Y_loo[:, ny],
+                                                                  scale=np.sqrt(self.Y_loo_var[:, ny])).tolist()
+                y_lb[:, ny] = norm.ppf(0.95, loc=self.Y_loo[:, ny],
+                                                                  scale=np.sqrt(self.Y_loo_var[:, ny])).tolist()
+        else:
+            for ny in range(self.y_dim):
+                mu = np.log(self.Y_loo[:, ny])
+                sig = np.sqrt(np.log(self.Y_loo_var[:, ny] / pow(self.Y_loo[:, ny], 2) + 1))
+                y_ub[:,ny] = lognorm.ppf(0.05, s=sig, scale=np.exp(mu)).tolist()
+                y_lb[:, ny] = lognorm.ppf(0.95, s=sig, scale=np.exp(mu)).tolist()
+
+        xy_sur_data = np.hstack((xy_data,self.Y_loo,y_lb,y_ub,self.Y_loo_var))
+        g_name_sur =  self.g_name
+        header_string_sur = header_string + " "  + " ".join(g_name_sur)  + ".median ".join(
+                g_name_sur) + ".median " + ".q5 ".join(g_name_sur) + ".q5 " + ".q95 ".join(
+                g_name_sur) + ".q95 " + ".var ".join(g_name_sur) + ".var \n"
+
+        np.savetxt(self.work_dir + '/surrogateTab.out', xy_sur_data, header=header_string_sur, fmt='%1.4e', comments='%')
+
+
+
         results = {}
 
         results["doSampling"] = self.do_sampling

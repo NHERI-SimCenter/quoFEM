@@ -141,13 +141,33 @@ ResultsDataChart::makeChart() {
     save_columns->resize(30,30);
     connect(save_columns,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetSeparatelyClicked()));
 
+    if (isSurrogate) {
+        QCheckBox *surrogateShowbutton = new QCheckBox();
+        surrogateShowbutton->setChecked(true);
+
+        connect(surrogateShowbutton,&QCheckBox::toggled,this,[=](bool tog) {
+            int col_tmp;
+            if (mLeft) {
+                col_tmp = col2;
+                col2 = col1;
+            }else {
+                col_tmp = col1;
+                col1 = col2;
+            }
+            isSurrogate = tog;
+            onSpreadsheetCellClicked(0, col_tmp); // just refresh the figure
+        });
+        layout->addWidget(surrogateShowbutton,1,2,Qt::AlignLeft);
+        layout->addWidget(new QLabel("Show surrogate model prediction bounds"),1,3,Qt::AlignLeft);
+
+    }
 
 
-    layout->addWidget(chartView, 0,0,1,3);
+    layout->addWidget(chartView, 0,0,1,4);
     layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
     layout->addWidget(save_columns,1,1,Qt::AlignLeft);
-    layout->addWidget(spreadsheet,2,0,1,3);
-    layout->setColumnStretch(2,1);
+    layout->addWidget(spreadsheet,2,0,1,4);
+    layout->setColumnStretch(3,1);
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
@@ -370,7 +390,6 @@ ResultsDataChart::readTableFromJson(QJsonObject spreadsheetData) {
     spreadsheet->verticalHeader()->setVisible(false);
 
     if (isSurrogate) {
-        isSurrogate = isSurrogate;
         nqoi = (colCount-nrv-1)/4;
     }
 
@@ -549,7 +568,6 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
         //oldCol=0;   // padhye trying. I don't think it makes sense to use coldCol as col2, i.e., something that was
         // previously selected?
         col2 = col; // col is the one that comes in te function, based on the click made after clicking
-
     } else {
         oldCol= col1;
         col1 = col;
@@ -560,6 +578,13 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
     QValueAxis *axisY = new QValueAxis();
 
     if (col1 != col2) {
+
+        if (isSurrogate) {
+            bool isCol1Qoi = ((col1>(nrv)) && (col1<(nrv+nqoi+1)));
+            bool isCol2Qoi = ((col2>(nrv)) && (col2<(nrv+nqoi+1)));
+            overlappingPlots(isCol1Qoi, isCol2Qoi, axisX,axisY);
+        }
+
         QScatterSeries *series = new QScatterSeries;
 
         // adjust marker size and opacity based on the number of samples
@@ -606,20 +631,20 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
         // finding the range for X and Y axis
         // now the axes will look a bit clean.
 
+
+
         double minX, maxX;
         double minY, maxY;
-
         for (int i=0; i<rowCount; i++) {
 
             QTableWidgetItem *itemX = spreadsheet->item(i,col1);
             QTableWidgetItem *itemY = spreadsheet->item(i,col2);
 
             double value1 = itemX->text().toDouble();
-
             double value2 = itemY->text().toDouble();
 
 
-            if (i == 0) {
+            if ((i == 0)) {
                 minX=value1;
                 maxX=value1;
                 minY=value2;
@@ -651,20 +676,24 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
 
         // if the column is not the run number, i.e., 0 column, then adjust the x-axis differently
 
-        if(col1!=0)
-        {
-            axisX->setRange(minX - 0.01*xRange, maxX + 0.1*xRange);
-        }
-        else{
+        if (axisX->min() ==axisX->max()){
+            if(col1!=0)
+            {
+                axisX->setRange(minX - 0.1*xRange, maxX + 0.1*xRange);
+            }
+            else{
+                axisX->setRange(int (minX - 1), int (maxX +1));
+                // axisX->setTickCount(1);
 
-            axisX->setRange(int (minX - 1), int (maxX +1));
-            // axisX->setTickCount(1);
+            }
+            // adjust y with some fine precision
+            axisY->setRange(minY - 0.1*yRange, maxY + 0.1*yRange);
 
         }
-        // adjust y with some fine precision
-        axisY->setRange(minY - 0.1*yRange, maxY + 0.1*yRange);
+
         chart->setAxisX(axisX, series);
         chart->setAxisY(axisY, series);
+
 
     } else {
 
@@ -939,20 +968,19 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
     //chart->legend()->setVisible(true);
     //chart->legend()->setAlignment(Qt::AlignRight);
 
-    if (isSurrogate) {
-        bool isCol1Qoi = ((col1>(nrv)) && (col1<(nrv+nqoi+1)));
-        bool isCol2Qoi = ((col2>(nrv)) && (col2<(nrv+nqoi+1)));
-        overlappingPlots(isCol1Qoi, isCol2Qoi, axisX, axisY);
-    }
 
 }
 
 
 
-void ResultsDataChart::overlappingPlots(bool isCol1Qoi, bool isCol2Qoi,QValueAxis *axisX, QValueAxis *axisY)
+void ResultsDataChart::overlappingPlots(bool isCol1Qoi, bool isCol2Qoi,QValueAxis *axisX,QValueAxis *axisY )
 {
+
+    //QValueAxis *axisX = new QValueAxis();
+    //QValueAxis *axisY = new QValueAxis();
     int col1_mean, col1_lb, col1_ub, col2_mean, col2_lb, col2_ub;
 
+    // offsets of columns
     if (isCol1Qoi) {
         col1_mean = col1+nqoi*1;
         col1_lb = col1+nqoi*2;
@@ -1010,6 +1038,66 @@ void ResultsDataChart::overlappingPlots(bool isCol1Qoi, bool isCol2Qoi,QValueAxi
         series->setColor(QColor(180, 180, 180, alpha));// Orange
         series->setBorderColor(QColor(180, 180, 180, alpha));// Orange
 
+        // find min/max
+        double minX, maxX, minY, maxY;
+        for (int i=0; i<rowCount; i++) {
+
+            double valueXl = spreadsheet->item(i,col1_lb)->text().toDouble();
+            double valueYl = spreadsheet->item(i,col2_lb)->text().toDouble();
+            double valueXu = spreadsheet->item(i,col1_ub)->text().toDouble();
+            double valueYu = spreadsheet->item(i,col2_ub)->text().toDouble();
+            double valueXs = spreadsheet->item(i,col1)->text().toDouble();
+            double valueYs = spreadsheet->item(i,col2)->text().toDouble();
+
+
+            if (i == 0) {
+                minX=valueXl;
+                maxX=valueXu;
+                minY=valueYl;
+                maxY=valueYu;
+            }
+            if(valueXl<minX){minX=valueXl;}
+            if(valueXu>maxX){maxX=valueXu;}
+            if(valueXs<minX){minX=valueXs;} // sample may lie outside of the range
+            if(valueXs>maxX){maxX=valueXs;}
+
+            if(valueYl<minY){minY=valueYl;}
+            if(valueYu>maxY){maxY=valueYu;}
+            if(valueYs<minY){minY=valueYs;} // sample may lie outside of the range
+            if(valueYs>maxY){maxY=valueYs;}
+
+        }
+
+        double xRange=maxX-minX;
+        double yRange=maxY-minY;
+        axisX->setRange(minX - 0.1*xRange, maxX + 0.1*xRange);
+        axisY->setRange(minY - 0.1*yRange, maxY + 0.1*yRange);
+
+        //
+        // draw bounds
+        //
+
+        QPen pen;
+        double eps = 1+1.e-15;
+        pen.setWidth(markerSize/5);
+        for (int i=0; i<rowCount; i++) {
+            QLineSeries *series_err = new QLineSeries;
+            series_err->append(spreadsheet->item(i,col1_lb)->text().toDouble(), spreadsheet->item(i,col2_lb)->text().toDouble());
+            series_err->append(eps*spreadsheet->item(i,col1_ub)->text().toDouble(), eps*spreadsheet->item(i,col2_ub)->text().toDouble());
+            series_err->setPen(pen);
+            chart->addSeries(series_err);
+            //series_err->setColor(QColor(180,180,180));
+            series_err->setColor(QColor(180, 180, 180));
+            //series_err->setColor(QColor(255, 127, 14, alpha*2));
+            chart->legend()->markers(series_err)[0]->setVisible(false);
+            chart->setAxisX(axisX, series_err);
+            chart->setAxisY(axisY, series_err);
+        }
+
+        //
+        // draw mean
+        //
+
         for (int i=0; i<rowCount; i++) {
             QTableWidgetItem *itemX = spreadsheet->item(i,col1_mean);    //col1 goes in x-axis, col2 on y-axis
             //col1=0;
@@ -1023,39 +1111,6 @@ void ResultsDataChart::overlappingPlots(bool isCol1Qoi, bool isCol2Qoi,QValueAxi
 
         chart->setAxisX(axisX, series);
         chart->setAxisY(axisY, series);
-
-        // draw bounds first
-
-        QPen pen;
-        double eps = 1+1.e-15;
-        pen.setWidth(markerSize/5);
-        for (int i=0; i<rowCount; i++) {
-            QLineSeries *series_err = new QLineSeries;
-
-            auto a = spreadsheet->item(i,col1_lb)->text().toDouble();
-            auto b = spreadsheet->item(i,col2_lb)->text().toDouble();
-            auto c = spreadsheet->item(i,col1_ub)->text().toDouble();
-            auto d = spreadsheet->item(i,col2_ub)->text().toDouble();
-
-            series_err->append(spreadsheet->item(i,col1_lb)->text().toDouble(), spreadsheet->item(i,col2_lb)->text().toDouble());
-            series_err->append(eps*spreadsheet->item(i,col1_ub)->text().toDouble(), eps*spreadsheet->item(i,col2_ub)->text().toDouble());
-            series_err->setPen(pen);
-            chart->addSeries(series_err);
-            //series_err->setColor(QColor(180,180,180));
-            series_err->setColor(QColor(180, 180, 180));
-            //series_err->setColor(QColor(255, 127, 14, alpha*2));
-            chart->legend()->markers(series_err)[0]->setVisible(false);
-            chart->setAxisX(axisX, series_err);
-            chart->setAxisY(axisY, series_err);
-        }
-
-        // legend of bounds
-
-//        QLineSeries *dummy_series_err = new QLineSeries;
-//        dummy_series_err->setColor(QColor(255, 127, 14, alpha*2));
-//        //dummy_series_err->setOpacity(series_CV->opacity());
-//        chart_CV->addSeries(dummy_series_err);
-//        dummy_series_err->setName("90% prediction bounds");
 
     }
 }

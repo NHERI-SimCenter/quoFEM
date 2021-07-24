@@ -410,16 +410,6 @@ void FEM::femProgramChanged(const QString &arg1)
         QLineEdit *file1 = new QLineEdit;
         QPushButton *chooseFile1 = new QPushButton();
         chooseFile1->setText(tr("Choose"));
-        connect(chooseFile1, &QPushButton::clicked, this, [=](){
-
-             QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)");
-             if (!fileName.isEmpty()){
-                 file1->setText(fileName);
-                 if ((arg1 == QString("FEAPpv")) || (arg1 == QString("OpenSees")) || (arg1 == QString("SurrogateGP")) )
-                        this->parseInputfilesForRV(fileName);
-             }
-         });
-
         chooseFile1->setToolTip(tr("Push to choose a file from your file system"));
 
         femLayout->addWidget(label1, 0,0);
@@ -431,15 +421,15 @@ void FEM::femProgramChanged(const QString &arg1)
         QLineEdit *file2 = new QLineEdit;
         QPushButton *chooseFile2 = new QPushButton();
 
-        connect(chooseFile2, &QPushButton::clicked, this, [=](){
-            QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)");
-            if (!fileName.isEmpty()) {
-                file2->setText(fileName);
-            }
-        });
-         chooseFile2->setText(tr("Choose"));
+        chooseFile2->setText(tr("Choose"));
         chooseFile2->setToolTip(tr("Push to choose a file from your file system"));
 
+        femLayout->addWidget(label2, 1,0);
+        femLayout->addWidget(file2, 1,1);
+        femLayout->addWidget(chooseFile2, 1,2);
+
+        QString file1ext = tr("All files (*.*)");
+        QString file2ext = tr("All files (*.*)");
         if (arg1 == QString("FEAPpv")){
             label1->setText("Input File");
             file1->setToolTip(tr("Name of FEAPpv input file"));
@@ -448,35 +438,51 @@ void FEM::femProgramChanged(const QString &arg1)
             label1->setText("Input Script");
             file1->setToolTip(tr("Name of OpenSees input script"));
             file2->setToolTip(tr("Name of Python/Tcl script that will process OpenSees output file for UQ engine"));
+            file1ext = "Tcl files (*.tcl)";
             file2->setPlaceholderText("(Optional)");
         } else if (arg1 == "SurrogateGP"){
             label1->setText("SurrogateGP Info (.json)");
             label2->setText("SurrogateGP Model (.pkl)");
             file1->setToolTip(tr("Name of SurrogateGP model file (.json)"));
             file2->setToolTip(tr("Name of SurrogateGP info file (.pkl)"));
+            file1ext = "Json files (*.json)";
+            file2ext = "Pickle files (*.pkl)";
             optionsLayout = 0;
         } else {
             label1->setText("Input Script");
             file1->setToolTip(tr("Name of OpenSeesPy input script"));
             file2->setToolTip(tr("Name of Python script that will process OpenSeesPy output"));
+            file1ext = "Python files (*.py)";
             file2->setPlaceholderText("(Optional)");
         }
 
-        femLayout->addWidget(label2, 1,0);
-        femLayout->addWidget(file2, 1,1);
-        femLayout->addWidget(chooseFile2, 1,2);
+        connect(chooseFile1, &QPushButton::clicked, this, [=](){
+             QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", file1ext);
+             if (!fileName.isEmpty()){
+                 file1->setText(fileName);
+                 if ((arg1 == QString("FEAPpv")) || (arg1 == QString("OpenSees")) || (arg1 == QString("SurrogateGP")) )
+                        this->parseInputfilesForRV(fileName);
+             }
+         });
 
+        connect(chooseFile2, &QPushButton::clicked, this, [=](){
+            QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", file2ext);
+            if (!fileName.isEmpty()) {
+                file2->setText(fileName);
+            }
+        });
 
         if (arg1 == "OpenSeesPy") {
             QLabel *label3 = new QLabel();
             label3->setText("Parameters File");
             QLineEdit *file3 = new QLineEdit;
-            file2->setToolTip(tr("Name of Python script that contains defined parameters"));
+            file3->setToolTip(tr("Name of Python script that contains defined parameters"));
             QPushButton *chooseFile3 = new QPushButton();
+            QString file3ext = "Python files (*.py)";
 
             connect(chooseFile3, &QPushButton::clicked, this, [=](){
 
-                QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)");
+                QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", file3ext);
                 if (!fileName.isEmpty()) {
                     file3->setText(fileName);
                     this->parseInputfilesForRV(fileName);
@@ -1040,7 +1046,10 @@ QStringList FEM::parseGPInputs(QString file1){
             labelProgDir2->setVisible(false);
         }
     });
-    thresVal->setText(QString::number(thres/100,'f',2));
+
+    if (appName != "data") {
+        thresVal->setText(QString::number(thres/100,'f',2));
+    }
     //theParameters->setInitialVarNamesAndValues(varNamesAndValues);
     theEdpWidget->setGPQoINames(qoiNames);
     option1Button->setChecked(false);

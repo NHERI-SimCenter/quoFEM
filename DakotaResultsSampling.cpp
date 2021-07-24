@@ -100,6 +100,7 @@ DakotaResultsSampling::DakotaResultsSampling(RandomVariablesContainer *theRandom
   : UQ_Results(parent), theRVs(theRandomVariables), tabWidget(0)
 {
     // title & add button
+    theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
 }

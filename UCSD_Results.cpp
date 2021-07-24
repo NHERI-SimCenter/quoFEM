@@ -101,6 +101,7 @@ UCSD_Results::UCSD_Results(RandomVariablesContainer *theRandomVariables, QWidget
     : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
+    theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
 }

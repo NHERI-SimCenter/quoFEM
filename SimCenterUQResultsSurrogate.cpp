@@ -113,6 +113,7 @@ SimCenterUQResultsSurrogate::SimCenterUQResultsSurrogate(RandomVariablesContaine
     : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
+    theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
 }
@@ -233,6 +234,14 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
         return 0;
     }
 
+    QDir tempFolder(filenameTabInfo.absolutePath());
+    QFileInfo surrogateTabInfo(tempFolder.filePath("surrogateTab.out"));
+    if (surrogateTabInfo.exists()) {
+        filenameTab = tempFolder.filePath("surrogateTab.out");
+        isSurrogate = true;
+    }
+
+
     //
     // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
     //
@@ -267,7 +276,8 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
         QString message = QString("ERROR: file either empty or malformed JSON");
     }
 
-    theDataTable = new ResultsDataChart(filenameTab);
+    //theDataTable = new ResultsDataChart(filenameTab);
+    theDataTable = new ResultsDataChart(filenameTab, isSurrogate, theRVs->getNumRandomVariables());
 
     //
     // create spreadsheet,  a QTableWidget showing RV and results for each run
@@ -362,6 +372,7 @@ SimCenterUQResultsSurrogate::outputToJSON(QJsonObject &jsonObject)
     bool result = true;
 
     jsonObject["resultType"]=QString(tr("SimCenterUQResultsSurrogate"));
+    jsonObject["isSurrogate"]=isSurrogate;
 
     //
     // add summary data
@@ -405,7 +416,8 @@ SimCenterUQResultsSurrogate::inputFromJSON(QJsonObject &jsonObject)
     // into a spreadsheet place all the data returned
     //
 
-    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+    isSurrogate=jsonObject["isSurrogate"].toBool();
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
     QScrollArea *sa = new QScrollArea;
     summarySurrogate(*&sa);
@@ -705,8 +717,10 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         bool nuggetLabel = true;
         double nuggetwidth = valNugget[QoInames[nq]].toDouble();
         if (nuggetwidth/inteval < 1.e-5) {
-            nuggetwidth = inteval*1.e-2;
             nuggetLabel = false;
+        }
+        if (nuggetwidth/inteval < 1.e-2) {
+            nuggetwidth = inteval*1.e-2;
         }
         for (int i=0; i<nd+1; i++) {
             series_nugget_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetwidth);

@@ -139,8 +139,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetParameters *param,InputWidgetF
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
             SLOT(engineSelectionChanged(QString)));
 
-    //    connect(theDakotaEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
-    // sy - wondering if this connect commend was put inside the engineSelectionChanged() below on purpose
+    connect(theDakotaEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
 
     // connect(theCustomEngine, SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));    
     // connect(theCustomEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));

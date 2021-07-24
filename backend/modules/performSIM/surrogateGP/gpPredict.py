@@ -234,8 +234,8 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
             y_pred_median[ny]=y_pred_median_tmp
             y_pred_var[ny] = y_pred_var_tmp
             y_samp[ny] = y_samp_tmp
-            y_q1[ny] = norm.ppf(0.05, loc=y_pred_median, scale=np.sqrt(y_pred_var_tmp))
-            y_q3[ny] = norm.ppf(0.95, loc=y_pred_median, scale=np.sqrt(y_pred_var_tmp))
+            y_q1[ny] = norm.ppf(0.05, loc=y_pred_median_tmp, scale=np.sqrt(y_pred_var_tmp))
+            y_q3[ny] = norm.ppf(0.95, loc=y_pred_median_tmp, scale=np.sqrt(y_pred_var_tmp))
 
         #for parname in m_list[ny].parameter_names():
         #    if (kern_name in parname) and parname.endswith('variance'):

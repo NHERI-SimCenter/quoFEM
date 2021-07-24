@@ -81,6 +81,8 @@ DakotaResultsBayesianCalibration::DakotaResultsBayesianCalibration(int numBurn, 
     : UQ_Results(parent)
 {
     // title & add button
+
+    theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
 

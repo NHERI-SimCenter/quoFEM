@@ -75,7 +75,7 @@ public slots:
    void onSpreadsheetCellClicked(int, int);
    void onSaveSpreadsheetClicked();
    void onSaveSpreadsheetSeparatelyClicked();
-   void overlappingPlots(bool isCol1Qoi, bool isCol2Qoi,QValueAxis *axisX, QValueAxis *axisY);
+   void overlappingPlots(bool isCol1Qoi, bool isCol2Qoi,QValueAxis *axisX,QValueAxis *axisY );
 
 private:
 
@@ -109,6 +109,7 @@ private:
 
     int rowCount;
     int colCount;
+
 };
 
 #endif // RESULT_DATA_CHART_H
