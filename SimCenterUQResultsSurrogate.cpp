@@ -105,7 +105,6 @@ using namespace QtCharts;
 #define NUM_DIVISIONS 10
 
 
-
 //QLabel *best_fit_label_text;
 
 
@@ -134,7 +133,6 @@ void SimCenterUQResultsSurrogate::clear(void)
             delete theWidget;
         }
     }
-
     tabWidget->clear();
     theDataTable = NULL;
 
@@ -191,16 +189,15 @@ static int mergesort(double *input, int size)
     }
 }
 
-// if sobelov indices are selected then we would need to do some processing outselves
-
 int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QString &filenameTab)
 {
     emit sendStatusMessage(tr("Processing Results ... "));
 
     this->clear();
     lastPath = "";
+
     //
-    // check it actually ran with errors
+    // check if it actually ran without errors
     //
 
     QFileInfo fileTabInfo(filenameTab);
@@ -242,11 +239,8 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     }
 
 
-    //
-    // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
-    //
-
     // create a scrollable windows, place summary inside it
+
     QScrollArea *sa = new QScrollArea;
 
     //
@@ -284,9 +278,6 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     //
 
     summarySurrogate(*&sa);
-
-    //QHBoxLayout *gsaLayout = new QHBoxLayout();
-
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
     //
@@ -674,7 +665,6 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
             series_CV->setMarkerSize(4.5);
         }
         series_CV->setColor(QColor(0, 114, 178, alpha));
-
         series_CV->setBorderColor(QColor(255,255,255,0));
 
         QWidget *container = new QWidget();
@@ -684,8 +674,6 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
 
         chart_CV->setAnimationOptions(QChart::AllAnimations);
         chartView_CV->setRenderHint(QPainter::Antialiasing);
-        //chartView_CV->chart()->legend()->hide();
-        //chart.legend().markers(serie_without_marker)[0].setVisible(false);
 
         QJsonArray yEx= yExact[QoInames[nq]].toArray();
         QJsonArray yPr= yPredi[QoInames[nq]].toArray();
@@ -738,7 +726,6 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
             //hide label if nugget is zero
             chart_CV->legend()->markers(series_nugget)[0]->setVisible(false);
         }
-        //series_nugget_core->setBorderColor(QColor(255,255,255,0));
         series_nugget->setBorderColor(QColor(255,255,255,0));
 
         // draw bounds first
@@ -776,6 +763,16 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         chart_CV->addSeries(dummy_series_err);
         dummy_series_err->setName("Inter-quartile Range");
 
+        // set fontsize
+        QFont chartFont;
+        chartFont.setPixelSize(12);
+        chart_CV->setFont(chartFont);
+        axisX->setLabelsFont(chartFont);
+        axisY->setLabelsFont(chartFont);
+        axisX->setTitleFont(chartFont);
+        axisY->setTitleFont(chartFont);
+        chart_CV->legend()->setFont(chartFont);
+
         // to get mean value
 
         double nugget = valNugget[QoInames[nq]].toDouble();
@@ -783,7 +780,6 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
 
         chartAndNugget->addWidget(chartView_CV,0,0);
         if (nugget/statisticsVector[jsonObj["xdim"].toInt()+1+nq][0]<1.e-12) {
-            auto aa = statisticsVector[jsonObj["xdim"].toInt()+1+nq][0];
             chartAndNugget->addWidget(new QLabel("nugget: 0.000"));
         } else {
             chartAndNugget->addWidget(new QLabel("nugget: " + QString::number(nugget,'g',4)),1,0);

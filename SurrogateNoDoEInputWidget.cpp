@@ -62,7 +62,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     auto layout = new QGridLayout();
 
     //
-    // Input
+    // Create Input LineEdit
     //
 
     inpFileDir = new QLineEdit();
@@ -78,7 +78,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     layout->addWidget(chooseInpFile,0,4);
 
     //
-    // Output selection checkbox
+    // Create Output selection checkbox
     //
 
     QHBoxLayout *theSelectionLayout = new QHBoxLayout();
@@ -93,7 +93,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
 
 
     //
-    // Output
+    // Create Output LineEdit
     //
     outFileDir = new QLineEdit();
     chooseOutFile = new QPushButton("Choose");
@@ -115,8 +115,9 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     errMSG->hide();
 
     //
-    // Advanced options
+    // Create Advanced options
     //
+
     theAdvancedCheckBox = new QCheckBox();
     theAdvancedTitle=new QLabel("\n    Advanced Options for Gaussian Process Model");
     theAdvancedTitle->setStyleSheet("font-weight: bold; color: gray");
@@ -129,6 +130,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     lineA->setMaximumWidth(420);
     layout->addWidget(lineA, 4, 0, 1, 2);
     lineA->setVisible(false);
+
     //
     // Selection of GP kernel
     //

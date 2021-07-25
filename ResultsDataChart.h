@@ -75,6 +75,7 @@ public slots:
    void onSpreadsheetCellClicked(int, int);
    void onSaveSpreadsheetClicked();
    void onSaveSpreadsheetSeparatelyClicked();
+   void onSaveSurrogateClicked();
    void overlappingPlots(bool isCol1Qoi, bool isCol2Qoi,QValueAxis *axisX,QValueAxis *axisY );
 
 private:

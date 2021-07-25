@@ -142,6 +142,14 @@ ResultsDataChart::makeChart() {
     connect(save_columns,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetSeparatelyClicked()));
 
     if (isSurrogate) {
+
+        QPushButton* save_surrogate = new QPushButton();
+        save_surrogate->setText("Save Surrogate Predictions");
+        save_surrogate->setToolTip(tr("Select an existing folder"));
+        save_surrogate->resize(30,30);
+        connect(save_surrogate,SIGNAL(clicked()),this,SLOT(onSaveSurrogateClicked()));
+        layout->addWidget(save_surrogate, 1,2,Qt::AlignLeft);
+
         QCheckBox *surrogateShowbutton = new QCheckBox();
         surrogateShowbutton->setChecked(true);
 
@@ -157,17 +165,17 @@ ResultsDataChart::makeChart() {
             isSurrogate = tog;
             onSpreadsheetCellClicked(0, col_tmp); // just refresh the figure
         });
-        layout->addWidget(surrogateShowbutton,1,2,Qt::AlignLeft);
-        layout->addWidget(new QLabel("Show surrogate model prediction bounds"),1,3,Qt::AlignLeft);
+        layout->addWidget(surrogateShowbutton,1,3,Qt::AlignLeft);
+        layout->addWidget(new QLabel("Show surrogate model prediction bounds"),1,4,Qt::AlignLeft);
 
     }
 
 
-    layout->addWidget(chartView, 0,0,1,4);
+    layout->addWidget(chartView, 0,0,1,-1);
     layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
     layout->addWidget(save_columns,1,1,Qt::AlignLeft);
-    layout->addWidget(spreadsheet,2,0,1,4);
-    layout->setColumnStretch(3,1);
+    layout->addWidget(spreadsheet,2,0,1,-1);
+    layout->setColumnStretch(4,1);
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
@@ -337,7 +345,11 @@ ResultsDataChart::readTableFromTab(QString filenameTab) {
         for (int i=0; i<colCount+2; i++) {
             std::string data;
             is >> data;
-            if ((includesInterface == true && i != 1) || (includesInterface == false)) {
+            if (i == 0) {
+                QModelIndex index = spreadsheet->model()->index(rowCount, col);
+                spreadsheet->model()->setData(index, int(std::stof(data)));
+                col++;
+            } else if ((includesInterface == true && i != 1) || (includesInterface == false)) {
                 QModelIndex index = spreadsheet->model()->index(rowCount, col);
                 spreadsheet->model()->setData(index, data.c_str());
                 col++;
@@ -547,6 +559,46 @@ ResultsDataChart::onSaveSpreadsheetSeparatelyClicked()
 
 }
 
+
+void
+ResultsDataChart::onSaveSurrogateClicked()
+{
+
+    int rowCount = spreadsheet->rowCount();
+    int columnCount = spreadsheet->columnCount();
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                    tr("Save Data"), "",
+                                                    tr("CSV (Comma delimited) (*.csv)"));
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly))
+    {
+        QTextStream stream(&file);
+        for (int j=0; j<columnCount; j++)
+        {
+      if (j == columnCount -1)
+            stream <<theHeadings.at(j);
+      else
+            stream <<theHeadings.at(j)<<", ";
+        }
+        stream <<endl;
+        for (int i=0; i<rowCount; i++)
+        {
+            for (int j=0; j<columnCount; j++)
+            {
+                QTableWidgetItem *item_value = spreadsheet->item(i,j);
+                double value = item_value->text().toDouble();
+        if (j == columnCount-1)
+          stream << value ;
+        else
+          stream << value << ", ";
+            }
+            stream<<endl;
+        }
+    file.close();
+    }
+}
+
 void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
 {
     mLeft = spreadsheet->wasLeftKeyPressed();
@@ -576,6 +628,7 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
     int rowCount = spreadsheet->rowCount();
     QValueAxis *axisX = new QValueAxis();
     QValueAxis *axisY = new QValueAxis();
+
 
     if (col1 != col2) {
 
@@ -964,7 +1017,14 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
             series->setName("Cumulative Frequency Distribution");
         }
     }
-
+    QFont chartFont;
+    chartFont.setPixelSize(12);
+    chart->setFont(chartFont);
+    axisX->setLabelsFont(chartFont);
+    axisY->setLabelsFont(chartFont);
+    chart->legend()->setFont(chartFont);
+    axisX->setTitleFont(chartFont);
+    axisY->setTitleFont(chartFont);
     //chart->legend()->setVisible(true);
     //chart->legend()->setAlignment(Qt::AlignRight);
 
