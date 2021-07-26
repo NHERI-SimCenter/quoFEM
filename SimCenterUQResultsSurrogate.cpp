@@ -270,6 +270,8 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     // check file contains valid object
     if (jsonObj.isEmpty()) {
         QString message = QString("ERROR: file either empty or malformed JSON");
+        emit sendErrorMessage(message);
+        return 0;
     }
 
     //theDataTable = new ResultsDataChart(filenameTab);
