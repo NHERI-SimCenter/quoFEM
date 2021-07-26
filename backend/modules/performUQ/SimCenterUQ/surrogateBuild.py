@@ -16,9 +16,9 @@ from pyDOE import lhs
 import warnings
 import random
 
-import emukit.multi_fidelity as emf
-from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
-from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
+#import emukit.multi_fidelity as emf
+#from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
+#from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
 
 
 class GpFromModel(object):
@@ -224,6 +224,14 @@ class GpFromModel(object):
                     elif Bous[0]>Bous[1]:
                         msg = 'Error reading json: the lower bound of a nugget value should be smaller than its upper bound'
                         errlog.exit(msg)
+
+            # if self.do_logtransform:
+            #     mu = 0
+            #     sig2 = self.nuggetVal
+
+            #     #median = np.exp(mu)
+            #     #mean = np.exp(mu + sig2/2)
+            #     self.nuggetVal = np.exp(2*mu + sig2)*(np.exp(sig2)-1)
 
         else:
             self.do_logtransform = False
@@ -1434,7 +1442,15 @@ class GpFromModel(object):
                 results["yPredict_CI_lb"][self.g_name[ny]] =  lognorm.ppf(0.25, s = sig, scale = np.exp(mu)).tolist()
                 results["yPredict_CI_ub"][self.g_name[ny]] =  lognorm.ppf(0.75, s = sig, scale = np.exp(mu)).tolist()
 
-            results["valNugget"][self.g_name[ny]] = float(self.m_list[ny]['Gaussian_noise.variance'])
+
+
+            # if self.do_logtransform:
+            #         log_mean = 0
+            #         log_var = float(self.m_list[ny]['Gaussian_noise.variance']) # nugget in log-space
+            #         nuggetVal_linear = np.exp(2*log_mean+log_var)*(np.exp(log_var)-1) # in linear space
+
+
+            results["valNugget"][self.g_name[ny]] =  float(self.m_list[ny]['Gaussian_noise.variance'])
             results["valNRMSE"][self.g_name[ny]] = self.NRMSE_val[ny]
             results["valR2"][self.g_name[ny]] = self.R2_val[ny]
             results["valCorrCoeff"][self.g_name[ny]] = self.corr_val[ny]
@@ -1483,10 +1499,11 @@ class GpFromModel(object):
         results["modelInfo"] = {}
 
         if not self.do_mf:
-            for i in range(self.y_dim):
-                for parname in self.m_list[i].parameter_names():
+            for ny in range(self.y_dim):
+                results["modelInfo"][self.g_name[ny]] = {}
+                for parname in self.m_list[ny].parameter_names():
                     print(parname)
-                    results["modelInfo"][parname] = list(eval('self.m_list[i].' + parname))
+                    results["modelInfo"][self.g_name[ny]][parname] = list(eval('self.m_list[ny].' + parname))
 
 
         with open('dakota.out', 'w') as fp:

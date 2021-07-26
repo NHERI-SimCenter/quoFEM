@@ -9,7 +9,7 @@ import subprocess
 from scipy.stats import lognorm, norm
 import GPy as GPy
 
-from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
+# from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
 
 def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
     global error_file
@@ -97,6 +97,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
 
 
     # Read pickles
+    # todo: fix for different nys
 
     if kernel == 'Radial Basis':
         kr = GPy.kern.RBF(input_dim=nrv_sur, ARD=True)
@@ -116,10 +117,10 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
     if not did_mf:
         kg = kr
         m_list = list()
-        for i in range(ng_sur):
-            m_list = m_list + [GPy.models.GPRegression(X, Y[:, i][np.newaxis].transpose(), kernel=kg.copy())]
-            for key, val in sur["modelInfo"].items():
-                exec('m_list[i].' + key + '= np.array(val)')
+        for ny in range(ng_sur):
+            m_list = m_list + [GPy.models.GPRegression(X, Y[:, ny][np.newaxis].transpose(), kernel=kg.copy())]
+            for key, val in sur["modelInfo"][g_name_sur[ny]].items():
+                exec('m_list[ny].' + key + '= np.array(val)')
 
 
     # to read:::
@@ -208,17 +209,15 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
     y_samp = np.zeros(y_dim)
     y_q1 = np.zeros(y_dim)
     y_q3 = np.zeros(y_dim)
-
     for ny in range(y_dim):
+        y_data_var[ny] = np.var(m_list[ny].Y)
         #y_pred_tmp, y_pred_var_tmp  = m_list[ny].predict(rv_val)
         y_pred_median_tmp, y_pred_var_tmp = predict(m_list[ny],rv_val,did_mf)
+
         y_samp_tmp = np.random.normal(y_pred_median_tmp,np.sqrt(y_pred_var_tmp))
         if did_logtransform:
             y_pred_median[ny] = np.exp(y_pred_median_tmp)
             # y_var_val = np.var(np.log(m_list[ny].Y))
-            log_mean = np.mean((m_list[ny].Y))
-            log_var = np.var((m_list[ny].Y))
-            y_data_var[ny] = np.exp(2 * log_mean + log_var) * (np.exp(log_var) - 1)  # in linear space
             y_pred_var[ny] = np.exp(2 * y_pred_median_tmp + y_pred_var_tmp) * (np.exp(y_pred_var_tmp) - 1)
             y_samp[ny] = np.exp(y_samp_tmp)
 
@@ -230,7 +229,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
 
 
         else:
-            y_data_var[ny] = np.var(m_list[ny].Y)
+            
             y_pred_median[ny]=y_pred_median_tmp
             y_pred_var[ny] = y_pred_var_tmp
             y_samp[ny] = y_samp_tmp

@@ -208,7 +208,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     //
 
 
-    theNuggetLabel=new QLabel("Nugget Values for each QoI");
+    theNuggetLabel=new QLabel("Nugget Variances");
     theNuggetSelection = new QComboBox();
 
     theNuggetSelection->addItem(tr("Optimize"),0);
@@ -220,18 +220,25 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     theNuggetVals = new QLineEdit();
     theNuggetVals->setToolTip("Provide nugget values");
     //theNuggetVals->setMaximumWidth(150);
+    theNuggetMsg= new QLabel("in the log-transformed space");
 
     layout->addWidget(theNuggetLabel, wid, 0);
-    layout->addWidget(theNuggetSelection, wid++, 1);
+    layout->addWidget(theNuggetSelection, wid, 1);
+    layout->addWidget(theNuggetMsg, wid++, 2);
     layout->addWidget(theNuggetVals, wid++, 1,1,3);
 
     theNuggetLabel->setVisible(false);
     theNuggetSelection->setVisible(false);
     theNuggetVals->setVisible(false);
+    theNuggetMsg->setVisible(false);
 
     connect(theNuggetSelection,SIGNAL(currentIndexChanged(int)),this,SLOT(showNuggetBox(int)));
-
-
+    connect(theLogtCheckBox, &QCheckBox::toggled, this, [=](bool tog)  {
+        if (tog && (theNuggetSelection->currentIndex()!=0))
+            theNuggetMsg -> setVisible(true);
+        else
+            theNuggetMsg -> setVisible(false);
+    });
     //
     // Use Existing Initial DoE
     //
@@ -287,7 +294,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     outFileDir->setVisible(false);
     chooseOutFile->setVisible(false);
 
-    errMSG=new QLabel("Your file format is not appropriate");
+    errMSG=new QLabel("Unrecognized file format");
     errMSG->setStyleSheet({"color: red"});
     layout->addWidget(errMSG,wid++,1,1,2,Qt::AlignLeft);
     errMSG->hide();
@@ -322,6 +329,13 @@ SurrogateDoEInputWidget::showNuggetBox(int idx)
         theNuggetVals->show();
         theNuggetVals->setPlaceholderText("[QoI₁ˡᵇ,QoI₁ᵘᵇ], [QoI₂ˡᵇ,QoI₂ᵘᵇ],..");
     }
+
+
+    if ((theLogtCheckBox->isChecked()) && (idx!=0))
+        theNuggetMsg -> setVisible(true);
+    else
+        theNuggetMsg -> setVisible(false);
+
 
 };
 

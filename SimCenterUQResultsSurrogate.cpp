@@ -254,6 +254,8 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     QFile file(filenameResults);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QString message = QString("Error: could not open file") + filenameResults;
+        emit sendErrorMessage(message);
+        return 0;
     }
 
     // place contents of file into json object
@@ -516,6 +518,7 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
     QJsonObject yPredi = jsonObj["yPredict"].toObject();
     QJsonObject yConfidenceLb = jsonObj["yPredict_CI_lb"].toObject();
     QJsonObject yConfidenceUb = jsonObj["yPredict_CI_ub"].toObject();
+    bool didLogtransform = jsonObj["doLogtransform"].toBool();
     bool isMultiFidelity = jsonObj["doMultiFidelity"].toBool();
 
     QStringList QoInames;
@@ -703,16 +706,27 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         QLineSeries *series_nugget_lb = new QLineSeries;
         int nd=100;
         bool nuggetLabel = true;
-        double nuggetwidth = valNugget[QoInames[nq]].toDouble();
-        if (nuggetwidth/inteval < 1.e-5) {
+        double nuggetvar = valNugget[QoInames[nq]].toDouble();
+        double nuggetstd = std::sqrt(valNugget[QoInames[nq]].toDouble());
+        if (nuggetstd/inteval < 1.e-5) {
             nuggetLabel = false;
         }
-        if (nuggetwidth/inteval < 1.e-2) {
-            nuggetwidth = inteval*1.e-2;
+        if (nuggetstd/inteval < 1.e-2) {
+            nuggetstd = inteval*1.e-2;
         }
         for (int i=0; i<nd+1; i++) {
-            series_nugget_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetwidth);
-            series_nugget_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetwidth);
+            series_nugget_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetstd);
+            series_nugget_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetstd);
+            if (didLogtransform) {
+                double log_mean = std::log(miny+i*(maxy-miny)/nd);
+                double log_var = nuggetvar;
+                nuggetstd = std::sqrt(std::exp(2.0*log_mean+log_var)*(std::exp(log_var)-1.0));
+                if (nuggetstd/inteval < 1.e-2) {
+                    nuggetstd = inteval*1.e-2;
+                }
+                series_nugget_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetstd);
+                series_nugget_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetstd);
+            }
         }
 
         QAreaSeries *series_nugget = new QAreaSeries(series_nugget_ub,series_nugget_lb);
@@ -777,12 +791,17 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
 
         double nugget = valNugget[QoInames[nq]].toDouble();
         QVector<QVector<double>> statisticsVector = theDataTable->getStatistics();
-
+        QString nuggetStr;
         chartAndNugget->addWidget(chartView_CV,0,0);
-        if (nugget/statisticsVector[jsonObj["xdim"].toInt()+1+nq][0]<1.e-12) {
-            chartAndNugget->addWidget(new QLabel("nugget: 0.000"));
+        if (!didLogtransform) {
+            nuggetStr = "nugget variance: ";
         } else {
-            chartAndNugget->addWidget(new QLabel("nugget: " + QString::number(nugget,'g',4)),1,0);
+            nuggetStr = "nugget variance (log-transformed space): ";
+        }
+        if (nugget/statisticsVector[jsonObj["xdim"].toInt()+1+nq][0]<1.e-12) {
+            chartAndNugget->addWidget(new QLabel(nuggetStr+"0.000"));
+        } else {
+            chartAndNugget->addWidget(new QLabel(nuggetStr + QString::number(nugget,'g',4)),1,0);
         }
 
         tabWidgetScatter->addTab(container,QoInames[nq]);

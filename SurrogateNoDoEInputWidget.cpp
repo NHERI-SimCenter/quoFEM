@@ -60,6 +60,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
 : UQ_MethodInputWidget(parent), theParameters(param), theEdpWidget(edpwidget), theFemWidget(femwidget)
 {
     auto layout = new QGridLayout();
+    int wid = 0; // widget id
 
     //
     // Create Input LineEdit
@@ -73,9 +74,9 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     });
     inpFileDir->setMinimumWidth(600);
     inpFileDir->setReadOnly(true);
-    layout->addWidget(new QLabel("Training Points (Input) File"),0,0);
-    layout->addWidget(inpFileDir,0,1,1,3);
-    layout->addWidget(chooseInpFile,0,4);
+    layout->addWidget(new QLabel("Training Points (Input) File"),wid,0);
+    layout->addWidget(inpFileDir,wid,1,1,3);
+    layout->addWidget(chooseInpFile,wid++,4);
 
     //
     // Create Output selection checkbox
@@ -103,15 +104,15 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     });
     outFileDir->setMinimumWidth(600);
     outFileDir->setReadOnly(true);
-    layout->addWidget(new QLabel("System Results (Output) File     "),1,0,Qt::AlignTop);
-    layout->addWidget(outFileDir,1,1,1,3,Qt::AlignTop);
-    layout->addWidget(chooseOutFile,1,4,Qt::AlignTop);
-    layout->addWidget(theCheckButton,1,5,Qt::AlignTop);
-    layout->addWidget(theLabel,1,6,Qt::AlignTop);
+    layout->addWidget(new QLabel("System Results (Output) File     "),wid,0,Qt::AlignTop);
+    layout->addWidget(outFileDir,wid,1,1,3,Qt::AlignTop);
+    layout->addWidget(chooseOutFile,wid,4,Qt::AlignTop);
+    layout->addWidget(theCheckButton,wid,5,Qt::AlignTop);
+    layout->addWidget(theLabel,wid++,6,Qt::AlignTop);
 
-    errMSG=new QLabel("File format is not appropreate");
+    errMSG=new QLabel("Unrecognized file format");
     errMSG->setStyleSheet({"color: red"});
-    layout->addWidget(errMSG,2,1,Qt::AlignLeft);
+    layout->addWidget(errMSG,wid++,1,Qt::AlignLeft);
     errMSG->hide();
 
     //
@@ -121,14 +122,14 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     theAdvancedCheckBox = new QCheckBox();
     theAdvancedTitle=new QLabel("\n    Advanced Options for Gaussian Process Model");
     theAdvancedTitle->setStyleSheet("font-weight: bold; color: gray");
-    layout->addWidget(theAdvancedTitle, 3, 0,1,3,Qt::AlignBottom);
-    layout->addWidget(theAdvancedCheckBox, 3, 0,Qt::AlignBottom);
+    layout->addWidget(theAdvancedTitle, wid, 0,1,3,Qt::AlignBottom);
+    layout->addWidget(theAdvancedCheckBox, wid++, 0,Qt::AlignBottom);
 
     lineA = new QFrame;
     lineA->setFrameShape(QFrame::HLine);
     lineA->setFrameShadow(QFrame::Sunken);
     lineA->setMaximumWidth(420);
-    layout->addWidget(lineA, 4, 0, 1, 2);
+    layout->addWidget(lineA, wid++, 0, 1, 3);
     lineA->setVisible(false);
 
     //
@@ -143,8 +144,8 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     gpKernel->addItem(tr("Radial Basis"));
     gpKernel->addItem(tr("Exponential"));
     gpKernel->setMaximumWidth(150);
-    layout->addWidget(theKernelLabel, 5, 0);
-    layout->addWidget(gpKernel, 5, 1);
+    layout->addWidget(theKernelLabel, wid, 0);
+    layout->addWidget(gpKernel, wid++, 1, 1,2);
     gpKernel->setCurrentIndex(0);
     theKernelLabel->setVisible(false);
     gpKernel->setVisible(false);
@@ -156,8 +157,8 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     theLinearLabel=new QLabel("Add Linear Trend Function");
 
     theLinearCheckBox = new QCheckBox();
-    layout->addWidget(theLinearLabel, 6, 0);
-    layout->addWidget(theLinearCheckBox, 6, 1);
+    layout->addWidget(theLinearLabel, wid, 0);
+    layout->addWidget(theLinearCheckBox, wid++, 1);
     //theLinearLabel->setStyleSheet("color: gray");
     //theLinearCheckBox->setDisabled(1);
     theLinearLabel->setVisible(false);
@@ -171,9 +172,9 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     theLogtLabel2=new QLabel("     (check this box only when all response qunatities are always positive)");
 
     theLogtCheckBox = new QCheckBox();
-    layout->addWidget(theLogtLabel, 7, 0);
-    layout->addWidget(theLogtLabel2, 7, 1);
-    layout->addWidget(theLogtCheckBox, 7, 1);
+    layout->addWidget(theLogtLabel, wid, 0);
+    layout->addWidget(theLogtLabel2, wid, 1,1,-1,Qt::AlignLeft);
+    layout->addWidget(theLogtCheckBox, wid++, 1);
     theLogtLabel->setVisible(false);
     theLogtLabel2->setVisible(false);
     theLogtCheckBox->setVisible(false);
@@ -183,7 +184,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     // Nugget function
     //
 
-    theNuggetLabel=new QLabel("Nugget Values for each QoI");
+    theNuggetLabel=new QLabel("Nugget Variances");
     theNuggetSelection = new QComboBox();
 
     theNuggetSelection->addItem(tr("Optimize"),0);
@@ -195,23 +196,31 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     theNuggetVals = new QLineEdit();
     theNuggetVals->setToolTip("Provide nugget values");
     //theNuggetVals->setMaximumWidth(150);
+    theNuggetMsg= new QLabel("in the log-transformed space");
 
-    layout->addWidget(theNuggetLabel, 8, 0);
-    layout->addWidget(theNuggetSelection, 8, 1);
-    layout->addWidget(theNuggetVals, 9, 1,1,2);
+    layout->addWidget(theNuggetLabel, wid, 0);
+    layout->addWidget(theNuggetSelection, wid, 1);
+    layout->addWidget(theNuggetMsg, wid++, 2,Qt::AlignLeft);
+    layout->addWidget(theNuggetVals, wid++, 1,1,2);
 
     theNuggetLabel->setVisible(false);
     theNuggetSelection->setVisible(false);
     theNuggetVals->setVisible(false);
+    theNuggetMsg->setVisible(false);
 
     connect(theNuggetSelection,SIGNAL(currentIndexChanged(int)),this,SLOT(showNuggetBox(int)));
-
+    connect(theLogtCheckBox, &QCheckBox::toggled, this, [=](bool tog)  {
+        if (tog && (theNuggetSelection->currentIndex()!=0))
+            theNuggetMsg -> setVisible(true);
+        else
+            theNuggetMsg -> setVisible(false);
+    });
     //
     // Finish
     //
 
-    layout->setRowStretch(10, 1);
-    layout->setColumnStretch(7, 1);
+    layout->setRowStretch(wid, 1);
+    layout->setColumnStretch(6, 1);
     this->setLayout(layout);
 
 
@@ -245,6 +254,12 @@ SurrogateNoDoEInputWidget::showNuggetBox(int idx)
         theNuggetVals->show();
         theNuggetVals->setPlaceholderText("[QoI1_LB,QoI1_UB], [QoI2_LB,QoI2_UB],..");
     }
+
+    if ((theLogtCheckBox->isChecked()) && (idx!=0))
+        theNuggetMsg -> setVisible(true);
+    else
+        theNuggetMsg -> setVisible(false);
+
 
 };
 

@@ -923,9 +923,8 @@ QStringList FEM::parseGPInputs(QString file1){
 
     option1Button = new QRadioButton();
     QLabel *option1Label = new QLabel("     Stop Analysis");
-    option1Button->setChecked(true);
     option2Button = new QRadioButton();
-    QLabel *option2Label = new QLabel("     Continue (not recommended)");
+    QLabel *option2Label = new QLabel("     Ignore and Continue");
     option3Button = new QRadioButton();
     QLabel *option3Label = new QLabel("     Run Exact FEM Simulation");
     QLabel *labelThresMsg = new QLabel(" ");
@@ -968,7 +967,7 @@ QStringList FEM::parseGPInputs(QString file1){
         option1Button -> setDisabled(false);
         option2Button -> setDisabled(false);
         option3Button -> setDisabled(true);
-        option1Button -> setChecked(true);
+        option2Button -> setChecked(true);
         labelThresMsg->setVisible(false);
         option3Label->setText("     Run Exact FEM simulation (not supported for data-based surrogate model)");
         option3Label->setStyleSheet("color: grey");
@@ -979,7 +978,7 @@ QStringList FEM::parseGPInputs(QString file1){
     } else {
         // interpolate
         option1Button -> setDisabled(false);
-        option1Button -> setChecked(true);
+        option2Button -> setChecked(true);
         option2Button -> setDisabled(false);
         option3Button -> setDisabled(false);
         labelThresMsg -> setVisible(true);
@@ -1012,7 +1011,7 @@ QStringList FEM::parseGPInputs(QString file1){
         }
     });
 
-    femOpt = "giveError";
+    femOpt = "continue";
     connect(option1Button, &QCheckBox::toggled, this, [=](bool tog){
         if (tog==true)
         {

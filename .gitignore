@@ -50,7 +50,7 @@ uqFEM.pro.user
 applications/out/build/*
 backend/applications/
 backend/build/
-
+build/
 
 Makefile
 *.pro.user
