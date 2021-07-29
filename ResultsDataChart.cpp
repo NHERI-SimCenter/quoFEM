@@ -287,7 +287,6 @@ ResultsDataChart::getMinMax() {
 
 void
 ResultsDataChart::readTableFromTab(QString filenameTab) {
-
     theHeadings << "Run #";
 
     // open file containing tab data
@@ -362,10 +361,12 @@ ResultsDataChart::readTableFromTab(QString filenameTab) {
     if (isSurrogate) {
         nqoi = (colCount-nrv-1)/4;
     }
+    //
+    // why not enable sorting!
+    //
+    spreadsheet->setSortingEnabled(true);
+    spreadsheet->sortItems(0);
 }
-
-
-
 
 void
 ResultsDataChart::readTableFromJson(QJsonObject spreadsheetData) {
@@ -405,9 +406,13 @@ ResultsDataChart::readTableFromJson(QJsonObject spreadsheetData) {
         nqoi = (colCount-nrv-1)/4;
     }
 
+    //
+    // why not enable sorting!
+    //
+    spreadsheet->setSortingEnabled(true);
+    spreadsheet->sortItems(0);
+
 }
-
-
 
 QVector<QString>
 ResultsDataChart::getNames() {
