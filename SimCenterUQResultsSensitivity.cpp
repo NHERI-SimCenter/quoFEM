@@ -547,13 +547,13 @@ SimCenterUQResultsSensitivity::outputToJSON(QJsonObject &jsonObject)
     jsonObject["sobols"]=sobols_vec;
 
     QJsonArray QoIlist;
-    for (int nq=0; nq<nQoI; nq++){
+    for (int nq=0; nq<nQoI && nq < QoInames.size(); nq++){
         QoIlist.append(QoInames[nq]);
     }
     jsonObject["QoIlist"]=QoIlist;
 
     QJsonArray comblist;
-    for (int nc=0; nc<ncomb; nc++){
+    for (int nc=0; nc<ncomb && nc < combs.size(); nc++){
         comblist.append(combs[nc]);
     }
     jsonObject["Comblist"]=comblist;
