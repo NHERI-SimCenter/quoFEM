@@ -35,11 +35,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 // Written: fmckenna
-// added and modified: padhye
+// added and modified: padhye, bsaakash
 
 #include "UCSD_Results.h"
 //#include "InputWidgetFEM.h"
-#include "bayesplots.h"
+#include "BayesPlots.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
