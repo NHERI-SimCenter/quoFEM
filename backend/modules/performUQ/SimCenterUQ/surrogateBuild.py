@@ -419,10 +419,14 @@ class GpFromModel(object):
                 while is_left:
                     idx = idx + 1
                     try:
-                        os.chmod('{}/workdir.{}/workflow_driver.bat'.format(work_dir, idx), 0o777)
+                        if os.path.exists('{}/workdir.{}/workflow_driver.bat'.format(work_dir, idx)):
+                            os.chmod('{}/workdir.{}/workflow_driver.bat'.format(work_dir, idx), 0o777)
                         shutil.rmtree('{}/workdir.{}'.format(work_dir, idx))
-                    except OSError:
-                        is_left = False
+                    except Exception as ex:
+                        print(ex)
+                        is_left = True
+                        break
+
                 print("Cleaned the working directory")
             else:
                 print("Work directory is clean")
@@ -1580,7 +1584,11 @@ def run_FEM(X,id_sim, rv_name):
     # (1) create "workdir.idx " folder :need C++17 to use the files system namespace
     id_sim = id_sim
     current_dir_i = work_dir + '/workdir.' + str(id_sim + 1)
-    shutil.copytree(work_dir + '/templatedir', current_dir_i)
+    try:
+        shutil.copytree(work_dir + '/templatedir', current_dir_i)
+    except Exception as ex:
+        msg = 'Error running FEM: ' + str(ex)
+        errlog.exit(msg)
 
     # (2) write param.in file
     outF = open(current_dir_i + '/params.in', 'w')
@@ -1592,10 +1600,12 @@ def run_FEM(X,id_sim, rv_name):
 
     # (3) run workflow_driver.bat
     os.chdir(current_dir_i)
+
+    # Windows
+    workflowDriver = "workflow_driver.bat"
+
     if run_type.lower() == 'runninglocal':
-        if os_type.lower().startswith('win'):
-            workflowDriver = "workflow_driver.bat"
-        else:
+        if not os_type.lower().startswith('win'):
             workflowDriver = "workflow_driver"
 
     workflow_run_command = '{}/{}'.format(current_dir_i, workflowDriver)
@@ -1605,10 +1615,15 @@ def run_FEM(X,id_sim, rv_name):
 
     # (4) reading results
     if glob.glob('results.out'):
-        g = np.loadtxt('results.out')
+        g = np.loadtxt('results.out').flatten()
     else:
         msg = 'Error running FEM: result.out missing'
         errlog.exit(msg)
+
+    if g.shape[0]==0:
+        msg = 'Error running FEM: result.out is empty'
+        errlog.exit(msg)
+
 
     id_sim = id_sim + 1
     os.chdir("../")
@@ -1700,14 +1715,9 @@ if __name__ == "__main__":
     inputArgs = sys.argv
     work_dir = inputArgs[1].replace(os.sep, '/')
 
-    # global error_file
     errlog = errorLog(work_dir)
 
-    # run_type = 'runningLocal'
-    # os_type  = 'windows'
-    # work_dir =
     os_type = inputArgs[2]
-    # os_type = inputArgs[2]
     run_type = inputArgs[3]
     result_file = "results.out"
 

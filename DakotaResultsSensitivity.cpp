@@ -57,6 +57,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPushButton>
 #include <QProcess>
 #include <QScrollArea>
+#include <QBarSet>
+#include <QBarSeries>
+#include <QBarCategoryAxis>
 
 #include <iostream>
 #include <sstream>
@@ -327,71 +330,7 @@ Node_2_Disp Sobol' indices:
 
     QScrollArea *sa = new QScrollArea;
 
-    //HEREHEREHEREHEREHERE
     gsaChart(*&sa);
-    /*************
-    while (done == false) {
-        std::getline(fileResults, haystack);
-        if (haystack.find(needleSobol) != std::string::npos) {
-            QString h(QString::fromStdString(haystack));
-
-            groupBox = new QGroupBox(h);
-            summaryLayout->addWidget(groupBox);
-
-
-            // Labels & QlineEdit Option in a QGrid
-            trainingDataLayout = new QGridLayout();
-            QLabel *l1 = new QLabel("Random Variable");
-            QLabel *l2 = new QLabel("Main");
-            QLabel *l3 = new QLabel("Total");
-            trainingDataLayout->addWidget(l1, 0,0);
-            trainingDataLayout->addWidget(l2, 0,1);
-            trainingDataLayout->addWidget(l3, 0,2);
-            QFont font;
-            font.setBold(true);
-            l1->setAlignment(Qt::AlignCenter);
-            l1->setFont(font);
-            l2->setAlignment(Qt::AlignCenter);
-            l2->setFont(font);
-            l3->setAlignment(Qt::AlignCenter);
-            l3->setFont(font);
-
-            groupBox->setLayout(trainingDataLayout);
-
-            // set num EDP and read a useleass line
-            numEDP = 0;
-            std::getline(fileResults, haystack);
-
-        } else {
-            std::istringstream iss(haystack);
-            QString h(QString::fromStdString(haystack));
-            if (h.length() == 0) {
-                done = true;
-            } else {
-                std::string data1, data2, data3, data4;
-
-                iss >> data1 >> data2 >> data3;
-                QString d1(QString::fromStdString(data1));
-                QString d2(QString::fromStdString(data2));
-                QString d3(QString::fromStdString(data3));
-                QLineEdit *e1 = new QLineEdit(d3); e1->setReadOnly(true); e1->setAlignment(Qt::AlignCenter);
-                QLineEdit *e2 = new QLineEdit(d1); e2->setReadOnly(true);  e2->setAlignment(Qt::AlignRight);
-                QLineEdit *e3 = new QLineEdit(d2); e3->setReadOnly(true); e3->setAlignment(Qt::AlignRight);
-
-                trainingDataLayout->addWidget(e1, numEDP+1,0);
-                trainingDataLayout->addWidget(e2, numEDP+1,1);
-                trainingDataLayout->addWidget(e3, numEDP+1,2);
-                trainingDataLayout->setColumnStretch(1,.5);
-                trainingDataLayout->setColumnStretch(2,.5);
-                trainingDataLayout->setColumnStretch(3,1);
-
-
-                numEDP++;
-            }
-        }
-    }
-    *************/
-
 
     //
     // create spreadsheet,  a QTableWidget showing RV and results for each run
@@ -426,7 +365,7 @@ void DakotaResultsSensitivity::gsaChart(QScrollArea *&sa) {
     QGroupBox *groupBox = NULL;
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summaryLayout->setContentsMargins(0,0,0,0); // adding back
+    summaryLayout->setContentsMargins(10,10,10,10); // adding back
     summary->setLayout(summaryLayout);
     sa->setWidget(summary);
 
@@ -457,12 +396,16 @@ void DakotaResultsSensitivity::gsaChart(QScrollArea *&sa) {
 
         groupBox->setLayout(trainingDataLayout);
 
+        QBarSet *set0 = new QBarSet("Main");
+        QBarSet *set1 = new QBarSet("Total");
+
         for (int nrv=0; nrv< numRV; nrv++) {
             std::string data1, data2, data3, data4;
 
-            QLineEdit *e1 = new QLineEdit(rvname_list[nrv]); e1->setReadOnly(true); e1->setAlignment(Qt::AlignCenter);
-            QLineEdit *e2 = new QLineEdit(QString::number(sobols_main[ne][nrv])); e2->setReadOnly(true);  e2->setAlignment(Qt::AlignRight);
-            QLineEdit *e3 = new QLineEdit(QString::number(sobols_tot[ne][nrv])); e3->setReadOnly(true); e3->setAlignment(Qt::AlignRight);
+            //QLineEdit *e1 = new QLineEdit(rvname_list[nrv]); e1->setReadOnly(true); e1->setAlignment(Qt::AlignCenter);
+            QLabel *e1 = new QLabel(rvname_list[nrv]); e1->setAlignment(Qt::AlignCenter);
+            QLineEdit *e2 = new QLineEdit(QString::number(sobols_main[ne][nrv],'f', 3)); e2->setReadOnly(true);  e2->setAlignment(Qt::AlignRight);
+            QLineEdit *e3 = new QLineEdit(QString::number(sobols_tot[ne][nrv],'f', 3)); e3->setReadOnly(true); e3->setAlignment(Qt::AlignRight);
 
             trainingDataLayout->addWidget(e1, nrv+1,0);
             trainingDataLayout->addWidget(e2, nrv+1,1);
@@ -470,12 +413,91 @@ void DakotaResultsSensitivity::gsaChart(QScrollArea *&sa) {
             trainingDataLayout->setColumnStretch(1,.5);
             trainingDataLayout->setColumnStretch(2,.5);
             trainingDataLayout->setColumnStretch(3,1);
+
+            *set0 << sobols_main[ne][nrv];
+            *set1 << sobols_tot[ne][nrv];
         }
+        QBarSeries *series = new QBarSeries();
+        series->append(set0);
+        series->append(set1);
+
+        QChart *chartSobol = new QChart();
+        chartSobol->addSeries(series);
+        chartSobol->setAnimationOptions(QChart::SeriesAnimations);
+
+        QStringList categories;
+        foreach (const QString str, rvname_list) {
+            categories << str;
+        }
+
+        QBarCategoryAxis *axisX = new QBarCategoryAxis();
+        axisX->append(categories);
+        chartSobol->addAxis(axisX, Qt::AlignBottom);
+        series->attachAxis(axisX);
+
+        QValueAxis *axisY = new QValueAxis();
+        axisY->setRange(0.0, 1.05);
+        axisY->setTickType(QValueAxis::TickType::TicksDynamic);
+        axisY->setTickInterval(0.5);
+        axisY->setTickAnchor(0.0);
+        chartSobol->addAxis(axisY, Qt::AlignLeft);
+        series->attachAxis(axisY);
+
+        chartSobol->setMargins(QMargins(10,10,10,10));
+        chartSobol->setBackgroundRoundness(0);
+        chartSobol->setMinimumHeight(120);
+
+        QChartView *chartView = new QChartView(chartSobol);
+        chartView->setRenderHint(QPainter::Antialiasing);
+
+        chartSobol->legend()->setVisible(true);
+        chartSobol->legend()->setAlignment(Qt::AlignRight);
+        trainingDataLayout->addWidget(chartView, 0,3,-1,-1);
+        trainingDataLayout->setSpacing(5);
+        trainingDataLayout->setMargin(10);
+        trainingDataLayout->setColumnStretch(0 | 1 | 2, 1);
     }
+
+    //
+    // save button
+    //
+
+    QPushButton * saveData = new QPushButton("Save Results");
+    saveData->setMaximumWidth(150);
+    summaryLayout->addWidget(saveData);
+    summaryLayout->setAlignment(saveData,Qt::AlignRight);
+    connect(saveData,SIGNAL(clicked()),this,SLOT(onSaveButtonClicked()));
+    //
+    //
+    //
+
     summaryLayout->addStretch();
 }
 
+void
+DakotaResultsSensitivity::onSaveButtonClicked(void) {
 
+        QString fileName = QFileDialog::getSaveFileName(this,
+                                                        tr("Save Data"), "/sensitivityResults",
+                                                        tr("output (*.out)"));
+        QFile file(fileName);
+        if (file.open(QIODevice::WriteOnly))
+        {
+            QTextStream stream(&file);
+
+             for (int ne=0; ne< numEDP; ne++) {
+
+                 stream << "* " << edpname_list[ne] << endl;
+                 stream << "randomVariable   Main   Total" << endl;
+                 for (int nrv=0; nrv< numRV; nrv++) {
+                     stream << rvname_list[nrv] << "   " << QString::number(sobols_main[ne][nrv],'f', 3) << "   " ;
+                     stream << QString::number(sobols_tot[ne][nrv],'f', 3) << endl;
+                 }
+            stream << endl;
+             }
+        file.close();
+        }
+}
 
 
 // padhye
@@ -591,8 +613,8 @@ DakotaResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
     for (int nq=0; nq<numEDP; nq++){
         QVector<double> sobols_tot_vec, sobols_main_vec;
         for (int nc=0; nc<numRV; nc++){
-            sobols_tot_vec.push_back(sobols_tot_vals[nc].toDouble());
-            sobols_main_vec.push_back(sobols_main_vals[nc].toDouble());
+            sobols_tot_vec.push_back(sobols_tot_vals[numRV*nq+nc].toDouble());
+            sobols_main_vec.push_back(sobols_main_vals[numRV*nq+nc].toDouble());
         }
         sobols_tot.push_back(sobols_tot_vec);
         sobols_main.push_back(sobols_main_vec);

@@ -5,7 +5,6 @@ import os
 import sys
 import json as json
 import shutil
-import subprocess
 from scipy.stats import lognorm, norm
 import GPy as GPy
 
@@ -22,7 +21,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
     #
 
     msg0 = os.path.basename(os.getcwd()) + " : "
-    file_object = open('../surrogateLog.err', 'a')
+    file_object = open('../surrogateLog.log', 'a')
 
     folderName = os.path.basename(os.getcwd())
     sampNum = folderName.split(".")[-1]
@@ -369,8 +368,8 @@ def predict(m, X, did_mf):
 
 
 if __name__ == "__main__":
-    error_file = open('surrogate.err', "w")
-    inputArgs = sys.argv    
+    error_file = open('../surrogate.err', "w")
+    inputArgs = sys.argv
 
     if not inputArgs[2].endswith('.json'):
         msg = 'ERROR: surrogte information file (.json) not set'

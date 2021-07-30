@@ -161,7 +161,6 @@ void SimCenterUQEngine::engineSelectionChanged(const QString &arg1)
         emit onUQ_EngineChanged();
 }
 
-
 int
 SimCenterUQEngine::getMaxNumParallelTasks(void) {
     return theCurrentEngine->getMaxNumParallelTasks();

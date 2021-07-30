@@ -74,7 +74,7 @@ public slots:
    void clear(void);
   // void onSpreadsheetCellClicked(int, int);
   // void onSaveSpreadsheetClicked();
-
+   void onSaveButtonClicked(void);
    // modified by padhye 08/25/2018
 
 private:

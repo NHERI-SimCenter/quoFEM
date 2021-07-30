@@ -87,11 +87,11 @@ InputWidgetParameters::setParametersWidget(RandomVariablesContainer *param) {
     }
 
     if (param != 0) {
-        layout->addWidget(param);
         theParameters = param;
+        layout->addWidget(theParameters);
         //theParameters->addConstantRVs(varNamesAndValues);
         theParameters->addNormalRVs(varNamesAndValues);
-    //    connect(this,SLOT(errorMessage(QString)),param,SIGNAL(sendErrorMessage(QString)));
+        connect(this,SLOT(errorMessage(QString)),param,SIGNAL(sendErrorMessage(QString)));
         connect(param,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     }
 }

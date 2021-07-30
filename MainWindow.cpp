@@ -1356,13 +1356,10 @@ void MainWindow::onExitButtonClicked(){
 }
 
 void MainWindow::onUQ_EngineChanged(bool abilityToRunRemote) {
-
     qDebug() << "onUQENGINECHANGED " << abilityToRunRemote;
     runDesignSafeButton->setDisabled(!abilityToRunRemote);
-    random->setParametersWidget(uq->getParameters());
-
+    random->setParametersWidget(uq->getParameters()); // May give error in results tab if removed..
 }
-
 
 bool MainWindow::save()
 {

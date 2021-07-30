@@ -213,6 +213,19 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     if (line.length() != 0) {
         qDebug() << line.length() << " " << line;
         emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
+
+        // check if there is an error message from surrogate modeling
+//        QFileInfo surrogateErrorInfo(fileTabInfo.absolutePath() + QDir::separator() + QString("surrogate.err"));
+//        if (surrogateErrorInfo.exists()) {
+//            QFile surrogateError(filenameErrorString);
+//            if (surrogateError.open(QIODevice::ReadOnly)) {
+//               QTextStream in(&fileError);
+//               line = in.readLine();
+//               surrogateError.close();
+//            }
+//            emit sendErrorMessage(QString(QString("Error Running Surrogate Simulation: ") + line));
+//        }
+
         return 0;
     }
 
