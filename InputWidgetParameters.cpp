@@ -87,11 +87,11 @@ InputWidgetParameters::setParametersWidget(RandomVariablesContainer *param) {
     }
 
     if (param != 0) {
-        layout->addWidget(param);
         theParameters = param;
+        layout->addWidget(theParameters);
         //theParameters->addConstantRVs(varNamesAndValues);
         theParameters->addNormalRVs(varNamesAndValues);
-    //    connect(this,SLOT(errorMessage(QString)),param,SIGNAL(sendErrorMessage(QString)));
+        connect(this,SLOT(errorMessage(QString)),param,SIGNAL(sendErrorMessage(QString)));
         connect(param,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     }
 }
@@ -101,7 +101,6 @@ InputWidgetParameters::setInitialVarNamesAndValues(QStringList theList){
     varNamesAndValues=theList;
     //theParameters->addConstantRVs(varNamesAndValues);
     theParameters->addNormalRVs(varNamesAndValues);
-
 }
 
 void
@@ -117,7 +116,6 @@ InputWidgetParameters::setGPVarNamesAndValues(QStringList theList){
 
 void
 InputWidgetParameters::clear(void){
-
     varNamesAndValues.clear();
     theParameters->clear();
 }
@@ -142,4 +140,9 @@ InputWidgetParameters::errorMessage(QString message){
 void
 InputWidgetParameters::setCorrelationDisabled(bool tog){
     theParameters->setCorrelationDisabled(tog);
+}
+
+int
+InputWidgetParameters::getNumRandomVariables(void){
+    return theParameters->getNumRandomVariables();
 }

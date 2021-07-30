@@ -60,12 +60,7 @@ backend/build/
 # Pycache files
 *__pycache__
 
-*graph_info.json
-# Conan build files
-*/conan.lock
-*/conanbuildinfo.pri
-*/conanbuildinfo.txt
-*/conaninfo.txt
+build/
 
 Makefile
 *.pro.user

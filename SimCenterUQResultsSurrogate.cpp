@@ -105,7 +105,6 @@ using namespace QtCharts;
 #define NUM_DIVISIONS 10
 
 
-
 //QLabel *best_fit_label_text;
 
 
@@ -113,6 +112,7 @@ SimCenterUQResultsSurrogate::SimCenterUQResultsSurrogate(RandomVariablesContaine
     : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
+    theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
 }
@@ -133,7 +133,6 @@ void SimCenterUQResultsSurrogate::clear(void)
             delete theWidget;
         }
     }
-
     tabWidget->clear();
     theDataTable = NULL;
 
@@ -190,16 +189,15 @@ static int mergesort(double *input, int size)
     }
 }
 
-// if sobelov indices are selected then we would need to do some processing outselves
-
 int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QString &filenameTab)
 {
     emit sendStatusMessage(tr("Processing Results ... "));
 
     this->clear();
     lastPath = "";
+
     //
-    // check it actually ran with errors
+    // check if it actually ran without errors
     //
 
     QFileInfo fileTabInfo(filenameTab);
@@ -233,11 +231,16 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
         return 0;
     }
 
-    //
-    // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
-    //
+    QDir tempFolder(filenameTabInfo.absolutePath());
+    QFileInfo surrogateTabInfo(tempFolder.filePath("surrogateTab.out"));
+    if (surrogateTabInfo.exists()) {
+        filenameTab = tempFolder.filePath("surrogateTab.out");
+        isSurrogate = true;
+    }
+
 
     // create a scrollable windows, place summary inside it
+
     QScrollArea *sa = new QScrollArea;
 
     //
@@ -251,6 +254,8 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     QFile file(filenameResults);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QString message = QString("Error: could not open file") + filenameResults;
+        emit sendErrorMessage(message);
+        return 0;
     }
 
     // place contents of file into json object
@@ -265,18 +270,18 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     // check file contains valid object
     if (jsonObj.isEmpty()) {
         QString message = QString("ERROR: file either empty or malformed JSON");
+        emit sendErrorMessage(message);
+        return 0;
     }
 
-    theDataTable = new ResultsDataChart(filenameTab);
+    //theDataTable = new ResultsDataChart(filenameTab);
+    theDataTable = new ResultsDataChart(filenameTab, isSurrogate, theRVs->getNumRandomVariables());
 
     //
     // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
 
     summarySurrogate(*&sa);
-
-    //QHBoxLayout *gsaLayout = new QHBoxLayout();
-
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
     //
@@ -362,6 +367,7 @@ SimCenterUQResultsSurrogate::outputToJSON(QJsonObject &jsonObject)
     bool result = true;
 
     jsonObject["resultType"]=QString(tr("SimCenterUQResultsSurrogate"));
+    jsonObject["isSurrogate"]=isSurrogate;
 
     //
     // add summary data
@@ -405,7 +411,8 @@ SimCenterUQResultsSurrogate::inputFromJSON(QJsonObject &jsonObject)
     // into a spreadsheet place all the data returned
     //
 
-    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+    isSurrogate=jsonObject["isSurrogate"].toBool();
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
     QScrollArea *sa = new QScrollArea;
     summarySurrogate(*&sa);
@@ -513,6 +520,7 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
     QJsonObject yPredi = jsonObj["yPredict"].toObject();
     QJsonObject yConfidenceLb = jsonObj["yPredict_CI_lb"].toObject();
     QJsonObject yConfidenceUb = jsonObj["yPredict_CI_ub"].toObject();
+    bool didLogtransform = jsonObj["doLogtransform"].toBool();
     bool isMultiFidelity = jsonObj["doMultiFidelity"].toBool();
 
     QStringList QoInames;
@@ -662,7 +670,6 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
             series_CV->setMarkerSize(4.5);
         }
         series_CV->setColor(QColor(0, 114, 178, alpha));
-
         series_CV->setBorderColor(QColor(255,255,255,0));
 
         QWidget *container = new QWidget();
@@ -672,8 +679,6 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
 
         chart_CV->setAnimationOptions(QChart::AllAnimations);
         chartView_CV->setRenderHint(QPainter::Antialiasing);
-        //chartView_CV->chart()->legend()->hide();
-        //chart.legend().markers(serie_without_marker)[0].setVisible(false);
 
         QJsonArray yEx= yExact[QoInames[nq]].toArray();
         QJsonArray yPr= yPredi[QoInames[nq]].toArray();
@@ -701,42 +706,42 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         // draw nugget scale
         QLineSeries *series_nugget_ub = new QLineSeries;
         QLineSeries *series_nugget_lb = new QLineSeries;
-        //QLineSeries *series_nugget_core_ub = new QLineSeries;
-        //QLineSeries *series_nugget_core_lb = new QLineSeries;
         int nd=100;
         bool nuggetLabel = true;
-        double nuggetwidth = valNugget[QoInames[nq]].toDouble();
-        if (nuggetwidth/inteval < 1.e-5) {
-            nuggetwidth = inteval*1.e-2;
+        double nuggetvar = valNugget[QoInames[nq]].toDouble();
+        double nuggetstd = std::sqrt(valNugget[QoInames[nq]].toDouble());
+        if (nuggetstd/inteval < 1.e-5) {
             nuggetLabel = false;
         }
+        if (nuggetstd/inteval < 1.e-2) {
+            nuggetstd = inteval*1.e-2;
+        }
         for (int i=0; i<nd+1; i++) {
-            series_nugget_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetwidth);
-            series_nugget_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetwidth);
-            //series_nugget_core_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetwidth/2);
-            //series_nugget_core_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetwidth/2);
+            series_nugget_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetstd);
+            series_nugget_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetstd);
+            if (didLogtransform) {
+                double log_mean = std::log(miny+i*(maxy-miny)/nd);
+                double log_var = nuggetvar;
+                nuggetstd = std::sqrt(std::exp(2.0*log_mean+log_var)*(std::exp(log_var)-1.0));
+                if (nuggetstd/inteval < 1.e-2) {
+                    nuggetstd = inteval*1.e-2;
+                }
+                series_nugget_ub->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd + nuggetstd);
+                series_nugget_lb->append(miny+i*(maxy-miny)/nd, miny+i*(maxy-miny)/nd - nuggetstd);
+            }
         }
 
         QAreaSeries *series_nugget = new QAreaSeries(series_nugget_ub,series_nugget_lb);
-        //QAreaSeries *series_nugget_core = new QAreaSeries(series_nugget_core_ub,series_nugget_core_lb);
         series_nugget->setName("± Nugget Std.");
 
         chart_CV->addSeries(series_nugget);
-        //chart_CV->addSeries(series_nugget_core);
-
-        //series_nugget->setColor(Qt::gray);
         series_nugget->setColor(QColor(180,180,180,alpha/2));
-        //series_nugget_core->setColor(QColor(180,180,180,alpha/2));
         chart_CV->setAxisX(axisX, series_nugget);// share the X-axis
         chart_CV->setAxisY(axisY, series_nugget);
-        //chart_CV->setAxisX(axisX, series_nugget_core);// share the X-axis
-        //chart_CV->setAxisY(axisY, series_nugget_core);
-        //chart_CV->legend()->markers(series_nugget_core)[0]->setVisible(false);
         if (nuggetLabel == false) {
             //hide label if nugget is zero
             chart_CV->legend()->markers(series_nugget)[0]->setVisible(false);
         }
-        //series_nugget_core->setBorderColor(QColor(255,255,255,0));
         series_nugget->setBorderColor(QColor(255,255,255,0));
 
         // draw bounds first
@@ -774,17 +779,31 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
         chart_CV->addSeries(dummy_series_err);
         dummy_series_err->setName("Inter-quartile Range");
 
+        // set fontsize
+        QFont chartFont;
+        chartFont.setPixelSize(12);
+        chart_CV->setFont(chartFont);
+        axisX->setLabelsFont(chartFont);
+        axisY->setLabelsFont(chartFont);
+        axisX->setTitleFont(chartFont);
+        axisY->setTitleFont(chartFont);
+        chart_CV->legend()->setFont(chartFont);
+
         // to get mean value
 
         double nugget = valNugget[QoInames[nq]].toDouble();
         QVector<QVector<double>> statisticsVector = theDataTable->getStatistics();
-
+        QString nuggetStr;
         chartAndNugget->addWidget(chartView_CV,0,0);
-        if (nugget/statisticsVector[jsonObj["xdim"].toInt()+1+nq][0]<1.e-12) {
-            auto aa = statisticsVector[jsonObj["xdim"].toInt()+1+nq][0];
-            chartAndNugget->addWidget(new QLabel("nugget: 0.000"));
+        if (!didLogtransform) {
+            nuggetStr = "nugget variance: ";
         } else {
-            chartAndNugget->addWidget(new QLabel("nugget: " + QString::number(nugget,'g',4)),1,0);
+            nuggetStr = "nugget variance (log-transformed space): ";
+        }
+        if (nugget/statisticsVector[jsonObj["xdim"].toInt()+1+nq][0]<1.e-12) {
+            chartAndNugget->addWidget(new QLabel(nuggetStr+"0.000"));
+        } else {
+            chartAndNugget->addWidget(new QLabel(nuggetStr + QString::number(nugget,'g',4)),1,0);
         }
 
         tabWidgetScatter->addTab(container,QoInames[nq]);

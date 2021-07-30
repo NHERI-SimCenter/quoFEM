@@ -100,6 +100,7 @@ DakotaResultsSampling::DakotaResultsSampling(RandomVariablesContainer *theRandom
   : UQ_Results(parent), theRVs(theRandomVariables), tabWidget(0)
 {
     // title & add button
+    theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
 }
@@ -212,6 +213,19 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     if (line.length() != 0) {
         qDebug() << line.length() << " " << line;
         emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
+
+        // check if there is an error message from surrogate modeling
+//        QFileInfo surrogateErrorInfo(fileTabInfo.absolutePath() + QDir::separator() + QString("surrogate.err"));
+//        if (surrogateErrorInfo.exists()) {
+//            QFile surrogateError(filenameErrorString);
+//            if (surrogateError.open(QIODevice::ReadOnly)) {
+//               QTextStream in(&fileError);
+//               line = in.readLine();
+//               surrogateError.close();
+//            }
+//            emit sendErrorMessage(QString(QString("Error Running Surrogate Simulation: ") + line));
+//        }
+
         return 0;
     }
 
@@ -219,6 +233,14 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     if (!filenameTabInfo.exists()) {
         emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
         return 0;
+    }
+
+    // If surrogate model is used, display additional info.
+    QDir tempFolder(filenameTabInfo.absolutePath());
+    QFileInfo surrogateTabInfo(tempFolder.filePath("surrogateTab.out"));
+    if (surrogateTabInfo.exists()) {
+        filenameTab = tempFolder.filePath("surrogateTab.out");
+        isSurrogate = true;
     }
 
     //
@@ -242,8 +264,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
 
-
-    theDataTable = new ResultsDataChart(filenameTab);
+    theDataTable = new ResultsDataChart(filenameTab, isSurrogate, theRVs->getNumRandomVariables());
 
     //
     // determine summary statistics for each edp
@@ -281,6 +302,7 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
 
 
     jsonObject["resultType"]=QString(tr("SimCenterUQResultsSampling"));
+    jsonObject["isSurrogate"]=isSurrogate;
 
     //
     // add summary data
@@ -356,7 +378,8 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
 
     sa->setWidget(summary);
 
-    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+    isSurrogate=jsonObject["isSurrogate"].toBool();
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
     //
     // determine summary statistics for each edp

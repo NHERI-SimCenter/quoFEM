@@ -6,38 +6,49 @@ import sys
 import json as json
 import shutil
 import subprocess
+from scipy.stats import lognorm, norm
 
-def main(params_dir,surrogate_dir,json_dir,result_file):
+from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
+
+def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
     global error_file
 
     os_type='win'
     run_type ='runninglocal'
 
+
+    #
+    # create a log file
+    #
+
     msg0 = os.path.basename(os.getcwd()) + " : "
     file_object = open('../surrogateLog.err', 'a')
+
+    folderName = os.path.basename(os.getcwd())
+    sampNum = folderName.split(".")[-1]
 
     #
     # read json -- current input file
     #
-    f = open('dakota.json') # current input file
-    try:
-        inp_tmp = json.load(f)
-    except ValueError:
-        msg = 'invalid json format - dakota.json'
-        error_file.write(msg)
-        error_file.close()
-        file_object.write(msg0+msg)
-        file_object.close()
-        exit(-1)
-    f.close()
-    #norm_var_thr = 0.0001
+
+    with open(dakota_path) as f: # current input file
+        try:
+            inp_tmp = json.load(f)
+        except ValueError:
+            msg = 'invalid json format - dakota.json'
+            error_file.write(msg)
+            error_file.close()
+            file_object.write(msg0+msg)
+            file_object.close()
+            exit(-1)
+
     norm_var_thr = inp_tmp["fem"]["varThres"]
     when_inaccurate = inp_tmp["fem"]["femOption"]
+    do_mf = inp_tmp
 
-    #when_inaccurate='do_original'
-    #when_inaccurate='give_error'
-    #when_inaccurate='do_nothing'
 
+    #np.random.seed(int(inp_tmp["fem"]["gpSeed"]))
+    np.random.seed(int(inp_tmp["fem"]["gpSeed"])+int(sampNum))
 
     # if no g and rv,
 
@@ -64,6 +75,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file):
         kern_name = 'Mat32'
     elif kernel == 'Matern 5/2':
         kern_name = 'Mat52'
+    did_mf = sur["doMultiFidelity"]
 
     # from json
     g_name_sur = list()
@@ -160,28 +172,46 @@ def main(params_dir,surrogate_dir,json_dir,result_file):
     y_dim = len(m_list)
     nsamp = np.sum(m_list[0].X[:, -1] == 0)
 
-    y_pred=np.zeros(y_dim)
+    y_pred_median = np.zeros(y_dim)
     y_pred_var=np.zeros(y_dim)
     y_data_var=np.zeros(y_dim)
-    y_pred_prior_var = np.zeros(y_dim)
+    y_samp = np.zeros(y_dim)
+    y_q1 = np.zeros(y_dim)
+    y_q3 = np.zeros(y_dim)
 
     for ny in range(y_dim):
-        y_pred_tmp, y_pred_var_tmp  = m_list[ny].predict(rv_val)
-        y_pred[ny]=y_pred_tmp
+        #y_pred_tmp, y_pred_var_tmp  = m_list[ny].predict(rv_val)
+        y_pred_median_tmp, y_pred_var_tmp = predict(m_list[ny],rv_val,did_mf)
+        y_samp_tmp = np.random.normal(y_pred_median_tmp,np.sqrt(y_pred_var_tmp))
         if did_logtransform:
+            y_pred_median[ny] = np.exp(y_pred_median_tmp)
             # y_var_val = np.var(np.log(m_list[ny].Y))
             log_mean = np.mean((m_list[ny].Y))
             log_var = np.var((m_list[ny].Y))
             y_data_var[ny] = np.exp(2 * log_mean + log_var) * (np.exp(log_var) - 1)  # in linear space
-            y_pred_var[ny] = np.exp(2 * y_pred_tmp + y_pred_var_tmp) * (np.exp(y_pred_var_tmp) - 1)
+            y_pred_var[ny] = np.exp(2 * y_pred_median_tmp + y_pred_var_tmp) * (np.exp(y_pred_var_tmp) - 1)
+            y_samp[ny] = np.exp(y_samp_tmp)
+
+            #mu = np.log(y_pred_median_tmp)
+            #sig = np.sqrt(np.log(y_pred_var_tmp/ pow(y_pred_median_tmp, 2) + 1))
+
+            y_q1[ny] = lognorm.ppf(0.05, s=np.sqrt(y_pred_var_tmp), scale=np.exp(y_pred_median_tmp))
+            y_q3[ny] = lognorm.ppf(0.95, s=np.sqrt(y_pred_var_tmp), scale=np.exp(y_pred_median_tmp))
+
+
         else:
             y_data_var[ny] = np.var(m_list[ny].Y)
+            y_pred_median[ny]=y_pred_median
             y_pred_var[ny] = y_pred_var_tmp
-        for parname in m_list[ny].parameter_names():
-            if (kern_name in parname) and parname.endswith('variance'):
-                exec('y_pred_prior_var[ny]=m_list[ny].' + parname)
+            y_samp[ny] = y_samp_tmp
+            y_q1[ny] = norm.ppf(0.05, loc=y_pred_median, scale=np.sqrt(y_pred_var_tmp))
+            y_q3[ny] = norm.ppf(0.95, loc=y_pred_median, scale=np.sqrt(y_pred_var_tmp))
 
-    error_ratio1 = y_pred_var.T / y_pred_prior_var
+        #for parname in m_list[ny].parameter_names():
+        #    if (kern_name in parname) and parname.endswith('variance'):
+        #        exec('y_pred_prior_var[ny]=m_list[ny].' + parname)
+
+    #error_ratio1 = y_pred_var.T / y_pred_prior_var
     error_ratio2 = y_pred_var.T / y_data_var
     idx = np.argmax(error_ratio2) + 1
 
@@ -227,16 +257,17 @@ def main(params_dir,surrogate_dir,json_dir,result_file):
             #shutil.copyfile(os.path.join(sim_dir, 'results.out'), os.path.join(os.getcwd(), 'results.out'))
 
             with open('results.out', 'r') as f:
-                table = np.loadtxt(f)
+                y_pred = np.loadtxt(f)
 
             os.chdir("../")
 
-            with open('results.out', 'w') as f:
-                if table.size==1:
-                    f.write(str(table))
-                else:
-                    result_values = table[g_idx].tolist()
-                    f.write(' '.join(map(str, result_values)))
+            # with open('results.out', 'w') as f:
+            #     if table.size==1:
+            #         #f.write(str(table))
+            #     else:
+            #
+            #         #result_values = table[g_idx].tolist()
+            #         #f.write(' '.join(map(str, result_values)))
 
             msg2 = msg0+msg1+'- RUN original model\n'
             print(msg2)
@@ -244,7 +275,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file):
             file_object.write(msg2)
             error_file.close()
             file_object.close()
-            exit(-1)
+            #exit(-1)
         elif when_inaccurate == 'giveError':
             msg2 = msg0+msg1+'- STOP\n'
             print(msg2)
@@ -258,15 +289,54 @@ def main(params_dir,surrogate_dir,json_dir,result_file):
             error_file.write(msg2)
             file_object.write(msg2)
             error_file.close()
+            if inp_tmp["fem"]["predictionOption"].lower().startswith("median"):
+                y_pred = y_pred_median[g_idx]
+            elif inp_tmp["fem"]["predictionOption"].lower().startswith("rand"):
+                y_pred = y_samp[g_idx]
+
     else:
         msg3 = 'Prediction error of output {} is {:.2f}%\n'.format(idx, np.max(error_ratio2)*100)
         file_object.write(msg0+msg3)
         file_object.close()
 
-    if did_logtransform:
-        y_pred=np.exp(y_pred)
+        if inp_tmp["fem"]["predictionOption"].lower().startswith("median"):
+            y_pred = y_pred_median[g_idx]
+        elif inp_tmp["fem"]["predictionOption"].lower().startswith("rand"):
+            y_pred = y_samp[g_idx]
 
-    np.savetxt(result_file, np.array([y_pred[g_idx]]), fmt='%.5e')
+    np.savetxt(result_file, np.array([y_pred]), fmt='%.5e')
+
+    #
+    # tab file
+    #
+
+    with open('../surrogateTab.out', 'a') as tab_file:
+        # write header
+        if os.path.getsize('../surrogateTab.out') == 0:
+            tab_file.write("%eval_id interface "+ " ".join(rv_name_sur) + " "+ " ".join(g_name_sur) + " " + ".median ".join(g_name_sur) + ".median "+ ".q5 ".join(g_name_sur) + ".q5 "+ ".q95 ".join(g_name_sur) + ".q95 " +".var ".join(g_name_sur) + ".var \n")
+        # write values
+
+        rv_list = " ".join("{:e}".format(rv)  for rv in rv_val[0])
+        ypred_list = " ".join("{:e}".format(yp) for yp in y_pred)
+        ymedian_list = " ".join("{:e}".format(ym) for ym in y_pred_median)
+        yQ1_list = " ".join("{:e}".format(yq1)  for yq1 in y_q1)
+        yQ3_list = " ".join("{:e}".format(yq3) for yq3 in y_q3)
+        ypredvar_list=" ".join("{:e}".format(ypv)  for ypv in y_pred_var)
+
+        tab_file.write(str(sampNum)+" NO_ID "+ rv_list + " "+ ypred_list + " " + ymedian_list+ " "+ yQ1_list + " "+ yQ3_list +" "+ ypredvar_list + " \n")
+
+
+
+def predict(m, X, did_mf):
+
+    if not did_mf:
+        return m.predict(X)
+    else:
+        X_list = convert_x_list_to_array([X, X])
+        X_list_l = X_list[:X.shape[0]]
+        X_list_h = X_list[X.shape[0]:]
+        return m.predict(X_list_h)
+
 
 if __name__ == "__main__":
     error_file = open('surrogate.err', "w")
@@ -320,5 +390,5 @@ if __name__ == "__main__":
     surrogate_meta_dir = inputArgs[2]
     result_file="results.out"
 
-    sys.exit(main(params_dir,surrogate_dir,surrogate_meta_dir,result_file))
+    sys.exit(main(params_dir,surrogate_dir,surrogate_meta_dir,result_file,'dakota.json'))
 

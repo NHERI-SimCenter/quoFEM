@@ -94,7 +94,7 @@ private:
     QCheckBox * theNugCheckBox;
     QLineEdit * theNuggetVals;
     QLabel * theNuggetLabel;
-
+    QLabel * theNuggetMsg;
     InputWidgetParameters *theParameters;
     InputWidgetEDP *theEdpWidget;
     InputWidgetFEM *theFemWidget;

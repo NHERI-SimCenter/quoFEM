@@ -104,6 +104,7 @@ private:
    void summarySurrogate(QScrollArea *&summaryLayout);
 
    QString lastPath;
+   bool isSurrogate;
 
 };
 

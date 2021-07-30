@@ -184,6 +184,8 @@ FEM::outputToJSON(QJsonObject &jsonObject)
         } else if (femSelection->currentText() == "SurrogateGP") {
             jsonObject["varThres"]=thresVal->text().toDouble();
             jsonObject["femOption"]=femOpt;
+            jsonObject["predictionOption"]=gpOutputSelection->currentText();
+            jsonObject["gpSeed"]=gpSeed->text();
         }
 
     }
@@ -260,6 +262,8 @@ FEM::inputFromJSON(QJsonObject &femObject)
                 } else if (femOpt == "doSimulation") {
                     option3Button ->setChecked(true);
                 }
+                gpOutputSelection->setCurrentText(femObject["predictionOption"].toString());
+                gpSeed->setText(femObject["gpSeed"].toString());
 
             } else {
                 this->parseInputfilesForRV(fileName1);
@@ -406,16 +410,6 @@ void FEM::femProgramChanged(const QString &arg1)
         QLineEdit *file1 = new QLineEdit;
         QPushButton *chooseFile1 = new QPushButton();
         chooseFile1->setText(tr("Choose"));
-        connect(chooseFile1, &QPushButton::clicked, this, [=](){
-
-             QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)");
-             if (!fileName.isEmpty()){
-                 file1->setText(fileName);
-                 if ((arg1 == QString("FEAPpv")) || (arg1 == QString("OpenSees")) || (arg1 == QString("SurrogateGP")) )
-                        this->parseInputfilesForRV(fileName);
-             }
-         });
-
         chooseFile1->setToolTip(tr("Push to choose a file from your file system"));
 
         femLayout->addWidget(label1, 0,0);
@@ -427,15 +421,15 @@ void FEM::femProgramChanged(const QString &arg1)
         QLineEdit *file2 = new QLineEdit;
         QPushButton *chooseFile2 = new QPushButton();
 
-        connect(chooseFile2, &QPushButton::clicked, this, [=](){
-            QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)");
-            if (!fileName.isEmpty()) {
-                file2->setText(fileName);
-            }
-        });
-         chooseFile2->setText(tr("Choose"));
+        chooseFile2->setText(tr("Choose"));
         chooseFile2->setToolTip(tr("Push to choose a file from your file system"));
 
+        femLayout->addWidget(label2, 1,0);
+        femLayout->addWidget(file2, 1,1);
+        femLayout->addWidget(chooseFile2, 1,2);
+
+        QString file1ext = tr("All files (*.*)");
+        QString file2ext = tr("All files (*.*)");
         if (arg1 == QString("FEAPpv")){
             label1->setText("Input File");
             file1->setToolTip(tr("Name of FEAPpv input file"));
@@ -444,35 +438,51 @@ void FEM::femProgramChanged(const QString &arg1)
             label1->setText("Input Script");
             file1->setToolTip(tr("Name of OpenSees input script"));
             file2->setToolTip(tr("Name of Python/Tcl script that will process OpenSees output file for UQ engine"));
+            file1ext = "Tcl files (*.tcl)";
             file2->setPlaceholderText("(Optional)");
         } else if (arg1 == "SurrogateGP"){
             label1->setText("SurrogateGP Info (.json)");
             label2->setText("SurrogateGP Model (.pkl)");
             file1->setToolTip(tr("Name of SurrogateGP model file (.json)"));
             file2->setToolTip(tr("Name of SurrogateGP info file (.pkl)"));
+            file1ext = "Json files (*.json)";
+            file2ext = "Pickle files (*.pkl)";
             optionsLayout = 0;
         } else {
             label1->setText("Input Script");
             file1->setToolTip(tr("Name of OpenSeesPy input script"));
             file2->setToolTip(tr("Name of Python script that will process OpenSeesPy output"));
+            file1ext = "Python files (*.py)";
             file2->setPlaceholderText("(Optional)");
         }
 
-        femLayout->addWidget(label2, 1,0);
-        femLayout->addWidget(file2, 1,1);
-        femLayout->addWidget(chooseFile2, 1,2);
+        connect(chooseFile1, &QPushButton::clicked, this, [=](){
+             QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", file1ext);
+             if (!fileName.isEmpty()){
+                 file1->setText(fileName);
+                 if ((arg1 == QString("FEAPpv")) || (arg1 == QString("OpenSees")) || (arg1 == QString("SurrogateGP")) )
+                        this->parseInputfilesForRV(fileName);
+             }
+         });
 
+        connect(chooseFile2, &QPushButton::clicked, this, [=](){
+            QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", file2ext);
+            if (!fileName.isEmpty()) {
+                file2->setText(fileName);
+            }
+        });
 
         if (arg1 == "OpenSeesPy") {
             QLabel *label3 = new QLabel();
             label3->setText("Parameters File");
             QLineEdit *file3 = new QLineEdit;
-            file2->setToolTip(tr("Name of Python script that contains defined parameters"));
+            file3->setToolTip(tr("Name of Python script that contains defined parameters"));
             QPushButton *chooseFile3 = new QPushButton();
+            QString file3ext = "Python files (*.py)";
 
             connect(chooseFile3, &QPushButton::clicked, this, [=](){
 
-                QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)");
+                QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", file3ext);
                 if (!fileName.isEmpty()) {
                     file3->setText(fileName);
                     this->parseInputfilesForRV(fileName);
@@ -913,17 +923,16 @@ QStringList FEM::parseGPInputs(QString file1){
 
     option1Button = new QRadioButton();
     QLabel *option1Label = new QLabel("     Stop Analysis");
-    option1Button->setChecked(true);
     option2Button = new QRadioButton();
-    QLabel *option2Label = new QLabel("     Continue (not recommended)");
+    QLabel *option2Label = new QLabel("     Ignore and Continue");
     option3Button = new QRadioButton();
     QLabel *option3Label = new QLabel("     Run Exact FEM Simulation");
     QLabel *labelThresMsg = new QLabel(" ");
     labelThresMsg->setStyleSheet("color: red");
 
     thresVal->setMaximumWidth(100);
-    optionsLayout->addWidget(labelVarThres, 0,0);
-    optionsLayout->addWidget(thresVal,0,1, Qt::AlignVCenter);
+    optionsLayout->addWidget(labelVarThres, 0,0,1,2);
+    optionsLayout->addWidget(thresVal,0,2, Qt::AlignVCenter);
     optionsLayout->addWidget(labelThresMsg,1,0,1,-1);
     optionsLayout->addWidget(optionsLabel, 2,0,1,-1);
     optionsLayout->addWidget(option1Label, 3,0,1,-1);
@@ -958,7 +967,7 @@ QStringList FEM::parseGPInputs(QString file1){
         option1Button -> setDisabled(false);
         option2Button -> setDisabled(false);
         option3Button -> setDisabled(true);
-        option1Button -> setChecked(true);
+        option2Button -> setChecked(true);
         labelThresMsg->setVisible(false);
         option3Label->setText("     Run Exact FEM simulation (not supported for data-based surrogate model)");
         option3Label->setStyleSheet("color: grey");
@@ -969,7 +978,7 @@ QStringList FEM::parseGPInputs(QString file1){
     } else {
         // interpolate
         option1Button -> setDisabled(false);
-        option1Button -> setChecked(true);
+        option2Button -> setChecked(true);
         option2Button -> setDisabled(false);
         option3Button -> setDisabled(false);
         labelThresMsg -> setVisible(true);
@@ -1002,7 +1011,7 @@ QStringList FEM::parseGPInputs(QString file1){
         }
     });
 
-    femOpt = "giveError";
+    femOpt = "continue";
     connect(option1Button, &QCheckBox::toggled, this, [=](bool tog){
         if (tog==true)
         {
@@ -1036,7 +1045,10 @@ QStringList FEM::parseGPInputs(QString file1){
             labelProgDir2->setVisible(false);
         }
     });
-    thresVal->setText(QString::number(thres/100,'f',2));
+
+    if (appName != "data") {
+        thresVal->setText(QString::number(thres/100,'f',2));
+    }
     //theParameters->setInitialVarNamesAndValues(varNamesAndValues);
     theEdpWidget->setGPQoINames(qoiNames);
     option1Button->setChecked(false);
@@ -1048,9 +1060,37 @@ QStringList FEM::parseGPInputs(QString file1){
     //
 
     QLabel * gpOutputLabel= new QLabel("GP output");
-    QComboBox * gpOutputSelection = new QComboBox();
-    gpOutputSelection->addItem(tr("Optimal (median) estimates"));
-    gpOutputSelection->addItem(tr("Random sample"));
+    gpOutputSelection = new QComboBox();
+    gpOutputSelection->addItem(tr("Median (representative) prediction"));
+    gpOutputSelection->addItem(tr("Random samples"));
+
+    optionsLayout->addWidget(new QLabel(""),9,0);
+    optionsLayout->addWidget(gpOutputLabel,10,0);
+    optionsLayout->addWidget(gpOutputSelection,10,1);
+
+    gpSeedLabel= new QLabel("Seed");
+    gpSeed = new QLineEdit();
+    optionsLayout->addWidget(gpSeedLabel,11,0);
+    optionsLayout->addWidget(gpSeed,11,1);
+    gpSeed-> hide();
+    gpSeedLabel->hide();
+    srand(time(NULL));
+    gpSeed->setText(QString::number(rand() % 1000 + 1));
+
+    connect(gpOutputSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(gpShowSeed(QString)));
 
     return varNamesAndValues;
+}
+
+
+void FEM::gpShowSeed(const QString &arg1)
+{
+    if (arg1==tr("Random samples"))
+    {
+        gpSeed-> show();
+        gpSeedLabel->show();
+    } else {
+        gpSeed-> hide();
+        gpSeedLabel->hide();
+    }
 }

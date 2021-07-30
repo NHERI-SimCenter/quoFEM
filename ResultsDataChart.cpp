@@ -58,13 +58,32 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtCharts/QScatterSeries>
 #include <QtCharts/QVXYModelMapper>
 #include <QAreaSeries>
+#include <QtCharts/QLegendMarker>
 using namespace QtCharts;
 
-ResultsDataChart::ResultsDataChart(QString filenameTab, QWidget *parent)
-    : SimCenterWidget(parent)
+
+ResultsDataChart::ResultsDataChart(QJsonObject spread, bool isSur, int nRV, QWidget *parent)
+    : SimCenterWidget(parent),isSurrogate(isSur), nrv(nRV)
 {
-    //QString filenameTab="";
-    //auto layout = new QGridLayout();
+    // From json file
+
+    col1 = 0;
+    col2 = 0;
+    spreadsheet = new MyTableWidget();
+    this->readTableFromJson(spread);
+    this->makeChart();
+
+    if (isSur) {
+        for (int i=nrv+nqoi+1; i<colCount; i++)
+            spreadsheet->setColumnHidden(i,true);
+    }
+
+}
+
+ResultsDataChart::ResultsDataChart(QString filenameTab, bool isSur, int nRV, QWidget *parent)
+    : SimCenterWidget(parent),isSurrogate(isSur), nrv(nRV)
+{
+    // From surrogateTab.out
 
     col1 = 0;
     col2 = 0;
@@ -72,19 +91,10 @@ ResultsDataChart::ResultsDataChart(QString filenameTab, QWidget *parent)
     this->readTableFromTab(filenameTab);
     this->makeChart();
 
-}
-
-ResultsDataChart::ResultsDataChart(QJsonObject spread, QWidget *parent)
-    : SimCenterWidget(parent)
-{
-    //QString filenameTab="";
-    //auto layout = new QGridLayout();
-
-    col1 = 0;
-    col2 = 0;
-    spreadsheet = new MyTableWidget();
-    this->readTableFromJson(spread);
-    this->makeChart();
+    if (isSur) {
+        for (int i=nrv+nqoi+1; i<colCount; i++)
+            spreadsheet->setColumnHidden(i,true);
+    }
 
 }
 
@@ -132,17 +142,49 @@ ResultsDataChart::makeChart() {
     save_columns->resize(30,30);
     connect(save_columns,SIGNAL(clicked()),this,SLOT(onSaveSpreadsheetSeparatelyClicked()));
 
-    layout->addWidget(chartView, 0,0,1,3);
+    if (isSurrogate) {
+
+        QPushButton* save_surrogate = new QPushButton();
+        save_surrogate->setText("Save Surrogate Predictions");
+        save_surrogate->setToolTip(tr("Select an existing folder"));
+        save_surrogate->resize(30,30);
+        connect(save_surrogate,SIGNAL(clicked()),this,SLOT(onSaveSurrogateClicked()));
+        layout->addWidget(save_surrogate, 1,2,Qt::AlignLeft);
+
+        QCheckBox *surrogateShowbutton = new QCheckBox();
+        surrogateShowbutton->setChecked(true);
+
+        connect(surrogateShowbutton,&QCheckBox::toggled,this,[=](bool tog) {
+            int col_tmp;
+            if (mLeft) {
+                col_tmp = col2;
+                col2 = col1;
+            }else {
+                col_tmp = col1;
+                col1 = col2;
+            }
+            isSurrogate = tog;
+            onSpreadsheetCellClicked(0, col_tmp); // just refresh the figure
+        });
+        layout->addWidget(surrogateShowbutton,1,3,Qt::AlignLeft);
+        layout->addWidget(new QLabel("Show surrogate model prediction bounds"),1,4,Qt::AlignLeft);
+
+    }
+
+
+    layout->addWidget(chartView, 0,0,1,-1);
     layout->addWidget(save_spreadsheet,1,0,Qt::AlignLeft);
     layout->addWidget(save_columns,1,1,Qt::AlignLeft);
-    layout->addWidget(spreadsheet,2,0,1,3);
-    layout->setColumnStretch(2,1);
+    layout->addWidget(spreadsheet,2,0,1,-1);
+    layout->setColumnStretch(4,1);
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
     //
 
     this->setLayout(layout);
+
+    onSpreadsheetCellClicked(0,1);
 }
 
 QVector<QVector<double>>
@@ -151,13 +193,17 @@ ResultsDataChart::getStatistics() {
     // determine summary statistics for each edp
     //
     QVector<QVector<double>> statistics;
-//    QVector<double> mean_vector;
-//    QVector<double> sd_vector;
-//    QVector<double> skewness_vector;
-//    QVector<double> kurtosis_vector;
     QVector<QString> var_names;
 
-    for (int col = 0; col<colCount; ++col) { // +1 for first col which is not an RV
+    int numCol;
+    if (!isSurrogate) {
+        numCol = colCount;
+    } else {
+        numCol = colCount - 4*nqoi;
+    }
+
+    for (int col = 0; col<numCol; ++col) { // +1 for first col which is nit an RV
+
         // compute the mean
         double sum_value=0;
         for(int row=0;row<rowCount;++row) {
@@ -203,19 +249,8 @@ ResultsDataChart::getStatistics() {
 
         QString variableName = theHeadings.at(col);
 
-    //    mean_vector.push_back(mean_value);
-    //    sd_vector.push_back(sd_value);
-    //    skewness_vector.push_back(skewness_value);
-    //    kurtosis_vector.push_back(kurtosis_value);
-    //    var_names.push_back(variableName);
-    //  statistics_tmp.push_back(mean_value);
-    //  statistics_tmp.push_back(sd_value);
-    //  statistics_tmp.push_back(skewness_value);
-    //  statistics_tmp.push_back(kurtosis_value);
           statistics.push_back({mean_value, sd_value, skewness_value, kurtosis_value});
           var_names.push_back(variableName);
-    //    QWidget *theWidget = this->createResultEDPWidget(variableName, mean_value, sd_value, skewness_value, kurtosis_value);
-    //    summaryLayout->addWidget(theWidget);
     }
     return statistics;
     //summaryLayout->addStretch();
@@ -253,7 +288,6 @@ ResultsDataChart::getMinMax() {
 
 void
 ResultsDataChart::readTableFromTab(QString filenameTab) {
-
     theHeadings << "Run #";
 
     // open file containing tab data
@@ -311,7 +345,11 @@ ResultsDataChart::readTableFromTab(QString filenameTab) {
         for (int i=0; i<colCount+2; i++) {
             std::string data;
             is >> data;
-            if ((includesInterface == true && i != 1) || (includesInterface == false)) {
+            if (i == 0) {
+                QModelIndex index = spreadsheet->model()->index(rowCount, col);
+                spreadsheet->model()->setData(index, int(std::stof(data)));
+                col++;
+            } else if ((includesInterface == true && i != 1) || (includesInterface == false)) {
                 QModelIndex index = spreadsheet->model()->index(rowCount, col);
                 spreadsheet->model()->setData(index, data.c_str());
                 col++;
@@ -320,10 +358,16 @@ ResultsDataChart::readTableFromTab(QString filenameTab) {
         rowCount++;
     }
     tabResults.close();
+
+    if (isSurrogate) {
+        nqoi = (colCount-nrv-1)/4;
+    }
+    //
+    // why not enable sorting!
+    //
+    spreadsheet->setSortingEnabled(true);
+    spreadsheet->sortItems(0);
 }
-
-
-
 
 void
 ResultsDataChart::readTableFromJson(QJsonObject spreadsheetData) {
@@ -359,16 +403,30 @@ ResultsDataChart::readTableFromJson(QJsonObject spreadsheetData) {
     colCount = numCol;
     spreadsheet->verticalHeader()->setVisible(false);
 
+    if (isSurrogate) {
+        nqoi = (colCount-nrv-1)/4;
+    }
+
+    //
+    // why not enable sorting!
+    //
+    spreadsheet->setSortingEnabled(true);
+    spreadsheet->sortItems(0);
+
 }
-
-
 
 QVector<QString>
 ResultsDataChart::getNames() {
 
     QVector<QString> names;
+    int numNames;
+    if (!isSurrogate) {
+        numNames = colCount;
+    } else {
+        numNames = colCount - 4*nqoi;
+    }
 
-    for (int col =0; col<colCount; ++col) { // +1 for first col which is nit an RV
+    for (int col =0; col<numNames; ++col) { // +1 for first col which is nit an RV
         QString variableName = theHeadings.at(col);
         names.push_back(variableName);
     }
@@ -381,6 +439,11 @@ ResultsDataChart::onSaveSpreadsheetClicked()
 
     int rowCount = spreadsheet->rowCount();
     int columnCount = spreadsheet->columnCount();
+
+    if (isSurrogate) {
+        columnCount = nrv+nqoi+1;
+    }
+
 
     QString fileName = QFileDialog::getSaveFileName(this,
                                                     tr("Save Data"), "",
@@ -472,6 +535,9 @@ ResultsDataChart::onSaveSpreadsheetSeparatelyClicked()
 
     int rowCount = spreadsheet->rowCount();
     int columnCount = spreadsheet->columnCount();
+    if (isSurrogate) {
+        columnCount = nrv+nqoi+1;
+    }
 
     QString dirName = QFileDialog::getExistingDirectory(this,
                                                     tr("Select directory"), "",
@@ -499,6 +565,46 @@ ResultsDataChart::onSaveSpreadsheetSeparatelyClicked()
 
 }
 
+
+void
+ResultsDataChart::onSaveSurrogateClicked()
+{
+
+    int rowCount = spreadsheet->rowCount();
+    int columnCount = spreadsheet->columnCount();
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                    tr("Save Data"), "",
+                                                    tr("CSV (Comma delimited) (*.csv)"));
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly))
+    {
+        QTextStream stream(&file);
+        for (int j=0; j<columnCount; j++)
+        {
+      if (j == columnCount -1)
+            stream <<theHeadings.at(j);
+      else
+            stream <<theHeadings.at(j)<<", ";
+        }
+        stream <<endl;
+        for (int i=0; i<rowCount; i++)
+        {
+            for (int j=0; j<columnCount; j++)
+            {
+                QTableWidgetItem *item_value = spreadsheet->item(i,j);
+                double value = item_value->text().toDouble();
+        if (j == columnCount-1)
+          stream << value ;
+        else
+          stream << value << ", ";
+            }
+            stream<<endl;
+        }
+    file.close();
+    }
+}
+
 void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
 {
     mLeft = spreadsheet->wasLeftKeyPressed();
@@ -520,15 +626,24 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
         //oldCol=0;   // padhye trying. I don't think it makes sense to use coldCol as col2, i.e., something that was
         // previously selected?
         col2 = col; // col is the one that comes in te function, based on the click made after clicking
-
     } else {
         oldCol= col1;
         col1 = col;
     }
 
     int rowCount = spreadsheet->rowCount();
+    QValueAxis *axisX = new QValueAxis();
+    QValueAxis *axisY = new QValueAxis();
+
 
     if (col1 != col2) {
+
+        if (isSurrogate) {
+            bool isCol1Qoi = ((col1>(nrv)) && (col1<(nrv+nqoi+1)));
+            bool isCol2Qoi = ((col2>(nrv)) && (col2<(nrv+nqoi+1)));
+            overlappingPlots(isCol1Qoi, isCol2Qoi, axisX,axisY);
+        }
+
         QScatterSeries *series = new QScatterSeries;
 
         // adjust marker size and opacity based on the number of samples
@@ -568,9 +683,6 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
         chart->addSeries(series);
         series->setName("Samples");
 
-        QValueAxis *axisX = new QValueAxis();
-        QValueAxis *axisY = new QValueAxis();
-
         axisX->setTitleText(theHeadings.at(col1));
         axisY->setTitleText(theHeadings.at(col2));
 
@@ -578,20 +690,20 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
         // finding the range for X and Y axis
         // now the axes will look a bit clean.
 
+
+
         double minX, maxX;
         double minY, maxY;
-
         for (int i=0; i<rowCount; i++) {
 
             QTableWidgetItem *itemX = spreadsheet->item(i,col1);
             QTableWidgetItem *itemY = spreadsheet->item(i,col2);
 
             double value1 = itemX->text().toDouble();
-
             double value2 = itemY->text().toDouble();
 
 
-            if (i == 0) {
+            if ((i == 0)) {
                 minX=value1;
                 maxX=value1;
                 minY=value2;
@@ -623,20 +735,24 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
 
         // if the column is not the run number, i.e., 0 column, then adjust the x-axis differently
 
-        if(col1!=0)
-        {
-            axisX->setRange(minX - 0.01*xRange, maxX + 0.1*xRange);
-        }
-        else{
+        if (axisX->min() ==axisX->max()){
+            if(col1!=0)
+            {
+                axisX->setRange(minX - 0.1*xRange, maxX + 0.1*xRange);
+            }
+            else{
+                axisX->setRange(int (minX - 1), int (maxX +1));
+                // axisX->setTickCount(1);
 
-            axisX->setRange(int (minX - 1), int (maxX +1));
-            // axisX->setTickCount(1);
+            }
+            // adjust y with some fine precision
+            axisY->setRange(minY - 0.1*yRange, maxY + 0.1*yRange);
 
         }
-        // adjust y with some fine precision
-        axisY->setRange(minY - 0.1*yRange, maxY + 0.1*yRange);
+
         chart->setAxisX(axisX, series);
         chart->setAxisY(axisY, series);
+
 
     } else {
 
@@ -711,9 +827,6 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
 
             chart->addSeries(series);
             series->setName("Histogram");
-
-            QValueAxis *axisX = new QValueAxis();
-            QValueAxis *axisY = new QValueAxis();
 
             axisX->setRange(min-(max-min)*.1, max+(max-min)*.1);
             axisY->setRange(0, 1.1*maxPercent);
@@ -899,8 +1012,6 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
 
 
             chart->addSeries(series);
-            QValueAxis *axisX = new QValueAxis();
-            QValueAxis *axisY = new QValueAxis();
             // padhye, make these consistent changes all across.
             axisX->setRange(xAxisMin, xAxisMax);
             axisY->setRange(0, 1);
@@ -912,10 +1023,237 @@ void ResultsDataChart::onSpreadsheetCellClicked(int row, int col)
             series->setName("Cumulative Frequency Distribution");
         }
     }
-
+    QFont chartFont;
+    chartFont.setPixelSize(12);
+    chart->setFont(chartFont);
+    axisX->setLabelsFont(chartFont);
+    axisY->setLabelsFont(chartFont);
+    chart->legend()->setFont(chartFont);
+    axisX->setTitleFont(chartFont);
+    axisY->setTitleFont(chartFont);
     //chart->legend()->setVisible(true);
     //chart->legend()->setAlignment(Qt::AlignRight);
+
+
 }
+
+
+
+void ResultsDataChart::overlappingPlots(bool isCol1Qoi, bool isCol2Qoi,QValueAxis *axisX,QValueAxis *axisY )
+{
+
+    //QValueAxis *axisX = new QValueAxis();
+    //QValueAxis *axisY = new QValueAxis();
+    int col1_mean, col1_lb, col1_ub, col2_mean, col2_lb, col2_ub;
+
+    // offsets of columns
+    if (isCol1Qoi) {
+        col1_mean = col1+nqoi*1;
+        col1_lb = col1+nqoi*2;
+        col1_ub = col1+nqoi*3;
+    } else {
+        col1_mean = col1;
+        col1_lb = col1;
+        col1_ub = col1;
+    }
+
+    if (isCol2Qoi) {
+        col2_mean = col2+nqoi*1;
+        col2_lb = col2+nqoi*2;
+        col2_ub = col2+nqoi*3;
+    } else {
+        col2_mean = col2;
+        col2_lb = col2;
+        col2_ub = col2;
+    }
+
+    bool drawPlots=false;
+
+    if ((!isCol1Qoi && isCol2Qoi) || (isCol1Qoi && !isCol2Qoi)) {
+        drawPlots=true;
+    }
+
+    if ((col1 != col2) && drawPlots){
+        QScatterSeries *series = new QScatterSeries;
+
+        // adjust marker size and opacity based on the number of samples
+        double markerSize, alpha;
+        if (rowCount < 10) {
+            markerSize = 15.0/2;
+            alpha =200;
+        } else if (rowCount < 100) {
+            markerSize = 11.0/2;
+            alpha =160;
+        } else if (rowCount < 1000) {
+            markerSize = 8.0/2;
+            alpha =100;
+        } else if (rowCount < 10000) {
+            markerSize = 6.0/2;
+            alpha =70;
+        } else if (rowCount < 100000) {
+            markerSize = 5.0/2;
+            alpha =50;
+        } else {
+            markerSize = 4.5/2;
+            alpha =30;
+        }
+        series->setMarkerSize(markerSize);
+        series->setMarkerShape(QScatterSeries::MarkerShapeRectangle);
+        //series->setColor(QColor(0, 114, 178, alpha)); //Blue
+        //series->setColor(QColor(255, 127, 14, alpha*2));// Orange
+        series->setColor(QColor(180, 180, 180, alpha));// Orange
+        series->setBorderColor(QColor(180, 180, 180, alpha));// Orange
+
+        // find min/max
+        double minX, maxX, minY, maxY;
+        for (int i=0; i<rowCount; i++) {
+
+            double valueXl = spreadsheet->item(i,col1_lb)->text().toDouble();
+            double valueYl = spreadsheet->item(i,col2_lb)->text().toDouble();
+            double valueXu = spreadsheet->item(i,col1_ub)->text().toDouble();
+            double valueYu = spreadsheet->item(i,col2_ub)->text().toDouble();
+            double valueXs = spreadsheet->item(i,col1)->text().toDouble();
+            double valueYs = spreadsheet->item(i,col2)->text().toDouble();
+
+
+            if (i == 0) {
+                minX=valueXl;
+                maxX=valueXu;
+                minY=valueYl;
+                maxY=valueYu;
+            }
+            if(valueXl<minX){minX=valueXl;}
+            if(valueXu>maxX){maxX=valueXu;}
+            if(valueXs<minX){minX=valueXs;} // sample may lie outside of the range
+            if(valueXs>maxX){maxX=valueXs;}
+
+            if(valueYl<minY){minY=valueYl;}
+            if(valueYu>maxY){maxY=valueYu;}
+            if(valueYs<minY){minY=valueYs;} // sample may lie outside of the range
+            if(valueYs>maxY){maxY=valueYs;}
+
+        }
+
+        double xRange=maxX-minX;
+        double yRange=maxY-minY;
+        axisX->setRange(minX - 0.1*xRange, maxX + 0.1*xRange);
+        axisY->setRange(minY - 0.1*yRange, maxY + 0.1*yRange);
+
+        //
+        // draw bounds
+        //
+
+        QPen pen;
+        double eps = 1+1.e-15;
+        pen.setWidth(markerSize/5);
+        for (int i=0; i<rowCount; i++) {
+            QLineSeries *series_err = new QLineSeries;
+            series_err->append(spreadsheet->item(i,col1_lb)->text().toDouble(), spreadsheet->item(i,col2_lb)->text().toDouble());
+            series_err->append(eps*spreadsheet->item(i,col1_ub)->text().toDouble(), eps*spreadsheet->item(i,col2_ub)->text().toDouble());
+            series_err->setPen(pen);
+            chart->addSeries(series_err);
+            //series_err->setColor(QColor(180,180,180));
+            series_err->setColor(QColor(180, 180, 180));
+            //series_err->setColor(QColor(255, 127, 14, alpha*2));
+            chart->legend()->markers(series_err)[0]->setVisible(false);
+            chart->setAxisX(axisX, series_err);
+            chart->setAxisY(axisY, series_err);
+        }
+
+        //
+        // draw mean
+        //
+
+        for (int i=0; i<rowCount; i++) {
+            QTableWidgetItem *itemX = spreadsheet->item(i,col1_mean);    //col1 goes in x-axis, col2 on y-axis
+            //col1=0;
+            QTableWidgetItem *itemY = spreadsheet->item(i,col2_mean);
+
+            series->append(itemX->text().toDouble(), itemY->text().toDouble());
+        }
+        chart->addSeries(series);
+        series->setName("Surrogate prediction and 90% bounds");
+
+
+        chart->setAxisX(axisX, series);
+        chart->setAxisY(axisY, series);
+
+    }
+}
+
+//// M. Giles, "Approximating the erfinv function." In GPU Computing Gems Jade Edition, pp. 109-116. 2011. (online)
+///* compute inverse error functions with maximum error of 2.35793 ulp */
+//// brought from : https://stackoverflow.com/questions/27229371/inverse-error-function-in-c - sy
+//float
+//ResultsDataChart::my_erfinvf(float a)
+//{
+//    float p, r, t;
+//    t = fmaf(a, 0.0f - a, 1.0f);
+//    t = my_logf(t);
+//    if (fabsf(t) > 6.125f) { // maximum ulp error = 2.35793
+//        p =              3.03697567e-10f; //  0x1.4deb44p-32
+//        p = fmaf(p, t,  2.93243101e-8f); //  0x1.f7c9aep-26
+//        p = fmaf(p, t,  1.22150334e-6f); //  0x1.47e512p-20
+//        p = fmaf(p, t,  2.84108955e-5f); //  0x1.dca7dep-16
+//        p = fmaf(p, t,  3.93552968e-4f); //  0x1.9cab92p-12
+//        p = fmaf(p, t,  3.02698812e-3f); //  0x1.8cc0dep-9
+//        p = fmaf(p, t,  4.83185798e-3f); //  0x1.3ca920p-8
+//        p = fmaf(p, t, -2.64646143e-1f); // -0x1.0eff66p-2
+//        p = fmaf(p, t,  8.40016484e-1f); //  0x1.ae16a4p-1
+//    } else { // maximum ulp error = 2.35002
+//        p =              5.43877832e-9f;  //  0x1.75c000p-28
+//        p = fmaf(p, t,  1.43285448e-7f); //  0x1.33b402p-23
+//        p = fmaf(p, t,  1.22774793e-6f); //  0x1.499232p-20
+//        p = fmaf(p, t,  1.12963626e-7f); //  0x1.e52cd2p-24
+//        p = fmaf(p, t, -5.61530760e-5f); // -0x1.d70bd0p-15
+//        p = fmaf(p, t, -1.47697632e-4f); // -0x1.35be90p-13
+//        p = fmaf(p, t,  2.31468678e-3f); //  0x1.2f6400p-9
+//        p = fmaf(p, t,  1.15392581e-2f); //  0x1.7a1e50p-7
+//        p = fmaf(p, t, -2.32015476e-1f); // -0x1.db2aeep-3
+//        p = fmaf(p, t,  8.86226892e-1f); //  0x1.c5bf88p-1
+//    }
+//    r = a * p;
+//    return r;
+//}
+
+///* compute natural logarithm with a maximum error of 0.85089 ulp */
+//float
+//ResultsDataChart::my_logf(float a)
+//{
+//    float i, m, r, s, t;
+//    int e;
+
+//    m = frexpf(a, &e);
+//    if (m < 0.666666667f) { // 0x1.555556p-1
+//        m = m + m;
+//        e = e - 1;
+//    }
+//    i = (float)e;
+//    /* m in [2/3, 4/3] */
+//    m = m - 1.0f;
+//    s = m * m;
+//    /* Compute log1p(m) for m in [-1/3, 1/3] */
+//    r =             -0.130310059f;  // -0x1.0ae000p-3
+//    t =              0.140869141f;  //  0x1.208000p-3
+//    r = fmaf(r, s, -0.121484190f); // -0x1.f19968p-4
+//    t = fmaf(t, s,  0.139814854f); //  0x1.1e5740p-3
+//    r = fmaf(r, s, -0.166846052f); // -0x1.55b362p-3
+//    t = fmaf(t, s,  0.200120345f); //  0x1.99d8b2p-3
+//    r = fmaf(r, s, -0.249996200f); // -0x1.fffe02p-3
+//    r = fmaf(t, m, r);
+//    r = fmaf(r, m,  0.333331972f); //  0x1.5554fap-2
+//    r = fmaf(r, m, -0.500000000f); // -0x1.000000p-1
+//    r = fmaf(r, s, m);
+//    r = fmaf(i,  0.693147182f, r); //  0x1.62e430p-1 // log(2)
+//    if (!((a > 0.0f) && (a <= 3.40282346e+38f))) { // 0x1.fffffep+127
+//        r = a + a;  // silence NaNs if necessary
+//        float zero=0.0f;
+//        if (a  < 0.0f) r = ( 0.0f / zero); //  NaN
+//        if (a == 0.0f) r = (-1.0f / zero); // -Inf
+//    }
+//    return r;
+//}
+
 
 
 ResultsDataChart::~ResultsDataChart()

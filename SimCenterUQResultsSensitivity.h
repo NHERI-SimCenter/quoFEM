@@ -75,7 +75,7 @@ signals:
 public slots:
    void clear(void);
    // modified by padhye 08/25/2018
-
+   void onSaveButtonClicked(void);
 private:
    RandomVariablesContainer *theRVs;
    QTabWidget *tabWidget;
@@ -91,6 +91,7 @@ private:
 
    ResultsDataChart* theDataTable;
 
+   bool isSurrogate = false;
 
    void gsaGraph(QScrollArea *&summaryLayout);
 

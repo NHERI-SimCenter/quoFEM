@@ -139,9 +139,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetParameters *param,InputWidgetF
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
             SLOT(engineSelectionChanged(QString)));
 
-    //    connect(theDakotaEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
-    connect(theCurrentEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
-    // sy - wondering if this connect commend was put inside the engineSelectionChanged() below on purpose
+    connect(theDakotaEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
 
     // connect(theCustomEngine, SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));    
     // connect(theCustomEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
@@ -201,20 +199,18 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
         theStackedWidget->setCurrentIndex(0);
         theCurrentEngine = theDakotaEngine;
         emit onUQ_EngineChanged(true);
-    }
-    else if (arg1 == "SimCenterUQ") {
+    } else if (arg1 == "SimCenterUQ") {
         theStackedWidget->setCurrentIndex(1);
         theCurrentEngine = theSimCenterUQEngine;
-        emit onUQ_EngineChanged(false);
-
+        emit onUQ_EngineChanged(true);
     } else if (arg1 == "CustomUQ") {
       theStackedWidget->setCurrentIndex(2);
       theCurrentEngine = theCustomEngine;
-      emit onUQ_EngineChanged(false);
+      emit onUQ_EngineChanged(true);
     } else if (arg1 == "UCSD-UQ") {
       theStackedWidget->setCurrentIndex(3);
       theCurrentEngine = theUCSD_Engine;
-      emit onUQ_EngineChanged(false);
+      emit onUQ_EngineChanged(true);
 
       //} else if (arg1 == "UQpy") {
       //     theStackedWidget->setCurrentIndex(2);
@@ -227,6 +223,7 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
 
     qDebug() << arg1;
 
+    connect(theCurrentEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
     connect(theCurrentEngine,SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
 
 

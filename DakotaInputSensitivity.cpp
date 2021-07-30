@@ -65,7 +65,6 @@ DakotaInputSensitivity::DakotaInputSensitivity(QWidget *parent)
 : UQ_Engine(parent),uqSpecific(0)
 {
     layout = new QVBoxLayout();
-
     mLayout = new QVBoxLayout();
 
     //
@@ -209,6 +208,7 @@ int DakotaInputSensitivity::processResults(QString &filenameResults, QString &fi
 
 UQ_Results *
 DakotaInputSensitivity::getResults(void) {
+
     return new DakotaResultsSensitivity(theRandomVariables);
 }
 

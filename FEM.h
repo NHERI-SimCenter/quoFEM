@@ -82,6 +82,7 @@ public:
     //void singleFemProgramChanged(const QString& arg1, QWidget *&newFemSpecific);
     void numModelsChanged(int newNum);
     void customInputNumberChanged(int numCustomInputs);
+    void gpShowSeed(const QString& arg1);
     // void chooseFileName1(void);
     // void chooseFileName2(void);
 
@@ -96,6 +97,9 @@ public:
     QWidget* theCustomFileInputWidget;
     QWidget *titleWidget;
     int tag;
+    QComboBox * gpOutputSelection;
+    QLineEdit * gpSeed;
+    QLabel * gpSeedLabel;
 
     //    QLineEdit *file1;
     // QLineEdit *file2;

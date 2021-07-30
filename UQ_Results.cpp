@@ -128,6 +128,7 @@ UQ_Results::setResultWidget(UQ_Results *result) {
         layout->removeWidget(resultWidget);
         delete resultWidget;
         resultWidget = 0;
+
     } else {
         qDebug() << "ResultWidget NULL";
     }
@@ -137,4 +138,3 @@ UQ_Results::setResultWidget(UQ_Results *result) {
         resultWidget = result;
     }
 }
-

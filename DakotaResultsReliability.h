@@ -88,6 +88,9 @@ private:
    bool mLeft;
    QStringList theHeadings;
 
+   void clearLayout(QLayout *layout);
+
+
    //   QVector<QString>theHeadings;
 };
 

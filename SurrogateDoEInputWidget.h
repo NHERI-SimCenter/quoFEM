@@ -85,7 +85,7 @@ private:
     QLabel * theInputLabel;
     QLabel * theOutputLabel;
     QLabel * errMSG;
-
+    QLabel * theNuggetMsg;
     QLabel * theNuggetLabel;
     QComboBox * theNuggetSelection;
     QCheckBox * theNugCheckBox;

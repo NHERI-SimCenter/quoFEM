@@ -106,6 +106,7 @@ SimCenterUQResultsSensitivity::SimCenterUQResultsSensitivity(RandomVariablesCont
     : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
+    theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
 }
@@ -227,6 +228,14 @@ int SimCenterUQResultsSensitivity::processResults(QString &filenameResults, QStr
         return 0;
     }
 
+    // If surrogate model is used, display additional info.
+    QDir tempFolder(filenameTabInfo.absolutePath());
+    QFileInfo surrogateTabInfo(tempFolder.filePath("surrogateTab.out"));
+    if (surrogateTabInfo.exists()) {
+        filenameTab = tempFolder.filePath("surrogateTab.out");
+        isSurrogate = true;
+    }
+
     //
     // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
     //
@@ -305,7 +314,8 @@ Node_2_Disp Sobol' indices:
     // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
 
-    theDataTable = new ResultsDataChart(filenameTab);
+    theDataTable = new ResultsDataChart(filenameTab, isSurrogate, theRVs->getNumRandomVariables());
+    //theDataTable = new ResultsDataChart(filenameTab);
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
@@ -323,11 +333,10 @@ Node_2_Disp Sobol' indices:
 
 void SimCenterUQResultsSensitivity::gsaGraph(QScrollArea *&sa)
 {
-
-
     sa->setWidgetResizable(true);
     sa->setLineWidth(0);
     sa->setFrameShape(QFrame::NoFrame);
+
 
     QWidget *summary = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
@@ -341,182 +350,142 @@ void SimCenterUQResultsSensitivity::gsaGraph(QScrollArea *&sa)
     QGroupBox *groupBox = NULL;
     for (int nq=0; nq<nQoI; nq++){
         QGridLayout * trainingDataLayout = NULL;
-        //std::getline(fileResults, haystack);
-        //if (haystack.find(needleSobol) != std::string::npos) {
-            //QString h(QString::fromStdString(haystack));
-            QString h(QoInames[nq]+" Sobol' Indicies");
-            groupBox = new QGroupBox(h);
-            summaryLayout->addWidget(groupBox);
-            summaryLayout->setSpacing(10);
-            summaryLayout->setMargin(10);
+        QString h(QoInames[nq]+" Sobol' Indicies");
+        groupBox = new QGroupBox(h);
+        summaryLayout->addWidget(groupBox);
+        summaryLayout->setSpacing(10);
+        summaryLayout->setMargin(10);
 
-            /***** TABLE LAYOUT OPTION  ******
-            // QTable option
-            table = new MyTableWidget();
-            table->setColumnCount(3);
-            table->setHorizontalHeaderLabels(theTableHeadings);
-            table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-            table->verticalHeader()->setVisible(false);
-            tableLayout = new QHBoxLayout();
-            tableLayout->addWidget(table);
-            tableLayout->addStretch();
-            groupBox->setLayout(tableLayout);
-            ********************************************/
+        /***** TABLE LAYOUT OPTION  ******
+        // QTable option
+        table = new MyTableWidget();
+        table->setColumnCount(3);
+        table->setHorizontalHeaderLabels(theTableHeadings);
+        table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        table->verticalHeader()->setVisible(false);
+        tableLayout = new QHBoxLayout();
+        tableLayout->addWidget(table);
+        tableLayout->addStretch();
+        groupBox->setLayout(tableLayout);
+        ********************************************/
 
-            // Labels & QlineEdit Option in a QGrid
-            trainingDataLayout = new QGridLayout();
-            QLabel *l1 = new QLabel("Random Variable");
-            QLabel *l2 = new QLabel("Main");
-            QLabel *l3 = new QLabel("Total");
-            trainingDataLayout->addWidget(l1, 0,0);
-            trainingDataLayout->addWidget(l2, 0,1);
-            trainingDataLayout->addWidget(l3, 0,2);
-            QFont font;
-            font.setBold(true);
+        trainingDataLayout = new QGridLayout();
+        QLabel *l1 = new QLabel("Random Variable");
+        QLabel *l2 = new QLabel("Main");
+        QLabel *l3 = new QLabel("Total");
+        trainingDataLayout->addWidget(l1, 0,0);
+        trainingDataLayout->addWidget(l2, 0,1);
+        trainingDataLayout->addWidget(l3, 0,2);
+        QFont font;
+        font.setBold(true);
 
-            l1->setMaximumHeight(25);
-            l1->setMinimumHeight(25);
-            l1->setAlignment(Qt::AlignCenter);
-            l1->setFont(font);
+        l1->setMaximumHeight(25);
+        l1->setMinimumHeight(25);
+        l1->setAlignment(Qt::AlignCenter);
+        l1->setFont(font);
 
-            l2->setMaximumHeight(25);
-            l2->setMinimumHeight(25);
-            l2->setAlignment(Qt::AlignCenter);
-            l2->setFont(font);
+        l2->setMaximumHeight(25);
+        l2->setMinimumHeight(25);
+        l2->setAlignment(Qt::AlignCenter);
+        l2->setFont(font);
 
-            l3->setMaximumHeight(25);
-            l3->setMinimumHeight(25);
-            l3->setAlignment(Qt::AlignCenter);
-            l3->setFont(font);
+        l3->setMaximumHeight(25);
+        l3->setMinimumHeight(25);
+        l3->setAlignment(Qt::AlignCenter);
+        l3->setFont(font);
 
+        groupBox->setLayout(trainingDataLayout);
 
-            groupBox->setLayout(trainingDataLayout);
+        QBarSet *set0 = new QBarSet("Main");
+        QBarSet *set1 = new QBarSet("Total");
 
-            // set num EDP and read a useleass line
-            //numEDP = 0;
-            //std::getline(fileResults, haystack);
+        for (int nc=0; nc<ncomb; nc++) {
+            QLabel *e1 = new QLabel(combs[nc]); e1->setAlignment(Qt::AlignCenter);
+            QLineEdit *e2 = new QLineEdit(QString::number(sobols[nq][nc],'f', 3)); e2->setReadOnly(true);  e2->setAlignment(Qt::AlignRight);
+            QLineEdit *e3 = new QLineEdit(QString::number(sobols[nq][nc+ncomb],'f', 3)); e3->setReadOnly(true); e3->setAlignment(Qt::AlignRight);
+            e1->setMaximumWidth(100);
+            e2->setMaximumWidth(100);
+            e3->setMaximumWidth(100);
 
-        //} else {
-            //std::istringstream iss(haystack);
-            //QString h(QString::fromStdString(haystack));
-            //if (h.length() == 0) {
-            //    done = true;
-            //} else {
-                //std::string data1, data2, data3, data4;
+            e1->setMinimumWidth(100);
+            e2->setMinimumWidth(100);
+            e3->setMinimumWidth(100);
 
-                //iss >> data1 >> data2 >> data3;
-                //QString d1(QString::fromStdString(data1));
-                //QString d2(QString::fromStdString(data2));
-                //QString d3(QString::fromStdString(data3));
+            trainingDataLayout->addWidget(e1, nc+1,0);
+            trainingDataLayout->addWidget(e2, nc+1,1);
+            trainingDataLayout->addWidget(e3, nc+1,2);
+            trainingDataLayout->setColumnStretch(1,0);
+            trainingDataLayout->setColumnStretch(2,0);
+            trainingDataLayout->setColumnStretch(3,1);
 
+            *set0 << sobols[nq][nc];
+            *set1 << sobols[nq][nc+ncomb];
+            //*set0 << 2;
+            //*set1 << 3;
+         }
 
-            QBarSet *set0 = new QBarSet("Main");
-            QBarSet *set1 = new QBarSet("Total");
+        QBarSeries *series = new QBarSeries();
+        series->append(set0);
+        series->append(set1);
 
-            for (int nc=0; nc<ncomb; nc++) {
-                //QLineEdit *e1 = new QLineEdit(combs[nc]); e1->setReadOnly(true); e1->setAlignment(Qt::AlignCenter);
-                QLabel *e1 = new QLabel(combs[nc]); e1->setAlignment(Qt::AlignCenter);
-                QLineEdit *e2 = new QLineEdit(QString::number(sobols[nq][nc])); e2->setReadOnly(true);  e2->setAlignment(Qt::AlignRight);
-                QLineEdit *e3 = new QLineEdit(QString::number(sobols[nq][nc+ncomb])); e3->setReadOnly(true); e3->setAlignment(Qt::AlignRight);
-                e1->setMaximumWidth(100);
-                e2->setMaximumWidth(100);
-                e3->setMaximumWidth(100);
+        QChart *chartSobol = new QChart();
+        chartSobol->addSeries(series);
+        //chart->setTitle("");
+        chartSobol->setAnimationOptions(QChart::SeriesAnimations);
 
-                e1->setMinimumWidth(100);
-                e2->setMinimumWidth(100);
-                e3->setMinimumWidth(100);
+        QStringList categories;
+        foreach (const QString str, combs) {
+            categories << str;
+        }
 
-                trainingDataLayout->addWidget(e1, nc+1,0);
-                trainingDataLayout->addWidget(e2, nc+1,1);
-                trainingDataLayout->addWidget(e3, nc+1,2);
-                //trainingDataLayout->setColumnStretch(1,.5);
-                //trainingDataLayout->setColumnStretch(2,.5);
-                trainingDataLayout->setColumnStretch(1,0);
-                trainingDataLayout->setColumnStretch(2,0);
-                trainingDataLayout->setColumnStretch(3,1);
-
-                *set0 << sobols[nq][nc];
-                *set1 << sobols[nq][nc+ncomb];
-                //*set0 << 2;
-                //*set1 << 3;
-             }
-
-            QBarSeries *series = new QBarSeries();
-            series->append(set0);
-            series->append(set1);
-
-            QChart *chartSobol = new QChart();
-            chartSobol->addSeries(series);
-            //chart->setTitle("");
-            chartSobol->setAnimationOptions(QChart::SeriesAnimations);
-
-            QStringList categories;
-            foreach (const QString str, combs) {
-                categories << str;
-            }
-
-            QBarCategoryAxis *axisX = new QBarCategoryAxis();
-            axisX->append(categories);
+        QBarCategoryAxis *axisX = new QBarCategoryAxis();
+        axisX->append(categories);
 
 
-            chartSobol->addAxis(axisX, Qt::AlignBottom);
-            series->attachAxis(axisX);
+        chartSobol->addAxis(axisX, Qt::AlignBottom);
+        series->attachAxis(axisX);
 
-            QValueAxis *axisY = new QValueAxis();
-            axisY->setRange(0.0, 1.05);
-            axisY->setTickType(QValueAxis::TickType::TicksDynamic);
-            axisY->setTickInterval(0.5);
-            axisY->setTickAnchor(0.0);
-            chartSobol->addAxis(axisY, Qt::AlignLeft);
-            series->attachAxis(axisY);
+        QValueAxis *axisY = new QValueAxis();
+        axisY->setRange(0.0, 1.05);
+        axisY->setTickType(QValueAxis::TickType::TicksDynamic);
+        axisY->setTickInterval(0.5);
+        axisY->setTickAnchor(0.0);
+        chartSobol->addAxis(axisY, Qt::AlignLeft);
+        series->attachAxis(axisY);
 
-            chartSobol->setMargins(QMargins(10,10,10,10));
-            chartSobol->setBackgroundRoundness(0);
-            chartSobol->setMinimumHeight(120);
-            if (ncomb<5) {
-                //chartSobol->setMaximumWidth(400);
-            }
+        chartSobol->setMargins(QMargins(10,10,10,10));
+        chartSobol->setBackgroundRoundness(0);
+        chartSobol->setMinimumHeight(120);
+        if (ncomb<5) {
+            //chartSobol->setMaximumWidth(400);
+        }
 
 
-            QChartView *chartView = new QChartView(chartSobol);
-            chartView->setRenderHint(QPainter::Antialiasing);
+        QChartView *chartView = new QChartView(chartSobol);
+        chartView->setRenderHint(QPainter::Antialiasing);
 
-            chartSobol->legend()->setVisible(true);
-            chartSobol->legend()->setAlignment(Qt::AlignRight);
-            //chartView->chart()->legend()->hide();
-            trainingDataLayout->addWidget(chartView, 0,3,ncomb+1,1);
-            trainingDataLayout->setSpacing(5);
-            trainingDataLayout->setMargin(10);
-            //trainingDataLayout->setColumnStretch(0,1);
-            //trainingDataLayout->setColumnStretch(1,1);
-            //trainingDataLayout->setColumnStretch(2,1);
-            //trainingDataLayout->setColumnStretch(0 | 1 | 2, 200);
-            trainingDataLayout->setColumnStretch(0 | 1 | 2, 1);
-                        //
-            // create a widget into which we place the chart and the spreadsheet
-            //
-
-            //QWidget *widget = new QWidget();
-            //QVBoxLayout *gsaLayout = new QVBoxLayout(widget);
-
-            //gsaLayout->addLayout(trainingDataLayout, 1);
-            //gsaLayout->addWidget(chartView, 1);
-            //groupBox->setLayout(gsaLayout);
-
-                /* *** Table Widget option
-                table->insertRow(numEDP);
-                QModelIndex index1 = table->model()->index(numEDP, 0);
-                table->model()->setData(index1, data3.c_str());
-                QModelIndex index2 = table->model()->index(numEDP, 1);
-                table->model()->setData(index2, data1.c_str());
-                QModelIndex index3 = table->model()->index(numEDP, 2);
-                table->model()->setData(index3, data2.c_str());
-                */
-
-                //numEDP++;
-            //}
-        //}
+        chartSobol->legend()->setVisible(true);
+        chartSobol->legend()->setAlignment(Qt::AlignRight);
+        trainingDataLayout->addWidget(chartView, 0,3,ncomb+1,1);
+        trainingDataLayout->setSpacing(5);
+        trainingDataLayout->setMargin(10);
+        trainingDataLayout->setColumnStretch(0 | 1 | 2, 1);
     }
+
+    //
+    // save button
+    //
+
+    QPushButton * saveData = new QPushButton("Save Results");
+    saveData->setMaximumWidth(150);
+    summaryLayout->addWidget(saveData);
+    summaryLayout->setAlignment(saveData,Qt::AlignRight);
+    connect(saveData,SIGNAL(clicked()),this,SLOT(onSaveButtonClicked()));
+
+    //
+    //
+    //
+
 
     summaryLayout->addStretch();
 }
@@ -529,7 +498,7 @@ SimCenterUQResultsSensitivity::outputToJSON(QJsonObject &jsonObject)
     bool result = true;
 
     jsonObject["resultType"]=QString(tr("SimCenterUQResultsSensitivity"));
-
+    jsonObject["isSurrogate"]=isSurrogate;
     //
     // add summary data
     //
@@ -629,7 +598,9 @@ SimCenterUQResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
     gsaGraph(*&sa);
 
 
-    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+    isSurrogate=jsonObject["isSurrogate"].toBool();
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
+
 
     //
     // add summary, detained info and spreadsheet with chart to the tabed widget
@@ -642,5 +613,31 @@ SimCenterUQResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
     return result;
 }
 
+
+
+void
+SimCenterUQResultsSensitivity::onSaveButtonClicked(void) {
+
+        QString fileName = QFileDialog::getSaveFileName(this,
+                                                        tr("Save Data"), "/sensitivityResults",
+                                                        tr("output (*.out)"));
+        QFile file(fileName);
+        if (file.open(QIODevice::WriteOnly))
+        {
+            QTextStream stream(&file);
+
+             for (int nq=0; nq< nQoI; nq++) {
+
+                 stream << "* " << QoInames[nq] << endl;
+                 stream << "randomVariable   Main   Total" << endl;
+                 for (int nc=0; nc< ncomb; nc++) {
+                     stream << combs[nc] << "   " << QString::number(sobols[nq][nc],'f', 3) << "   " ;
+                     stream << QString::number(sobols[nq][nc+ncomb],'f', 3) << endl;
+                 }
+            stream << endl;
+             }
+        file.close();
+        }
+}
 
 extern QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit);
