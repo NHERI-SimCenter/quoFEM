@@ -51,6 +51,21 @@ applications/out/build/*
 backend/applications/
 backend/build/
 
+# .DS_Store files on Mac
+*.DS_Store
+
+# .idea/ files from PyCharm IDE
+*.idea/
+
+# Pycache files
+*__pycache__
+
+*graph_info.json
+# Conan build files
+*/conan.lock
+*/conanbuildinfo.pri
+*/conanbuildinfo.txt
+*/conaninfo.txt
 
 Makefile
 *.pro.user
