@@ -289,7 +289,7 @@
         "qfem-0015/figures/SUR-QoItab.png",
         "qfem-0015/figures/SUR-FEMtab.png",
         "qfem-0015/figures/SUR-UQtab1.png",
-        "qfem-0015/figures/SUR-GM.PNG",
+        "qfem-0015/figures/SUR-GM.png",
         "qfem-0015/figures/SUR-VER2.png",
         "qfem-0015/figures/SUR-VER4.png",
         "qfem-0015/figures/SUR-REStab3.png",
@@ -299,12 +299,12 @@
         "qfem-0015/figures/SUR-VER3.png",
         "qfem-0015/figures/SUR-REStab1st2.png",
         "qfem-0015/figures/SUR-REStab2nd2.png",
-        "qfem-0015/figures/SUR-Concept.PNG",
+        "qfem-0015/figures/SUR-Concept.png",
         "qfem-0015/figures/SUR-VER1.png"
       ],
       "entry_point": "qfem-0015/./input.json",
       "summary": "This example constructs a Gaussian process-based surrogate model for the response of a building structure given a ground motion time history. We are interested in the maximum inter-story drift/acceleration response determined in 14 structural parameters.",
-      "logo": "figures/SUR-Concept.PNG",
+      "logo": "figures/SUR-Concept.png",
       "published": "2021-03-12T21:26:53.946381-08:00",
       "categories": {
         "Simulation": "OpenSeesPy",
@@ -318,7 +318,7 @@
       "doc": [
         "qfem-0016/figures/SUR2-REStab2.png",
         "qfem-0016/figures/SUR2-VER1.png",
-        "qfem-0016/figures/SUR2-sturcture.PNG",
+        "qfem-0016/figures/SUR2-sturcture.png",
         "qfem-0016/README.rst",
         "qfem-0016/figures/SUR2-RVtab.png",
         "qfem-0016/figures/SUR2-VER3.png",
@@ -334,7 +334,7 @@
       ],
       "entry_point": "qfem-0016/./input.json",
       "summary": "Surrogate modeling for mean and variance of EQ response",
-      "logo": "figures/SUR2-sturcture.PNG",
+      "logo": "figures/SUR2-sturcture.png",
       "published": "2021-03-12T21:26:53.946381-08:00",
       "categories": {
         "Simulation": "OpenSees",
