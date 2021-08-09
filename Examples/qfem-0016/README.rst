@@ -18,7 +18,7 @@ This example constructs a Gaussian process-based surrogate model for mean and st
 Problem description
 -------------------
 
-The structure (:qfem-0016:`three story nonlinear building stick model <src/ShearBuilding_NL.py>`) has the following uncertain properties:
+The structure (:qfem-0016:`three story nonlinear building stick model <src/ShearBuilding_NL.tcl>`) has the following uncertain properties:
 
 ============================= ============ =========
 Random Variable               lower bound  upper bound			      
@@ -32,7 +32,7 @@ yield strength (Fy)           0.5          0.8
 
 The goal is to make a surrogate model that predicts mean and standard deviation of the peak displacement at node 1.
 
-.. figure:: figures/SUR2-sturcture.PNG
+.. figure:: figures/SUR2-sturcture.png
    :align: center
    :figclass: align-center
    :width: 600
@@ -41,9 +41,9 @@ Input files
 -------------
 Once the user selects OpenSeesPy as FEM applications, the below two fields are requested.
 
-1. Input Script - ``ShearBuilding_NL.tcl``: This file is the main OpenSees input script that implements builds the model, reads ground motion time histories, and runs the analysis repeatedly. It is supplied to the Input Script field of the FEM tab. 
+1. Input Script - :qfem-0016:`ShearBuilding_NL.tcl <src/ShearBuilding_NL.tcl>`: This file is the main OpenSees input script that implements builds the model, reads ground motion time histories, and runs the analysis repeatedly. It is supplied to the Input Script field of the FEM tab. 
 
-2. Postprocess Script (Optional) - ``postprocess.tcl``: This file is a postprocess script that connects the QoI name to the output value. According to this postprocess file, the QoI should be entered as either in the format of ``Node_i_Disp_j_Mean`` or ``Node_i_Disp_j_Std``, where i and j respectively denote the node number and degree of freedom.
+2. Postprocess Script (Optional) - :qfem-0016:`postprocess.tcl <src/postprocess.tcl>`: This file is a postprocess script that connects the QoI name to the output value. According to this postprocess file, the QoI should be entered as either in the format of ``Node_i_Disp_j_Mean`` or ``Node_i_Disp_j_Std``, where i and j respectively denote the node number and degree of freedom.
 
 **The other subsidiary scripts (including ground motion time histories) are stored in the same directory of the main input script.**
 

@@ -15,7 +15,7 @@ Outline
 
 This example constructs a Gaussian process-based surrogate model for the response of a building structure given a ground motion time history. We are interested in the maximum inter-story drift/acceleration response determined in 14 structural parameters. 
 
-.. figure:: figures/SUR-Concept.PNG
+.. figure:: figures/SUR-Concept.png
    :align: center
    :figclass: align-center
    :width: 600
@@ -48,7 +48,7 @@ roof Weight        10.0         15.5
 
 Below is the time history of the ground motion excitation.
 
-.. figure:: figures/SUR-GM.PNG
+.. figure:: figures/SUR-GM.png
    :align: center
    :figclass: align-center
    :width: 600
