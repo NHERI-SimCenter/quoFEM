@@ -135,7 +135,7 @@ void DakotaResultsReliability::clear(void)
 int DakotaResultsReliability::processResults(QString &filenameResults, QString &filenameTab)
 {
 
-  emit sendStatusMessage(tr("Processing Reliability Results"));
+  statusMessage(tr("Processing Reliability Results"));
 
 
 
@@ -148,7 +148,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
   QFileInfo filenameErrorInfo(filenameErrorString);
   if (!filenameErrorInfo.exists()) {
-      emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+      errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
       return 0;
   }
   QFile fileError(filenameErrorString);
@@ -166,7 +166,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
                                && !line.contains("Warning: maximum back-tracking", Qt::CaseInsensitive)
                                && !line.contains("Warning: maximum Newton iterations ", Qt::CaseInsensitive)){
       qDebug() << line.length() << " " << line;
-      emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
+      errorMessage(QString(QString("Error Running Dakota: ") + line));
       return 0;
   }
   */
@@ -178,23 +178,23 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
               if (line.at(42)=='0') {
                   // Multiple output by user
                   qDebug() << line.length() << " " << line;
-                  emit sendErrorMessage(QString("Dakota Error: No results.out. Check dakota.err file"));
+                  errorMessage(QString("Dakota Error: No results.out. Check dakota.err file"));
                   return 0;
               } else {
                   // Multiple output by user
                   qDebug() << line.length() << " " << line;
-                  emit sendErrorMessage(QString("Dakota Error: Current reliability option supports only single output. Please try with Mean Value option or with a single output. "));
+                  errorMessage(QString("Dakota Error: Current reliability option supports only single output. Please try with Mean Value option or with a single output. "));
                   return 0;
               }
           }
           if (line.contains("Warning:", Qt::CaseInsensitive)) {
               // Warning
                 qDebug() << line.length() << " " << line;
-                  emit sendErrorMessage(QString(QString("Dakota ") + line));
+                  errorMessage(QString(QString("Dakota ") + line));
           } else {
               // Other errors
                 qDebug() << line.length() << " " << line;
-                emit sendErrorMessage(QString(QString("Dakota ") + line));
+                errorMessage(QString(QString("Dakota ") + line));
                 return 0;
           }
 
@@ -203,7 +203,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
   QFileInfo filenameResultsInfo(filenameResults);
   if (!filenameResultsInfo.exists()) {
-      emit sendErrorMessage("No dakota.out file - dakota failed .. possibly no QoI");
+      errorMessage("No dakota.out file - dakota failed .. possibly no QoI");
       return 0;
   }
 
@@ -219,7 +219,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
     return -1;
   }
   
-    emit sendErrorMessage((QString("")));
+    errorMessage((QString("")));
 
   /* **************************************** LOOKING FOR THE FOLLOWING
      -----------------------------------------------------------------
@@ -320,7 +320,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
                }
                else if (data1.find("Warning:") != std::string::npos) {
-                   emit sendErrorMessage(QString(QString("Dakota ") + QString::fromStdString(haystack)));
+                   errorMessage(QString(QString("Dakota ") + QString::fromStdString(haystack)));
                } else {
                    if (numSpreadsheetCols == 2)
                        spreadsheet->insertRow(numRows);
@@ -345,7 +345,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
   this->onSpreadsheetCellClicked(0,1);
   if (numSpreadsheetRows == 0)
-      emit sendStatusMessage(tr("No Result Data Found .. dakota failed .. possibly no QoI provided"));
+      statusMessage(tr("No Result Data Found .. dakota failed .. possibly no QoI provided"));
 
   return 0;
 }

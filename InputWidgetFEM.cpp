@@ -399,7 +399,7 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
                 result = false;
         }
     } else {
-        emit sendErrorMessage("ERROR: FEM Input - no fem section in input file");
+        errorMessage("ERROR: FEM Input - no fem section in input file");
         return false;
     }
     return result;

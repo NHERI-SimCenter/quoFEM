@@ -182,7 +182,7 @@ static int mergesort(double *input, int size)
 
 int DakotaResultsSensitivity::processResults(QString &filenameResults, QString &filenameTab)
 {
-    emit sendStatusMessage(tr("Processing Results ... "));
+    statusMessage(tr("Processing Results ... "));
 
     this->clear();
 
@@ -195,7 +195,7 @@ int DakotaResultsSensitivity::processResults(QString &filenameResults, QString &
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
         return 0;
     }
     QFile fileError(filenameErrorString);
@@ -210,13 +210,13 @@ int DakotaResultsSensitivity::processResults(QString &filenameResults, QString &
 
     if (line.length() != 0) {
         qDebug() << line.length() << " " << line;
-        emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
+        errorMessage(QString(QString("Error Running Dakota: ") + line));
         return 0;
     }
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        errorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
         return 0;
     }
 
@@ -351,7 +351,7 @@ Node_2_Disp Sobol' indices:
     tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
-    emit sendStatusMessage(tr(""));
+    statusMessage(tr(""));
 
     return 0;
 }

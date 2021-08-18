@@ -275,7 +275,7 @@ static int mergesort(double *input, int size)
 
 int DakotaResultsCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
-    emit sendStatusMessage(tr("Processing Sampling Results"));
+    statusMessage(tr("Processing Sampling Results"));
 
     this->clear();
 
@@ -395,7 +395,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
     tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
-    emit sendStatusMessage(tr(""));
+    statusMessage(tr(""));
 
     return 0;
 }
