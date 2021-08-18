@@ -64,7 +64,6 @@ public:
 signals:
 
 public slots:
-       void errorMessage(QString message);
 
 protected:
     RandomVariablesContainer *theParameters;

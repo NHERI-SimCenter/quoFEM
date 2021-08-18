@@ -246,7 +246,7 @@ SimCenterUQInputSurrogate::inputAppDataFromJSON(QJsonObject &jsonObject)
           int index = inpMethod->findText(method);
 
           if (index == -1) {
-              emit sendErrorMessage(QString("ERROR: Unknown Method") + method);
+              errorMessage(QString("ERROR: Unknown Method") + method);
               return false;
           }
           inpMethod->setCurrentIndex(index);
@@ -254,7 +254,7 @@ SimCenterUQInputSurrogate::inputAppDataFromJSON(QJsonObject &jsonObject)
         }
 
     } else {
-        emit sendErrorMessage("ERROR: Surrogate Input Widget - no \"surrogateMethodData\" input");
+        errorMessage("ERROR: Surrogate Input Widget - no \"surrogateMethodData\" input");
         return false;
     }
 

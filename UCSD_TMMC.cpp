@@ -167,7 +167,7 @@ UCSD_TMMC::inputFromJSON(QJsonObject &jsonObject){
 
   }
   else {
-          emit sendErrorMessage("ERROR: TMCMC input - not all data specified");
+          errorMessage("ERROR: TMCMC input - not all data specified");
           result = false;
       }
 

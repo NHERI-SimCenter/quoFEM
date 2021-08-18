@@ -185,7 +185,7 @@ static int mergesort(double *input, int size)
 
 int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab)
 {
-    emit sendStatusMessage(tr("Processing Sampling Results"));
+    statusMessage(tr("Processing Sampling Results"));
 
     this->clear();
     mLeft = true;
@@ -201,7 +201,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
         return 0;
     }
     QFile fileError(filenameErrorString);
@@ -216,13 +216,13 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     if (line.length() != 0) {
         qDebug() << line.length() << " " << line;
-        emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
+        errorMessage(QString(QString("Error Running Dakota: ") + line));
         return 0;
     }
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        errorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
         return 0;
     }
 
@@ -410,7 +410,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     tabWidget->addTab(widget, tr("Data Values"));
     tabWidget->adjustSize();
 
-    emit sendStatusMessage(tr(""));
+    statusMessage(tr(""));
 
     return 0;
 }

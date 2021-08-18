@@ -304,7 +304,7 @@ SimCenterUQInputSampling::inputAppDataFromJSON(QJsonObject &jsonObject)
           int index = samplingMethod->findText(method);
 
           if (index == -1) {
-              emit sendErrorMessage(QString("ERROR: Unknown Method") + method);
+              errorMessage(QString("ERROR: Unknown Method") + method);
               return false;
           }
           samplingMethod->setCurrentIndex(index);
@@ -312,7 +312,7 @@ SimCenterUQInputSampling::inputAppDataFromJSON(QJsonObject &jsonObject)
         }
 
     } else {
-        emit sendErrorMessage("ERROR: Sampling Input Widget - no \"samplingMethodData\" input");
+        errorMessage("ERROR: Sampling Input Widget - no \"samplingMethodData\" input");
         return false;
     }
 

@@ -482,7 +482,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
 
     tabWidget->adjustSize();
 
-    emit sendStatusMessage(tr(""));
+    statusMessage(tr(""));
 
     return 0;
 }

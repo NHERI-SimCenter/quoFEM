@@ -194,7 +194,7 @@ static int mergesort(double *input, int size)
 
 int SimCenterUQResultsSensitivity::processResults(QString &filenameResults, QString &filenameTab)
 {
-    emit sendStatusMessage(tr("Processing Results ... "));
+    statusMessage(tr("Processing Results ... "));
 
     this->clear();
     mLeft = true;
@@ -210,7 +210,7 @@ int SimCenterUQResultsSensitivity::processResults(QString &filenameResults, QStr
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        emit sendErrorMessage("No dakota.err file - SimCenterUQ did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        errorMessage("No dakota.err file - SimCenterUQ did not run - problem with dakota setup or the applicatins failed with inputs provied");
         return 0;
     }
     QFile fileError(filenameErrorString);
@@ -225,13 +225,13 @@ int SimCenterUQResultsSensitivity::processResults(QString &filenameResults, QStr
 
     if (line.length() != 0) {
         qDebug() << line.length() << " " << line;
-        emit sendErrorMessage(QString(QString("Error Running SimCenterUQ: ") + line));
+        errorMessage(QString(QString("Error Running SimCenterUQ: ") + line));
         return 0;
     }
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        errorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
         return 0;
     }
 
@@ -458,7 +458,7 @@ Node_2_Disp Sobol' indices:
     tabWidget->addTab(widget, tr("Data Values"));
     tabWidget->adjustSize();
 
-    emit sendStatusMessage(tr(""));
+    statusMessage(tr(""));
 
     return 0;
 }
