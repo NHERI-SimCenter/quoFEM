@@ -4,14 +4,14 @@ import os
 import sys
 import subprocess
 import math
-import json
 import pickle  # check - cross platform issue?
 import glob
+import json
+from scipy.stats import lognorm
 
 import numpy as np
 import GPy as GPy
 
-#from sklearn.cluster import KMeans
 from pyDOE import lhs
 import warnings
 import random
@@ -68,7 +68,6 @@ class GpFromModel(object):
         # self.doe_method = "mmse"
         self.do_predictive = False
         automate_doe = False
-        do_nugget = True
 
         surrogateInfo = inp["UQ_Method"]["surrogateMethodInfo"]
 
@@ -87,6 +86,7 @@ class GpFromModel(object):
                 user_init = surrogateInfo["initialDoE"]
             else:
                 user_init = -100
+            thr_count = surrogateInfo['samples']  # number of samples
 
         elif surrogateInfo["method"] == "Import Data File":
             self.do_mf = False
@@ -99,34 +99,93 @@ class GpFromModel(object):
 
         elif surrogateInfo["method"] == "Import Multi-fidelity Data File":
             self.do_mf = True
-            self.inpData_HF = surrogateInfo['inpFile_HF']
-            self.outData_HF = surrogateInfo['outFile_HF']
-            self.X_HF = read_txt(self.inpData_HF, errlog)
-            self.Y_HF = read_txt(self.outData_HF, errlog)
 
-            if self.X_HF.shape[0] != self.Y_HF.shape[0]:
-                msg = 'Error reading json: high fidelity input and output files should have the same number of rows'
-                errlog.exit(msg)
+            self.hf_is_model = surrogateInfo['HFfromModel']
+            self.lf_is_model = surrogateInfo['LFfromModel']
 
-            if surrogateInfo['LFfromModel']:
+            if self. hf_is_model:
+                self.use_existing_hf = surrogateInfo["existingDoE_HF"]
+                self.samples_hf = surrogateInfo["samples_HF"]
+                if self.use_existing_hf:
+                    self.inpData_hf = surrogateInfo['inpFile_HF']
+                    self.outData_hf = surrogateInfo['outFile_HF']
+            else:
+                self.inpData_hf = surrogateInfo['inpFile_HF']
+                self.outData_hf = surrogateInfo['outFile_HF']
+                self.X_hf = read_txt(self.inpData_hf, errlog)
+                self.Y_hf = read_txt(self.outData_hf, errlog)
+                if self.X_hf.shape[0] != self.Y_hf.shape[0]:
+                    msg = 'Error reading json: high fidelity input and output files should have the same number of rows'
+                    errlog.exit(msg)
+
+            if self.lf_is_model:
+                self.use_existing_lf = surrogateInfo["existingDoE_LF"]
+                self.samples_lf = surrogateInfo["samples_LF"]
+                if self.use_existing_lf:
+                    self.inpData_lf = surrogateInfo['inpFile_LF']
+                    self.outData_lf = surrogateInfo['outFile_LF']
+            else:
+                self.inpData_lf = surrogateInfo['inpFile_LF']
+                self.outData_lf = surrogateInfo['outFile_LF']
+                self.X_lf = read_txt(self.inpData_lf, errlog)
+                self.Y_lf = read_txt(self.outData_lf, errlog)
+                if self.X_lf.shape[0] != self.Y_lf.shape[0]:
+                    msg = 'Error reading json: low fidelity input and output files should have the same number of rows'
+                    errlog.exit(msg)
+
+            if (not self.hf_is_model) and self.lf_is_model:
+                self.mf_case = "data-model"
                 do_sampling = True
                 do_simulation = True
-                do_doe = True
-                self.use_existing = surrogateInfo["existingDoE"]
-                if self.use_existing:
-                    self.inpData = surrogateInfo['inpFile_LF']
-                    self.outData = surrogateInfo['outFile_LF']
-
-                if surrogateInfo["doDoE"]:
+                do_doe = surrogateInfo["doDoE"]
+                self.use_existing = self.use_existing_lf
+                if self.lf_is_model:
+                    if self.use_existing_lf:
+                        self.inpData = self.inpData_lf
+                        self.oupData = self.outData_lf
+                else:
+                    self.inpData = self.inpData_lf
+                    self.outData = self.outData_lf
+                if do_doe:
                     user_init = -100
                 else:
-                    user_init = surrogateInfo["samples"]
-            else:
+                    user_init = self.samples_lf
+                thr_count = self.samples_lf  # number of samples
+
+
+            elif self.hf_is_model and (not self.lf_is_model):
+                self.mf_case = "model-data"
+                do_sampling = True
+                do_simulation = True
+                do_doe = surrogateInfo["doDoE"]
+                self.use_existing = self.use_existing_hf
+                if self.hf_is_model:
+                    if self.use_existing_hf:
+                        self.inpData = self.inpData_hf
+                        self.oupData = self.outData_hf
+                else:
+                    self.inpData = self.inpData_hf
+                    self.outData = self.outData_hf
+                if do_doe:
+                    user_init = -100
+                else:
+                    user_init = self.samples_hf
+                thr_count = self.samples_hf  # number of samples
+
+            elif self.hf_is_model and self.lf_is_model:
+                self.mf_case = "model-model"
+                do_sampling = True
+                do_simulation = True
+                do_doe = surrogateInfo["doDoE"]
+
+            elif (not self.hf_is_model) and (not self.lf_is_model):
+                self.mf_case = "data-data"
                 do_sampling = False
                 do_simulation = False
                 do_doe = False
-                self.inpData = surrogateInfo['inpFile_LF']
-                self.outData = surrogateInfo['outFile_LF']
+                self.inpData = self.inpData_lf
+                self.outData = self.outData_lf
+
         else:
             msg = 'Error reading json: either select "Import Data File" or "Sampling and Simulation"'
             errlog.exit(msg)
@@ -135,10 +194,43 @@ class GpFromModel(object):
             self.do_logtransform = surrogateInfo["logTransform"]
             kernel = surrogateInfo["kernel"]
             do_linear = surrogateInfo["linear"]
+            nugget_opt = surrogateInfo["nuggetOpt"]
+            try:
+                self.nuggetVal = np.array(json.loads("[{}]".format(surrogateInfo["nuggetString"])))
+            except json.decoder.JSONDecodeError:
+                msg = 'Error reading json: improper format of nugget values/bounds. Provide nugget values/bounds of each QoI with comma delimiter'
+                errlog.exit(msg)
+
+            if self.nuggetVal.shape[0]!=self.y_dim and self.nuggetVal.shape[0]!=0 :
+                msg = 'Error reading json: Number of nugget quantities does not match # QoI'
+                errlog.exit(msg)
+
+            if nugget_opt == "Fixed Values":
+                for Vals in self.nuggetVal:
+                    if (not np.isscalar(Vals)):
+                        msg = 'Error reading json: provide nugget values of each QoI with comma delimiter'
+                        errlog.exit(msg)
+            elif nugget_opt == "Fixed Bounds":
+                for Bous in self.nuggetVal:
+                    if (np.isscalar(Bous)):
+                        msg = 'Error reading json: provide nugget bounds of each QoI in brackets with comma delimiter, e.g. [0.0,1.0],[0.0,2.0],...'
+                        errlog.exit(msg)
+                    elif (isinstance(Bous,list)):
+                        msg = 'Error reading json: provide both lower and upper bounds of nugget'
+                        errlog.exit(msg)
+                    elif Bous.shape[0]!=2:
+                        msg = 'Error reading json: provide nugget bounds of each QoI in brackets with comma delimiter, e.g. [0.0,1.0],[0.0,2.0],...'
+                        errlog.exit(msg)
+                    elif Bous[0]>Bous[1]:
+                        msg = 'Error reading json: the lower bound of a nugget value should be smaller than its upper bound'
+                        errlog.exit(msg)
+
         else:
             self.do_logtransform = False
             kernel = 'Matern 5/2'
             do_linear = False
+            #do_nugget = True
+            nugget_opt = "optimize"
 
         if do_simulation:
             femInfo = inp["fem"]
@@ -146,13 +238,11 @@ class GpFromModel(object):
             self.postFile = femInfo["postprocessScript"]
             self.appName = femInfo["program"]
 
-
         #
         # get x points
         #
 
         if do_sampling:
-            thr_count = surrogateInfo['samples']  # number of samples
             thr_NRMSE = surrogateInfo["accuracyLimit"]
             thr_t = surrogateInfo["timeLimit"] * 60
 
@@ -160,7 +250,7 @@ class GpFromModel(object):
             random.seed(surrogateInfo['seed'])
             self.xrange = np.empty((0, 2), float)
             for rv in inp['randomVariables']:
-                if  "lowerbound" not in rv:
+                if "lowerbound" not in rv:
                     msg = 'Error in input RV: all RV should be set to Uniform distribution'
                     errlog.exit(msg)
                 self.xrange = np.vstack((self.xrange, [rv['lowerbound'], rv['upperbound']]))
@@ -175,19 +265,19 @@ class GpFromModel(object):
             #
 
             if self.use_existing:
-                X_tmp = read_txt(self.inpData,errlog)
-                Y_tmp = read_txt(self.outData,errlog)
+                X_tmp = read_txt(self.inpData, errlog)
+                Y_tmp = read_txt(self.outData, errlog)
                 n_ex = X_tmp.shape[0]
 
                 if self.do_mf:
-                    if X_tmp.shape[1] != self.X_HF.shape[1]:
+                    if X_tmp.shape[1] != self.X_hf.shape[1]:
                         msg = 'Error importing input data: dimension inconsistent: high fidelity data have {} RV column(s) but low fidelity model have {}.'.format(
-                            self.X_HF.shape[1], X_tmp.shape[1])
+                            self.X_hf.shape[1], X_tmp.shape[1])
                         errlog.exit(msg)
 
-                    if Y_tmp.shape[1] != self.Y_HF.shape[1]:
+                    if Y_tmp.shape[1] != self.Y_hf.shape[1]:
                         msg = 'Error importing input data: dimension inconsistent: high fidelity data have {} QoI column(s) but low fidelity model have {}.'.format(
-                            self.Y_HF.shape[1], Y_tmp.shape[1])
+                            self.Y_hf.shape[1], Y_tmp.shape[1])
                         errlog.exit(msg)
 
                 if X_tmp.shape[1] != x_dim:
@@ -201,12 +291,13 @@ class GpFromModel(object):
                     errlog.exit(msg)
 
                 if n_ex != Y_tmp.shape[0]:
-                    msg = 'Error importing input data: numbers of input ({}) and output ({}) dataset are inconsistent'.format(n_ex, Y_tmp.shape[0])
+                    msg = 'Error importing input data: numbers of input ({}) and output ({}) dataset are inconsistent'.format(
+                        n_ex, Y_tmp.shape[0])
                     errlog.exit(msg)
 
             else:
                 n_ex = 0
-                if user_init ==0:
+                if user_init == 0:
                     msg = 'Error reading json: # of initial DoE should be greater than 0'
                     errlog.exit(msg)
                 X_tmp = np.zeros((0, x_dim))
@@ -225,11 +316,11 @@ class GpFromModel(object):
 
             # check validity of datafile
             if n_ex > 0:
-                Y_test ,self.id_sim= run_FEM(X_tmp[0, :][np.newaxis] ,self.id_sim, self.rv_name)
+                Y_test, self.id_sim = run_FEM(X_tmp[0, :][np.newaxis], self.id_sim, self.rv_name)
                 if np.sum(abs((Y_test - Y_tmp[0, :][np.newaxis]) / Y_test) > 0.01, axis=1) > 0:
                     msg = 'Consistency check failed. Your data is not consistent to your model response.'
                     errlog.exit(msg)
-                if n_init>0:
+                if n_init > 0:
                     n_init -= 1
                 else:
                     n_iter -= 1
@@ -238,11 +329,12 @@ class GpFromModel(object):
             # generate initial samples
             #
 
-            if n_init>0:
+            if n_init > 0:
                 U = lhs(x_dim, samples=(n_init))
                 X = np.vstack([X_tmp, np.zeros((n_init, x_dim))])
                 for nx in range(x_dim):
-                    X[n_ex:n_ex+n_init, nx] = U[:, nx] * (self.xrange[nx, 1] - self.xrange[nx, 0]) + self.xrange[nx, 0]
+                    X[n_ex:n_ex + n_init, nx] = U[:, nx] * (self.xrange[nx, 1] - self.xrange[nx, 0]) + self.xrange[
+                        nx, 0]
             else:
                 X = X_tmp
 
@@ -255,19 +347,19 @@ class GpFromModel(object):
         else:
 
             n_ex = 0
-            thr_NRMSE = 0.02 # default
+            thr_NRMSE = 0.02  # default
             thr_t = float('inf')
 
             #
             # Read sample locations from directory
             #
 
-            X = read_txt(self.inpData,errlog)
+            X = read_txt(self.inpData, errlog)
 
             if self.do_mf:
-                if X.shape[1] != self.X_HF.shape[1]:
+                if X.shape[1] != self.X_hf.shape[1]:
                     msg = 'Error importing input data: dimension inconsistent: high fidelity data have {} RV column(s) but low fidelity model have {}.'.format(
-                        self.X_HF.shape[1], X.shape[1])
+                        self.X_hf.shape[1], X.shape[1])
                     errlog.exit(msg)
 
             if X.shape[1] != x_dim:
@@ -282,13 +374,11 @@ class GpFromModel(object):
             n_init = thr_count
             n_iter = 0
 
-
         # give error
 
         if thr_count <= 2:
             msg = 'Number of samples should be greater than 2.'
             errlog.exit(msg)
-
 
         if do_doe:
             ac = 1  # pre-screening time = time*ac
@@ -302,8 +392,8 @@ class GpFromModel(object):
         else:
             ac = 1  # pre-screening time = time*ac
             ar = 1  # cluster
-            n_candi = 1 # candidate points
-            n_integ = 1 # integration points
+            n_candi = 1  # candidate points
+            n_integ = 1  # integration points
             user_init = thr_count
 
         #
@@ -350,15 +440,14 @@ class GpFromModel(object):
             #
             t_tmp = time.time()
 
-
-            #if n_init>0:
+            # if n_init>0:
             Y = np.vstack([Y_tmp, np.zeros((n_init, y_dim))])
             for ns in range(n_init):
-                Y[n_ex+ns, :],self.id_sim = run_FEM(X[n_ex+ns, :][np.newaxis],self.id_sim, self.rv_name)
+                Y[n_ex + ns, :], self.id_sim = run_FEM(X[n_ex + ns, :][np.newaxis], self.id_sim, self.rv_name)
                 print(">> {:.2f} sec".format(time.time() - t_init))
                 if time.time() - t_init > thr_t:
-                    Y = Y[:n_ex+ns, :]
-                    X = X[:n_ex+ns, :]
+                    Y = Y[:n_ex + ns, :]
+                    X = X[:n_ex + ns, :]
                     break
 
             t_sim_all = time.time() - t_tmp
@@ -380,19 +469,19 @@ class GpFromModel(object):
 
                 Yt = np.zeros((n_pred, y_dim))
                 for ns in range(n_pred):
-                    Yt[ns, :],self.id_sim = run_FEM(Xt[ns, :][np.newaxis],self.id_sim, self.rv_name)
+                    Yt[ns, :], self.id_sim = run_FEM(Xt[ns, :][np.newaxis], self.id_sim, self.rv_name)
 
         else:
 
             #
             # READ SAMPLES FROM DIRECTORY
             #
-            Y = read_txt(self.outData,errlog)
+            Y = read_txt(self.outData, errlog)
 
             if self.do_mf:
-                if Y.shape[1] != self.Y_HF.shape[1]:
+                if Y.shape[1] != self.Y_hf.shape[1]:
                     msg = 'Error importing input data: dimension inconsistent: high fidelity data have {} QoI column(s) but low fidelity model have {}.'.format(
-                        self.Y_HF.shape[1], Y.shape[1])
+                        self.Y_hf.shape[1], Y.shape[1])
                     errlog.exit(msg)
 
             if Y.shape[1] != y_dim:
@@ -401,10 +490,11 @@ class GpFromModel(object):
                 errlog.exit(msg)
 
             if X.shape[0] != Y.shape[0]:
-                msg = 'Error importing input data: numbers of input ({}) and output ({}) dataset are inconsistent'.format(X.shape[0], Y.shape[0])
+                msg = 'Error importing input data: numbers of input ({}) and output ({}) dataset are inconsistent'.format(
+                    X.shape[0], Y.shape[0])
                 errlog.exit(msg)
 
-            thr_count  = 0
+            thr_count = 0
             self.t_sim_each = float("inf")
         #
         # GP function
@@ -426,19 +516,25 @@ class GpFromModel(object):
             kg = kr
             self.m_list = list()
             for i in range(y_dim):
-                self.m_list = self.m_list + [GPy.models.GPRegression(X, Y[:, i][np.newaxis].transpose(), kernel=kg.copy())]
+                self.m_list = self.m_list + [
+                    GPy.models.GPRegression(X, Y[:, i][np.newaxis].transpose(), kernel=kg.copy())]
                 for parname in self.m_list[i].parameter_names():
                     if parname.endswith('lengthscale'):
                         exec('self.m_list[i].' + parname + '=self.len')
 
         else:
             kgs = emf.kernels.LinearMultiFidelityKernel([kr.copy(), kr.copy()])
-            X_list, Y_list = emf.convert_lists_to_array.convert_xy_lists_to_arrays([X, self.X_HF], [Y, self.Y_HF])
+
+            if self.mf_case == 'data-model' or self.mf_case=='data-data':
+                X_list, Y_list = emf.convert_lists_to_array.convert_xy_lists_to_arrays([X, self.X_hf], [Y, self.Y_hf])
+            elif self.mf_case == 'model-data':
+                X_list, Y_list = emf.convert_lists_to_array.convert_xy_lists_to_arrays([self.X_lf, X], [self.Y_lf, Y])
 
             self.m_list = list()
             for i in range(y_dim):
-                self.m_list = self.m_list + [GPyMultiOutputWrapper(emf.models.GPyLinearMultiFidelityModel(X_list, Y_list, kernel=kgs.copy(), n_fidelities=2), 2, n_optimization_restarts=5)]
-
+                self.m_list = self.m_list + [GPyMultiOutputWrapper(
+                    emf.models.GPyLinearMultiFidelityModel(X_list, Y_list, kernel=kgs.copy(), n_fidelities=2), 2,
+                    n_optimization_restarts=5)]
 
         #
         # Verification measures
@@ -446,7 +542,7 @@ class GpFromModel(object):
 
         self.NRMSE_hist = np.zeros((1, y_dim), float)
         self.NRMSE_idx = np.zeros((1, 1), int)
-        #leng_hist = np.zeros((1, self.m_list[0]._param_array_.shape[0]), int)
+        # leng_hist = np.zeros((1, self.m_list[0]._param_array_.shape[0]), int)
         if self.do_predictive:
             self.NRMSE_pred_hist = np.empty((1, y_dim), float)
 
@@ -459,9 +555,8 @@ class GpFromModel(object):
         print("======== RUNNING GP DoE ===========")
         exit_code = 'count'  # num iter
         i = 0
-        x_new = np.zeros((0,x_dim))
+        x_new = np.zeros((0, x_dim))
         n_new = 0
-
 
         doe_off = False
         while not doe_off:
@@ -481,7 +576,7 @@ class GpFromModel(object):
             t_tmp = time.time()
             [x_new, self.m_list, err, idx, Y_cv, Y_cv_var] = self.__design_of_experiments(X, Y, ac, ar, n_candi,
                                                                                           n_integ, self.m_list,
-                                                                                          do_cal, do_nugget, do_doe)
+                                                                                          do_cal, nugget_opt, do_doe)
 
             t_doe = time.time() - t_tmp
             print('DoE Time: {:.2f} s'.format(t_doe))
@@ -496,14 +591,18 @@ class GpFromModel(object):
             if not self.do_mf:
                 NRMSE_val = self.__normalized_mean_sq_error(Y_cv, Y)
             else:
-                NRMSE_val = self.__normalized_mean_sq_error(Y_cv, self.Y_HF)
+                if self.mf_case == 'data-model' or self.mf_case == 'data-data':
+                    NRMSE_val = self.__normalized_mean_sq_error(Y_cv, self.Y_hf)
+                elif self.mf_case == 'model-data' :
+                    NRMSE_val = self.__normalized_mean_sq_error(Y_cv, Y)
+
             self.NRMSE_hist = np.vstack((self.NRMSE_hist, np.array(NRMSE_val)))
             self.NRMSE_idx = np.vstack((self.NRMSE_idx, i))
 
             if self.do_predictive:
                 Yt_pred = np.zeros((n_pred, y_dim))
                 for ny in range(y_dim):
-                    y_pred_tmp, dummy = self.__predict(self.m_list[ny],Xt)
+                    y_pred_tmp, dummy = self.__predict(self.m_list[ny], Xt)
                     Yt_pred[:, ny] = y_pred_tmp.transpose()
                 if self.do_logtransform:
                     Yt_pred = np.exp(Yt_pred)
@@ -538,7 +637,7 @@ class GpFromModel(object):
                 break
 
             n_new = x_new.shape[0]
-            if not (n_new + self.id_sim < n_init + n_iter +1):
+            if not (n_new + self.id_sim < n_init + n_iter + 1):
                 n_new = n_init + n_iter - self.id_sim
                 x_new = x_new[0:n_new, :]
 
@@ -546,12 +645,11 @@ class GpFromModel(object):
 
             y_new = np.zeros((n_new, y_dim))
             for ny in range(n_new):
-                y_new[ny, :],self.id_sim = run_FEM(x_new[ny, :][np.newaxis],self.id_sim, self.rv_name)
+                y_new[ny, :], self.id_sim = run_FEM(x_new[ny, :][np.newaxis], self.id_sim, self.rv_name)
 
             print(">> {:.2f} s".format(time.time() - t_init))
             X = np.vstack([X, x_new])
             Y = np.vstack([Y, y_new])
-
 
         print("======== RUNNING GP Calibration ===========")
 
@@ -565,7 +663,7 @@ class GpFromModel(object):
                 X_tmp[:, nx] = U[:, nx] * (self.xrange[nx, 1] - self.xrange[nx, 0]) + self.xrange[nx, 0]
 
             for ns in np.arange(n_left):
-                Y_tmp[ns, :],self.id_sim = run_FEM(X_tmp[ns, :][np.newaxis],self.id_sim, self.rv_name)
+                Y_tmp[ns, :], self.id_sim = run_FEM(X_tmp[ns, :][np.newaxis], self.id_sim, self.rv_name)
                 print(">> {:.2f} s".format(time.time() - t_init))
                 if time.time() - t_init > thr_t - self.calib_time:
                     X_tmp = X_tmp[:ns, :]
@@ -586,9 +684,7 @@ class GpFromModel(object):
             #     if not self.do_mf:
             #         NRMSE_val = self.__normalized_mean_sq_error(Y_cv, Y)
             #     else:
-            #         NRMSE_val = self.__normalized_mean_sq_error(Y_cv, self.Y_HF)
-
-
+            #         NRMSE_val = self.__normalized_mean_sq_error(Y_cv, self.Y_hf)
 
         sim_time = time.time() - t_init
         n_samp = Y.shape[0]
@@ -612,7 +708,7 @@ class GpFromModel(object):
         #             plt.plot(x_plot, lf_mean_lin_mf_model);
         #             plt.plot(x_plot, hf_mean_lin_mf_model, '-');
         #             plt.plot(X, Y[:,ny], 'x');
-        #             plt.plot(self.X_HF,self.Y_HF[:,ny], 'x');
+        #             plt.plot(self.X_hf,self.Y_hf[:,ny], 'x');
         #             plt.show()
         #     else:
         #         for ny in range(y_dim):
@@ -626,7 +722,7 @@ class GpFromModel(object):
         #
         #
 
-        # plt.plot(Y_cv[:,0], self.Y_HF[:,0], 'x'); plt.show()
+        # plt.plot(Y_cv[:,0], self.Y_hf[:,0], 'x'); plt.show()
         # plt.show()
         # plt.plot(Y_cv[:,1], Y[:,1], 'x')
         # plt.show()
@@ -650,15 +746,15 @@ class GpFromModel(object):
                 # m_tmp = self.m_list[ny].copy()
                 m_tmp = self.m_list[ny]
                 if self.do_logtransform:
-                    #y_var_val = np.var(np.log(Y[:, ny]))
+                    # y_var_val = np.var(np.log(Y[:, ny]))
                     log_mean = np.mean(np.log(Y[:, ny]))
                     log_var = np.var(np.log(Y[:, ny]))
-                    y_var_val = np.exp(2*log_mean+log_var)*(np.exp(log_var)-1) # in linear space
+                    y_var_val = np.exp(2 * log_mean + log_var) * (np.exp(log_var) - 1)  # in linear space
                 else:
                     y_var_val = np.var(Y[:, ny])
 
                 for ns in range(n_err):
-                    y_pred_tmp, y_pred_var_tmp = self.__predict(m_tmp,Xerr[ns, :][np.newaxis])
+                    y_pred_tmp, y_pred_var_tmp = self.__predict(m_tmp, Xerr[ns, :][np.newaxis])
                     if self.do_logtransform:
                         y_pred_var[ns, ny] = np.exp(2 * y_pred_tmp + y_pred_var_tmp) * (np.exp(y_pred_var_tmp) - 1)
                     else:
@@ -666,13 +762,13 @@ class GpFromModel(object):
 
                     y_data_var[ns, ny] = y_var_val
 
-                    #for parname in m_tmp.parameter_names():
+                    # for parname in m_tmp.parameter_names():
                     #    if ('Mat52' in parname) and parname.endswith('variance'):
                     #        exec('y_pred_prior_var[ns,ny]=m_tmp.' + parname)
 
-            #error_ratio1_Pr = (y_pred_var / y_pred_prior_var)
+            # error_ratio1_Pr = (y_pred_var / y_pred_prior_var)
             error_ratio2_Pr = (y_pred_var / y_data_var)
-            #np.max(error_ratio1_Pr, axis=0)
+            # np.max(error_ratio1_Pr, axis=0)
             np.max(error_ratio2_Pr, axis=0)
 
             self.perc_thr = np.hstack([np.array([1]), np.arange(10, 1000, 50), np.array([999])])
@@ -686,7 +782,11 @@ class GpFromModel(object):
             if not self.do_mf:
                 Y_ex = Y[:, ny]
             else:
-                Y_ex = self.Y_HF[:, ny]
+                if self.mf_case == 'data-model' or self.mf_case == 'data-data':
+                    Y_ex = self.Y_hf[:, ny]
+                elif self.mf_case == 'model-data':
+                    Y_ex = Y[:, ny]
+
             corr_val[ny] = np.corrcoef(Y_ex, Y_cv[:, ny])[0, 1]
             R2_val[ny] = 1 - np.sum(pow(Y_cv[:, ny] - Y_ex, 2)) / np.sum(pow(Y_cv[:, ny] - np.mean(Y_cv[:, ny]), 2))
 
@@ -729,8 +829,7 @@ class GpFromModel(object):
             else:
                 self.rvVal = self.rvVal + [np.mean(X[:, nx])]
 
-
-    def __parameter_calibration(self, m_tmp_list, x_dim, do_nugget):
+    def __parameter_calibration(self, m_tmp_list, x_dim, nugget_opt):
 
         warnings.filterwarnings("ignore")
 
@@ -749,10 +848,13 @@ class GpFromModel(object):
                 m_init = m_tmp_list[ny]
                 m_tmp = m_init
 
-                if not do_nugget:
-                    m_tmp['Gaussian_noise.variance'].constrain_fixed(1e-10)
-                else:
+                if nugget_opt == "optimize":
                     m_tmp['Gaussian_noise.variance'].unfix()
+                elif nugget_opt == "Fixed Values":
+                    m_tmp['Gaussian_noise.variance'].constrain_fixed(self.nuggetVal[ny])
+                elif nugget_opt == "Fixed Bounds":
+                    m_tmp['Gaussian_noise.variance'].constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
+
                 m_tmp.optimize(clear_after_finish=True)
                 # m_tmp.optimize_restarts(5)
                 max_log_likli = m_tmp.log_likelihood()
@@ -775,10 +877,13 @@ class GpFromModel(object):
                     if parname.endswith('lengthscale'):
                         exec('m_tmp.' + parname + '=self.len')
 
-                if not do_nugget:
-                    m_tmp['Gaussian_noise.variance'].constrain_fixed(1e-10)
-                else:
+                if nugget_opt == "optimize":
                     m_tmp['Gaussian_noise.variance'].unfix()
+                elif nugget_opt == "Fixed Values":
+                    m_tmp['Gaussian_noise.variance'].constrain_fixed(self.nuggetVal[ny])
+                elif nugget_opt == "Fixed Bounds":
+                    m_tmp['Gaussian_noise.variance'].constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
+
                 m_tmp.optimize(clear_after_finish=True)
                 # m_tmp.optimize_restarts(5)
 
@@ -804,9 +909,12 @@ class GpFromModel(object):
                             else:
                                 exec('m_tmp.' + parname + '=np.random.exponential(1, (1, x_dim)) * m.' + parname)
 
-                    if not do_nugget:
-                        # m_tmp['multioutput_likelihood.*variance'].constrain_fixed(1e-10)
-                        m_tmp['Gaussian_noise.variance'].constrain_fixed(1e-10)
+                    if nugget_opt == "optimize":
+                        m_tmp['Gaussian_noise.variance'].unfix()
+                    elif nugget_opt == "Fixed Values":
+                        m_tmp['Gaussian_noise.variance'].constrain_fixed(self.nuggetVal[ny])
+                    elif nugget_opt == "Fixed Bounds":
+                        m_tmp['Gaussian_noise.variance'].constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
 
                     t_fix = time.time()
                     try:
@@ -835,9 +943,23 @@ class GpFromModel(object):
                 m_list = m_list + [m]
                 print(m)
             else:
-                if not do_nugget:
-                    m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.fix(0)
-                    m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.fix(0)
+
+
+                if nugget_opt == "optimize":
+                    m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.unfix()
+                    m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.unfix()
+
+                elif nugget_opt == "Fixed Values":
+                    m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.constrain_fixed(self.nuggetVal[ny])
+                    m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.constrain_fixed(self.nuggetVal[ny])
+
+                elif nugget_opt == "Fixed Bounds":
+                    m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
+                    m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
+                #
+                # if not do_nugget:
+                #     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.fix(0)
+                #     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.fix(0)
 
                 m_tmp_list[ny].optimize()
                 nopt = 5
@@ -848,21 +970,28 @@ class GpFromModel(object):
 
         return m_tmp_list
 
-    def __design_of_experiments(self, X, Y, ac, ar, n_candi, n_integ, pre_m_list, do_cal, do_nugget, do_doe):
+    def __design_of_experiments(self, X, Y, ac, ar, n_candi, n_integ, pre_m_list, do_cal, nugget_opt, do_doe):
 
         # do log transform
         if self.do_logtransform:
 
-            if np.min(Y)<0:
+            if np.min(Y) < 0:
                 msg = 'Error running SimCenterUQ. Response contains negative values. Please uncheck the log-transform option in the UQ tab'
                 errlog.exit(msg)
             Y = np.log(Y)
 
             if self.do_mf:
-                if np.min(self.Y_HF)<0:
-                    msg = 'Error running SimCenterUQ. Response contains negative values. Please uncheck the log-transform option in the UQ tab'
-                    errlog.exit(msg)
-                self.Y_HF = np.log(self.Y_HF)
+
+                if self.mf_case == 'data-model' or self.mf_case == 'data-data':
+                    if np.min(self.Y_hf)<0:
+                        msg = 'Error running SimCenterUQ. Response contains negative values. Please uncheck the log-transform option in the UQ tab'
+                        errlog.exit(msg)
+                    self.Y_hf = np.log(self.Y_hf)
+                elif self.mf_case == 'mode-data':
+                    if np.min(self.Y_lf) < 0:
+                        msg = 'Error running SimCenterUQ. Response contains negative values. Please uncheck the log-transform option in the UQ tab'
+                        errlog.exit(msg)
+                    self.Y_lf = np.log(self.Y_lf)
 
         r = 1  # adaptively
 
@@ -875,25 +1004,44 @@ class GpFromModel(object):
             if not self.do_mf:
                 m_tmp_list[i].set_XY(X, Y[:, i][np.newaxis].transpose())
             else:
-                X_list_tmp, Y_list_tmp = emf.convert_lists_to_array.convert_xy_lists_to_arrays([X, self.X_HF],
-                                                                                               [Y[:, i][np.newaxis].transpose(), self.Y_HF[:, i][np.newaxis].transpose()])
+
+                if self.mf_case == 'data-model' or self.mf_case == 'data-data':
+                    X_list_tmp, Y_list_tmp = emf.convert_lists_to_array.convert_xy_lists_to_arrays([X, self.X_hf],
+                                                                                                   [Y[:, i][np.newaxis].transpose(), self.Y_hf[:, i][np.newaxis].transpose()])
+                elif self.mf_case == 'model-data':
+                    X_list_tmp, Y_list_tmp = emf.convert_lists_to_array.convert_xy_lists_to_arrays([self.X_lf, X],
+                                                                                                   [self.Y_lf[:, i][np.newaxis].transpose(),Y[:, i][np.newaxis].transpose()])
+
                 m_tmp_list[i].set_data(X=X_list_tmp,Y=Y_list_tmp)
 
+
         if do_cal:
-            m_list = self.__parameter_calibration(m_tmp_list, x_dim, do_nugget)
+            m_list = self.__parameter_calibration(m_tmp_list, x_dim, nugget_opt)
         else:
             m_list = m_tmp_list.copy()
 
         #
         # cross validation errors
         #
-        Y_pred, Y_pred_var, e2 =  self.__get_cross_validation(X,Y,m_list)
-
+        Y_pred, Y_pred_var, e2 = self.__get_cross_validation(X, Y, m_list)
 
         if self.do_logtransform:
-            Y_pred = np.exp(Y_pred)
+
+            mu = Y_pred
+            sig2 = Y_pred_var
+
+            median = np.exp(mu)
+            mean = np.exp(mu + sig2/2)
+            var = np.exp(2*mu + sig2)*(np.exp(sig2)-1)
+
+            Y_pred = median
+            Y_pred_var = var
+
             if self.do_mf:
-                self.Y_HF = np.exp(self.Y_HF)
+                if self.mf_case == 'data-model' or self.mf_case == 'data-data':
+                    self.Y_hf = np.exp(self.Y_hf)
+                elif self.mf_case == 'model-data':
+                    self.Y_lf = np.exp(self.Y_lf)
 
         if not do_doe:
             return 0, m_list, 0, 0, Y_pred, Y_pred_var
@@ -934,7 +1082,10 @@ class GpFromModel(object):
                 if not self.do_mf:
                     phi = e2[self.__closest_node(xc1[i, :], X)]
                 else:
-                    phi = e2[self.__closest_node(xc1[i, :], self.X_HF)]
+                    if self.mf_case == 'data-model' or self.mf_case == 'data-data':
+                        phi = e2[self.__closest_node(xc1[i, :], self.X_hf)]
+                    elif self.mf_case == 'model-data':
+                        phi = e2[self.__closest_node(xc1[i, :], X)]
 
                 score1[i] = yc1_var[i] * pow(phi[y_idx], r)
                 cri1[i] = yc1_var[i]
@@ -981,7 +1132,7 @@ class GpFromModel(object):
                 if not self.do_mf:
                     phi = e2[self.__closest_node(xc1[i, :], X)]
                 else:
-                    phi = e2[self.__closest_node(xc1[i, :], self.X_HF)]
+                    phi = e2[self.__closest_node(xc1[i, :], self.X_hf)]
 
                 score1[i] = yc1_var[i] * pow(phi[y_idx], r)
                 cri1[i] = yc1_var[i]
@@ -1100,11 +1251,13 @@ class GpFromModel(object):
         if not self.do_mf:
             return m.predict(X)
         else:
-            X_list = convert_x_list_to_array([X, X])
-            X_list_l = X_list[:X.shape[0]]
-            X_list_h = X_list[X.shape[0]:]
-            return m.predict(X_list_h)
-
+            if self.mf_case == 'data-model' or self.mf_case == 'data-data':
+                X_list = convert_x_list_to_array([X, X])
+                X_list_l = X_list[:X.shape[0]]
+                X_list_h = X_list[X.shape[0]:]
+                return m.predict(X_list_h)
+            elif self.mf_case == 'model-data':
+                return m.predict(X)
 
         x_list = list()
         y_list = list()
@@ -1116,45 +1269,64 @@ class GpFromModel(object):
 
     def __get_cross_validation(self,X,Y,m_list):
 
-
         if not self.do_mf:
             e2 = np.zeros(Y.shape)
             Y_pred = np.zeros(Y.shape)
             Y_pred_var = np.zeros(Y.shape)
             for ny in range(Y.shape[1]):
-                m_tmp = m_list[ny].copy()
+                m_tmp = m_list[ny]
                 for ns in range(X.shape[0]):
                     X_tmp = np.delete(X, ns, axis=0)
                     Y_tmp = np.delete(Y, ns, axis=0)
                     m_tmp.set_XY(X=X_tmp, Y=Y_tmp[:, ny][np.newaxis].transpose())
                     x_loo = X[ns, :][np.newaxis]
                     # Y_pred_tmp, Y_err_tmp = m_tmp.predict(x_loo)
-                    Y_pred_tmp, Y_err_tmp = self.__predict(m_tmp,x_loo)
+                    Y_pred_tmp, Y_err_tmp = self.__predict(m_tmp, x_loo)
                     Y_pred[ns, ny] = Y_pred_tmp
                     Y_pred_var[ns, ny] = Y_err_tmp
                     e2[ns, ny] = pow((Y_pred[ns, ny] - Y[ns, ny]), 2)  # for nD outputs
 
-        else:
-            e2 = np.zeros(self.Y_HF.shape)
-            Y_pred = np.zeros(self.Y_HF.shape)
-            Y_pred_var = np.zeros(self.Y_HF.shape)
 
-            for ny in range(Y.shape[1]):
-                m_tmp = m_list[ny]
-                for ns in range(self.X_HF.shape[0]):
-                    X_HF_tmp = np.delete(self.X_HF, ns, axis=0)
-                    Y_HF_tmp = np.delete(self.Y_HF, ns, axis=0)
-                    X_list_tmp, Y_list_tmp = emf.convert_lists_to_array.convert_xy_lists_to_arrays([X, X_HF_tmp],
-                                                                                                   [Y[:, ny][np.newaxis].transpose(), Y_HF_tmp[:, ny][np.newaxis].transpose()])
-                    m_tmp.set_data(X=X_list_tmp, Y=Y_list_tmp)
-                    x_loo = np.hstack((self.X_HF[ns], 1))[np.newaxis]
-                    Y_pred_tmp, Y_err_tmp = self.__predict(m_tmp,x_loo)
-                    Y_pred[ns] = Y_pred_tmp
-                    Y_pred_var[ns] = Y_err_tmp
-                    e2[ns] = pow((Y_pred[ns] - self.Y_HF[ns]), 2)  # for nD outputs
+        else:
+            if self.mf_case == 'data-model' or self.mf_case == 'data-data':
+                e2 = np.zeros(self.Y_hf.shape)
+                Y_pred = np.zeros(self.Y_hf.shape)
+                Y_pred_var = np.zeros(self.Y_hf.shape)
+
+                for ny in range(Y.shape[1]):
+                    m_tmp = m_list[ny]
+                    for ns in range(self.X_hf.shape[0]):
+                        X_hf_tmp = np.delete(self.X_hf, ns, axis=0)
+                        Y_hf_tmp = np.delete(self.Y_hf, ns, axis=0)
+                        X_list_tmp, Y_list_tmp = emf.convert_lists_to_array.convert_xy_lists_to_arrays([X, X_hf_tmp],
+                                                                                                       [Y[:, ny][np.newaxis].transpose(), Y_hf_tmp[:, ny][np.newaxis].transpose()])
+                        m_tmp.set_data(X=X_list_tmp, Y=Y_list_tmp)
+                        x_loo = np.hstack((self.X_hf[ns], 1))[np.newaxis]
+                        Y_pred_tmp, Y_err_tmp = self.__predict(m_tmp,x_loo)
+                        Y_pred[ns] = Y_pred_tmp
+                        Y_pred_var[ns] = Y_err_tmp
+                        e2[ns] = pow((Y_pred[ns] - self.Y_hf[ns]), 2)  # for nD outputs
+
+            elif self.mf_case == 'model-data':
+                e2 = np.zeros(Y.shape)
+                Y_pred = np.zeros(Y.shape)
+                Y_pred_var = np.zeros(Y.shape)
+
+                for ny in range(Y.shape[1]):
+                    m_tmp = m_list[ny]
+                    for ns in range(X.shape[0]):
+                        X_tmp = np.delete(X, ns, axis=0)
+                        Y_tmp = np.delete(X, ns, axis=0)
+                        X_list_tmp, Y_list_tmp = emf.convert_lists_to_array.convert_xy_lists_to_arrays([self.X_lf, X_tmp],
+                                                                                                       [self.Y_lf[:, ny][np.newaxis].transpose(), Y_tmp[:, ny][np.newaxis].transpose()])
+                        m_tmp.set_data(X=X_list_tmp, Y=Y_list_tmp)
+                        x_loo = np.hstack((X[ns], 1))[np.newaxis]
+                        Y_pred_tmp, Y_err_tmp = self.__predict(m_tmp,x_loo)
+                        Y_pred[ns] = Y_pred_tmp
+                        Y_pred_var[ns] = Y_err_tmp
+                        e2[ns] = pow((Y_pred[ns] - Y[ns]), 2)  # for nD outputs
 
         return Y_pred, Y_pred_var, e2
-
 
     def save_model(self, filename):
         import json
@@ -1191,15 +1363,39 @@ class GpFromModel(object):
         results["ylabels"] = self.g_name
         results["yExact"] = {}
         results["yPredict"] = {}
+        results["valNugget"] = {}
         results["valNRMSE"] = {}
         results["valR2"] = {}
         results["valCorrCoeff"] = {}
+        results["yPredict_CI_lb"] = {}
+        results["yPredict_CI_ub"] = {}
         for ny in range(self.y_dim):
             if not self.do_mf:
                 results["yExact"][self.g_name[ny]] = self.Y[:, ny].tolist()
             else:
-                results["yExact"][self.g_name[ny]] = self.Y_HF[:, ny].tolist()
+                if self.mf_case == 'data-model' or self.mf_case == 'data-data':
+                    results["yExact"][self.g_name[ny]] = self.Y_hf[:, ny].tolist()
+                elif self.mf_case == 'model-data':
+                    results["yExact"][self.g_name[ny]] = self.Y[:, ny].tolist()
+
             results["yPredict"][self.g_name[ny]] = self.Y_loo[:, ny].tolist()
+
+            if not self.do_logtransform:
+                results["yPredict_CI_lb"][self.g_name[ny]] = self.Y_loo[:, ny].tolist()+2*np.sqrt(self.Y_loo_var[:, ny]).tolist()
+                results["yPredict_CI_ub"][self.g_name[ny]] = self.Y_loo[:, ny].tolist()-2*np.sqrt(self.Y_loo_var[:, ny]).tolist()
+            else:
+                def lognormCDF(x, mu=0, sigma=1):
+                    a = (math.log(x) - mu) / math.sqrt(2 * sigma ** 2)
+                    p = 0.5 + 0.5 * math.erf(a)
+                    return p
+
+                mu = np.log(self.Y_loo[:, ny] )
+                sig = np.sqrt(np.log(self.Y_loo_var[:, ny]/pow(self.Y_loo[:, ny] ,2)+1))
+
+                results["yPredict_CI_lb"][self.g_name[ny]] =  lognorm.ppf(0.25, s = sig, scale = np.exp(mu)).tolist()
+                results["yPredict_CI_ub"][self.g_name[ny]] =  lognorm.ppf(0.75, s = sig, scale = np.exp(mu)).tolist()
+
+            results["valNugget"][self.g_name[ny]] = float(self.m_list[ny]['Gaussian_noise.variance'])
             results["valNRMSE"][self.g_name[ny]] = self.NRMSE_val[ny]
             results["valR2"][self.g_name[ny]] = self.R2_val[ny]
             results["valCorrCoeff"][self.g_name[ny]] = self.corr_val[ny]
@@ -1223,9 +1419,15 @@ class GpFromModel(object):
                 results["outData"] = self.outData
 
         if self.do_mf:
-            results["inpData_HF"] = self.inpData_HF
-            results["outData_HF"] = self.outData_HF
-            results["valSamp_HF"] = self.X_HF.shape[0]
+            if self.mf_case == 'data-model' or self.mf_case == 'data-data':
+                results["inpData_HF"] = self.inpData_hf
+                results["outData_HF"] = self.outData_hf
+                results["valSamp_HF"] = self.X_hf.shape[0]
+
+            elif self.mf_case == 'model-data':
+                results["inpData_LF"] = self.inpData_lf
+                results["outData_LF"] = self.outData_lf
+                results["valSamp_LF"] = self.X_lf.shape[0]
 
         rv_list = []
         for nx in range(self.x_dim):
@@ -1296,7 +1498,8 @@ class GpFromModel(object):
 
         print("Results Saved")
 
-def run_FEM(X,id_sim, rv_name):
+
+def run_FEM(X, id_sim, rv_name):
     x_dim = X.shape[1]
 
     if X.shape[0] > 1:
@@ -1343,11 +1546,10 @@ def run_FEM(X,id_sim, rv_name):
     os.chdir("../")
 
     if np.isnan(np.sum(g)):
-        msg = 'Error running FEM: Response value at workdir.{} is NaN'.format(id_sim+1)
+        msg = 'Error running FEM: Response value at workdir.{} is NaN'.format(id_sim + 1)
         errlog.exit(msg)
 
     return g, id_sim
-
 
 
 def read_txt(text_dir, errlog):
@@ -1383,7 +1585,6 @@ def read_txt(text_dir, errlog):
 
     return X
 
-
 # ==========================================================================================
 
 class errorLog(object):
@@ -1399,7 +1600,7 @@ class errorLog(object):
 
 
 def build_surrogate(work_dir, os_type, run_type):
-    #t_total = time.process_time()
+    # t_total = time.process_time()
     filename = 'SimGpModel'
 
     f = open(work_dir + '/templatedir/dakota.json')
@@ -1412,31 +1613,31 @@ def build_surrogate(work_dir, os_type, run_type):
     f.close()
 
     if inp['UQ_Method']['uqType'] != 'Train GP Surrogate Model':
-        msg = 'UQ type inconsistency : user wanted <' + inp['UQ_Method']['uqType']+'> but called <Global Surrogate Modeling> program'
+        msg = 'UQ type inconsistency : user wanted <' + inp['UQ_Method'][
+            'uqType'] + '> but called <Global Surrogate Modeling> program'
         errlog.exit(msg)
-
 
     gp = GpFromModel(work_dir, run_type, os_type, inp, errlog)
     gp.save_model(filename)
+
 
 # ==========================================================================================
 
 # the actual execution
 
 if __name__ == "__main__":
-
-    inputArgs = sys.argv    
+    inputArgs = sys.argv
     work_dir = inputArgs[1].replace(os.sep, '/')
 
-    #global error_file
+    # global error_file
     errlog = errorLog(work_dir)
 
-    #run_type = 'runningLocal'
-    #os_type  = 'windows'
-    #work_dir = 
+    # run_type = 'runningLocal'
+    # os_type  = 'windows'
+    # work_dir =
     os_type = inputArgs[2]
-    #os_type = inputArgs[2]
+    # os_type = inputArgs[2]
     run_type = inputArgs[3]
-    result_file="results.out"
+    result_file = "results.out"
 
-    sys.exit(build_surrogate(work_dir,os_type, run_type))
+    sys.exit(build_surrogate(work_dir, os_type, run_type))

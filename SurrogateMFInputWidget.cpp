@@ -91,7 +91,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     inpFileDir_HF = new QLineEdit();
     chooseInpFile_HF = new QPushButton("Choose");
     connect(chooseInpFile_HF, &QPushButton::clicked, this, [=](){
-        inpFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        inpFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
         if ((!theHighSimButton->isChecked()) && (!theLowSimButton->isChecked()) )
             this->parseInputDataForRV(inpFileDir_HF->text());
         else
@@ -108,7 +108,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     outFileDir_HF = new QLineEdit();
     chooseOutFile_HF = new QPushButton("Choose");
     connect(chooseOutFile_HF, &QPushButton::clicked, this, [=](){
-        outFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        outFileDir_HF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
         if ((!theHighSimButton->isChecked()) && (!theLowSimButton->isChecked()) )
             this->parseOutputDataForQoI(outFileDir_HF->text());
         else
@@ -188,7 +188,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     inpFileDir_LF = new QLineEdit();
     chooseInpFile_LF = new QPushButton("Choose");
     connect(chooseInpFile_LF, &QPushButton::clicked, this, [=](){
-        inpFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        inpFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
 
         if ((!theHighSimButton->isChecked()) && (!theLowSimButton->isChecked()) )
             this->parseInputDataForRV(inpFileDir_LF->text());
@@ -205,7 +205,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     outFileDir_LF = new QLineEdit();
     chooseOutFile_LF = new QPushButton("Choose");
     connect(chooseOutFile_LF, &QPushButton::clicked, this, [=](){
-        outFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        outFileDir_LF->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
 
         if ((!theHighSimButton->isChecked()) && (!theLowSimButton->isChecked()) )
             this->parseOutputDataForQoI(outFileDir_LF->text());
@@ -332,6 +332,16 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     theSimGrid->setColumnStretch(2,1);
     theSimGrid->setRowStretch(4,1);
 
+
+    //
+    // Parallel Execution
+    //
+
+    parallelCheckBox = new QCheckBox();
+    parallelCheckBox -> setChecked(true);
+    theSimGrid->addWidget(new QLabel("   Parallel Execution"), id_fe, 0);
+    theSimGrid->addWidget(parallelCheckBox, id_fe++, 1);
+
     // /////////////////////////////////////
     // ADVANCED
     // /////////////////////////////////////
@@ -367,7 +377,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
 
     // Use Linear trending function
 
-    theLinearLabel=new QLabel("Use Linear Trend Function");
+    theLinearLabel=new QLabel("Add Linear Trend Function");
 
     theLinearCheckBox = new QCheckBox();
     layout->addWidget(theLinearLabel, 6, 0);
@@ -379,8 +389,8 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
 
     // Use Log transform
 
-    theLogtLabel=new QLabel("Responses are always positive");
-    theLogtLabel2=new QLabel("     (allow log-transform)");
+    theLogtLabel=new QLabel("Log-space Transform of QoI");
+    theLogtLabel2=new QLabel("     (check this box only when all response qunatities are always positive)");
 
     theLogtCheckBox = new QCheckBox();
     layout->addWidget(theLogtLabel, 7, 0);
@@ -392,10 +402,37 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
 
 
     //
+    // Nugget function
+    //
+
+    theNuggetLabel=new QLabel("Nugget Values for each QoI");
+    theNuggetSelection = new QComboBox();
+
+    theNuggetSelection->addItem(tr("Optimize"),0);
+    theNuggetSelection->addItem(tr("Fixed Values"),1);
+    theNuggetSelection->addItem(tr("Fixed Bounds"),2);
+    theNuggetSelection->setMaximumWidth(150);
+    theNuggetSelection->setCurrentIndex(0);
+
+    theNuggetVals = new QLineEdit();
+    theNuggetVals->setToolTip("Provide nugget values");
+    //theNuggetVals->setMaximumWidth(150);
+
+    layout->addWidget(theNuggetLabel, 8, 0);
+    layout->addWidget(theNuggetSelection, 8, 1);
+    layout->addWidget(theNuggetVals, 9, 1,1,2);
+
+    theNuggetLabel->setVisible(false);
+    theNuggetSelection->setVisible(false);
+    theNuggetVals->setVisible(false);
+
+    connect(theNuggetSelection,SIGNAL(currentIndexChanged(int)),this,SLOT(showNuggetBox(int)));
+
+    //
     // Finish
     //
 
-    layout->setRowStretch(8, 1);
+    layout->setRowStretch(10, 1);
     layout->setColumnStretch(7, 1);
     this->setLayout(layout);
 
@@ -417,6 +454,24 @@ SurrogateMFInputWidget::~SurrogateMFInputWidget()
 {
 
 }
+
+
+void
+SurrogateMFInputWidget::showNuggetBox(int idx)
+{
+
+    if (idx == 0) {
+        theNuggetVals->hide();
+    } else if (idx==1){
+        theNuggetVals->show();
+        theNuggetVals->setPlaceholderText("QoI1, QoI2,..");
+    } else if (idx==2) {
+        theNuggetVals->show();
+        theNuggetVals->setPlaceholderText("[QoI1_LB,QoI1_UB], [QoI2_LB,QoI2_UB],..");
+    }
+
+};
+
 
 void SurrogateMFInputWidget::doExistingLF(bool tog)
 {
@@ -461,29 +516,24 @@ void SurrogateMFInputWidget::doAdvancedGP(bool tog)
 {
     if (tog) {
         theAdvancedTitle->setStyleSheet("font-weight: bold; color: black");
-        lineA->setVisible(true);
-        gpKernel->setVisible(true);
-        theLinearCheckBox->setVisible(true);
-        theLogtCheckBox->setVisible(true);
-        theLinearLabel->setVisible(true);
-        theLogtLabel->setVisible(true);
-        theLogtLabel2->setVisible(true);
-        theKernelLabel->setVisible(true);
+
     } else {
         theAdvancedTitle->setStyleSheet("font-weight: bold; color: gray");
-
-        lineA->setVisible(false);
-        gpKernel->setVisible(false);
-        theLinearCheckBox->setVisible(false);
-        theLogtCheckBox->setVisible(false);
-        theLinearLabel->setVisible(false);
-        theLogtLabel->setVisible(false);
-        theLogtLabel2->setVisible(false);
-        theKernelLabel->setVisible(false);
         gpKernel->setCurrentIndex(0);
         theLinearCheckBox->setChecked(false);
         theLogtCheckBox->setChecked(false);
     }
+
+    lineA->setVisible(tog);
+    gpKernel->setVisible(tog);
+    theLinearCheckBox->setVisible(tog);
+    theLogtCheckBox->setVisible(tog);
+    theLinearLabel->setVisible(tog);
+    theLogtLabel->setVisible(tog);
+    theLogtLabel2->setVisible(tog);
+    theKernelLabel->setVisible(tog);
+    theNuggetLabel->setVisible(tog);
+    theNuggetVals->setVisible(tog);
 }
 
 
@@ -604,6 +654,7 @@ SurrogateMFInputWidget::outputToJSON(QJsonObject &jsonObj){
         jsonObj["timeLimit"]=timeMeasure->text().toDouble();
         jsonObj["accuracyLimit"]=accuracyMeasure->text().toDouble();
         jsonObj["doDoE"]=theDoECheckBox->isChecked();
+        jsonObj["parallelExecution"]=parallelCheckBox->isChecked();
     }
 
     jsonObj["advancedOpt"]=theAdvancedCheckBox->isChecked();
@@ -612,6 +663,9 @@ SurrogateMFInputWidget::outputToJSON(QJsonObject &jsonObj){
         jsonObj["kernel"]=gpKernel->currentText();
         jsonObj["linear"]=theLinearCheckBox->isChecked();
         jsonObj["logTransform"]=theLogtCheckBox->isChecked();
+        jsonObj["nuggetOpt"]=theNuggetSelection->currentText();
+        jsonObj["nuggetString"]=theNuggetVals->text();
+
     }
     return result;    
 }
@@ -786,6 +840,11 @@ SurrogateMFInputWidget::inputFromJSON(QJsonObject &jsonObject){
             result = false;
         }
 
+        if (jsonObject.contains("parallelExecution")) {
+            parallelCheckBox->setChecked(jsonObject["parallelExecution"].toBool());
+        } else {
+            parallelCheckBox->setChecked(false); // for compatibility. later change it to error. (sy - june 2021)
+        }
     }
 
   if (jsonObject.contains("advancedOpt")) {
@@ -800,6 +859,20 @@ SurrogateMFInputWidget::inputFromJSON(QJsonObject &jsonObject){
         gpKernel->setCurrentIndex(index);
         theLinearCheckBox->setChecked(jsonObject["linear"].toBool());
         theLogtCheckBox->setChecked(jsonObject["logTransform"].toBool());
+
+        if (jsonObject.contains("nuggetOpt")) {
+            QString nuggetOpt =jsonObject["nuggetOpt"].toString();
+            index = theNuggetSelection->findText(nuggetOpt);
+            if (index == -1) {
+                return false;
+            }
+            theNuggetSelection->setCurrentIndex(index);
+            if (index!=0){
+                theNuggetVals->setText(jsonObject["nuggetString"].toString());
+            }
+        } else {
+            theNuggetSelection->setCurrentIndex(0);
+        }
       }
   } else {
      return false;

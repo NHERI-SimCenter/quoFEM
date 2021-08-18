@@ -73,6 +73,8 @@ public slots:
     void doAdvancedGP(bool tog);
     void doExistingLF(bool tog);
     void doExistingHF(bool tog);
+    void showNuggetBox(int idx);
+
 
 private:
     QLineEdit *numSamples_HF, *initialDoE_HF, *randomSeed,  *accuracyMeasure, *timeMeasure;
@@ -81,9 +83,15 @@ private:
     QComboBox *gpKernel;
     QCheckBox *theAdvancedCheckBox,*theExistingCheckBox_HF,*theExistingCheckBox_LF, *theDoECheckBox;
     QCheckBox *theLinearCheckBox,*theLogtCheckBox;
+    QCheckBox *parallelCheckBox;
 
     QLabel * theAdvancedTitle,* theKernelLabel,* theLinearLabel,* theLogtLabel,* theLogtLabel2,* theInitialLabel;
     QLabel * modelMSG, * errMSG, *theExistingLabel;
+
+    QLabel * theNuggetLabel;
+    QComboBox * theNuggetSelection;
+    QCheckBox * theNugCheckBox;
+    QLineEdit * theNuggetVals;
 
     InputWidgetParameters *theParameters;
     InputWidgetEDP *theEdpWidget;

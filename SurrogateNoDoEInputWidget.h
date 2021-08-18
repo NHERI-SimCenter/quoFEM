@@ -69,6 +69,7 @@ public:
 public slots:
     void setOutputDir(bool tog);
     void doAdvancedGP(bool tog);
+    void showNuggetBox(int idx);
 private:
     QLineEdit *randomSeed;
     QLineEdit *inpFileDir;
@@ -88,6 +89,11 @@ private:
     QLabel * theLogtLabel2;
     QLabel * theInitialLabel;
     QLabel * errMSG;
+
+    QComboBox * theNuggetSelection;
+    QCheckBox * theNugCheckBox;
+    QLineEdit * theNuggetVals;
+    QLabel * theNuggetLabel;
 
     InputWidgetParameters *theParameters;
     InputWidgetEDP *theEdpWidget;

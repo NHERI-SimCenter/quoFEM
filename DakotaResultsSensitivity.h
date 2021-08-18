@@ -44,7 +44,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QMessageBox>
 #include <QPushButton>
 #include <QScrollArea>
-
+#include <ResultsDataChart.h>
 using namespace QtCharts;
 
 class QTextEdit;
@@ -72,8 +72,8 @@ signals:
 
 public slots:
    void clear(void);
-   void onSpreadsheetCellClicked(int, int);
-   void onSaveSpreadsheetClicked();
+  // void onSpreadsheetCellClicked(int, int);
+  // void onSaveSpreadsheetClicked();
 
    // modified by padhye 08/25/2018
 
@@ -83,18 +83,19 @@ private:
 
    MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
    QChart *chart;
-   QPushButton* save_spreadheet; // save the data from spreadsheet
+   //QPushButton* save_spreadheet; // save the data from spreadsheet
    QLabel *label;
-   QLabel *best_fit_instructions;
+   //QLabel *best_fit_instructions;
+   ResultsDataChart * theDataTable;
 
-   int col1, col2;
-   bool mLeft;
-   QStringList theHeadings;
+   //int col1, col2;
+   //bool mLeft;
+   //QStringList theHeadings;
 
-   QVector<QString>theNames;
-   QVector<double>theMeans;
-   QVector<double>theStdDevs;
-   QVector<double>theKurtosis;
+   //QVector<QString>theNames;
+   //QVector<double>theMeans;
+   //QVector<double>theStdDevs;
+   //QVector<double>theKurtosis;
    QVector<QVector<double>> sobols_tot;
    QVector<QVector<double>> sobols_main;
 

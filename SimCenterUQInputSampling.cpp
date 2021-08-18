@@ -83,6 +83,9 @@ SimCenterUQInputSampling::SimCenterUQInputSampling(QWidget *parent)
     //samplingMethod->addItem(tr("LHS"));
     samplingMethod->addItem(tr("Monte Carlo"));
 
+    samplingMethod->setMaximumWidth(200);
+    samplingMethod->setMinimumWidth(200);
+
     methodLayout->addWidget(label1);
     methodLayout->addWidget(samplingMethod,2);
     methodLayout->addStretch(4);
