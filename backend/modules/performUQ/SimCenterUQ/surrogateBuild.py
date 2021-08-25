@@ -16,6 +16,9 @@ from pyDOE import lhs
 import warnings
 import random
 
+from multiprocessing import Pool
+
+
 #import emukit.multi_fidelity as emf
 #from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
 #from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
@@ -70,6 +73,19 @@ class GpFromModel(object):
         automate_doe = False
 
         surrogateInfo = inp["UQ_Method"]["surrogateMethodInfo"]
+
+        self.do_parallel = surrogateInfo["parallelExecution"]
+        if self.run_type.lower() == 'runninglocal':
+            self.pool = 0
+            n_core = 5
+            if self.do_parallel:
+                from multiprocessing import Pool
+                self.pool = Pool(mp.cpu_count())
+                n_core = Pool.cpu_count()
+        else:
+            from mpi4py.futures import MPIPoolExecutor
+            n_core = Pool.cpu_count()
+
 
         if surrogateInfo["method"] == "Sampling and Simulation":
             self.do_mf = False
@@ -306,13 +322,14 @@ class GpFromModel(object):
             else:
                 n_ex = 0
                 if user_init ==0:
-                    msg = 'Error reading json: # of initial DoE should be greater than 0'
-                    errlog.exit(msg)
+                    #msg = 'Error reading json: # of initial DoE should be greater than 0'
+                    #errlog.exit(msg)
+                    user_init = -1;
                 X_tmp = np.zeros((0, x_dim))
                 Y_tmp = np.zeros((0, y_dim))
 
             if user_init < 0:
-                n_init_ref = min(10 * x_dim, thr_count + n_ex - 1, 500)
+                n_init_ref = max(min(10 * x_dim, thr_count + n_ex - 1, 500),n_core)
                 if n_init_ref > n_ex:
                     n_init = n_init_ref - n_ex
                 else:
@@ -392,9 +409,9 @@ class GpFromModel(object):
         if do_doe:
             ac = 1  # pre-screening time = time*ac
             ar = 1  # cluster
-            n_candi = min(2000 * x_dim, 200)  # candidate points
-            n_integ = min(2000 * x_dim, 1000)  # integration points
-            self.cal_interval = 20
+            n_candi = min(200 * x_dim, 2000)  # candidate points
+            n_integ = min(200 * x_dim, 2000)  # integration points
+            self.cal_interval = n_core
             if user_init > thr_count:
                 msg = 'Number of DoE cannot exceed total number of simulation'
                 errlog.exit(msg)
@@ -1110,13 +1127,77 @@ class GpFromModel(object):
             logcrimi1 = np.log(cri1[:, 0])
             logcrimi2 = np.log(cri2[:, 0])
 
+
+            idx_pareto_front = list()
+            rankid = np.zeros(nc1)
+            varRank = np.zeros(nc1)
+            biasRank = np.zeros(nc1)
+            for id in range(nc1):
+                idx_tmp = np.argwhere((logcrimi1 >= logcrimi1[id]) * (logcrimi2 >= logcrimi2[id]))
+                varRank[id] = np.sum((logcrimi1 >= logcrimi1[id]))
+                biasRank[id] = np.sum((logcrimi2 >= logcrimi2[id]))
+                rankid[id] = idx_tmp.size
+
+            idx_rank = np.argsort(rankid)
+            sort_rank = np.sort(rankid)
+            num_1rank = np.sum(rankid==1)
+            idx_1rank = list((np.argwhere(rankid==1)).flatten())
+
+            if num_1rank < self.cal_interval:
+                prob = np.ones((nc1,))
+                prob[list(rankid==1)]=0
+                prob=prob/sum(prob)
+                idx_pareto = idx_1rank + list(np.random.choice(nc1, self.cal_interval-num_1rank, p=prob))
+            else:
+                idx_pareto_candi = idx_1rank.copy()
+                X_tmp = X
+                Y_tmp = Y
+                m_tmp = m_idx.copy()
+
+                # get MMSEw
+                score = np.squeeze(cri1*cri2)
+                score_candi = score[idx_pareto_candi]
+                best_local = np.argsort(-score_candi)[0]
+                best_global = idx_1rank[best_local]
+
+                idx_pareto_new = [best_global]
+                del idx_pareto_candi[best_local]
+
+                for i in range(self.cal_interval-1):
+                    X_tmp = np.vstack([X_tmp, xc1[best_global, :][np.newaxis]])
+                    Y_tmp = np.zeros((Y_tmp.shape[0] + 1, Y.shape[1]))  # any variables
+                    m_tmp.set_XY(X=X_tmp, Y=Y_tmp)
+                    dummy, Yq_var = m_tmp.predict(xc1[idx_pareto_candi, :])
+                    score_tmp = Yq_var * cri2[idx_pareto_candi] # only update the variance
+
+                    best_local = np.argsort(-np.squeeze(score_tmp))[0]
+                    best_global = idx_pareto_candi[best_local]
+                    idx_pareto_new = idx_pareto_new + [best_global]
+                    del idx_pareto_candi[best_local]
+
+                    #score_tmp = Yq_var * cri2[idx_pareto_left]/Y_pred_var[closest_node(xc1[i, :], X, self.m_list, self.xrange)]
+
+            #idx_pareto = list(idx_rank[0:self.cal_interval])
+                idx_pareto = idx_pareto_new
+
+            update_point = xc1[idx_pareto, :]
+            update_IMSE = 0
+                    
+            # import matplotlib.pyplot as plt
+            # plt.plot(logcrimi1, logcrimi2, 'x');plt.plot(logcrimi1[idx_pareto], logcrimi2[idx_pareto], 'x'); plt.show()
+            # plt.plot(m_idx.X[:,0], m_idx.X[:,1], 'x'); plt.show()
+            # plt.plot(X[:, 0],X[:, 1], 'ro');           
+            # plt.scatter(xc1[:,0], xc1[:,1], c=cri2); plt.plot(xc1[rankid==0,0], xc1[rankid==0,1], 'rx'); plt.show()
+            # plt.scatter(xc1[:,0], xc1[:,1], c=cri2); plt.plot(update_point[:,0], update_point[:,1], 'rx'); plt.show()     
+            # plt.scatter(xc1[:, 0], xc1[:, 1], c=cri2); plt.show()
+            #
+            '''
             idx_pareto = list()
             for id in range(nc1):
                 idx_tmp = np.argwhere(logcrimi2 >= logcrimi2[id])
                 if np.sum(logcrimi1[idx_tmp[:, 0]] >= logcrimi1[id]) == 1:
                     idx_pareto = idx_pareto + [id]
-
-            # plt.plot(logcrimi1[idx_pareto], logcrimi2[idx_pareto], 'x')
+                    
             if len(idx_pareto) == 0:
                 idx_pareto = np.arange(self.cal_interval)
 
@@ -1125,9 +1206,7 @@ class GpFromModel(object):
                 idx_pareto2 = np.asarray(random_indices)
                 idx_pareto = np.asarray(idx_pareto)
                 idx_pareto = list(idx_pareto[idx_pareto2[0:self.cal_interval]])
-
-            update_point = xc1[idx_pareto, :]
-            update_IMSE = 0
+            '''
 
         elif self.doe_method == "imsew":
             #
@@ -1569,6 +1648,7 @@ class GpFromModel(object):
             file.close()
 
         print("Results Saved")
+        return 0
 
 
 def run_FEM(X,id_sim, rv_name):
@@ -1634,6 +1714,28 @@ def run_FEM(X,id_sim, rv_name):
 
     return g, id_sim
 
+#
+# def run_FEM_batch(Xs,id_sim, rv_name, do_parallel, y_dim, os_type, run_type):
+#     nsamp = Xs.shape[0]
+#     if not do_parallel:
+#         gs = np.zeros(nsamp,y_dim)
+#         for i in range(nsamp):
+#             gs[i,:] = run_FEM(Xs[i,:],id_sim+i,rv_name)
+#     else:
+#         print("Running {} simulations in parallel".format(nsamp))
+#         if run_type.lower() == 'runninglocal':
+#             try:
+#                 tmp = time.time()
+#                 iterables = ((X[i, :][np.newaxis], id_sim + i, rv_name, work_dir, run_type, os_type, t_init, t_thr) for i in range(N))
+#                 result_objs = pool.starmap(run_FEM, iterables)
+#                 print("Simulation time = {} s".format(time.time() - tmp));  tmp = time.time();
+#
+#             except KeyboardInterrupt:
+#                 print("Ctrl+c received, terminating and joining pool.")
+#                 pool.shutdown()
+#
+#
+
 
 
 def read_txt(text_dir, errlog):
@@ -1668,6 +1770,7 @@ def read_txt(text_dir, errlog):
         X = np.array([X]).transpose()
 
     return X
+
 
 # ==========================================================================================
 
@@ -1717,8 +1820,8 @@ if __name__ == "__main__":
 
     errlog = errorLog(work_dir)
 
-    os_type = inputArgs[2]
-    run_type = inputArgs[3]
+    run_type = inputArgs[2]
+    os_type = inputArgs[3]
     result_file = "results.out"
 
     sys.exit(build_surrogate(work_dir, os_type, run_type))
