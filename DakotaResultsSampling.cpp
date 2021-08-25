@@ -197,7 +197,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        emit errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
         return 0;
     }
     QFile fileError(filenameErrorString);
@@ -212,7 +212,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     if (line.length() != 0) {
         qDebug() << line.length() << " " << line;
-        sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
+        emit errorMessage(QString(QString("Error Running Dakota: ") + line));
 
         // check if there is an error message from surrogate modeling
 //        QFileInfo surrogateErrorInfo(fileTabInfo.absolutePath() + QDir::separator() + QString("surrogate.err"));

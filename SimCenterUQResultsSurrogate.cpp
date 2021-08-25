@@ -254,7 +254,7 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     QFile file(filenameResults);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QString message = QString("Error: could not open file") + filenameResults;
-        emit sendErrorMessage(message);
+        errorMessage(message);
         return 0;
     }
 
@@ -270,7 +270,7 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     // check file contains valid object
     if (jsonObj.isEmpty()) {
         QString message = QString("ERROR: file either empty or malformed JSON");
-        emit sendErrorMessage(message);
+        errorMessage(message);
         return 0;
     }
 

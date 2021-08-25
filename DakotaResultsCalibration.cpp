@@ -369,7 +369,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        emit sendErrorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        errorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
         return 0;
     }
 
