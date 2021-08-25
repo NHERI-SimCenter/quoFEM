@@ -271,11 +271,17 @@ FEM::inputFromJSON(QJsonObject &femObject)
 
             if (femSelection->currentText() == "Custom") {
               // Check how many input files
-              customInputFiles.resize(femObject["fileInfo"].toArray().count());
 
               int count = 0;
-              for (auto const& val : femObject["fileInfo"].toArray()) {
-                customInputFiles.at(count)->setText(val.toString());
+              auto fileListArray = femObject["fileInfo"].toArray();
+              auto numFiles = fileListArray.count();
+              theCustomInputNumber->setValue(numFiles);
+              customInputFiles.resize(numFiles);
+              for (auto const& val :  fileListArray) {
+                auto b = val.toString();
+                //auto inputFile = new QLineEdit(b);
+                //customInputFiles.append(inputFile);
+                customInputFiles.at(count)->setText(b);
                 count++;
               }
               this->parseInputfilesForRV(fileName1);
