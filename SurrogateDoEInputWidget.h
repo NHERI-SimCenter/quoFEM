@@ -68,7 +68,6 @@ private:
     QLineEdit *accuracyMeasure;
     QLineEdit *timeMeasure;
     QCheckBox *parallelCheckBox;
-    QLineEdit *initialDoE;
     QComboBox *gpKernel;
     QCheckBox *theLinearCheckBox;
     QCheckBox *theAdvancedCheckBox;
@@ -88,8 +87,12 @@ private:
     QLabel * theNuggetMsg;
     QLabel * theNuggetLabel;
     QComboBox * theNuggetSelection;
-    QCheckBox * theNugCheckBox;
     QLineEdit * theNuggetVals;
+    QLabel * theDoEMsg;
+    QLabel * theDoELabel;
+    QComboBox * theDoESelection;
+    QLineEdit *initialDoE;
+
 
     QPushButton *chooseOutFile;
     QPushButton *chooseInpFile;
@@ -106,6 +109,7 @@ private slots:
     void doExistingGP(bool tog);
     void checkValidityData(QString name1);
     void showNuggetBox(int idx);
+    void showDoEBox(int idx);
 
 };
 

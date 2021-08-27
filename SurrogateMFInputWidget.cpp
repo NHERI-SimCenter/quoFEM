@@ -347,7 +347,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     // /////////////////////////////////////
 
     theAdvancedCheckBox = new QCheckBox();
-    theAdvancedTitle=new QLabel("\n    Advanced Options for Gaussian Process Model");
+    theAdvancedTitle=new QLabel("\n     Advanced Options for Gaussian Process Model");
     theAdvancedTitle->setStyleSheet("font-weight: bold; color: gray");
     layout->addWidget(theAdvancedTitle, 3, 0,1,3,Qt::AlignBottom);
     layout->addWidget(theAdvancedCheckBox, 3, 0,Qt::AlignBottom);
