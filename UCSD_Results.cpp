@@ -187,7 +187,7 @@ static int mergesort(double *input, int size)
 
 int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
 {
-    emit sendStatusMessage(tr("Processing Sampling Results"));
+    statusMessage(tr("Processing Sampling Results"));
 
     this->clear();
 
@@ -195,34 +195,9 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     // check it actually ran with no errors
     //
 
-
-    //    QFileInfo fileTabInfo(filenameTab);
-    //    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
-
-    //    QFileInfo filenameErrorInfo(filenameErrorString);
-    //    if (!filenameErrorInfo.exists()) {
-    //        emit sendErrorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
-    //        return 0;
-    //    }
-    //    QFile fileError(filenameErrorString);
-    //    QString line("");
-    //    if (fileError.open(QIODevice::ReadOnly)) {
-    //       QTextStream in(&fileError);
-    //       while (!in.atEnd()) {
-    //          line = in.readLine();
-    //       }
-    //       fileError.close();
-    //    }
-
-    //    if (line.length() != 0) {
-    //        qDebug() << line.length() << " " << line;
-    //        emit sendErrorMessage(QString(QString("Error Running Dakota: ") + line));
-    //        return 0;
-    //    }
-
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        emit sendErrorMessage("No dakotaTab.out file - TMCMC failed .. possibly no QoI");
+        errorMessage("No dakotaTab.out file - TMCMC failed .. possibly no QoI");
         return 0;
     }
 
@@ -230,7 +205,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     QFileInfo priorFileInfo(fileDirTab, "dakotaTabPrior.out");
     QString filenameTabPrior = priorFileInfo.absoluteFilePath();
     if (!priorFileInfo.exists()) {
-        emit sendErrorMessage("No dakotaTabPrior.out file - TMCMC failed .. possibly no QoI");
+        errorMessage("No dakotaTabPrior.out file - TMCMC failed .. possibly no QoI");
         return 0;
     }
 
@@ -277,14 +252,14 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     QDir fileDir = filenameTabInfo.absoluteDir();
     QFileInfo jsonFileInfo(fileDirTab, QString("templatedir") + QDir::separator() + QString("dakota.json"));
     if (!jsonFileInfo.exists()) {
-        emit sendErrorMessage("No dakota.json file");
+        errorMessage("No dakota.json file");
         return 0;
     }
     QString filenameJson = jsonFileInfo.absoluteFilePath();
     QFile dakotaJsonFile(filenameJson);
     if (!dakotaJsonFile.open(QFile::ReadOnly | QFile::Text)) {
         QString message = QString("Error: could not open file") + filenameJson;
-        emit sendErrorMessage(message);
+        errorMessage(message);
         return 0;
     }
     QString val = dakotaJsonFile.readAll();
@@ -314,7 +289,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     // Get the quoFEMTempCalibrationDataFile.cal from templatedir
     QFileInfo calFileInfo(fileDirTab, QString("templatedir") + QDir::separator() + QString("quoFEMTempCalibrationDataFile.cal"));
     if (!calFileInfo.exists()) {
-            emit sendErrorMessage("No calibration data file");
+            errorMessage("No calibration data file");
             return 0;
         }
     QString calFileName = calFileInfo.absoluteFilePath();
@@ -352,7 +327,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     tabWidget->addTab(thePlot, tr("Plots"));
     tabWidget->adjustSize();
 
-    emit sendStatusMessage(tr(""));
+    statusMessage(tr(""));
 
     return 0;
 }

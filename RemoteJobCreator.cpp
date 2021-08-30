@@ -97,12 +97,14 @@ RemoteJobCreator::RemoteJobCreator(AgaveCurl *theInt, QWidget *parent)
     appNameLabel->setText("App Name");
     layout->addWidget(appNameLabel,4,0);
 
+    /*
     appLineEdit = new QLineEdit();
-    appLineEdit->setText("simcenter-dakota-1.0.0u1");
+    appLineEdit->setText("simcenter-dakota-1.0.0u3");
     appLineEdit->setToolTip(tr("Name of Agave App to run. Do not edit unless you really know what you are doing!"));
     //appLineEdit->setText("Dakota-6.6.0.0u1");
     layout->addWidget(appLineEdit,4,1);
-
+    */
+    
     pushButton = new QPushButton();
     pushButton->setText("Submit");
     pushButton->setToolTip(tr("Press to launch job on remote machine. After pressing, window closes when Job Starts"));

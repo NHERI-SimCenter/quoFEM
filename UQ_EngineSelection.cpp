@@ -282,8 +282,8 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
             } else if ((type == QString("UCSD-UQ"))) {
                 index = 3;
             } else {
-                QString errorMessage = QString("UQ_Engine Selection - type: ") + type + QString(" not valid");
-                emit sendErrorMessage(errorMessage);
+                QString theErrorMessage = QString("UQ_Engine Selection - type: ") + type + QString(" not valid");
+                errorMessage(theErrorMessage);
                 return false;
             }
 
@@ -294,12 +294,12 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
                 return theCurrentEngine->inputAppDataFromJSON(theObject);
             }
         } else {
-            emit sendErrorMessage("UQ_EngineSelection - no Application key found");
+            errorMessage("UQ_EngineSelection - no Application key found");
             return false;
         }
 
     } else {
-        emit sendErrorMessage("UQ_EngineSelection: failed to find UQ application");
+        errorMessage("UQ_EngineSelection: failed to find UQ application");
         return false;
     }
 
