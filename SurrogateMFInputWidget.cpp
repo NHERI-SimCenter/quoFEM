@@ -479,9 +479,9 @@ void SurrogateMFInputWidget::doExistingLF(bool tog)
         inpFileDir_LF->setDisabled(0);
         outFileDir_LF->setDisabled(0);
         chooseInpFile_LF->setDisabled(0);
-        chooseInpFile_LF->setStyleSheet("font-color: white");
+        chooseInpFile_LF->setStyleSheet("color: white");
         chooseOutFile_LF->setDisabled(0);
-        chooseOutFile_LF->setStyleSheet("font-color: white");
+        chooseOutFile_LF->setStyleSheet("color: white");
     } else {
         inpFileDir_LF->setDisabled(1);
         outFileDir_LF->setDisabled(1);
@@ -498,9 +498,9 @@ void SurrogateMFInputWidget::doExistingHF(bool tog)
         inpFileDir_HF->setDisabled(0);
         outFileDir_HF->setDisabled(0);
         chooseInpFile_HF->setDisabled(0);
-        chooseInpFile_HF->setStyleSheet("font-color: white");
+        chooseInpFile_HF->setStyleSheet("color: white");
         chooseOutFile_HF->setDisabled(0);
-        chooseOutFile_HF->setStyleSheet("font-color: white");
+        chooseOutFile_HF->setStyleSheet("color: white");
     } else {
         inpFileDir_HF->setDisabled(1);
         outFileDir_HF->setDisabled(1);

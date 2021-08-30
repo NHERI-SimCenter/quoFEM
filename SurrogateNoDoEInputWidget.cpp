@@ -297,7 +297,7 @@ void SurrogateNoDoEInputWidget::setOutputDir(bool tog)
     if (tog) {
         outFileDir->setDisabled(0);
         chooseOutFile->setDisabled(0);
-        chooseOutFile->setStyleSheet("font-color: white");
+        chooseOutFile->setStyleSheet("color: white");
         theFemWidget->setFEMforGP("GPdata");
         parseInputDataForRV(inpFileDir->text());
         parseOutputDataForQoI(outFileDir->text());
