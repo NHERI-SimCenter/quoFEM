@@ -35,7 +35,8 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
 
     # print("\nParticleNum: {}, parameter values: {} ".format(ParticleNum, par))
 
-    stringtoappend = ("analysis" + str(ParticleNum))
+    # stringtoappend = ("analysis" + str(ParticleNum))  #TODO: remove this line
+    stringtoappend = ("workdir." + str(ParticleNum))
     analysisPath = os.path.join(resultsLocation, stringtoappend)
 
     if os.path.isdir(analysisPath):
@@ -75,6 +76,8 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
 
     # Read in the model prediction
     prediction = np.atleast_2d(np.genfromtxt('results.out')).reshape((1, -1))
+
+    os.chdir(resultsLocation)
 
     return log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrixList, edpNamesList,
                           edpLengthsList, covarianceMultiplierList, normalizingFactors, locShiftList)

@@ -93,22 +93,29 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QThread>
 #include <QSettings>
 #include <QDesktopServices>
+#include <QDockWidget>
+
 #include <Utils/RelativePathResolver.h>
+#include "Utils/PythonProgressDialog.h"
 
 
 
 void
 MainWindow::errorMessage(const QString msg){
-    //qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-    errorLabel->setText(msg);
-    qDebug() << "ERROR MESSAGE" << msg;
+
+    if(msg.isEmpty())
+        return;
+
+    progressDialog->appendErrorMessage(msg);  
 }
 
 void
 MainWindow::fatalMessage(const QString msg){
-    //qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-    errorLabel->setText(msg);
-    qDebug() << "ERROR MESSAGE" << msg;
+
+    if(msg.isEmpty())
+        return;
+
+    progressDialog->appendErrorMessage(msg);    
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -159,7 +166,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->resize(width, height);
 
-
     //
     // add SimCenter Header
     //
@@ -174,6 +180,15 @@ MainWindow::MainWindow(QWidget *parent)
     layoutMessages->addWidget(errorLabel);
     header->appendLayout(layoutMessages);
 
+    progressDialog = PythonProgressDialog::getInstance(this);
+    statusDockWidget = new QDockWidget(tr("Program Output"), this);
+    statusDockWidget->setContentsMargins(0,0,0,0);
+    statusDockWidget->setWidget(progressDialog);
+
+    this->addDockWidget(Qt::BottomDockWidgetArea, statusDockWidget);
+
+    connect(progressDialog,&PythonProgressDialog::showDialog,statusDockWidget,&QDockWidget::setVisible);
+        
     // place login info
     QHBoxLayout *layoutLogin = new QHBoxLayout();
     QLabel *name = new QLabel();
@@ -1640,10 +1655,17 @@ void MainWindow::createActions() {
     exitAction->setStatusTip(tr("Exit the application"));
     fileMenu->addAction(exitAction);
 
+
+    // Show progress dialog
+    QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
+    viewMenu->addAction(statusDockWidget->toggleViewAction());
+    viewMenu->addSeparator();
+    
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
+
+    QAction *preferencesAct = helpMenu->addAction(tr("&Preferences"), this, &MainWindow::preferences);
     QAction *versionAct = helpMenu->addAction(tr("&Version"), this, &MainWindow::version);
     QAction *aboutAct = helpMenu->addAction(tr("&About"), this, &MainWindow::about);
-    QAction *preferencesAct = helpMenu->addAction(tr("&Preferences"), this, &MainWindow::preferences);
     //aboutAct->setStatusTip(tr("Show the application's About box"));
     QAction *manualAct = helpMenu->addAction(tr("&Manual"), this, &MainWindow::manual);
     QAction *submitAct = helpMenu->addAction(tr("&Submit Bug/Feature Request"), this, &MainWindow::submitFeedback);

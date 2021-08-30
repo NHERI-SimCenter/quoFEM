@@ -40,6 +40,13 @@ if __name__ == '__main__':
     workdir_template = inputArgs[2]
     run_type = inputArgs[3]  # either "runningLocal" or "runningRemote"
 
+    MPI_size = None
+    # if run_type == "runningRemote":
+    #     from mpi4py import MPI
+    #     comm = MPI.COMM_WORLD
+    #     MPI_size = comm.Get_size()
+    #     print("\n\nRunning remote. MPI_size: {}\n\n".format(MPI_size))
+
     # Create a logFile for recording the output
     logFile = open(os.path.join(workdir_main, "logFileTMCMC.txt"), "w")
     t1 = time.time()
@@ -51,9 +58,14 @@ if __name__ == '__main__':
     dakotaJsonLocation = os.path.join(os.path.abspath(workdir_template), "dakota.json")
     logFile.write('\n\n==========================')
     logFile.write("\nParsing the json input file {}".format(dakotaJsonLocation))
-    (variablesList, numberOfSamples, seedval, resultsLocation, resultsPath, logLikelihoodDirectoryPath,
-     logLikelihoodFilename, calDataPath, calDataFileName, edpList, writeOutputs) = parseDataFunction(dakotaJsonLocation,
+    (variablesList, numberOfSamples, seedval, resultsLocationUnused, resultsPathUnused, logLikelihoodDirectoryPath,
+     logLikelihoodFilename, calDataPathUnused, calDataFileName, edpList, writeOutputs) = parseDataFunction(dakotaJsonLocation,
                                                                                                      logFile)
+    resultsLocation = os.path.abspath(workdir_main)
+    calDataPath = os.path.abspath(workdir_main)
+    resultsPath = os.path.abspath(workdir_main)
+    # logLikelihoodDirectoryPath = workdir_template
+
     logFile.flush()
     os.fsync(logFile.fileno())
 
@@ -143,9 +155,10 @@ if __name__ == '__main__':
     # Process calibration data file
     logFile.write('\n\n==========================')
     logFile.write('\nProcessing calibration data file')
-    calDataFile = os.path.join(calDataPath, calDataFileName)
+    # calDataFile = os.path.join(calDataPath, calDataFileName) #TODO: check if this is ok
+    calDataFile = os.path.join(workdir_main, calDataFileName)
     logFile.write("\nCalibration data file being processed: {}\n".format(calDataFile))
-    tempCalDataFile = os.path.join(workdir_template, "quoFEMTempCalibrationDataFile.cal")
+    tempCalDataFile = os.path.join(workdir_main, "quoFEMTempCalibrationDataFile.cal")
     f1 = open(tempCalDataFile, "w")
     logFile.write("\n\nCreating headings")
     headings = "Exp_num interface "
@@ -266,7 +279,8 @@ if __name__ == '__main__':
         for i, edpName in enumerate(edpNamesList):
             logFile.write('\n\tEDP: {}'.format(edpName))
             covarianceFileName = "{}.{}.sigma".format(edpName, expNum)
-            covarianceFile = os.path.join(calDataPath, covarianceFileName)
+            # covarianceFile = os.path.join(calDataPath, covarianceFileName)  #TODO: Check if this needs to be fixed
+            covarianceFile = os.path.join(workdir_main, covarianceFileName)
             logFile.write(
                 "\n\t\tChecking to see if user-supplied file '{}' exists in '{}'".format(covarianceFileName,
                                                                                          calDataPath))
@@ -481,10 +495,13 @@ if __name__ == '__main__':
         # if __name__ == '__main__':
         mytrace = RunTMCMC(Np, AllPars, Nm_steps_max, Nm_steps_maxmax, logLikeModule.log_likelihood, variables,
                            resultsLocation, seedval, calibrationData, numExperiments, covarianceMatrixList,
-                           edpNamesList, edpLengthsList, normalizingFactors, locShiftList, run_type, logFile)
+                           edpNamesList, edpLengthsList, normalizingFactors, locShiftList, run_type, logFile, MPI_size)
         logFile.write('\n\n\t==========================')
         logFile.write('\n\tTMCMC algorithm finished running')
         logFile.write('\n\t==========================')
+
+        logFile.flush()
+        os.fsync(logFile.fileno())
 
         logFile.write('\n\n\t==========================')
         logFile.write("\n\tStarting post-processing")
@@ -496,6 +513,9 @@ if __name__ == '__main__':
             Wm = mytrace[i][2]
             evidence = evidence * (sum(Wm) / len(Wm))
         logFile.write("\n\t\t\tModel evidence: {:e}".format(evidence))
+
+        logFile.flush()
+        os.fsync(logFile.fileno())
 
         # # Write Data to '.csv' files
         # logFile.write("\n\n\t\tWriting samples from each stage to csv files")
@@ -540,7 +560,7 @@ if __name__ == '__main__':
                 for j in range(len(variables['names'])):
                     string += "{}\t".format(dataToWrite[i, j])
                 if writeOutputs:  # write the output data
-                    analysisNumString = ("analysis" + str(i))
+                    analysisNumString = ("workdir." + str(i))
                     prediction = np.atleast_2d(np.genfromtxt(os.path.join(workdir_main, analysisNumString,
                                                                           'results.out'))).reshape((1, -1))
                     for predNum in range(np.shape(prediction)[1]):
@@ -552,10 +572,13 @@ if __name__ == '__main__':
         logFile.write("\n\tPost processing finished")
         logFile.write('\n\t==========================')
 
+        logFile.flush()
+        os.fsync(logFile.fileno())
+
         # Delete Analysis Folders
 
         # for analysisNumber in range(0, Np):
-        #     stringToAppend = ("analysis" + str(analysisNumber))
+        #     stringToAppend = ("workdir." + str(analysisNumber))
         #     analysisLocation = os.path.join(resultsLocation, stringToAppend)
         #     # analysisPath = Path(analysisLocation)
         #     analysisPath = os.path.abspath(analysisLocation)
@@ -565,6 +588,9 @@ if __name__ == '__main__':
         logFile.write("\n\tCompleted analysis for model {}".format(modelNum))
         logFile.write('\n\t==========================')
 
+        logFile.flush()
+        os.fsync(logFile.fileno())
+
     logFile.write('\n\n==========================')
     logFile.write('\nFinished looping over each model')
     logFile.write('\n==========================\n')
@@ -572,6 +598,10 @@ if __name__ == '__main__':
     # ======================================================================================================================
     logFile.write("\nUCSD_UQ engine workflow complete!\n")
     logFile.write("\nTime taken: {:0.2f} minutes".format((time.time() - t1) / 60))
+
+    logFile.flush()
+    os.fsync(logFile.fileno())
+
     logFile.close()
 
     # ======================================================================================================================

@@ -35,11 +35,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 // Written: fmckenna
-// added and modified: padhye
+// added and modified: padhye, bsaakash
 
 #include "UCSD_Results.h"
 //#include "InputWidgetFEM.h"
-#include "bayesplots.h"
+#include "BayesPlots.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -311,7 +311,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     QString xLabel = "Component";
     QString yLabel = "Value";
 
-    BayesPlots *thePlot = new BayesPlots(xLabel, yLabel);
+    BayesPlots *thePlot = new BayesPlots(edpNames, edpLengths);
     thePlot->plotPosterior(minMaxVector, minMaxVectorPrior, statisticsVector, statisticsVectorPrior, statisticsVectorCalData);
 
 
