@@ -120,7 +120,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     //
 
     theAdvancedCheckBox = new QCheckBox();
-    theAdvancedTitle=new QLabel("\n    Advanced Options for Gaussian Process Model");
+    theAdvancedTitle=new QLabel("\n     Advanced Options for Gaussian Process Model");
     theAdvancedTitle->setStyleSheet("font-weight: bold; color: gray");
     layout->addWidget(theAdvancedTitle, wid, 0,1,3,Qt::AlignBottom);
     layout->addWidget(theAdvancedCheckBox, wid++, 0,Qt::AlignBottom);

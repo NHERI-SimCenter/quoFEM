@@ -125,7 +125,7 @@ DakotaInputSensitivity::DakotaInputSensitivity(QWidget *parent)
 
     this->setLayout(layout);
 
-    connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
+    //connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
 
 }
 

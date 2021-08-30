@@ -208,7 +208,7 @@ MainWindow::MainWindow(QWidget *parent)
     random->setParametersWidget(uq->getParameters());
 
 
-    connect(uq, SIGNAL(onNumModelsChanged(int)), fem, SLOT(numModelsChanged(int)));
+    //connect(uq, SIGNAL(onNumModelsChanged(int)), fem, SLOT(numModelsChanged(int)));
     // create selection widget & add the input widgets
     results = new UQ_Results();
 
