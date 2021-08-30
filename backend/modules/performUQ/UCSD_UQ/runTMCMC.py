@@ -16,7 +16,7 @@ import csv
 
 def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variables, resultsLocation, seed,
              calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors,
-             locShiftList, run_type, logFile):
+             locShiftList, run_type, logFile, MPI_size):
     """ Runs TMCMC Algorithm """
 
     # Initialize (beta, effective sample size)
@@ -57,6 +57,7 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     if parallelize_MCMC == 'yes':
         if run_type == "runningLocal":
             pool = Pool(processes=mp.cpu_count())
+            logFile.write("\n\tCreated multiprocessing pool for run_type: {}".format(run_type))
             Lmt = pool.starmap(runFEM, [(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
                                          numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
                                          normalizingFactors, locShiftList) for ind in range(N)], )
@@ -64,7 +65,9 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
             logFile.write("\n\n\nRunning remote")
             logFile.write("\nmax_workers: {}".format(os.cpu_count() - 1))
             from mpi4py.futures import MPIPoolExecutor
-            executor = MPIPoolExecutor(max_workers=os.cpu_count() - 1)
+            executor = MPIPoolExecutor(max_workers=MPI_size)
+            logFile.write("\n\tCreated mpi4py executor pool for run_type: {}".format(run_type))
+            # executor = MPIPoolExecutor(max_workers=os.cpu_count() - 1)
             iterables = [(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
                           numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
                           normalizingFactors, locShiftList) for ind in range(N)]
@@ -109,8 +112,8 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
             for j in range(len(variables['names'])):
                 string += "{}\t".format(dataToWrite[i, j])
             if writeOutputs:  # write the output data
-                analysisNumString = ("analysis" + str(i))
-                prediction = np.atleast_2d(np.genfromtxt(os.path.join(resultsLocation, analysisNumString,
+                workdirString = ("workdir." + str(i))
+                prediction = np.atleast_2d(np.genfromtxt(os.path.join(resultsLocation, workdirString,
                                                                       'results.out'))).reshape((1, -1))
                 for predNum in range(np.shape(prediction)[1]):
                     string += "{}\t".format(prediction[0, predNum])
@@ -199,7 +202,7 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
                                         for j1 in range(N)], )
             else:
                 logFile.write("\n\n\nRunning remote - MCMC steps")
-                logFile.write("\nmax_workers: {}".format(os.cpu_count() - 1))
+                logFile.write("\nmax_workers: {}".format(MPI_size))
                 iterables = [(j1, Em, Nm_steps, Smcap[j1], Lmcap[j1], Postmcap[j1], beta,
                               numAccepts, AllPars, log_likelihood, variables,
                               resultsLocation, default_rng(child_seeds[j1]),
@@ -271,7 +274,9 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     if parallelize_MCMC == 'yes':
         if run_type == "runningLocal":
             pool.close()
+            logFile.write("\n\tClosed multiprocessing pool for run_type: {}".format(run_type))
         else:
             executor.shutdown()
+            logFile.write("\n\tShutdown mpi4py executor pool for run_type: {}".format(run_type))
 
     return mytrace
