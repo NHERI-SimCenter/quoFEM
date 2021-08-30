@@ -336,7 +336,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     QString xLabel = "Component";
     QString yLabel = "Value";
 
-    BayesPlots *thePlot = new BayesPlots(xLabel, yLabel);
+    BayesPlots *thePlot = new BayesPlots(edpNames, edpLengths);
     thePlot->plotPosterior(minMaxVector, minMaxVectorPrior, statisticsVector, statisticsVectorPrior, statisticsVectorCalData);
 
 
