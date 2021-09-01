@@ -75,16 +75,21 @@ class GpFromModel(object):
         surrogateInfo = inp["UQ_Method"]["surrogateMethodInfo"]
 
         self.do_parallel = surrogateInfo["parallelExecution"]
-        if self.run_type.lower() == 'runninglocal':
-            self.pool = 0
-            n_core = 5
-            if self.do_parallel:
+
+        if self.do_parallel:
+            self.n_processor = os.cpu_count()
+            self.cal_interval = self.n_processor
+            if self.run_type.lower() == 'runninglocal':
                 from multiprocessing import Pool
-                self.pool = Pool(mp.cpu_count())
-                n_core = Pool.cpu_count()
+                self.pool = Pool(self.n_processor)
+            else:
+                # Always
+                from mpi4py.futures import MPIPoolExecutor
+                self.pool = MPIPoolExecutor(max_workers=self.n_processor)
+
         else:
-            from mpi4py.futures import MPIPoolExecutor
-            n_core = Pool.cpu_count()
+            self.pool = 0
+            self.cal_interval = 5
 
 
         if surrogateInfo["method"] == "Sampling and Simulation":
@@ -329,19 +334,27 @@ class GpFromModel(object):
                 Y_tmp = np.zeros((0, y_dim))
 
             if user_init < 0:
-                n_init_ref = max(min(10 * x_dim, thr_count + n_ex - 1, 500),n_core)
+                n_init_ref = min(4 * x_dim, thr_count + n_ex - 1, 500)
+                if self.do_parallel:
+                    n_init_ref = int(np.ceil(n_init_ref/self.n_processor)*self.n_processor) # Let's not waste resource
                 if n_init_ref > n_ex:
                     n_init = n_init_ref - n_ex
                 else:
                     n_init = 0
+                    
             else:
                 n_init = user_init
 
             n_iter = thr_count - n_init
 
+            def FEM_batch(Xs, id_sim):
+                return run_FEM_batch(Xs, id_sim, self.rv_name, self.do_parallel, self.y_dim, self.os_type, self.run_type, self.pool, t_init, thr_t)
+
             # check validity of datafile
             if n_ex > 0:
-                Y_test ,self.id_sim= run_FEM(X_tmp[0, :][np.newaxis] ,self.id_sim, self.rv_name)
+                #Y_test, self.id_sim = FEM_batch(X_tmp[0, :][np.newaxis], self.id_sim)
+                # TODO : Fix this
+                Y_test ,self.id_sim= run_FEM(X_tmp[0, :][np.newaxis] ,self.itd_sim, self.rv_name)
                 if np.sum(abs((Y_test - Y_tmp[0, :][np.newaxis]) / Y_test) > 0.01, axis=1) > 0:
                     msg = 'Consistency check failed. Your data is not consistent to your model response.'
                     errlog.exit(msg)
@@ -411,7 +424,6 @@ class GpFromModel(object):
             ar = 1  # cluster
             n_candi = min(200 * x_dim, 2000)  # candidate points
             n_integ = min(200 * x_dim, 2000)  # integration points
-            self.cal_interval = n_core
             if user_init > thr_count:
                 msg = 'Number of DoE cannot exceed total number of simulation'
                 errlog.exit(msg)
@@ -470,16 +482,9 @@ class GpFromModel(object):
             #
             t_tmp = time.time()
 
-
-            #if n_init>0:
-            Y = np.vstack([Y_tmp, np.zeros((n_init, y_dim))])
-            for ns in range(n_init):
-                Y[n_ex+ns, :],self.id_sim = run_FEM(X[n_ex+ns, :][np.newaxis],self.id_sim, self.rv_name)
-                print(">> {:.2f} sec".format(time.time() - t_init))
-                if time.time() - t_init > thr_t:
-                    Y = Y[:n_ex+ns, :]
-                    X = X[:n_ex+ns, :]
-                    break
+            X_fem, Y_fem ,self.id_sim= FEM_batch(X[n_ex:, :],self.id_sim)
+            Y = np.vstack((Y_tmp,Y_fem))
+            X = np.vstack((X[0:n_ex, :],X_fem))
 
             t_sim_all = time.time() - t_tmp
 
@@ -497,10 +502,13 @@ class GpFromModel(object):
                 U = lhs(x_dim, samples=n_pred)
                 for nx in range(x_dim):
                     Xt[:, nx] = U[:, nx] * (self.xrange[nx, 1] - self.xrange[nx, 0]) + self.xrange[nx, 0]
+                #
+                # Yt = np.zeros((n_pred, y_dim))
+                # for ns in range(n_pred):
+                #     Yt[ns, :],self.id_sim = run_FEM(Xt[ns, :][np.newaxis],self.id_sim, self.rv_name)
 
                 Yt = np.zeros((n_pred, y_dim))
-                for ns in range(n_pred):
-                    Yt[ns, :],self.id_sim = run_FEM(Xt[ns, :][np.newaxis],self.id_sim, self.rv_name)
+                Xt, Yt ,self.id_sim= FEM_batch(Xt,self.id_sim)
 
         else:
 
@@ -590,7 +598,7 @@ class GpFromModel(object):
         doe_off = False
         while not doe_off:
 
-            self.doe_method = "pareto"
+            self.doe_method = "mmsew"
 
             t = time.time()
             if self.doe_method == "random":
@@ -672,11 +680,12 @@ class GpFromModel(object):
 
             i = self.id_sim + n_new
 
-            y_new = np.zeros((n_new, y_dim))
-            for ny in range(n_new):
-                y_new[ny, :],self.id_sim = run_FEM(x_new[ny, :][np.newaxis],self.id_sim, self.rv_name)
+            # y_new = np.zeros((n_new, y_dim))
+            # for ny in range(n_new):
+            #     y_new[ny, :],self.id_sim = run_FEM(x_new[ny, :][np.newaxis],self.id_sim, self.rv_name)
+            x_new, y_new, self.id_sim = FEM_batch(x_new,self.id_sim)
 
-            print(">> {:.2f} s".format(time.time() - t_init))
+            #print(">> {:.2f} s".format(time.time() - t_init))
             X = np.vstack([X, x_new])
             Y = np.vstack([Y, y_new])
 
@@ -692,13 +701,15 @@ class GpFromModel(object):
                 # X[:,nx] = np.random.uniform(xrange[nx,0], xrange[nx,1], (1, n_init))
                 X_tmp[:, nx] = U[:, nx] * (self.xrange[nx, 1] - self.xrange[nx, 0]) + self.xrange[nx, 0]
 
-            for ns in np.arange(n_left):
-                Y_tmp[ns, :],self.id_sim = run_FEM(X_tmp[ns, :][np.newaxis],self.id_sim, self.rv_name)
-                print(">> {:.2f} s".format(time.time() - t_init))
-                if time.time() - t_init > thr_t - self.calib_time:
-                    X_tmp = X_tmp[:ns, :]
-                    Y_tmp = Y_tmp[:ns, :]
-                    break
+            X_tmp, Y_tmp, self.id_sim = FEM_batch(X_tmp,self.id_sim)
+
+            # for ns in np.arange(n_left):
+            #     Y_tmp[ns, :],self.id_sim = run_FEM(X_tmp[ns, :][np.newaxis],self.id_sim, self.rv_name)
+            #     print(">> {:.2f} s".format(time.time() - t_init))
+            #     if time.time() - t_init > thr_t - self.calib_time:
+            #         X_tmp = X_tmp[:ns, :]
+            #         Y_tmp = Y_tmp[:ns, :]
+            #         break
 
             X = np.vstack((X, X_tmp))
             Y = np.vstack((Y, Y_tmp))
@@ -870,7 +881,7 @@ class GpFromModel(object):
         m_list = list()
 
         for ny in range(self.y_dim):
-
+            print("y dimension {}:".format(ny))
             nopt = 10
 
             #
@@ -896,8 +907,8 @@ class GpFromModel(object):
                 m = m_tmp.copy()
 
                 id_opt = 1
-                print('{} among {}: {}'.format(1, nopt, m_tmp.log_likelihood()))
-                print('     Calibration time for each: {:.2f} s'.format(time.time() - t_unfix))
+                print('{} among {} Log-Likelihood: {}'.format(1, nopt, m_tmp.log_likelihood()))
+                #print('     Calibration time for each: {:.2f} s'.format(time.time() - t_unfix))
 
                 if time.time() - t_unfix > self.t_sim_each:
                     nopt = 1
@@ -926,8 +937,8 @@ class GpFromModel(object):
                     m = m_tmp.copy()
 
                 id_opt = 1
-                print('{} among {}: {}'.format(1, nopt, m_tmp.log_likelihood()))
-                print('     Calibration time for each: {:.2f} s'.format(time.time() - t_unfix))
+                print('{} among {} Log-Likelihood: {}'.format(2, nopt, m_tmp.log_likelihood()))
+                #print('     Calibration time for each: {:.2f} s'.format(time.time() - t_unfix))
 
                 if time.time() - t_unfix > self.t_sim_each:
                     nopt = 1
@@ -957,8 +968,8 @@ class GpFromModel(object):
                     except Exception as ex:
                         print("OS error: {0}".format(ex))
 
-                    print('{} among {}: {}'.format(no + 2, nopt, m_tmp.log_likelihood()))
-                    print('     Calibration time for each: {:.2f} s'.format(time.time() - t_fix))
+                    print('{} among {} Log-Likelihood: {}'.format(no + 3, nopt, m_tmp.log_likelihood()))
+                    #print('     Calibration time for each: {:.2f} s'.format(time.time() - t_fix))
 
                     if m_tmp.log_likelihood() > max_log_likli:
                         max_log_likli = m_tmp.log_likelihood()
@@ -1091,6 +1102,7 @@ class GpFromModel(object):
         #
         # SCREENING score_tmp function of each candidate
         #
+        nc1 = round(n_candi)
 
         if self.doe_method == "pareto":
 
@@ -1098,7 +1110,6 @@ class GpFromModel(object):
             # Initial candidates
             #
 
-            nc1 = round(n_candi)
             xc1 = np.zeros((nc1, x_dim))
             for nx in range(x_dim):
                 xc1[:, nx] = np.random.uniform(self.xrange[nx, 0], self.xrange[nx, 1], (1, nc1))  # LHS
@@ -1111,14 +1122,21 @@ class GpFromModel(object):
             score1 = np.zeros(yc1_pred.shape)
             cri1 = np.zeros(yc1_pred.shape)
             cri2 = np.zeros(yc1_pred.shape)
+            # TODO: is this the best?
+            ll = self.xrange[nx, 1] - self.xrange[nx, 0]
             for i in range(nc1):
                 if not self.do_mf:
-                    phi = e2[self.__closest_node(xc1[i, :], X)]
+                    phi = e2[closest_node(xc1[i, :], X, ll)]
+                    #phi = e2[self.__closest_node(xc1[i, :], X)]
                 else:
                     if self.mf_case == 'data-model' or self.mf_case == 'data-data':
-                        phi = e2[self.__closest_node(xc1[i, :], self.X_hf)]
+                        phi = e2[closest_node(xc1[i, :], self.X_hf, ll)]
+                        #phi = e2[self.__closest_node(xc1[i, :], self.X_hf)]
                     elif self.mf_case == 'model-data':
-                        phi = e2[self.__closest_node(xc1[i, :], X)]
+                        phi = e2[closest_node(xc1[i, :], X, ll)]
+                        #phi = e2[self.__closest_node(xc1[i, :], X)]
+
+
 
                 score1[i] = yc1_var[i] * pow(phi[y_idx], r)
                 cri1[i] = yc1_var[i]
@@ -1209,9 +1227,69 @@ class GpFromModel(object):
             '''
 
         elif self.doe_method == "imsew":
+
+
+            nq = round(n_integ)
+            m_stack = m_idx.copy()
+            X_stack = X
+            Y_stack = Y
+
+            update_point = np.zeros((self.cal_interval,self.x_dim))
+            update_IMSE = np.zeros((self.cal_interval,1))
+
             #
-            # Clustering
+            # Initial candidates
             #
+            for ni in range(self.cal_interval):
+
+                #
+                # Initial candidates
+                #
+
+                xc1 = np.zeros((nc1, x_dim))
+                for nx in range(x_dim):
+                    xc1[:, nx] = np.random.uniform(self.xrange[nx, 0], self.xrange[nx, 1], (1, nc1))  # LHS
+
+                xq = np.zeros((nq, x_dim))
+                for nx in range(x_dim):
+                    xq[:, nx] = np.random.uniform(self.xrange[nx, 0], self.xrange[nx, 1], (1, nq))
+
+                #TODO: is diff(xrange) the best?
+                ll = self.xrange[:, 1] - self.xrange[:, 0]
+                phiq = np.zeros((nq, y_dim))
+                for i in range(nq):
+                    phiq[i,:] = e2[closest_node(xq[i, :], X, ll)]
+
+                phiqr = pow(phiq[:, y_idx], r)
+
+                if self.do_parallel:
+                    tmp = time.time()
+                    iterables = ((m_stack.copy(), xc1[i,:][np.newaxis], xq, phiqr, i) for i in range(nc1))
+                    result_objs = list(self.pool.starmap(imse, iterables))
+                    IMSEc1 = np.zeros(nc1)
+                    for IMSE_val, idx in result_objs:
+                        IMSEc1[idx] = IMSE_val
+                    print("IMSE: finding the next DOE {} in a parallel way.. time = {}".format(ni,time.time() -tmp)) # 7s # 3-4s
+                else:
+                    tmp = time.time()
+                    phiqr = pow(phiq[:, y_idx], r)
+                    IMSEc1 = np.zeros(nc1)
+                    for i in range(nc1):
+                        IMSEc1[i], dummy = imse(m_stack.copy(), xc1[i,:][np.newaxis], xq, phiqr, i)
+                    print("IMSE: finding the next DOE {} in a serial way.. time = {}".format(ni,time.time() -tmp)) # 4s
+
+                new_idx = np.argmin(IMSEc1, axis=0)
+                x_point = xc1[new_idx, :][np.newaxis]
+
+                X_stack = np.vstack([X_stack, x_point])
+                Y_stack = np.zeros((Y_stack.shape[0] + 1, Y.shape[1]))  # any variables
+                m_stack.set_XY(X=X_stack, Y=Y_stack)
+                update_point[ni, :] = x_point
+                update_IMSE[ni, :] = IMSEc1[new_idx]
+
+            # import matplotlib.pyplot as plt; plt.scatter(xc1[:,0],xc1[:,1],c = IMSEc1); plt.show()
+            # import matplotlib.pyplot as plt; plt.scatter(xc1[:,0],xc1[:,1],c = IMSEc1); plt.plot(update_point[:,0],update_point[:,1],'x'); plt.show()     
+            # import matplotlib.pyplot as plt; plt.scatter(X_stack[:,0],X_stack[:,1]); plt.show()
             '''
             
             nc1 = round(n_candi)
@@ -1310,10 +1388,41 @@ class GpFromModel(object):
 
         elif self.doe_method == "mmsew":
 
-            update_point = xc2[0:1, :]
-            update_IMSE = 0
+            #
+            # Initial candidates
+            #
+            xc1 = np.zeros((nc1, x_dim))
+            for nx in range(x_dim):
+                xc1[:, nx] = np.random.uniform(self.xrange[nx, 0], self.xrange[nx, 1], (1, nc1))  # LHS
 
-        # log transform
+            m_stack = m_idx.copy()
+            ll = self.xrange[:, 1] - self.xrange[:, 0]
+            phic = np.zeros((nc1, y_dim))
+            for i in range(nc1):
+                phic[i, :] = e2[closest_node(xc1[i, :], X, ll)]
+
+            phicr = pow(phic[:, y_idx], r)
+
+            X_stack = X
+            Y_stack = Y
+
+            update_point = np.zeros((self.cal_interval,self.x_dim))
+            update_IMSE = np.zeros((self.cal_interval,1))
+
+            for ni in range(self.cal_interval):
+                '/home1/07031/yisangri/.conan
+                yc1_pred, yc1_var = m_stack.predict(xc1)  # use only variance
+                MMSEc1 = yc1_var.flatten() * phicr.flatten()
+
+
+                new_idx = np.argmax(MMSEc1, axis=0)
+                x_point = xc1[new_idx, :][np.newaxis]
+
+                X_stack = np.vstack([X_stack, x_point])
+                Y_stack = np.zeros((Y_stack.shape[0] + 1, Y.shape[1]))  # any variables
+                m_stack.set_XY(X=X_stack, Y=Y_stack)
+                update_point[ni, :] = x_point
+                update_IMSE[ni, :] = MMSEc1[new_idx]
 
         return update_point, m_list, update_IMSE, y_idx, Y_pred, Y_pred_var
 
@@ -1651,22 +1760,21 @@ class GpFromModel(object):
         return 0
 
 
-def run_FEM(X,id_sim, rv_name):
+def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver):
+    X = np.atleast_2d(X)
     x_dim = X.shape[1]
 
     if X.shape[0] > 1:
-        global error_file
-        print('do one simulation at a time')
-        error_file.write('do one simulation at a time')
-        error_file.close()
-        exit(-1)
+        errlog = errorLog(work_dir)
+        msg = 'do one simulation at a time'
+        errlog.exit(msg)
 
     # (1) create "workdir.idx " folder :need C++17 to use the files system namespace
-    id_sim = id_sim
     current_dir_i = work_dir + '/workdir.' + str(id_sim + 1)
     try:
         shutil.copytree(work_dir + '/templatedir', current_dir_i)
     except Exception as ex:
+        errlog = errorLog(work_dir)
         msg = 'Error running FEM: ' + str(ex)
         errlog.exit(msg)
 
@@ -1681,62 +1789,76 @@ def run_FEM(X,id_sim, rv_name):
     # (3) run workflow_driver.bat
     os.chdir(current_dir_i)
 
-    # Windows
-    workflowDriver = "workflow_driver.bat"
-
-    if run_type.lower() == 'runninglocal':
-        if not os_type.lower().startswith('win'):
-            workflowDriver = "workflow_driver"
-
     workflow_run_command = '{}/{}'.format(current_dir_i, workflowDriver)
     subprocess.Popen(workflow_run_command, shell=True).wait()
-
-    print("DONE RUNNING PREPROCESSOR\n")
 
     # (4) reading results
     if glob.glob('results.out'):
         g = np.loadtxt('results.out').flatten()
     else:
+        errlog = errorLog(work_dir)
         msg = 'Error running FEM: result.out missing'
         errlog.exit(msg)
 
     if g.shape[0]==0:
+        errlog = errorLog(work_dir)
         msg = 'Error running FEM: result.out is empty'
         errlog.exit(msg)
 
-
-    id_sim = id_sim + 1
     os.chdir("../")
 
     if np.isnan(np.sum(g)):
+        errlog = errorLog(work_dir)
         msg = 'Error running FEM: Response value at workdir.{} is NaN'.format(id_sim+1)
         errlog.exit(msg)
 
     return g, id_sim
 
-#
-# def run_FEM_batch(Xs,id_sim, rv_name, do_parallel, y_dim, os_type, run_type):
-#     nsamp = Xs.shape[0]
-#     if not do_parallel:
-#         gs = np.zeros(nsamp,y_dim)
-#         for i in range(nsamp):
-#             gs[i,:] = run_FEM(Xs[i,:],id_sim+i,rv_name)
-#     else:
-#         print("Running {} simulations in parallel".format(nsamp))
-#         if run_type.lower() == 'runninglocal':
-#             try:
-#                 tmp = time.time()
-#                 iterables = ((X[i, :][np.newaxis], id_sim + i, rv_name, work_dir, run_type, os_type, t_init, t_thr) for i in range(N))
-#                 result_objs = pool.starmap(run_FEM, iterables)
-#                 print("Simulation time = {} s".format(time.time() - tmp));  tmp = time.time();
-#
-#             except KeyboardInterrupt:
-#                 print("Ctrl+c received, terminating and joining pool.")
-#                 pool.shutdown()
-#
-#
 
+def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool, t_init, t_thr):
+    X = np.atleast_2d(X)
+    # Windows
+    workflowDriver = "workflow_driver.bat"
+    if run_type.lower() == 'runninglocal':
+        if not os_type.lower().startswith('win'):
+            workflowDriver = "workflow_driver"
 
+    nsamp = X.shape[0]
+    if not do_parallel:
+        Y = np.zeros((nsamp,y_dim))
+        for ns in range(nsamp):
+            Y[ns,:], id_sim_current = run_FEM(X[ns,:],id_sim+ns,rv_name, work_dir, workflowDriver)
+            if time.time() - t_init > t_thr:
+                X = X[:ns, :]
+                Y = Y[:ns, :]
+                break               
+
+        return X, Y, id_sim_current+1
+
+    if do_parallel:
+        print("Running {} simulations in parallel".format(nsamp))
+        tmp = time.time()
+        iterables = ((X[i, :][np.newaxis], id_sim + i, rv_name, work_dir, workflowDriver) for i in range(nsamp))
+        try:
+            result_objs = pool.starmap(run_FEM, iterables)
+            print("Simulation time = {} s".format(time.time() - tmp));  tmp = time.time();
+        except KeyboardInterrupt:
+            print("Ctrl+c received, terminating and joining pool.")
+            pool.shutdown()
+        tmp = time.time();
+
+        Nsim = len(result_objs)
+        Y = np.zeros((Nsim, y_dim))
+
+        for val, id in result_objs:
+            if np.isnan(np.sum(val)):
+                Nsim = id - id_sim
+                X = X[:Nsim, :]
+                Y = Y[:Nsim, :]
+            else:
+                Y[id - id_sim, :] = val
+
+    return X, Y, id_sim + Nsim
 
 def read_txt(text_dir, errlog):
     if not os.path.exists(text_dir):
@@ -1770,6 +1892,29 @@ def read_txt(text_dir, errlog):
         X = np.array([X]).transpose()
 
     return X
+
+def closest_node(node, nodes, ll):
+
+    nodes = np.asarray(nodes)
+    deltas = nodes - node
+    deltas_norm = np.zeros(deltas.shape)
+    for nx in range(nodes.shape[1]):
+        deltas_norm[:, nx] = deltas[:, nx] /  ll[nx]
+
+    dist_2 = np.einsum('ij,ij->i', deltas_norm, deltas_norm) # square sum
+    return np.argmin(dist_2)
+
+def imse(m_tmp, xcandi, xq, phiqr, i):
+    X = m_tmp.X
+    Y = m_tmp.Y
+    X_tmp = np.vstack([X, xcandi])
+    Y_tmp = np.zeros((Y.shape[0] + 1, Y.shape[1]))  # any variables
+    m_tmp.set_XY(X=X_tmp, Y=Y_tmp)
+    dummy, Yq_var = m_tmp.predict(xq)
+    IMSEc1 = 1 / xq.shape[0] * sum(phiqr.flatten() *Yq_var.flatten())
+    
+    return IMSEc1, i
+
 
 
 # ==========================================================================================
@@ -1820,8 +1965,8 @@ if __name__ == "__main__":
 
     errlog = errorLog(work_dir)
 
-    run_type = inputArgs[2]
-    os_type = inputArgs[3]
+    run_type = inputArgs[3]
+    os_type = inputArgs[2]
     result_file = "results.out"
 
     sys.exit(build_surrogate(work_dir, os_type, run_type))

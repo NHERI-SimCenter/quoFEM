@@ -108,6 +108,14 @@ MainWindow::errorMessage(const QString msg){
 
     progressDialog->appendErrorMessage(msg);  
 }
+void
+MainWindow::statusMessage(const QString msg){
+
+    if(msg.isEmpty())
+        return;
+
+    progressDialog->appendText(msg);
+}
 
 void
 MainWindow::fatalMessage(const QString msg){
@@ -699,7 +707,7 @@ MainWindow::runApplication(QString program, QStringList args) {
 void MainWindow::onRunButtonClicked() {
 
     GoogleAnalytics::ReportLocalRun();
-
+    statusMessage("Running Analysis..");
     //
     // get program & input file from fem widget
     //
@@ -1623,6 +1631,7 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
     results->setResultWidget(result);
     
     inputWidget->setSelection(QString("RES"));
+
 }
 
 void MainWindow::createActions() {

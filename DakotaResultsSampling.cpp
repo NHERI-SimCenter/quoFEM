@@ -184,7 +184,7 @@ static int mergesort(double *input, int size)
 
 int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab)
 {
-    statusMessage(tr("Processing Sampling Results"));
+    statusMessage(tr("Analysis done"));
 
     this->clear();
 
@@ -287,8 +287,8 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
-    statusMessage(tr(""));
 
+    statusMessage(tr("Results Displayed"));
     return 0;
 }
 
