@@ -64,19 +64,22 @@ UQpyEngine::getMaxNumParallelTasks(void) {
 }
 
 bool
-UQpyEngine::outputToJSON(QJsonObject &rvObject) {
+UQpyEngine::outputToJSON(__attribute__((unused)) QJsonObject &rvObject) {
+    //__attribute__((unused)) added to suppress warnings
     return true;
 }
 
 
 bool
-UQpyEngine::inputFromJSON(QJsonObject &rvObject) {
+UQpyEngine::inputFromJSON(__attribute__((unused)) QJsonObject &rvObject) {
+    //__attribute__((unused)) added to suppress warnings
     return true;
 }
 
 
 int
-UQpyEngine::processResults(QString &filenameResults, QString &filenameTab) {
+UQpyEngine::processResults(__attribute__((unused)) QString &filenameResults, __attribute__((unused)) QString &filenameTab) {
+    //__attribute__((unused)) added to suppress warnings
     return 0;
 }
 

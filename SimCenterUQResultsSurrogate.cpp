@@ -139,55 +139,57 @@ void SimCenterUQResultsSurrogate::clear(void)
 }
 
 
+// not needed
+//static void merge_helper(double *input, int left, int right, double *scratch)
+//{
+//    // if one element: done  else: recursive call and then merge
+//    if(right == left + 1) {
+//        return;
+//    } else {
+//        int length = right - left;
+//        int midpoint_distance = length/2;
+//        /* l and r are to the positions in the left and right subarrays */
+//        int l = left, r = left + midpoint_distance;
 
-static void merge_helper(double *input, int left, int right, double *scratch)
-{
-    // if one element: done  else: recursive call and then merge
-    if(right == left + 1) {
-        return;
-    } else {
-        int length = right - left;
-        int midpoint_distance = length/2;
-        /* l and r are to the positions in the left and right subarrays */
-        int l = left, r = left + midpoint_distance;
+//        // sort each subarray
+//        merge_helper(input, left, left + midpoint_distance, scratch);
+//        merge_helper(input, left + midpoint_distance, right, scratch);
 
-        // sort each subarray
-        merge_helper(input, left, left + midpoint_distance, scratch);
-        merge_helper(input, left + midpoint_distance, right, scratch);
+//        // merge the arrays together using scratch for temporary storage
+//        for(int i = 0; i < length; i++) {
+//            /* Check to see if any elements remain in the left array; if so,
+//            * we check if there are any elements left in the right array; if
+//            * so, we compare them.  Otherwise, we know that the merge must
+//            * use take the element from the left array */
+//            if(l < left + midpoint_distance &&
+//                    (r == right || fmin(input[l], input[r]) == input[l])) {
+//                scratch[i] = input[l];
+//                l++;
+//            } else {
+//                scratch[i] = input[r];
+//                r++;
+//            }
+//        }
+//        // Copy the sorted subarray back to the input
+//        for(int i = left; i < right; i++) {
+//            input[i] = scratch[i - left];
+//        }
+//    }
+//}
 
-        // merge the arrays together using scratch for temporary storage
-        for(int i = 0; i < length; i++) {
-            /* Check to see if any elements remain in the left array; if so,
-            * we check if there are any elements left in the right array; if
-            * so, we compare them.  Otherwise, we know that the merge must
-            * use take the element from the left array */
-            if(l < left + midpoint_distance &&
-                    (r == right || fmin(input[l], input[r]) == input[l])) {
-                scratch[i] = input[l];
-                l++;
-            } else {
-                scratch[i] = input[r];
-                r++;
-            }
-        }
-        // Copy the sorted subarray back to the input
-        for(int i = left; i < right; i++) {
-            input[i] = scratch[i - left];
-        }
-    }
-}
+// Not used
 
-static int mergesort(double *input, int size)
-{
-    double *scratch = new double[size];
-    if(scratch != NULL) {
-        merge_helper(input, 0, size, scratch);
-        delete [] scratch;
-        return 1;
-    } else {
-        return 0;
-    }
-}
+//static int mergesort(double *input, int size)
+//{
+//    double *scratch = new double[size];
+//    if(scratch != NULL) {
+//        merge_helper(input, 0, size, scratch);
+//        delete [] scratch;
+//        return 1;
+//    } else {
+//        return 0;
+//    }
+//}
 
 int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QString &filenameTab)
 {
@@ -317,7 +319,7 @@ SimCenterUQResultsSurrogate::onSaveModelClicked()
 
     QString workflowDir1 = workingDir+QString("templatedir");
     QString workflowDir2 = path+QString("/templatedir_SIM");
-    bool directoryCopied = copyPath(workflowDir1, workflowDir2, true);
+    //bool directoryCopied = copyPath(workflowDir1, workflowDir2, true);
 
     lastPath =  QFileInfo(fileName).path();
 

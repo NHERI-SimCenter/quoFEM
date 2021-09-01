@@ -71,7 +71,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetFEM.h>
 
 UQ_EngineSelection::UQ_EngineSelection(InputWidgetParameters *param,InputWidgetFEM *femwidget,InputWidgetEDP *edpwidget, QWidget *parent)
-    : SimCenterAppWidget(parent), theCurrentEngine(0), theParameters(param), theFemWidget(femwidget), theEdpWidget(edpwidget)
+    : SimCenterAppWidget(parent), theCurrentEngine(0), theParameters(param), theEdpWidget(edpwidget), theFemWidget(femwidget)
 {
 
     QVBoxLayout *layout = new QVBoxLayout();

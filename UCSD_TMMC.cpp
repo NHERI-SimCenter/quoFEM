@@ -64,6 +64,7 @@ UCSD_TMMC::UCSD_TMMC(QWidget *parent)
     // create label and entry for seed to layout
     srand(time(NULL));
     int randomNumber = rand() % 1000 + 1;
+    //int randomNumber = arc4random() % 1000 + 1;
     randomSeed = new QLineEdit();
     randomSeed->setText(QString::number(randomNumber));
     randomSeed->setValidator(new QIntValidator);
