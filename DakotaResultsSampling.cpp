@@ -184,7 +184,7 @@ static int mergesort(double *input, int size)
 
 int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab)
 {
-    statusMessage(tr("Processing Sampling Results"));
+    statusMessage(tr("Analysis done"));
 
     this->clear();
 
@@ -212,7 +212,6 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     if (line.length() != 0) {
         qDebug() << line.length() << " " << line;
-        emit errorMessage(QString(QString("Error Running Dakota: ") + line));
 
         // check if there is an error message from surrogate modeling
 //        QFileInfo surrogateErrorInfo(fileTabInfo.absolutePath() + QDir::separator() + QString("surrogate.err"));
@@ -225,6 +224,8 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 //            }
 //            emit sendErrorMessage(QString(QString("Error Running Surrogate Simulation: ") + line));
 //        }
+
+        errorMessage(QString(QString("Error Running Dakota: ") + line));
 
         return 0;
     }
@@ -286,8 +287,8 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
-    statusMessage(tr(""));
 
+    statusMessage(tr("Results Displayed"));
     return 0;
 }
 

@@ -98,6 +98,7 @@ signals:
 
     void onUQ_EngineChanged(bool);
 
+    void statusMessage(QString message);
     void errorMessage(QString message);
     void fatalMessage(QString message);
 

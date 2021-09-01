@@ -82,16 +82,15 @@ InputWidgetParameters::setParametersWidget(RandomVariablesContainer *param) {
 
     if (theParameters != 0) {
         layout->removeWidget(theParameters);
+        param->copyRVs(theParameters);
         delete theParameters;
         theParameters = nullptr;
     }
-
     if (param != 0) {
         theParameters = param;
         layout->addWidget(theParameters);
         //theParameters->addConstantRVs(varNamesAndValues);
-        theParameters->addNormalRVs(varNamesAndValues);
-
+        //theParameters->addNormalRVs(varNamesAndValues);
     }
 }
 
