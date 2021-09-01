@@ -510,7 +510,7 @@ DakotaResultsSensitivity::outputToJSON(QJsonObject &jsonObject)
     jsonObject["resultType"]=QString(tr("DakotaResultsSensitivity"));
     jsonObject["isSurrogate"]=isSurrogate;
 
-    if (spreadsheet == NULL)
+    if (theDataTable == NULL)
         return true;
 
     //
