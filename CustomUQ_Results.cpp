@@ -184,7 +184,7 @@ static int mergesort(double *input, int size)
 
 int CustomUQ_Results::processResults(QString &filenameResults, QString &filenameTab)
 {
-    emit sendStatusMessage(tr("Processing Sampling Results"));
+    statusMessage(tr("Processing Sampling Results"));
 
     this->clear();
     mLeft = true;
@@ -199,7 +199,7 @@ int CustomUQ_Results::processResults(QString &filenameResults, QString &filename
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        emit sendErrorMessage("No tabularResults.out file - Custom UQ failed to finish running");
+        errorMessage("No tabularResults.out file - Custom UQ failed to finish running");
         return 0;
     }
 
@@ -387,7 +387,7 @@ int CustomUQ_Results::processResults(QString &filenameResults, QString &filename
     tabWidget->addTab(widget, tr("Data Values"));
     tabWidget->adjustSize();
 
-    emit sendStatusMessage(tr(""));
+    statusMessage(tr(""));
     
     return 0;
 }

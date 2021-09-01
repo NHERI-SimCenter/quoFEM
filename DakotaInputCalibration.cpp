@@ -156,7 +156,7 @@ DakotaInputCalibration::outputToJSON(QJsonObject &jsonObject)
 //    uq["factors"]=scalingFactors->text();
     uq["calibrationDataFile"]=calDataFileEdit->text();
     if (calDataFileEdit->text().isEmpty()) {
-        sendErrorMessage("ERROR: Calibration data file not provided");
+        errorMessage("ERROR: Calibration data file not provided");
         result = false;
     }
 

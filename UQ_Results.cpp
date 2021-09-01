@@ -96,11 +96,11 @@ UQ_Results::inputFromJSON(QJsonObject &jsonObject)
 	if (resultWidget != 0) {
 	  result = resultWidget->inputFromJSON(uq);
 	} else {
-	  emit sendErrorMessage("ERROR: reading Dakota Results - no result widget set!");
+	  errorMessage("ERROR: reading Dakota Results - no result widget set!");
 	}
 
     } else {
-        emit sendErrorMessage("ERROR: Dakota Results - no \"uqResults\" entry");
+        errorMessage("ERROR: Dakota Results - no \"uqResults\" entry");
         return false;
     }
 

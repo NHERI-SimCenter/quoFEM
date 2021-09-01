@@ -343,7 +343,7 @@ DakotaInputBayesianCalibration::outputToJSON(QJsonObject &jsonObject)
     uq["calibrationDataFile"]=calDataFileEdit->text();
 
     if (chains->text().toInt()<3) {
-        sendErrorMessage("ERROR: Number of chains must be greater than 2");
+        errorMessage("ERROR: Number of chains must be greater than 2");
         result = false;
     }
 //    if (uq.contains("calibrationDataFile")) {
@@ -456,12 +456,12 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 
 //        if (calibrateCovarianceMultipliersBool) {
 //            if (!readCovarianceBool){
-//                emit sendErrorMessage("ERROR: Bayesian Calibration Input - covariance data must be read from file to calibrate multipliers");
+//                errorMessage("ERROR: Bayesian Calibration Input - covariance data must be read from file to calibrate multipliers");
 //                result = false;
 //            }
 //            else {
 //                if (!readCalDataBool) {
-//                    emit sendErrorMessage("ERROR: Bayesian Calibration Input - calibration data must also be read from file if calibrating multipliers");
+//                    errorMessage("ERROR: Bayesian Calibration Input - calibration data must also be read from file if calibrating multipliers");
 //                    result = false;
 //                }
 //            }
@@ -469,7 +469,7 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
 
 //        if (readCovarianceBool) {
 //            if (!readCalDataBool) {
-//                emit sendErrorMessage("ERROR: Bayesian Calibration Input - calibration data must also be read from file if reading error covariance from file");
+//                errorMessage("ERROR: Bayesian Calibration Input - calibration data must also be read from file if reading error covariance from file");
 //                result = false;
 //            }
 //        }
@@ -503,7 +503,7 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
         //scalingFactors->setText(fact);
 
     } else {
-        emit sendErrorMessage("ERROR: Bayesian Calibration Input - no \"bayesian_calibration_method\" data");
+        errorMessage("ERROR: Bayesian Calibration Input - no \"bayesian_calibration_method\" data");
         result = false;
     }
 

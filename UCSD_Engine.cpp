@@ -118,7 +118,7 @@ void UCSD_Engine::methodChanged(const QString &arg1)
     } 
     else {
         QString errorMsg = QString("UCSD_Engine Selection type: ") + arg1 + QString(" unknown");
-        emit sendErrorMessage(errorMsg);
+        errorMessage(errorMsg);
         qDebug() << "ERROR .. UCSD_Engine selection .. type unknown: " << arg1;
     }
 

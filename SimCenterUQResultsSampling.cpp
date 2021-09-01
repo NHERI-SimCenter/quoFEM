@@ -184,7 +184,7 @@ static int mergesort(double *input, int size)
 
 int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString &filenameTab)
 {
-    emit sendStatusMessage(tr("Processing Sampling Results"));
+    statusMessage(tr("Processing Sampling Results"));
 
     this->clear();
 
@@ -197,7 +197,7 @@ int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        emit sendErrorMessage("No dakota.err file - SimCenterUQ did not run - problem with SimCenterUQ setup or the applicatins failed with inputs provied");
+        errorMessage("No dakota.err file - SimCenterUQ did not run - problem with SimCenterUQ setup or the applicatins failed with inputs provied");
         return 0;
     }
     QFile fileError(filenameErrorString);
@@ -212,13 +212,13 @@ int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString
 
     if (line.length() != 0) {
         qDebug() << line.length() << " " << line;
-        emit sendErrorMessage(QString(QString("Error Running SimCenterUQ: ") + line));
+        errorMessage(QString(QString("Error Running SimCenterUQ: ") + line));
         return 0;
     }
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        emit sendErrorMessage("No SimCenterUQTab.out file - SimCenterUQ failed .. possibly no QoI");
+        errorMessage("No SimCenterUQTab.out file - SimCenterUQ failed .. possibly no QoI");
         return 0;
     }
 
@@ -275,7 +275,7 @@ int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString
     tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
-    emit sendStatusMessage(tr(""));
+    statusMessage(tr(""));
 
     return 0;
 }
