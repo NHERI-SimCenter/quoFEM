@@ -61,6 +61,8 @@ class QThread;
 class QNetworkAccessManager;
 class QNetworkReply;
 class SimCenterPreferences;
+class PythonProgressDialog;
+class QDockWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -149,6 +151,9 @@ signals:
 
     SimCenterPreferences *thePreferences;
     QString workingDirectory;
+
+    PythonProgressDialog* progressDialog;
+    QDockWidget* statusDockWidget;  
 };
 
 #endif // MAINWINDOW_H
