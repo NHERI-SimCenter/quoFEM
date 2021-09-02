@@ -81,11 +81,9 @@ DakotaResultsCalibration::DakotaResultsCalibration(RandomVariablesContainer *the
     : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
-
     theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
-
 }
 
 DakotaResultsCalibration::~DakotaResultsCalibration()
@@ -212,7 +210,12 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
         return true;
     }
 
-    isSurrogate=jsonObject["isSurrogate"].toBool();
+    if (jsonObject.contains("isSurrogate")) { // no saving of analysis data
+        isSurrogate=jsonObject["isSurrogate"].toBool();
+    } else {
+        isSurrogate=false;
+    }
+
     theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
     tabWidget->addTab(sa,tr("Summary"));
@@ -379,6 +382,8 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
     if (surrogateTabInfo.exists()) {
         filenameTab = tempFolder.filePath("surrogateTab.out");
         isSurrogate = true;
+    } else {
+        isSurrogate = false;
     }
 
 

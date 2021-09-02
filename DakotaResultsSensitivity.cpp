@@ -226,6 +226,8 @@ int DakotaResultsSensitivity::processResults(QString &filenameResults, QString &
     if (surrogateTabInfo.exists()) {
         filenameTab = tempFolder.filePath("surrogateTab.out");
         isSurrogate = true;
+    } else {
+        isSurrogate = false;
     }
 
     //
@@ -636,7 +638,12 @@ DakotaResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
 
     //theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
 
-    isSurrogate=jsonObject["isSurrogate"].toBool();
+    if (jsonObject.contains("isSurrogate")) { // no saving of analysis data
+        isSurrogate=jsonObject["isSurrogate"].toBool();
+    } else {
+        isSurrogate=false;
+    }
+
     theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
     tabWidget->addTab(sa,tr("Summary"));

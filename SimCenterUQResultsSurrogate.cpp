@@ -236,6 +236,8 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     if (surrogateTabInfo.exists()) {
         filenameTab = tempFolder.filePath("surrogateTab.out");
         isSurrogate = true;
+    } else {
+        isSurrogate = false;
     }
 
 
@@ -411,7 +413,14 @@ SimCenterUQResultsSurrogate::inputFromJSON(QJsonObject &jsonObject)
     // into a spreadsheet place all the data returned
     //
 
-    isSurrogate=jsonObject["isSurrogate"].toBool();
+    //isSurrogate=jsonObject["isSurrogate"].toBool();
+
+    if (jsonObject.contains("isSurrogate")) { // no saving of analysis data
+        isSurrogate=jsonObject["isSurrogate"].toBool();
+    } else {
+        isSurrogate=false;
+    }
+
     theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
     QScrollArea *sa = new QScrollArea;

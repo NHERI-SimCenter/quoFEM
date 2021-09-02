@@ -233,6 +233,8 @@ int SimCenterUQResultsSensitivity::processResults(QString &filenameResults, QStr
     if (surrogateTabInfo.exists()) {
         filenameTab = tempFolder.filePath("surrogateTab.out");
         isSurrogate = true;
+    } else {
+        isSurrogate = false;
     }
 
     //
@@ -597,7 +599,13 @@ SimCenterUQResultsSensitivity::inputFromJSON(QJsonObject &jsonObject)
     gsaGraph(*&sa);
 
 
-    isSurrogate=jsonObject["isSurrogate"].toBool();
+    //isSurrogate=jsonObject["isSurrogate"].toBool();
+    if (jsonObject.contains("isSurrogate")) { // no saving of analysis data
+        isSurrogate=jsonObject["isSurrogate"].toBool();
+    } else {
+        isSurrogate=false;
+    }
+
     theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
 
