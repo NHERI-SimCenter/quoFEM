@@ -7,6 +7,7 @@ import json as json
 import shutil
 from scipy.stats import lognorm, norm
 import GPy as GPy
+import subprocess
 
 # from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
 
@@ -225,7 +226,6 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
 
             y_q1[ny] = lognorm.ppf(0.05, s=np.sqrt(y_pred_var_tmp), scale=np.exp(y_pred_median_tmp))
             y_q3[ny] = lognorm.ppf(0.95, s=np.sqrt(y_pred_var_tmp), scale=np.exp(y_pred_median_tmp))
-
 
         else:
             

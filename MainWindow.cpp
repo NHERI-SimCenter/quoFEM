@@ -1649,7 +1649,6 @@ void MainWindow::createActions() {
     connect(saveAction, &QAction::triggered, this, &MainWindow::save);
     fileMenu->addAction(saveAction);
 
-
     QAction *saveAsAction = new QAction(tr("&Save As"), this);
     saveAction->setStatusTip(tr("Save the document with new filename to disk"));
     connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
@@ -1663,6 +1662,7 @@ void MainWindow::createActions() {
     // exitAction->setShortcuts(QKeySequence::Quit);
     exitAction->setStatusTip(tr("Exit the application"));
     fileMenu->addAction(exitAction);
+    fileMenu->addSeparator();
 
 
     // Show progress dialog
@@ -1672,7 +1672,7 @@ void MainWindow::createActions() {
     
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 
-    QAction *preferencesAct = helpMenu->addAction(tr("&Preferences"), this, &MainWindow::preferences);
+    QAction *preferencesAct = fileMenu->addAction(tr("&Preferences"), this, &MainWindow::preferences);
     QAction *versionAct = helpMenu->addAction(tr("&Version"), this, &MainWindow::version);
     QAction *aboutAct = helpMenu->addAction(tr("&About"), this, &MainWindow::about);
     //aboutAct->setStatusTip(tr("Show the application's About box"));
@@ -1791,7 +1791,9 @@ void MainWindow::copyright()
       ";
 
 
-         QMessageBox msgBox;
+    QMessageBox msgBox;
+    msgBox.setTextInteractionFlags(Qt::TextSelectableByMouse);
+
     QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     msgBox.setText(textCopyright);
     QGridLayout *layout = (QGridLayout*)msgBox.layout();
@@ -1874,9 +1876,11 @@ void MainWindow::cite()
 {
   QString citeText = QString("Frank McKenna, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Michael Gardner, & Nikhil Padhye. (2021, May 21). NHERI-SimCenter/quoFEM: Version 2.3.0 (Version v2.3.0). Zenodo. http://doi.org/10.5281/zenodo.4780588");
     QMessageBox msgBox;
+    msgBox.setTextInteractionFlags(Qt::TextSelectableByMouse);
     QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     msgBox.setText(citeText);
     QGridLayout *layout = (QGridLayout*)msgBox.layout();
+
     layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
     msgBox.exec();
 }

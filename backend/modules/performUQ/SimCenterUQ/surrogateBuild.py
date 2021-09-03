@@ -4,7 +4,7 @@ import os
 import sys
 import subprocess
 import math
-import pickle  # check - cross platform issue?
+import pickle
 import glob
 import json
 from scipy.stats import lognorm, norm
@@ -19,9 +19,9 @@ import random
 from multiprocessing import Pool
 
 
-#import emukit.multi_fidelity as emf
-#from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
-#from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
+import emukit.multi_fidelity as emf
+from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
+from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
 
 
 class GpFromModel(object):
@@ -1410,7 +1410,6 @@ class GpFromModel(object):
             update_IMSE = np.zeros((self.cal_interval,1))
 
             for ni in range(self.cal_interval):
-                '/home1/07031/yisangri/.conan
                 yc1_pred, yc1_var = m_stack.predict(xc1)  # use only variance
                 MMSEc1 = yc1_var.flatten() * phicr.flatten()
 
