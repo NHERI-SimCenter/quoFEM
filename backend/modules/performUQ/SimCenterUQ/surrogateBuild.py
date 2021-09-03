@@ -64,11 +64,6 @@ class GpFromModel(object):
         self.y_dim = y_dim
         self.rv_name = rv_name
 
-        # # Switches for investigation
-        # self.doe_method = "random"
-        # self.doe_method = "imsew"
-        # self.doe_method = "mmsew"
-        # self.doe_method = "mmse"
         self.do_predictive = False
         automate_doe = False
 
@@ -90,7 +85,6 @@ class GpFromModel(object):
         else:
             self.pool = 0
             self.cal_interval = 5
-
 
         if surrogateInfo["method"] == "Sampling and Simulation":
             self.do_mf = False
@@ -561,6 +555,10 @@ class GpFromModel(object):
 
         else:
             kgs = emf.kernels.LinearMultiFidelityKernel([kr.copy(), kr.copy()])
+
+            if not X.shape[1]==self.X_hf.shape[1]:
+                msg = 'Error importing input data: dimension of low ({}) and high ({}) fidelity models (datasets) are inconsistent'.format(X.shape[1], self.X_hf.shape[1])
+                errlog.exit(msg)
 
             if self.mf_case == 'data-model' or self.mf_case=='data-data':
                 X_list, Y_list = emf.convert_lists_to_array.convert_xy_lists_to_arrays([X, self.X_hf], [Y, self.Y_hf])
