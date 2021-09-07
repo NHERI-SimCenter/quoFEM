@@ -360,7 +360,7 @@ ResultsDataChart::readTableFromTab(QString filenameTab) {
     tabResults.close();
 
     if (isSurrogate) {
-        nqoi = (colCount-nrv-1)/4;
+        nqoi = (colCount-nrv-1)/5;
     }
     //
     // why not enable sorting!
@@ -404,7 +404,7 @@ ResultsDataChart::readTableFromJson(QJsonObject spreadsheetData) {
     spreadsheet->verticalHeader()->setVisible(false);
 
     if (isSurrogate) {
-        nqoi = (colCount-nrv-1)/4;
+        nqoi = (colCount-nrv-1)/5;
     }
 
     //

@@ -19,9 +19,9 @@ import random
 from multiprocessing import Pool
 
 
-import emukit.multi_fidelity as emf
-from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
-from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
+# import emukit.multi_fidelity as emf
+# from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
+# from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
 
 
 class GpFromModel(object):
@@ -217,7 +217,7 @@ class GpFromModel(object):
                 errlog.exit(msg)
 
             if self.nuggetVal.shape[0]!=self.y_dim and self.nuggetVal.shape[0]!=0 :
-                msg = 'Error reading json: Number of nugget quantities does not match # QoI'
+                msg = 'Error reading json: Number of nugget quantities ({}) does not match # QoIs ({})'.format(self.nuggetVal.shape[0],self.y_dim)
                 errlog.exit(msg)
 
             if nugget_opt == "Fixed Values":
@@ -1643,6 +1643,13 @@ class GpFromModel(object):
             results["valNRMSE"][self.g_name[ny]] = self.NRMSE_val[ny]
             results["valR2"][self.g_name[ny]] = self.R2_val[ny]
             results["valCorrCoeff"][self.g_name[ny]] = self.corr_val[ny]
+            #
+            # if np.isnan(self.NRMSE_val[ny]):
+            #     results["valNRMSE"][self.g_name[ny]] = null
+            # if np.isnan(self.R2_val[ny]):
+            #     results["valR2"][self.g_name[ny]] = null
+            # if np.isnan(self.corr_val[ny]):
+            #     results["valCorrCoeff"][self.g_name[ny]] = null
 
         if self.do_simulation:
             results["predError"] = {}
