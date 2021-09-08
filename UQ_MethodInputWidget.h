@@ -55,6 +55,7 @@ public:
      *   @return int - number of tasks
      */      
     virtual int getNumberTasks(void) =0;
+    virtual bool copyFiles(QString &fileDir);
 
 };
 

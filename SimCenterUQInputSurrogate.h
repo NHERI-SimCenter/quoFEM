@@ -74,7 +74,7 @@ public:
 
     int getMaxNumParallelTasks(void);
     QString getMethodName();
-
+    bool copyFiles(QString &fileDir);
     QVBoxLayout *mLayout;
 
 signals:

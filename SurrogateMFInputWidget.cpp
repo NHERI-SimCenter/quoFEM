@@ -390,7 +390,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     // Use Log transform
 
     theLogtLabel=new QLabel("Log-space Transform of QoI");
-    theLogtLabel2=new QLabel("     (check this box only when all response qunatities are always positive)");
+    theLogtLabel2=new QLabel("     (check this box only when all responses are always positive)");
 
     theLogtCheckBox = new QCheckBox();
     layout->addWidget(theLogtLabel, 7, 0);
@@ -879,6 +879,21 @@ SurrogateMFInputWidget::inputFromJSON(QJsonObject &jsonObject){
   }
 
   return result;
+}
+
+bool
+SurrogateMFInputWidget::copyFiles(QString &fileDir) {
+
+    if ((!theHighSimButton->isChecked()) || (theExistingCheckBox_HF->isChecked())) {
+        QFile::copy(inpFileDir_HF->text(), fileDir + QDir::separator() + "inpFile_HF.in");
+        QFile::copy(outFileDir_HF->text(), fileDir + QDir::separator() + "outFile_HF.in");
+
+    }
+    if ((!theLowSimButton->isChecked()) || (theExistingCheckBox_LF->isChecked())) {
+        QFile::copy(inpFileDir_LF->text(), fileDir + QDir::separator() + "inpFile_LF.in");
+        QFile::copy(outFileDir_LF->text(), fileDir + QDir::separator() + "outFile_LF.in");
+    }
+    return true;
 }
 
 void

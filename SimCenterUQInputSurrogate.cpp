@@ -278,7 +278,10 @@ SimCenterUQInputSurrogate::getParameters(void) {
   return theRandomVariables;
 }
 
-
+bool
+SimCenterUQInputSurrogate::copyFiles(QString &fileDir) {
+    return theInpCurrentMethod->copyFiles(fileDir);
+}
 
 QString
 SimCenterUQInputSurrogate::getMethodName(void){

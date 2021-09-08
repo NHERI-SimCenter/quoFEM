@@ -776,7 +776,12 @@ void MainWindow::onRunButtonClicked() {
         // create template dir for other type of fem app to put stuff
         tmpSimCenterDirectory.mkpath(templateDirectory);
     }
+    random->copyFiles(templateDirectory);
+    uq->copyFiles(templateDirectory);
 
+    //
+    // copy files required in RV tab if any
+    //
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
     //

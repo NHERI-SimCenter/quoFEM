@@ -45,6 +45,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RandomVariablesContainer.h>
 #include <QMessageBox>
 #include <QDebug>
+#include <QFile>
 
 InputWidgetParameters::InputWidgetParameters(QWidget *parent)
     : SimCenterWidget(parent), theParameters(0)
@@ -137,4 +138,10 @@ InputWidgetParameters::setCorrelationDisabled(bool tog){
 int
 InputWidgetParameters::getNumRandomVariables(void){
     return theParameters->getNumRandomVariables();
+}
+
+void
+InputWidgetParameters::copyFiles(QString fileDir){
+    theParameters->copyFiles(fileDir);
+    //QFile::copy(workingDir+QString("SimGpModel.pkl"), fileName);
 }

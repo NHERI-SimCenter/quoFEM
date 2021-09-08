@@ -57,6 +57,7 @@ public:
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
+    bool copyFiles(QString &fileDir);
     void clear(void);
 
     int getNumberTasks(void);

@@ -265,6 +265,7 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     val=file.readAll();
     file.close();
     val.replace(QString("NaN"),QString("null"));
+    val.replace(QString("Infinity"),QString("inf"));
 
     QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
     //QJsonParseError parseErr;

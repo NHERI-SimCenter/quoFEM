@@ -169,7 +169,7 @@ SurrogateNoDoEInputWidget::SurrogateNoDoEInputWidget(InputWidgetParameters *para
     //
 
     theLogtLabel=new QLabel("Log-space Transform of QoI");
-    theLogtLabel2=new QLabel("     (check this box only when all response qunatities are always positive)");
+    theLogtLabel2=new QLabel("     (check this box only when all responses are always positive)");
 
     theLogtCheckBox = new QCheckBox();
     layout->addWidget(theLogtLabel, wid, 0);
@@ -475,6 +475,16 @@ SurrogateNoDoEInputWidget::inputFromJSON(QJsonObject &jsonObject){
   }
 
   return result;
+}
+
+bool
+SurrogateNoDoEInputWidget::copyFiles(QString &fileDir) {
+    QFile::copy(inpFileDir->text(), fileDir + QDir::separator() + "inpFile.in");
+    if (theCheckButton->isChecked())
+    {
+        QFile::copy(outFileDir->text(), fileDir + QDir::separator() + "outFile.in");
+    }
+    return true;
 }
 
 void

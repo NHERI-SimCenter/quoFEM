@@ -18,11 +18,9 @@ import random
 
 from multiprocessing import Pool
 
-
-# import emukit.multi_fidelity as emf
-# from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
-# from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
-
+import emukit.multi_fidelity as emf
+from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
+from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
 
 class GpFromModel(object):
 
@@ -51,8 +49,13 @@ class GpFromModel(object):
             errlog.exit(msg)
 
         for g in inp['EDP']:
-            self.g_name = self.g_name + [g['name']]
-            y_dim += 1
+            if g['length']==1: # scalar
+                self.g_name = self.g_name + [g['name']]
+                y_dim += 1
+            else: # vector
+                for nl in range(g['length']):
+                    self.g_name = self.g_name + ["{}_{}".format(g['name'],nl+1)]
+                    y_dim += 1
 
         if y_dim == 0:
             msg = 'Error reading json: EDP(QoI) is empty'
@@ -94,8 +97,10 @@ class GpFromModel(object):
             self.use_existing = surrogateInfo["existingDoE"]
 
             if self.use_existing:
-                self.inpData = surrogateInfo['inpFile']
-                self.outData = surrogateInfo['outFile']
+                #self.inpData = surrogateInfo['inpFile']
+                #self.outData = surrogateInfo['outFile']
+                self.inpData = os.path.join(work_dir, "templatedir/inpFile.in")
+                self.outData = os.path.join(work_dir, "templatedir/outFile.in")
 
             if surrogateInfo["advancedOpt"]:
                 user_init = surrogateInfo["initialDoE"]
@@ -108,9 +113,11 @@ class GpFromModel(object):
             do_sampling = False
             do_simulation = not surrogateInfo["outputData"]
             do_doe = False
-            self.inpData = surrogateInfo['inpFile']
+            # self.inpData = surrogateInfo['inpFile']
+            self.inpData = os.path.join(work_dir, "templatedir/inpFile.in")
             if not do_simulation:
-                self.outData = surrogateInfo['outFile']
+                # self.outData = surrogateInfo['outFile']
+                self.outData = os.path.join(work_dir, "templatedir/outFile.in")
 
         elif surrogateInfo["method"] == "Import Multi-fidelity Data File":
             self.do_mf = True
@@ -122,11 +129,15 @@ class GpFromModel(object):
                 self.use_existing_hf = surrogateInfo["existingDoE_HF"]
                 self.samples_hf = surrogateInfo["samples_HF"]
                 if self.use_existing_hf:
-                    self.inpData_hf = surrogateInfo['inpFile_HF']
-                    self.outData_hf = surrogateInfo['outFile_HF']
+                    #self.inpData_hf = surrogateInfo['inpFile_HF']
+                    #self.outData_hf = surrogateInfo['outFile_HF']
+                    self.inpData = os.path.join(work_dir, "templatedir/inpFile_HF.in")
+                    self.outData = os.path.join(work_dir, "templatedir/outFile_HF.in")
             else:
-                self.inpData_hf = surrogateInfo['inpFile_HF']
-                self.outData_hf = surrogateInfo['outFile_HF']
+                #self.inpData_hf = surrogateInfo['inpFile_HF']
+                #self.outData_hf = surrogateInfo['outFile_HF']
+                self.inpData = os.path.join(work_dir, "templatedir/inpFile_HF.in")
+                self.outData = os.path.join(work_dir, "templatedir/outFile_HF.in")
                 self.X_hf = read_txt(self.inpData_hf, errlog)
                 self.Y_hf = read_txt(self.outData_hf, errlog)
                 if self.X_hf.shape[0] != self.Y_hf.shape[0]:
@@ -137,11 +148,15 @@ class GpFromModel(object):
                 self.use_existing_lf = surrogateInfo["existingDoE_LF"]
                 self.samples_lf = surrogateInfo["samples_LF"]
                 if self.use_existing_lf:
-                    self.inpData_lf = surrogateInfo['inpFile_LF']
-                    self.outData_lf = surrogateInfo['outFile_LF']
+                    #self.inpData_lf = surrogateInfo['inpFile_LF']
+                    #self.outData_lf = surrogateInfo['outFile_LF']
+                    self.inpData = os.path.join(work_dir, "templatedir/inpFile_LF.in")
+                    self.outData = os.path.join(work_dir, "templatedir/outFile_LF.in")
             else:
-                self.inpData_lf = surrogateInfo['inpFile_LF']
-                self.outData_lf = surrogateInfo['outFile_LF']
+                # self.inpData_lf = surrogateInfo['inpFile_LF']
+                # self.outData_lf = surrogateInfo['outFile_LF']
+                self.inpData = os.path.join(work_dir, "templatedir/inpFile_LF.in")
+                self.outData = os.path.join(work_dir, "templatedir/outFile_LF.in")
                 self.X_lf = read_txt(self.inpData_lf, errlog)
                 self.Y_lf = read_txt(self.outData_lf, errlog)
                 if self.X_lf.shape[0] != self.Y_lf.shape[0]:
@@ -315,7 +330,7 @@ class GpFromModel(object):
                     errlog.exit(msg)
 
                 if n_ex != Y_tmp.shape[0]:
-                    msg = 'Error importing input data: numbers of input ({}) and output ({}) dataset are inconsistent'.format(n_ex, Y_tmp.shape[0])
+                    msg = 'Error importing input data: numbers of samples of inputs ({}) and outputs ({}) are inconsistent'.format(n_ex, Y_tmp.shape[0])
                     errlog.exit(msg)
 
             else:
@@ -523,7 +538,7 @@ class GpFromModel(object):
                 errlog.exit(msg)
 
             if X.shape[0] != Y.shape[0]:
-                msg = 'Error importing input data: numbers of input ({}) and output ({}) dataset are inconsistent'.format(X.shape[0], Y.shape[0])
+                msg = 'Error importing input data: numbers of samples of inputs ({}) and outputs ({}) are inconsistent'.format(X.shape[0], Y.shape[0])
                 errlog.exit(msg)
 
             thr_count  = 0
@@ -1475,7 +1490,7 @@ class GpFromModel(object):
             Y_pred = np.zeros(Y.shape)
             Y_pred_var = np.zeros(Y.shape)
             for ny in range(Y.shape[1]):
-                m_tmp = m_list[ny]
+                m_tmp = m_list[ny].copy()
                 for ns in range(X.shape[0]):
                     X_tmp = np.delete(X, ns, axis=0)
                     Y_tmp = np.delete(Y, ns, axis=0)
@@ -1638,8 +1653,11 @@ class GpFromModel(object):
             #         log_var = float(self.m_list[ny]['Gaussian_noise.variance']) # nugget in log-space
             #         nuggetVal_linear = np.exp(2*log_mean+log_var)*(np.exp(log_var)-1) # in linear space
 
-
-            results["valNugget"][self.g_name[ny]] =  float(self.m_list[ny]['Gaussian_noise.variance'])
+            if self.do_mf:
+                #results["valNugget"][self.g_name[ny]] = float(self.m_list[ny].gpy_model['Gaussian_noise.variance'])
+                pass
+            else:
+                results["valNugget"][self.g_name[ny]] =  float(self.m_list[ny]['Gaussian_noise.variance'])
             results["valNRMSE"][self.g_name[ny]] = self.NRMSE_val[ny]
             results["valR2"][self.g_name[ny]] = self.R2_val[ny]
             results["valCorrCoeff"][self.g_name[ny]] = self.corr_val[ny]
@@ -1866,7 +1884,7 @@ def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool
 
 def read_txt(text_dir, errlog):
     if not os.path.exists(text_dir):
-        msg = "Error: file does not exist " + text_dir
+        msg = "Error: file does not exist: " + text_dir
         errlog.exit(msg)
 
     with open(text_dir) as f:
@@ -1877,20 +1895,22 @@ def read_txt(text_dir, errlog):
                 header_count = header_count + 1
                 print(line)
 
-    with open(text_dir) as f:
+    
         # X = np.loadtxt(f, skiprows=header_count, delimiter=',')
         try:
-            X = np.loadtxt(f, skiprows=header_count)
+            with open(text_dir) as f:
+                X = np.loadtxt(f, skiprows=header_count)
         except ValueError:
-            try:
-                X = np.genfromtxt(f, skip_header=header_count, delimiter=',')
-                # if there are extra delimiter, remove nan
-                if np.isnan(X[-1, -1]):
-                    X = np.delete(X, -1, 1)
-                # X = np.loadtxt(f, skiprows=header_count, delimiter=',')
-            except ValueError:
-                msg = "Error: file format is not supported " + text_dir
-                errlog.exit(msg)
+            with open(text_dir) as f:
+                try:
+                    X = np.genfromtxt(f, skip_header=header_count, delimiter=',')
+                    # if there are extra delimiter, remove nan
+                    if np.isnan(X[-1, -1]):
+                        X = np.delete(X, -1, 1)
+                    # X = np.loadtxt(f, skiprows=header_count, delimiter=',')
+                except ValueError:
+                    msg = "Error: file format is not supported " + text_dir
+                    errlog.exit(msg)
 
     if X.ndim == 1:
         X = np.array([X]).transpose()
