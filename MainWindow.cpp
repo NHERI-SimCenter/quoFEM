@@ -936,7 +936,7 @@ void MainWindow::onRunButtonClicked() {
     //
 
     QString python("python");
-    QSettings settings("SimCenter", "Common");
+    QSettings settings("SimCenter", "quoFEM");
     QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid())
       python = pythonLocationVariant.toString();
