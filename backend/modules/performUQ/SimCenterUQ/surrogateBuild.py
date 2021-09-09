@@ -75,15 +75,17 @@ class GpFromModel(object):
         self.do_parallel = surrogateInfo["parallelExecution"]
 
         if self.do_parallel:
-            self.n_processor = os.cpu_count()
-            self.cal_interval = self.n_processor
             if self.run_type.lower() == 'runninglocal':
+                self.n_processor = os.cpu_count()
                 from multiprocessing import Pool
                 self.pool = Pool(self.n_processor)
             else:
                 # Always
+                from mpi4py import MPI
                 from mpi4py.futures import MPIPoolExecutor
-                self.pool = MPIPoolExecutor(max_workers=self.n_processor)
+                self.pool = MPIPoolExecutor()
+                self.n_processor = MPI.COMM_WORLD.Get_size()
+            self.cal_interval = 5
 
         else:
             self.pool = 0
@@ -363,6 +365,7 @@ class GpFromModel(object):
             if n_ex > 0:
                 #Y_test, self.id_sim = FEM_batch(X_tmp[0, :][np.newaxis], self.id_sim)
                 # TODO : Fix this
+                print(X_tmp[0, :][np.newaxis].shape)
                 Y_test ,self.id_sim= run_FEM(X_tmp[0, :][np.newaxis] ,self.itd_sim, self.rv_name)
                 if np.sum(abs((Y_test - Y_tmp[0, :][np.newaxis]) / Y_test) > 0.01, axis=1) > 0:
                     msg = 'Consistency check failed. Your data is not consistent to your model response.'
@@ -1755,6 +1758,7 @@ class GpFromModel(object):
             for ny in range(self.y_dim):
                 file.write('     {} : {:.2f}\n'.format(self.g_name[ny], self.NRMSE_val[ny]))
             file.write('  - analysis time : {:.1f} sec\n'.format(self.sim_time))
+            file.write('  - calibration interval : {}\n'.format(self.cal_interval))
             file.write('\n')
 
             file.write('* GP parameters\n'.format(self.y_dim))
@@ -1783,6 +1787,7 @@ class GpFromModel(object):
 
 
 def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver):
+
     X = np.atleast_2d(X)
     x_dim = X.shape[1]
 
@@ -1791,14 +1796,19 @@ def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver):
         msg = 'do one simulation at a time'
         errlog.exit(msg)
 
+
     # (1) create "workdir.idx " folder :need C++17 to use the files system namespace
     current_dir_i = work_dir + '/workdir.' + str(id_sim + 1)
+
+    print(id_sim)
+
     try:
         shutil.copytree(work_dir + '/templatedir', current_dir_i)
     except Exception as ex:
         errlog = errorLog(work_dir)
         msg = 'Error running FEM: ' + str(ex)
         errlog.exit(msg)
+
 
     # (2) write param.in file
     outF = open(current_dir_i + '/params.in', 'w')
@@ -1812,19 +1822,19 @@ def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver):
     os.chdir(current_dir_i)
 
     workflow_run_command = '{}/{}'.format(current_dir_i, workflowDriver)
-    subprocess.Popen(workflow_run_command, shell=True).wait()
+    subprocess.check_call(workflow_run_command, shell=True)
 
     # (4) reading results
     if glob.glob('results.out'):
         g = np.loadtxt('results.out').flatten()
     else:
         errlog = errorLog(work_dir)
-        msg = 'Error running FEM: result.out missing'
+        msg = 'Error running FEM: results.out missing at ' + current_dir_i
         errlog.exit(msg)
 
     if g.shape[0]==0:
         errlog = errorLog(work_dir)
-        msg = 'Error running FEM: result.out is empty'
+        msg = 'Error running FEM: results.out is empty'
         errlog.exit(msg)
 
     os.chdir("../")
@@ -1840,10 +1850,10 @@ def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver):
 def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool, t_init, t_thr):
     X = np.atleast_2d(X)
     # Windows
-    workflowDriver = "workflow_driver.bat"
-    if run_type.lower() == 'runninglocal':
-        if not os_type.lower().startswith('win'):
-            workflowDriver = "workflow_driver"
+    if os_type.lower().startswith('win'):
+        workflowDriver = "workflow_driver.bat"
+    else:
+        workflowDriver = "./workflow_driver"
 
     nsamp = X.shape[0]
     if not do_parallel:
@@ -1862,14 +1872,18 @@ def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool
         tmp = time.time()
         iterables = ((X[i, :][np.newaxis], id_sim + i, rv_name, work_dir, workflowDriver) for i in range(nsamp))
         try:
-            result_objs = pool.starmap(run_FEM, iterables)
+            result_objs = list(pool.starmap(run_FEM, iterables))
             print("Simulation time = {} s".format(time.time() - tmp));  tmp = time.time();
         except KeyboardInterrupt:
             print("Ctrl+c received, terminating and joining pool.")
-            pool.shutdown()
-        tmp = time.time();
+            try:
+                pool.terminate()
+            except Exception:
+                sys.exit()
 
-        Nsim = len(result_objs)
+        tmp = time.time();
+        print("=====================================")
+        Nsim = len(list((result_objs)))
         Y = np.zeros((Nsim, y_dim))
 
         for val, id in result_objs:
