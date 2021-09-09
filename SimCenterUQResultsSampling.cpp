@@ -229,8 +229,9 @@ int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString
     if (surrogateTabInfo.exists()) {
         filenameTab = tempFolder.filePath("surrogateTab.out");
         isSurrogate = true;
+    } else {
+        isSurrogate = false;
     }
-
 
     //
     // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
@@ -367,7 +368,12 @@ SimCenterUQResultsSampling::inputFromJSON(QJsonObject &jsonObject)
 
     sa->setWidget(summary);
 
-    isSurrogate=jsonObject["isSurrogate"].toBool();
+    if (jsonObject.contains("isSurrogate")) { // no saving of analysis data
+        isSurrogate=jsonObject["isSurrogate"].toBool();
+    } else {
+        isSurrogate=false;
+    }
+
     theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
 //    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());

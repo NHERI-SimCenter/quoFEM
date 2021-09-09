@@ -177,7 +177,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     //theLogtLabel=new QLabel("Responses are always positive");
     //theLogtLabel2=new QLabel("     (allow log-transform)");
     theLogtLabel=new QLabel("Log-space Transform of QoI");
-    theLogtLabel2=new QLabel("      (check this box only when all response qunatities are always positive)");
+    theLogtLabel2=new QLabel("      (check this box only when all responses are always positive)");
 
     theLogtCheckBox = new QCheckBox();
     layout->addWidget(theLogtLabel, wid, 0);
@@ -597,7 +597,15 @@ SurrogateDoEInputWidget::clear(void)
 
 }
 
-
+bool
+SurrogateDoEInputWidget::copyFiles(QString &fileDir) {
+    if (theExistingCheckBox->isChecked())
+    {
+        QFile::copy(inpFileDir->text(), fileDir + QDir::separator() + "inpFile.in");
+        QFile::copy(outFileDir->text(), fileDir + QDir::separator() + "outFile.in");
+    }
+    return true;
+}
 
 int
 SurrogateDoEInputWidget::getNumberTasks()

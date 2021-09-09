@@ -4,7 +4,7 @@ import os
 import sys
 import subprocess
 import math
-import pickle  # check - cross platform issue?
+import pickle
 import glob
 import json
 from scipy.stats import lognorm, norm
@@ -18,11 +18,9 @@ import random
 
 from multiprocessing import Pool
 
-
-#import emukit.multi_fidelity as emf
-#from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
-#from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
-
+import emukit.multi_fidelity as emf
+from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
+from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
 
 class GpFromModel(object):
 
@@ -51,8 +49,13 @@ class GpFromModel(object):
             errlog.exit(msg)
 
         for g in inp['EDP']:
-            self.g_name = self.g_name + [g['name']]
-            y_dim += 1
+            if g['length']==1: # scalar
+                self.g_name = self.g_name + [g['name']]
+                y_dim += 1
+            else: # vector
+                for nl in range(g['length']):
+                    self.g_name = self.g_name + ["{}_{}".format(g['name'],nl+1)]
+                    y_dim += 1
 
         if y_dim == 0:
             msg = 'Error reading json: EDP(QoI) is empty'
@@ -64,11 +67,6 @@ class GpFromModel(object):
         self.y_dim = y_dim
         self.rv_name = rv_name
 
-        # # Switches for investigation
-        # self.doe_method = "random"
-        # self.doe_method = "imsew"
-        # self.doe_method = "mmsew"
-        # self.doe_method = "mmse"
         self.do_predictive = False
         automate_doe = False
 
@@ -77,20 +75,21 @@ class GpFromModel(object):
         self.do_parallel = surrogateInfo["parallelExecution"]
 
         if self.do_parallel:
-            self.n_processor = os.cpu_count()
-            self.cal_interval = self.n_processor
             if self.run_type.lower() == 'runninglocal':
+                self.n_processor = os.cpu_count()
                 from multiprocessing import Pool
                 self.pool = Pool(self.n_processor)
             else:
                 # Always
+                from mpi4py import MPI
                 from mpi4py.futures import MPIPoolExecutor
-                self.pool = MPIPoolExecutor(max_workers=self.n_processor)
+                self.pool = MPIPoolExecutor()
+                self.n_processor = MPI.COMM_WORLD.Get_size()
+            self.cal_interval = 5
 
         else:
             self.pool = 0
             self.cal_interval = 5
-
 
         if surrogateInfo["method"] == "Sampling and Simulation":
             self.do_mf = False
@@ -100,8 +99,10 @@ class GpFromModel(object):
             self.use_existing = surrogateInfo["existingDoE"]
 
             if self.use_existing:
-                self.inpData = surrogateInfo['inpFile']
-                self.outData = surrogateInfo['outFile']
+                #self.inpData = surrogateInfo['inpFile']
+                #self.outData = surrogateInfo['outFile']
+                self.inpData = os.path.join(work_dir, "templatedir/inpFile.in")
+                self.outData = os.path.join(work_dir, "templatedir/outFile.in")
 
             if surrogateInfo["advancedOpt"]:
                 user_init = surrogateInfo["initialDoE"]
@@ -114,9 +115,11 @@ class GpFromModel(object):
             do_sampling = False
             do_simulation = not surrogateInfo["outputData"]
             do_doe = False
-            self.inpData = surrogateInfo['inpFile']
+            # self.inpData = surrogateInfo['inpFile']
+            self.inpData = os.path.join(work_dir, "templatedir/inpFile.in")
             if not do_simulation:
-                self.outData = surrogateInfo['outFile']
+                # self.outData = surrogateInfo['outFile']
+                self.outData = os.path.join(work_dir, "templatedir/outFile.in")
 
         elif surrogateInfo["method"] == "Import Multi-fidelity Data File":
             self.do_mf = True
@@ -128,11 +131,15 @@ class GpFromModel(object):
                 self.use_existing_hf = surrogateInfo["existingDoE_HF"]
                 self.samples_hf = surrogateInfo["samples_HF"]
                 if self.use_existing_hf:
-                    self.inpData_hf = surrogateInfo['inpFile_HF']
-                    self.outData_hf = surrogateInfo['outFile_HF']
+                    #self.inpData_hf = surrogateInfo['inpFile_HF']
+                    #self.outData_hf = surrogateInfo['outFile_HF']
+                    self.inpData = os.path.join(work_dir, "templatedir/inpFile_HF.in")
+                    self.outData = os.path.join(work_dir, "templatedir/outFile_HF.in")
             else:
-                self.inpData_hf = surrogateInfo['inpFile_HF']
-                self.outData_hf = surrogateInfo['outFile_HF']
+                #self.inpData_hf = surrogateInfo['inpFile_HF']
+                #self.outData_hf = surrogateInfo['outFile_HF']
+                self.inpData = os.path.join(work_dir, "templatedir/inpFile_HF.in")
+                self.outData = os.path.join(work_dir, "templatedir/outFile_HF.in")
                 self.X_hf = read_txt(self.inpData_hf, errlog)
                 self.Y_hf = read_txt(self.outData_hf, errlog)
                 if self.X_hf.shape[0] != self.Y_hf.shape[0]:
@@ -143,11 +150,15 @@ class GpFromModel(object):
                 self.use_existing_lf = surrogateInfo["existingDoE_LF"]
                 self.samples_lf = surrogateInfo["samples_LF"]
                 if self.use_existing_lf:
-                    self.inpData_lf = surrogateInfo['inpFile_LF']
-                    self.outData_lf = surrogateInfo['outFile_LF']
+                    #self.inpData_lf = surrogateInfo['inpFile_LF']
+                    #self.outData_lf = surrogateInfo['outFile_LF']
+                    self.inpData = os.path.join(work_dir, "templatedir/inpFile_LF.in")
+                    self.outData = os.path.join(work_dir, "templatedir/outFile_LF.in")
             else:
-                self.inpData_lf = surrogateInfo['inpFile_LF']
-                self.outData_lf = surrogateInfo['outFile_LF']
+                # self.inpData_lf = surrogateInfo['inpFile_LF']
+                # self.outData_lf = surrogateInfo['outFile_LF']
+                self.inpData = os.path.join(work_dir, "templatedir/inpFile_LF.in")
+                self.outData = os.path.join(work_dir, "templatedir/outFile_LF.in")
                 self.X_lf = read_txt(self.inpData_lf, errlog)
                 self.Y_lf = read_txt(self.outData_lf, errlog)
                 if self.X_lf.shape[0] != self.Y_lf.shape[0]:
@@ -223,7 +234,7 @@ class GpFromModel(object):
                 errlog.exit(msg)
 
             if self.nuggetVal.shape[0]!=self.y_dim and self.nuggetVal.shape[0]!=0 :
-                msg = 'Error reading json: Number of nugget quantities does not match # QoI'
+                msg = 'Error reading json: Number of nugget quantities ({}) does not match # QoIs ({})'.format(self.nuggetVal.shape[0],self.y_dim)
                 errlog.exit(msg)
 
             if nugget_opt == "Fixed Values":
@@ -321,7 +332,7 @@ class GpFromModel(object):
                     errlog.exit(msg)
 
                 if n_ex != Y_tmp.shape[0]:
-                    msg = 'Error importing input data: numbers of input ({}) and output ({}) dataset are inconsistent'.format(n_ex, Y_tmp.shape[0])
+                    msg = 'Error importing input data: numbers of samples of inputs ({}) and outputs ({}) are inconsistent'.format(n_ex, Y_tmp.shape[0])
                     errlog.exit(msg)
 
             else:
@@ -354,6 +365,7 @@ class GpFromModel(object):
             if n_ex > 0:
                 #Y_test, self.id_sim = FEM_batch(X_tmp[0, :][np.newaxis], self.id_sim)
                 # TODO : Fix this
+                print(X_tmp[0, :][np.newaxis].shape)
                 Y_test ,self.id_sim= run_FEM(X_tmp[0, :][np.newaxis] ,self.itd_sim, self.rv_name)
                 if np.sum(abs((Y_test - Y_tmp[0, :][np.newaxis]) / Y_test) > 0.01, axis=1) > 0:
                     msg = 'Consistency check failed. Your data is not consistent to your model response.'
@@ -529,7 +541,7 @@ class GpFromModel(object):
                 errlog.exit(msg)
 
             if X.shape[0] != Y.shape[0]:
-                msg = 'Error importing input data: numbers of input ({}) and output ({}) dataset are inconsistent'.format(X.shape[0], Y.shape[0])
+                msg = 'Error importing input data: numbers of samples of inputs ({}) and outputs ({}) are inconsistent'.format(X.shape[0], Y.shape[0])
                 errlog.exit(msg)
 
             thr_count  = 0
@@ -561,6 +573,10 @@ class GpFromModel(object):
 
         else:
             kgs = emf.kernels.LinearMultiFidelityKernel([kr.copy(), kr.copy()])
+
+            if not X.shape[1]==self.X_hf.shape[1]:
+                msg = 'Error importing input data: dimension of low ({}) and high ({}) fidelity models (datasets) are inconsistent'.format(X.shape[1], self.X_hf.shape[1])
+                errlog.exit(msg)
 
             if self.mf_case == 'data-model' or self.mf_case=='data-data':
                 X_list, Y_list = emf.convert_lists_to_array.convert_xy_lists_to_arrays([X, self.X_hf], [Y, self.Y_hf])
@@ -1410,7 +1426,6 @@ class GpFromModel(object):
             update_IMSE = np.zeros((self.cal_interval,1))
 
             for ni in range(self.cal_interval):
-                '/home1/07031/yisangri/.conan
                 yc1_pred, yc1_var = m_stack.predict(xc1)  # use only variance
                 MMSEc1 = yc1_var.flatten() * phicr.flatten()
 
@@ -1478,7 +1493,7 @@ class GpFromModel(object):
             Y_pred = np.zeros(Y.shape)
             Y_pred_var = np.zeros(Y.shape)
             for ny in range(Y.shape[1]):
-                m_tmp = m_list[ny]
+                m_tmp = m_list[ny].copy()
                 for ns in range(X.shape[0]):
                     X_tmp = np.delete(X, ns, axis=0)
                     Y_tmp = np.delete(Y, ns, axis=0)
@@ -1641,11 +1656,21 @@ class GpFromModel(object):
             #         log_var = float(self.m_list[ny]['Gaussian_noise.variance']) # nugget in log-space
             #         nuggetVal_linear = np.exp(2*log_mean+log_var)*(np.exp(log_var)-1) # in linear space
 
-
-            results["valNugget"][self.g_name[ny]] =  float(self.m_list[ny]['Gaussian_noise.variance'])
+            if self.do_mf:
+                #results["valNugget"][self.g_name[ny]] = float(self.m_list[ny].gpy_model['Gaussian_noise.variance'])
+                pass
+            else:
+                results["valNugget"][self.g_name[ny]] =  float(self.m_list[ny]['Gaussian_noise.variance'])
             results["valNRMSE"][self.g_name[ny]] = self.NRMSE_val[ny]
             results["valR2"][self.g_name[ny]] = self.R2_val[ny]
             results["valCorrCoeff"][self.g_name[ny]] = self.corr_val[ny]
+            #
+            # if np.isnan(self.NRMSE_val[ny]):
+            #     results["valNRMSE"][self.g_name[ny]] = null
+            # if np.isnan(self.R2_val[ny]):
+            #     results["valR2"][self.g_name[ny]] = null
+            # if np.isnan(self.corr_val[ny]):
+            #     results["valCorrCoeff"][self.g_name[ny]] = null
 
         if self.do_simulation:
             results["predError"] = {}
@@ -1733,6 +1758,7 @@ class GpFromModel(object):
             for ny in range(self.y_dim):
                 file.write('     {} : {:.2f}\n'.format(self.g_name[ny], self.NRMSE_val[ny]))
             file.write('  - analysis time : {:.1f} sec\n'.format(self.sim_time))
+            file.write('  - calibration interval : {}\n'.format(self.cal_interval))
             file.write('\n')
 
             file.write('* GP parameters\n'.format(self.y_dim))
@@ -1761,6 +1787,7 @@ class GpFromModel(object):
 
 
 def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver):
+
     X = np.atleast_2d(X)
     x_dim = X.shape[1]
 
@@ -1769,14 +1796,19 @@ def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver):
         msg = 'do one simulation at a time'
         errlog.exit(msg)
 
+
     # (1) create "workdir.idx " folder :need C++17 to use the files system namespace
     current_dir_i = work_dir + '/workdir.' + str(id_sim + 1)
+
+    print(id_sim)
+
     try:
         shutil.copytree(work_dir + '/templatedir', current_dir_i)
     except Exception as ex:
         errlog = errorLog(work_dir)
         msg = 'Error running FEM: ' + str(ex)
         errlog.exit(msg)
+
 
     # (2) write param.in file
     outF = open(current_dir_i + '/params.in', 'w')
@@ -1790,19 +1822,19 @@ def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver):
     os.chdir(current_dir_i)
 
     workflow_run_command = '{}/{}'.format(current_dir_i, workflowDriver)
-    subprocess.Popen(workflow_run_command, shell=True).wait()
+    subprocess.check_call(workflow_run_command, shell=True)
 
     # (4) reading results
     if glob.glob('results.out'):
         g = np.loadtxt('results.out').flatten()
     else:
         errlog = errorLog(work_dir)
-        msg = 'Error running FEM: result.out missing'
+        msg = 'Error running FEM: results.out missing at ' + current_dir_i
         errlog.exit(msg)
 
     if g.shape[0]==0:
         errlog = errorLog(work_dir)
-        msg = 'Error running FEM: result.out is empty'
+        msg = 'Error running FEM: results.out is empty'
         errlog.exit(msg)
 
     os.chdir("../")
@@ -1818,10 +1850,10 @@ def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver):
 def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool, t_init, t_thr):
     X = np.atleast_2d(X)
     # Windows
-    workflowDriver = "workflow_driver.bat"
-    if run_type.lower() == 'runninglocal':
-        if not os_type.lower().startswith('win'):
-            workflowDriver = "workflow_driver"
+    if os_type.lower().startswith('win'):
+        workflowDriver = "workflow_driver.bat"
+    else:
+        workflowDriver = "./workflow_driver"
 
     nsamp = X.shape[0]
     if not do_parallel:
@@ -1840,14 +1872,18 @@ def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool
         tmp = time.time()
         iterables = ((X[i, :][np.newaxis], id_sim + i, rv_name, work_dir, workflowDriver) for i in range(nsamp))
         try:
-            result_objs = pool.starmap(run_FEM, iterables)
+            result_objs = list(pool.starmap(run_FEM, iterables))
             print("Simulation time = {} s".format(time.time() - tmp));  tmp = time.time();
         except KeyboardInterrupt:
             print("Ctrl+c received, terminating and joining pool.")
-            pool.shutdown()
-        tmp = time.time();
+            try:
+                pool.terminate()
+            except Exception:
+                sys.exit()
 
-        Nsim = len(result_objs)
+        tmp = time.time();
+        print("=====================================")
+        Nsim = len(list((result_objs)))
         Y = np.zeros((Nsim, y_dim))
 
         for val, id in result_objs:
@@ -1862,7 +1898,7 @@ def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool
 
 def read_txt(text_dir, errlog):
     if not os.path.exists(text_dir):
-        msg = "Error: file does not exist " + text_dir
+        msg = "Error: file does not exist: " + text_dir
         errlog.exit(msg)
 
     with open(text_dir) as f:
@@ -1873,20 +1909,22 @@ def read_txt(text_dir, errlog):
                 header_count = header_count + 1
                 print(line)
 
-    with open(text_dir) as f:
+    
         # X = np.loadtxt(f, skiprows=header_count, delimiter=',')
         try:
-            X = np.loadtxt(f, skiprows=header_count)
+            with open(text_dir) as f:
+                X = np.loadtxt(f, skiprows=header_count)
         except ValueError:
-            try:
-                X = np.genfromtxt(f, skip_header=header_count, delimiter=',')
-                # if there are extra delimiter, remove nan
-                if np.isnan(X[-1, -1]):
-                    X = np.delete(X, -1, 1)
-                # X = np.loadtxt(f, skiprows=header_count, delimiter=',')
-            except ValueError:
-                msg = "Error: file format is not supported " + text_dir
-                errlog.exit(msg)
+            with open(text_dir) as f:
+                try:
+                    X = np.genfromtxt(f, skip_header=header_count, delimiter=',')
+                    # if there are extra delimiter, remove nan
+                    if np.isnan(X[-1, -1]):
+                        X = np.delete(X, -1, 1)
+                    # X = np.loadtxt(f, skiprows=header_count, delimiter=',')
+                except ValueError:
+                    msg = "Error: file format is not supported " + text_dir
+                    errlog.exit(msg)
 
     if X.ndim == 1:
         X = np.array([X]).transpose()

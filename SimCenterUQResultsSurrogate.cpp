@@ -238,6 +238,8 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     if (surrogateTabInfo.exists()) {
         filenameTab = tempFolder.filePath("surrogateTab.out");
         isSurrogate = true;
+    } else {
+        isSurrogate = false;
     }
 
 
@@ -263,11 +265,16 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     // place contents of file into json object
     QString val;
     val=file.readAll();
+    file.close();
+    val.replace(QString("NaN"),QString("null"));
+    val.replace(QString("Infinity"),QString("inf"));
+
     QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
+    //QJsonParseError parseErr;
+    //QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &parseErr );
     jsonObj = doc.object();
 
     // close file
-    file.close();
 
     // check file contains valid object
     if (jsonObj.isEmpty()) {
@@ -413,7 +420,14 @@ SimCenterUQResultsSurrogate::inputFromJSON(QJsonObject &jsonObject)
     // into a spreadsheet place all the data returned
     //
 
-    isSurrogate=jsonObject["isSurrogate"].toBool();
+    //isSurrogate=jsonObject["isSurrogate"].toBool();
+
+    if (jsonObject.contains("isSurrogate")) { // no saving of analysis data
+        isSurrogate=jsonObject["isSurrogate"].toBool();
+    } else {
+        isSurrogate=false;
+    }
+
     theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
     QScrollArea *sa = new QScrollArea;
@@ -592,9 +606,21 @@ void SimCenterUQResultsSurrogate::summarySurrogate(QScrollArea *&sa)
 
         double NRMSEvalue= valNRMSE[QoInames[nq]].toDouble();
 
+
         NRMSE -> setText(QString::number(valNRMSE[QoInames[nq]].toDouble(), 'f', 3));
         R2 -> setText(QString::number(valR2[QoInames[nq]].toDouble(), 'f', 3));
         Corr -> setText(QString::number(valCorrCoeff[QoInames[nq]].toDouble(), 'f', 3));
+
+        auto aa = valNRMSE[QoInames[nq]].isNull();
+        if (valNRMSE[QoInames[nq]].isNull()) {
+            NRMSE -> setText("NaN");
+        }
+        if (valR2[QoInames[nq]].isNull()) {
+            R2 -> setText("NaN");
+        }
+        if (valCorrCoeff[QoInames[nq]].isNull()) {
+            Corr -> setText("NaN");
+        }
 
         NRMSE->setAlignment(Qt::AlignRight);
         R2->setAlignment(Qt::AlignRight);

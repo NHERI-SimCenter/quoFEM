@@ -237,3 +237,8 @@ QString
 SimCenterUQEngine::getMethodName() {
     return theCurrentEngine->getMethodName();
 }
+
+bool
+SimCenterUQEngine::copyFiles(QString &fileDir) {
+    return theCurrentEngine->copyFiles(fileDir);
+}

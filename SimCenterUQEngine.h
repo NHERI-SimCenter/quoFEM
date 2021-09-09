@@ -69,6 +69,9 @@ public:
     QString getProcessingScript();
     QString getMethodName();
 
+    bool copyFiles(QString &fileName);
+
+
 signals:
     void onUQ_EngineChanged(void);
     void onNumModelsChanged(int newNum);
