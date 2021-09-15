@@ -8,7 +8,6 @@ import pickle
 import glob
 import json
 from scipy.stats import lognorm, norm
-
 import numpy as np
 import GPy as GPy
 
@@ -83,9 +82,14 @@ class GpFromModel(object):
                 # Always
                 from mpi4py import MPI
                 from mpi4py.futures import MPIPoolExecutor
+                self.world = MPI.COMM_WORLD
                 self.pool = MPIPoolExecutor()
-                self.n_processor = MPI.COMM_WORLD.Get_size()
-            self.cal_interval = 5
+                self.n_processor = self.world.Get_size()
+                #self.n_processor =20
+            print("nprocessor :")
+            print(self.n_processor)
+            #self.cal_interval = 5
+            self.cal_interval = self.n_processor
 
         else:
             self.pool = 0
@@ -888,7 +892,6 @@ class GpFromModel(object):
             else:
                 self.rvVal = self.rvVal + [np.mean(X[:, nx])]
 
-
     def __parameter_calibration(self, m_tmp_list, x_dim, nugget_opt):
 
         warnings.filterwarnings("ignore")
@@ -1547,6 +1550,12 @@ class GpFromModel(object):
 
         return Y_pred, Y_pred_var, e2
 
+    def term(self):
+        if self.do_parallel:
+            if self.run_type != "runningLocal":
+                print("RUNNING SUCCESSFUL")
+                self.world.Abort(0) # to prevent deadlock
+
 
     def save_model(self, filename):
         import json
@@ -1853,7 +1862,7 @@ def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool
     if os_type.lower().startswith('win'):
         workflowDriver = "workflow_driver.bat"
     else:
-        workflowDriver = "./workflow_driver"
+        workflowDriver = "workflow_driver"
 
     nsamp = X.shape[0]
     if not do_parallel:
@@ -1877,7 +1886,7 @@ def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool
         except KeyboardInterrupt:
             print("Ctrl+c received, terminating and joining pool.")
             try:
-                pool.terminate()
+                pool.shutdown()
             except Exception:
                 sys.exit()
 
@@ -1954,7 +1963,6 @@ def imse(m_tmp, xcandi, xq, phiqr, i):
     return IMSEc1, i
 
 
-
 # ==========================================================================================
 
 class errorLog(object):
@@ -1990,6 +1998,7 @@ def build_surrogate(work_dir, os_type, run_type):
 
     gp = GpFromModel(work_dir, run_type, os_type, inp, errlog)
     gp.save_model(filename)
+    gp.term()
 
 # the actual execution
 
@@ -2006,5 +2015,5 @@ if __name__ == "__main__":
     run_type = inputArgs[3]
     os_type = inputArgs[2]
     result_file = "results.out"
-
-    sys.exit(build_surrogate(work_dir, os_type, run_type))
+    #sys.exit(build_surrogate(work_dir, os_type, run_type))    
+    build_surrogate(work_dir, os_type, run_type)    
