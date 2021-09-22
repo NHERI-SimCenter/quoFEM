@@ -121,7 +121,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetParameters *param,InputWidgetF
     theSimCenterUQEngine = new SimCenterUQEngine(theParameters,theFemWidget,theEdpWidget);
     theCustomEngine = new UQ_JsonEngine();
     //theUQpyEngine = new UQpyEngine();
-    theUCSD_Engine = new UCSD_Engine();
+    theUCSD_Engine = new UCSD_Engine(theParameters, theFemWidget, theEdpWidget);
 
     theStackedWidget->addWidget(theDakotaEngine);
     theStackedWidget->addWidget(theSimCenterUQEngine);
@@ -310,7 +310,6 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
 
 bool
 UQ_EngineSelection::copyFiles(QString &destDir) {
-
   if (theCurrentEngine != 0) {
     return  theCurrentEngine->copyFiles(destDir);
   }
