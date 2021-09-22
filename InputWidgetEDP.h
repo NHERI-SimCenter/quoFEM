@@ -65,6 +65,8 @@ public:
     void setGPQoINames(QStringList quiNames);
     void showAdvancedSensitivity(bool tog);
 
+    QVector<EDP *>theEDPs;
+
 
 signals:
 
@@ -86,7 +88,7 @@ private:
     QFrame *edp;
     //QWidget *edp;
     QLineEdit *theGroupEdit;
-    QVector<EDP *>theEDPs;
+//    QVector<EDP *>theEDPs;
 
     InputWidgetParameters *theParameters;
 };
