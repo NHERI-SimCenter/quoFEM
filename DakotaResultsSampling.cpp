@@ -197,7 +197,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        emit errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        emit errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applications failed with inputs provided");
         return 0;
     }
     QFile fileError(filenameErrorString);

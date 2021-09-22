@@ -195,7 +195,7 @@ int DakotaResultsSensitivity::processResults(QString &filenameResults, QString &
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applications failed with inputs provided");
         return 0;
     }
     QFile fileError(filenameErrorString);
