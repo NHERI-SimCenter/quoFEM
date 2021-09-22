@@ -287,7 +287,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
 //    QString calDataFile = calFilePath + QDir::separator() + calFileName;
 
     // Get the quoFEMTempCalibrationDataFile.cal from templatedir
-    QFileInfo calFileInfo(fileDirTab, QString("templatedir") + QDir::separator() + QString("quoFEMTempCalibrationDataFile.cal"));
+    QFileInfo calFileInfo(fileDirTab, QString("quoFEMTempCalibrationDataFile.cal"));
     if (!calFileInfo.exists()) {
             errorMessage("No calibration data file");
             return 0;
