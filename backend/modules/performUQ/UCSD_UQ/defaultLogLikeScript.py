@@ -13,12 +13,16 @@ class CovError(Exception):
 
 
 def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
-                   covarianceMultiplierList, normalizingFactors, locShiftList):
+                   covarianceMultiplierList, scaleFactors, shiftFactors):
     """ Compute the log-likelihood
 
     :param calibrationData: Calibration data consisting of the measured values of response. Each row contains the data
     from one experiment. The length of each row equals the sum of the lengths of all response quantities.
     :type calibrationData: numpy ndarray (atleast_2d)
+
+    :param prediction: Prediction of the response from the model, evaluated using the parameter values for
+    which the log-likelihood function needs to be calculated.
+    :type prediction: numpy ndarray (atleast_2d)
 
     :param numExperiments: Number of experiments from which data is available, this is equal to the number of rows
     (i.e., the first index) of the calibration data array
@@ -38,15 +42,15 @@ def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrix
     list is equal to the product of the number of experiments and the number of response quantities.
     :type covarianceMultiplierList: list of numpy ndarrays
 
-    :param normalizingFactors: A list containing the normalizing factors used to scale (i.e. divide) the model
+    :param scaleFactors: A list containing the normalizing factors used to scale (i.e. divide) the model
     prediction values. The length of this list is equal to the number of response quantities.
-    :type normalizingFactors: list of ints
+    :type scaleFactors: list of ints
 
-    :param locShiftList: A list containing the values used to shift the prediction values. The locShift values are 0.0,
+    :param shiftFactors: A list containing the values used to shift the prediction values. The locShift values are 0.0,
     unless the abs max of the data of that response quantity is 0. In this case, the locShift = 1.0. LocShift values
     must be added to the response quantities since they are added to the data. The length of this list is equal to the
     number of response quantities.
-    :type locShiftList: list of ints
+    :type shiftFactors: list of ints
 
     :return: loglikelihood. This is a scalar value, which is equal to the logpdf of a zero-mean multivariate normal
     distribution and a user-supplied covariance structure. Block-diagonal covariance structures are supported. The value
@@ -64,8 +68,8 @@ def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrix
     # Shift and normalize the prediction
     currentPosition = 0
     for j in range(len(edpLengthsList)):
-        prediction[:, currentPosition:currentPosition + edpLengthsList[j]] += locShiftList[j]
-        prediction[:, currentPosition:currentPosition + edpLengthsList[j]] /= normalizingFactors[j]
+        prediction[:, currentPosition:currentPosition + edpLengthsList[j]] += shiftFactors[j]
+        prediction[:, currentPosition:currentPosition + edpLengthsList[j]] /= scaleFactors[j]
         currentPosition += edpLengthsList[j]
 
     # Compute the normalized residuals

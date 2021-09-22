@@ -26,7 +26,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
 
 
 def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibrationData, numExperiments,
-           covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors, locShiftList):
+           covarianceMatrixList, edpNamesList, edpLengthsList, scaleFactors, shiftFactors):
     """ 
     this function runs FE model (model.tcl) for each parameter value (par)
     model.tcl should take parameter input
@@ -35,8 +35,7 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
 
     # print("\nParticleNum: {}, parameter values: {} ".format(ParticleNum, par))
 
-    # stringtoappend = ("analysis" + str(ParticleNum))  #TODO: remove this line
-    stringtoappend = ("workdir." + str(ParticleNum))
+    stringtoappend = ("workdir." + str(ParticleNum + 1))
     analysisPath = os.path.join(resultsLocation, stringtoappend)
 
     if os.path.isdir(analysisPath):
@@ -80,4 +79,4 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
     os.chdir(resultsLocation)
 
     return log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrixList, edpNamesList,
-                          edpLengthsList, covarianceMultiplierList, normalizingFactors, locShiftList)
+                          edpLengthsList, covarianceMultiplierList, scaleFactors, shiftFactors)
