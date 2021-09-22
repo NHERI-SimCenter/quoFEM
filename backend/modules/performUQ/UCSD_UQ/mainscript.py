@@ -7,10 +7,10 @@ affiliation: University of California, San Diego, *SimCenter, University of Cali
 # ======================================================================================================================
 import os
 import sys
-import csv
-from importlib import import_module
+# from importlib import import_module
 import numpy as np
 import time
+from shutil import copyfile
 
 from parseData import parseDataFunction
 import pdfs
@@ -34,69 +34,62 @@ if __name__ == '__main__':
 
     inputArgs = sys.argv
 
-    mainscript_path = inputArgs[0]
-    mainscript_dir = os.path.split(mainscript_path)[0]
-    workdir_main = inputArgs[1]
-    workdir_template = inputArgs[2]
-    run_type = inputArgs[3]  # either "runningLocal" or "runningRemote"
+    mainscriptPath = os.path.abspath(inputArgs[0])
+    mainscriptDir = os.path.split(mainscriptPath)[0]
+    workdirMain = os.path.abspath(inputArgs[1])
+    workdirTemplate = os.path.abspath(inputArgs[2])
+    runType = inputArgs[3]  # either "runningLocal" or "runningRemote"
 
     MPI_size = None
-    # if run_type == "runningRemote":
-    #     from mpi4py import MPI
-    #     comm = MPI.COMM_WORLD
-    #     MPI_size = comm.Get_size()
-    #     print("\n\nRunning remote. MPI_size: {}\n\n".format(MPI_size))
+    parallelizeMCMC = True
 
     # Create a logFile for recording the output
-    logFile = open(os.path.join(workdir_main, "logFileTMCMC.txt"), "w")
+    logFile = open(os.path.join(workdirMain, "logFileTMCMC.txt"), "w")
     t1 = time.time()
     logFile.write("Starting analysis at: {}".format(time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())))
 
     # ======================================================================================================================
     logFile.write("\nRunning quoFEM's UCSD_UQ engine workflow")
     logFile.write('\nCWD: {}'.format(os.path.abspath('.')))
-    dakotaJsonLocation = os.path.join(os.path.abspath(workdir_template), "dakota.json")
+    dakotaJsonLocation = os.path.join(os.path.abspath(workdirTemplate), "dakota.json")
     logFile.write('\n\n==========================')
     logFile.write("\nParsing the json input file {}".format(dakotaJsonLocation))
-    (variablesList, numberOfSamples, seedval, resultsLocationUnused, resultsPathUnused, logLikelihoodDirectoryPath,
-     logLikelihoodFilename, calDataPathUnused, calDataFileName, edpList, writeOutputs) = parseDataFunction(dakotaJsonLocation,
-                                                                                                     logFile)
-    resultsLocation = os.path.abspath(workdir_main)
-    calDataPath = os.path.abspath(workdir_main)
-    resultsPath = os.path.abspath(workdir_main)
-    # logLikelihoodDirectoryPath = workdir_template
+
+    (variablesList, numberOfSamples, seedVal,
+     logLikeModule, calDataFileName, edpList, writeOutputs) = parseDataFunction(dakotaJsonLocation, logFile,
+                                                                                workdirMain, mainscriptDir)
 
     logFile.flush()
     os.fsync(logFile.fileno())
 
     # ======================================================================================================================
-    logFile.write('\n\n==========================')
-    logFile.write("\nProcessing log-likelihood script options")
-    # If loglikelihood script is provided, use that, otherwise, use default loglikelihood function
-    if len(logLikelihoodDirectoryPath) > 0:  # if the path is not an empty string
-        if os.path.exists(os.path.join(logLikelihoodDirectoryPath, logLikelihoodFilename)):
-            sys.path.append(logLikelihoodDirectoryPath)
-            logLikeModuleName = os.path.splitext(logLikelihoodFilename)[0]
-            logFile.write("\nUsing the user-supplied log-likelihood script: {}".format(
-                os.path.join(logLikelihoodDirectoryPath, logLikelihoodFilename)))
-        else:
-            logFile.write("\nERROR: The loglikelihood script {} cannot be found.".format(
-                os.path.join(logLikelihoodDirectoryPath, logLikelihoodFilename)))
-            raise FileNotFoundError("ERROR: The loglikelihood script {} cannot be found.".format(
-                os.path.join(logLikelihoodDirectoryPath, logLikelihoodFilename)))
-    else:
-        defaultLogLikeFileName = "defaultLogLikeScript.py"
-        defaultLogLikeDirectoryPath = mainscript_dir
-        sys.path.append(defaultLogLikeDirectoryPath)
-        logLikeModuleName = os.path.splitext(defaultLogLikeFileName)[0]
-        logFile.write("\nUsing the default loglikelihood script: {}".format(
-            os.path.join(defaultLogLikeDirectoryPath, defaultLogLikeFileName)))
-
-    logLikeModule = import_module(logLikeModuleName)
+    # logFile.write('\n\n==========================')
+    # logFile.write("\nProcessing log-likelihood script options")
+    # # If loglikelihood script is provided, use that, otherwise, use default loglikelihood function
+    # if len(logLikelihoodFilename) > 0:  # if the path is not an empty string
+    #     if os.path.exists(os.path.join(workdirMain, logLikelihoodFilename)):
+    #         sys.path.append(workdirMain)
+    #         logLikeModuleName = os.path.splitext(logLikelihoodFilename)[0]
+    #         logFile.write("\nUsing the user-supplied log-likelihood script: {}".format(
+    #             os.path.join(workdirMain, logLikelihoodFilename)))
+    #     else:
+    #         logFile.write("\nERROR: The loglikelihood script {} cannot be found.".format(
+    #             os.path.join(workdirMain, logLikelihoodFilename)))
+    #         raise FileNotFoundError("ERROR: The loglikelihood script {} cannot be found.".format(
+    #             os.path.join(workdirMain, logLikelihoodFilename)))
+    # else:
+    #     defaultLogLikeFileName = "defaultLogLikeScript.py"
+    #     defaultLogLikeDirectoryPath = mainscriptDir
+    #     sys.path.append(defaultLogLikeDirectoryPath)
+    #     logLikeModuleName = os.path.splitext(defaultLogLikeFileName)[0]
+    #     logFile.write("\nUsing the default loglikelihood script: {}".format(
+    #         os.path.join(defaultLogLikeDirectoryPath, defaultLogLikeFileName)))
+    #
+    # logLikeModule = import_module(logLikeModuleName)
 
     # ======================================================================================================================
-    logFile.write('\n\n==========================')
-    logFile.write('\nProcessing EDP definitions')
+    # logFile.write('\n\n==========================')
+    # logFile.write('\nProcessing EDP definitions')
     lineLength = 0
     edpNamesList = []
     edpLengthsList = []
@@ -105,20 +98,21 @@ if __name__ == '__main__':
         lineLength += edp["length"]
         edpNamesList.append(edp["name"])
         edpLengthsList.append(edp["length"])
-    logFile.write('\nThe EDPs defined are:')
-    printString = ""
-    for i in range(len(edpList)):
-        printString += "Name: '{}', Length: {}\n".format(edpNamesList[i], edpLengthsList[i])
-    logFile.write(printString)
-    logFile.write("\nExpected length of each line in data file: {}".format(lineLength))
+
+    # logFile.write('\nThe EDPs defined are:')
+    # printString = ""
+    # for i in range(len(edpList)):
+    #     printString += "Name: '{}', Length: {}\n".format(edpNamesList[i], edpLengthsList[i])
+    # logFile.write(printString)
+    # logFile.write("\nExpected length of each line in data file: {}".format(lineLength))
 
     # # ======================================================================================================================
     # # Process calibration data file
     # logFile.write('\n\n==========================')
     # logFile.write('\nProcessing calibration data file')
-    # calDataFile = os.path.join(calDataPath, calDataFileName)
+    # calDataFile = os.path.join(workdirMain, calDataFileName)
     # logFile.write("\nCalibration data file being processed: {}\n".format(calDataFile))
-    # tempCalDataFile = os.path.join(workdir_template, "quoFEMTempCalibrationDataFile.cal")
+    # tempCalDataFile = os.path.join(workdirTemplate, "quoFEMTempCalibrationDataFile.cal")
     # f1 = open(tempCalDataFile, "w")
     # numExperiments = 0
     # linenum = 0
@@ -153,14 +147,21 @@ if __name__ == '__main__':
 
     # ======================================================================================================================
     # Process calibration data file
-    logFile.write('\n\n==========================')
-    logFile.write('\nProcessing calibration data file')
-    # calDataFile = os.path.join(calDataPath, calDataFileName) #TODO: check if this is ok
-    calDataFile = os.path.join(workdir_main, calDataFileName)
-    logFile.write("\nCalibration data file being processed: {}\n".format(calDataFile))
-    tempCalDataFile = os.path.join(workdir_main, "quoFEMTempCalibrationDataFile.cal")
+    # logFile.write('\n\n==========================')
+    # logFile.write('\nProcessing calibration data file')
+    # calDataFile = os.path.join(workdirMain, calDataFileName) #TODO: check if this is ok
+
+    # # Copy the calibration data file to the workdirMain
+    # src = os.path.join(workdirMain, calDataFileName)
+    # dst = os.path.join(workdirMain, calDataFileName)
+    # copyfile(src, dst)
+
+    # calDataFile = dst
+    calDataFile = os.path.join(workdirMain, calDataFileName)
+    logFile.write("\n\nCalibration data file being processed: {}\n".format(calDataFile))
+    tempCalDataFile = os.path.join(workdirMain, "quoFEMTempCalibrationDataFile.cal")
     f1 = open(tempCalDataFile, "w")
-    logFile.write("\n\nCreating headings")
+    logFile.write("\n\tCreating headings")
     headings = "Exp_num interface "
     for i, edpName in enumerate(edpNamesList):
         if edpLengthsList[i] == 1:
@@ -168,6 +169,7 @@ if __name__ == '__main__':
         else:
             for comp in range(edpLengthsList[i]):
                 headings += "{}_{} ".format(edpName, comp + 1)
+    logFile.write("\n\t\tThe headings are: {}".format(headings))
     f1.write(headings)
     interface = 1
     numExperiments = 0
@@ -186,7 +188,7 @@ if __name__ == '__main__':
                     tempLine = "\n{} {} ".format(numExperiments, interface)
                     for w in words:
                         tempLine += "{} ".format(w)
-                    logFile.write("\nLine {}, length {}: {}".format(linenum, len(words), tempLine))
+                    logFile.write("\n\tLine {}, length {}: \t\t{}".format(linenum, len(words), tempLine))
                     f1.write(tempLine)
                     # if numExperiments == 0:
                     #     f1.write(tempLine)
@@ -203,18 +205,25 @@ if __name__ == '__main__':
     f1.close()
 
     # Read in the calibration data
-    calibrationData = np.atleast_2d(np.genfromtxt(tempCalDataFile, skip_header=1, usecols=np.arange(2, 2+lineLength)))
-    logFile.write(
-        "\nFinished reading in calibration data. Shape of calibration data: {}\n".format(np.shape(calibrationData)))
-    logFile.write('\nThe number of experiments: {}'.format(np.shape(calibrationData)[0]))
-    logFile.write('\nThe number of calibration terms per experiment: {}'.format(np.shape(calibrationData)[1]))
+    calibrationData = np.atleast_2d(np.genfromtxt(tempCalDataFile, skip_header=1, usecols=np.arange(2, 2 + lineLength)))
+    # logFile.write(
+    #     "\nFinished reading in calibration data. Shape of calibration data: {}\n".format(np.shape(calibrationData)))
+    # logFile.write('\nThe number of experiments: {}'.format(np.shape(calibrationData)[0]))
+    # logFile.write('\nThe number of calibration terms per experiment: {}'.format(np.shape(calibrationData)[1]))
 
     # Compute the normalizing factors - absolute maximum of the data for each response variable
+    logFile.write("\n\nFor numerical convenience, a transformation is applied to the calibration data and model "
+                  "prediction corresponding to each response quantity. \nThe calibration data and model prediction for "
+                  "each response variable will first be shifted (a scalar value will be added to the data and "
+                  "prediction) and then scaled (the data and prediction will be divided by a positive scalar value).")
     logFile.write(
-        "\nComputing normalizing factors. The normalizing factors used are the absolute maximum of the data for each "
-        "response variable. The data and the prediction will be divided by the normalizing factors.")
-    locShiftList = []
-    normalizingFactors = []
+        "\n\nComputing scale and shift factors. "
+        "\n\tThe shift factors are set to 0.0 by default."
+        "\n\tThe scale factors used are the absolute maximum of the data for each response variable."
+        "\n\tIf the absolute maximum of the data for any response variable is 0.0, then the scale factor is set to "
+        "1.0, and the shift factor is set to 1.0.")
+    shiftFactors = []
+    scaleFactors = []
     currentPosition = 0
     locShift = 0.0
     for j in range(len(edpList)):
@@ -223,20 +232,18 @@ if __name__ == '__main__':
         if absMax == 0:  # This is to handle the case if abs max of data = 0.
             locShift = 1.0
             absMax = 1.0
-        locShiftList.append(locShift)
-        normalizingFactors.append(absMax)
+        shiftFactors.append(locShift)
+        scaleFactors.append(absMax)
         calibrationDataSlice += locShift
         calibrationData[:, currentPosition:currentPosition + edpLengthsList[j]] = calibrationDataSlice / absMax
         currentPosition += edpLengthsList[j]
-    logFile.write("\nNormalized calibration data: \n{}".format(calibrationData))
 
-    logFile.write("\nThe normalizing factors computed are: ")
+    logFile.write("\n\tThe scale and shift factors computed are: ")
     for j in range(len(edpList)):
-        logFile.write("\nEDP: {}, normalizing factor: {}".format(edpNamesList[j], normalizingFactors[j]))
+        logFile.write("\n\t\tEDP: {}, scale factor: {}, shift factor: {}".format(edpNamesList[j], scaleFactors[j],
+                                                                                 shiftFactors[j]))
 
-    logFile.write("\n\nThe locShift values are: ")
-    for j in range(len(edpList)):
-        logFile.write("\nEDP: {}, locShift: {}".format(edpNamesList[j], locShiftList[j]))
+    logFile.write("\n\nThe transformed calibration data: \n{}".format(calibrationData))
 
     # ======================================================================================================================
     # Processing covariance matrix options
@@ -245,28 +252,28 @@ if __name__ == '__main__':
     logFile.write('\nOne variance value or covariance matrix will be used per response quantity per experiment.')
     logFile.write('\nIf the user does not supply variance or covariance data, a default variance value will be\n'
                   'used per response quantity, which is constant across experiments. The default variance is\n'
-                  'computed as the variance of the normalized data, if there is data from more than one experiment. \n'
+                  'computed as the variance of the transformed data, if there is data from more than one experiment. \n'
                   'If there is data from only one experiment, then a default variance value is computed by \n'
                   'assuming that the standard deviation of the error is 5% of the absolute maximum value of \n'
-                  'the corresponding normalized response data.')
+                  'the corresponding transformed response data.')
 
     # For each response variable, compute the variance of the data. These will be the default error variance
     # values used in the calibration process. Values of the multiplier on these default error variance values will be
     # calibrated. There will be one such error variance value per response quantity. If there is only data from one
     # experiment,then the default error std.dev. value is assumed to be 5% of the absolute maximum value of the data
     # corresponding to that response quantity.
-    scaleFactors = np.zeros_like(edpNamesList, dtype=float)
+    defaultErrorVariances = np.zeros_like(edpNamesList, dtype=float)
     if np.shape(calibrationData)[0] > 1:  # if there are more than 1 rows of data, i.e. data from multiple experiments
         currentIndex = 0
         for i in range(len(edpNamesList)):
             dataSlice = calibrationData[:, currentIndex:currentIndex + edpLengthsList[i]]
-            scaleFactors[i] = np.nanvar(dataSlice)
+            defaultErrorVariances[i] = np.nanvar(dataSlice)
             currentIndex += edpLengthsList[i]
     else:
         currentIndex = 0
         for i in range(len(edpNamesList)):
             dataSlice = calibrationData[:, currentIndex:currentIndex + edpLengthsList[i]]
-            scaleFactors[i] = (0.05 * np.max(np.absolute(dataSlice))) ** 2
+            defaultErrorVariances[i] = (0.05 * np.max(np.absolute(dataSlice))) ** 2
             currentIndex += edpLengthsList[i]
 
     # Create the covariance matrix
@@ -279,16 +286,21 @@ if __name__ == '__main__':
         for i, edpName in enumerate(edpNamesList):
             logFile.write('\n\tEDP: {}'.format(edpName))
             covarianceFileName = "{}.{}.sigma".format(edpName, expNum)
-            # covarianceFile = os.path.join(calDataPath, covarianceFileName)  #TODO: Check if this needs to be fixed
-            covarianceFile = os.path.join(workdir_main, covarianceFileName)
+            covarianceFile = os.path.join(workdirMain, covarianceFileName)  # TODO: Check if this needs to be fixed
             logFile.write(
                 "\n\t\tChecking to see if user-supplied file '{}' exists in '{}'".format(covarianceFileName,
-                                                                                         calDataPath))
+                                                                                         workdirMain))
             if os.path.isfile(covarianceFile):
                 logFile.write("\n\t\tFound a user supplied file.")
+                if runType == "runningLocal":
+                    src = covarianceFile
+                    dst = os.path.join(workdirMain, covarianceFileName)
+                    logFile.write("\n\t\tCopying user-supplied covariance file from {} to {}".format(src, dst))
+                    copyfile(src, dst)
+                    covarianceFile = dst
                 logFile.write("\n\t\tReading in user supplied covariance matrix from file: '{}'".format(covarianceFile))
                 # Check the data in the covariance matrix file
-                tmpCovFile = os.path.join(calDataPath, "quoFEMTempCovMatrixFile.sigma")
+                tmpCovFile = os.path.join(workdirMain, "quoFEMTempCovMatrixFile.sigma")
                 numRows = 0
                 numCols = 0
                 linenum = 0
@@ -381,7 +393,7 @@ if __name__ == '__main__':
             else:
                 logFile.write("\n\t\tDid not find a user supplied file. Using the default variance value.")
                 logFile.write("\n\t\tThe covariance matrix is an identity matrix multiplied by this value.")
-                scalarVariance = np.array(scaleFactors[i])
+                scalarVariance = np.array(defaultErrorVariances[i])
                 covarianceMatrixList.append(scalarVariance)
                 covarianceTypeList.append('scalar')
                 logFile.write("\n\t\tCovariance matrix: {}".format(scalarVariance))
@@ -391,12 +403,12 @@ if __name__ == '__main__':
     logFile.write('\n\n==========================')
     logFile.write('\nSetting up the TMCMC algorithm')
 
-    sys.path.append(resultsPath)
-    logFile.write("\n\tResults path: {}".format(resultsPath))
+    # sys.path.append(workdirMain)
+    logFile.write("\n\tResults path: {}".format(workdirMain))
 
     # set the seed
-    np.random.seed(seedval)
-    logFile.write("\n\tSeed: {}".format(seedval))
+    np.random.seed(seedVal)
+    logFile.write("\n\tSeed: {}".format(seedVal))
 
     # number of particles: Np
     Np = numberOfSamples
@@ -494,8 +506,9 @@ if __name__ == '__main__':
 
         # if __name__ == '__main__':
         mytrace = RunTMCMC(Np, AllPars, Nm_steps_max, Nm_steps_maxmax, logLikeModule.log_likelihood, variables,
-                           resultsLocation, seedval, calibrationData, numExperiments, covarianceMatrixList,
-                           edpNamesList, edpLengthsList, normalizingFactors, locShiftList, run_type, logFile, MPI_size)
+                           workdirMain, seedVal, calibrationData, numExperiments, covarianceMatrixList,
+                           edpNamesList, edpLengthsList, scaleFactors, shiftFactors, runType, logFile, MPI_size,
+                           parallelizeMCMC)
         logFile.write('\n\n\t==========================')
         logFile.write('\n\tTMCMC algorithm finished running')
         logFile.write('\n\t==========================')
@@ -523,7 +536,7 @@ if __name__ == '__main__':
         #     dataToWrite = mytrace[i][0]
         #
         #     stringToAppend = 'resultsStage{}.csv'.format(i)
-        #     resultsFilePath = os.path.join(os.path.abspath(resultsLocation), stringToAppend)
+        #     resultsFilePath = os.path.join(os.path.abspath(workdirMain), stringToAppend)
         #
         #     with open(resultsFilePath, 'w', newline='') as csvfile:
         #         csvWriter = csv.writer(csvfile)
@@ -532,7 +545,7 @@ if __name__ == '__main__':
 
         # Write the results of the last stage to a file named dakotaTab.out for quoFEM to be able to read the results
         logFile.write("\n\n\t\tWriting posterior samples to 'dakotaTab.out' for quoFEM to read the results")
-        tabFilePath = os.path.join(resultsLocation, "dakotaTab.out")
+        tabFilePath = os.path.join(workdirMain, "dakotaTab.out")
 
         # Create the headings, which will be the first line of the file
         logFile.write("\n\t\t\tCreating headings")
@@ -560,8 +573,8 @@ if __name__ == '__main__':
                 for j in range(len(variables['names'])):
                     string += "{}\t".format(dataToWrite[i, j])
                 if writeOutputs:  # write the output data
-                    analysisNumString = ("workdir." + str(i))
-                    prediction = np.atleast_2d(np.genfromtxt(os.path.join(workdir_main, analysisNumString,
+                    analysisNumString = ("workdir." + str(i + 1))
+                    prediction = np.atleast_2d(np.genfromtxt(os.path.join(workdirMain, analysisNumString,
                                                                           'results.out'))).reshape((1, -1))
                     for predNum in range(np.shape(prediction)[1]):
                         string += "{}\t".format(prediction[0, predNum])
@@ -578,8 +591,8 @@ if __name__ == '__main__':
         # Delete Analysis Folders
 
         # for analysisNumber in range(0, Np):
-        #     stringToAppend = ("workdir." + str(analysisNumber))
-        #     analysisLocation = os.path.join(resultsLocation, stringToAppend)
+        #     stringToAppend = ("workdir." + str(analysisNumber + 1))
+        #     analysisLocation = os.path.join(workdirMain, stringToAppend)
         #     # analysisPath = Path(analysisLocation)
         #     analysisPath = os.path.abspath(analysisLocation)
         #     shutil.rmtree(analysisPath)
@@ -597,7 +610,7 @@ if __name__ == '__main__':
 
     # ======================================================================================================================
     logFile.write("\nUCSD_UQ engine workflow complete!\n")
-    logFile.write("\nTime taken: {:0.2f} minutes".format((time.time() - t1) / 60))
+    logFile.write("\nTime taken: {:0.2f} minutes\n\n".format((time.time() - t1) / 60))
 
     logFile.flush()
     os.fsync(logFile.fileno())
