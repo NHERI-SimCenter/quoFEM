@@ -149,7 +149,7 @@ if __name__ == '__main__':
     # Process calibration data file
     # logFile.write('\n\n==========================')
     # logFile.write('\nProcessing calibration data file')
-    # calDataFile = os.path.join(workdirMain, calDataFileName) #TODO: check if this is ok
+    # calDataFile = os.path.join(workdirMain, calDataFileName)
 
     # # Copy the calibration data file to the workdirMain
     # src = os.path.join(workdirMain, calDataFileName)
@@ -286,7 +286,7 @@ if __name__ == '__main__':
         for i, edpName in enumerate(edpNamesList):
             logFile.write('\n\tEDP: {}'.format(edpName))
             covarianceFileName = "{}.{}.sigma".format(edpName, expNum)
-            covarianceFile = os.path.join(workdirMain, covarianceFileName)  # TODO: Check if this needs to be fixed
+            covarianceFile = os.path.join(workdirMain, covarianceFileName)
             logFile.write(
                 "\n\t\tChecking to see if user-supplied file '{}' exists in '{}'".format(covarianceFileName,
                                                                                          workdirMain))
