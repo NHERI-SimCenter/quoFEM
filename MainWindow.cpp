@@ -1090,7 +1090,8 @@ void MainWindow::onRemoteRunButtonClicked(){
         // create template dir for other type of fem app to put stuff
         tmpSimCenterDirectory.mkpath(tmpDirectory);
     }
-
+    random->copyFiles(tmpDirectory);
+    uq->copyFiles(tmpDirectory);
 
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
