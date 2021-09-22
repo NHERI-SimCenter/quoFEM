@@ -283,9 +283,44 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
     this->clear();
 
     //
-    // open Dakota output file
+    // check it actually ran with no errors
     //
 
+    QFileInfo fileTabInfo(filenameTab);
+    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
+
+    QFileInfo filenameErrorInfo(filenameErrorString);
+    if (!filenameErrorInfo.exists()) {
+        errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applications failed with inputs provided");
+    return 0;
+    }
+
+
+    QFileInfo filenameTabInfo(filenameTab);
+    if (!filenameTabInfo.exists()) {
+        errorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        return 0;
+    }
+
+
+    QFile fileError(filenameErrorString);
+    QString line("");
+    if (fileError.open(QIODevice::ReadOnly)) {
+       QTextStream in(&fileError);
+       while (!in.atEnd()) {
+          line = in.readLine();
+       }
+       fileError.close();
+    }
+
+    if (line.length() != 0) {
+        errorMessage(QString(QString("Error Running Dakota: ") + line));
+        return 0;
+    }
+
+    //
+    // open Dakota output file
+    //
 
     std::ifstream fileResults(filenameResults.toStdString().c_str());
     if (!fileResults.is_open()) {
@@ -370,11 +405,11 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
 
     //spreadsheet = new MyTableWidget();
 
-    QFileInfo filenameTabInfo(filenameTab);
-    if (!filenameTabInfo.exists()) {
-        errorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
-        return 0;
-    }
+//    QFileInfo filenameTabInfo(filenameTab);
+//    if (!filenameTabInfo.exists()) {
+//        errorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+//        return 0;
+//    }
 
     // If surrogate model is used, display additional info.
     QDir tempFolder(filenameTabInfo.absolutePath());
