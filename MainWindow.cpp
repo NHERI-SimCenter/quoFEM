@@ -936,7 +936,12 @@ void MainWindow::onRunButtonClicked() {
     //
 
     QString python("python");
-    QSettings settings("SimCenter", "quoFEM");
+    #ifdef USE_SIMCENTER_PYTHON
+        QSettings settings("SimCenter", QCoreApplication::applicationName()));
+    #else
+        QSettings settings("SimCenter", "Common");
+    #endif
+
     QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid())
       python = pythonLocationVariant.toString();
@@ -1202,11 +1207,15 @@ void MainWindow::onRemoteRunButtonClicked(){
     QString femApp = appDIR +  QDir::separator() + femProgramToExe;
 
     //
-    // invoke the fem aplication to create workflow driver
+    // invoke the fem application to create workflow driver
     //
 
     QString python("python");
+#ifdef USE_SIMCENTER_PYTHON
+    QSettings settings("SimCenter", QCoreApplication::applicationName()));
+#else
     QSettings settings("SimCenter", "Common");
+#endif
     QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid())
       python = pythonLocationVariant.toString();
