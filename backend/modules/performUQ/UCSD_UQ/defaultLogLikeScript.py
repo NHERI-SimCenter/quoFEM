@@ -91,7 +91,7 @@ def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrix
             covListIndex += 1
 
             # Multiply the covariance matrix by the value of the covariance multiplier
-            cov *= covarianceMultiplierList[j]
+            cov = cov * covarianceMultiplierList[j]
 
             if np.shape(cov)[0] == np.shape(cov)[1] == 1:
                 # If there is a single variance value that is constant for all residual terms, then this is the case of
