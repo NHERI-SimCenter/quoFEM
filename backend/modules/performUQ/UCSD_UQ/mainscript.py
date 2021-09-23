@@ -41,6 +41,11 @@ if __name__ == '__main__':
     runType = inputArgs[3]  # either "runningLocal" or "runningRemote"
 
     MPI_size = None
+    if runType == "runningRemote":
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+        MPI_size = comm.Get_size()
+
     parallelizeMCMC = True
 
     # Create a logFile for recording the output
@@ -616,5 +621,8 @@ if __name__ == '__main__':
     os.fsync(logFile.fileno())
 
     logFile.close()
+
+    if runType == "runningRemote":
+        comm.Abort(0)
 
     # ======================================================================================================================
