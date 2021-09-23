@@ -133,7 +133,7 @@ int main(int argc, const char **argv) {
 
     dpreproCommand = remoteDir + std::string("/applications/performUQ/templateSub/simCenterSub");
     openSeesCommand = std::string("/home1/00477/tg457427/bin/OpenSees");
-    pythonCommand = std::string("python");
+    pythonCommand = std::string("python3");
   }
 
 
