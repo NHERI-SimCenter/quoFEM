@@ -81,6 +81,8 @@ DakotaResultsBayesianCalibration::DakotaResultsBayesianCalibration(int numBurn, 
     : UQ_Results(parent)
 {
     // title & add button
+
+    theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
 
@@ -323,7 +325,7 @@ int DakotaResultsBayesianCalibration::processResults(QString &filenameResults, Q
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applications failed with inputs provided");
 	return 0;
     }
 

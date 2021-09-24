@@ -58,7 +58,8 @@ public:
     void setGPVarNamesAndValues(QStringList theList);
     QStringList getParametereNames(void);
     void setCorrelationDisabled(bool tog);
-
+    void copyFiles(QString fileName);
+    int getNumRandomVariables(void);
     void clear(void);
 
 signals:

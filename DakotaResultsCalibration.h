@@ -54,7 +54,7 @@ class DakotaResultsCalibration : public UQ_Results
 {
     Q_OBJECT
 public:
-    explicit DakotaResultsCalibration(QWidget *parent = 0);
+    explicit DakotaResultsCalibration(RandomVariablesContainer * theRVs, QWidget *parent = 0);
     ~DakotaResultsCalibration();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -69,10 +69,13 @@ public slots:
    void clear(void);
 
 private:
+   RandomVariablesContainer *theRVs;
+
    QTabWidget *tabWidget;
    QTextEdit  *dakotaText;
    MyTableWidget *spreadsheet;
    QChart *chart;
+   ResultsDataChart* theDataTable;
 
    int col1, col2;
    bool mLeft;
@@ -84,7 +87,7 @@ private:
    QWidget *summary;
    QVBoxLayout *summaryLayout;
 
-   ResultsDataChart* theDataTable;
+   bool isSurrogate;
 };
 
 #endif // DAKOTA_RESULTS_CALIBRATION_H

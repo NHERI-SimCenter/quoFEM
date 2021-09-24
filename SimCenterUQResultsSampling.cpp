@@ -97,6 +97,7 @@ SimCenterUQResultsSampling::SimCenterUQResultsSampling(RandomVariablesContainer 
   : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
+    theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
 }
@@ -196,7 +197,7 @@ int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        errorMessage("No dakota.err file - SimCenterUQ did not run - problem with SimCenterUQ setup or the applicatins failed with inputs provied");
+        errorMessage("No dakota.err file - SimCenterUQ did not run - problem with SimCenterUQ setup or the applications failed with inputs provided");
         return 0;
     }
     QFile fileError(filenameErrorString);
@@ -221,6 +222,17 @@ int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString
         return 0;
     }
 
+
+    // If surrogate model is used, display additional info.
+    QDir tempFolder(filenameTabInfo.absolutePath());
+    QFileInfo surrogateTabInfo(tempFolder.filePath("surrogateTab.out"));
+    if (surrogateTabInfo.exists()) {
+        filenameTab = tempFolder.filePath("surrogateTab.out");
+        isSurrogate = true;
+    } else {
+        isSurrogate = false;
+    }
+
     //
     // create summary, a QWidget for summary data, the EDP name, mean, stdDev, kurtosis info
     //
@@ -242,7 +254,7 @@ int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString
     // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
 
-    theDataTable = new ResultsDataChart(filenameTab);
+    theDataTable = new ResultsDataChart(filenameTab, isSurrogate, theRVs->getNumRandomVariables());
 
     //
     // determine summary statistics for each edp
@@ -280,6 +292,7 @@ SimCenterUQResultsSampling::outputToJSON(QJsonObject &jsonObject)
 
 
     jsonObject["resultType"]=QString(tr("SimCenterUQResultsSampling"));
+    jsonObject["isSurrogate"]=isSurrogate;
 
     //
     // add summary data
@@ -355,7 +368,15 @@ SimCenterUQResultsSampling::inputFromJSON(QJsonObject &jsonObject)
 
     sa->setWidget(summary);
 
-    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+    if (jsonObject.contains("isSurrogate")) { // no saving of analysis data
+        isSurrogate=jsonObject["isSurrogate"].toBool();
+    } else {
+        isSurrogate=false;
+    }
+
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
+
+//    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
 
     //
     // determine summary statistics for each edp

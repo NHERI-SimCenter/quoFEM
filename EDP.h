@@ -62,6 +62,9 @@ public:
 
     bool isSelectedForRemoval(void);
 
+    QLineEdit *variableName;
+    QLineEdit *varLength;
+
 signals:
 
 public slots:
@@ -69,8 +72,8 @@ public slots:
 private:
    // EDPData *theData;
     QRadioButton *button;
-    QLineEdit *variableName;
-    QLineEdit *varLength;
+//    QLineEdit *variableName;
+//    QLineEdit *varLength;
 //    QLineEdit *varNumIndCoords;
 //    QLineEdit *varExperimentVarianceType;
     QHBoxLayout *mainLayout;

@@ -100,7 +100,7 @@
       },
       {
         "Name": "Custom",
-        "ExecutablePath": "",
+        "ExecutablePath": "applications/performSIM/Custom/createCustomDriver",
         "ApplicationSpecificInputs": []
       }	,
       {

@@ -65,7 +65,7 @@ public:
     int parseInputDataForRV(QString name1);
     int parseOutputDataForQoI(QString name1);
     int numSamples;
-
+    bool copyFiles(QString &fileDir);
 public slots:
     void setOutputDir(bool tog);
     void doAdvancedGP(bool tog);
@@ -94,7 +94,7 @@ private:
     QCheckBox * theNugCheckBox;
     QLineEdit * theNuggetVals;
     QLabel * theNuggetLabel;
-
+    QLabel * theNuggetMsg;
     InputWidgetParameters *theParameters;
     InputWidgetEDP *theEdpWidget;
     InputWidgetFEM *theFemWidget;

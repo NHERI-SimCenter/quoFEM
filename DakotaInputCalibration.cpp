@@ -264,13 +264,16 @@ DakotaInputCalibration::processResults(QString &filenameResults, QString &filena
 
 UQ_Results *
 DakotaInputCalibration::getResults(void) {
-  return new DakotaResultsCalibration();
+  return new DakotaResultsCalibration(theRandomVariables);
+  //return new DakotaResultsCalibration();
 }
 
 RandomVariablesContainer *
 DakotaInputCalibration::getParameters(void) {
   QString classType("Design");
-  return new RandomVariablesContainer(classType,QString("Dakota"));
+  theRandomVariables =  new RandomVariablesContainer(classType,QString("Dakota"));
+  return theRandomVariables;
+  //return new RandomVariablesContainer(classType,QString("Dakota"));
 }
 
 QString

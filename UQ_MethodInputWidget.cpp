@@ -49,7 +49,12 @@ UQ_MethodInputWidget::~UQ_MethodInputWidget()
 
 }
 
-
+bool
+UQ_MethodInputWidget::copyFiles(QString &destDir)
+{
+    Q_UNUSED(destDir);
+    return true;
+}
 
 
 

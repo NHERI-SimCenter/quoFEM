@@ -48,6 +48,10 @@ class UQ_Results;
 class RandomVariablesContainer;
 class UQ_MethodInputWidget;
 
+class InputWidgetEDP;
+class InputWidgetParameters;
+class InputWidgetFEM;
+
 
 class UCSD_Engine : public UQ_Engine
 {
@@ -55,7 +59,7 @@ class UCSD_Engine : public UQ_Engine
 
 public:
 
-    explicit UCSD_Engine(QWidget *parent = 0);
+    explicit UCSD_Engine(InputWidgetParameters *param, InputWidgetFEM *femWidget,InputWidgetEDP *edpWidget, QWidget *parent = 0);
     virtual ~UCSD_Engine();
 
     int getMaxNumParallelTasks(void);
@@ -71,6 +75,8 @@ public:
     QString getProcessingScript();
     QString getMethodName();
 
+    bool copyFiles(QString &fileName);
+
 signals:
     void onMethodChanged(void);
 
@@ -83,6 +89,10 @@ private:
    UQ_MethodInputWidget *theCurrentMethod;
    UQ_MethodInputWidget *theTMMC;
   RandomVariablesContainer *theRandomVariables;
+
+  InputWidgetParameters *theParameters;
+  InputWidgetFEM *theFemWidget;
+  InputWidgetEDP *theEdpWidget;
 };
 
 #endif // UCSD_ENGINE_H

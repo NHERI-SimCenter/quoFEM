@@ -53,8 +53,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <UCSD_TMMC.h>
 
-UCSD_Engine::UCSD_Engine(QWidget *parent)
-: UQ_Engine(parent), theCurrentMethod(0)
+UCSD_Engine::UCSD_Engine(InputWidgetParameters *param,InputWidgetFEM *femWidget,InputWidgetEDP *edpWidget, QWidget *parent)
+: UQ_Engine(parent), theCurrentMethod(0), theParameters(param), theFemWidget(femWidget), theEdpWidget(edpWidget)
 {
 
     QString classType("Uncertain");
@@ -88,7 +88,7 @@ UCSD_Engine::UCSD_Engine(QWidget *parent)
     // create the individual widgets add to stacked widget
     //
 
-    theTMMC = new UCSD_TMMC();
+    theTMMC = new UCSD_TMMC(theParameters, theFemWidget, theEdpWidget);
     theStackedWidget->addWidget(theTMMC);
 
     layout->addWidget(theStackedWidget);
@@ -202,4 +202,9 @@ UCSD_Engine::getProcessingScript() {
 QString
 UCSD_Engine::getMethodName() {
     return QString("UCSD");
+}
+
+bool
+UCSD_Engine::copyFiles(QString &fileName) {
+    return theCurrentMethod->copyFiles(fileName);
 }

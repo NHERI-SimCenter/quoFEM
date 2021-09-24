@@ -108,6 +108,14 @@ MainWindow::errorMessage(const QString msg){
 
     progressDialog->appendErrorMessage(msg);  
 }
+void
+MainWindow::statusMessage(const QString msg){
+
+    if(msg.isEmpty())
+        return;
+
+    progressDialog->appendText(msg);
+}
 
 void
 MainWindow::fatalMessage(const QString msg){
@@ -223,7 +231,7 @@ MainWindow::MainWindow(QWidget *parent)
     random->setParametersWidget(uq->getParameters());
 
 
-    connect(uq, SIGNAL(onNumModelsChanged(int)), fem, SLOT(numModelsChanged(int)));
+    //connect(uq, SIGNAL(onNumModelsChanged(int)), fem, SLOT(numModelsChanged(int)));
     // create selection widget & add the input widgets
     results = new UQ_Results();
 
@@ -699,7 +707,7 @@ MainWindow::runApplication(QString program, QStringList args) {
 void MainWindow::onRunButtonClicked() {
 
     GoogleAnalytics::ReportLocalRun();
-
+    statusMessage("Running Analysis..");
     //
     // get program & input file from fem widget
     //
@@ -768,7 +776,12 @@ void MainWindow::onRunButtonClicked() {
         // create template dir for other type of fem app to put stuff
         tmpSimCenterDirectory.mkpath(templateDirectory);
     }
+    random->copyFiles(templateDirectory);
+    uq->copyFiles(templateDirectory);
 
+    //
+    // copy files required in RV tab if any
+    //
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
     //
@@ -923,7 +936,12 @@ void MainWindow::onRunButtonClicked() {
     //
 
     QString python("python");
-    QSettings settings("SimCenter", "Common");
+    #ifdef USE_SIMCENTER_PYTHON
+        QSettings settings("SimCenter", QCoreApplication::applicationName());
+    #else
+        QSettings settings("SimCenter", "Common");
+    #endif
+
     QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid())
       python = pythonLocationVariant.toString();
@@ -1072,7 +1090,8 @@ void MainWindow::onRemoteRunButtonClicked(){
         // create template dir for other type of fem app to put stuff
         tmpSimCenterDirectory.mkpath(tmpDirectory);
     }
-
+    random->copyFiles(tmpDirectory);
+    uq->copyFiles(tmpDirectory);
 
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
@@ -1189,11 +1208,15 @@ void MainWindow::onRemoteRunButtonClicked(){
     QString femApp = appDIR +  QDir::separator() + femProgramToExe;
 
     //
-    // invoke the fem aplication to create workflow driver
+    // invoke the fem application to create workflow driver
     //
 
     QString python("python");
+#ifdef USE_SIMCENTER_PYTHON
+    QSettings settings("SimCenter", QCoreApplication::applicationName());
+#else
     QSettings settings("SimCenter", "Common");
+#endif
     QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid())
       python = pythonLocationVariant.toString();
@@ -1371,13 +1394,10 @@ void MainWindow::onExitButtonClicked(){
 }
 
 void MainWindow::onUQ_EngineChanged(bool abilityToRunRemote) {
-
     qDebug() << "onUQENGINECHANGED " << abilityToRunRemote;
     runDesignSafeButton->setDisabled(!abilityToRunRemote);
-    random->setParametersWidget(uq->getParameters());
-
+    random->setParametersWidget(uq->getParameters()); // May give error in results tab if removed..
 }
-
 
 bool MainWindow::save()
 {
@@ -1626,6 +1646,7 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
     results->setResultWidget(result);
     
     inputWidget->setSelection(QString("RES"));
+
 }
 
 void MainWindow::createActions() {
@@ -1643,7 +1664,6 @@ void MainWindow::createActions() {
     connect(saveAction, &QAction::triggered, this, &MainWindow::save);
     fileMenu->addAction(saveAction);
 
-
     QAction *saveAsAction = new QAction(tr("&Save As"), this);
     saveAction->setStatusTip(tr("Save the document with new filename to disk"));
     connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
@@ -1657,6 +1677,7 @@ void MainWindow::createActions() {
     // exitAction->setShortcuts(QKeySequence::Quit);
     exitAction->setStatusTip(tr("Exit the application"));
     fileMenu->addAction(exitAction);
+    fileMenu->addSeparator();
 
 
     // Show progress dialog
@@ -1666,7 +1687,7 @@ void MainWindow::createActions() {
     
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 
-    QAction *preferencesAct = helpMenu->addAction(tr("&Preferences"), this, &MainWindow::preferences);
+    QAction *preferencesAct = fileMenu->addAction(tr("&Preferences"), this, &MainWindow::preferences);
     QAction *versionAct = helpMenu->addAction(tr("&Version"), this, &MainWindow::version);
     QAction *aboutAct = helpMenu->addAction(tr("&About"), this, &MainWindow::about);
     //aboutAct->setStatusTip(tr("Show the application's About box"));
@@ -1785,7 +1806,9 @@ void MainWindow::copyright()
       ";
 
 
-         QMessageBox msgBox;
+    QMessageBox msgBox;
+    msgBox.setTextInteractionFlags(Qt::TextSelectableByMouse);
+
     QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     msgBox.setText(textCopyright);
     QGridLayout *layout = (QGridLayout*)msgBox.layout();
@@ -1868,9 +1891,11 @@ void MainWindow::cite()
 {
   QString citeText = QString("Frank McKenna, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Michael Gardner, & Nikhil Padhye. (2021, May 21). NHERI-SimCenter/quoFEM: Version 2.3.0 (Version v2.3.0). Zenodo. http://doi.org/10.5281/zenodo.4780588");
     QMessageBox msgBox;
+    msgBox.setTextInteractionFlags(Qt::TextSelectableByMouse);
     QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     msgBox.setText(citeText);
     QGridLayout *layout = (QGridLayout*)msgBox.layout();
+
     layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
     msgBox.exec();
 }
