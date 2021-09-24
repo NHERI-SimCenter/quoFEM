@@ -64,6 +64,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include  <QDebug>
 #include "AgaveCurl.h"
+#include <ZipUtils.h>
+
 #include <MainWindow.h>
 
 RemoteJobManager::RemoteJobManager(AgaveCurl *theRemoteInterface, MainWindow *theMain, QWidget *parent)
@@ -312,32 +314,35 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
 	  }
 	
         name1 = localDir + QDir::separator() + QString("dakota.json");
-        name2 = localDir + QDir::separator() + QString("dakota.out");
-        name3 = localDir + QDir::separator() + QString("dakotaTab.out");
-        name4 = localDir + QDir::separator() + QString("dakota.err");;
-        name5 = localDir + QDir::separator() + QString("dakota_mcmc_tabular.dat");;
+	name2 = localDir + QDir::separator() + QString("results.zip");
+	name3 = localDir;
+	
+	//        name3 = localDir + QDir::separator() + QString("dakotaTab.out");
+	//        name4 = localDir + QDir::separator() + QString("dakota.err");;
+	//        name5 = localDir + QDir::separator() + QString("dakota_mcmc_tabular.dat");;
 
         QStringList localFiles;
         localFiles.append(name1);
         localFiles.append(name2);
-        localFiles.append(name3);
-        localFiles.append(name4);
+	// localFiles.append(name3);
+	// localFiles.append(name4);
 
         //
         // download data to temp files & then process them as normal
         //
 
-        QString dakotaJSON = archiveDir + QString("/dakota.json");
-        QString dakotaOUT = archiveDir + QString("/dakota.out");
-        QString dakotaTAB = archiveDir + QString("/dakotaTab.out");
-        QString dakotaERR = archiveDir + QString("/dakota.err");
+        QString inputJSON = archiveDir + QString("/dakota.json");
+        QString resultsZIP = archiveDir + QString("/results.zip");	
+	//        QString dakotaOUT = archiveDir + QString("/dakota.out");
+	//        QString dakotaTAB = archiveDir + QString("/dakotaTab.out");
+	//        QString dakotaERR = archiveDir + QString("/dakota.err");
 
         // first download the input data & load it
         QStringList filesToDownload;
-        filesToDownload.append(dakotaJSON);
-        filesToDownload.append(dakotaOUT);
-        filesToDownload.append(dakotaTAB);
-        filesToDownload.append(dakotaERR);
+        filesToDownload.append(inputJSON);
+        filesToDownload.append(resultsZIP);
+	//        filesToDownload.append(dakotaTAB);
+	//        filesToDownload.append(dakotaERR);
 
         emit downloadFiles(filesToDownload, localFiles);
      }
@@ -354,7 +359,9 @@ RemoteJobManager::downloadFilesReturn(bool result)
 
     if (result == true) {
         theMainWindow->loadFile(name1);
-        theMainWindow->processResults(name2, name3);
+	ZipUtils::UnzipFile(name2, QDir(name3));
+	QString resultsDir = name3 + QDir::separator() + QString("results");
+	theMainWindow->processResults(resultsDir);
         this->hide();
     } else {
         emit errorMessage("ERROR - Failed to download File - did Job finish successfully?");

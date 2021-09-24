@@ -53,6 +53,7 @@ public:
     virtual bool inputFromJSON(QJsonObject &rvObject);
 
     virtual int processResults(QString &filenameResults, QString &filenameTab);
+    virtual int processResults(QString &dirName);  
 
     void setResultWidget(UQ_Results *result);
 

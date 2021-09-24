@@ -181,6 +181,13 @@ static int mergesort(double *input, int size)
 
 // if sobelov indices are selected then we would need to do some processing outselves
 
+int DakotaResultsSampling::processResults(QString &dirName)
+{
+  QString filenameOUT = dirName + QDir::separator() + tr("dakota.out");;
+  QString filenameTAB = dirName + QDir::separator() + tr("dakotaTab.out");;
+  return this->processResults(filenameOUT, filenameTAB);
+}
+
 int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab)
 {
     statusMessage(tr("Processing Sampling Results"));

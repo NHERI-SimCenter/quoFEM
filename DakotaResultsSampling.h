@@ -67,6 +67,7 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
+    int processResults(QString &dirName);  
     QWidget *createResultEDPWidget(QString &name, QVector<double> statistics);
 
 signals:

@@ -122,6 +122,19 @@ UQ_Results::processResults(QString &filenameResults, QString &filenameTab) {
     }
 }
 
+int 
+UQ_Results::processResults(QString &dirName) {
+
+    if (resultWidget != 0)
+        return resultWidget->processResults(dirName);
+    else {
+        QMessageBox::warning(this, tr("Application"),
+                             tr("BUG - No Results Set!"));
+
+        return 0;
+    }
+}
+
 void
 UQ_Results::setResultWidget(UQ_Results *result) {
     if (resultWidget != 0) {

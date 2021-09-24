@@ -104,6 +104,7 @@ signals:
     bool saveFile(const QString &fileName);
     void loadFile(const QString &fileName);
     void processResults(QString &filename1, QString & filename2);
+    void processResults(QString &dirName);
 
     void about();
     void manual();

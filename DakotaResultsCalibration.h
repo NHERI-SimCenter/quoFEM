@@ -61,6 +61,7 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
+    int processResults(QString &dirName);  
     QWidget *createResultParameterWidget(QString &name, double value);
 
 signals:

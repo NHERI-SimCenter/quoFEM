@@ -270,6 +270,13 @@ static int mergesort(double *input, int size)
     }
 }
 
+int DakotaResultsCalibration::processResults(QString &dirName) 
+{
+  QString filenameOut = dirName + QDir::separator() + tr("dakota.out");	  
+  QString filenameTAB = dirName + QDir::separator() + tr("dakota_mcmc_tabular.dat");	  
+  return this->processResults(dirName);
+}
+
 int DakotaResultsCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
     statusMessage(tr("Processing Sampling Results"));
@@ -279,7 +286,6 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
     //
     // open Dakota output file
     //
-
 
     std::ifstream fileResults(filenameResults.toStdString().c_str());
     if (!fileResults.is_open()) {

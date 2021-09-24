@@ -183,10 +183,16 @@ static int mergesort(double *input, int size)
 }
 
 // if sobelov indices are selected then we would need to do some processing outselves
-
-int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
+int UCSD_Results::processResults(QString &dirName)
 {
-    statusMessage(tr("Processing Sampling Results"));
+  QString tabFile = dirName + QDir::separator() + tr("dakotaTab.out");;
+  QString tabPriorFile = dirName + QDir::separator() + tr("dakotaTabPrior.out");;    
+  this->processResults(tabFile, tabPriorFile);
+}
+
+int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
+{
+    statusMessage(tr("UCSD Processing Results"));
 
     this->clear();
 
@@ -201,7 +207,9 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     }
 
     QDir fileDirTab = filenameTabInfo.absoluteDir();
-    QFileInfo priorFileInfo(fileDirTab, "dakotaTabPrior.out");
+    // QFileInfo priorFileInfo(fileDirTab, "dakotaTabPrior.out");
+    QFileInfo priorFileInfo(filenamePrior);    
+    
     QString filenameTabPrior = priorFileInfo.absoluteFilePath();
     if (!priorFileInfo.exists()) {
         errorMessage("No dakotaTabPrior.out file - TMCMC failed .. possibly no QoI");
@@ -254,6 +262,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
         errorMessage("No dakota.json file");
         return 0;
     }
+    
     QString filenameJson = jsonFileInfo.absoluteFilePath();
     QFile dakotaJsonFile(filenameJson);
     if (!dakotaJsonFile.open(QFile::ReadOnly | QFile::Text)) {
@@ -261,6 +270,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
         errorMessage(message);
         return 0;
     }
+    
     QString val = dakotaJsonFile.readAll();
     QJsonDocument docJson = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject jsonObj = docJson.object();
@@ -279,11 +289,11 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
     // create headings for calibration data file
 
     // find calibration data file name path and file name
-//    QJsonObject uqMethod = jsonObj["UQ_Method"].toObject();
-//    QString calFileName = uqMethod["calDataFile"].toString();
-//    QString calFilePath = uqMethod["calDataFilePath"].toString();
-
-//    QString calDataFile = calFilePath + QDir::separator() + calFileName;
+    //    QJsonObject uqMethod = jsonObj["UQ_Method"].toObject();
+    //    QString calFileName = uqMethod["calDataFile"].toString();
+    //    QString calFilePath = uqMethod["calDataFilePath"].toString();
+    
+    //    QString calDataFile = calFilePath + QDir::separator() + calFileName;
 
     // Get the quoFEMTempCalibrationDataFile.cal from templatedir
     QFileInfo calFileInfo(fileDirTab, QString("templatedir") + QDir::separator() + QString("quoFEMTempCalibrationDataFile.cal"));
