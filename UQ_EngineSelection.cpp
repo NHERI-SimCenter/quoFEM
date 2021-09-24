@@ -198,6 +198,7 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
     theEdpWidget->showAdvancedSensitivity(false);
 
     if (arg1 == "Dakota") {
+      
         theStackedWidget->setCurrentIndex(0);
         theCurrentEngine = theDakotaEngine;
         emit onUQ_EngineChanged(true);
@@ -205,16 +206,19 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
     else if (arg1 == "SimCenterUQ") {
         theStackedWidget->setCurrentIndex(1);
         theCurrentEngine = theSimCenterUQEngine;
-        emit onUQ_EngineChanged(false);
+        emit onUQ_EngineChanged(true);
 
     } else if (arg1 == "CustomUQ") {
+
       theStackedWidget->setCurrentIndex(2);
       theCurrentEngine = theCustomEngine;
       emit onUQ_EngineChanged(false);
+      
     } else if (arg1 == "UCSD-UQ") {
+
       theStackedWidget->setCurrentIndex(3);
       theCurrentEngine = theUCSD_Engine;
-      emit onUQ_EngineChanged(false);
+      emit onUQ_EngineChanged(true);
 
       //} else if (arg1 == "UQpy") {
       //     theStackedWidget->setCurrentIndex(2);
