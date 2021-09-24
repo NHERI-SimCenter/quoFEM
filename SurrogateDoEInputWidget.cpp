@@ -247,6 +247,8 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     theNuggetSelection->addItem(tr("Optimize"),0);
     theNuggetSelection->addItem(tr("Fixed Values"),1);
     theNuggetSelection->addItem(tr("Fixed Bounds"),2);
+    theNuggetSelection->addItem(tr("Zero"),3);
+
     theNuggetSelection->setMaximumWidth(150);
     theNuggetSelection->setCurrentIndex(0);
 

@@ -99,18 +99,22 @@ class GpFromModel(object):
             self.do_mf = False
             do_sampling = True
             do_simulation = True
-            do_doe = True
             self.use_existing = surrogateInfo["existingDoE"]
-
             if self.use_existing:
-                #self.inpData = surrogateInfo['inpFile']
-                #self.outData = surrogateInfo['outFile']
                 self.inpData = os.path.join(work_dir, "templatedir/inpFile.in")
                 self.outData = os.path.join(work_dir, "templatedir/outFile.in")
 
+
             if surrogateInfo["advancedOpt"]:
-                user_init = surrogateInfo["initialDoE"]
+                self.doe_method = surrogateInfo["DoEmethod"]
+                if surrogateInfo["DoEmethod"] == "None":
+                    do_doe = False
+                else:
+                    do_doe = True
+                    user_init = surrogateInfo["initialDoE"]
             else:
+                self.doe_method = "pareto" #default
+                do_doe = True
                 user_init = -100
             thr_count = surrogateInfo['samples']  # number of samples
 
@@ -118,6 +122,7 @@ class GpFromModel(object):
             self.do_mf = False
             do_sampling = False
             do_simulation = not surrogateInfo["outputData"]
+            self.doe_method = "None"  # default
             do_doe = False
             # self.inpData = surrogateInfo['inpFile']
             self.inpData = os.path.join(work_dir, "templatedir/inpFile.in")
@@ -135,13 +140,9 @@ class GpFromModel(object):
                 self.use_existing_hf = surrogateInfo["existingDoE_HF"]
                 self.samples_hf = surrogateInfo["samples_HF"]
                 if self.use_existing_hf:
-                    #self.inpData_hf = surrogateInfo['inpFile_HF']
-                    #self.outData_hf = surrogateInfo['outFile_HF']
                     self.inpData = os.path.join(work_dir, "templatedir/inpFile_HF.in")
                     self.outData = os.path.join(work_dir, "templatedir/outFile_HF.in")
             else:
-                #self.inpData_hf = surrogateInfo['inpFile_HF']
-                #self.outData_hf = surrogateInfo['outFile_HF']
                 self.inpData = os.path.join(work_dir, "templatedir/inpFile_HF.in")
                 self.outData = os.path.join(work_dir, "templatedir/outFile_HF.in")
                 self.X_hf = read_txt(self.inpData_hf, errlog)
@@ -154,13 +155,9 @@ class GpFromModel(object):
                 self.use_existing_lf = surrogateInfo["existingDoE_LF"]
                 self.samples_lf = surrogateInfo["samples_LF"]
                 if self.use_existing_lf:
-                    #self.inpData_lf = surrogateInfo['inpFile_LF']
-                    #self.outData_lf = surrogateInfo['outFile_LF']
                     self.inpData = os.path.join(work_dir, "templatedir/inpFile_LF.in")
                     self.outData = os.path.join(work_dir, "templatedir/outFile_LF.in")
             else:
-                # self.inpData_lf = surrogateInfo['inpFile_LF']
-                # self.outData_lf = surrogateInfo['outFile_LF']
                 self.inpData = os.path.join(work_dir, "templatedir/inpFile_LF.in")
                 self.outData = os.path.join(work_dir, "templatedir/outFile_LF.in")
                 self.X_lf = read_txt(self.inpData_lf, errlog)
@@ -187,7 +184,6 @@ class GpFromModel(object):
                 else:
                     user_init = self.samples_lf
                 thr_count = self.samples_lf  # number of samples
-
 
             elif self.hf_is_model and (not self.lf_is_model):
                 self.mf_case = "model-data"
@@ -281,7 +277,6 @@ class GpFromModel(object):
             self.inpFile = femInfo["inputFile"]
             self.postFile = femInfo["postprocessScript"]
             self.appName = femInfo["program"]
-
 
         #
         # get x points
@@ -570,7 +565,7 @@ class GpFromModel(object):
             kg = kr
             self.m_list = list()
             for i in range(y_dim):
-                self.m_list = self.m_list + [GPy.models.GPRegression(X, Y[:, i][np.newaxis].transpose(), kernel=kg.copy())]
+                self.m_list = self.m_list + [GPy.models.GPRegression(X, Y[:, i][np.newaxis].transpose(), kernel=kg.copy(),normalizer=True)]
                 for parname in self.m_list[i].parameter_names():
                     if parname.endswith('lengthscale'):
                         exec('self.m_list[i].' + parname + '=self.len')
@@ -614,11 +609,9 @@ class GpFromModel(object):
         x_new = np.zeros((0,x_dim))
         n_new = 0
 
+        doe_off = False # false if true
 
-        doe_off = False
         while not doe_off:
-
-            self.doe_method = "mmsew"
 
             t = time.time()
             if self.doe_method == "random":
@@ -852,6 +845,9 @@ class GpFromModel(object):
 
             corr_val[ny] = np.corrcoef(Y_ex, Y_cv[:, ny])[0, 1]
             R2_val[ny] = 1 - np.sum(pow(Y_cv[:, ny] - Y_ex, 2)) / np.sum(pow(Y_cv[:, ny] - np.mean(Y_cv[:, ny]), 2))
+            if np.var(Y_ex)==0:
+                corr_val[ny] = 1
+                R2_val[ny] = 0
 
         self.kernel = kernel
         self.NRMSE_val = NRMSE_val
@@ -900,6 +896,7 @@ class GpFromModel(object):
         m_list = list()
 
         for ny in range(self.y_dim):
+
             print("y dimension {}:".format(ny))
             nopt = 10
 
@@ -908,15 +905,24 @@ class GpFromModel(object):
             #
 
             if not self.do_mf:
+                nugget_opt_tmp = nugget_opt
+                if np.var(m_tmp_list[ny].Y) == 0:
+                    nugget_opt_tmp = "Zero"
+                    for parname in m_tmp_list[ny].parameter_names():
+                        if parname.endswith('variance'):
+                            m_tmp_list[ny][parname].constrain_fixed(0)
+
                 m_init = m_tmp_list[ny]
                 m_tmp = m_init
 
-                if nugget_opt == "optimize":
+                if nugget_opt_tmp == "Optimize":
                     m_tmp['Gaussian_noise.variance'].unfix()
-                elif nugget_opt == "Fixed Values":
+                elif nugget_opt_tmp == "Fixed Values":
                     m_tmp['Gaussian_noise.variance'].constrain_fixed(self.nuggetVal[ny])
-                elif nugget_opt == "Fixed Bounds":
+                elif nugget_opt_tmp == "Fixed Bounds":
                     m_tmp['Gaussian_noise.variance'].constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
+                elif nugget_opt_tmp == "Zero":
+                    m_tmp['Gaussian_noise.variance'].constrain_fixed(0)
 
                 m_tmp.optimize(clear_after_finish=True)
                 # m_tmp.optimize_restarts(5)
@@ -940,12 +946,14 @@ class GpFromModel(object):
                     if parname.endswith('lengthscale'):
                         exec('m_tmp.' + parname + '=self.len')
 
-                if nugget_opt == "optimize":
+                if nugget_opt_tmp == "Optimize":
                     m_tmp['Gaussian_noise.variance'].unfix()
-                elif nugget_opt == "Fixed Values":
+                elif nugget_opt_tmp == "Fixed Values":
                     m_tmp['Gaussian_noise.variance'].constrain_fixed(self.nuggetVal[ny])
-                elif nugget_opt == "Fixed Bounds":
+                elif nugget_opt_tmp == "Fixed Bounds":
                     m_tmp['Gaussian_noise.variance'].constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
+                elif nugget_opt_tmp == "Zero":
+                    m_tmp['Gaussian_noise.variance'].constrain_fixed(0)
 
                 m_tmp.optimize(clear_after_finish=True)
                 # m_tmp.optimize_restarts(5)
@@ -972,12 +980,14 @@ class GpFromModel(object):
                             else:
                                 exec('m_tmp.' + parname + '=np.random.exponential(1, (1, x_dim)) * m.' + parname)
 
-                    if nugget_opt == "optimize":
+                    if nugget_opt_tmp == "Optimize":
                         m_tmp['Gaussian_noise.variance'].unfix()
-                    elif nugget_opt == "Fixed Values":
+                    elif nugget_opt_tmp == "Fixed Values":
                         m_tmp['Gaussian_noise.variance'].constrain_fixed(self.nuggetVal[ny])
-                    elif nugget_opt == "Fixed Bounds":
+                    elif nugget_opt_tmp == "Fixed Bounds":
                         m_tmp['Gaussian_noise.variance'].constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
+                    elif nugget_opt_tmp == "Zero":
+                        m_tmp['Gaussian_noise.variance'].constrain_fixed(0)
 
                     t_fix = time.time()
                     try:
@@ -1000,25 +1010,31 @@ class GpFromModel(object):
                         break
 
                 if math.isinf(-max_log_likli) or math.isnan(-max_log_likli):
-                    msg = "Error GP optimization failed, perhaps QoI values are zero."
-                    self.errlog.exit(msg)
+                    #msg = "Error GP optimization failed, perhaps QoI values are zero."
+                    if np.var(m_tmp.Y) != 0:
+                        msg = "Error GP optimization failed for QoI #{}".format(ny+1)
+                        self.errlog.exit(msg)
 
                 m_list = m_list + [m]
                 print(m)
             else:
 
 
-                if nugget_opt == "optimize":
+                if nugget_opt_tmp == "Optimize":
                     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.unfix()
                     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.unfix()
 
-                elif nugget_opt == "Fixed Values":
+                elif nugget_opt_tmp == "Fixed Values":
                     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.constrain_fixed(self.nuggetVal[ny])
                     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.constrain_fixed(self.nuggetVal[ny])
 
-                elif nugget_opt == "Fixed Bounds":
+                elif nugget_opt_tmp == "Fixed Bounds":
                     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
                     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
+
+                elif nugget_opt_tmp == "Zero":
+                    m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.constrain_fixed(0)
+                    m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.constrain_fixed(0)
                 #
                 # if not do_nugget:
                 #     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.fix(0)
@@ -1123,6 +1139,7 @@ class GpFromModel(object):
         #
         nc1 = round(n_candi)
 
+        self.doe_method = self.doe_method.lower()
         if self.doe_method == "pareto":
 
             #
@@ -1142,7 +1159,7 @@ class GpFromModel(object):
             cri1 = np.zeros(yc1_pred.shape)
             cri2 = np.zeros(yc1_pred.shape)
             # TODO: is this the best?
-            ll = self.xrange[nx, 1] - self.xrange[nx, 0]
+            ll = self.xrange[:, 1] - self.xrange[:, 0]
             for i in range(nc1):
                 if not self.do_mf:
                     phi = e2[closest_node(xc1[i, :], X, ll)]
@@ -1188,7 +1205,7 @@ class GpFromModel(object):
             else:
                 idx_pareto_candi = idx_1rank.copy()
                 X_tmp = X
-                Y_tmp = Y
+                Y_tmp = Y[:,y_idx][np.newaxis].T
                 m_tmp = m_idx.copy()
 
                 # get MMSEw
@@ -1202,7 +1219,7 @@ class GpFromModel(object):
 
                 for i in range(self.cal_interval-1):
                     X_tmp = np.vstack([X_tmp, xc1[best_global, :][np.newaxis]])
-                    Y_tmp = np.zeros((Y_tmp.shape[0] + 1, Y.shape[1]))  # any variables
+                    Y_tmp = np.vstack([Y_tmp, np.array([[0]]) ]) # any variables
                     m_tmp.set_XY(X=X_tmp, Y=Y_tmp)
                     dummy, Yq_var = m_tmp.predict(xc1[idx_pareto_candi, :])
                     score_tmp = Yq_var * cri2[idx_pareto_candi] # only update the variance
@@ -1442,11 +1459,19 @@ class GpFromModel(object):
                 update_point[ni, :] = x_point
                 update_IMSE[ni, :] = MMSEc1[new_idx]
 
+        else:
+            msg = 'Error running SimCenterUQ: cannot identify the doe method <' + self.doe_method + '>'
+            errlog.exit(msg)
+
         return update_point, m_list, update_IMSE, y_idx, Y_pred, Y_pred_var
 
     def __normalized_mean_sq_error(self, yp, ye):
         nt = yp.shape[0]
-        return np.sqrt(1 / nt * np.sum(pow(yp - ye, 2), axis=0)) / (np.max(ye, axis=0) - np.min(ye, axis=0))
+        data_bound = (np.max(ye, axis=0) - np.min(ye, axis=0))
+        RMSE = np.sqrt(1 / nt * np.sum(pow(yp - ye, 2), axis=0))
+        NRMSE =RMSE/data_bound
+        NRMSE[np.argwhere((data_bound ==0))]=0
+        return NRMSE
 
     def __closest_node(self, node, nodes):
         nodes = np.asarray(nodes)
@@ -1481,12 +1506,6 @@ class GpFromModel(object):
             elif self.mf_case == 'model-data':
                 return m.predict(X)
 
-        x_list = list()
-        y_list = list()
-        for i in range(Y.shape[1]):
-            x_list = x_list + [X, ]
-            y_list = y_list + [Y[:, [i, ]], ]
-        return x_list, y_list
 
 
     def __get_cross_validation(self,X,Y,m_list):
@@ -1673,13 +1692,13 @@ class GpFromModel(object):
             results["valNRMSE"][self.g_name[ny]] = self.NRMSE_val[ny]
             results["valR2"][self.g_name[ny]] = self.R2_val[ny]
             results["valCorrCoeff"][self.g_name[ny]] = self.corr_val[ny]
-            #
+
             # if np.isnan(self.NRMSE_val[ny]):
-            #     results["valNRMSE"][self.g_name[ny]] = null
+            #     results["valNRMSE"][self.g_name[ny]] = 0
             # if np.isnan(self.R2_val[ny]):
-            #     results["valR2"][self.g_name[ny]] = null
+            #     results["valR2"][self.g_name[ny]] = 0
             # if np.isnan(self.corr_val[ny]):
-            #     results["valCorrCoeff"][self.g_name[ny]] = null
+            #     results["valCorrCoeff"][self.g_name[ny]] = 0
 
         if self.do_simulation:
             results["predError"] = {}
@@ -1728,11 +1747,10 @@ class GpFromModel(object):
             for ny in range(self.y_dim):
                 results["modelInfo"][self.g_name[ny]] = {}
                 for parname in self.m_list[ny].parameter_names():
-                    print(parname)
                     results["modelInfo"][self.g_name[ny]][parname] = list(eval('self.m_list[ny].' + parname))
 
 
-        with open('dakota.out', 'w') as fp:
+        with open(self.work_dir + '/dakota.out', 'w') as fp:
             json.dump(results, fp, indent=1)
 
         with open(self.work_dir + '/GPresults.out', 'w') as file:
