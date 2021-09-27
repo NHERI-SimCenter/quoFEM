@@ -78,6 +78,7 @@ UCSD_Engine::UCSD_Engine(InputWidgetParameters *param,InputWidgetFEM *femWidget,
     theSelectionLayout->addStretch();
     layout->addLayout(theSelectionLayout);
 
+    parallelCheckBox = new QCheckBox();
     parallelCheckBox->setChecked(true);
 
     //
