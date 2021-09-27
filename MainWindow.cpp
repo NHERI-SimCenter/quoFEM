@@ -937,7 +937,7 @@ void MainWindow::onRunButtonClicked() {
 
     QString python("python");
     #ifdef USE_SIMCENTER_PYTHON
-        QSettings settings("SimCenter", QCoreApplication::applicationName()));
+        QSettings settings("SimCenter", QCoreApplication::applicationName());
     #else
         QSettings settings("SimCenter", "Common");
     #endif
@@ -1213,7 +1213,7 @@ void MainWindow::onRemoteRunButtonClicked(){
 
     QString python("python");
 #ifdef USE_SIMCENTER_PYTHON
-    QSettings settings("SimCenter", QCoreApplication::applicationName()));
+    QSettings settings("SimCenter", QCoreApplication::applicationName());
 #else
     QSettings settings("SimCenter", "Common");
 #endif
