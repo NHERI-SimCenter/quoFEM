@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     # Change permission of workflow driver
     workflowDriverFile = os.path.join(templateDir, "workflow_driver")
-    if runType in ["runningLocal"]:
+    if runType in ['runningLocal']:
         os.chmod(workflowDriverFile, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
     st = os.stat(workflowDriverFile)
     os.chmod(workflowDriverFile, st.st_mode | stat.S_IEXEC)

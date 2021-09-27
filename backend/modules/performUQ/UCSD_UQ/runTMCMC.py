@@ -28,8 +28,6 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
 
     # Initialize other TMCMC variables
     Nm_steps = Nm_steps_max
-    # parallelizeMCMC = 'yes'  # yes or no
-    # parallelizeMCMC = 'no'  # yes or no
     Adap_calc_Nsteps = 'yes'  # yes or no
     Adap_scale_cov = 'yes'  # yes or no
     scalem = 1  # cov scale factor
