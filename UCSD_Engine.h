@@ -52,6 +52,8 @@ class InputWidgetEDP;
 class InputWidgetParameters;
 class InputWidgetFEM;
 
+class QCheckBox;
+
 
 class UCSD_Engine : public UQ_Engine
 {
@@ -89,6 +91,7 @@ private:
    UQ_MethodInputWidget *theCurrentMethod;
    UQ_MethodInputWidget *theTMMC;
   RandomVariablesContainer *theRandomVariables;
+  QCheckBox *parallelCheckBox;
 
   InputWidgetParameters *theParameters;
   InputWidgetFEM *theFemWidget;

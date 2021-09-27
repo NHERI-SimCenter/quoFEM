@@ -78,6 +78,8 @@ UCSD_Engine::UCSD_Engine(InputWidgetParameters *param,InputWidgetFEM *femWidget,
     theSelectionLayout->addStretch();
     layout->addLayout(theSelectionLayout);
 
+    parallelCheckBox->setChecked(true);
+
     //
     // create the stacked widget
     //
@@ -137,6 +139,7 @@ bool
 UCSD_Engine::outputToJSON(QJsonObject &jsonObject) {
 
     jsonObject["uqType"] = theMethodSelection->currentText();
+    jsonObject["parallelExecution"] = parallelCheckBox->isChecked();
     return theCurrentMethod->outputToJSON(jsonObject);
 }
 
@@ -153,6 +156,12 @@ UCSD_Engine::inputFromJSON(QJsonObject &jsonObject) {
         result = theCurrentMethod->inputFromJSON(jsonObject);
     else
         result = false; // don't emit error as one should have been generated
+
+    parallelCheckBox->setChecked(true);
+    if (jsonObject.contains("parallelExecution")) {
+        bool checkedState = jsonObject["parallelExecution"].toBool();
+        parallelCheckBox->setChecked(checkedState);
+    }
 
     return result;
 }
