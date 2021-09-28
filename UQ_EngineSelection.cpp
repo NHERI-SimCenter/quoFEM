@@ -121,7 +121,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetParameters *param,InputWidgetF
     theSimCenterUQEngine = new SimCenterUQEngine(theParameters,theFemWidget,theEdpWidget);
     theCustomEngine = new UQ_JsonEngine();
     //theUQpyEngine = new UQpyEngine();
-    theUCSD_Engine = new UCSD_Engine();
+    theUCSD_Engine = new UCSD_Engine(theParameters, theFemWidget, theEdpWidget);
 
     theStackedWidget->addWidget(theDakotaEngine);
     theStackedWidget->addWidget(theSimCenterUQEngine);
@@ -139,9 +139,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetParameters *param,InputWidgetF
     connect(theEngineSelectionBox, SIGNAL(currentIndexChanged(QString)), this,
             SLOT(engineSelectionChanged(QString)));
 
-    //    connect(theDakotaEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
-    connect(theCurrentEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
-    // sy - wondering if this connect commend was put inside the engineSelectionChanged() below on purpose
+    connect(theDakotaEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
 
     // connect(theCustomEngine, SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));    
     // connect(theCustomEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
@@ -202,12 +200,13 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
         theStackedWidget->setCurrentIndex(0);
         theCurrentEngine = theDakotaEngine;
         emit onUQ_EngineChanged(true);
-    }
-    else if (arg1 == "SimCenterUQ") {
+	
+    } else if (arg1 == "SimCenterUQ") {
+      
         theStackedWidget->setCurrentIndex(1);
         theCurrentEngine = theSimCenterUQEngine;
         emit onUQ_EngineChanged(true);
-
+	
     } else if (arg1 == "CustomUQ") {
 
       theStackedWidget->setCurrentIndex(2);
@@ -220,17 +219,13 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
       theCurrentEngine = theUCSD_Engine;
       emit onUQ_EngineChanged(true);
 
-      //} else if (arg1 == "UQpy") {
-      //     theStackedWidget->setCurrentIndex(2);
-      //     theCurrentEngine = theUQpyEngine;
-      //     emit onUQ_EngineChanged();
-
     } else {
       qDebug() << "ERROR .. UQ_EngineSelection selection .. type unknown: " << arg1;
     }
 
     qDebug() << arg1;
 
+    connect(theCurrentEngine, SIGNAL(onUQ_EngineChanged()), this, SLOT(enginesEngineSelectionChanged()));
     connect(theCurrentEngine,SIGNAL(onNumModelsChanged(int)), this, SLOT(numModelsChanged(int)));
 
 
@@ -317,7 +312,6 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
 
 bool
 UQ_EngineSelection::copyFiles(QString &destDir) {
-
   if (theCurrentEngine != 0) {
     return  theCurrentEngine->copyFiles(destDir);
   }

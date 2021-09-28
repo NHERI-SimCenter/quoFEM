@@ -66,6 +66,7 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
+    int processResults(QString &dirName);
 
 signals:
 
@@ -87,6 +88,9 @@ private:
    int col1, col2;
    bool mLeft;
    QStringList theHeadings;
+
+   void clearLayout(QLayout *layout);
+
 
    //   QVector<QString>theHeadings;
 };

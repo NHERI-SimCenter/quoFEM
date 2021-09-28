@@ -1,11 +1,11 @@
-#ifndef DAKOTA_RESULTS_CALIBRATION_H
-#define DAKOTA_RESULTS_CALIBRATION_H
+#ifndef BAYESPLOTS_H
+#define BAYESPLOTS_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without 
+Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -29,66 +29,33 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 
-REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS 
-PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, 
+THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS
+PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,
 UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
+// Written: bsaakash
 
-#include <UQ_Results.h>
-#include <QtCharts/QChart>
-#include "ResultsDataChart.h"
+#include <QWidget>
+#include <qcustomplot.h>
 
-using namespace QtCharts;
-
-class QTextEdit;
-class QTabWidget;
-class MyTableWidget;
-//class QChart;
-
-class DakotaResultsCalibration : public UQ_Results
+class BayesPlots : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DakotaResultsCalibration(RandomVariablesContainer * theRVs, QWidget *parent = 0);
-    ~DakotaResultsCalibration();
+    BayesPlots(QVector<QString> edpNames, QVector<int> edpLengths, QWidget *parent = 0);
+//    BayesPlots(QString xLabel, QString yLabel, QWidget *parent = 0);
+    ~BayesPlots();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-
-    int processResults(QString &filenameResults, QString &filenameTab);
-    int processResults(QString &dirName);  
-    QWidget *createResultParameterWidget(QString &name, double value);
-
-signals:
-
-public slots:
-   void clear(void);
+    void plotPosterior(QVector<QVector<double>> minMaxPosterior, QVector<QVector<double>> minMaxPrior,
+                       QVector<QVector<double>> statisticsVectorPosterior, QVector<QVector<double>> statisticsVectorPrior,
+                       QVector<QVector<double>> statisticsVectorCalData);
 
 private:
-   RandomVariablesContainer *theRVs;
-
-   QTabWidget *tabWidget;
-   QTextEdit  *dakotaText;
-   MyTableWidget *spreadsheet;
-   QChart *chart;
-   ResultsDataChart* theDataTable;
-
-   int col1, col2;
-   bool mLeft;
-   QStringList theHeadings;
-
-   QVector<QString>theNames;
-   QVector<double>theBestValues;
-
-   QWidget *summary;
-   QVBoxLayout *summaryLayout;
-
-   bool isSurrogate;
+    QCustomPlot *thePlot;
 };
 
-#endif // DAKOTA_RESULTS_CALIBRATION_H
+#endif // BAYESPLOTS_H

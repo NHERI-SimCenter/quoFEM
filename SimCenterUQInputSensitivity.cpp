@@ -150,7 +150,7 @@ SimCenterUQInputSensitivity::SimCenterUQInputSensitivity(QWidget *parent)
 
     this->setLayout(mLayout);
 
-    connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
+    //connect(samplingMethod, SIGNAL(currentTextChanged(QString)), this, SLOT(onTextChanged(QString)));
     connect(importCorrDataCheckBox,SIGNAL(toggled(bool)),this,SLOT(showDataOptions(bool)));
 
 }
@@ -185,6 +185,7 @@ void SimCenterUQInputSensitivity::clear(void)
 bool
 SimCenterUQInputSensitivity::outputToJSON(QJsonObject &jsonObject)
 {
+    // testing
     bool result = true;
 
     QJsonObject uq;

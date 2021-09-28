@@ -94,6 +94,8 @@ private:
    QVector<double>theSkewness;
    ResultsDataChart *theDataTable;
 
+   bool isSurrogate = false;
+
 };
 
 #endif // DAKOTA_RESULTS_SAMPLING_H

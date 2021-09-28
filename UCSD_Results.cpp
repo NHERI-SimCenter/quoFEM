@@ -35,11 +35,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 // Written: fmckenna
-// added and modified: padhye
+// added and modified: padhye, bsaakash
 
 #include "UCSD_Results.h"
 //#include "InputWidgetFEM.h"
-#include "bayesplots.h"
+#include "BayesPlots.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -101,6 +101,7 @@ UCSD_Results::UCSD_Results(RandomVariablesContainer *theRandomVariables, QWidget
     : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
+    theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
 }
@@ -296,7 +297,7 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
     //    QString calDataFile = calFilePath + QDir::separator() + calFileName;
 
     // Get the quoFEMTempCalibrationDataFile.cal from templatedir
-    QFileInfo calFileInfo(fileDirTab, QString("templatedir") + QDir::separator() + QString("quoFEMTempCalibrationDataFile.cal"));
+    QFileInfo calFileInfo(fileDirTab, QString("quoFEMTempCalibrationDataFile.cal"));
     if (!calFileInfo.exists()) {
             errorMessage("No calibration data file");
             return 0;
@@ -320,7 +321,7 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
     QString xLabel = "Component";
     QString yLabel = "Value";
 
-    BayesPlots *thePlot = new BayesPlots(xLabel, yLabel);
+    BayesPlots *thePlot = new BayesPlots(edpNames, edpLengths);
     thePlot->plotPosterior(minMaxVector, minMaxVectorPrior, statisticsVector, statisticsVectorPrior, statisticsVectorCalData);
 
 

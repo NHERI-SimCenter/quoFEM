@@ -90,6 +90,7 @@ using namespace QtCharts;
 DakotaResultsReliability::DakotaResultsReliability(RandomVariablesContainer *theRandomVariables, QWidget *parent)
   : UQ_Results(parent), theRVs(theRandomVariables), numSpreadsheetRows(0), numSpreadsheetCols(0)
 {
+    // clear current
   chart = new QChart();
   QChartView *chartView = new QChartView(chart);
   chart->setAnimationOptions(QChart::AllAnimations);
@@ -118,15 +119,23 @@ void DakotaResultsReliability::clear(void)
 {
   spreadsheet->clear();
   theHeadings.clear();
-
   numSpreadsheetCols = 0;
   numSpreadsheetRows = 0;
 
   mLeft = true;
   col1 = 0;
   col2 = 0;
+
+  //clearLayout(layout);
+
 }
 
+int DakotaResultsReliability::processResults(QString &dirName)
+{
+  QString filenameOut = dirName + QDir::separator() + tr("dakota.out");
+  QString filenameTAB = dirName + QDir::separator() + tr("dakotaTab.dat");
+  return this->processResults(filenameOut, filenameTAB);
+}
 
 
 int DakotaResultsReliability::processResults(QString &filenameResults, QString &filenameTab)
@@ -134,8 +143,6 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
   statusMessage(tr("Processing Reliability Results"));
 
-  // clear current
-  this->clear();
 
 
   //
@@ -147,7 +154,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
   QFileInfo filenameErrorInfo(filenameErrorString);
   if (!filenameErrorInfo.exists()) {
-      errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+      errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applications failed with inputs provided");
       return 0;
   }
   QFile fileError(filenameErrorString);
@@ -429,48 +436,65 @@ void DakotaResultsReliability::onSpreadsheetCellClicked(int row, int col)
 
     int rowCount = spreadsheet->rowCount();
 
-    QLineSeries *series= new QLineSeries;
 
     double minX = 1e6;
     double maxX = -1e6;
 
-    for (int i=0; i<rowCount; i++) {
-        QTableWidgetItem *itemY = spreadsheet->item(i,col1);
-        QTableWidgetItem *itemX = spreadsheet->item(i,col2);
+    if (rowCount>1)     {
+        QLineSeries *series= new QLineSeries;
+        for (int i=0; i<rowCount; i++) {
+            QTableWidgetItem *itemY = spreadsheet->item(i,col1);
+            QTableWidgetItem *itemX = spreadsheet->item(i,col2);
 
+            double value1 = itemX->text().toDouble();
+            double value2 = itemY->text().toDouble();
+            if (value1 > maxX) maxX = value1;
+            if (value1 < minX) minX = value1;
+
+            series->append(value1, value2);
+        }
+        chart->addSeries(series);
+        series->setName("CDF");
+
+
+        // if value is constant, adjust axes
+        if (minX==maxX) {
+            double axisMargin=abs(minX)*0.1;
+            minX=minX-axisMargin;
+            maxX=maxX+axisMargin;
+        }
+
+        QValueAxis *axisX = new QValueAxis();
+        QValueAxis *axisY = new QValueAxis();
+
+        axisX->setRange(minX, maxX);
+        axisY->setRange(0., 1.);
+
+
+        axisY->setTitleText("Probability Level");
+        axisX->setTitleText(theHeadings.at(col2));
+
+        axisY->setTickCount(5);
+        axisX->setTickCount(NUM_DIVISIONS+1);
+
+        chart->setAxisX(axisX, series);
+        chart->setAxisY(axisY, series);
+
+    } else {
+        QScatterSeries *series= new QScatterSeries;
+        QTableWidgetItem *itemY = spreadsheet->item(0,col1);
+        QTableWidgetItem *itemX = spreadsheet->item(0,col2);
         double value1 = itemX->text().toDouble();
         double value2 = itemY->text().toDouble();
-        if (value1 > maxX) maxX = value1;
-        if (value1 < minX) minX = value1;
-
         series->append(value1, value2);
+        chart->addSeries(series);
+        series->setName("CDF");
+
+        QValueAxis *axisX = new QValueAxis();
+        QValueAxis *axisY = new QValueAxis();
+        axisX->setRange(value1-abs(value1)*0.2, value1+abs(value1)*0.2);
+        axisY->setRange(0., 1.);
     }
-
-    // if value is constant, adjust axes
-    if (minX==maxX) {
-        double axisMargin=abs(minX)*0.1;
-        minX=minX-axisMargin;
-        maxX=maxX+axisMargin;
-    }
-
-    chart->addSeries(series);
-    series->setName("CDF");
-
-    QValueAxis *axisX = new QValueAxis();
-    QValueAxis *axisY = new QValueAxis();
-
-    axisX->setRange(minX, maxX);
-    axisY->setRange(0., 1.);
-
-
-    axisY->setTitleText("Probability Level");
-    axisX->setTitleText(theHeadings.at(col2));
-
-    axisY->setTickCount(5);
-    axisX->setTickCount(NUM_DIVISIONS+1);
-
-    chart->setAxisX(axisX, series);
-    chart->setAxisY(axisY, series);
 }
 
 

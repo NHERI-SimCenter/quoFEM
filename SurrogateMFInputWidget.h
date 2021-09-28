@@ -66,6 +66,8 @@ public:
     int parseInputDataForRV(QString name1);
     int parseOutputDataForQoI(QString name1);
 
+    bool copyFiles(QString &fileDir);
+
 public slots:
     void setLowSim(bool tog);
     void setHighSim(bool tog);

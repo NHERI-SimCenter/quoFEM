@@ -49,7 +49,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <iostream>
 #include <fstream>
 #include <QRadioButton>
-
+#include <QSpinBox>
 
 SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
 : UQ_MethodInputWidget(parent)
@@ -82,7 +82,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
     accuracyMeasure->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Target Accuracy (Normalized Error) "), wid, 0);
+    layout->addWidget(new QLabel("Target Accuracy (Normalized Err) "), wid, 0);
     layout->addWidget(accuracyMeasure, wid++, 1);
 
     //
@@ -126,7 +126,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     //
 
     theAdvancedCheckBox = new QCheckBox();
-    theAdvancedTitle=new QLabel("\n    Advanced Options for Gaussian Process Model ");
+    theAdvancedTitle=new QLabel("\n     Advanced Options for Gaussian Process Model ");
     theAdvancedTitle->setStyleSheet("font-weight: bold; color: grey");
     layout->addWidget(theAdvancedTitle, wid, 0, 1, 3,Qt::AlignBottom);
     layout->addWidget(theAdvancedCheckBox, wid++, 0, 1, 3, Qt::AlignBottom);
@@ -177,11 +177,11 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     //theLogtLabel=new QLabel("Responses are always positive");
     //theLogtLabel2=new QLabel("     (allow log-transform)");
     theLogtLabel=new QLabel("Log-space Transform of QoI");
-    theLogtLabel2=new QLabel("     (check this box only when all response qunatities are always positive)");
+    theLogtLabel2=new QLabel("      (check this box only when all responses are always positive)");
 
     theLogtCheckBox = new QCheckBox();
     layout->addWidget(theLogtLabel, wid, 0);
-    layout->addWidget(theLogtLabel2, wid, 1,1,2);
+    layout->addWidget(theLogtLabel2, wid, 1,1,-1);
     layout->addWidget(theLogtCheckBox, wid++, 1);
     theLogtLabel->setVisible(false);
     theLogtLabel2->setVisible(false);
@@ -191,45 +191,89 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     // # of Initial DoE (Space filling)
     //
 
-    theInitialLabel=new QLabel("Number of Initial Samples (DoE)");
+//    theInitialLabel=new QLabel("Number of Initial Samples (DoE)");
 
+//    initialDoE = new QLineEdit();
+//    initialDoE->setValidator(new QIntValidator);
+//    initialDoE->setToolTip("Set the number of initial DoE (Space filling)");
+//    initialDoE->setPlaceholderText("(Optional)");
+//    initialDoE->setMaximumWidth(150);
+//    layout->addWidget(theInitialLabel, wid, 0);
+//    layout->addWidget(initialDoE, wid++, 1);
+//    initialDoE->setVisible(false);
+//    theInitialLabel->setVisible(false);
+
+    //
+    // DoE Options
+    //
+
+    theDoELabel=new QLabel("DoE Options");
+    theDoESelection = new QComboBox();
+
+    theDoESelection->addItem(tr("Pareto"),0);
+    theDoESelection->addItem(tr("IMSEw"),1);
+    theDoESelection->addItem(tr("MMSEw"),2);
+    theDoESelection->addItem(tr("None"),3);
+    theDoESelection->setMaximumWidth(150);
+    theDoESelection->setCurrentIndex(0);
+
+    //theDoEMsg= new QLabel("Provide the number of initial samples (DoE)");
+    //theDoEMsg= new QLabel("");
     initialDoE = new QLineEdit();
-    initialDoE->setValidator(new QIntValidator);
-    initialDoE->setToolTip("Set the number of initial DoE (Space filling)");
-    initialDoE->setPlaceholderText("(Optional)");
+    initialDoE->setToolTip("Provide the number of initial samples");
+    initialDoE->setPlaceholderText("(Optional) Initial DoE #");
     initialDoE->setMaximumWidth(150);
-    layout->addWidget(theInitialLabel, wid, 0);
-    layout->addWidget(initialDoE, wid++, 1);
+    initialDoE->setMinimumWidth(150);
+
+    layout->addWidget(theDoELabel, wid, 0);
+    layout->addWidget(theDoESelection, wid, 1);
+    //layout->addWidget(theDoEMsg, wid, 2);
+    layout->addWidget(initialDoE, wid++, 2,1,3);
+
+    theDoELabel->setVisible(false);
+    theDoESelection->setVisible(false);
+    //theDoEMsg->setVisible(false);
     initialDoE->setVisible(false);
-    theInitialLabel->setVisible(false);
+    connect(theDoESelection,SIGNAL(currentIndexChanged(int)),this,SLOT(showDoEBox(int)));
 
     //
     // Nugget function
     //
 
 
-    theNuggetLabel=new QLabel("Nugget Values for each QoI");
+    theNuggetLabel=new QLabel("Nugget Variances");
     theNuggetSelection = new QComboBox();
 
     theNuggetSelection->addItem(tr("Optimize"),0);
     theNuggetSelection->addItem(tr("Fixed Values"),1);
     theNuggetSelection->addItem(tr("Fixed Bounds"),2);
+    theNuggetSelection->addItem(tr("Zero"),3);
+
     theNuggetSelection->setMaximumWidth(150);
     theNuggetSelection->setCurrentIndex(0);
 
     theNuggetVals = new QLineEdit();
     theNuggetVals->setToolTip("Provide nugget values");
     //theNuggetVals->setMaximumWidth(150);
+    theNuggetMsg= new QLabel("in the log-transformed space");
 
     layout->addWidget(theNuggetLabel, wid, 0);
-    layout->addWidget(theNuggetSelection, wid++, 1);
+    layout->addWidget(theNuggetSelection, wid, 1);
+    layout->addWidget(theNuggetMsg, wid++, 2);
     layout->addWidget(theNuggetVals, wid++, 1,1,3);
 
     theNuggetLabel->setVisible(false);
     theNuggetSelection->setVisible(false);
     theNuggetVals->setVisible(false);
+    theNuggetMsg->setVisible(false);
 
     connect(theNuggetSelection,SIGNAL(currentIndexChanged(int)),this,SLOT(showNuggetBox(int)));
+    connect(theLogtCheckBox, &QCheckBox::toggled, this, [=](bool tog)  {
+        if (tog && (theNuggetSelection->currentIndex()!=0))
+            theNuggetMsg -> setVisible(true);
+        else
+            theNuggetMsg -> setVisible(false);
+    });
 
 
     //
@@ -237,7 +281,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     //
 
     theExistingCheckBox = new QCheckBox();
-    theExistingTitle = new QLabel("\n    Start with Existing Dataset");
+    theExistingTitle = new QLabel("\n     Start with Existing Dataset");
     theExistingTitle ->setStyleSheet("font-weight: bold; color: grey");
     layout->addWidget(theExistingTitle, wid, 0, 1, 2, Qt::AlignBottom);
     layout->addWidget(theExistingCheckBox, wid++, 0, Qt::AlignBottom);
@@ -287,7 +331,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     outFileDir->setVisible(false);
     chooseOutFile->setVisible(false);
 
-    errMSG=new QLabel("Your file format is not appropriate");
+    errMSG=new QLabel("Unrecognized file format");
     errMSG->setStyleSheet({"color: red"});
     layout->addWidget(errMSG,wid++,1,1,2,Qt::AlignLeft);
     errMSG->hide();
@@ -317,14 +361,28 @@ SurrogateDoEInputWidget::showNuggetBox(int idx)
         theNuggetVals->hide();
     } else if (idx==1){
         theNuggetVals->show();
-        theNuggetVals->setPlaceholderText("QoI1, QoI2,..");
+        theNuggetVals->setPlaceholderText("QoI₁, QoI₂,..");
     } else if (idx==2) {
         theNuggetVals->show();
-        theNuggetVals->setPlaceholderText("[QoI1_LB,QoI1_UB], [QoI2_LB,QoI2_UB],..");
+        theNuggetVals->setPlaceholderText("[QoI₁ˡᵇ,QoI₁ᵘᵇ], [QoI₂ˡᵇ,QoI₂ᵘᵇ],..");
     }
-
+    if ((theLogtCheckBox->isChecked()) && (idx!=0))
+        theNuggetMsg -> setVisible(true);
+    else
+        theNuggetMsg -> setVisible(false);
 };
 
+
+void
+SurrogateDoEInputWidget::showDoEBox(int idx)
+{
+    initialDoE->clear();
+    if (idx == 3) {
+        initialDoE->hide();
+    } else {
+        initialDoE->show();
+    }
+};
 
 // SLOT function
 void SurrogateDoEInputWidget::doAdvancedGP(bool tog)
@@ -351,9 +409,11 @@ void SurrogateDoEInputWidget::doAdvancedGP(bool tog)
         theLogtLabel->setVisible(tog);
         theLogtLabel2->setVisible(tog);
         theKernelLabel->setVisible(tog);
-        theInitialLabel->setVisible(tog);
+        //theInitialLabel->setVisible(tog);
         theNuggetLabel->setVisible(tog);
         theNuggetSelection->setVisible(tog);
+        theDoELabel->setVisible(tog);
+        theDoESelection->setVisible(tog);
 }
 
 void SurrogateDoEInputWidget::doExistingGP(bool tog)
@@ -436,6 +496,7 @@ SurrogateDoEInputWidget::outputToJSON(QJsonObject &jsonObj){
     {
         jsonObj["advancedOpt"]=true;
         jsonObj["kernel"]=gpKernel->currentText();
+        jsonObj["DoEmethod"]=theDoESelection->currentText();
         jsonObj["initialDoE"]=initialDoE->text().toDouble();
         jsonObj["linear"]=theLinearCheckBox->isChecked();
         jsonObj["logTransform"]=theLogtCheckBox->isChecked();
@@ -494,6 +555,7 @@ SurrogateDoEInputWidget::inputFromJSON(QJsonObject &jsonObject){
             theLinearCheckBox->setChecked(jsonObject["linear"].toBool());
             theLogtCheckBox->setChecked(jsonObject["logTransform"].toBool());
             double accuracy=jsonObject["initialDoE"].toDouble();
+            theDoESelection -> setCurrentText(jsonObject["DoEmethod"].toString());
             initialDoE->setText(QString::number(accuracy));
 
             if (jsonObject.contains("nuggetOpt")) {
@@ -537,7 +599,15 @@ SurrogateDoEInputWidget::clear(void)
 
 }
 
-
+bool
+SurrogateDoEInputWidget::copyFiles(QString &fileDir) {
+    if (theExistingCheckBox->isChecked())
+    {
+        QFile::copy(inpFileDir->text(), fileDir + QDir::separator() + "inpFile.in");
+        QFile::copy(outFileDir->text(), fileDir + QDir::separator() + "outFile.in");
+    }
+    return true;
+}
 
 int
 SurrogateDoEInputWidget::getNumberTasks()

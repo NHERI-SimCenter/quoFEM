@@ -57,6 +57,7 @@ public:
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
+    bool copyFiles(QString &fileDir);
     void clear(void);
 
     int getNumberTasks(void);
@@ -68,7 +69,6 @@ private:
     QLineEdit *accuracyMeasure;
     QLineEdit *timeMeasure;
     QCheckBox *parallelCheckBox;
-    QLineEdit *initialDoE;
     QComboBox *gpKernel;
     QCheckBox *theLinearCheckBox;
     QCheckBox *theAdvancedCheckBox;
@@ -85,11 +85,15 @@ private:
     QLabel * theInputLabel;
     QLabel * theOutputLabel;
     QLabel * errMSG;
-
+    QLabel * theNuggetMsg;
     QLabel * theNuggetLabel;
     QComboBox * theNuggetSelection;
-    QCheckBox * theNugCheckBox;
     QLineEdit * theNuggetVals;
+    QLabel * theDoEMsg;
+    QLabel * theDoELabel;
+    QComboBox * theDoESelection;
+    QLineEdit *initialDoE;
+
 
     QPushButton *chooseOutFile;
     QPushButton *chooseInpFile;
@@ -106,6 +110,7 @@ private slots:
     void doExistingGP(bool tog);
     void checkValidityData(QString name1);
     void showNuggetBox(int idx);
+    void showDoEBox(int idx);
 
 };
 

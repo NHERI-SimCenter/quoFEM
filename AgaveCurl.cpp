@@ -725,7 +725,7 @@ AgaveCurl::uploadFile(const QString &local, const QString &remote) {
            emit errorMessage(message);
            return false;
        } else if (status == "success") {
-           emit statusMessage("Successfully uploaded diretory");
+           emit statusMessage("Successfully uploaded directory");
            return true;
        }
 

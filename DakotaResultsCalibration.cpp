@@ -77,13 +77,13 @@ using namespace QtCharts;
 #define NUM_DIVISIONS 10
 
 
-DakotaResultsCalibration::DakotaResultsCalibration(QWidget *parent)
-    : UQ_Results(parent)
+DakotaResultsCalibration::DakotaResultsCalibration(RandomVariablesContainer *theRandomVariables, QWidget *parent)
+    : UQ_Results(parent), theRVs(theRandomVariables)
 {
     // title & add button
+    theDataTable = NULL;
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,1);
-
 }
 
 DakotaResultsCalibration::~DakotaResultsCalibration()
@@ -122,7 +122,7 @@ DakotaResultsCalibration::outputToJSON(QJsonObject &jsonObject)
       return true;
 
     jsonObject["resultType"]=QString(tr("DakotaResultsCalibration"));
-
+    jsonObject["isSurrogate"]=isSurrogate;
     //
     // add summary data
     //
@@ -210,7 +210,13 @@ DakotaResultsCalibration::inputFromJSON(QJsonObject &jsonObject)
         return true;
     }
 
-    theDataTable = new ResultsDataChart(spreadsheetValue.toObject());
+    if (jsonObject.contains("isSurrogate")) { // no saving of analysis data
+        isSurrogate=jsonObject["isSurrogate"].toBool();
+    } else {
+        isSurrogate=false;
+    }
+
+    theDataTable = new ResultsDataChart(spreadsheetValue.toObject(), isSurrogate, theRVs->getNumRandomVariables());
 
     tabWidget->addTab(sa,tr("Summary"));
     tabWidget->addTab(dakotaText,tr("General"));
@@ -272,9 +278,10 @@ static int mergesort(double *input, int size)
 
 int DakotaResultsCalibration::processResults(QString &dirName) 
 {
+  qDebug() << "DakotaResultsCalibration::processResults dir" << dirName;
   QString filenameOut = dirName + QDir::separator() + tr("dakota.out");	  
-  QString filenameTAB = dirName + QDir::separator() + tr("dakota_mcmc_tabular.dat");	  
-  return this->processResults(dirName);
+  QString filenameTAB = dirName + QDir::separator() + tr("dakotaTab.out");
+  return this->processResults(filenameOut, filenameTAB);
 }
 
 int DakotaResultsCalibration::processResults(QString &filenameResults, QString &filenameTab) {
@@ -282,6 +289,42 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
     statusMessage(tr("Processing Sampling Results"));
 
     this->clear();
+
+    //
+    // check it actually ran with no errors
+    //
+
+    QFileInfo fileTabInfo(filenameTab);
+    QString filenameErrorString = fileTabInfo.absolutePath() + QDir::separator() + QString("dakota.err");
+
+    QFileInfo filenameErrorInfo(filenameErrorString);
+    if (!filenameErrorInfo.exists()) {
+        errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applications failed with inputs provided");
+    return 0;
+    }
+
+
+    QFileInfo filenameTabInfo(filenameTab);
+    if (!filenameTabInfo.exists()) {
+        errorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+        return 0;
+    }
+
+
+    QFile fileError(filenameErrorString);
+    QString line("");
+    if (fileError.open(QIODevice::ReadOnly)) {
+       QTextStream in(&fileError);
+       while (!in.atEnd()) {
+          line = in.readLine();
+       }
+       fileError.close();
+    }
+
+    if (line.length() != 0) {
+        errorMessage(QString(QString("Error Running Dakota: ") + line));
+        return 0;
+    }
 
     //
     // open Dakota output file
@@ -370,19 +413,29 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
 
     //spreadsheet = new MyTableWidget();
 
-    // open file containing tab data
-    std::ifstream tabResults(filenameTab.toStdString().c_str());
-    if (!tabResults.is_open()) {
-        qDebug() << "Could not open file";
-        return -1;
+//    QFileInfo filenameTabInfo(filenameTab);
+//    if (!filenameTabInfo.exists()) {
+//        errorMessage("No dakotaTab.out file - dakota failed .. possibly no QoI");
+//        return 0;
+//    }
+
+    // If surrogate model is used, display additional info.
+    QDir tempFolder(filenameTabInfo.absolutePath());
+    QFileInfo surrogateTabInfo(tempFolder.filePath("surrogateTab.out"));
+    if (surrogateTabInfo.exists()) {
+        filenameTab = tempFolder.filePath("surrogateTab.out");
+        isSurrogate = true;
+    } else {
+        isSurrogate = false;
     }
+
 
 
     //
     // create spreadsheet,  a QTableWidget showing RV and results for each run
     //
 
-    theDataTable = new ResultsDataChart(filenameTab);
+    theDataTable = new ResultsDataChart(filenameTab, isSurrogate, theRVs->getNumRandomVariables());
 
 
     tabWidget->addTab(sa,tr("Summary"));

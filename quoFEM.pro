@@ -40,6 +40,7 @@ include(../SimCenterCommon/Common/Common.pri)
 include(../SimCenterCommon/Workflow/JsonConfiguredWidgets.pri)
 
 SOURCES += main.cpp\
+    BayesPlots.cpp \
         MainWindow.cpp \
         EDP.cpp  \
         FEM.cpp  \
@@ -64,7 +65,6 @@ SOURCES += main.cpp\
         DakotaEngine.cpp \
         SimCenterUQEngine.cpp \
         UQpyEngine.cpp \
-    bayesplots.cpp \
 	filterEngine.cpp \
         InputWidgetParameters.cpp \
         DakotaResultsBayesianCalibration.cpp \
@@ -103,6 +103,7 @@ SOURCES += main.cpp\
 
 
 HEADERS  += MainWindow.h \
+    BayesPlots.h \
     InputWidgetEDP.h \
     EDP.h \
     FEM.h \
@@ -126,7 +127,6 @@ HEADERS  += MainWindow.h \
     DakotaEngine.h \
     SimCenterUQEngine.h \
     UQpyEngine.h \
-    bayesplots.h \
     filterEngine.h \
     InputWidgetParameters.h \
     DakotaInputBayesianCalibration.h \

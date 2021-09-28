@@ -68,6 +68,7 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
+    int processResults(QString &dirName);  
     QWidget *createResultEDPWidget(QString &name, double mean, double stdDev, double kurtosis);
 
 signals:
@@ -75,7 +76,7 @@ signals:
 public slots:
    void clear(void);
    // modified by padhye 08/25/2018
-
+   void onSaveButtonClicked(void);
 private:
    RandomVariablesContainer *theRVs;
    QTabWidget *tabWidget;
@@ -91,6 +92,7 @@ private:
 
    ResultsDataChart* theDataTable;
 
+   bool isSurrogate = false;
 
    void gsaGraph(QScrollArea *&summaryLayout);
 

@@ -274,18 +274,6 @@ void InputWidgetFEM::addFEM(int i)
 
 }
 
-//void InputWidgetFEM::addFEM(QString name)
-//{
-//    FEM *theFEM = new FEM(theParameters, theEdpWidget, name);
-//    theFEMs.append(theFEM);
-//    femLayout->insertWidget(femLayout->count()-1, theFEM);
-//}
-
-
-//int InputWidgetFEM::getnumInputs(void)
-//{
-//    return theFEMs.length();
-//}
 
 void InputWidgetFEM::clear(void)
 {
@@ -372,6 +360,10 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
+    // if UQ has disabled FEM, don't load FEM part
+    if (!femSelection->isEnabled())
+        return true;
+
     if (jsonObject.contains("fem")) {
         QJsonObject femObject = jsonObject["fem"].toObject();
 
@@ -398,7 +390,6 @@ InputWidgetFEM::inputFromJSON(QJsonObject &jsonObject)
                 }
                 else
                     result = false;
-
             }
         } else {
             this->addFEM(0);

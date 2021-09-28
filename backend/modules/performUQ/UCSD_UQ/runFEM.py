@@ -25,8 +25,8 @@ def copytree(src, dst, symlinks=False, ignore=None):
                 shutil.copy2(s, d)
 
 
-def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibrationData, numExperiments,
-           covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors, locShiftList):
+def runFEM(ParticleNum, par, variables, workdirMain, log_likelihood, calibrationData, numExperiments,
+           covarianceMatrixList, edpNamesList, edpLengthsList, scaleFactors, shiftFactors):
     """ 
     this function runs FE model (model.tcl) for each parameter value (par)
     model.tcl should take parameter input
@@ -35,8 +35,8 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
 
     # print("\nParticleNum: {}, parameter values: {} ".format(ParticleNum, par))
 
-    stringtoappend = ("analysis" + str(ParticleNum))
-    analysisPath = os.path.join(resultsLocation, stringtoappend)
+    stringtoappend = ("workdir." + str(ParticleNum + 1))
+    analysisPath = os.path.join(workdirMain, stringtoappend)
 
     if os.path.isdir(analysisPath):
         pass
@@ -44,7 +44,7 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
         os.mkdir(analysisPath)
 
     # copy templatefiles
-    templateDir = os.path.join(resultsLocation, "templatedir")
+    templateDir = os.path.join(workdirMain, "templatedir")
     copytree(templateDir, analysisPath)
 
     # change to analysis directory
@@ -76,5 +76,7 @@ def runFEM(ParticleNum, par, variables, resultsLocation, log_likelihood, calibra
     # Read in the model prediction
     prediction = np.atleast_2d(np.genfromtxt('results.out')).reshape((1, -1))
 
+    # os.chdir(workdirMain)
+
     return log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrixList, edpNamesList,
-                          edpLengthsList, covarianceMultiplierList, normalizingFactors, locShiftList)
+                          edpLengthsList, covarianceMultiplierList, scaleFactors, shiftFactors)

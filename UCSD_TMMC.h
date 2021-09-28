@@ -42,19 +42,31 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <UQ_MethodInputWidget.h>
 class QLineEdit;
 class QGroupBox;
+class QCheckBox;
+class InputWidgetParameters;
+class InputWidgetEDP;
+class InputWidgetFEM;
 
 class UCSD_TMMC : public UQ_MethodInputWidget
 {
     Q_OBJECT
 public:
-    explicit UCSD_TMMC(QWidget *parent = 0);
-    ~UCSD_TMMC();
+//    explicit UCSD_TMMC(QWidget *parent = 0);
+    explicit UCSD_TMMC(InputWidgetParameters *param, InputWidgetFEM *femWidget,InputWidgetEDP *edpWidget, QWidget *parent = 0);
+    virtual ~UCSD_TMMC();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
     void clear(void);
 
     int getNumberTasks(void);
+
+    bool copyFiles(QString &fileDir);
+
+    int getNumExp(QString &calFileName);
+
+    int numExperiments;
+
 
 private:
   QLineEdit *numParticles;
@@ -63,6 +75,11 @@ private:
   QLineEdit *calDataFileEdit;
   QGroupBox *requiredInputsGroupBox;
   QGroupBox *optionalInputsGroupBox;
+  QCheckBox *readCovarianceDataCheckBox;
+
+  InputWidgetParameters *theParameters;
+  InputWidgetFEM *theFemWidget;
+  InputWidgetEDP *theEdpWidget;
 };
 
 #endif // UCSD_TMMC_H

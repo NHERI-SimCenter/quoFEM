@@ -45,6 +45,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RandomVariablesContainer.h>
 #include <QMessageBox>
 #include <QDebug>
+#include <QFile>
 
 InputWidgetParameters::InputWidgetParameters(QWidget *parent)
     : SimCenterWidget(parent), theParameters(0)
@@ -82,17 +83,15 @@ InputWidgetParameters::setParametersWidget(RandomVariablesContainer *param) {
 
     if (theParameters != 0) {
         layout->removeWidget(theParameters);
+        param->copyRVs(theParameters);
         delete theParameters;
         theParameters = nullptr;
     }
-
     if (param != 0) {
-        layout->addWidget(param);
         theParameters = param;
+        layout->addWidget(theParameters);
         //theParameters->addConstantRVs(varNamesAndValues);
-        theParameters->addNormalRVs(varNamesAndValues);
-        // connect(this,SLOT(errorMessage(QString)),param,SIGNAL(sendErrorMessage(QString)));
-	// connect(param,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+        //theParameters->addNormalRVs(varNamesAndValues);
     }
 }
 
@@ -101,7 +100,6 @@ InputWidgetParameters::setInitialVarNamesAndValues(QStringList theList){
     varNamesAndValues=theList;
     //theParameters->addConstantRVs(varNamesAndValues);
     theParameters->addNormalRVs(varNamesAndValues);
-
 }
 
 void
@@ -117,7 +115,6 @@ InputWidgetParameters::setGPVarNamesAndValues(QStringList theList){
 
 void
 InputWidgetParameters::clear(void){
-
     varNamesAndValues.clear();
     theParameters->clear();
 }
@@ -136,4 +133,15 @@ InputWidgetParameters::getParametereNames(void)
 void
 InputWidgetParameters::setCorrelationDisabled(bool tog){
     theParameters->setCorrelationDisabled(tog);
+}
+
+int
+InputWidgetParameters::getNumRandomVariables(void){
+    return theParameters->getNumRandomVariables();
+}
+
+void
+InputWidgetParameters::copyFiles(QString fileDir){
+//    theParameters->copyFiles(fileDir);
+    //QFile::copy(workingDir+QString("SimGpModel.pkl"), fileName);
 }

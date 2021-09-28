@@ -66,6 +66,7 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
+    int processResults(QString &dirName);
     QWidget *createResultEDPWidget(QString &name, double mean, double stdDev, double kurtosis);
 
 signals:
@@ -74,34 +75,27 @@ public slots:
    void clear(void);
   // void onSpreadsheetCellClicked(int, int);
   // void onSaveSpreadsheetClicked();
-
+   void onSaveButtonClicked(void);
    // modified by padhye 08/25/2018
 
 private:
+
+   void gsaChart(QScrollArea *&summaryLayout);
+
    RandomVariablesContainer *theRVs;
    QTabWidget *tabWidget;
 
    MyTableWidget *spreadsheet;  // MyTableWidget inherits the QTableWidget
    QChart *chart;
-   //QPushButton* save_spreadheet; // save the data from spreadsheet
    QLabel *label;
-   //QLabel *best_fit_instructions;
    ResultsDataChart * theDataTable;
 
-   //int col1, col2;
-   //bool mLeft;
-   //QStringList theHeadings;
-
-   //QVector<QString>theNames;
-   //QVector<double>theMeans;
-   //QVector<double>theStdDevs;
-   //QVector<double>theKurtosis;
    QVector<QVector<double>> sobols_tot;
    QVector<QVector<double>> sobols_main;
 
    QStringList edpname_list, rvname_list;
    int numEDP,numRV;
-   void gsaChart(QScrollArea *&summaryLayout);
+   bool isSurrogate = false;
 
 };
 

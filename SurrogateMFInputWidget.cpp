@@ -347,7 +347,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     // /////////////////////////////////////
 
     theAdvancedCheckBox = new QCheckBox();
-    theAdvancedTitle=new QLabel("\n    Advanced Options for Gaussian Process Model");
+    theAdvancedTitle=new QLabel("\n     Advanced Options for Gaussian Process Model");
     theAdvancedTitle->setStyleSheet("font-weight: bold; color: gray");
     layout->addWidget(theAdvancedTitle, 3, 0,1,3,Qt::AlignBottom);
     layout->addWidget(theAdvancedCheckBox, 3, 0,Qt::AlignBottom);
@@ -390,7 +390,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     // Use Log transform
 
     theLogtLabel=new QLabel("Log-space Transform of QoI");
-    theLogtLabel2=new QLabel("     (check this box only when all response qunatities are always positive)");
+    theLogtLabel2=new QLabel("     (check this box only when all responses are always positive)");
 
     theLogtCheckBox = new QCheckBox();
     layout->addWidget(theLogtLabel, 7, 0);
@@ -479,9 +479,9 @@ void SurrogateMFInputWidget::doExistingLF(bool tog)
         inpFileDir_LF->setDisabled(0);
         outFileDir_LF->setDisabled(0);
         chooseInpFile_LF->setDisabled(0);
-        chooseInpFile_LF->setStyleSheet("font-color: white");
+        chooseInpFile_LF->setStyleSheet("color: white");
         chooseOutFile_LF->setDisabled(0);
-        chooseOutFile_LF->setStyleSheet("font-color: white");
+        chooseOutFile_LF->setStyleSheet("color: white");
     } else {
         inpFileDir_LF->setDisabled(1);
         outFileDir_LF->setDisabled(1);
@@ -498,9 +498,9 @@ void SurrogateMFInputWidget::doExistingHF(bool tog)
         inpFileDir_HF->setDisabled(0);
         outFileDir_HF->setDisabled(0);
         chooseInpFile_HF->setDisabled(0);
-        chooseInpFile_HF->setStyleSheet("font-color: white");
+        chooseInpFile_HF->setStyleSheet("color: white");
         chooseOutFile_HF->setDisabled(0);
-        chooseOutFile_HF->setStyleSheet("font-color: white");
+        chooseOutFile_HF->setStyleSheet("color: white");
     } else {
         inpFileDir_HF->setDisabled(1);
         outFileDir_HF->setDisabled(1);
@@ -879,6 +879,21 @@ SurrogateMFInputWidget::inputFromJSON(QJsonObject &jsonObject){
   }
 
   return result;
+}
+
+bool
+SurrogateMFInputWidget::copyFiles(QString &fileDir) {
+
+    if ((!theHighSimButton->isChecked()) || (theExistingCheckBox_HF->isChecked())) {
+        QFile::copy(inpFileDir_HF->text(), fileDir + QDir::separator() + "inpFile_HF.in");
+        QFile::copy(outFileDir_HF->text(), fileDir + QDir::separator() + "outFile_HF.in");
+
+    }
+    if ((!theLowSimButton->isChecked()) || (theExistingCheckBox_LF->isChecked())) {
+        QFile::copy(inpFileDir_LF->text(), fileDir + QDir::separator() + "inpFile_LF.in");
+        QFile::copy(outFileDir_LF->text(), fileDir + QDir::separator() + "outFile_LF.in");
+    }
+    return true;
 }
 
 void
