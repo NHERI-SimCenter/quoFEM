@@ -43,6 +43,7 @@ if __name__ == '__main__':
     MPI_size = None
     if runType == "runningRemote":
         from mpi4py import MPI
+
         comm = MPI.COMM_WORLD
         MPI_size = comm.Get_size()
 
@@ -60,110 +61,16 @@ if __name__ == '__main__':
     logFile.write('\n\n==========================')
     logFile.write("\nParsing the json input file {}".format(dakotaJsonLocation))
 
-    (variablesList, numberOfSamples, seedVal,
-     logLikeModule, calDataFileName, edpList, writeOutputs) = parseDataFunction(dakotaJsonLocation, logFile,
-                                                                                workdirMain, mainscriptDir)
+    (numberOfSamples, seedVal, calDataFileName, logLikeModule, writeOutputs, variablesList, lineLength, edpNamesList,
+     edpLengthsList) = parseDataFunction(dakotaJsonLocation, logFile, workdirMain, mainscriptDir)
 
     logFile.flush()
     os.fsync(logFile.fileno())
 
-    # ======================================================================================================================
-    # logFile.write('\n\n==========================')
-    # logFile.write("\nProcessing log-likelihood script options")
-    # # If loglikelihood script is provided, use that, otherwise, use default loglikelihood function
-    # if len(logLikelihoodFilename) > 0:  # if the path is not an empty string
-    #     if os.path.exists(os.path.join(workdirMain, logLikelihoodFilename)):
-    #         sys.path.append(workdirMain)
-    #         logLikeModuleName = os.path.splitext(logLikelihoodFilename)[0]
-    #         logFile.write("\nUsing the user-supplied log-likelihood script: {}".format(
-    #             os.path.join(workdirMain, logLikelihoodFilename)))
-    #     else:
-    #         logFile.write("\nERROR: The loglikelihood script {} cannot be found.".format(
-    #             os.path.join(workdirMain, logLikelihoodFilename)))
-    #         raise FileNotFoundError("ERROR: The loglikelihood script {} cannot be found.".format(
-    #             os.path.join(workdirMain, logLikelihoodFilename)))
-    # else:
-    #     defaultLogLikeFileName = "defaultLogLikeScript.py"
-    #     defaultLogLikeDirectoryPath = mainscriptDir
-    #     sys.path.append(defaultLogLikeDirectoryPath)
-    #     logLikeModuleName = os.path.splitext(defaultLogLikeFileName)[0]
-    #     logFile.write("\nUsing the default loglikelihood script: {}".format(
-    #         os.path.join(defaultLogLikeDirectoryPath, defaultLogLikeFileName)))
-    #
-    # logLikeModule = import_module(logLikeModuleName)
-
-    # ======================================================================================================================
-    # logFile.write('\n\n==========================')
-    # logFile.write('\nProcessing EDP definitions')
-    lineLength = 0
-    edpNamesList = []
-    edpLengthsList = []
-    # Get list of EDPs and their lengths
-    for edp in edpList:
-        lineLength += edp["length"]
-        edpNamesList.append(edp["name"])
-        edpLengthsList.append(edp["length"])
-
-    # logFile.write('\nThe EDPs defined are:')
-    # printString = ""
-    # for i in range(len(edpList)):
-    #     printString += "Name: '{}', Length: {}\n".format(edpNamesList[i], edpLengthsList[i])
-    # logFile.write(printString)
-    # logFile.write("\nExpected length of each line in data file: {}".format(lineLength))
-
-    # # ======================================================================================================================
+    # # ================================================================================================================
     # # Process calibration data file
-    # logFile.write('\n\n==========================')
-    # logFile.write('\nProcessing calibration data file')
-    # calDataFile = os.path.join(workdirMain, calDataFileName)
-    # logFile.write("\nCalibration data file being processed: {}\n".format(calDataFile))
-    # tempCalDataFile = os.path.join(workdirTemplate, "quoFEMTempCalibrationDataFile.cal")
-    # f1 = open(tempCalDataFile, "w")
-    # numExperiments = 0
-    # linenum = 0
-    # with open(calDataFile, "r") as f:
-    #     for line in f:
-    #         linenum += 1
-    #         if len(line.strip()) == 0:
-    #             continue
-    #         else:
-    #             line = line.replace(',', ' ')
-    #             # Check length of each line
-    #             words = line.split()
-    #             tempLine = ""
-    #             if len(words) == lineLength:
-    #                 for w in words:
-    #                     tempLine += "{} ".format(w)
-    #                 logFile.write("\nLine {}, length {}: {}".format(linenum, len(words), tempLine))
-    #                 if numExperiments == 0:
-    #                     f1.write(tempLine)
-    #                 else:
-    #                     f1.write("\n")
-    #                     f1.write(tempLine)
-    #                 numExperiments += 1
-    #             else:
-    #                 logFile.write("\nERROR: The number of entries ({}) in line num {} of the file '{}' "
-    #                               "does not match the expected length {}".format(len(words), linenum,
-    #                                                                              calDataFile, lineLength))
-    #                 raise DataProcessingError("ERROR: The number of entries ({}) in line num {} of the file '{}' "
-    #                                           "does not match the expected length {}".format(len(words), linenum,
-    #                                                                                          calDataFile, lineLength))
-    # f1.close()
-
-    # ======================================================================================================================
-    # Process calibration data file
-    # logFile.write('\n\n==========================')
-    # logFile.write('\nProcessing calibration data file')
-    # calDataFile = os.path.join(workdirMain, calDataFileName)
-
-    # # Copy the calibration data file to the workdirMain
-    # src = os.path.join(workdirMain, calDataFileName)
-    # dst = os.path.join(workdirMain, calDataFileName)
-    # copyfile(src, dst)
-
-    # calDataFile = dst
     calDataFile = os.path.join(workdirMain, calDataFileName)
-    logFile.write("\n\nCalibration data file being processed: {}\n".format(calDataFile))
+    logFile.write("\nCalibration data file being processed: \n\t{}\n".format(calDataFile))
     tempCalDataFile = os.path.join(workdirMain, "quoFEMTempCalibrationDataFile.cal")
     f1 = open(tempCalDataFile, "w")
     logFile.write("\n\tCreating headings")
@@ -174,7 +81,7 @@ if __name__ == '__main__':
         else:
             for comp in range(edpLengthsList[i]):
                 headings += "{}_{} ".format(edpName, comp + 1)
-    logFile.write("\n\t\tThe headings are: {}".format(headings))
+    logFile.write("\n\t\tThe headings are: \n\t\t{}".format(headings))
     f1.write(headings)
     interface = 1
     numExperiments = 0
@@ -190,16 +97,11 @@ if __name__ == '__main__':
                 words = line.split()
                 if len(words) == lineLength:
                     numExperiments += 1
-                    tempLine = "\n{} {} ".format(numExperiments, interface)
+                    tempLine = "{} {} ".format(numExperiments, interface)
                     for w in words:
                         tempLine += "{} ".format(w)
-                    logFile.write("\n\tLine {}, length {}: \t\t{}".format(linenum, len(words), tempLine))
-                    f1.write(tempLine)
-                    # if numExperiments == 0:
-                    #     f1.write(tempLine)
-                    # else:
-                    #     f1.write("\n")
-                    #     f1.write(tempLine)
+                    logFile.write("\n\tLine {}, length {}: \n\t\t{}".format(linenum, len(words), tempLine))
+                    f1.write("\n{}".format(tempLine))
                 else:
                     logFile.write("\nERROR: The number of entries ({}) in line num {} of the file '{}' "
                                   "does not match the expected length {}".format(len(words), linenum,
@@ -216,50 +118,84 @@ if __name__ == '__main__':
     # logFile.write('\nThe number of experiments: {}'.format(np.shape(calibrationData)[0]))
     # logFile.write('\nThe number of calibration terms per experiment: {}'.format(np.shape(calibrationData)[1]))
 
-    # Compute the normalizing factors - absolute maximum of the data for each response variable
-    logFile.write("\n\nFor numerical convenience, a transformation is applied to the calibration data and model "
+    # Transform the data depending on the option chosen by the user
+    transformation = "absMaxScaling"
+    logFile.write("\n\nFor numerical convenience, a transformation is applied to the calibration data \nand model "
                   "prediction corresponding to each response quantity. \nThe calibration data and model prediction for "
-                  "each response variable will first be shifted (a scalar value will be added to the data and "
-                  "prediction) and then scaled (the data and prediction will be divided by a positive scalar value).")
-    logFile.write(
-        "\n\nComputing scale and shift factors. "
-        "\n\tThe shift factors are set to 0.0 by default."
-        "\n\tThe scale factors used are the absolute maximum of the data for each response variable."
-        "\n\tIf the absolute maximum of the data for any response variable is 0.0, then the scale factor is set to "
-        "1.0, and the shift factor is set to 1.0.")
+                  "each response variable will \nfirst be shifted (a scalar value will be added to the data and "
+                  "prediction) and \nthen scaled (the data and prediction will be divided by a positive scalar value).")
+
+    if transformation not in ["absMaxScaling", "standardize"]:
+        logFile.write("\n\nA valid transformation option not found. Choosing the default option of standardizing the "
+                      "data.")
+        transformation = "standardize"
+
     shiftFactors = []
     scaleFactors = []
     currentPosition = 0
     locShift = 0.0
-    for j in range(len(edpList)):
-        calibrationDataSlice = calibrationData[:, currentPosition:currentPosition + edpLengthsList[j]]
-        absMax = np.absolute(np.max(calibrationDataSlice))
-        if absMax == 0:  # This is to handle the case if abs max of data = 0.
-            locShift = 1.0
-            absMax = 1.0
-        shiftFactors.append(locShift)
-        scaleFactors.append(absMax)
-        calibrationDataSlice += locShift
-        calibrationData[:, currentPosition:currentPosition + edpLengthsList[j]] = calibrationDataSlice / absMax
-        currentPosition += edpLengthsList[j]
 
-    logFile.write("\n\tThe scale and shift factors computed are: ")
-    for j in range(len(edpList)):
+    if transformation in ["absMaxScaling"]:
+        # Compute the scale factors - absolute maximum of the data for each response variable
+        logFile.write(
+            "\n\nComputing scale and shift factors. "
+            "\n\tThe shift factors are set to 0.0 by default."
+            "\n\tThe scale factors used are the absolute maximum of the data for each response variable."
+            "\n\tIf the absolute maximum of the data for any response variable is 0.0, "
+            "\n\tthen the scale factor is set to 1.0, and the shift factor is set to 1.0.")
+        for j in range(len(edpLengthsList)):
+            calibrationDataSlice = calibrationData[:, currentPosition:currentPosition + edpLengthsList[j]]
+            absMax = np.absolute(np.max(calibrationDataSlice))
+            if absMax == 0:  # This is to handle the case if abs max of data = 0.
+                locShift = 1.0
+                absMax = 1.0
+            shiftFactors.append(locShift)
+            scaleFactors.append(absMax)
+            calibrationDataSlice = calibrationDataSlice + locShift
+            calibrationData[:, currentPosition:currentPosition + edpLengthsList[j]] = calibrationDataSlice / absMax
+            currentPosition += edpLengthsList[j]
+    else:
+        # Compute the scale and shift factors by standardizing the data. First, the data are shifted by their mean
+        # value, then they are scaled by the standard deviation, to get the standardized data, i.e., data with mean 0
+        # and standard deviation 1
+        logFile.write(
+            "\n\nComputing scale and shift factors. "
+            "\n\tThe shift factors are set to the negative of the mean value for each response variable."
+            "\n\tThe scale factors used are the standard deviation of the data for each response variable."
+            "\n\tIf the standard deviation of the data for any response variable is 0.0, "
+            "\n\tthen the scale factor is set to 1.0.")
+        for j in range(len(edpLengthsList)):
+            calibrationDataSlice = calibrationData[:, currentPosition:currentPosition + edpLengthsList[j]]
+            meanValue = np.nanmean(calibrationDataSlice)
+            stdValue = np.nanstd(calibrationDataSlice)
+            if stdValue == 0:  # This is to handle the case if stdev of data = 0.
+                stdValue = 1.0
+            shiftFactors.append(stdValue)
+            scaleFactors.append(-meanValue)
+            calibrationDataSlice = calibrationDataSlice - meanValue
+            calibrationData[:, currentPosition:currentPosition + edpLengthsList[j]] = calibrationDataSlice / stdValue
+            currentPosition += edpLengthsList[j]
+
+    logFile.write("\n\n\tThe scale and shift factors computed are: ")
+    for j in range(len(edpNamesList)):
         logFile.write("\n\t\tEDP: {}, scale factor: {}, shift factor: {}".format(edpNamesList[j], scaleFactors[j],
                                                                                  shiftFactors[j]))
 
     logFile.write("\n\nThe transformed calibration data: \n{}".format(calibrationData))
+    # logFile.write("\n\nMean of the transformed calibration data: \n{}".format(np.mean(calibrationData, axis=0)))
+    # logFile.write("\n\nVariance of the transformed calibration data: \n{}".format(np.var(calibrationData, axis=0)))
 
     # ======================================================================================================================
     # Processing covariance matrix options
     logFile.write('\n\n==========================')
     logFile.write('\nProcessing options for variance/covariance:')
-    logFile.write('\nOne variance value or covariance matrix will be used per response quantity per experiment.')
-    logFile.write('\nIf the user does not supply variance or covariance data, a default variance value will be\n'
-                  'used per response quantity, which is constant across experiments. The default variance is\n'
-                  'computed as the variance of the transformed data, if there is data from more than one experiment. \n'
-                  'If there is data from only one experiment, then a default variance value is computed by \n'
-                  'assuming that the standard deviation of the error is 5% of the absolute maximum value of \n'
+    logFile.write('\n\tOne variance value or covariance matrix will be used per response quantity per experiment.')
+    logFile.write('\n\tIf the user does not supply variance or covariance data, a default variance value will be\n\t'
+                  'used per response quantity, which is constant across experiments. The default variance is\n\t'
+                  'computed as the variance of the transformed data, if there is data from more than one '
+                  'experiment.\n\t'
+                  'If there is data from only one experiment, then a default variance value is computed by \n\t'
+                  'assuming that the standard deviation of the error is 5% of the absolute maximum value of \n\t'
                   'the corresponding transformed response data.')
 
     # For each response variable, compute the variance of the data. These will be the default error variance
@@ -431,7 +367,7 @@ if __name__ == '__main__':
     # ======================================================================================================================
     logFile.write('\n\n==========================')
     logFile.write('\nLooping over each model')
-    # %% For each model:
+    # For each model:
     for modelNum, variables in enumerate(variablesList):
         logFile.write('\n\n\t==========================')
         logFile.write("\n\tStarting analysis for model {}".format(modelNum))
@@ -509,7 +445,6 @@ if __name__ == '__main__':
         logFile.flush()
         os.fsync(logFile.fileno())
 
-        # if __name__ == '__main__':
         mytrace = RunTMCMC(Np, AllPars, Nm_steps_max, Nm_steps_maxmax, logLikeModule.log_likelihood, variables,
                            workdirMain, seedVal, calibrationData, numExperiments, covarianceMatrixList,
                            edpNamesList, edpLengthsList, scaleFactors, shiftFactors, runType, logFile, MPI_size,
@@ -534,19 +469,6 @@ if __name__ == '__main__':
 
         logFile.flush()
         os.fsync(logFile.fileno())
-
-        # # Write Data to '.csv' files
-        # logFile.write("\n\n\t\tWriting samples from each stage to csv files")
-        # for i in range(len(mytrace)):
-        #     dataToWrite = mytrace[i][0]
-        #
-        #     stringToAppend = 'resultsStage{}.csv'.format(i)
-        #     resultsFilePath = os.path.join(os.path.abspath(workdirMain), stringToAppend)
-        #
-        #     with open(resultsFilePath, 'w', newline='') as csvfile:
-        #         csvWriter = csv.writer(csvfile)
-        #         csvWriter.writerows(dataToWrite)
-        #     logFile.write("\n\t\t\tWrote to file {}".format(resultsFilePath))
 
         # Write the results of the last stage to a file named dakotaTab.out for quoFEM to be able to read the results
         logFile.write("\n\n\t\tWriting posterior samples to 'dakotaTab.out' for quoFEM to read the results")
