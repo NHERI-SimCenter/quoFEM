@@ -249,7 +249,7 @@ UCSD_TMMC::copyFiles(QString &fileDir) {
         QDir dstDir = childDir.dir();
         QString dst = dstDir.absolutePath()  + QDir::separator() + calFileInfo.fileName();
 
-        qDebug() << "Inside UCSD_TMMC copyFiles. FileDir is: " << fileDir;
+        qDebug() << "FileDir is: " << fileDir;
         qDebug() << "tmp.SimCenter path is: " << dstDir.absolutePath();
         qDebug() << "calFileName is: " << calFileName;
         qDebug() << "Copying " << calFileName << " to " << dst << "\n";
@@ -264,7 +264,7 @@ UCSD_TMMC::copyFiles(QString &fileDir) {
 
         if (readCovarianceDataCheckBox->isChecked())
         {
-            qDebug() << "Looking to find user-defined covariance files";
+            qDebug() << "Looking for user-defined covariance files";
 
             QVector<EDP *> theEDPs = theEdpWidget->theEDPs;
             int numEDPs = theEDPs.size();

@@ -247,14 +247,8 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
     }
     summaryLayout->addStretch();
 
-    theDataTablePrior = new ResultsDataChart(filenameTabPrior);
-    QVector<QVector<double>> statisticsVectorPrior = theDataTablePrior->getStatistics();
-//    QVector<QString> namesVectorPrior = theDataTablePrior->getNames();
-//    for (int col = 1; col<namesVectorPrior.size(); ++col) {
-//        QWidget *theWidgetPrior = this->createResultEDPWidget(namesVectorPrior[col], statisticsVectorPrior[col]);
-//        summaryLayout->addWidget(theWidgetPrior);
-//    }
-//    summaryLayout->addStretch();
+//    theDataTablePrior = new ResultsDataChart(filenameTabPrior);
+//    QVector<QVector<double>> statisticsVectorPrior = theDataTablePrior->getStatistics();
 
     // Read the dakota.json file located in ./templatedir
     QDir fileDir = filenameTabInfo.absoluteDir();
@@ -287,15 +281,6 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
         edpLengths.push_back(edps.at(i)["length"].toInt());
     }
 
-    // create headings for calibration data file
-
-    // find calibration data file name path and file name
-    //    QJsonObject uqMethod = jsonObj["UQ_Method"].toObject();
-    //    QString calFileName = uqMethod["calDataFile"].toString();
-    //    QString calFilePath = uqMethod["calDataFilePath"].toString();
-    
-    //    QString calDataFile = calFilePath + QDir::separator() + calFileName;
-
     // Get the quoFEMTempCalibrationDataFile.cal from templatedir
     QFileInfo calFileInfo(fileDirTab, QString("quoFEMTempCalibrationDataFile.cal"));
     if (!calFileInfo.exists()) {
@@ -304,25 +289,19 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
         }
     QString calFileName = calFileInfo.absoluteFilePath();
 
-    theDataTableCalData = new ResultsDataChart(calFileName);
-    QVector<QVector<double>> statisticsVectorCalData = theDataTableCalData->getStatistics();
-    QVector<QString> namesVectorCalData = theDataTablePrior->getNames();
-//    for (int col = 1; col<namesVectorPrior.size(); ++col) {
-//        QWidget *theWidgetPrior = this->createResultEDPWidget(namesVectorPrior[col], statisticsVectorPrior[col]);
-//        summaryLayout->addWidget(theWidgetPrior);
-//    }
-//    summaryLayout->addStretch();
+//    theDataTableCalData = new ResultsDataChart(calFileName);
+//    QVector<QVector<double>> statisticsVectorCalData = theDataTableCalData->getStatistics();
+//    QVector<QString> namesVectorCalData = theDataTablePrior->getNames();
 
+//    // Get the range of the predictions
+//    QVector<QVector<double>> minMaxVector = theDataTable->getMinMax();
+//    QVector<QVector<double>> minMaxVectorPrior = theDataTablePrior->getMinMax();
 
-    // Get the range of the predictions
-    QVector<QVector<double>> minMaxVector = theDataTable->getMinMax();
-    QVector<QVector<double>> minMaxVectorPrior = theDataTablePrior->getMinMax();
+//    QString xLabel = "Component";
+//    QString yLabel = "Value";
 
-    QString xLabel = "Component";
-    QString yLabel = "Value";
-
-    BayesPlots *thePlot = new BayesPlots(edpNames, edpLengths);
-    thePlot->plotPosterior(minMaxVector, minMaxVectorPrior, statisticsVector, statisticsVectorPrior, statisticsVectorCalData);
+//    BayesPlots *thePlot = new BayesPlots(edpNames, edpLengths);
+//    thePlot->plotPosterior(minMaxVector, minMaxVectorPrior, statisticsVector, statisticsVectorPrior, statisticsVectorCalData);
 
 
     //
@@ -330,11 +309,11 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
     //
 
     tabWidget->addTab(sa,tr("Summary"));
-    tabWidget->addTab(theDataTablePrior, tr("Prior"));
-//    tabWidget->addTab(theDataTable, tr("Data Values"));
-    tabWidget->addTab(theDataTable, tr("Posterior"));
-    tabWidget->addTab(theDataTableCalData, tr("Calibration Data"));
-    tabWidget->addTab(thePlot, tr("Plots"));
+//    tabWidget->addTab(theDataTablePrior, tr("Prior"));
+    tabWidget->addTab(theDataTable, tr("Data Values"));
+//    tabWidget->addTab(theDataTable, tr("Posterior"));
+//    tabWidget->addTab(theDataTableCalData, tr("Calibration Data"));
+//    tabWidget->addTab(thePlot, tr("Plots"));
     tabWidget->adjustSize();
 
     statusMessage(tr(""));
@@ -384,9 +363,9 @@ UCSD_Results::outputToJSON(QJsonObject &jsonObject)
         theDataTable->outputToJSON(jsonObject);
     }
 
-    if(theDataTablePrior != NULL) {
-        theDataTablePrior->outputToJSON(jsonObject);
-    }
+//    if(theDataTablePrior != NULL) {
+//        theDataTablePrior->outputToJSON(jsonObject);
+//    }
 
     return result;
 }

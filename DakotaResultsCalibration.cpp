@@ -286,7 +286,7 @@ int DakotaResultsCalibration::processResults(QString &dirName)
 
 int DakotaResultsCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
-    statusMessage(tr("Processing Sampling Results"));
+    statusMessage(tr("Dakota Calibration Processing Sampling Results"));
 
     this->clear();
 
