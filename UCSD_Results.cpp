@@ -271,7 +271,7 @@ int UCSD_Results::processResults(QString &filenameResults, QString &filenameTab)
         edpLengths.push_back(edps.at(i)["length"].toInt());
     }
 
-    // Get the quoFEMTempCalibrationDataFile.cal from templatedir
+    // Get the quoFEMTempCalibrationDataFile.cal from tmp.SimCenter
     QFileInfo calFileInfo(fileDirTab, QString("quoFEMTempCalibrationDataFile.cal"));
     if (!calFileInfo.exists()) {
             errorMessage("No calibration data file");
