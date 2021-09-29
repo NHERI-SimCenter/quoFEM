@@ -312,6 +312,14 @@ static int mergesort(double *input, int size)
     }
 }
 
+int DakotaResultsBayesianCalibration::processResults(QString &dirName)
+{
+  qDebug() << "DakotaResultsBayesianCalibration::processResults dir" << dirName;
+  QString filenameOut = dirName + QDir::separator() + tr("dakota.out");
+  QString filenameTAB = dirName + QDir::separator() + tr("dakotaTab.out");
+  return this->processResults(filenameOut, filenameTAB);
+}
+
 int DakotaResultsBayesianCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
     statusMessage(tr("Processing Sampling Results"));

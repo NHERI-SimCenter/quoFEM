@@ -307,6 +307,7 @@ MainWindow::MainWindow(QWidget *parent)
     //
 
     // error & status messages
+    
     connect(theRemoteInterface,SIGNAL(errorMessage(QString)), this, SLOT(errorMessage(QString)));
     connect(theRemoteInterface,SIGNAL(statusMessage(QString)), this, SLOT(errorMessage(QString)));
     connect(theRemoteInterface,SIGNAL(fatalMessage(QString)), this, SLOT(fatalMessage(QString)));
@@ -595,43 +596,6 @@ MainWindow::runApplication(QString program, QStringList args) {
     procEnv.insert("PYTHONPATH", pythonPathEnv);
     proc->setProcessEnvironment(procEnv);    
 
-
-    /*************** OLD CODE .. NEW .. ABOVE IS IN LOCALAPPLICATION .. BEGIN SWAP OUT
-    SimCenterPreferences *preferences = SimCenterPreferences::getInstance();
-    QString python=preferences->getPython();
-
-    QString exportPath("export PATH=$PATH");
-
-    QSettings settingsApplication("SimCenter", QCoreApplication::applicationName());
-    QVariant  openseesPathVariant = settingsApplication.value("openseesPath");
-    if (openseesPathVariant.isValid()) {
-        QFileInfo openseesFile(openseesPathVariant.toString());
-        if (openseesFile.exists()) {
-            QString openseesPath = openseesFile.absolutePath();
-            pathEnv = openseesPath + ';' + pathEnv;
-            exportPath += ":" + openseesPath;
-        }
-    }
-
-
-    QVariant  dakotaPathVariant = settingsApplication.value("dakotaPath");
-    if (dakotaPathVariant.isValid()) {
-        QFileInfo dakotaFile(dakotaPathVariant.toString());
-        if (dakotaFile.exists()) {
-            QString dakotaPath = dakotaFile.absolutePath();
-            QString dakotaPythonPath = QFileInfo(dakotaPath).absolutePath() + QDir::separator() +
-                    "share" + QDir::separator() + "Dakota" + QDir::separator() + "Python";
-            pathEnv = dakotaPath + ';' + pathEnv;
-            exportPath += ":" + dakotaPath;
-            pythonPathEnv = dakotaPythonPath + ";" + pythonPathEnv;
-        }
-    }
-
-    procEnv.insert("PATH", pathEnv);
-    procEnv.insert("PYTHONPATH", pythonPathEnv);
-    proc->setProcessEnvironment(procEnv);
-    *************************************** OLD CODE SWAP OUT   ***********************/
-    
 #ifdef Q_OS_WIN
 
     //python = QString('\"') + python + QString('\"');
@@ -1000,6 +964,7 @@ void MainWindow::onRunButtonClicked() {
     
     qDebug() << problemType;
 
+    /*
     QString filenameOUT = tmpSimCenterDirectoryName + QDir::separator() + tr("dakota.out");
     QString filenameTAB;
     if (problemType == "Inverse Problem") {
@@ -1009,8 +974,10 @@ void MainWindow::onRunButtonClicked() {
     } else {
         filenameTAB = tmpSimCenterDirectoryName + QDir::separator() + tr("dakotaTab.out");
     }
-
-    this->processResults(filenameOUT, filenameTAB);
+    */
+    
+    //    this->processResults(filenameOUT, filenameTAB);
+    this->processResults(tmpSimCenterDirectoryName);    
 }
 
 
@@ -1634,19 +1601,41 @@ void MainWindow::loadFile(const QString &fileName)
 }
 
 
+void MainWindow::processResults(QString &dirName)
+{
+    errorMessage("Processing Results");
+    qDebug() << "MainWindow:: processResults dir";
+    UQ_Results *result=uq->getResults();
+
+    if (result != NULL) {
+        //connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
+        // connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(errorMessage(QString)));
+
+        result->processResults(dirName);
+        results->setResultWidget(result);
+
+        inputWidget->setSelection(QString("RES"));
+    } else
+        qDebug() << "MainWindow:: processResults dir - No result widget";
+}
+
+
 void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 {
     errorMessage("Processing Results");
-
+    qDebug() << "MainWindow:: processResults files";
     UQ_Results *result=uq->getResults();
-    connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
-    connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(errorMessage(QString)));
 
-    result->processResults(dakotaIN, dakotaTAB);
-    results->setResultWidget(result);
-    
-    inputWidget->setSelection(QString("RES"));
+    if (result != NULL) {
+        connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
+        connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(errorMessage(QString)));
 
+        result->processResults(dakotaIN, dakotaTAB);
+        results->setResultWidget(result);
+
+        inputWidget->setSelection(QString("RES"));
+    } else
+        qDebug() << "MainWindow:: processResults file - No result widget";
 }
 
 void MainWindow::createActions() {

@@ -115,16 +115,32 @@ UQ_Results::processResults(QString &filenameResults, QString &filenameTab) {
     if (resultWidget != 0)
         return resultWidget->processResults(filenameResults, filenameTab);
     else {
-        QMessageBox::warning(this, tr("Application"),
-                             tr("BUG - No Results Set!"));
+      QString message = QString("Error Processing results - No ResultsWidget set, file: " ) +  filenameResults;
+      qDebug() << message;
+      // qDebug() << message;
+      QMessageBox::warning(this, tr("Application"),tr("BUG - No ResultsWidget Set!"));
+      return 0;
+    }
+}
 
-        return 0;
+int 
+UQ_Results::processResults(QString &dirName) {
+
+    if (resultWidget != 0)
+        return resultWidget->processResults(dirName);
+    else {
+      QString message = QString("Error Processing results - No resultsWidet set, directory: " ) +  dirName;
+      qDebug() << message;      
+      QMessageBox::warning(this, tr("Application"),tr("BUG - No ResultsWidget Set!"));      
+      return 0;
     }
 }
 
 void
 UQ_Results::setResultWidget(UQ_Results *result) {
+  
     if (resultWidget != 0) {
+      
         layout->removeWidget(resultWidget);
         delete resultWidget;
         resultWidget = 0;
@@ -136,5 +152,8 @@ UQ_Results::setResultWidget(UQ_Results *result) {
     if (result != 0) {
         layout->addWidget(result);
         resultWidget = result;
+	qDebug() << "ResultWidget::set result widget new: not NULL";
+    } else {
+	qDebug() << "ResultWidget::set result widget new:  NULL!";
     }
 }

@@ -179,6 +179,12 @@ static int mergesort(double *input, int size)
 }
 
 // if sobelov indices are selected then we would need to do some processing outselves
+int DakotaResultsSensitivity::processResults(QString &dirName)
+{
+  QString filenameOut = dirName + QDir::separator() + tr("dakota.out");
+  QString filenameTAB = dirName + QDir::separator() + tr("dakotaTab.out");
+  return this->processResults(filenameOut, filenameTAB);
+}
 
 int DakotaResultsSensitivity::processResults(QString &filenameResults, QString &filenameTab)
 {

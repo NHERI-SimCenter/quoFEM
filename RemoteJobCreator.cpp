@@ -175,6 +175,15 @@ RemoteJobCreator::uploadDirReturn(bool result)
         pushButton->setDisabled(true);
 
         job["name"]=QString("quoFEM:") + nameLineEdit->text();
+        int nodeCount = numCPU_LineEdit->text().toInt();
+
+        QString queue = "small";
+        if (nodeCount > 2)
+            queue = "normal";
+        if (nodeCount > 512)
+            queue = "large";
+
+        job["batchQueue"]=queue;
         job["nodeCount"]=numCPU_LineEdit->text().toInt();
         job["processorsOnEachNode"]=numProcessorsLineEdit->text().toInt();
         job["maxRunTime"]=runtimeLineEdit->text();
@@ -202,6 +211,8 @@ RemoteJobCreator::uploadDirReturn(bool result)
 
         inputs["inputDirectory"]=remoteDirectory;
         job["inputs"]=inputs;
+
+        qDebug() << job;
 
         // disable the button while the job is being uploaded and started
         pushButton->setEnabled(false);

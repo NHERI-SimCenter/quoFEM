@@ -189,6 +189,13 @@ static int mergesort(double *input, int size)
     }
 }
 
+int SimCenterUQResultsSurrogate::processResults(QString &dirName)
+{
+  QString filenameOUT = dirName + QDir::separator() + tr("dakota.out");;
+  QString filenameTAB = dirName + QDir::separator() + tr("dakotaTab.out");;
+  return this->processResults(filenameOUT, filenameTAB);
+}
+
 int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QString &filenameTab)
 {
     statusMessage(tr("Processing Results ... "));

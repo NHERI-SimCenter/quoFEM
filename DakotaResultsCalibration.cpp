@@ -276,9 +276,17 @@ static int mergesort(double *input, int size)
     }
 }
 
+int DakotaResultsCalibration::processResults(QString &dirName) 
+{
+  qDebug() << "DakotaResultsCalibration::processResults dir" << dirName;
+  QString filenameOut = dirName + QDir::separator() + tr("dakota.out");	  
+  QString filenameTAB = dirName + QDir::separator() + tr("dakotaTab.out");
+  return this->processResults(filenameOut, filenameTAB);
+}
+
 int DakotaResultsCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
-    statusMessage(tr("Processing Sampling Results"));
+    statusMessage(tr("Dakota Calibration Processing Sampling Results"));
 
     this->clear();
 

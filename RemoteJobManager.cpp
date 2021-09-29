@@ -64,6 +64,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include  <QDebug>
 #include "AgaveCurl.h"
+#include <ZipUtils.h>
+
 #include <MainWindow.h>
 
 RemoteJobManager::RemoteJobManager(AgaveCurl *theRemoteInterface, MainWindow *theMain, QWidget *parent)
@@ -300,46 +302,49 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
              }
          }
 
-        //archiveDir = SimCenterPreferences::getInstance()->getRemoteWorkDir();
-        archiveDir = archiveDir + QString("/") + inputDir.remove(QRegExp(".*\/")); // regex to remove up till last /
+         //archiveDir = SimCenterPreferences::getInstance()->getRemoteWorkDir();
+         archiveDir = archiveDir + QString("/") + inputDir.remove(QRegExp(".*\/")); // regex to remove up till last /
 
-	QString localDir = SimCenterPreferences::getInstance()->getRemoteWorkDir();
-	QDir localWork(localDir);
-	if (!localWork.exists())
-	  if (!localWork.mkpath(localDir)) {
-            emit errorMessage(QString("Could not create Working Dir: ") + localDir + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
-            return;
-	  }
-	
-        name1 = localDir + QDir::separator() + QString("dakota.json");
-        name2 = localDir + QDir::separator() + QString("dakota.out");
-        name3 = localDir + QDir::separator() + QString("dakotaTab.out");
-        name4 = localDir + QDir::separator() + QString("dakota.err");;
-        name5 = localDir + QDir::separator() + QString("dakota_mcmc_tabular.dat");;
+         QString localDir = SimCenterPreferences::getInstance()->getRemoteWorkDir();
+         QDir localWork(localDir);
+         if (!localWork.exists())
+             if (!localWork.mkpath(localDir)) {
+                 emit errorMessage(QString("Could not create Working Dir: ") + localDir + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
+                 return;
+             }
 
-        QStringList localFiles;
-        localFiles.append(name1);
-        localFiles.append(name2);
-        localFiles.append(name3);
-        localFiles.append(name4);
+         name1 = localDir + QDir::separator() + QString("dakota.json");
+         name2 = localDir + QDir::separator() + QString("results.zip");
+         name3 = localDir;
 
-        //
-        // download data to temp files & then process them as normal
-        //
+         //        name3 = localDir + QDir::separator() + QString("dakotaTab.out");
+         //        name4 = localDir + QDir::separator() + QString("dakota.err");;
+         //        name5 = localDir + QDir::separator() + QString("dakota_mcmc_tabular.dat");;
 
-        QString dakotaJSON = archiveDir + QString("/dakota.json");
-        QString dakotaOUT = archiveDir + QString("/dakota.out");
-        QString dakotaTAB = archiveDir + QString("/dakotaTab.out");
-        QString dakotaERR = archiveDir + QString("/dakota.err");
+         QStringList localFiles;
+         localFiles.append(name1);
+         localFiles.append(name2);
+         // localFiles.append(name3);
+         // localFiles.append(name4);
 
-        // first download the input data & load it
-        QStringList filesToDownload;
-        filesToDownload.append(dakotaJSON);
-        filesToDownload.append(dakotaOUT);
-        filesToDownload.append(dakotaTAB);
-        filesToDownload.append(dakotaERR);
+         //
+         // download data to temp files & then process them as normal
+         //
 
-        emit downloadFiles(filesToDownload, localFiles);
+         QString inputJSON = archiveDir + QString("/dakota.json");
+         QString resultsZIP = archiveDir + QString("/results.zip");
+         //        QString dakotaOUT = archiveDir + QString("/dakota.out");
+         //        QString dakotaTAB = archiveDir + QString("/dakotaTab.out");
+         //        QString dakotaERR = archiveDir + QString("/dakota.err");
+
+         // first download the input data & load it
+         QStringList filesToDownload;
+         filesToDownload.append(inputJSON);
+         filesToDownload.append(resultsZIP);
+         //        filesToDownload.append(dakotaTAB);
+         //        filesToDownload.append(dakotaERR);
+
+         emit downloadFiles(filesToDownload, localFiles);
      }
 }
 
@@ -354,8 +359,18 @@ RemoteJobManager::downloadFilesReturn(bool result)
 
     if (result == true) {
         theMainWindow->loadFile(name1);
-        theMainWindow->processResults(name2, name3);
+
+        // remove results dir if exists
+        QString resultsDir = name3 + QDir::separator() + QString("results");
+        QDir resultsD(resultsDir);
+        if (resultsD.exists())
+            resultsD.removeRecursively();
+
+        // unzip .. this places files in a new dir results
+        ZipUtils::UnzipFile(name2, QDir(name3));
+        theMainWindow->processResults(resultsDir);
         this->hide();
+
     } else {
         emit errorMessage("ERROR - Failed to download File - did Job finish successfully?");
     }
