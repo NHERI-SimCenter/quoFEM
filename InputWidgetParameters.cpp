@@ -142,6 +142,6 @@ InputWidgetParameters::getNumRandomVariables(void){
 
 void
 InputWidgetParameters::copyFiles(QString fileDir){
-//    theParameters->copyFiles(fileDir);
+    theParameters->copyFiles(fileDir);
     //QFile::copy(workingDir+QString("SimGpModel.pkl"), fileName);
 }
