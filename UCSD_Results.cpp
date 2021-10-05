@@ -188,7 +188,7 @@ int UCSD_Results::processResults(QString &dirName)
 {
   QString tabFile = dirName + QDir::separator() + tr("dakotaTab.out");;
   QString tabPriorFile = dirName + QDir::separator() + tr("dakotaTabPrior.out");;    
-  this->processResults(tabFile, tabPriorFile);
+  return this->processResults(tabFile, tabPriorFile);
 }
 
 int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
