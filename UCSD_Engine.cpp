@@ -101,7 +101,7 @@ UCSD_Engine::UCSD_Engine(InputWidgetParameters *param,InputWidgetFEM *femWidget,
     connect(theMethodSelection,
 	    SIGNAL(currentIndexChanged(QString)),
 	    this,
-	    SLOT(engineSelectionChanged(QString)));
+        SLOT(methodChanged(QString)));
 }
 
 UCSD_Engine::~UCSD_Engine()
@@ -120,7 +120,7 @@ void UCSD_Engine::methodChanged(const QString &arg1)
       theCurrentMethod = theTMMC;   
     } 
     else {
-        QString errorMsg = QString("UCSD_Engine Selection type: ") + arg1 + QString(" unknown");
+        QString errorMsg = QString("ERROR: UCSD_Engine Selection type: ") + arg1 + QString(" unknown");
         errorMessage(errorMsg);
         qDebug() << "ERROR .. UCSD_Engine selection .. type unknown: " << arg1;
     }
