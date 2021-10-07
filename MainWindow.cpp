@@ -309,28 +309,28 @@ MainWindow::MainWindow(QWidget *parent)
     // error & status messages
     
     connect(theRemoteInterface,SIGNAL(errorMessage(QString)), this, SLOT(errorMessage(QString)));
-    connect(theRemoteInterface,SIGNAL(statusMessage(QString)), this, SLOT(errorMessage(QString)));
+    connect(theRemoteInterface,SIGNAL(statusMessage(QString)), this, SLOT(statusMessage(QString)));
     connect(theRemoteInterface,SIGNAL(fatalMessage(QString)), this, SLOT(fatalMessage(QString)));
 
-    connect(fem,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(fem,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(fem,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+//    connect(fem,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+//    connect(fem,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+//    connect(fem,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
-    connect(random,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(random,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(random,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+//    connect(random,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+//    connect(random,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+//    connect(random,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
-    connect(results,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(results,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(results,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+//    connect(results,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+//    connect(results,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+//    connect(results,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
-    connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(uq,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(uq,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+//    connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+//    connect(uq,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+//    connect(uq,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
-    connect(edp,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(edp,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(edp,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+//    connect(edp,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+//    connect(edp,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+//    connect(edp,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
     connect(jobManager,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(jobManager,SIGNAL(statusMessage(QString)),this,SLOT(statusMessage(QString)));
@@ -1603,7 +1603,7 @@ void MainWindow::loadFile(const QString &fileName)
 
 void MainWindow::processResults(QString &dirName)
 {
-    errorMessage("Processing Results");
+    statusMessage(tr("Processing Results"));
     qDebug() << "MainWindow:: processResults dir";
     UQ_Results *result=uq->getResults();
 
@@ -1622,13 +1622,13 @@ void MainWindow::processResults(QString &dirName)
 
 void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 {
-    errorMessage("Processing Results");
+    statusMessage(tr("Processing Results"));
     qDebug() << "MainWindow:: processResults files";
     UQ_Results *result=uq->getResults();
 
     if (result != NULL) {
         connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
-        connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(errorMessage(QString)));
+        connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(statusMessage(QString)));
 
         result->processResults(dakotaIN, dakotaTAB);
         results->setResultWidget(result);

@@ -92,6 +92,7 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     QIntValidator *posIntValidator = new QIntValidator();
     posIntValidator->setBottom(bottom);
 
+
     int minChains = 3;
     QIntValidator *minChainValidator = new QIntValidator();
     minChainValidator->setBottom(minChains);
@@ -99,6 +100,7 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     chains = new QLineEdit();
     chains->setText(tr("3"));
     chains->setValidator(minChainValidator);
+//    connect(chains, SIGNAL(textChanged(QString)), this, SLOT(chainsTextChanged(QString)));
 
     chainSamples = new QLineEdit();
     chainSamples->setText(tr("1000"));
@@ -127,7 +129,7 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
 
     readCalibrationDataCheckBox = new QCheckBox();
     readCalibrationDataCheckBox->setChecked(false);
-    connect(readCalibrationDataCheckBox,SIGNAL(toggled(bool)),this,SLOT(showNumExp(bool)));
+    connect(readCalibrationDataCheckBox, SIGNAL(toggled(bool)), this, SLOT(showNumExp(bool)));
 
     numExperiments = new QLineEdit();
     numExperiments->setText(tr("1"));
@@ -265,11 +267,11 @@ DakotaInputBayesianCalibration::DakotaInputBayesianCalibration(QWidget *parent)
     layout->setColumnMinimumWidth(2, 40);
     layout->setColumnMinimumWidth(3, 40);
 //    layout->setColumnMinimumWidth(4, 300);
-    layout->setColumnMinimumWidth(4, 40);
+    layout->setColumnMinimumWidth(4, 400);
 //    layout->setColumnMinimumWidth(5, 10);
 //    layout->setColumnMinimumWidth(6, 10);
 
-    layout->setRowMinimumHeight(6, 24);
+//    layout->setRowMinimumHeight(6, 24);
     layout->setRowMinimumHeight(7, 24);
 
     layout->setColumnStretch(8, 1);
@@ -282,6 +284,12 @@ DakotaInputBayesianCalibration::~DakotaInputBayesianCalibration()
 {
 
 }
+
+//void DakotaInputBayesianCalibration::chainsTextChanged(QString newText) {
+//    if (QVariant(newText).toInt() > 2) {
+
+//    }
+//}
 
 int 
 DakotaInputBayesianCalibration::getMaxNumParallelTasks(void){
@@ -396,7 +404,13 @@ DakotaInputBayesianCalibration::inputFromJSON(QJsonObject &jsonObject)
         //mcmcMethod->setCurrentIndex(index);
 
         int samples=uq["chainSamples"].toInt();
-        chainSamples->setText(QString::number(samples));
+        if (samples < 3) {
+            errorMessage("ERROR: Number of chains must be greater than 2");
+            result = false;
+        }
+        else {
+            chainSamples->setText(QString::number(samples));
+        }
 
         double seed=uq["seed"].toDouble();
         randomSeed->setText(QString::number(seed));
