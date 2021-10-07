@@ -117,7 +117,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     //
 
     parallelCheckBox = new QCheckBox();
-    parallelCheckBox -> setChecked(true);
+    parallelCheckBox->setChecked(true);
     layout->addWidget(new QLabel("Parallel Execution"), wid, 0);
     layout->addWidget(parallelCheckBox, wid++, 1);
 
@@ -540,7 +540,7 @@ SurrogateDoEInputWidget::inputFromJSON(QJsonObject &jsonObject){
     if (jsonObject.contains("parallelExecution")) {
         parallelCheckBox->setChecked(jsonObject["parallelExecution"].toBool());
     } else {
-        parallelCheckBox->setChecked(false); // for compatibility. later change it to error. (sy - june 2021)
+        parallelCheckBox->setChecked(true); // for compatibility. later change it to error. (sy - june 2021)
     }
 
     if (jsonObject.contains("advancedOpt")) {
