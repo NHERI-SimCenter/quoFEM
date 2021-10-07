@@ -80,6 +80,7 @@ public:
     bool copyFiles(QString &fileName);
 
 signals:
+    void onUQ_EngineChanged(void);
     void onMethodChanged(void);
 
 public slots:

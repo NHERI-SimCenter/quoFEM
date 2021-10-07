@@ -126,8 +126,10 @@ void UCSD_Engine::methodChanged(const QString &arg1)
     }
 
     // emit signal if engine changed
-    if (theCurrentMethod != theOldEngine)
+    if (theCurrentMethod != theOldEngine) {
         emit onMethodChanged();
+        emit onUQ_EngineChanged();
+    }
 }
 
 
