@@ -550,8 +550,8 @@ int DakotaInputBayesianCalibration::processResults(QString &filenameResults, QSt
 
 UQ_Results *
 DakotaInputBayesianCalibration::getResults(void) {
-    qDebug() << "new DakotaResultsCalibration";
-  return new DakotaResultsBayesianCalibration(burnInSamples->text().toInt());
+    qDebug() << "new DakotaResultsBayesianCalibration";
+    return new DakotaResultsBayesianCalibration(burnInSamples->text().toInt());
 }
 
 RandomVariablesContainer *

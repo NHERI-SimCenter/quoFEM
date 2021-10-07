@@ -202,6 +202,8 @@ int DakotaInputReliability::processResults(QString &filenameResults, QString &fi
 
 UQ_Results *
 DakotaInputReliability::getResults(void) {
+
+    qDebug() << "DakotaInputReliability::getResults";
     return new DakotaResultsReliability(theRandomVariables);
 }
 

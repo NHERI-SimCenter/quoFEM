@@ -209,6 +209,7 @@ int DakotaInputSensitivity::processResults(QString &filenameResults, QString &fi
 UQ_Results *
 DakotaInputSensitivity::getResults(void) {
 
+    qDebug() << "DakotaInputSensitivity::getResults";
     return new DakotaResultsSensitivity(theRandomVariables);
 }
 
