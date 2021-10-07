@@ -193,7 +193,7 @@ int UCSD_Results::processResults(QString &dirName)
 
 int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
 {
-    statusMessage(tr("UCSD Processing Results"));
+    statusMessage(tr("Processing Results"));
 
     this->clear();
 
@@ -203,7 +203,7 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        errorMessage("No dakotaTab.out file - TMCMC failed .. possibly no QoI");
+        errorMessage("ERROR: No dakotaTab.out file - TMCMC failed .. possibly no QoI");
         return 0;
     }
 
@@ -213,7 +213,7 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
     
     QString filenameTabPrior = priorFileInfo.absoluteFilePath();
     if (!priorFileInfo.exists()) {
-        errorMessage("No dakotaTabPrior.out file - TMCMC failed .. possibly no QoI");
+        errorMessage("ERROR: No dakotaTabPrior.out file - TMCMC failed .. possibly no QoI");
         return 0;
     }
 
@@ -254,14 +254,14 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
     QDir fileDir = filenameTabInfo.absoluteDir();
     QFileInfo jsonFileInfo(fileDirTab, QString("templatedir") + QDir::separator() + QString("dakota.json"));
     if (!jsonFileInfo.exists()) {
-        errorMessage("No dakota.json file");
+        errorMessage("ERROR: No dakota.json file");
         return 0;
     }
     
     QString filenameJson = jsonFileInfo.absoluteFilePath();
     QFile dakotaJsonFile(filenameJson);
     if (!dakotaJsonFile.open(QFile::ReadOnly | QFile::Text)) {
-        QString message = QString("Error: could not open file") + filenameJson;
+        QString message = QString("ERROR: could not open file") + filenameJson;
         errorMessage(message);
         return 0;
     }
@@ -284,7 +284,7 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
     // Get the quoFEMTempCalibrationDataFile.cal from tmp.SimCenter
     QFileInfo calFileInfo(fileDirTab, QString("quoFEMTempCalibrationDataFile.cal"));
     if (!calFileInfo.exists()) {
-            errorMessage("No calibration data file");
+            errorMessage("ERROR: No calibration data file");
             return 0;
         }
     QString calFileName = calFileInfo.absoluteFilePath();

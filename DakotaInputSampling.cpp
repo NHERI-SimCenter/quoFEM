@@ -264,7 +264,7 @@ DakotaInputSampling::inputAppDataFromJSON(QJsonObject &jsonObject)
           int index = samplingMethod->findText(method);
 
           if (index == -1) {
-              errorMessage(QString("ERROR: Unknown Method") + method);
+              errorMessage(QString("ERROR: Unknown Method ") + method);
               return false;
           }
           samplingMethod->setCurrentIndex(index);
