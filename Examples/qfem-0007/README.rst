@@ -22,7 +22,7 @@ Consider the two-story building structure shown in :numref:`figSteelStructuralSy
 
 .. _figSteelStructuralSystem:
 
-.. figure:: figures/SteelStructuralSystem.png
+.. figure:: figures/qfem-0007-SteelStructuralSystem.png
    :align: center
    :width: 400
    :figclass: align-center
@@ -67,7 +67,7 @@ The eigenvectors in :eq:`eqnEigenVectors` are normalized such that the first com
 
 .. _figNaturalModeShapes:
 
-.. figure:: figures/NaturalModeShapes.png
+.. figure:: figures/qfem-0007-NaturalModeShapes.png
    :align: center
    :width: 400
    :figclass: align-center
@@ -156,14 +156,14 @@ UQ workflow
 
 1. Start the application and the **UQ** panel will be presented. In the panel for the UQ selection, keep the UQ engine as that selected, i.e. Dakota. In the UQ Method category drop down menu change the category to **Parameters Estimation**, and the method as **NL2SOL**, and enter the fields as shown in the figure below. If manually setting up this problem, choose the path to the file containing the calibration data on your system. 
 
-.. figure:: figures/UQ.png
+.. figure:: figures/qfem-0007-UQ.png
    :width: 600
    :align: center
    :figclass: align-center
 
 2. Next select the **FEM** tab from the input panel selection. This will default to the OpenSees FEM engine. For the main script copy the path name to the ``fem.tcl`` file or select **choose** and navigate to the file. 
 
-.. figure:: figures/FEM.png
+.. figure:: figures/qfem-0007-FEM.png
    :width: 600
    :align: center
    :figclass: align-center
@@ -175,7 +175,7 @@ UQ workflow
 3. Next select the **RV** tab from the input panel. This should be prepopulated with two random variables with same names as those having ``pset`` in the tcl script, i.e. ``Ic1`` and ``Ic2``. For each variable, from the drop down menu change them from having a constant distribution to a continuous design one and then provide the lower bounds, upper bounds and the starting points shown in the figure below.
 
 
-.. figure:: figures/RV.png
+.. figure:: figures/qfem-0007-RV.png
    :width: 600
    :align: center
    :figclass: align-center
@@ -186,7 +186,7 @@ UQ workflow
 
 4. Next select the **QoI** panel. Here enter **2** variable names for the two quantities output from the model. 
 
-.. figure:: figures/QoI.png
+.. figure:: figures/qfem-0007-QoI.png
    :width: 600
    :align: center
    :figclass: align-center
@@ -198,12 +198,12 @@ UQ workflow
 5. Next click on the **Run** button. This will cause the backend application to launch Dakota. When done the **RES** tab will be selected and the results will be displayed as shown in the figure below. The figure shows that Dakota estimated the parameters ``Ic1`` and ``Ic2`` as **1168.83** and **1211.25** respectively, for the input data provided. The true value of these parameters, as described in the earlier sections is **1190**.
 
 
-.. figure:: figures/RES1.png
+.. figure:: figures/qfem-0007-RES1.png
    :width: 600
    :align: center
    :figclass: align-center
 
-.. figure:: figures/RES2.png
+.. figure:: figures/qfem-0007-RES2.png
    :width: 600
    :align: center
    :figclass: align-center

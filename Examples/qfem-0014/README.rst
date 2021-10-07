@@ -25,7 +25,7 @@ Consider the two-story building structure shown in :numref:`figSteelStructuralSy
 
 .. _figSteelStructuralSystem:
 
-.. figure:: figures/SteelStructuralSystem.png
+.. figure:: figures/qfem-0014-SteelStructuralSystem.png
    :align: center
    :width: 400
    :figclass: align-center
@@ -70,7 +70,7 @@ The eigenvectors in :eq:`eqnEigenVectors` are normalized such that the first com
 
 .. _figNaturalModeShapes:
 
-.. figure:: figures/NaturalModeShapes.png
+.. figure:: figures/qfem-0014-NaturalModeShapes.png
    :align: center
    :width: 400
    :figclass: align-center
@@ -162,7 +162,7 @@ The steps involved are as follows:
 
 1. Start the application and the **UQ** panel will be highlighted. In the **UQ Engine** drop down menu, select the **UCSD_UQ** engine. In the **Method** category drop down menu the **Transitional Markov chain Monte Carlo** option will be highlighted. Enter the values in this panel as shown in the figure below. If manually setting up this problem, choose the path to the file containing the calibration data on your system. 
 
-.. figure:: figures/UQ.png
+.. figure:: figures/qfem-0014-UQ.png
    :width: 600
    :align: center
    :figclass: align-center
@@ -170,7 +170,7 @@ The steps involved are as follows:
 
 2. Next select the **FEM** panel from the input panel selection. This will default to the **OpenSees** FEM engine. In the **Input Script** field, enter the path to the ``model.tcl`` file or select **Choose** and navigate to the file. 
 
-.. figure:: figures/FEM.png
+.. figure:: figures/qfem-0014-FEM.png
    :align: center
    :figclass: align-center
    :width: 600
@@ -180,7 +180,7 @@ The steps involved are as follows:
 
 For each variable, specify the prior probability distribution - from the **Distribution** drop down menu, select **Uniform** and then provide the lower bounds and upper bounds shown in the figure below. 
 
-.. figure:: figures/RV.png
+.. figure:: figures/qfem-0014-RV.png
    :align: center
    :figclass: align-center
    :width: 600
@@ -188,7 +188,7 @@ For each variable, specify the prior probability distribution - from the **Distr
 
 4. In the **QoI** panel, enter **2** variable names for the two quantities output from the model. 
 
-.. figure:: figures/QoI.png
+.. figure:: figures/qfem-0014-QoI.png
    :width: 600
    :align: center
    :figclass: align-center
@@ -201,7 +201,7 @@ For each variable, specify the prior probability distribution - from the **Distr
 5. Next click on the **Run** button. This will cause the backend application to launch the **UCSD_UQ** engine, which performs Bayesian calibration using the TMCMC algorithm. When done, the **RES** tab will be selected and the results will be displayed as shown in the figure below. The results show the first four moments of the posterior marginal probability distribution of ``k1`` and ``k2``. Also shown are the moments of the estimated aditional error parameters per response quantity and finally, the moments of the outputs corresponding to the samples from the posterior probability distribution of the parameters. 
 
 
-.. figure:: figures/RES1.png
+.. figure:: figures/qfem-0014-RES1.png
    :align: center
    :figclass: align-center
    :width: 600
@@ -209,31 +209,31 @@ For each variable, specify the prior probability distribution - from the **Distr
 
 If the user selects the **Data Values** tab in the results panel, they will be presented with both a graphical plot and a tabular listing of the data.
 
-.. figure:: figures/RES2.png
+.. figure:: figures/qfem-0014-RES2.png
    :align: center
    :figclass: align-center
    :width: 600
 
 Various views of the graphical display can be obtained by left and right clicking in the columns of the tabular data. 
 
-.. figure:: figures/RES3.png
+.. figure:: figures/qfem-0014-RES3.png
    :align: center
    :figclass: align-center
    :width: 600
 
-.. figure:: figures/RES6.png
+.. figure:: figures/qfem-0014-RES6.png
    :align: center
    :figclass: align-center
    :width: 600
 
 If a singular column of the tabular data is pressed with both right and left buttons a histogram and CDF will be displayed, as shown in the figures below.
 
-.. figure:: figures/RES4.png
+.. figure:: figures/qfem-0014-RES4.png
    :align: center
    :figclass: align-center
    :width: 600
  
-.. figure:: figures/RES5.png
+.. figure:: figures/qfem-0014-RES5.png
    :align: center
    :figclass: align-center
    :width: 600
