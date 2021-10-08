@@ -52,7 +52,7 @@
     },
     {
       "name": "Surrogate Modeling to Predict Mean and Variance of Earthquake Response",
-      "description": "Surrogate modeling for mean and variance of EQ response",
+      "description": "This example constructs a Gaussian process-based surrogate model for the mean and variance of building responses subjected to ten different ground motions. A floor response of a six-story shear building model is investigated.",
       "InputFile": "qfem-0016/src/input.json"
     },
     {
