@@ -19,7 +19,6 @@
             "accuracyLimit": 0.02,
             "advancedOpt": true,
             "existingDoE": false,
-            "initialDoE": 16,
             "kernel": "Matern 5/2",
             "linear": true,
             "logTransform": true,
