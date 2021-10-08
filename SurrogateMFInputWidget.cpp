@@ -325,9 +325,9 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
 
     // Do DoE
 
-    theDoECheckBox = new QCheckBox();
-    theSimGrid->addWidget(new QLabel("   Do Adaptive Design of Experiments"), id_fe, 0);
-    theSimGrid->addWidget(theDoECheckBox, id_fe++, 1);
+//    theDoECheckBox = new QCheckBox();
+//    theSimGrid->addWidget(new QLabel("   Do Adaptive Design of Experiments"), id_fe, 0);
+//    theSimGrid->addWidget(theDoECheckBox, id_fe++, 1);
 
     theSimGrid->setColumnStretch(2,1);
     theSimGrid->setRowStretch(4,1);
@@ -533,6 +533,7 @@ void SurrogateMFInputWidget::doAdvancedGP(bool tog)
     theLogtLabel2->setVisible(tog);
     theKernelLabel->setVisible(tog);
     theNuggetLabel->setVisible(tog);
+    theNuggetSelection->setVisible(tog);
     theNuggetVals->setVisible(tog);
 }
 
@@ -653,7 +654,8 @@ SurrogateMFInputWidget::outputToJSON(QJsonObject &jsonObj){
         jsonObj["seed"]=randomSeed->text().toInt();
         jsonObj["timeLimit"]=timeMeasure->text().toDouble();
         jsonObj["accuracyLimit"]=accuracyMeasure->text().toDouble();
-        jsonObj["doDoE"]=theDoECheckBox->isChecked();
+        //jsonObj["doDoE"]=theDoECheckBox->isChecked();
+        jsonObj["doDoE"]=0;
         jsonObj["parallelExecution"]=parallelCheckBox->isChecked();
     }
 
@@ -843,7 +845,7 @@ SurrogateMFInputWidget::inputFromJSON(QJsonObject &jsonObject){
         if (jsonObject.contains("parallelExecution")) {
             parallelCheckBox->setChecked(jsonObject["parallelExecution"].toBool());
         } else {
-            parallelCheckBox->setChecked(false); // for compatibility. later change it to error. (sy - june 2021)
+            parallelCheckBox->setChecked(true); // for compatibility. later change it to error. (sy - june 2021)
         }
     }
 

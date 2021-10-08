@@ -56,34 +56,8 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
 {
     auto layout = new QGridLayout();
 
-    //
-    // Random Seed
-    //
     int wid = 0; // widget id
 
-    srand(time(NULL));
-    int randomNumber = rand() % 1000 + 1;
-    randomSeed = new QLineEdit();
-    randomSeed->setText(QString::number(randomNumber));
-    randomSeed->setValidator(new QIntValidator);
-    randomSeed->setToolTip("Set the seed");
-    randomSeed->setMaximumWidth(150);
-
-    layout->addWidget(new QLabel("Random Seed"), wid, 0);
-    layout->addWidget(randomSeed, wid++, 1);
-
-    //
-    // create convergence criteria
-    //
-
-    accuracyMeasure = new QLineEdit();
-    accuracyMeasure->setText(tr("0.02"));
-    accuracyMeasure->setValidator(new QDoubleValidator);
-    accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
-    accuracyMeasure->setMaximumWidth(150);
-
-    layout->addWidget(new QLabel("Target Accuracy (Normalized Err) "), wid, 0);
-    layout->addWidget(accuracyMeasure, wid++, 1);
 
     //
     // create layout label and entry for # samples
@@ -95,7 +69,9 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     numSamples->setToolTip("Specify the number of samples");
     numSamples->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Max Number of Model Runs"), wid, 0);
+    QLabel *maxRun = new QLabel("Max Number of Model Runs");
+    maxRun->setStyleSheet("font-weight: bold");
+    layout->addWidget(maxRun, wid, 0);
     layout->addWidget(numSamples, wid++, 1);
 
     //
@@ -111,6 +87,34 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
 
     layout->addWidget(new QLabel("Max Computation Time (minutes)    "), wid, 0);
     layout->addWidget(timeMeasure, wid++, 1);
+
+    //
+    // create convergence criteria
+    //
+
+    accuracyMeasure = new QLineEdit();
+    accuracyMeasure->setText(tr("0.02"));
+    accuracyMeasure->setValidator(new QDoubleValidator);
+    accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
+    accuracyMeasure->setMaximumWidth(150);
+
+    layout->addWidget(new QLabel("Target Accuracy (Normalized Err) "), wid, 0);
+    layout->addWidget(accuracyMeasure, wid++, 1);
+
+    //
+    // Random Seed
+    //
+
+    srand(time(NULL));
+    int randomNumber = rand() % 1000 + 1;
+    randomSeed = new QLineEdit();
+    randomSeed->setText(QString::number(randomNumber));
+    randomSeed->setValidator(new QIntValidator);
+    randomSeed->setToolTip("Set the seed");
+    randomSeed->setMaximumWidth(150);
+
+    layout->addWidget(new QLabel("Random Seed"), wid, 0);
+    layout->addWidget(randomSeed, wid++, 1);
 
     //
     // Parallel Execution
@@ -540,7 +544,7 @@ SurrogateDoEInputWidget::inputFromJSON(QJsonObject &jsonObject){
     if (jsonObject.contains("parallelExecution")) {
         parallelCheckBox->setChecked(jsonObject["parallelExecution"].toBool());
     } else {
-        parallelCheckBox->setChecked(false); // for compatibility. later change it to error. (sy - june 2021)
+        parallelCheckBox->setChecked(true); // for compatibility. later change it to error. (sy - june 2021)
     }
 
     if (jsonObject.contains("advancedOpt")) {
