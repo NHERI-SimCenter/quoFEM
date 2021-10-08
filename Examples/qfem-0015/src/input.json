@@ -25,7 +25,8 @@
             "method": "Sampling and Simulation",
             "samples": 150,
             "seed": 71,
-            "timeLimit": 20
+            "timeLimit": 20,
+            "DoEmethod":"None"
         },
         "uqEngine": "SimCenterUQ",
         "uqType": "Train GP Surrogate Model"

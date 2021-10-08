@@ -7,7 +7,7 @@ Surrogate Modeling to Predict Mean and Variance of Earthquake Response
 +----------------+------------------------------------------+
 
 .. note::
-   This example may run up to 60 minutes depending on the computer performance. For a quick test run, the user may want to reduce the **Max Computation Time** or **Max Number of model Runs**.
+   This example may run up to 20 minutes depending on the computer performance. For a quick test run, the user may want to reduce the **Max Computation Time** or **Max Number of model Runs**.
 
 Outline
 -------
