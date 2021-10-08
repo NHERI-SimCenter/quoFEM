@@ -95,7 +95,7 @@ The corresponding first eigenvalue and first eigenvector are:
 To simulate system identification results (measurement data), random estimation errors are added to :math:`\lambda_1^{true}` and :math:`\phi_{12}^{true}`. The random estimation errors for :math:`\lambda_1^{true}` and :math:`\phi_{12}^{true}` are assumed to be statistically independent, zero-mean Gaussian with 5% coefficient of variation (relative to :math:`\lambda_1^{true}` and :math:`\phi_{12}^{true}`). Thus, the standard deviation of the system identification errors for :math:`\lambda_1^{true}` and :math:`\phi_{12}^{true}` are 
 
 .. math::
-	\sigma_{\lambda_1} = 0.05*\lambda_1^{true} = 54.203; \quad \sigma_{\phi_{12}^{true}} = 0.05*\phi_{12}^{true} = 0.0705
+	\sigma_{\lambda_1}^{true} = 0.05*\lambda_1^{true} = 54.203; \quad \sigma_{\phi_{12}}^{true} = 0.05*\phi_{12}^{true} = 0.0705
 
 
 Now five independent sets of system identification results (measurement data sets) are simulated as: 
@@ -130,7 +130,7 @@ which we impose the the following bounds and initial estimates:
 
 Files required
 ++++++++++++++
-The exercise requires a two files. The user is required to download these file and place them in a **new** folder. 
+The exercise requires two files. The user is required to download these file and place them in a **new** folder. 
 
 .. warning::
 
