@@ -542,6 +542,13 @@ void SurrogateMFInputWidget::setLowSim(bool tog)
 {
     theExistingCheckBox_LF->setChecked(!tog);
 
+    // Temporary
+    if (theLowSimButton->isChecked() && theHighSimButton->isChecked()) {
+        errorMessage("Currently, the option to use both high- and low-fidelity models is not supported");
+        theLowSimButton->setChecked(false);
+        return;
+    }
+
     if (theLowSimButton->isChecked() && theHighSimButton->isChecked()) {
         theEdpWidget->setGPQoINames(QStringList("") );
         theFemWidget->setFEMforGP("GPMFmodel");
@@ -576,6 +583,13 @@ void SurrogateMFInputWidget::setLowSim(bool tog)
     }
 }
 void SurrogateMFInputWidget::setHighSim(bool tog) {
+
+    // Temporary
+    if (theHighSimButton->isChecked() && theLowSimButton->isChecked()) {
+        errorMessage("Currently, the option to use both high- and low-fidelity models is not supported");
+        theHighSimButton->setChecked(false);
+        return;
+    }
 
     theExistingCheckBox_HF->setChecked(!tog);
 
