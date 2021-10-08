@@ -29,7 +29,7 @@ def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrix
     :type numExperiments: int
 
     :param covarianceMatrixList: A list of length numExperiments * numResponses, where each item in the list contains
-    the covariacne matrix or variance value corresponding to that experiment and response quantity
+    the covariance matrix or variance value corresponding to that experiment and response quantity
     :type covarianceMatrixList: list of numpy ndarrays
 
     :param edpNamesList: A list containing the names of the response quantities
@@ -38,9 +38,10 @@ def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrix
     :param edpLengthsList: A list containing the length of each response quantity
     :type edpLengthsList: list of ints
 
-    :param covarianceMultiplierList: A list containing the covariance matrices or variance values. The length of this
-    list is equal to the product of the number of experiments and the number of response quantities.
-    :type covarianceMultiplierList: list of numpy ndarrays
+    :param covarianceMultiplierList: A list containing multipliers on the default covariance matrices or variance
+    values. The length of this list is equal to the number of response quantities. These additional variables, one
+    per response quantity, are parameters of the likelihood model whose values are also calibrated.
+    :type covarianceMultiplierList: list of floats
 
     :param scaleFactors: A list containing the normalizing factors used to scale (i.e. divide) the model
     prediction values. The length of this list is equal to the number of response quantities.
