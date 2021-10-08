@@ -3,6 +3,7 @@ import os
 import json
 import stat
 import subprocess
+import platform
 
 if __name__ == '__main__':
 
@@ -14,11 +15,12 @@ if __name__ == '__main__':
     runType = inputArgs[3]  # either "runningLocal" or "runningRemote"
 
     # Change permission of workflow driver
-    workflowDriverFile = os.path.join(templateDir, "workflow_driver")
-    if runType in ['runningLocal']:
-        os.chmod(workflowDriverFile, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
-    st = os.stat(workflowDriverFile)
-    os.chmod(workflowDriverFile, st.st_mode | stat.S_IEXEC)
+    if platform.system() != "Windows":
+        workflowDriverFile = os.path.join(templateDir, "workflow_driver")
+        if runType in ['runningLocal']:
+            os.chmod(workflowDriverFile, stat.S_IXUSR | stat.S_IRUSR | stat.S_IXOTH)
+        st = os.stat(workflowDriverFile)
+        os.chmod(workflowDriverFile, st.st_mode | stat.S_IEXEC)
 
     if runType in ["runningLocal"]:
         # Get path to python from dakota.json file
