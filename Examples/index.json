@@ -392,7 +392,7 @@
       ],
       "entry_point": "qfem-0018/./input.json",
       "summary": "In this example, the parameters of the STEEL02 material model in OpenSees\nare calibrated using non-linear least squares optimization. Experimental data is\npassed in to quoFEM from an external file, and the output is the time-history of\nstress - a non-scalar response quantity.\n",
-      "logo": "figures/StrainHistory.png",
+      "logo": "figures/qf-0018-StrainHistory.png",
       "published": "2021-07-01T21:26:53.946381-08:00",
       "categories": {
         "Simulation": "OpenSees",
@@ -427,7 +427,7 @@
       ],
       "entry_point": "qfem-0019/./input.json",
       "summary": "In this example, the parameters of the STEEL02 material model in OpenSees\nare calibrated by Bayesian inference. Experimental data is\npassed in to quoFEM from an external file, and the output is the time-history of\nstress - a non-scalar response quantity.\n",
-      "logo": "figures/qfem-0019-StressResults.png",
+      "logo": "figures/qf-0019-StressResults.png",
       "published": "2021-07-01T21:26:53.946381-08:00",
       "categories": {
         "Simulation": "OpenSees",
