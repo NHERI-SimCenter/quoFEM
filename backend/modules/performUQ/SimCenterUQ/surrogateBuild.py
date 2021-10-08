@@ -278,11 +278,12 @@ class GpFromModel(object):
             #do_nugget = True
             nugget_opt = "optimize"
 
-        if do_simulation:
-            femInfo = inp["fem"]
-            self.inpFile = femInfo["inputFile"]
-            self.postFile = femInfo["postprocessScript"]
-            self.appName = femInfo["program"]
+        if not self.do_mf:
+            if do_simulation:
+                femInfo = inp["fem"]
+                self.inpFile = femInfo["inputFile"]
+                self.postFile = femInfo["postprocessScript"]
+                self.appName = femInfo["program"]
 
         #
         # get x points
@@ -1206,10 +1207,11 @@ class GpFromModel(object):
 
                 #cri1[i] = yc1_var[i]
                 cri2[i] = sum(e2[:, y_idx] / Y_pred_var[:, y_idx] * wei.T)
+                #cri2[i] = pow(phi[y_idx],r)
 
             VOI = np.zeros(yc1_pred.shape)
             for i in range(nc1):
-                pdfvals = m_idx.kern.K(np.array([xc1[i]]), xq)**2/m_idx.kern.K(np.array([xc1[0]]))**2
+                pdfvals = m_idx.kern.K(np.array([xq[i]]), xq)**2/m_idx.kern.K(np.array([xq[0]]))**2
                 VOI[i] = np.mean(pdfvals)*np.prod(np.diff(self.xrange,axis=1)) # * np.prod(np.diff(self.xrange))
                 cri1[i] = yc1_var[i] * VOI[i]
 
