@@ -56,34 +56,8 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
 {
     auto layout = new QGridLayout();
 
-    //
-    // Random Seed
-    //
     int wid = 0; // widget id
 
-    srand(time(NULL));
-    int randomNumber = rand() % 1000 + 1;
-    randomSeed = new QLineEdit();
-    randomSeed->setText(QString::number(randomNumber));
-    randomSeed->setValidator(new QIntValidator);
-    randomSeed->setToolTip("Set the seed");
-    randomSeed->setMaximumWidth(150);
-
-    layout->addWidget(new QLabel("Random Seed"), wid, 0);
-    layout->addWidget(randomSeed, wid++, 1);
-
-    //
-    // create convergence criteria
-    //
-
-    accuracyMeasure = new QLineEdit();
-    accuracyMeasure->setText(tr("0.02"));
-    accuracyMeasure->setValidator(new QDoubleValidator);
-    accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
-    accuracyMeasure->setMaximumWidth(150);
-
-    layout->addWidget(new QLabel("Target Accuracy (Normalized Err) "), wid, 0);
-    layout->addWidget(accuracyMeasure, wid++, 1);
 
     //
     // create layout label and entry for # samples
@@ -95,7 +69,9 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     numSamples->setToolTip("Specify the number of samples");
     numSamples->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Max Number of Model Runs"), wid, 0);
+    QLabel *maxRun = new QLabel("Max Number of Model Runs");
+    maxRun->setStyleSheet("font-weight: bold");
+    layout->addWidget(maxRun, wid, 0);
     layout->addWidget(numSamples, wid++, 1);
 
     //
@@ -111,6 +87,34 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
 
     layout->addWidget(new QLabel("Max Computation Time (minutes)    "), wid, 0);
     layout->addWidget(timeMeasure, wid++, 1);
+
+    //
+    // create convergence criteria
+    //
+
+    accuracyMeasure = new QLineEdit();
+    accuracyMeasure->setText(tr("0.02"));
+    accuracyMeasure->setValidator(new QDoubleValidator);
+    accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
+    accuracyMeasure->setMaximumWidth(150);
+
+    layout->addWidget(new QLabel("Target Accuracy (Normalized Err) "), wid, 0);
+    layout->addWidget(accuracyMeasure, wid++, 1);
+
+    //
+    // Random Seed
+    //
+
+    srand(time(NULL));
+    int randomNumber = rand() % 1000 + 1;
+    randomSeed = new QLineEdit();
+    randomSeed->setText(QString::number(randomNumber));
+    randomSeed->setValidator(new QIntValidator);
+    randomSeed->setToolTip("Set the seed");
+    randomSeed->setMaximumWidth(150);
+
+    layout->addWidget(new QLabel("Random Seed"), wid, 0);
+    layout->addWidget(randomSeed, wid++, 1);
 
     //
     // Parallel Execution
@@ -215,7 +219,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     theDoESelection->addItem(tr("MMSEw"),2);
     theDoESelection->addItem(tr("None"),3);
     theDoESelection->setMaximumWidth(150);
-    theDoESelection->setCurrentIndex(0);
+    theDoESelection->setCurrentIndex(3);
 
     //theDoEMsg= new QLabel("Provide the number of initial samples (DoE)");
     //theDoEMsg= new QLabel("");
@@ -387,6 +391,22 @@ SurrogateDoEInputWidget::showDoEBox(int idx)
 // SLOT function
 void SurrogateDoEInputWidget::doAdvancedGP(bool tog)
 {
+
+    lineA->setVisible(tog);
+    gpKernel-> setVisible(tog);
+    theLinearCheckBox-> setVisible(tog);
+    theLogtCheckBox-> setVisible(tog);
+    //initialDoE-> setVisible(tog);
+    theLinearLabel->setVisible(tog);
+    theLogtLabel->setVisible(tog);
+    theLogtLabel2->setVisible(tog);
+    theKernelLabel->setVisible(tog);
+    //theInitialLabel->setVisible(tog);
+    theNuggetLabel->setVisible(tog);
+    theNuggetSelection->setVisible(tog);
+    theDoELabel->setVisible(tog);
+    theDoESelection->setVisible(tog);
+
     if (tog) {
         theAdvancedTitle->setStyleSheet("font-weight: bold; color: black");
 
@@ -395,25 +415,11 @@ void SurrogateDoEInputWidget::doAdvancedGP(bool tog)
 
         gpKernel->setCurrentIndex(0);
         theNuggetSelection->setCurrentIndex(0);
+        theDoESelection->setCurrentIndex(3);
         theLinearCheckBox->setChecked(false);
         theLogtCheckBox->setChecked(false);
-        initialDoE-> setText("");
+        //initialDoE-> setText("");
     }
-
-        lineA->setVisible(tog);
-        gpKernel-> setVisible(tog);
-        theLinearCheckBox-> setVisible(tog);
-        theLogtCheckBox-> setVisible(tog);
-        initialDoE-> setVisible(tog);
-        theLinearLabel->setVisible(tog);
-        theLogtLabel->setVisible(tog);
-        theLogtLabel2->setVisible(tog);
-        theKernelLabel->setVisible(tog);
-        //theInitialLabel->setVisible(tog);
-        theNuggetLabel->setVisible(tog);
-        theNuggetSelection->setVisible(tog);
-        theDoELabel->setVisible(tog);
-        theDoESelection->setVisible(tog);
 }
 
 void SurrogateDoEInputWidget::doExistingGP(bool tog)
