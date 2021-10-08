@@ -29,7 +29,8 @@ def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrix
     :type numExperiments: int
 
     :param covarianceMatrixList: A list of length numExperiments * numResponses, where each item in the list contains
-    the covariance matrix or variance value corresponding to that experiment and response quantity
+    the covariance matrix or variance value corresponding to that experiment and response quantity, i.e., each item in
+    the list is a block on the diagonal of the error covariance matrix
     :type covarianceMatrixList: list of numpy ndarrays
 
     :param edpNamesList: A list containing the names of the response quantities
@@ -47,10 +48,8 @@ def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrix
     prediction values. The length of this list is equal to the number of response quantities.
     :type scaleFactors: list of ints
 
-    :param shiftFactors: A list containing the values used to shift the prediction values. The locShift values are 0.0,
-    unless the abs max of the data of that response quantity is 0. In this case, the locShift = 1.0. LocShift values
-    must be added to the response quantities since they are added to the data. The length of this list is equal to the
-    number of response quantities.
+    :param shiftFactors: A list containing the values used to shift (i.e. added to) the prediction values. The length of
+    this list is equal to the number of response quantities.
     :type shiftFactors: list of ints
 
     :return: loglikelihood. This is a scalar value, which is equal to the logpdf of a zero-mean multivariate normal
