@@ -98,15 +98,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <Utils/RelativePathResolver.h>
 #include "Utils/PythonProgressDialog.h"
 
-
-
 void
 MainWindow::errorMessage(const QString msg){
 
     if(msg.isEmpty())
         return;
 
-    progressDialog->appendErrorMessage(msg);  
+    progressDialog->appendErrorMessage(msg);
 }
 void
 MainWindow::statusMessage(const QString msg){
@@ -123,7 +121,7 @@ MainWindow::fatalMessage(const QString msg){
     if(msg.isEmpty())
         return;
 
-    progressDialog->appendErrorMessage(msg);    
+    progressDialog->appendErrorMessage(msg);
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -1631,8 +1629,8 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
     UQ_Results *result=uq->getResults();
 
     if (result != NULL) {
-        connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
-        connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(statusMessage(QString)));
+      // connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
+      // connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(statusMessage(QString)));
 
         result->processResults(dakotaIN, dakotaTAB);
         results->setResultWidget(result);
@@ -1715,6 +1713,7 @@ void MainWindow::createActions() {
             QString inputFile = exampleObj["InputFile"].toString();
             auto action = exampleMenu->addAction(name, this, &MainWindow::loadExamples);
             action->setProperty("InputFile",inputFile);
+            action->setProperty("exampleName",name);	    
         }
     } else
         qDebug() << "No Examples" << pathToExamplesJson;
@@ -1726,6 +1725,10 @@ void MainWindow::createActions() {
 
 void MainWindow::loadExamples()
 {
+  QString message = QString("Loading Example: ") + QObject::sender()->property("exampleName").toString();
+  
+  this->statusMessage(message);
+  
     auto pathToExample = QCoreApplication::applicationDirPath() + QDir::separator() + "Examples" + QDir::separator();
     pathToExample += QObject::sender()->property("InputFile").toString();
 
@@ -1736,6 +1739,8 @@ void MainWindow::loadExamples()
     }
 
     this->loadFile(pathToExample);
+
+    this->statusMessage(QString("Example Loaded\n"));    
 }
 
 

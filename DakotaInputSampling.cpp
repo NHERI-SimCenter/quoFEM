@@ -288,8 +288,6 @@ int DakotaInputSampling::processResults(QString &filenameResults, QString &filen
 
 UQ_Results *
 DakotaInputSampling::getResults(void) {
-
-    qDebug() << "DakotaInputSampling::getResults()";
     return new DakotaResultsSampling(theRandomVariables);
 }
 
