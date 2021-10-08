@@ -121,7 +121,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     //
 
     parallelCheckBox = new QCheckBox();
-    parallelCheckBox -> setChecked(true);
+    parallelCheckBox->setChecked(true);
     layout->addWidget(new QLabel("Parallel Execution"), wid, 0);
     layout->addWidget(parallelCheckBox, wid++, 1);
 

@@ -66,6 +66,8 @@ signals:
    void startJobCall(QJsonObject theJob);
    void successfullJobStart(void);
    void errorMessage(QString);
+   void statusMessage(QString);
+   void fatalMessage(QString);
 
 public slots:
     void attemptLoginReturn(bool);

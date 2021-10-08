@@ -264,8 +264,11 @@ DakotaInputCalibration::processResults(QString &filenameResults, QString &filena
 
 UQ_Results *
 DakotaInputCalibration::getResults(void) {
+
+  qDebug() << "DakotaInputCalibration::getResults";
   return new DakotaResultsCalibration(theRandomVariables);
   //return new DakotaResultsCalibration();
+
 }
 
 RandomVariablesContainer *

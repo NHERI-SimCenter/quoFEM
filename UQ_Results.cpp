@@ -93,11 +93,11 @@ UQ_Results::inputFromJSON(QJsonObject &jsonObject)
             return true; // no results saved
         }
 
-	if (resultWidget != 0) {
-	  result = resultWidget->inputFromJSON(uq);
-	} else {
-	  errorMessage("ERROR: reading Dakota Results - no result widget set!");
-	}
+        if (resultWidget != 0) {
+          result = resultWidget->inputFromJSON(uq);
+        } else {
+          errorMessage("ERROR: reading Dakota Results - no result widget set!");
+        }
 
     } else {
         errorMessage("ERROR: Dakota Results - no \"uqResults\" entry");
@@ -115,10 +115,11 @@ UQ_Results::processResults(QString &filenameResults, QString &filenameTab) {
     if (resultWidget != 0)
         return resultWidget->processResults(filenameResults, filenameTab);
     else {
-      QString message = QString("Error Processing results - No ResultsWidget set, file: " ) +  filenameResults;
+      QString message = QString("ERROR: Processing results - No ResultsWidget set, file: " ) +  filenameResults;
       qDebug() << message;
+      errorMessage(message);
       // qDebug() << message;
-      QMessageBox::warning(this, tr("Application"),tr("BUG - No ResultsWidget Set!"));
+//      QMessageBox::warning(this, tr("Application"),tr("BUG - No ResultsWidget Set!"));
       return 0;
     }
 }
@@ -129,9 +130,10 @@ UQ_Results::processResults(QString &dirName) {
     if (resultWidget != 0)
         return resultWidget->processResults(dirName);
     else {
-      QString message = QString("Error Processing results - No resultsWidet set, directory: " ) +  dirName;
-      qDebug() << message;      
-      QMessageBox::warning(this, tr("Application"),tr("BUG - No ResultsWidget Set!"));      
+      QString message = QString("ERROR: Processing results - No resultsWidget set, directory: " ) +  dirName;
+      qDebug() << message;
+      errorMessage(message);
+//      QMessageBox::warning(this, tr("Application"),tr("BUG - No ResultsWidget Set!"));
       return 0;
     }
 }
@@ -145,15 +147,12 @@ UQ_Results::setResultWidget(UQ_Results *result) {
         delete resultWidget;
         resultWidget = 0;
 
-    } else {
-        qDebug() << "ResultWidget NULL";
     }
 
     if (result != 0) {
         layout->addWidget(result);
         resultWidget = result;
-	qDebug() << "ResultWidget::set result widget new: not NULL";
     } else {
-	qDebug() << "ResultWidget::set result widget new:  NULL!";
+        errorMessage(QString("ResultWidget::set result widget new:  NULL!"));
     }
 }

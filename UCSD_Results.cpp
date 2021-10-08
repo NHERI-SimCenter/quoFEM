@@ -134,68 +134,66 @@ void UCSD_Results::clear(void)
 
 
 
-static void merge_helper(double *input, int left, int right, double *scratch)
-{
-    // if one element: done  else: recursive call and then merge
-    if(right == left + 1) {
-        return;
-    } else {
-        int length = right - left;
-        int midpoint_distance = length/2;
-        /* l and r are to the positions in the left and right subarrays */
-        int l = left, r = left + midpoint_distance;
+//static void merge_helper(double *input, int left, int right, double *scratch)
+//{
+//    // if one element: done  else: recursive call and then merge
+//    if(right == left + 1) {
+//        return;
+//    } else {
+//        int length = right - left;
+//        int midpoint_distance = length/2;
+//        /* l and r are to the positions in the left and right subarrays */
+//        int l = left, r = left + midpoint_distance;
 
-        // sort each subarray
-        merge_helper(input, left, left + midpoint_distance, scratch);
-        merge_helper(input, left + midpoint_distance, right, scratch);
+//        // sort each subarray
+//        merge_helper(input, left, left + midpoint_distance, scratch);
+//        merge_helper(input, left + midpoint_distance, right, scratch);
 
-        // merge the arrays together using scratch for temporary storage
-        for(int i = 0; i < length; i++) {
-            /* Check to see if any elements remain in the left array; if so,
-            * we check if there are any elements left in the right array; if
-            * so, we compare them.  Otherwise, we know that the merge must
-            * use take the element from the left array */
-            if(l < left + midpoint_distance &&
-                    (r == right || fmin(input[l], input[r]) == input[l])) {
-                scratch[i] = input[l];
-                l++;
-            } else {
-                scratch[i] = input[r];
-                r++;
-            }
-        }
-        // Copy the sorted subarray back to the input
-        for(int i = left; i < right; i++) {
-            input[i] = scratch[i - left];
-        }
-    }
-}
+//        // merge the arrays together using scratch for temporary storage
+//        for(int i = 0; i < length; i++) {
+//            /* Check to see if any elements remain in the left array; if so,
+//            * we check if there are any elements left in the right array; if
+//            * so, we compare them.  Otherwise, we know that the merge must
+//            * use take the element from the left array */
+//            if(l < left + midpoint_distance &&
+//                    (r == right || fmin(input[l], input[r]) == input[l])) {
+//                scratch[i] = input[l];
+//                l++;
+//            } else {
+//                scratch[i] = input[r];
+//                r++;
+//            }
+//        }
+//        // Copy the sorted subarray back to the input
+//        for(int i = left; i < right; i++) {
+//            input[i] = scratch[i - left];
+//        }
+//    }
+//}
 
-static int mergesort(double *input, int size)
-{
-    double *scratch = new double[size];
-    if(scratch != NULL) {
-        merge_helper(input, 0, size, scratch);
-        delete [] scratch;
-        return 1;
-    } else {
-        return 0;
-    }
-}
+//static int mergesort(double *input, int size)
+//{
+//    double *scratch = new double[size];
+//    if(scratch != NULL) {
+//        merge_helper(input, 0, size, scratch);
+//        delete [] scratch;
+//        return 1;
+//    } else {
+//        return 0;
+//    }
+//}
 
 // if sobelov indices are selected then we would need to do some processing outselves
 int UCSD_Results::processResults(QString &dirName)
 {
   QString tabFile = dirName + QDir::separator() + tr("dakotaTab.out");;
   QString tabPriorFile = dirName + QDir::separator() + tr("dakotaTabPrior.out");;    
-  this->processResults(tabFile, tabPriorFile);
-
-  return 0;
+  return this->processResults(tabFile, tabPriorFile);
 }
 
 int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
 {
-    statusMessage(tr("UCSD Processing Results"));
+    statusMessage(tr("Processing Results"));
 
     this->clear();
 
@@ -205,7 +203,7 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
 
     QFileInfo filenameTabInfo(filenameTab);
     if (!filenameTabInfo.exists()) {
-        errorMessage("No dakotaTab.out file - TMCMC failed .. possibly no QoI");
+        errorMessage("ERROR: No dakotaTab.out file - TMCMC failed .. possibly no QoI");
         return 0;
     }
 
@@ -215,7 +213,7 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
     
     QString filenameTabPrior = priorFileInfo.absoluteFilePath();
     if (!priorFileInfo.exists()) {
-        errorMessage("No dakotaTabPrior.out file - TMCMC failed .. possibly no QoI");
+        errorMessage("ERROR: No dakotaTabPrior.out file - TMCMC failed .. possibly no QoI");
         return 0;
     }
 
@@ -256,14 +254,14 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
     QDir fileDir = filenameTabInfo.absoluteDir();
     QFileInfo jsonFileInfo(fileDirTab, QString("templatedir") + QDir::separator() + QString("dakota.json"));
     if (!jsonFileInfo.exists()) {
-        errorMessage("No dakota.json file");
+        errorMessage("ERROR: No dakota.json file");
         return 0;
     }
     
     QString filenameJson = jsonFileInfo.absoluteFilePath();
     QFile dakotaJsonFile(filenameJson);
     if (!dakotaJsonFile.open(QFile::ReadOnly | QFile::Text)) {
-        QString message = QString("Error: could not open file") + filenameJson;
+        QString message = QString("ERROR: could not open file") + filenameJson;
         errorMessage(message);
         return 0;
     }
@@ -286,7 +284,7 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
     // Get the quoFEMTempCalibrationDataFile.cal from tmp.SimCenter
     QFileInfo calFileInfo(fileDirTab, QString("quoFEMTempCalibrationDataFile.cal"));
     if (!calFileInfo.exists()) {
-            errorMessage("No calibration data file");
+            errorMessage("ERROR: No calibration data file");
             return 0;
         }
     QString calFileName = calFileInfo.absoluteFilePath();

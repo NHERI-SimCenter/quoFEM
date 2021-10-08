@@ -98,15 +98,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <Utils/RelativePathResolver.h>
 #include "Utils/PythonProgressDialog.h"
 
-
-
 void
 MainWindow::errorMessage(const QString msg){
 
     if(msg.isEmpty())
         return;
 
-    progressDialog->appendErrorMessage(msg);  
+    progressDialog->appendErrorMessage(msg);
 }
 void
 MainWindow::statusMessage(const QString msg){
@@ -123,7 +121,7 @@ MainWindow::fatalMessage(const QString msg){
     if(msg.isEmpty())
         return;
 
-    progressDialog->appendErrorMessage(msg);    
+    progressDialog->appendErrorMessage(msg);
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -309,28 +307,28 @@ MainWindow::MainWindow(QWidget *parent)
     // error & status messages
     
     connect(theRemoteInterface,SIGNAL(errorMessage(QString)), this, SLOT(errorMessage(QString)));
-    connect(theRemoteInterface,SIGNAL(statusMessage(QString)), this, SLOT(errorMessage(QString)));
+    connect(theRemoteInterface,SIGNAL(statusMessage(QString)), this, SLOT(statusMessage(QString)));
     connect(theRemoteInterface,SIGNAL(fatalMessage(QString)), this, SLOT(fatalMessage(QString)));
 
-    connect(fem,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(fem,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(fem,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+//    connect(fem,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+//    connect(fem,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+//    connect(fem,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
-    connect(random,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(random,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(random,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+//    connect(random,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+//    connect(random,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+//    connect(random,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
-    connect(results,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(results,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(results,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+//    connect(results,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+//    connect(results,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+//    connect(results,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
-    connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(uq,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(uq,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+//    connect(uq,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+//    connect(uq,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+//    connect(uq,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
-    connect(edp,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(edp,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(edp,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+//    connect(edp,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+//    connect(edp,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+//    connect(edp,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
     connect(jobManager,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(jobManager,SIGNAL(statusMessage(QString)),this,SLOT(statusMessage(QString)));
@@ -413,7 +411,7 @@ MainWindow::MainWindow(QWidget *parent)
     QDir dirWorkRemote(workingDirectory);
     if (!dirWorkRemote.exists())
         if (!dirWorkRemote.mkpath(workingDirectory)) {
-            emit errorMessage(QString("Could not create Working Dir: ") + workingDirectory + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
+            this->errorMessage(QString("Could not create Working Dir: ") + workingDirectory + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
             return;
         }
 
@@ -422,7 +420,7 @@ MainWindow::MainWindow(QWidget *parent)
     QDir dirWork(workingDirectory);
     if (!dirWork.exists())
         if (!dirWork.mkpath(workingDirectory)) {
-            emit errorMessage(QString("Could not create Working Dir: ") + workingDirectory + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
+            this->errorMessage(QString("Could not create Working Dir: ") + workingDirectory + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
             return;
         }
 
@@ -435,6 +433,9 @@ MainWindow::MainWindow(QWidget *parent)
     if (loginPassword.isValid()) {
         passwordLineEdit->setText(loginPassword.toString());
     }
+
+    PythonProgressDialog *theDialog=PythonProgressDialog::getInstance();
+    theDialog->appendInfoMessage("Welcome to quoFEM");    
 }
 
 MainWindow::~MainWindow()
@@ -526,7 +527,7 @@ MainWindow::runApplication(QString program, QStringList args) {
         exportPath += pythonPath;
         pathEnv = pythonPath + ';' + pathEnv;
     } else {
-        emit errorMessage("NO VALID PYTHON - Read the Manual & Check your Preferences");
+        this->errorMessage("NO VALID PYTHON - Read the Manual & Check your Preferences");
         return false;
     }
 
@@ -607,7 +608,7 @@ MainWindow::runApplication(QString program, QStringList args) {
     {
         qDebug() << "Failed to start the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString().split('\n');
-        emit errorMessage("Failed to start the workflow!!!");
+        this->errorMessage("Failed to start the workflow!!!");
         failed = true;
     }
 
@@ -615,7 +616,7 @@ MainWindow::runApplication(QString program, QStringList args) {
     {
         qDebug() << "Failed to finish running the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
-        emit errorMessage("Failed to finish running the workflow!!!");
+        this->errorMessage("Failed to finish running the workflow!!!");
         return -1;
     }
 
@@ -624,7 +625,7 @@ MainWindow::runApplication(QString program, QStringList args) {
     {
         qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
-        emit errorMessage("Failed to run the workflow!!!");
+        this->errorMessage("Failed to run the workflow!!!");
         return proc->exitCode();
     }
 
@@ -648,7 +649,7 @@ MainWindow::runApplication(QString program, QStringList args) {
     } else if (homeDir.exists(".zshrc")) {
       sourceBash = QString("source $HOME/.zshrc; ");
     } else
-      emit errorMessage( "No .bash_profile, .bashrc or .zshrc file found. This may not find Dakota or OpenSees");
+      this->errorMessage( "No .bash_profile, .bashrc or .zshrc file found. This may not find Dakota or OpenSees");
 
     // note the above not working under linux because bash_profile not being called so no env variables!!
     QString command = sourceBash + exportPath + "; \"" + program + QString("\"  ");
@@ -672,6 +673,7 @@ void MainWindow::onRunButtonClicked() {
 
     GoogleAnalytics::ReportLocalRun();
     statusMessage("Running Analysis..");
+    
     //
     // get program & input file from fem widget
     //
@@ -1441,22 +1443,22 @@ bool MainWindow::outputToJSON(QJsonObject &jsonObj) {
     jsonObj["Applications"]=appsUQ;
 
     if (fem->outputToJSON(jsonObj) != true) {
-        emit errorMessage(QString("FEM: failed to write output"));
+        this->errorMessage(QString("FEM: failed to write output"));
         return false;
     }
 
     if (uq->outputToJSON(jsonObj) != true) {
-        emit errorMessage(QString("UQ: failed to write output"));
+        this->errorMessage(QString("UQ: failed to write output"));
         return false;
     }
 
     if (random->outputToJSON(jsonObj) != true) {
-        emit errorMessage(QString("RV: failed to write output"));
+        this->errorMessage(QString("RV: failed to write output"));
         return false;
     }
 
     if (edp->outputToJSON(jsonObj) != true) {
-        emit errorMessage(QString("EDP: failed to write output"));
+        this->errorMessage(QString("EDP: failed to write output"));
         return false;
     }
 
@@ -1476,13 +1478,13 @@ bool MainWindow::outputToJSON(QJsonObject &jsonObj) {
 
 bool MainWindow::inputFromJSON(QJsonObject &jsonObj){
 
-    emit errorMessage(QString("")); // to clear the message area
+    this->errorMessage(QString("")); // to clear the message area
 
     if (jsonObj.contains("Applications")) {
 
         QJsonObject theApplicationObject = jsonObj["Applications"].toObject();
         if (uq->inputAppDataFromJSON(theApplicationObject) != true) {
-            emit errorMessage(QString("UQ: failed to read app data input"));
+            this->errorMessage(QString("UQ: failed to read app data input"));
             return false;
         }
     } else {
@@ -1490,22 +1492,22 @@ bool MainWindow::inputFromJSON(QJsonObject &jsonObj){
     }
 
     if (uq->inputFromJSON(jsonObj) != true) {
-        emit errorMessage(QString("UQ: failed to read input"));
+        this->errorMessage(QString("UQ: failed to read input"));
         return false;
     }
 
     if (fem->inputFromJSON(jsonObj) != true) {
-        emit errorMessage(QString("FEM: failed to read input"));
+        this->errorMessage(QString("FEM: failed to read input"));
         return false;
     }
 
     if (random->inputFromJSON(jsonObj) != true) {
-        emit errorMessage(QString("RV: failed to read input"));
+        this->errorMessage(QString("RV: failed to read input"));
         return false;
     }
 
     if (edp->inputFromJSON(jsonObj) != true) {
-        emit errorMessage(QString("EDP: failed to read input"));
+        this->errorMessage(QString("EDP: failed to read input"));
         return false;
     }
 
@@ -1603,7 +1605,7 @@ void MainWindow::loadFile(const QString &fileName)
 
 void MainWindow::processResults(QString &dirName)
 {
-    errorMessage("Processing Results");
+    statusMessage(tr("Processing Results"));
     qDebug() << "MainWindow:: processResults dir";
     UQ_Results *result=uq->getResults();
 
@@ -1622,13 +1624,13 @@ void MainWindow::processResults(QString &dirName)
 
 void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 {
-    errorMessage("Processing Results");
+    statusMessage(tr("Processing Results"));
     qDebug() << "MainWindow:: processResults files";
     UQ_Results *result=uq->getResults();
 
     if (result != NULL) {
-        connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
-        connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(errorMessage(QString)));
+      // connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
+      // connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(statusMessage(QString)));
 
         result->processResults(dakotaIN, dakotaTAB);
         results->setResultWidget(result);
@@ -1711,6 +1713,7 @@ void MainWindow::createActions() {
             QString inputFile = exampleObj["InputFile"].toString();
             auto action = exampleMenu->addAction(name, this, &MainWindow::loadExamples);
             action->setProperty("InputFile",inputFile);
+            action->setProperty("exampleName",name);	    
         }
     } else
         qDebug() << "No Examples" << pathToExamplesJson;
@@ -1722,6 +1725,10 @@ void MainWindow::createActions() {
 
 void MainWindow::loadExamples()
 {
+  QString message = QString("Loading Example: ") + QObject::sender()->property("exampleName").toString();
+  
+  this->statusMessage(message);
+  
     auto pathToExample = QCoreApplication::applicationDirPath() + QDir::separator() + "Examples" + QDir::separator();
     pathToExample += QObject::sender()->property("InputFile").toString();
 
@@ -1732,6 +1739,8 @@ void MainWindow::loadExamples()
     }
 
     this->loadFile(pathToExample);
+
+    this->statusMessage(QString("Example Loaded\n"));    
 }
 
 
@@ -1810,7 +1819,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.3.1 "));
+                       tr("Version 2.4.0 "));
 }
 
 void MainWindow::preferences()
@@ -1878,7 +1887,7 @@ void MainWindow::manual()
 
 void MainWindow::cite()
 {
-  QString citeText = QString("Frank McKenna, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Michael Gardner, & Nikhil Padhye. (2021, May 21). NHERI-SimCenter/quoFEM: Version 2.3.0 (Version v2.3.0). Zenodo. http://doi.org/10.5281/zenodo.4780588");
+  QString citeText = QString("1) Frank McKenna, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Michael Gardner, & Nikhil Padhye. (2021, May 21). NHERI-SimCenter/quoFEM: Version 2.3.0 (Version v2.3.0). Zenodo. http://doi.org/10.5281/zenodo.4780588 \n\n 2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
     QMessageBox msgBox;
     msgBox.setTextInteractionFlags(Qt::TextSelectableByMouse);
     QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);

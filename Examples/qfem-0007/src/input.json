@@ -3,7 +3,7 @@
         "calibrationMethodData": {
             "convergenceTol": 1e-10,
             "factors": "",
-            "maxIterations": 50,
+            "maxIterations": 1000,
             "method": "NL2SOL",
 	        "calibrationDataFile": "{Current_Dir}/eigData.csv"
         },
