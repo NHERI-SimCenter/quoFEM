@@ -98,15 +98,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <Utils/RelativePathResolver.h>
 #include "Utils/PythonProgressDialog.h"
 
-
-
 void
 MainWindow::errorMessage(const QString msg){
 
     if(msg.isEmpty())
         return;
 
-    progressDialog->appendErrorMessage(msg);  
+    progressDialog->appendErrorMessage(msg);
 }
 void
 MainWindow::statusMessage(const QString msg){
@@ -123,7 +121,7 @@ MainWindow::fatalMessage(const QString msg){
     if(msg.isEmpty())
         return;
 
-    progressDialog->appendErrorMessage(msg);    
+    progressDialog->appendErrorMessage(msg);
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -1631,8 +1629,8 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
     UQ_Results *result=uq->getResults();
 
     if (result != NULL) {
-        connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
-        connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(statusMessage(QString)));
+      // connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
+      // connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(statusMessage(QString)));
 
         result->processResults(dakotaIN, dakotaTAB);
         results->setResultWidget(result);
@@ -1715,6 +1713,7 @@ void MainWindow::createActions() {
             QString inputFile = exampleObj["InputFile"].toString();
             auto action = exampleMenu->addAction(name, this, &MainWindow::loadExamples);
             action->setProperty("InputFile",inputFile);
+            action->setProperty("exampleName",name);	    
         }
     } else
         qDebug() << "No Examples" << pathToExamplesJson;
@@ -1726,6 +1725,10 @@ void MainWindow::createActions() {
 
 void MainWindow::loadExamples()
 {
+  QString message = QString("Loading Example: ") + QObject::sender()->property("exampleName").toString();
+  
+  this->statusMessage(message);
+  
     auto pathToExample = QCoreApplication::applicationDirPath() + QDir::separator() + "Examples" + QDir::separator();
     pathToExample += QObject::sender()->property("InputFile").toString();
 
@@ -1736,6 +1739,8 @@ void MainWindow::loadExamples()
     }
 
     this->loadFile(pathToExample);
+
+    this->statusMessage(QString("Example Loaded\n"));    
 }
 
 
@@ -1882,7 +1887,7 @@ void MainWindow::manual()
 
 void MainWindow::cite()
 {
-  QString citeText = QString("1) Frank McKenna, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Michael Gardner, & Nikhil Padhye. (2021, May 21). NHERI-SimCenter/quoFEM: Version 2.3.0 (Version v2.3.0). Zenodo. http://doi.org/10.5281/zenodo.4780588 \n\n 2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
+  QString citeText = QString("1) Frank McKenna, Adam Zsarnoczay, Michael Gardner, Wael Elhaddad, Sang-ri Yi, & Aakash Bangalore Satish. (2021). NHERI-SimCenter/quoFEM: Version 2.4.0 (v2.4.0). Zenodo. https://doi.org/10.5281/zenodo.5558000 \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
     QMessageBox msgBox;
     msgBox.setTextInteractionFlags(Qt::TextSelectableByMouse);
     QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);

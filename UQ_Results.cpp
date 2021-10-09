@@ -147,15 +147,12 @@ UQ_Results::setResultWidget(UQ_Results *result) {
         delete resultWidget;
         resultWidget = 0;
 
-    } else {
-        qDebug() << "ResultWidget NULL";
     }
 
     if (result != 0) {
         layout->addWidget(result);
         resultWidget = result;
-	qDebug() << "ResultWidget::set result widget new: not NULL";
     } else {
-	qDebug() << "ResultWidget::set result widget new:  NULL!";
+        errorMessage(QString("ResultWidget::set result widget new:  NULL!"));
     }
 }

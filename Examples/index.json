@@ -342,7 +342,7 @@
         "qfem-0016/figures/SUR2-VER0.png"
       ],
       "entry_point": "qfem-0016/./input.json",
-      "summary": "Surrogate modeling for mean and variance of EQ response",
+      "summary": "This example constructs a Gaussian process-based surrogate model for the mean and variance of peak building responses subjected to ten different ground motions. The 2nd floor response of a six-story shear building model is investigated.",
       "logo": "figures/SUR2-sturcture.PNG",
       "published": "2021-03-12T21:26:53.946381-08:00",
       "categories": {
