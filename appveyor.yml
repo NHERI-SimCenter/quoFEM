@@ -35,6 +35,7 @@ for:
        - chmod 'u+x' makeEXE.sh
        - ./makeEXE.sh
        - cd ..
+       - ls ~/.conan
 
     test_script:
        - qmake --version
