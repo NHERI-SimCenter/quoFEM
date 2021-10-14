@@ -192,5 +192,11 @@ QTreeView#treeViewOnTheLeft::item:selected:!active {
     background: rgb(63, 147, 168);
 }
 
+/*----------------------------------------------------------------------------*/
+/* QTabWidget                                                                 */
+/*----------------------------------------------------------------------------*/
 
-
+QLineEdit {
+    font-weight: bold;
+    font-color: black;
+}
