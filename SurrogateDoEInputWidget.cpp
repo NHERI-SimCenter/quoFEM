@@ -323,7 +323,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     outFileDir = new QLineEdit();
     chooseOutFile = new QPushButton("Choose");
     connect(chooseOutFile, &QPushButton::clicked, this, [=](){
-        outFileDir->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)"));
+        outFileDir->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*.*)"));
         this->checkValidityData(outFileDir->text());
     });
     outFileDir->setMaximumWidth(150);

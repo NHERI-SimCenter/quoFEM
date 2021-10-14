@@ -372,7 +372,7 @@ class GpFromModel(object):
                 #Y_test, self.id_sim = FEM_batch(X_tmp[0, :][np.newaxis], self.id_sim)
                 # TODO : Fix this
                 print(X_tmp[0, :][np.newaxis].shape)
-                Y_test ,self.id_sim= run_FEM(X_tmp[0, :][np.newaxis] ,self.itd_sim, self.rv_name)
+                X_test, Y_test ,self.id_sim= FEM_batch(X_tmp[0, :][np.newaxis] ,self.id_sim)
                 if np.sum(abs((Y_test - Y_tmp[0, :][np.newaxis]) / Y_test) > 0.01, axis=1) > 0:
                     msg = 'Consistency check failed. Your data is not consistent to your model response.'
                     errlog.exit(msg)
@@ -2105,4 +2105,3 @@ if __name__ == "__main__":
     result_file = "results.out"
     #sys.exit(build_surrogate(work_dir, os_type, run_type))    
     build_surrogate(work_dir, os_type, run_type)
-    errlog.terminate()
