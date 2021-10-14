@@ -1,0 +1,10 @@
+^C:\USERS\SIMCENTER\SANGRI\QUOFEM\BACKEND\BUILD\CMAKEFILES\AF6DFE1CE1FA4EE8545D716BB484E863\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/SimCenter/Sangri/quoFEM/backend -BC:/Users/SimCenter/Sangri/quoFEM/backend/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/SimCenter/Sangri/quoFEM/backend/build/SimCenterBackendApplications.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
