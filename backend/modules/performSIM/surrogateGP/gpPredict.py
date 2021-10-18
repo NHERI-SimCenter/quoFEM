@@ -118,7 +118,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
         kg = kr
         m_list = list()
         for ny in range(ng_sur):
-            m_list = m_list + [GPy.models.GPRegression(X, Y[:, ny][np.newaxis].transpose(), kernel=kg.copy())]
+            m_list = m_list + [GPy.models.GPRegression(X, Y[:, ny][np.newaxis].transpose(), kernel=kg.copy(),normalizer=True)]
             for key, val in sur["modelInfo"][g_name_sur[ny]].items():
                 exec('m_list[ny].' + key + '= np.array(val)')
 
@@ -240,7 +240,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
         #        exec('y_pred_prior_var[ny]=m_list[ny].' + parname)
 
     #error_ratio1 = y_pred_var.T / y_pred_prior_var
-    error_ratio2 = y_pred_var.T / y_data_var
+    error_ratio2 = y_pred_var_tmp.T / y_data_var
     idx = np.argmax(error_ratio2) + 1
 
     '''

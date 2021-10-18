@@ -188,6 +188,13 @@ static int mergesort(double *input, int size)
 
 // if sobelov indices are selected then we would need to do some processing outselves
 
+int SimCenterUQResultsSensitivity::processResults(QString &dirName)
+{
+  QString filenameOUT = dirName + QDir::separator() + tr("dakota.out");;
+  QString filenameTAB = dirName + QDir::separator() + tr("dakotaTab.out");;
+  return this->processResults(filenameOUT, filenameTAB);
+}
+
 int SimCenterUQResultsSensitivity::processResults(QString &filenameResults, QString &filenameTab)
 {
     statusMessage(tr("Processing Sampling Results"));
@@ -203,7 +210,7 @@ int SimCenterUQResultsSensitivity::processResults(QString &filenameResults, QStr
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        errorMessage("No dakota.err file - SimCenterUQ did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        errorMessage("No dakota.err file - SimCenterUQ did not run - problem with dakota setup or the applications failed with inputs provided");
         return 0;
     }
     QFile fileError(filenameErrorString);
@@ -497,6 +504,9 @@ bool
 SimCenterUQResultsSensitivity::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
+
+    if (theDataTable == NULL)
+        return result; // no data
 
     jsonObject["resultType"]=QString(tr("SimCenterUQResultsSensitivity"));
     jsonObject["isSurrogate"]=isSurrogate;

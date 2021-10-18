@@ -8,10 +8,10 @@ import pickle
 import glob
 import json
 from scipy.stats import lognorm, norm
-
 import numpy as np
 import GPy as GPy
 
+from copy import deepcopy
 from pyDOE import lhs
 import warnings
 import random
@@ -72,7 +72,10 @@ class GpFromModel(object):
 
         surrogateInfo = inp["UQ_Method"]["surrogateMethodInfo"]
 
-        self.do_parallel = surrogateInfo["parallelExecution"]
+        try:
+            self.do_parallel = surrogateInfo["parallelExecution"]
+        except:
+            self.do_parallel = True
 
         if self.do_parallel:
             if self.run_type.lower() == 'runninglocal':
@@ -83,9 +86,14 @@ class GpFromModel(object):
                 # Always
                 from mpi4py import MPI
                 from mpi4py.futures import MPIPoolExecutor
+                self.world = MPI.COMM_WORLD
                 self.pool = MPIPoolExecutor()
-                self.n_processor = MPI.COMM_WORLD.Get_size()
-            self.cal_interval = 5
+                self.n_processor = self.world.Get_size()
+                #self.n_processor =20
+            print("nprocessor :")
+            print(self.n_processor)
+            #self.cal_interval = 5
+            self.cal_interval = self.n_processor
 
         else:
             self.pool = 0
@@ -95,25 +103,31 @@ class GpFromModel(object):
             self.do_mf = False
             do_sampling = True
             do_simulation = True
-            do_doe = True
             self.use_existing = surrogateInfo["existingDoE"]
-
             if self.use_existing:
-                #self.inpData = surrogateInfo['inpFile']
-                #self.outData = surrogateInfo['outFile']
                 self.inpData = os.path.join(work_dir, "templatedir/inpFile.in")
                 self.outData = os.path.join(work_dir, "templatedir/outFile.in")
+            thr_count = surrogateInfo['samples']  # number of samples
+
 
             if surrogateInfo["advancedOpt"]:
-                user_init = surrogateInfo["initialDoE"]
+                self.doe_method = surrogateInfo["DoEmethod"]
+                if surrogateInfo["DoEmethod"] == "None":
+                    do_doe = False
+                    user_init = thr_count
+                else:
+                    do_doe = True
+                    user_init = surrogateInfo["initialDoE"]
             else:
+                self.doe_method = "pareto" #default
+                do_doe = True
                 user_init = -100
-            thr_count = surrogateInfo['samples']  # number of samples
 
         elif surrogateInfo["method"] == "Import Data File":
             self.do_mf = False
             do_sampling = False
             do_simulation = not surrogateInfo["outputData"]
+            self.doe_method = "None"  # default
             do_doe = False
             # self.inpData = surrogateInfo['inpFile']
             self.inpData = os.path.join(work_dir, "templatedir/inpFile.in")
@@ -123,6 +137,7 @@ class GpFromModel(object):
 
         elif surrogateInfo["method"] == "Import Multi-fidelity Data File":
             self.do_mf = True
+            self.doe_method = "None"  # default
 
             self.hf_is_model = surrogateInfo['HFfromModel']
             self.lf_is_model = surrogateInfo['LFfromModel']
@@ -131,15 +146,11 @@ class GpFromModel(object):
                 self.use_existing_hf = surrogateInfo["existingDoE_HF"]
                 self.samples_hf = surrogateInfo["samples_HF"]
                 if self.use_existing_hf:
-                    #self.inpData_hf = surrogateInfo['inpFile_HF']
-                    #self.outData_hf = surrogateInfo['outFile_HF']
                     self.inpData = os.path.join(work_dir, "templatedir/inpFile_HF.in")
                     self.outData = os.path.join(work_dir, "templatedir/outFile_HF.in")
             else:
-                #self.inpData_hf = surrogateInfo['inpFile_HF']
-                #self.outData_hf = surrogateInfo['outFile_HF']
-                self.inpData = os.path.join(work_dir, "templatedir/inpFile_HF.in")
-                self.outData = os.path.join(work_dir, "templatedir/outFile_HF.in")
+                self.inpData_hf = os.path.join(work_dir, "templatedir/inpFile_HF.in")
+                self.outData_hf = os.path.join(work_dir, "templatedir/outFile_HF.in")
                 self.X_hf = read_txt(self.inpData_hf, errlog)
                 self.Y_hf = read_txt(self.outData_hf, errlog)
                 if self.X_hf.shape[0] != self.Y_hf.shape[0]:
@@ -150,15 +161,11 @@ class GpFromModel(object):
                 self.use_existing_lf = surrogateInfo["existingDoE_LF"]
                 self.samples_lf = surrogateInfo["samples_LF"]
                 if self.use_existing_lf:
-                    #self.inpData_lf = surrogateInfo['inpFile_LF']
-                    #self.outData_lf = surrogateInfo['outFile_LF']
                     self.inpData = os.path.join(work_dir, "templatedir/inpFile_LF.in")
                     self.outData = os.path.join(work_dir, "templatedir/outFile_LF.in")
             else:
-                # self.inpData_lf = surrogateInfo['inpFile_LF']
-                # self.outData_lf = surrogateInfo['outFile_LF']
-                self.inpData = os.path.join(work_dir, "templatedir/inpFile_LF.in")
-                self.outData = os.path.join(work_dir, "templatedir/outFile_LF.in")
+                self.inpData_lf = os.path.join(work_dir, "templatedir/inpFile_LF.in")
+                self.outData_lf = os.path.join(work_dir, "templatedir/outFile_LF.in")
                 self.X_lf = read_txt(self.inpData_lf, errlog)
                 self.Y_lf = read_txt(self.outData_lf, errlog)
                 if self.X_lf.shape[0] != self.Y_lf.shape[0]:
@@ -183,7 +190,6 @@ class GpFromModel(object):
                 else:
                     user_init = self.samples_lf
                 thr_count = self.samples_lf  # number of samples
-
 
             elif self.hf_is_model and (not self.lf_is_model):
                 self.mf_case = "model-data"
@@ -272,12 +278,12 @@ class GpFromModel(object):
             #do_nugget = True
             nugget_opt = "optimize"
 
-        if do_simulation:
-            femInfo = inp["fem"]
-            self.inpFile = femInfo["inputFile"]
-            self.postFile = femInfo["postprocessScript"]
-            self.appName = femInfo["program"]
-
+        if not self.do_mf:
+            if do_simulation:
+                femInfo = inp["fem"]
+                self.inpFile = femInfo["inputFile"]
+                self.postFile = femInfo["postprocessScript"]
+                self.appName = femInfo["program"]
 
         #
         # get x points
@@ -366,7 +372,7 @@ class GpFromModel(object):
                 #Y_test, self.id_sim = FEM_batch(X_tmp[0, :][np.newaxis], self.id_sim)
                 # TODO : Fix this
                 print(X_tmp[0, :][np.newaxis].shape)
-                Y_test ,self.id_sim= run_FEM(X_tmp[0, :][np.newaxis] ,self.itd_sim, self.rv_name)
+                X_test, Y_test ,self.id_sim= FEM_batch(X_tmp[0, :][np.newaxis] ,self.id_sim)
                 if np.sum(abs((Y_test - Y_tmp[0, :][np.newaxis]) / Y_test) > 0.01, axis=1) > 0:
                     msg = 'Consistency check failed. Your data is not consistent to your model response.'
                     errlog.exit(msg)
@@ -457,12 +463,25 @@ class GpFromModel(object):
             if os.path.exists('{}/workdir.1'.format(work_dir)):
                 is_left = True
                 idx = 0
+
+                def change_permissions_recursive(path, mode):
+                    for root, dirs, files in os.walk(path, topdown=False):
+                        for dir in [os.path.join(root, d) for d in dirs]:
+                            os.chmod(dir, mode)
+                    for file in [os.path.join(root, f) for f in files]:
+                        os.chmod(file, mode)
+
                 while is_left:
                     idx = idx + 1
                     try:
                         if os.path.exists('{}/workdir.{}/workflow_driver.bat'.format(work_dir, idx)):
-                            os.chmod('{}/workdir.{}/workflow_driver.bat'.format(work_dir, idx), 0o777)
-                        shutil.rmtree('{}/workdir.{}'.format(work_dir, idx))
+                            #os.chmod('{}/workdir.{}'.format(work_dir, idx), 777)
+                            change_permissions_recursive('{}/workdir.{}'.format(work_dir, idx), 0o777)
+                        my_dir = '{}/workdir.{}'.format(work_dir, idx)
+                        os.chmod(my_dir, 0o777)
+                        shutil.rmtree(my_dir)
+                        #shutil.rmtree('{}/workdir.{}'.format(work_dir, idx), ignore_errors=False, onerror=handleRemoveReadonly)
+
                     except Exception as ex:
                         print(ex)
                         is_left = True
@@ -566,7 +585,7 @@ class GpFromModel(object):
             kg = kr
             self.m_list = list()
             for i in range(y_dim):
-                self.m_list = self.m_list + [GPy.models.GPRegression(X, Y[:, i][np.newaxis].transpose(), kernel=kg.copy())]
+                self.m_list = self.m_list + [GPy.models.GPRegression(X, Y[:, i][np.newaxis].transpose(), kernel=kg.copy(),normalizer=True)]
                 for parname in self.m_list[i].parameter_names():
                     if parname.endswith('lengthscale'):
                         exec('self.m_list[i].' + parname + '=self.len')
@@ -574,9 +593,15 @@ class GpFromModel(object):
         else:
             kgs = emf.kernels.LinearMultiFidelityKernel([kr.copy(), kr.copy()])
 
-            if not X.shape[1]==self.X_hf.shape[1]:
-                msg = 'Error importing input data: dimension of low ({}) and high ({}) fidelity models (datasets) are inconsistent'.format(X.shape[1], self.X_hf.shape[1])
-                errlog.exit(msg)
+            if not self.hf_is_model:
+                if not X.shape[1]==self.X_hf.shape[1]:
+                    msg = 'Error importing input data: dimension of low ({}) and high ({}) fidelity models (datasets) are inconsistent'.format(X.shape[1], self.X_hf.shape[1])
+                    errlog.exit(msg)
+
+            if not self.lf_is_model:
+                if not X.shape[1]==self.X_lf.shape[1]:
+                    msg = 'Error importing input data: dimension of low ({}) and high ({}) fidelity models (datasets) are inconsistent'.format(X.shape[1], self.X_hf.shape[1])
+                    errlog.exit(msg)
 
             if self.mf_case == 'data-model' or self.mf_case=='data-data':
                 X_list, Y_list = emf.convert_lists_to_array.convert_xy_lists_to_arrays([X, self.X_hf], [Y, self.Y_hf])
@@ -585,7 +610,7 @@ class GpFromModel(object):
 
             self.m_list = list()
             for i in range(y_dim):
-                self.m_list = self.m_list + [GPyMultiOutputWrapper(emf.models.GPyLinearMultiFidelityModel(X_list, Y_list, kernel=kgs.copy(), n_fidelities=2), 2, n_optimization_restarts=5)]
+                self.m_list = self.m_list + [GPyMultiOutputWrapper(emf.models.GPyLinearMultiFidelityModel(X_list, Y_list, kernel=kgs.copy(), n_fidelities=2), 2, n_optimization_restarts=15)]
 
 
         #
@@ -610,11 +635,9 @@ class GpFromModel(object):
         x_new = np.zeros((0,x_dim))
         n_new = 0
 
+        doe_off = False # false if true
 
-        doe_off = False
         while not doe_off:
-
-            self.doe_method = "mmsew"
 
             t = time.time()
             if self.doe_method == "random":
@@ -848,6 +871,9 @@ class GpFromModel(object):
 
             corr_val[ny] = np.corrcoef(Y_ex, Y_cv[:, ny])[0, 1]
             R2_val[ny] = 1 - np.sum(pow(Y_cv[:, ny] - Y_ex, 2)) / np.sum(pow(Y_cv[:, ny] - np.mean(Y_cv[:, ny]), 2))
+            if np.var(Y_ex)==0:
+                corr_val[ny] = 1
+                R2_val[ny] = 0
 
         self.kernel = kernel
         self.NRMSE_val = NRMSE_val
@@ -888,7 +914,6 @@ class GpFromModel(object):
             else:
                 self.rvVal = self.rvVal + [np.mean(X[:, nx])]
 
-
     def __parameter_calibration(self, m_tmp_list, x_dim, nugget_opt):
 
         warnings.filterwarnings("ignore")
@@ -897,23 +922,33 @@ class GpFromModel(object):
         m_list = list()
 
         for ny in range(self.y_dim):
+
             print("y dimension {}:".format(ny))
             nopt = 10
 
             #
             # previous optimal
             #
+            nugget_opt_tmp = nugget_opt
 
             if not self.do_mf:
+                if np.var(m_tmp_list[ny].Y) == 0:
+                    nugget_opt_tmp = "Zero"
+                    for parname in m_tmp_list[ny].parameter_names():
+                        if parname.endswith('variance'):
+                            m_tmp_list[ny][parname].constrain_fixed(0)
+
                 m_init = m_tmp_list[ny]
                 m_tmp = m_init
 
-                if nugget_opt == "optimize":
+                if nugget_opt_tmp == "Optimize":
                     m_tmp['Gaussian_noise.variance'].unfix()
-                elif nugget_opt == "Fixed Values":
+                elif nugget_opt_tmp == "Fixed Values":
                     m_tmp['Gaussian_noise.variance'].constrain_fixed(self.nuggetVal[ny])
-                elif nugget_opt == "Fixed Bounds":
+                elif nugget_opt_tmp == "Fixed Bounds":
                     m_tmp['Gaussian_noise.variance'].constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
+                elif nugget_opt_tmp == "Zero":
+                    m_tmp['Gaussian_noise.variance'].constrain_fixed(0)
 
                 m_tmp.optimize(clear_after_finish=True)
                 # m_tmp.optimize_restarts(5)
@@ -937,12 +972,14 @@ class GpFromModel(object):
                     if parname.endswith('lengthscale'):
                         exec('m_tmp.' + parname + '=self.len')
 
-                if nugget_opt == "optimize":
+                if nugget_opt_tmp == "Optimize":
                     m_tmp['Gaussian_noise.variance'].unfix()
-                elif nugget_opt == "Fixed Values":
+                elif nugget_opt_tmp == "Fixed Values":
                     m_tmp['Gaussian_noise.variance'].constrain_fixed(self.nuggetVal[ny])
-                elif nugget_opt == "Fixed Bounds":
+                elif nugget_opt_tmp == "Fixed Bounds":
                     m_tmp['Gaussian_noise.variance'].constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
+                elif nugget_opt_tmp == "Zero":
+                    m_tmp['Gaussian_noise.variance'].constrain_fixed(0)
 
                 m_tmp.optimize(clear_after_finish=True)
                 # m_tmp.optimize_restarts(5)
@@ -969,12 +1006,14 @@ class GpFromModel(object):
                             else:
                                 exec('m_tmp.' + parname + '=np.random.exponential(1, (1, x_dim)) * m.' + parname)
 
-                    if nugget_opt == "optimize":
+                    if nugget_opt_tmp == "Optimize":
                         m_tmp['Gaussian_noise.variance'].unfix()
-                    elif nugget_opt == "Fixed Values":
+                    elif nugget_opt_tmp == "Fixed Values":
                         m_tmp['Gaussian_noise.variance'].constrain_fixed(self.nuggetVal[ny])
-                    elif nugget_opt == "Fixed Bounds":
+                    elif nugget_opt_tmp == "Fixed Bounds":
                         m_tmp['Gaussian_noise.variance'].constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
+                    elif nugget_opt_tmp == "Zero":
+                        m_tmp['Gaussian_noise.variance'].constrain_fixed(0)
 
                     t_fix = time.time()
                     try:
@@ -997,25 +1036,31 @@ class GpFromModel(object):
                         break
 
                 if math.isinf(-max_log_likli) or math.isnan(-max_log_likli):
-                    msg = "Error GP optimization failed, perhaps QoI values are zero."
-                    self.errlog.exit(msg)
+                    #msg = "Error GP optimization failed, perhaps QoI values are zero."
+                    if np.var(m_tmp.Y) != 0:
+                        msg = "Error GP optimization failed for QoI #{}".format(ny+1)
+                        self.errlog.exit(msg)
 
                 m_list = m_list + [m]
                 print(m)
             else:
 
 
-                if nugget_opt == "optimize":
+                if nugget_opt_tmp == "Optimize":
                     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.unfix()
                     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.unfix()
 
-                elif nugget_opt == "Fixed Values":
+                elif nugget_opt_tmp == "Fixed Values":
                     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.constrain_fixed(self.nuggetVal[ny])
                     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.constrain_fixed(self.nuggetVal[ny])
 
-                elif nugget_opt == "Fixed Bounds":
+                elif nugget_opt_tmp == "Fixed Bounds":
                     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
                     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.constrain_bounded(self.nuggetVal[ny][0], self.nuggetVal[ny][1])
+
+                elif nugget_opt_tmp == "Zero":
+                    m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.constrain_fixed(0)
+                    m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise_1.constrain_fixed(0)
                 #
                 # if not do_nugget:
                 #     m_tmp_list[ny].gpy_model.mixed_noise.Gaussian_noise.fix(0)
@@ -1120,6 +1165,7 @@ class GpFromModel(object):
         #
         nc1 = round(n_candi)
 
+        self.doe_method = self.doe_method.lower()
         if self.doe_method == "pareto":
 
             #
@@ -1130,6 +1176,10 @@ class GpFromModel(object):
             for nx in range(x_dim):
                 xc1[:, nx] = np.random.uniform(self.xrange[nx, 0], self.xrange[nx, 1], (1, nc1))  # LHS
 
+            nq = round(n_integ)
+            xq = np.zeros((nq, x_dim))
+            for nx in range(x_dim):
+                xq[:, nx] = np.random.uniform(self.xrange[nx, 0], self.xrange[nx, 1], (1, nq))
             #
             # Lets Do Pareto
             #
@@ -1139,24 +1189,34 @@ class GpFromModel(object):
             cri1 = np.zeros(yc1_pred.shape)
             cri2 = np.zeros(yc1_pred.shape)
             # TODO: is this the best?
-            ll = self.xrange[nx, 1] - self.xrange[nx, 0]
+            ll = self.xrange[:, 1] - self.xrange[:, 0]
             for i in range(nc1):
                 if not self.do_mf:
-                    phi = e2[closest_node(xc1[i, :], X, ll)]
+                    wei = self.weights_node2(xc1[i, :], X, ll)
+                    #phi = e2[closest_node(xc1[i, :], X, ll)]
                     #phi = e2[self.__closest_node(xc1[i, :], X)]
                 else:
                     if self.mf_case == 'data-model' or self.mf_case == 'data-data':
-                        phi = e2[closest_node(xc1[i, :], self.X_hf, ll)]
+                        wei = self.weights_node2(xc1[i, :], self.X_hf, ll)
+                        #phi = e2[closest_node(xc1[i, :], self.X_hf, ll)]
                         #phi = e2[self.__closest_node(xc1[i, :], self.X_hf)]
                     elif self.mf_case == 'model-data':
-                        phi = e2[closest_node(xc1[i, :], X, ll)]
+                        wei = self.weights_node2(xc1[i, :], X, ll)
+                        #phi = e2[closest_node(xc1[i, :], X, ll)]
                         #phi = e2[self.__closest_node(xc1[i, :], X)]
 
+                #cri1[i] = yc1_var[i]
+                cri2[i] = sum(e2[:, y_idx] / Y_pred_var[:, y_idx] * wei.T)
+                #cri2[i] = pow(phi[y_idx],r)
 
+            VOI = np.zeros(yc1_pred.shape)
+            for i in range(nc1):
+                pdfvals = m_idx.kern.K(np.array([xq[i]]), xq)**2/m_idx.kern.K(np.array([xq[0]]))**2
+                VOI[i] = np.mean(pdfvals)*np.prod(np.diff(self.xrange,axis=1)) # * np.prod(np.diff(self.xrange))
+                cri1[i] = yc1_var[i] * VOI[i]
 
-                score1[i] = yc1_var[i] * pow(phi[y_idx], r)
-                cri1[i] = yc1_var[i]
-                cri2[i] = pow(phi[y_idx], r)
+            cri1 = (cri1-np.min(cri1))/(np.max(cri1)-np.min(cri1))
+            cri2 = (cri2-np.min(cri2))/(np.max(cri2)-np.min(cri2))
 
             logcrimi1 = np.log(cri1[:, 0])
             logcrimi2 = np.log(cri2[:, 0])
@@ -1176,6 +1236,7 @@ class GpFromModel(object):
             sort_rank = np.sort(rankid)
             num_1rank = np.sum(rankid==1)
             idx_1rank = list((np.argwhere(rankid==1)).flatten())
+            npareto = 4
 
             if num_1rank < self.cal_interval:
                 prob = np.ones((nc1,))
@@ -1185,7 +1246,7 @@ class GpFromModel(object):
             else:
                 idx_pareto_candi = idx_1rank.copy()
                 X_tmp = X
-                Y_tmp = Y
+                Y_tmp = Y[:,y_idx][np.newaxis].T
                 m_tmp = m_idx.copy()
 
                 # get MMSEw
@@ -1199,10 +1260,12 @@ class GpFromModel(object):
 
                 for i in range(self.cal_interval-1):
                     X_tmp = np.vstack([X_tmp, xc1[best_global, :][np.newaxis]])
-                    Y_tmp = np.zeros((Y_tmp.shape[0] + 1, Y.shape[1]))  # any variables
+                    Y_tmp = np.vstack([Y_tmp, np.array([[0]]) ]) # any variables
                     m_tmp.set_XY(X=X_tmp, Y=Y_tmp)
                     dummy, Yq_var = m_tmp.predict(xc1[idx_pareto_candi, :])
-                    score_tmp = Yq_var * cri2[idx_pareto_candi] # only update the variance
+                    cri1 = Yq_var * VOI[idx_pareto_candi]
+                    cri1 = (cri1 - np.min(cri1)) / (np.max(cri1) - np.min(cri1))
+                    score_tmp = cri1 * cri2[idx_pareto_candi] # only update the variance
 
                     best_local = np.argsort(-np.squeeze(score_tmp))[0]
                     best_global = idx_pareto_candi[best_local]
@@ -1439,11 +1502,19 @@ class GpFromModel(object):
                 update_point[ni, :] = x_point
                 update_IMSE[ni, :] = MMSEc1[new_idx]
 
+        else:
+            msg = 'Error running SimCenterUQ: cannot identify the doe method <' + self.doe_method + '>'
+            errlog.exit(msg)
+
         return update_point, m_list, update_IMSE, y_idx, Y_pred, Y_pred_var
 
     def __normalized_mean_sq_error(self, yp, ye):
         nt = yp.shape[0]
-        return np.sqrt(1 / nt * np.sum(pow(yp - ye, 2), axis=0)) / (np.max(ye, axis=0) - np.min(ye, axis=0))
+        data_bound = (np.max(ye, axis=0) - np.min(ye, axis=0))
+        RMSE = np.sqrt(1 / nt * np.sum(pow(yp - ye, 2), axis=0))
+        NRMSE =RMSE/data_bound
+        NRMSE[np.argwhere((data_bound ==0))]=0
+        return NRMSE
 
     def __closest_node(self, node, nodes):
         nodes = np.asarray(nodes)
@@ -1476,14 +1547,12 @@ class GpFromModel(object):
                 X_list_h = X_list[X.shape[0]:]
                 return m.predict(X_list_h)
             elif self.mf_case == 'model-data':
-                return m.predict(X)
+                #return m.predict(X)
+                X_list = convert_x_list_to_array([X, X])
+                X_list_l = X_list[:X.shape[0]]
+                X_list_h = X_list[X.shape[0]:]
+                return m.predict(X_list_h)
 
-        x_list = list()
-        y_list = list()
-        for i in range(Y.shape[1]):
-            x_list = x_list + [X, ]
-            y_list = y_list + [Y[:, [i, ]], ]
-        return x_list, y_list
 
 
     def __get_cross_validation(self,X,Y,m_list):
@@ -1513,18 +1582,18 @@ class GpFromModel(object):
                 Y_pred_var = np.zeros(self.Y_hf.shape)
 
                 for ny in range(Y.shape[1]):
-                    m_tmp = m_list[ny]
+                    m_tmp =  deepcopy(m_list[ny])
                     for ns in range(self.X_hf.shape[0]):
                         X_hf_tmp = np.delete(self.X_hf, ns, axis=0)
                         Y_hf_tmp = np.delete(self.Y_hf, ns, axis=0)
                         X_list_tmp, Y_list_tmp = emf.convert_lists_to_array.convert_xy_lists_to_arrays([X, X_hf_tmp],
                                                                                                        [Y[:, ny][np.newaxis].transpose(), Y_hf_tmp[:, ny][np.newaxis].transpose()])
                         m_tmp.set_data(X=X_list_tmp, Y=Y_list_tmp)
-                        x_loo = np.hstack((self.X_hf[ns], 1))[np.newaxis]
+                        x_loo = self.X_hf[ns][np.newaxis]
                         Y_pred_tmp, Y_err_tmp = self.__predict(m_tmp,x_loo)
-                        Y_pred[ns] = Y_pred_tmp
-                        Y_pred_var[ns] = Y_err_tmp
-                        e2[ns] = pow((Y_pred[ns] - self.Y_hf[ns]), 2)  # for nD outputs
+                        Y_pred[ns,ny] = Y_pred_tmp
+                        Y_pred_var[ns,ny] = Y_err_tmp
+                        e2[ns,ny] = pow((Y_pred[ns,ny] - self.Y_hf[ns,ny]), 2)  # for nD outputs
 
             elif self.mf_case == 'model-data':
                 e2 = np.zeros(Y.shape)
@@ -1532,20 +1601,27 @@ class GpFromModel(object):
                 Y_pred_var = np.zeros(Y.shape)
 
                 for ny in range(Y.shape[1]):
-                    m_tmp = m_list[ny]
+                    m_tmp = deepcopy(m_list[ny])
                     for ns in range(X.shape[0]):
                         X_tmp = np.delete(X, ns, axis=0)
-                        Y_tmp = np.delete(X, ns, axis=0)
+                        Y_tmp = np.delete(Y, ns, axis=0)
                         X_list_tmp, Y_list_tmp = emf.convert_lists_to_array.convert_xy_lists_to_arrays([self.X_lf, X_tmp],
                                                                                                        [self.Y_lf[:, ny][np.newaxis].transpose(), Y_tmp[:, ny][np.newaxis].transpose()])
                         m_tmp.set_data(X=X_list_tmp, Y=Y_list_tmp)
-                        x_loo = np.hstack((X[ns], 1))[np.newaxis]
+                        #x_loo = np.hstack((X[ns], 1))[np.newaxis]
+                        x_loo = self.X_hf[ns][np.newaxis]
                         Y_pred_tmp, Y_err_tmp = self.__predict(m_tmp,x_loo)
-                        Y_pred[ns] = Y_pred_tmp
-                        Y_pred_var[ns] = Y_err_tmp
-                        e2[ns] = pow((Y_pred[ns] - Y[ns]), 2)  # for nD outputs
+                        Y_pred[ns,ny] = Y_pred_tmp
+                        Y_pred_var[ns,ny] = Y_err_tmp
+                        e2[ns,ny] = pow((Y_pred[ns,ny] - Y[ns,ny]), 2)  # for nD outputs
 
         return Y_pred, Y_pred_var, e2
+
+    def term(self):
+        if self.do_parallel:
+            if self.run_type != "runningLocal":
+                print("RUNNING SUCCESSFUL")
+                self.world.Abort(0) # to prevent deadlock
 
 
     def save_model(self, filename):
@@ -1560,13 +1636,19 @@ class GpFromModel(object):
         header_string_y = ' ' + ' '.join([str(elem) for elem in self.g_name])
         header_string = header_string_x + header_string_y
 
-        xy_data = np.concatenate((np.asmatrix(np.arange(1, self.n_samp + 1)).T, self.X, self.Y), axis=1)
+        if not self.do_mf:
+            xy_data = np.concatenate((np.asmatrix(np.arange(1,  self.X.shape[0] + 1)).T, self.X, self.Y), axis=1)
+        else:
+            if not self.hf_is_model:
+                xy_data = np.concatenate((np.asmatrix(np.arange(1, self.X_hf.shape[0] + 1)).T, self.X_hf, self.Y_hf), axis=1)
+            else:
+                xy_data = np.concatenate((np.asmatrix(np.arange(1, self.X.shape[0] + 1)).T, self.X, self.Y), axis=1)
         np.savetxt(self.work_dir + '/dakotaTab.out', xy_data, header=header_string, fmt='%1.4e', comments='%')
         np.savetxt(self.work_dir + '/inputTab.out', self.X, header=header_string_x, fmt='%1.4e', comments='%')
         np.savetxt(self.work_dir + '/outputTab.out', self.Y, header=header_string_y, fmt='%1.4e', comments='%')
 
-        y_ub = np.zeros((self.n_samp,self.y_dim))
-        y_lb = np.zeros((self.n_samp,self.y_dim))
+        y_ub = np.zeros(self.Y_loo.shape)
+        y_lb = np.zeros(self.Y_loo.shape)
 
 
         if not self.do_logtransform:
@@ -1664,13 +1746,13 @@ class GpFromModel(object):
             results["valNRMSE"][self.g_name[ny]] = self.NRMSE_val[ny]
             results["valR2"][self.g_name[ny]] = self.R2_val[ny]
             results["valCorrCoeff"][self.g_name[ny]] = self.corr_val[ny]
-            #
+
             # if np.isnan(self.NRMSE_val[ny]):
-            #     results["valNRMSE"][self.g_name[ny]] = null
+            #     results["valNRMSE"][self.g_name[ny]] = 0
             # if np.isnan(self.R2_val[ny]):
-            #     results["valR2"][self.g_name[ny]] = null
+            #     results["valR2"][self.g_name[ny]] = 0
             # if np.isnan(self.corr_val[ny]):
-            #     results["valCorrCoeff"][self.g_name[ny]] = null
+            #     results["valCorrCoeff"][self.g_name[ny]] = 0
 
         if self.do_simulation:
             results["predError"] = {}
@@ -1719,11 +1801,10 @@ class GpFromModel(object):
             for ny in range(self.y_dim):
                 results["modelInfo"][self.g_name[ny]] = {}
                 for parname in self.m_list[ny].parameter_names():
-                    print(parname)
                     results["modelInfo"][self.g_name[ny]][parname] = list(eval('self.m_list[ny].' + parname))
 
 
-        with open('dakota.out', 'w') as fp:
+        with open(self.work_dir + '/dakota.out', 'w') as fp:
             json.dump(results, fp, indent=1)
 
         with open(self.work_dir + '/GPresults.out', 'w') as file:
@@ -1785,6 +1866,20 @@ class GpFromModel(object):
         print("Results Saved")
         return 0
 
+    def weights_node2(self, node, nodes, ls):
+        nodes = np.asarray(nodes)
+        deltas = nodes - node
+
+        deltas_norm = np.zeros(deltas.shape)
+        for nx in range(ls.shape[0]):
+            deltas_norm[:, nx] = (deltas[:, nx]) / ls[nx]  # additional weights?
+
+        dist_ls = np.sqrt(np.sum(pow(deltas_norm, 2), axis=1))
+
+        weig = np.exp(-pow(dist_ls,2))
+        if (sum(weig)==0):
+            weig = np.ones(nodes.shape[0])
+        return weig/sum(weig)
 
 def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver):
 
@@ -1853,7 +1948,7 @@ def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool
     if os_type.lower().startswith('win'):
         workflowDriver = "workflow_driver.bat"
     else:
-        workflowDriver = "./workflow_driver"
+        workflowDriver = "workflow_driver"
 
     nsamp = X.shape[0]
     if not do_parallel:
@@ -1877,7 +1972,7 @@ def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool
         except KeyboardInterrupt:
             print("Ctrl+c received, terminating and joining pool.")
             try:
-                pool.terminate()
+                pool.shutdown()
             except Exception:
                 sys.exit()
 
@@ -1954,7 +2049,6 @@ def imse(m_tmp, xcandi, xq, phiqr, i):
     return IMSEc1, i
 
 
-
 # ==========================================================================================
 
 class errorLog(object):
@@ -1968,6 +2062,8 @@ class errorLog(object):
         self.file.close()
         exit(-1)
 
+    def terminate(self):
+        self.file.close()
 
 def build_surrogate(work_dir, os_type, run_type):
     # t_total = time.process_time()
@@ -1990,6 +2086,7 @@ def build_surrogate(work_dir, os_type, run_type):
 
     gp = GpFromModel(work_dir, run_type, os_type, inp, errlog)
     gp.save_model(filename)
+    gp.term()
 
 # the actual execution
 
@@ -2006,5 +2103,5 @@ if __name__ == "__main__":
     run_type = inputArgs[3]
     os_type = inputArgs[2]
     result_file = "results.out"
-
-    sys.exit(build_surrogate(work_dir, os_type, run_type))
+    #sys.exit(build_surrogate(work_dir, os_type, run_type))    
+    build_surrogate(work_dir, os_type, run_type)

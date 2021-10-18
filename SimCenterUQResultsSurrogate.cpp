@@ -191,6 +191,13 @@ void SimCenterUQResultsSurrogate::clear(void)
 //    }
 //}
 
+int SimCenterUQResultsSurrogate::processResults(QString &dirName)
+{
+  QString filenameOUT = dirName + QDir::separator() + tr("dakota.out");;
+  QString filenameTAB = dirName + QDir::separator() + tr("dakotaTab.out");;
+  return this->processResults(filenameOUT, filenameTAB);
+}
+
 int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QString &filenameTab)
 {
     statusMessage(tr("Processing Results ... "));
@@ -208,7 +215,7 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        errorMessage("No dakota.err file - SimCenterUQ did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        errorMessage("No dakota.err file - SimCenterUQ did not run - problem with dakota setup or the applications failed with inputs provided");
         return 0;
     }
     QFile fileError(filenameErrorString);

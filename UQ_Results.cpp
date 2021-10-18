@@ -93,11 +93,11 @@ UQ_Results::inputFromJSON(QJsonObject &jsonObject)
             return true; // no results saved
         }
 
-	if (resultWidget != 0) {
-	  result = resultWidget->inputFromJSON(uq);
-	} else {
-	  errorMessage("ERROR: reading Dakota Results - no result widget set!");
-	}
+        if (resultWidget != 0) {
+          result = resultWidget->inputFromJSON(uq);
+        } else {
+          errorMessage("ERROR: reading Dakota Results - no result widget set!");
+        }
 
     } else {
         errorMessage("ERROR: Dakota Results - no \"uqResults\" entry");
@@ -115,26 +115,44 @@ UQ_Results::processResults(QString &filenameResults, QString &filenameTab) {
     if (resultWidget != 0)
         return resultWidget->processResults(filenameResults, filenameTab);
     else {
-        QMessageBox::warning(this, tr("Application"),
-                             tr("BUG - No Results Set!"));
+      QString message = QString("ERROR: Processing results - No ResultsWidget set, file: " ) +  filenameResults;
+      qDebug() << message;
+      errorMessage(message);
+      // qDebug() << message;
+//      QMessageBox::warning(this, tr("Application"),tr("BUG - No ResultsWidget Set!"));
+      return 0;
+    }
+}
 
-        return 0;
+int 
+UQ_Results::processResults(QString &dirName) {
+
+    if (resultWidget != 0)
+        return resultWidget->processResults(dirName);
+    else {
+      QString message = QString("ERROR: Processing results - No resultsWidget set, directory: " ) +  dirName;
+      qDebug() << message;
+      errorMessage(message);
+//      QMessageBox::warning(this, tr("Application"),tr("BUG - No ResultsWidget Set!"));
+      return 0;
     }
 }
 
 void
 UQ_Results::setResultWidget(UQ_Results *result) {
+  
     if (resultWidget != 0) {
+      
         layout->removeWidget(resultWidget);
         delete resultWidget;
         resultWidget = 0;
 
-    } else {
-        qDebug() << "ResultWidget NULL";
     }
 
     if (result != 0) {
         layout->addWidget(result);
         resultWidget = result;
+    } else {
+        errorMessage(QString("ResultWidget::set result widget new:  NULL!"));
     }
 }

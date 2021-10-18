@@ -121,7 +121,7 @@ UQ_EngineSelection::UQ_EngineSelection(InputWidgetParameters *param,InputWidgetF
     theSimCenterUQEngine = new SimCenterUQEngine(theParameters,theFemWidget,theEdpWidget);
     theCustomEngine = new UQ_JsonEngine();
     //theUQpyEngine = new UQpyEngine();
-    theUCSD_Engine = new UCSD_Engine();
+    theUCSD_Engine = new UCSD_Engine(theParameters, theFemWidget, theEdpWidget);
 
     theStackedWidget->addWidget(theDakotaEngine);
     theStackedWidget->addWidget(theSimCenterUQEngine);
@@ -196,26 +196,28 @@ void UQ_EngineSelection::engineSelectionChanged(const QString &arg1)
     theEdpWidget->showAdvancedSensitivity(false);
 
     if (arg1 == "Dakota") {
+      
         theStackedWidget->setCurrentIndex(0);
         theCurrentEngine = theDakotaEngine;
         emit onUQ_EngineChanged(true);
+	
     } else if (arg1 == "SimCenterUQ") {
+      
         theStackedWidget->setCurrentIndex(1);
         theCurrentEngine = theSimCenterUQEngine;
         emit onUQ_EngineChanged(true);
+	
     } else if (arg1 == "CustomUQ") {
+
       theStackedWidget->setCurrentIndex(2);
       theCurrentEngine = theCustomEngine;
-      emit onUQ_EngineChanged(true);
+      emit onUQ_EngineChanged(false);
+      
     } else if (arg1 == "UCSD-UQ") {
+
       theStackedWidget->setCurrentIndex(3);
       theCurrentEngine = theUCSD_Engine;
       emit onUQ_EngineChanged(true);
-
-      //} else if (arg1 == "UQpy") {
-      //     theStackedWidget->setCurrentIndex(2);
-      //     theCurrentEngine = theUQpyEngine;
-      //     emit onUQ_EngineChanged();
 
     } else {
       qDebug() << "ERROR .. UQ_EngineSelection selection .. type unknown: " << arg1;
@@ -282,7 +284,7 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
             } else if ((type == QString("UCSD-UQ"))) {
                 index = 3;
             } else {
-                QString theErrorMessage = QString("UQ_Engine Selection - type: ") + type + QString(" not valid");
+                QString theErrorMessage = QString("ERROR: UQ_Engine Selection - type: ") + type + QString(" not valid");
                 errorMessage(theErrorMessage);
                 return false;
             }
@@ -294,12 +296,12 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
                 return theCurrentEngine->inputAppDataFromJSON(theObject);
             }
         } else {
-            errorMessage("UQ_EngineSelection - no Application key found");
+            errorMessage("ERROR: UQ_EngineSelection - no Application key found");
             return false;
         }
 
     } else {
-        errorMessage("UQ_EngineSelection: failed to find UQ application");
+        errorMessage("ERROR: UQ_EngineSelection: failed to find UQ application");
         return false;
     }
 
@@ -310,7 +312,6 @@ UQ_EngineSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
 
 bool
 UQ_EngineSelection::copyFiles(QString &destDir) {
-
   if (theCurrentEngine != 0) {
     return  theCurrentEngine->copyFiles(destDir);
   }

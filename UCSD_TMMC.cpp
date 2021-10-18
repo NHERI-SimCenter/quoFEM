@@ -45,10 +45,19 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPushButton>
 #include <QFileDialog>
 #include <time.h>
+#include <QDir>
+#include <QDebug>
+#include <QCheckBox>
 
+#include <InputWidgetFEM.h>
+#include <InputWidgetParameters.h>
+#include <InputWidgetEDP.h>
 
-UCSD_TMMC::UCSD_TMMC(QWidget *parent) 
-: UQ_MethodInputWidget(parent)
+#include <fstream>
+#include <sstream>
+
+UCSD_TMMC::UCSD_TMMC(InputWidgetParameters *param, InputWidgetFEM *femWidget,InputWidgetEDP *edpWidget, QWidget *parent)
+: UQ_MethodInputWidget(parent), theParameters(param), theFemWidget(femWidget), theEdpWidget(edpWidget)
 {
     auto layout = new QGridLayout();
 
@@ -79,13 +88,11 @@ UCSD_TMMC::UCSD_TMMC(QWidget *parent)
     layout->addWidget(calDataFileEdit, 2, 1, 1, 2);
 
     QPushButton *chooseCalDataFile = new QPushButton("Choose");
-//    connect(chooseCalDataFile, &QPushButton::clicked, this, [=](){
-//        calDataFileEdit->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*)"));
-//    });
     connect(chooseCalDataFile, &QPushButton::clicked, this, [=](){
           QString fileName = QFileDialog::getOpenFileName(this,tr("Open File"),"", "All files (*)");
           if (!fileName.isEmpty()) {
               calDataFileEdit->setText(fileName);
+              numExperiments = getNumExp(fileName);
           }
     });
     layout->addWidget(chooseCalDataFile, 2, 3);
@@ -101,6 +108,9 @@ UCSD_TMMC::UCSD_TMMC(QWidget *parent)
         logLikelihoodScript->setText(QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.py)"));
     });
     layout->addWidget(chooseFile, 3, 3);
+
+    readCovarianceDataCheckBox = new QCheckBox();
+    readCovarianceDataCheckBox->setChecked(false);
 
 
     layout->setRowStretch(4, 1);
@@ -135,6 +145,10 @@ UCSD_TMMC::outputToJSON(QJsonObject &jsonObj){
     QString calFilePath = calFileInfo.absolutePath();
     jsonObj["calDataFilePath"]=calFilePath;
 
+    jsonObj["readUserDefinedCovarianceData"]=readCovarianceDataCheckBox->isChecked();
+
+    jsonObj["numExperiments"] = numExperiments;
+
     return result;    
 }
 
@@ -165,6 +179,21 @@ UCSD_TMMC::inputFromJSON(QJsonObject &jsonObject){
     if (!(calFile.trimmed().isEmpty() && calFilePath.trimmed().isEmpty())) {
         calDataFileEdit->setText(calFilePath + QDir::separator() + calFile);
     }
+
+    bool checkState = false;
+    if (jsonObject.contains("readUserDefinedCovarianceData")) {
+        checkState = jsonObject["readUserDefinedCovarianceData"].toBool();
+    }
+    readCovarianceDataCheckBox->setChecked(checkState);
+
+    if (jsonObject.contains("numExperiments")){
+        numExperiments = jsonObject["numExperiments"].toInt();
+    }
+    else {
+        QString calFileName = calDataFileEdit->text();
+        numExperiments = getNumExp(calFileName);
+    }
+
 
   }
   else {
@@ -207,3 +236,114 @@ UCSD_TMMC::getNumberTasks() {
     logLikelihoodScript->setText(dialog.selectedFiles().first());
 }
 */
+
+bool
+UCSD_TMMC::copyFiles(QString &fileDir) {
+
+    QString calFileName = calDataFileEdit->text();
+    if (calFileName != "") {
+
+        QFileInfo calFileInfo(calFileName);
+        QDir calDir = calFileInfo.dir();
+
+        QFileInfo childDir(fileDir);
+        QDir dstDir = childDir.dir();
+        QString dst = dstDir.absolutePath()  + QDir::separator() + calFileInfo.fileName();
+
+        qDebug() << "FileDir is: " << fileDir;
+        qDebug() << "tmp.SimCenter path is: " << dstDir.absolutePath();
+        qDebug() << "calFileName is: " << calFileName;
+        qDebug() << "Copying " << calFileName << " to " << dst << "\n";
+
+        bool fileCopyResult = QFile::copy(calFileName, dst);
+
+        qDebug() << "File copy result: " << QVariant(fileCopyResult).toString();
+
+        int numExp = getNumExp(calFileName);
+
+        qDebug() << "Number of experiments: " << numExp;
+
+        if (readCovarianceDataCheckBox->isChecked())
+        {
+            qDebug() << "Looking for user-defined covariance files";
+
+            QVector<EDP *> theEDPs = theEdpWidget->theEDPs;
+            int numEDPs = theEDPs.size();
+
+            qDebug() << "The number of response quantities: " << numEDPs;
+
+            for (int i = 0; i < numEDPs; i++) {
+                EDP *theEDP = theEDPs.at(i);
+                QString edpName = theEDP->variableName->text().simplified();
+
+                qDebug() << "Looping over EDPs. i: " << i << " edpName: " << edpName;
+
+                for (int expNum = 1; expNum <= numExp; expNum++) {
+                    QString covFileName = edpName + "." + QVariant(expNum).toString() + "." + "sigma";
+
+                    qDebug() << "covFileName: " << covFileName;
+
+                    QString srcFileName = calDir.absolutePath() + QDir::separator() + covFileName;
+
+                    qDebug() << "srcFileName: " << srcFileName;
+
+                    std::ifstream checkFile(srcFileName.toStdString());
+                    if (checkFile.good()) {
+
+                        qDebug() << "covFile found. Copying to tmp.SimCenter";
+
+                        QString dstFileName = dstDir.absolutePath() + QDir::separator() + covFileName;
+
+                        qDebug() << "dstFileName: " << dstFileName;
+
+                        bool fileCopyResult = QFile::copy(srcFileName, dstFileName);
+
+                        qDebug() << "File copy result: " << QVariant(fileCopyResult).toString();
+
+                    }
+                    else {
+                        qDebug() << "Check failed. Not copying the file.";
+                    }
+                }
+            }
+        }
+
+    }
+
+    QString loglikeFileName = logLikelihoodScript->text();
+
+    if (loglikeFileName != "") {
+
+        QFileInfo loglikeFileInfo(loglikeFileName);
+        QDir loglikeDir = loglikeFileInfo.dir();
+
+        QFileInfo childDir(fileDir);
+        QDir dstDir = childDir.dir();
+        QString dst = dstDir.absolutePath()  + QDir::separator() + loglikeFileInfo.fileName();
+
+        qDebug() << "loglikeFileName is: " << loglikeFileName;
+        qDebug() << "Copying " << loglikeFileName << " to " << dst << "\n";
+
+        bool fileCopyResult = QFile::copy(loglikeFileName, dst);
+
+        qDebug() << "File copy result: " << QVariant(fileCopyResult).toString();
+    }
+
+    return true;
+}
+
+int
+UCSD_TMMC::getNumExp(QString &calFileName) {
+
+    std::ifstream calDataFile(calFileName.toStdString());
+    int numExperiments = 0;
+    std::string line;
+    while (getline(calDataFile, line)) {
+        if (!line.empty()) {
+            ++numExperiments;
+        }
+    }
+    return numExperiments;
+
+}
+

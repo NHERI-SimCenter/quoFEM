@@ -45,7 +45,7 @@
       },	
       {
         "Name": "UCSD-UQ",
-        "ExecutablePath": "applications/performUQ/UCSD_UQ/mainscript.py",
+        "ExecutablePath": "applications/performUQ/UCSD_UQ/processInputs.py",
         "ApplicationSpecificInputs": [
         ]
       }

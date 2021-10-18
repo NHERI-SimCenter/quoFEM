@@ -130,6 +130,12 @@ void DakotaResultsReliability::clear(void)
 
 }
 
+int DakotaResultsReliability::processResults(QString &dirName)
+{
+  QString filenameOut = dirName + QDir::separator() + tr("dakota.out");
+  QString filenameTAB = dirName + QDir::separator() + tr("dakotaTab.dat");
+  return this->processResults(filenameOut, filenameTAB);
+}
 
 
 int DakotaResultsReliability::processResults(QString &filenameResults, QString &filenameTab)
@@ -148,7 +154,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
   QFileInfo filenameErrorInfo(filenameErrorString);
   if (!filenameErrorInfo.exists()) {
-      errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+      errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applications failed with inputs provided");
       return 0;
   }
   QFile fileError(filenameErrorString);

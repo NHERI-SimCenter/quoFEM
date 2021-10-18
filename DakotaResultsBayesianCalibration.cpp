@@ -312,6 +312,14 @@ static int mergesort(double *input, int size)
     }
 }
 
+int DakotaResultsBayesianCalibration::processResults(QString &dirName)
+{
+  qDebug() << "DakotaResultsBayesianCalibration::processResults dir" << dirName;
+  QString filenameOut = dirName + QDir::separator() + tr("dakota.out");
+  QString filenameTAB = dirName + QDir::separator() + tr("dakotaTab.out");
+  return this->processResults(filenameOut, filenameTAB);
+}
+
 int DakotaResultsBayesianCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
     statusMessage(tr("Processing Sampling Results"));
@@ -325,7 +333,7 @@ int DakotaResultsBayesianCalibration::processResults(QString &filenameResults, Q
 
     QFileInfo filenameErrorInfo(filenameErrorString);
     if (!filenameErrorInfo.exists()) {
-        errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applicatins failed with inputs provied");
+        errorMessage("No dakota.err file - dakota did not run - problem with dakota setup or the applications failed with inputs provided");
 	return 0;
     }
 

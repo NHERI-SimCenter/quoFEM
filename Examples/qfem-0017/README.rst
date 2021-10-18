@@ -20,7 +20,7 @@ Consider a two-dimensional truss structure that has uncertain properties that al
 ================================================ ============ =========
 Random Variable                                  lower bound  upper bound
 ================================================ ============ =========
-Elastid modulus, E                               150          200
+Elastic modulus, E                               150          200
 Load, P                                          15           35
 Cross sectional area of the upper three bars, Au 400          600
 Cross sectional area of the other six bars, Ao   200          300

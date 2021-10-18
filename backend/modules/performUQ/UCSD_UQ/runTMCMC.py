@@ -14,9 +14,9 @@ import os
 import csv
 
 
-def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variables, resultsLocation, seed,
-             calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors,
-             locShiftList, run_type, logFile, MPI_size):
+def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variables, workdirMain, seed,
+             calibrationData, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, scaleFactors,
+             shiftFactors, run_type, logFile, MPI_size, parallelizeMCMC=True):
     """ Runs TMCMC Algorithm """
 
     # Initialize (beta, effective sample size)
@@ -28,8 +28,6 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
 
     # Initialize other TMCMC variables
     Nm_steps = Nm_steps_max
-    parallelize_MCMC = 'yes'  # yes or no
-    # parallelize_MCMC = 'no'  # yes or no
     Adap_calc_Nsteps = 'yes'  # yes or no
     Adap_scale_cov = 'yes'  # yes or no
     scalem = 1  # cov scale factor
@@ -54,36 +52,39 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     Postm = Priorm  # prior = post for beta = 0
 
     # Evaluate log-likelihood at current samples Sm
-    if parallelize_MCMC == 'yes':
+    logFile.write("\n\n\t\tRun type: {}".format(run_type))
+    if parallelizeMCMC:
         if run_type == "runningLocal":
-            pool = Pool(processes=mp.cpu_count())
-            logFile.write("\n\tCreated multiprocessing pool for run_type: {}".format(run_type))
-            Lmt = pool.starmap(runFEM, [(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
+            procCount = mp.cpu_count()
+            pool = Pool(processes=procCount)
+            logFile.write("\n\n\t\tCreated multiprocessing pool for runType: {}".format(run_type))
+            logFile.write("\n\t\t\tNumber of processors being used: {}".format(procCount))
+            Lmt = pool.starmap(runFEM, [(ind, Sm[ind], variables, workdirMain, log_likelihood, calibrationData,
                                          numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
-                                         normalizingFactors, locShiftList) for ind in range(N)], )
+                                         scaleFactors, shiftFactors) for ind in range(N)], )
         else:
-            logFile.write("\n\n\nRunning remote")
-            logFile.write("\nmax_workers: {}".format(os.cpu_count() - 1))
             from mpi4py.futures import MPIPoolExecutor
             executor = MPIPoolExecutor(max_workers=MPI_size)
-            logFile.write("\n\tCreated mpi4py executor pool for run_type: {}".format(run_type))
-            # executor = MPIPoolExecutor(max_workers=os.cpu_count() - 1)
-            iterables = [(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
+            logFile.write("\n\n\t\tCreated mpi4py executor pool for runType: {}".format(run_type))
+            logFile.write("\n\t\t\tmax_workers: {}".format(MPI_size))
+            iterables = [(ind, Sm[ind], variables, workdirMain, log_likelihood, calibrationData,
                           numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
-                          normalizingFactors, locShiftList) for ind in range(N)]
+                          scaleFactors, shiftFactors) for ind in range(N)]
             Lmt = list(executor.starmap(runFEM, iterables))
         Lm = np.array(Lmt).squeeze()
     else:
-        Lm = np.array([runFEM(ind, Sm[ind], variables, resultsLocation, log_likelihood, calibrationData,
-                              numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, normalizingFactors,
-                              locShiftList)
+        logFile.write("\n\n\t\tNot parallelized")
+        logFile.write("\n\t\t\tNumber of processors being used: {}".format(1))
+        Lm = np.array([runFEM(ind, Sm[ind], variables, workdirMain, log_likelihood, calibrationData,
+                              numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList, scaleFactors,
+                              shiftFactors)
                        for ind in range(N)]).squeeze()
 
-    logFile.write("\n\t\tTotal number of model evaluations so far: {}".format(totalNumberOfModelEvaluations))
+    logFile.write("\n\n\t\tTotal number of model evaluations so far: {}".format(totalNumberOfModelEvaluations))
 
     # Write the results of the first stage to a file named dakotaTabPrior.out for quoFEM to be able to read the results
     logFile.write("\n\n\t\tWriting prior samples to 'dakotaTabPrior.out' for quoFEM to read the results")
-    tabFilePath = os.path.join(resultsLocation, "dakotaTabPrior.out")
+    tabFilePath = os.path.join(workdirMain, "dakotaTabPrior.out")
 
     writeOutputs = True
     # Create the headings, which will be the first line of the file
@@ -112,8 +113,8 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
             for j in range(len(variables['names'])):
                 string += "{}\t".format(dataToWrite[i, j])
             if writeOutputs:  # write the output data
-                workdirString = ("workdir." + str(i))
-                prediction = np.atleast_2d(np.genfromtxt(os.path.join(resultsLocation, workdirString,
+                workdirString = ("workdir." + str(i + 1))
+                prediction = np.atleast_2d(np.genfromtxt(os.path.join(workdirMain, workdirString,
                                                                       'results.out'))).reshape((1, -1))
                 for predNum in range(np.shape(prediction)[1]):
                     string += "{}\t".format(prediction[0, predNum])
@@ -162,7 +163,7 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         logFile.write("\n\n\t\tWriting samples from stage {} to csv file".format(stageNum - 1))
 
         stringToAppend = 'resultsStage{}.csv'.format(stageNum - 1)
-        resultsFilePath = os.path.join(os.path.abspath(resultsLocation), stringToAppend)
+        resultsFilePath = os.path.join(os.path.abspath(workdirMain), stringToAppend)
 
         with open(resultsFilePath, 'w', newline='') as csvfile:
             csvWriter = csv.writer(csvfile)
@@ -190,33 +191,37 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         os.fsync(logFile.fileno())
 
         numAccepts = 0
-        if parallelize_MCMC == 'yes':
+        if parallelizeMCMC:
             if run_type == "runningLocal":
+                logFile.write("\n\n\t\tLocal run - MCMC steps")
+                logFile.write("\n\t\t\tNumber of processors being used: {}".format(procCount))
                 results = pool.starmap(tmcmcFunctions.MCMC_MH,
                                        [(j1, Em, Nm_steps, Smcap[j1], Lmcap[j1], Postmcap[j1], beta,
                                          numAccepts, AllPars, log_likelihood, variables,
-                                         resultsLocation, default_rng(child_seeds[j1]),
+                                         workdirMain, default_rng(child_seeds[j1]),
                                          calibrationData, numExperiments, covarianceMatrixList,
-                                         edpNamesList, edpLengthsList, normalizingFactors,
-                                         locShiftList)
+                                         edpNamesList, edpLengthsList, scaleFactors,
+                                         shiftFactors)
                                         for j1 in range(N)], )
             else:
-                logFile.write("\n\n\nRunning remote - MCMC steps")
-                logFile.write("\nmax_workers: {}".format(MPI_size))
+                logFile.write("\n\n\t\tRemote run - MCMC steps")
+                logFile.write("\n\t\t\tmax_workers: {}".format(MPI_size))
                 iterables = [(j1, Em, Nm_steps, Smcap[j1], Lmcap[j1], Postmcap[j1], beta,
                               numAccepts, AllPars, log_likelihood, variables,
-                              resultsLocation, default_rng(child_seeds[j1]),
+                              workdirMain, default_rng(child_seeds[j1]),
                               calibrationData, numExperiments, covarianceMatrixList,
-                              edpNamesList, edpLengthsList, normalizingFactors,
-                              locShiftList)
+                              edpNamesList, edpLengthsList, scaleFactors,
+                              shiftFactors)
                              for j1 in range(N)]
                 results = list(executor.starmap(tmcmcFunctions.MCMC_MH, iterables))
         else:
+            logFile.write("\n\n\t\tLocal run - MCMC steps, not parallelized")
+            logFile.write("\n\t\t\tNumber of processors being used: {}".format(1))
             results = [
                 tmcmcFunctions.MCMC_MH(j1, Em, Nm_steps, Smcap[j1], Lmcap[j1], Postmcap[j1], beta, numAccepts, AllPars,
-                                       log_likelihood, variables, resultsLocation, default_rng(child_seeds[j1]),
+                                       log_likelihood, variables, workdirMain, default_rng(child_seeds[j1]),
                                        calibrationData, numExperiments, covarianceMatrixList,
-                                       edpNamesList, edpLengthsList, normalizingFactors, locShiftList)
+                                       edpNamesList, edpLengthsList, scaleFactors, shiftFactors)
                 for j1 in range(N)]
 
         Sm1, Lm1, Postm1, numAcceptsS, all_proposals, all_PLP = zip(*results)
@@ -228,7 +233,7 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
         all_proposals = np.asarray(all_proposals)
         all_PLP = np.asarray(all_PLP)
 
-        logFile.write("\n\t\tTotal number of model evaluations so far: {}".format(totalNumberOfModelEvaluations))
+        logFile.write("\n\n\t\tTotal number of model evaluations so far: {}".format(totalNumberOfModelEvaluations))
 
         # total observed acceptance rate
         R = numAccepts / numProposals
@@ -264,19 +269,19 @@ def RunTMCMC(N, AllPars, Nm_steps_max, Nm_steps_maxmax, log_likelihood, variable
     logFile.write("\n\n\t\tWriting samples from stage {} to csv file".format(stageNum))
 
     stringToAppend = 'resultsStage{}.csv'.format(stageNum)
-    resultsFilePath = os.path.join(os.path.abspath(resultsLocation), stringToAppend)
+    resultsFilePath = os.path.join(os.path.abspath(workdirMain), stringToAppend)
 
     with open(resultsFilePath, 'w', newline='') as csvfile:
         csvWriter = csv.writer(csvfile)
         csvWriter.writerows(dataToWrite)
     logFile.write("\n\t\t\tWrote to file {}".format(resultsFilePath))
 
-    if parallelize_MCMC == 'yes':
+    if parallelizeMCMC == 'yes':
         if run_type == "runningLocal":
             pool.close()
-            logFile.write("\n\tClosed multiprocessing pool for run_type: {}".format(run_type))
+            logFile.write("\n\tClosed multiprocessing pool for runType: {}".format(run_type))
         else:
             executor.shutdown()
-            logFile.write("\n\tShutdown mpi4py executor pool for run_type: {}".format(run_type))
+            logFile.write("\n\tShutdown mpi4py executor pool for runType: {}".format(run_type))
 
     return mytrace

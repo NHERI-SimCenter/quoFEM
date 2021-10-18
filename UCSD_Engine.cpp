@@ -53,8 +53,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <UCSD_TMMC.h>
 
-UCSD_Engine::UCSD_Engine(QWidget *parent)
-: UQ_Engine(parent), theCurrentMethod(0)
+UCSD_Engine::UCSD_Engine(InputWidgetParameters *param,InputWidgetFEM *femWidget,InputWidgetEDP *edpWidget, QWidget *parent)
+: UQ_Engine(parent), theCurrentMethod(0), theParameters(param), theFemWidget(femWidget), theEdpWidget(edpWidget)
 {
 
     QString classType("Uncertain");
@@ -78,6 +78,9 @@ UCSD_Engine::UCSD_Engine(QWidget *parent)
     theSelectionLayout->addStretch();
     layout->addLayout(theSelectionLayout);
 
+    parallelCheckBox = new QCheckBox();
+    parallelCheckBox->setChecked(true);
+
     //
     // create the stacked widget
     //
@@ -88,7 +91,7 @@ UCSD_Engine::UCSD_Engine(QWidget *parent)
     // create the individual widgets add to stacked widget
     //
 
-    theTMMC = new UCSD_TMMC();
+    theTMMC = new UCSD_TMMC(theParameters, theFemWidget, theEdpWidget);
     theStackedWidget->addWidget(theTMMC);
 
     layout->addWidget(theStackedWidget);
@@ -98,7 +101,7 @@ UCSD_Engine::UCSD_Engine(QWidget *parent)
     connect(theMethodSelection,
 	    SIGNAL(currentIndexChanged(QString)),
 	    this,
-	    SLOT(engineSelectionChanged(QString)));
+        SLOT(methodChanged(QString)));
 }
 
 UCSD_Engine::~UCSD_Engine()
@@ -117,14 +120,16 @@ void UCSD_Engine::methodChanged(const QString &arg1)
       theCurrentMethod = theTMMC;   
     } 
     else {
-        QString errorMsg = QString("UCSD_Engine Selection type: ") + arg1 + QString(" unknown");
+        QString errorMsg = QString("ERROR: UCSD_Engine Selection type: ") + arg1 + QString(" unknown");
         errorMessage(errorMsg);
         qDebug() << "ERROR .. UCSD_Engine selection .. type unknown: " << arg1;
     }
 
     // emit signal if engine changed
-    if (theCurrentMethod != theOldEngine)
+    if (theCurrentMethod != theOldEngine) {
         emit onMethodChanged();
+        emit onUQ_EngineChanged();
+    }
 }
 
 
@@ -137,6 +142,7 @@ bool
 UCSD_Engine::outputToJSON(QJsonObject &jsonObject) {
 
     jsonObject["uqType"] = theMethodSelection->currentText();
+    jsonObject["parallelExecution"] = parallelCheckBox->isChecked();
     return theCurrentMethod->outputToJSON(jsonObject);
 }
 
@@ -153,6 +159,12 @@ UCSD_Engine::inputFromJSON(QJsonObject &jsonObject) {
         result = theCurrentMethod->inputFromJSON(jsonObject);
     else
         result = false; // don't emit error as one should have been generated
+
+    parallelCheckBox->setChecked(true);
+    if (jsonObject.contains("parallelExecution")) {
+        bool checkedState = jsonObject["parallelExecution"].toBool();
+        parallelCheckBox->setChecked(checkedState);
+    }
 
     return result;
 }
@@ -202,4 +214,9 @@ UCSD_Engine::getProcessingScript() {
 QString
 UCSD_Engine::getMethodName() {
     return QString("UCSD");
+}
+
+bool
+UCSD_Engine::copyFiles(QString &fileName) {
+    return theCurrentMethod->copyFiles(fileName);
 }
