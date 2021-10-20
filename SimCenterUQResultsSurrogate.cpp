@@ -333,7 +333,7 @@ SimCenterUQResultsSurrogate::onSaveModelClicked()
 
     QString workflowDir1 = workingDir+QString("templatedir");
     QString workflowDir2 = path+QString("/templatedir_SIM");
-    //bool directoryCopied = copyPath(workflowDir1, workflowDir2, true);
+    bool directoryCopied = copyPath(workflowDir1, workflowDir2, true);
 
     lastPath =  QFileInfo(fileName).path();
 

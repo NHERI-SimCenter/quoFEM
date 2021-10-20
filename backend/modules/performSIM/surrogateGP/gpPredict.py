@@ -14,7 +14,8 @@ import subprocess
 def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
     global error_file
 
-    os_type='win'
+
+    os_type=sys.platform.lower()
     run_type ='runninglocal'
 
     #
