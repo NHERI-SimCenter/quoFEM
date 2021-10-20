@@ -98,7 +98,7 @@ SurrogateDoEInputWidget::SurrogateDoEInputWidget(QWidget *parent)
     accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
     accuracyMeasure->setMaximumWidth(150);
 
-    layout->addWidget(new QLabel("Target Accuracy (Normalized Err) "), wid, 0);
+    layout->addWidget(new QLabel("Target Accuracy (normalized err) "), wid, 0);
     layout->addWidget(accuracyMeasure, wid++, 1);
 
     //
