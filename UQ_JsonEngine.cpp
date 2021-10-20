@@ -120,8 +120,7 @@ UQ_JsonEngine::inputAppDataFromJSON(QJsonObject &jsonObject)
 }
 
 int
-UQ_JsonEngine::processResults(__attribute__((unused)) QString &filenameResults, __attribute__((unused)) QString &filenameTab) {
-    //__attribute__((unused)) added to suppress warnings
+UQ_JsonEngine::processResults( QString &filenameResults, QString &filenameTab) {
   return 0;
 }
 
