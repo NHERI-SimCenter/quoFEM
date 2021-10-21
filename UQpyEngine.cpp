@@ -64,7 +64,7 @@ UQpyEngine::getMaxNumParallelTasks(void) {
 }
 
 bool
-UQpyEngine::outputToJSON(QJsonObject &rvObject) {
+UQpyEngine::outputToJSON( QJsonObject &rvObject) {
     return true;
 }
 
@@ -76,7 +76,7 @@ UQpyEngine::inputFromJSON(QJsonObject &rvObject) {
 
 
 int
-UQpyEngine::processResults(QString &filenameResults, QString &filenameTab) {
+UQpyEngine::processResults( QString &filenameResults, QString &filenameTab) {
     return 0;
 }
 

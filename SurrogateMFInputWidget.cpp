@@ -309,7 +309,7 @@ SurrogateMFInputWidget::SurrogateMFInputWidget(InputWidgetParameters *param,Inpu
     accuracyMeasure->setToolTip("NRMSE: normalized root mean square error");
     accuracyMeasure->setMaximumWidth(150);
 
-    theSimGrid->addWidget(new QLabel("   Target Accuracy (Normalized Error)   "), id_fe, 0);
+    theSimGrid->addWidget(new QLabel("   Target Accuracy (normalized error)   "), id_fe, 0);
     theSimGrid->addWidget(accuracyMeasure, id_fe++, 1);
 
 //    Max computation time (approximate)

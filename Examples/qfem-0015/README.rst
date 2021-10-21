@@ -29,7 +29,7 @@ The structure (:qfem-0015:`single story building with a cripple wall <src/CWH.py
 Random Variable    lower bound  upper bound
 					      
 ================== ============ =========
-Material Quality   0.0          1.0
+Material Quality   0.2          1.0
 Plan Area          1200          2400
 Aspect Ratio       0.4          0.8
 Damping            0.02         0.1
@@ -66,7 +66,7 @@ Once the user selects OpenSeesPy as FEM applications, below three fields are req
 UQ Workflow
 -------------
 
-1. Start the application, and the **UQ** Selection will be highlighted. Change the UQ Engine to **SimCenterUQ** and the Method Category to **Training GP Surrogate Model**. Since the model is provided, the Training Dataset will be obtained by **Sampling and Simulation**. Since it is known that peak drift and acceleration values are always positive, log-transform is introduced. Since a trend is expected, a linear trend function is introduced. The number of Initial Design of Experiments is set to 10.
+1. Start the application, and the **UQ** Selection will be highlighted. Change the UQ Engine to **SimCenterUQ** and the Method Category to **Training GP Surrogate Model**. Since the model is provided, the Training Dataset will be obtained by **Sampling and Simulation**. 
 
 .. figure:: figures/SUR-UQtab1.png
    :align: center
@@ -134,7 +134,7 @@ Well-trained model will form a clear diagonal line while poorly trained model ar
    :figclass: align-center
    :width: 1200
 
-| Click on the **Run** button, and surrogate model training will be continued. Followings are the results after 144 more simulations.
+| Click on the **Run** button, and surrogate model training will be continued. Followings are the results after 150 more simulations.
 
 * Summary:
 
@@ -154,7 +154,7 @@ Well-trained model will form a clear diagonal line while poorly trained model ar
 Users may want to perform additional simulations in a similar way.
 
 .. note::
-   Note that in the second training period, 150 initial samples were provided from the data files and 144 more simulations were conducted. However, the number of total samples used to train the surrogate model is displayed as 293 since one simulation is consumed to check the consistency between the user provided model (in the **FEM tab**) and the dataset (in the **UQ tab**).
+   Note that in the second training period, 150 initial samples were provided from the data files and 150 more simulations were conducted. However, the number of total samples used to train the surrogate model is displayed as 299 since one simulation is consumed to check the consistency between the user provided model (in the **FEM tab**) and the dataset (in the **UQ tab**).
 
 
 
@@ -181,7 +181,7 @@ Once surrogate model is constructed, it can be used for various UQ/optimization 
    :figclass: align-center
    :width: 1200
 
-3. Select the **FEM tab**  from the input panel and choose **SurrogateGP** application. For the **SurrogateGP Info** field, copy the path to the ``SimGpModel.json`` or click choose and navigate to the file. Similarly, the  **SurroateGP Model field** calls ``SimGpModel.pkl`` file. Once the first file is imported, additional options will be visible. Here, the user can specify the Maximum Allowable Normalized Variance level. The exceedance percentage is provided to help users decision along with the pre-informed accuracy of the surrogate model obtained right after the training session. In this example, we would like to compare two cases: **(CASE 1)** (Ignore the precision tolerance and) **Continue** analysis, **(CASE 2)** **Run Exact FEM simulation** for those samples prediction variance is high. The Maximum Allowable Normalized Variance level is set as 0.08.
+3. Select the **FEM tab**  from the input panel and choose **SurrogateGP** application. For the **SurrogateGP Info** field, copy the path to the ``SimGpModel.json`` or click choose and navigate to the file. Similarly, the  **SurroateGP Model field** calls ``SimGpModel.pkl`` file. Once the first file is imported, additional options will be visible. Here, the user can specify the Maximum Allowable Normalized Variance level. The exceedance percentage is provided to help users decision along with the pre-informed accuracy of the surrogate model obtained right after the training session. In this example, we would like to compare two cases: **(CASE 1)** (Ignore the precision tolerance and) **Continue** analysis, **(CASE 2)** **Run Exact FEM simulation** for those samples prediction variance is high. The Maximum Allowable Normalized Variance level is set as 0.15.
 
 
 .. figure:: figures/SUR-VER3.png
@@ -212,23 +212,23 @@ Once surrogate model is constructed, it can be used for various UQ/optimization 
 * InterstoryDrift_x
 
 ================== ============================== ======================== ======================================
-Prob. Moments      Reference (only simulation)    CASE1 (only surrogate)   CASE1 (surrogate and simulation)					     
+Prob. Moments      Reference (only simulation)    CASE1 (only surrogate)   CASE2 (surrogate and simulation)					     
 ================== ============================== ======================== ======================================
-Mean               4.33e-4                        4.33e-4                  4.33e-4
-StdDev             1.66e-5                        1.71e-5                  1.70e-5
-Skewness           1.21                           1.20                     1.23
-Kurtosis           6.74                           6.51                     6.54
+Mean               4.54e-4                        4.53e-4                  4.54e-4
+StdDev             6.01e-5                        5.99e-5                  6.01e-5
+Skewness           2.59                           2.53                     2.58
+Kurtosis           13.49                          13.16                    13.49
 ================== ============================== ======================== ======================================
 
 * Accel_Roof_x
 
 ================== ============================== ======================== ======================================
-Prob. Moments      Reference (only simulation)    CASE1 (only surrogate)   CASE1 (surrogate and simulation)		
+Prob. Moments      Reference (only simulation)    CASE1 (only surrogate)   CASE2 (surrogate and simulation)		
 ================== ============================== ======================== ======================================
-Mean               37.4                           37.3                     37.5 
-StdDev             1.84                           1.62                     1.80
-Skewness           0.39                           0.06                     0.20
-Kurtosis           1.85                           2.12                     1.97
+Mean               35.84                          36.2                     35.79
+StdDev             3.20                           3.63                     3.10
+Skewness           0.46                           1.36                     0.31
+Kurtosis           4.86                           9.76                     5.38
 ================== ============================== ======================== ======================================
 
 
