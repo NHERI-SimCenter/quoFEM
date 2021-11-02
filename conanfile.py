@@ -16,7 +16,6 @@ class quoFEM(ConanFile):
 
     def configure(self):
         if self.settings.os == "Windows":
-            self.options["libcurl"].with_winssl = True
             self.options["lapack"].visual_studio = True
             self.options["lapack"].shared = True
 

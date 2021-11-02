@@ -5,7 +5,7 @@ image:
   - Ubuntu1804
   - Visual Studio 2019
 
-stack: python 3.7
+stack: python 3.8
 
 for:
   # macOS 
@@ -17,7 +17,8 @@ for:
     clone_folder: ~/SimCenter
 
     init:
-       - export PATH="$HOME/Qt/5.15.2/clang_64/bin:$HOME/venv3.8.6/bin:/Users/appveyor/Library/Python/2.7/bin:$PATH"
+       - export PATH="$HOME/Qt/5.15.2/clang_64/bin:$HOME/venv3.9/bin:$PATH"
+       - python --version
        - python -m pip install --upgrade pip
        - pip install conan
        - conan user

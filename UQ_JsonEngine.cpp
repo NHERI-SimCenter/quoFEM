@@ -120,7 +120,7 @@ UQ_JsonEngine::inputAppDataFromJSON(QJsonObject &jsonObject)
 }
 
 int
-UQ_JsonEngine::processResults(QString &filenameResults, QString &filenameTab) {
+UQ_JsonEngine::processResults( QString &filenameResults, QString &filenameTab) {
   return 0;
 }
 
