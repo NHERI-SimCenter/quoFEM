@@ -6,8 +6,14 @@ import sys
 import json as json
 import shutil
 from scipy.stats import lognorm, norm
-import GPy as GPy
 import subprocess
+
+try:
+    moduleName = "GPy"
+    import GPy as GPy
+    error_tag=False
+except:
+    error_tag=True
 
 # from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
 

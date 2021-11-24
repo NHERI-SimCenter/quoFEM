@@ -672,7 +672,7 @@ MainWindow::runApplication(QString program, QStringList args) {
 void MainWindow::onRunButtonClicked() {
 
     GoogleAnalytics::ReportLocalRun();
-    statusMessage("Running Analysis..");
+    statusMessage("Running Analysis");
     
     //
     // get program & input file from fem widget
@@ -1617,6 +1617,7 @@ void MainWindow::processResults(QString &dirName)
         results->setResultWidget(result);
 
         inputWidget->setSelection(QString("RES"));
+        statusMessage(tr("========== Results Displayed =========="));
     } else
         qDebug() << "MainWindow:: processResults dir - No result widget";
 }
@@ -1636,6 +1637,7 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
         results->setResultWidget(result);
 
         inputWidget->setSelection(QString("RES"));
+        statusMessage(tr("========== Results Displayed =========="));
     } else
         qDebug() << "MainWindow:: processResults file - No result widget";
 }
@@ -1740,7 +1742,9 @@ void MainWindow::loadExamples()
 
     this->loadFile(pathToExample);
 
-    this->statusMessage(QString("Example Loaded\n"));    
+    //this->statusMessage(QString("Example Loaded\n"));
+
+    this->statusMessage(QString("========== Example Loaded =========="));
 }
 
 

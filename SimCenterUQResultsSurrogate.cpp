@@ -200,7 +200,7 @@ int SimCenterUQResultsSurrogate::processResults(QString &dirName)
 
 int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QString &filenameTab)
 {
-    statusMessage(tr("Processing Results ... "));
+    //statusMessage(tr("Processing Results ... "));
 
     this->clear();
     lastPath = "";

@@ -351,7 +351,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
   this->onSpreadsheetCellClicked(0,1);
   if (numSpreadsheetRows == 0)
-      statusMessage(tr("No Result Data Found .. dakota failed .. possibly no QoI provided"));
+      errorMessage(tr("No Result Data Found .. dakota failed .. possibly no QoI provided"));
 
   return 0;
 }

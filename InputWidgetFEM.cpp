@@ -170,9 +170,6 @@ InputWidgetFEM::setFEMforGP(QString option){
     {
         numInputs=1;
         femSelection -> setDisabled(false);
-        //this->femProgramChanged("OpenSees");
-        //femSelection->setCurrentIndex(1);
-        //femSelection->setCurrentIndex(0);
         this -> setContentsVisible(true);
         theFEMs.at(0)->setAsGP(false);
         this->parseAllInputfiles();
@@ -180,8 +177,6 @@ InputWidgetFEM::setFEMforGP(QString option){
     } else if (option == "GPdata") {
         numInputs=1;
         femSelection -> setDisabled(true);
-        //femSelection->setCurrentIndex(1);
-        //femSelection->setCurrentIndex(0);
         femProgramChanged("OpenSees");
         this -> setContentsVisible(false);
         theFEMs.at(0)->setAsGP(true);
@@ -191,9 +186,6 @@ InputWidgetFEM::setFEMforGP(QString option){
     {
         numInputs=1;
         femSelection -> setDisabled(false);
-        //femSelection->setCurrentIndex(1);
-        //femSelection->setCurrentIndex(0);
-        //femProgramChanged("OpenSees");
         this -> setContentsVisible(true);
         theFEMs.at(0)->setAsGP(true);
         this->parseAllInputfiles();
@@ -229,10 +221,6 @@ InputWidgetFEM::femProgramChanged(const QString& arg1) {
         this->addFEM(0);
         theFEMs.at(0)->femProgramChanged(arg1);
     }
-//        int numFem = theFEMs.size();
-//        for (int i = numFem-1; i >= 0; i--) {
-//            FEM *theFEM = theFEMs.at(i);
-//            theFEM->femProgramChanged(arg1);
 }
 
 QString InputWidgetFEM::getApplicationName(void) {
