@@ -105,7 +105,7 @@ InputWidgetFEM::makeFEM(void)
     femSelection->addItem(tr("Custom"));
     femSelection->addItem(tr("SurrogateGP"));
     femSelection->setMinimumWidth(120);
-    //femSelection->addItem(tr("MultipleModels"));
+    //femSelection->addItem(tr("MultipleModels")); // not shown by default
     connect(femSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(femProgramChanged(QString)));
 
     QScrollArea *sa = new QScrollArea;
@@ -161,6 +161,7 @@ InputWidgetFEM::makeFEM(void)
 int
 InputWidgetFEM::setFEMforGP(QString option){
     GPoption = option;
+    // Remove MultipleModels Option
     int index = femSelection->findText("MultipleModels");
     if (index>-1) {
         femSelection->removeItem(index);

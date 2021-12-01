@@ -51,12 +51,9 @@ class GpFromModel(object):
         x_dim = 0
         y_dim = 0
 
-        if inp['fem']['numInputs'] >1:
-
-        else:
-            for rv in inp['randomVariables']:
-                rv_name = rv_name + [rv['name']]
-                x_dim += 1
+        for rv in inp['randomVariables']:
+            rv_name = rv_name + [rv['name']]
+            x_dim += 1
 
         if x_dim == 0:
             msg = 'Error reading json: RV is empty'
