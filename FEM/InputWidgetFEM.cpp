@@ -63,7 +63,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 InputWidgetFEM::InputWidgetFEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, QWidget *parent)
-  : SimCenterWidget(parent), numInputs(1), theEdpWidget(edpwidget), theParameters(param)
+  : SimCenterAppWidget(parent), numInputs(1), theEdpWidget(edpwidget), theParameters(param)
 {
     numInputs = 1;
     verticalLayout = new QVBoxLayout();
@@ -313,6 +313,25 @@ void InputWidgetFEM::setContentsVisible(bool tog)
 //        }
 //    }
 //}
+
+
+bool
+InputWidgetFEM::outputAppDataToJSON(QJsonObject &jsonObject)
+{
+  return true;
+}
+
+
+bool
+InputWidgetFEM::inputAppDataFromJSON(QJsonObject &jsonObject)
+{
+  return true;
+}
+
+bool InputWidgetFEM::copyFiles(QString &destName)
+{
+  return true;
+}
 
 
 bool

@@ -21,8 +21,9 @@ INCLUDEPATH += UQ/dakota
 INCLUDEPATH += UQ/simcenterUQ
 INCLUDEPATH += UQ/ucsd
 INCLUDEPATH += UQ/customUQ
-INCLUDEPATH += UQe/common
+INCLUDEPATH += UQ/common
 INCLUDEPATH += FEM
+INCLUDEPATH += EDP
 
 include($$PWD/ConanHelper.pri)
 
@@ -50,9 +51,7 @@ include(../SimCenterCommon/Workflow/JsonConfiguredWidgets.pri)
 SOURCES += main.cpp\
     BayesPlots.cpp \
     MainWindow.cpp \
-    EDP.cpp  \
     SidebarWidgetSelection.cpp \
-    InputWidgetEDP.cpp \
     filterEngine.cpp \
     InputWidgetParameters.cpp \
     RemoteJobCreator.cpp \
@@ -63,6 +62,8 @@ SOURCES += main.cpp\
     CustomizedItemModel.cpp \
     SimCenterGraphPlot.cpp \
     qcustomplot.cpp \
+    EDP/EDP.cpp  \
+    EDP/InputWidgetEDP.cpp \
     FEM/InputWidgetFEM.cpp \
     FEM/FEM.cpp  \    
     FEM/OpenSeesParser.cpp \
@@ -112,8 +113,6 @@ SOURCES += main.cpp\
 
 HEADERS  += MainWindow.h \
     BayesPlots.h \
-    InputWidgetEDP.h \
-    EDP.h \
     SidebarWidgetSelection.h \
     filterEngine.h \
     InputWidgetParameters.h \
@@ -125,6 +124,8 @@ HEADERS  += MainWindow.h \
     CustomizedItemModel.h \
     SimCenterGraphPlot.h \
     qcustomplot.h \
+    EDP/InputWidgetEDP.h \
+    EDP/EDP.h \
     FEM/FEM.h \
     FEM/InputWidgetFEM.h \
     FEM/OpenSeesParser.h \
