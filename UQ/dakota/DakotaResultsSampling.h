@@ -43,7 +43,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtCharts/QChart>
 #include <QMessageBox>
 #include <QPushButton>
-#include "ResultsDataChart.h"
+//#include <ResultsDataChart.h>
 
 
 using namespace QtCharts;
@@ -53,6 +53,7 @@ class QTabWidget;
 class MyTableWidget;
 class MainWindow;
 class RandomVariablesContainer;
+class ResultsDataChart;
 
 //class QChart;
 

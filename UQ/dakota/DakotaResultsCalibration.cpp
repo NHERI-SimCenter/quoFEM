@@ -74,6 +74,7 @@ using namespace QtCharts;
 #include <QFileDialog>
 
 #include <QXYSeries>
+#include "ResultsDataChart.h"
 #define NUM_DIVISIONS 10
 
 

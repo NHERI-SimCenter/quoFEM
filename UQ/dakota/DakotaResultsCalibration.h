@@ -41,13 +41,15 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <UQ_Results.h>
 #include <QtCharts/QChart>
-#include "ResultsDataChart.h"
 
 using namespace QtCharts;
 
 class QTextEdit;
 class QTabWidget;
 class MyTableWidget;
+class ResultsDataChart;
+class RandomVariablesContainer;
+
 //class QChart;
 
 class DakotaResultsCalibration : public UQ_Results
