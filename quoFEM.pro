@@ -21,8 +21,8 @@ INCLUDEPATH += UQ/dakota
 INCLUDEPATH += UQ/simcenterUQ
 INCLUDEPATH += UQ/ucsd
 INCLUDEPATH += UQ/customUQ
-INCLUDEPATH += UQ/common
-
+INCLUDEPATH += UQe/common
+INCLUDEPATH += FEM
 
 include($$PWD/ConanHelper.pri)
 
@@ -46,34 +46,35 @@ include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/Common/Common.pri)
 include(../SimCenterCommon/Workflow/JsonConfiguredWidgets.pri)
 
+
 SOURCES += main.cpp\
     BayesPlots.cpp \
-        MainWindow.cpp \
-        EDP.cpp  \
-        FEM.cpp  \
-        SidebarWidgetSelection.cpp \
-        InputWidgetEDP.cpp \
-        InputWidgetFEM.cpp \
-        UQ/UQ_EngineSelection.cpp \
-        UQ/UQ_Results.cpp \
-        UQ/UQ_Engine.cpp \
-        UQ/UQpyEngine.cpp \
-	filterEngine.cpp \
-        InputWidgetParameters.cpp \
-        OpenSeesParser.cpp \
-        FEAPpvParser.cpp \
-        OpenSeesPyParser.cpp \
+    MainWindow.cpp \
+    EDP.cpp  \
+    SidebarWidgetSelection.cpp \
+    InputWidgetEDP.cpp \
+    filterEngine.cpp \
+    InputWidgetParameters.cpp \
     RemoteJobCreator.cpp \
     MyTableWidget.cpp \
     RemoteJobManager.cpp \
     AgaveCurl.cpp \
     RemoteService.cpp \
     CustomizedItemModel.cpp \
-    UQ/UQ_MethodInputWidget.cpp \
-    UQ/common/ResultsDataChart.cpp \
     SimCenterGraphPlot.cpp \
     qcustomplot.cpp \
+    FEM/InputWidgetFEM.cpp \
+    FEM/FEM.cpp  \    
+    FEM/OpenSeesParser.cpp \
+    FEM/FEAPpvParser.cpp \
+    FEM/OpenSeesPyParser.cpp \
+    UQ/UQ_EngineSelection.cpp \
+    UQ/UQ_MethodInputWidget.cpp \
+    UQ/UQ_Results.cpp \
+    UQ/UQ_Engine.cpp \
+    UQ/UQpyEngine.cpp \    
     UQ/customUQ/CustomUQ_Results.cpp \
+    UQ/common/ResultsDataChart.cpp \
     UQ/UQ_JsonEngine.cpp \
     UQ/dakota/DakotaEngine.cpp \
     UQ/dakota/DakotaInputSampling.cpp \
@@ -113,28 +114,28 @@ HEADERS  += MainWindow.h \
     BayesPlots.h \
     InputWidgetEDP.h \
     EDP.h \
-    FEM.h \
-    InputWidgetFEM.h \
     SidebarWidgetSelection.h \
-    UQ/UQ_EngineSelection.h \
-    UQ/UQ_Results.h \
-    UQ/UQ_Engine.h \
-    UQ/UQpyEngine.h \
     filterEngine.h \
     InputWidgetParameters.h \
-    OpenSeesParser.h \
-    FEAPpvParser.h \
-    OpenSeesPyParser.h \
     RemoteJobCreator.h \
     MyTableWidget.h \
     RemoteJobManager.h \
     AgaveCurl.h \
     RemoteService.h \
-    UQ/UQ_MethodInputWidget.h \
-    UQ/common/ResultsDataChart.h \
     CustomizedItemModel.h \
     SimCenterGraphPlot.h \
     qcustomplot.h \
+    FEM/FEM.h \
+    FEM/InputWidgetFEM.h \
+    FEM/OpenSeesParser.h \
+    FEM/FEAPpvParser.h \
+    FEM/OpenSeesPyParser.h \
+    UQ/UQ_EngineSelection.h \
+    UQ/UQ_Results.h \
+    UQ/UQ_Engine.h \
+    UQ/UQpyEngine.h \
+    UQ/UQ_MethodInputWidget.h \    
+    UQ/common/ResultsDataChart.h \
     UQ/UQ_JsonEngine.h \
     UQ/dakota/DakotaEngine.h \    
     UQ/dakota/DakotaInputSampling.h \
