@@ -623,9 +623,9 @@ MainWindow::runApplication(QString program, QStringList args) {
 
     if(0 != proc->exitCode())
     {
-        qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << "Failed to run the workflow. exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
-        this->errorMessage("Failed to run the workflow!!!");
+        this->errorMessage("Failed to run the workflow");
         return proc->exitCode();
     }
 
@@ -1559,6 +1559,7 @@ bool MainWindow::saveFile(const QString &fileName)
 
     // set current file
     setCurrentFile(fileName);
+    statusMessage(tr("---------------------- Json Saved ----------------------"));
 
     return true;
 }
@@ -1597,15 +1598,18 @@ void MainWindow::loadFile(const QString &fileName)
 
     // given the json object, create the C++ objects
     //inputWidget->inputFromJSON(jsonObj);
-    this->inputFromJSON(jsonObj);
+    if (this->inputFromJSON(jsonObj) != true) {
+        return;
+    };
 
     setCurrentFile(fileName);
+    statusMessage(tr("---------------------- Json Loaded ----------------------"));
 }
 
 
 void MainWindow::processResults(QString &dirName)
 {
-    statusMessage(tr("Processing Results"));
+    //statusMessage(tr("Processing Results"));
     qDebug() << "MainWindow:: processResults dir";
     UQ_Results *result=uq->getResults();
 
@@ -1613,11 +1617,13 @@ void MainWindow::processResults(QString &dirName)
         //connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
         // connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(errorMessage(QString)));
 
-        result->processResults(dirName);
-        results->setResultWidget(result);
 
         inputWidget->setSelection(QString("RES"));
-        statusMessage(tr("========== Results Displayed =========="));
+        if (result->processResults(dirName) != true) {
+            return;
+        }
+        results->setResultWidget(result);
+        statusMessage(tr("---------------------- Results Displayed ----------------------"));
     } else
         qDebug() << "MainWindow:: processResults dir - No result widget";
 }
@@ -1625,7 +1631,7 @@ void MainWindow::processResults(QString &dirName)
 
 void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
 {
-    statusMessage(tr("Processing Results"));
+    //statusMessage(tr("Processing Results"));
     qDebug() << "MainWindow:: processResults files";
     UQ_Results *result=uq->getResults();
 
@@ -1633,11 +1639,13 @@ void MainWindow::processResults(QString &dakotaIN, QString &dakotaTAB)
       // connect(result,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
       // connect(result,SIGNAL(sendStatusMessage(QString)), this, SLOT(statusMessage(QString)));
 
-        result->processResults(dakotaIN, dakotaTAB);
+        //result->processResults(dakotaIN, dakotaTAB);
         results->setResultWidget(result);
-
+        if (result->processResults(dakotaIN, dakotaTAB) != true) {
+            return;
+        }
         inputWidget->setSelection(QString("RES"));
-        statusMessage(tr("========== Results Displayed =========="));
+        statusMessage(tr("---------------------- Results Displayed ----------------------"));
     } else
         qDebug() << "MainWindow:: processResults file - No result widget";
 }
@@ -1744,7 +1752,7 @@ void MainWindow::loadExamples()
 
     //this->statusMessage(QString("Example Loaded\n"));
 
-    this->statusMessage(QString("========== Example Loaded =========="));
+    this->statusMessage(QString("---------------------- Example Loaded ----------------------"));
 }
 
 
