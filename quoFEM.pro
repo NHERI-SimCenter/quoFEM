@@ -49,10 +49,10 @@ include(../SimCenterCommon/Workflow/JsonConfiguredWidgets.pri)
 
 
 SOURCES += main.cpp\
-    BayesPlots.cpp \
     MainWindow.cpp \
     SidebarWidgetSelection.cpp \
     filterEngine.cpp \
+    SimCenterGraphPlot.cpp \    
     InputWidgetParameters.cpp \
     RemoteJobCreator.cpp \
     MyTableWidget.cpp \
@@ -60,7 +60,6 @@ SOURCES += main.cpp\
     AgaveCurl.cpp \
     RemoteService.cpp \
     CustomizedItemModel.cpp \
-    SimCenterGraphPlot.cpp \
     qcustomplot.cpp \
     EDP/EDP.cpp  \
     EDP/InputWidgetEDP.cpp \
@@ -99,6 +98,7 @@ SOURCES += main.cpp\
     UQ/ucsd/UCSD_Engine.cpp \
     UQ/ucsd/UCSD_TMMC.cpp \
     UQ/ucsd/UCSD_Results.cpp \
+    UQ/ucsd/BayesPlots.cpp \
     UQ/simcenterUQ/SimCenterUQEngine.cpp \
     UQ/simcenterUQ/SimCenterUQInputSampling.cpp \
     UQ/simcenterUQ/SimCenterUQResultsSampling.cpp \    
@@ -112,7 +112,6 @@ SOURCES += main.cpp\
 
 
 HEADERS  += MainWindow.h \
-    BayesPlots.h \
     SidebarWidgetSelection.h \
     filterEngine.h \
     InputWidgetParameters.h \
@@ -122,7 +121,7 @@ HEADERS  += MainWindow.h \
     AgaveCurl.h \
     RemoteService.h \
     CustomizedItemModel.h \
-    SimCenterGraphPlot.h \
+    SimCenterGraphPlot.h \        
     qcustomplot.h \
     EDP/InputWidgetEDP.h \
     EDP/EDP.h \
@@ -160,6 +159,7 @@ HEADERS  += MainWindow.h \
     UQ/ucsd/UCSD_Engine.h \
     UQ/ucsd/UCSD_TMMC.h \
     UQ/ucsd/UCSD_Results.h \
+    UQ/ucsd/BayesPlots.h \
     UQ/customUQ/CustomUQ_Results.h \
     UQ/simcenterUQ/SimCenterUQEngine.h \    
     UQ/simcenterUQ/SimCenterUQInputSampling.h \    
