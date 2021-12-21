@@ -161,3 +161,26 @@ class WeibullDist:
     def log_pdf_eval(self, x):
         dist = stats.weibull_min(c=self.shape, scale=self.scale)
         return dist.logpdf(x)
+
+
+class JeffreysPriorForNormalVariance:
+    def __init__(self, lowerBound, upperBound):
+        if lowerBound < 0:
+            raise ValueError("ERROR: lowerBound must be greater than 0")
+        if upperBound <= lowerBound:
+            raise ValueError("ERROR: upperBound must be greater than lowerBound")
+        self.lowerBound = lowerBound
+        self.upperBound = upperBound
+        self.c = np.log(self.upperBound) - np.log(self.lowerBound)
+
+    def generate_rns(self, N):
+        us = stats.uniform.rvs(0, 1, N)
+        xs = self.lowerBound ** (1 - us) * self.upperBound ** us
+        return xs
+
+    def log_pdf_eval(self, x):
+        if x < self.lowerBound:
+            return -np.inf
+        if x > self.upperBound:
+            return -np.inf
+        return -np.log(self.c * x)
