@@ -976,7 +976,6 @@ void MainWindow::onRunButtonClicked() {
 
     //    this->processResults(filenameOUT, filenameTAB);
 
-    statusMessage(tr("Analysis Done"));
     this->processResults(tmpSimCenterDirectoryName);    
 }
 
