@@ -286,7 +286,7 @@ int DakotaResultsCalibration::processResults(QString &dirName)
 
 int DakotaResultsCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
-    statusMessage(tr("Processing Dakota Calibration Results"));
+    statusMessage(tr("Analysis Done, Processing Dakota Calibration Results..."));
 
     this->clear();
 
@@ -443,7 +443,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
     tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
-    statusMessage(tr("Results Displayed"));
+    // statusMessage(tr("Results Displayed"));
 
     return true;
 }

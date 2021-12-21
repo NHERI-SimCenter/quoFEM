@@ -191,7 +191,7 @@ int DakotaResultsSampling::processResults(QString &dirName)
 
 int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab)
 {
-    statusMessage(tr("Processing Dakota Sampling Results"));
+    statusMessage(tr("Analysis Done, Processing Dakota Sampling Results..."));
 
     this->clear();
 
@@ -297,7 +297,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     tabWidget->adjustSize();
 
 
-    statusMessage(tr("Results Displayed"));
+    // statusMessage(tr("Results Displayed"));
     return true;
 }
 
