@@ -516,7 +516,8 @@ void SurrogateMFInputWidget::doAdvancedGP(bool tog)
 {
     if (tog) {
         theAdvancedTitle->setStyleSheet("font-weight: bold; color: black");
-
+        theNuggetSelection->setCurrentIndex(0);
+        theNuggetVals->hide();
     } else {
         theAdvancedTitle->setStyleSheet("font-weight: bold; color: gray");
         gpKernel->setCurrentIndex(0);
@@ -534,7 +535,7 @@ void SurrogateMFInputWidget::doAdvancedGP(bool tog)
     theKernelLabel->setVisible(tog);
     theNuggetLabel->setVisible(tog);
     theNuggetSelection->setVisible(tog);
-    theNuggetVals->setVisible(tog);
+    //theNuggetVals->setVisible(tog);
 }
 
 
