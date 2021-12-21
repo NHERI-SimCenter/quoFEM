@@ -14,6 +14,10 @@ import random
 
 from multiprocessing import Pool
 
+# import emukit.multi_fidelity as emf
+# from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
+# from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
+
 try:
     moduleName = "emukit"
     import emukit.multi_fidelity as emf
@@ -30,7 +34,6 @@ try:
     error_tag=False
 except:
     error_tag=True
-
 
 class GpFromModel(object):
 
@@ -50,7 +53,6 @@ class GpFromModel(object):
         self.g_name = list()
         x_dim = 0
         y_dim = 0
-
         for rv in inp['randomVariables']:
             rv_name = rv_name + [rv['name']]
             x_dim += 1
@@ -226,15 +228,6 @@ class GpFromModel(object):
                 do_sampling = True
                 do_simulation = True
                 do_doe = surrogateInfo["doDoE"]
-                self.use_existing = self.use_existing_hf
-                if do_doe:
-                    user_init = -100
-                    user_init_lf = -100
-                else:
-                    user_init = self.samples_hf
-                    user_init_lf = self.samples_lf
-                thr_count = self.samples_hf  # number of samples
-                thr_count_lf = self.samples_lf  # number of samples
 
             elif (not self.hf_is_model) and (not self.lf_is_model):
                 self.mf_case = "data-data"
@@ -298,8 +291,8 @@ class GpFromModel(object):
             #do_nugget = True
             nugget_opt = "optimize"
 
-        if do_simulation:
-            if not self.do_mf:
+        if not self.do_mf:
+            if do_simulation:
                 femInfo = inp["fem"]
                 self.inpFile = femInfo["inputFile"]
                 self.postFile = femInfo["postprocessScript"]
@@ -331,117 +324,44 @@ class GpFromModel(object):
             # Read existing samples
             #
 
-            if not self.do_mf:
-                if self.use_existing:
-                    X_tmp = read_txt(self.inpData,errlog)
-                    Y_tmp = read_txt(self.outData,errlog)
-                    n_ex = X_tmp.shape[0]
+            if self.use_existing:
+                X_tmp = read_txt(self.inpData,errlog)
+                Y_tmp = read_txt(self.outData,errlog)
+                n_ex = X_tmp.shape[0]
 
-                    if self.do_mf:
-                        if X_tmp.shape[1] != self.X_hf.shape[1]:
-                            msg = 'Error importing input data: dimension inconsistent: high fidelity data have {} RV column(s) but low fidelity model have {}.'.format(
-                                self.X_hf.shape[1], X_tmp.shape[1])
-                            errlog.exit(msg)
-
-                        if Y_tmp.shape[1] != self.Y_hf.shape[1]:
-                            msg = 'Error importing input data: dimension inconsistent: high fidelity data have {} QoI column(s) but low fidelity model have {}.'.format(
-                                self.Y_hf.shape[1], Y_tmp.shape[1])
-                            errlog.exit(msg)
-
-                    if X_tmp.shape[1] != x_dim:
-                        msg = 'Error importing input data: dimension inconsistent: have {} RV(s) but have {} column(s).'.format(
-                            x_dim, X_tmp.shape[1])
+                if self.do_mf:
+                    if X_tmp.shape[1] != self.X_hf.shape[1]:
+                        msg = 'Error importing input data: dimension inconsistent: high fidelity data have {} RV column(s) but low fidelity model have {}.'.format(
+                            self.X_hf.shape[1], X_tmp.shape[1])
                         errlog.exit(msg)
 
-                    if Y_tmp.shape[1] != y_dim:
-                        msg = 'Error importing input data: dimension inconsistent: have {} QoI(s) but have {} column(s).'.format(
-                            y_dim, Y_tmp.shape[1])
+                    if Y_tmp.shape[1] != self.Y_hf.shape[1]:
+                        msg = 'Error importing input data: dimension inconsistent: high fidelity data have {} QoI column(s) but low fidelity model have {}.'.format(
+                            self.Y_hf.shape[1], Y_tmp.shape[1])
                         errlog.exit(msg)
 
-                    if n_ex != Y_tmp.shape[0]:
-                        msg = 'Error importing input data: numbers of samples of inputs ({}) and outputs ({}) are inconsistent'.format(n_ex, Y_tmp.shape[0])
-                        errlog.exit(msg)
-                else:
-                    n_ex = 0
-                    if user_init ==0:
-                        #msg = 'Error reading json: # of initial DoE should be greater than 0'
-                        #errlog.exit(msg)
-                        user_init = -1;
-                    X_tmp = np.zeros((0, x_dim))
-                    Y_tmp = np.zeros((0, y_dim))
+                if X_tmp.shape[1] != x_dim:
+                    msg = 'Error importing input data: dimension inconsistent: have {} RV(s) but have {} column(s).'.format(
+                        x_dim, X_tmp.shape[1])
+                    errlog.exit(msg)
 
-            if self.do_mf:
-                if self.use_existing_hf:
-                    X_tmp = read_txt(self.inpData,errlog)
-                    Y_tmp = read_txt(self.outData,errlog)
-                    n_ex = X_tmp.shape[0]
+                if Y_tmp.shape[1] != y_dim:
+                    msg = 'Error importing input data: dimension inconsistent: have {} QoI(s) but have {} column(s).'.format(
+                        y_dim, Y_tmp.shape[1])
+                    errlog.exit(msg)
 
-                    if self.do_mf:
-                        if X_tmp.shape[1] != self.X_hf.shape[1]:
-                            msg = 'Error importing input data: dimension inconsistent: high fidelity data have {} RV column(s) but low fidelity model have {}.'.format(
-                                self.X_hf.shape[1], X_tmp.shape[1])
-                            errlog.exit(msg)
+                if n_ex != Y_tmp.shape[0]:
+                    msg = 'Error importing input data: numbers of samples of inputs ({}) and outputs ({}) are inconsistent'.format(n_ex, Y_tmp.shape[0])
+                    errlog.exit(msg)
 
-                        if Y_tmp.shape[1] != self.Y_hf.shape[1]:
-                            msg = 'Error importing input data: dimension inconsistent: high fidelity data have {} QoI column(s) but low fidelity model have {}.'.format(
-                                self.Y_hf.shape[1], Y_tmp.shape[1])
-                            errlog.exit(msg)
-
-                    if X_tmp.shape[1] != x_dim:
-                        msg = 'Error importing input data: dimension inconsistent: have {} RV(s) but have {} column(s).'.format(
-                            x_dim, X_tmp.shape[1])
-                        errlog.exit(msg)
-
-                    if Y_tmp.shape[1] != y_dim:
-                        msg = 'Error importing input data: dimension inconsistent: have {} QoI(s) but have {} column(s).'.format(
-                            y_dim, Y_tmp.shape[1])
-                        errlog.exit(msg)
-
-                    if n_ex != Y_tmp.shape[0]:
-                        msg = 'Error importing input data: numbers of samples of inputs ({}) and outputs ({}) are inconsistent'.format(n_ex, Y_tmp.shape[0])
-                        errlog.exit(msg)
-                else:
-                    n_ex = 0
-                    if user_init ==0:
-                        #msg = 'Error reading json: # of initial DoE should be greater than 0'
-                        #errlog.exit(msg)
-                        user_init = -1;
-                    X_tmp = np.zeros((0, x_dim))
-                    Y_tmp = np.zeros((0, y_dim))
-
-                if self.use_existing_lf:
-                    X_tmp_lf = read_txt(self.inpData_lf, errlog)
-                    Y_tmp_lf = read_txt(self.outData_lf, errlog)
-                    n_ex = X_tmp_lf.shape[0]
-                    if self.do_mf:
-                        if X_tmp_lf.shape[1] != self.X_lf.shape[1]:
-                            msg = 'Error importing input data: dimension inconsistent: high fidelity data have {} RV column(s) but low fidelity model have {}.'.format(
-                                self.X_lf.shape[1], X_tmp_lf.shape[1])
-                            errlog.exit(msg)
-                        if Y_tmp_lf.shape[1] != self.Y_lf.shape[1]:
-                            msg = 'Error importing input data: dimension inconsistent: high fidelity data have {} QoI column(s) but low fidelity model have {}.'.format(
-                                self.Y_lf.shape[1], Y_tmp_lf.shape[1])
-                            errlog.exit(msg)
-                    if X_tmp_lf.shape[1] != x_dim:
-                        msg = 'Error importing input data: dimension inconsistent: have {} RV(s) but have {} column(s).'.format(
-                            x_dim, X_tmp_lf.shape[1])
-                        errlog.exit(msg)
-                    if Y_tmp_lf.shape[1] != y_dim:
-                        msg = 'Error importing input data: dimension inconsistent: have {} QoI(s) but have {} column(s).'.format(
-                            y_dim, Y_tmp_lf.shape[1])
-                        errlog.exit(msg)
-                    if n_ex != Y_tmp_lf.shape[0]:
-                        msg = 'Error importing input data: numbers of samples of inputs ({}) and outputs ({}) are inconsistent'.format(
-                            n_ex, Y_tmp_lf.shape[0])
-                        errlog.exit(msg)
-                else:
-                    n_ex_lf = 0
-                    if user_init_lf == 0:
-                         user_init_lf = -1;
-                    X_tmp_lf = np.zeros((0, x_dim))
-                    Y_tmp_lf = np.zeros((0, y_dim))
-
-
+            else:
+                n_ex = 0
+                if user_init ==0:
+                    #msg = 'Error reading json: # of initial DoE should be greater than 0'
+                    #errlog.exit(msg)
+                    user_init = -1;
+                X_tmp = np.zeros((0, x_dim))
+                Y_tmp = np.zeros((0, y_dim))
 
             if user_init < 0:
                 n_init_ref = min(4 * x_dim, thr_count + n_ex - 1, 500)
@@ -450,39 +370,15 @@ class GpFromModel(object):
                 if n_init_ref > n_ex:
                     n_init = n_init_ref - n_ex
                 else:
-                    n_init = 0                    
+                    n_init = 0
+                    
             else:
                 n_init = user_init
 
+            n_iter = thr_count - n_init
 
-            if user_init_lf < 0:
-                n_init_ref = min(4 * x_dim, thr_count_lf + n_ex_lf - 1, 500)
-                if self.do_parallel:
-                    n_init_ref = int(np.ceil(n_init_ref/self.n_processor)*self.n_processor) # Let's not waste resource
-                if n_init_ref > n_ex_lf:
-                    n_init_lf = n_init_ref - n_ex_lf
-                else:
-                    n_init_lf = 0
-            else:
-                n_init_lf = user_init_lf
-
-            n_iter_lf = thr_count_lf - n_init_lf
-
-            if self.do_mf:
-                if self.mf_case == 'model-model':
-                    def FEM_batch(Xs, id_sim):
-                        return run_FEM_batch(Xs, id_sim, self.rv_name, self.do_parallel, self.y_dim, self.os_type,
-                                             self.run_type, self.pool, t_init, thr_t, runIdx=1)
-                    def FEM_batch_lf(Xs, id_sim):
-                        return run_FEM_batch(Xs, id_sim, self.rv_name, self.do_parallel, self.y_dim, self.os_type,
-                                             self.run_type, self.pool, t_init, thr_t, runIdx=2)
-
-                    self.id_sim_lf = 0
-            else:
-                def FEM_batch(Xs, id_sim):
-                    return run_FEM_batch(Xs, id_sim, self.rv_name, self.do_parallel, self.y_dim, self.os_type, self.run_type, self.pool, t_init, thr_t, runIdx=0)
-
-
+            def FEM_batch(Xs, id_sim):
+                return run_FEM_batch(Xs, id_sim, self.rv_name, self.do_parallel, self.y_dim, self.os_type, self.run_type, self.pool, t_init, thr_t)
 
             # check validity of datafile
             if n_ex > 0:
@@ -509,17 +405,6 @@ class GpFromModel(object):
                     X[n_ex:n_ex+n_init, nx] = U[:, nx] * (self.xrange[nx, 1] - self.xrange[nx, 0]) + self.xrange[nx, 0]
             else:
                 X = X_tmp
-
-
-
-            if self.do_mf:
-                if n_init_lf>0:
-                    U = lhs(x_dim, samples=(n_init_lf))
-                    self.X_lf = np.vstack([X_tmp_lf, np.zeros((n_init_lf, x_dim))])
-                    for nx in range(x_dim):
-                        self.X_lf[n_ex_lf:n_ex_lf+n_init_lf, nx] = U[:, nx] * (self.xrange[nx, 1] - self.xrange[nx, 0]) + self.xrange[nx, 0]
-                else:
-                    self.X_lf = X_tmp_lf
 
             if sum(abs(self.len / self.xrange[:, 0]) < 1.e-7) > 1:
                 msg = 'Error : upperbound and lowerbound should not be the same'
@@ -652,13 +537,6 @@ class GpFromModel(object):
             else:
                 self.t_sim_each = float("inf")
 
-            if self.do_mf:
-                if self.mf_case == "model-model":
-                    X_fem, Y_fem, self.id_sim = FEM_batch_lf(self.X_lf[n_ex:, :], self.id_sim_lf)
-                    self.Y_lf = np.vstack((Y_tmp_lf, Y_fem))
-                    self.X_lf = np.vstack((self.X_lf[0:n_ex_lf, :], X_fem))
-
-
             #
             # Generate predictive samples
             #
@@ -740,7 +618,7 @@ class GpFromModel(object):
 
             if self.mf_case == 'data-model' or self.mf_case=='data-data':
                 X_list, Y_list = emf.convert_lists_to_array.convert_xy_lists_to_arrays([X, self.X_hf], [Y, self.Y_hf])
-            elif self.mf_case == 'model-data' or self.mf_case == 'model-model':
+            elif self.mf_case == 'model-data':
                 X_list, Y_list = emf.convert_lists_to_array.convert_xy_lists_to_arrays([self.X_lf, X], [self.Y_lf, Y])
 
             self.m_list = list()
@@ -804,7 +682,7 @@ class GpFromModel(object):
             else:
                 if self.mf_case == 'data-model' or self.mf_case == 'data-data':
                     NRMSE_val = self.__normalized_mean_sq_error(Y_cv, self.Y_hf)
-                elif self.mf_case == 'model-data'  or self.mf_case == 'model-model':
+                elif self.mf_case == 'model-data' :
                     NRMSE_val = self.__normalized_mean_sq_error(Y_cv, Y)
 
             self.NRMSE_hist = np.vstack((self.NRMSE_hist, np.array(NRMSE_val)))
@@ -1001,7 +879,7 @@ class GpFromModel(object):
             else:
                 if self.mf_case == 'data-model' or self.mf_case == 'data-data':
                     Y_ex = self.Y_hf[:, ny]
-                elif self.mf_case == 'model-data' or self.mf_case == 'model-model':
+                elif self.mf_case == 'model-data':
                     Y_ex = Y[:, ny]
 
             corr_val[ny] = np.corrcoef(Y_ex, Y_cv[:, ny])[0, 1]
@@ -1248,7 +1126,7 @@ class GpFromModel(object):
                 if self.mf_case == 'data-model' or self.mf_case == 'data-data':
                     X_list_tmp, Y_list_tmp = emf.convert_lists_to_array.convert_xy_lists_to_arrays([X, self.X_hf],
                                                                                                    [Y[:, i][np.newaxis].transpose(), self.Y_hf[:, i][np.newaxis].transpose()])
-                elif self.mf_case == 'model-data' or self.mf_case == 'model-model':
+                elif self.mf_case == 'model-data':
                     X_list_tmp, Y_list_tmp = emf.convert_lists_to_array.convert_xy_lists_to_arrays([self.X_lf, X],
                                                                                                    [self.Y_lf[:, i][np.newaxis].transpose(),Y[:, i][np.newaxis].transpose()])
 
@@ -1280,7 +1158,7 @@ class GpFromModel(object):
             if self.do_mf:
                 if self.mf_case == 'data-model' or self.mf_case == 'data-data':
                     self.Y_hf = np.exp(self.Y_hf)
-                elif self.mf_case == 'model-data' or self.mf_case == 'model-model':
+                elif self.mf_case == 'model-data':
                     self.Y_lf = np.exp(self.Y_lf)
 
         if not do_doe:
@@ -1335,7 +1213,7 @@ class GpFromModel(object):
                         wei = self.weights_node2(xc1[i, :], self.X_hf, ll)
                         #phi = e2[closest_node(xc1[i, :], self.X_hf, ll)]
                         #phi = e2[self.__closest_node(xc1[i, :], self.X_hf)]
-                    elif self.mf_case == 'model-data' or self.mf_case == 'model-model':
+                    elif self.mf_case == 'model-data':
                         wei = self.weights_node2(xc1[i, :], X, ll)
                         #phi = e2[closest_node(xc1[i, :], X, ll)]
                         #phi = e2[self.__closest_node(xc1[i, :], X)]
@@ -1681,7 +1559,7 @@ class GpFromModel(object):
                 X_list_l = X_list[:X.shape[0]]
                 X_list_h = X_list[X.shape[0]:]
                 return m.predict(X_list_h)
-            elif self.mf_case == 'model-data' or self.mf_case == 'model-model':
+            elif self.mf_case == 'model-data':
                 #return m.predict(X)
                 X_list = convert_x_list_to_array([X, X])
                 X_list_l = X_list[:X.shape[0]]
@@ -1730,7 +1608,7 @@ class GpFromModel(object):
                         Y_pred_var[ns,ny] = Y_err_tmp
                         e2[ns,ny] = pow((Y_pred[ns,ny] - self.Y_hf[ns,ny]), 2)  # for nD outputs
 
-            elif self.mf_case == 'model-data' or self.mf_case == 'model-model':
+            elif self.mf_case == 'model-data':
                 e2 = np.zeros(Y.shape)
                 Y_pred = np.zeros(Y.shape)
                 Y_pred_var = np.zeros(Y.shape)
@@ -1744,7 +1622,7 @@ class GpFromModel(object):
                                                                                                        [self.Y_lf[:, ny][np.newaxis].transpose(), Y_tmp[:, ny][np.newaxis].transpose()])
                         m_tmp.set_data(X=X_list_tmp, Y=Y_list_tmp)
                         #x_loo = np.hstack((X[ns], 1))[np.newaxis]
-                        x_loo = X[ns][np.newaxis]
+                        x_loo = self.X_hf[ns][np.newaxis]
                         Y_pred_tmp, Y_err_tmp = self.__predict(m_tmp,x_loo)
                         Y_pred[ns,ny] = Y_pred_tmp
                         Y_pred_var[ns,ny] = Y_err_tmp
@@ -1846,7 +1724,7 @@ class GpFromModel(object):
             else:
                 if self.mf_case == 'data-model' or self.mf_case == 'data-data':
                     results["yExact"][self.g_name[ny]] = self.Y_hf[:, ny].tolist()
-                elif self.mf_case == 'model-data' or self.mf_case == 'model-model':
+                elif self.mf_case == 'model-data':
                     results["yExact"][self.g_name[ny]] = self.Y[:, ny].tolist()
 
             results["yPredict"][self.g_name[ny]] = self.Y_loo[:, ny].tolist()
@@ -1894,15 +1772,9 @@ class GpFromModel(object):
             results["predError"]["percent"] = self.perc_thr.tolist()
             results["predError"]["value"] = self.perc_val.tolist()
             results["fem"] = {}
-            try:
-                results["fem"]["inputFile"] = self.inpFile
-                results["fem"]["postprocessScript"] = self.postFile
-                results["fem"]["program"] = self.appName
-            except:
-                results["fem"]["inputFile"] = 0
-                results["fem"]["postprocessScript"] = 0
-                results["fem"]["program"] = 0
-
+            results["fem"]["inputFile"] = self.inpFile
+            results["fem"]["postprocessScript"] = self.postFile
+            results["fem"]["program"] = self.appName
 
         if self.do_sampling:
             if self.use_existing:
@@ -1920,16 +1792,6 @@ class GpFromModel(object):
                 results["valSamp_HF"] = self.X_hf.shape[0]
 
             elif self.mf_case == 'model-data':
-                results["inpData_LF"] = self.inpData_lf
-                results["outData_LF"] = self.outData_lf
-                results["valSamp_LF"] = self.X_lf.shape[0]
-
-            if self.hf_is_model and self.use_existing_hf:
-                results["inpData_HF"] = self.inpData_hf
-                results["outData_HF"] = self.outData_hf
-                results["valSamp_HF"] = self.X_hf.shape[0]
-
-            if self.lf_is_model and self.use_existing_lf:
                 results["inpData_LF"] = self.inpData_lf
                 results["outData_LF"] = self.outData_lf
                 results["valSamp_LF"] = self.X_lf.shape[0]
@@ -2032,17 +1894,7 @@ class GpFromModel(object):
             weig = np.ones(nodes.shape[0])
         return weig/sum(weig)
 
-def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver, runIdx):
-    # runIdx=0 : single model
-    # runIdx=1 : HF
-    # runIdx=2 : LF
-
-    if runIdx == 0 :
-        templatedirFolder = '/templatedir'
-        workdirFolder = '/workdir.' + str(id_sim + 1)
-    else:
-        templatedirFolder = '/templatedir.' + str(runIdx)
-        workdirFolder = '/workdir.' + str(runIdx) + '.' + str(id_sim + 1)
+def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver):
 
     X = np.atleast_2d(X)
     x_dim = X.shape[1]
@@ -2054,12 +1906,12 @@ def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver, runIdx):
 
 
     # (1) create "workdir.idx " folder :need C++17 to use the files system namespace
-    current_dir_i = work_dir + workdirFolder
+    current_dir_i = work_dir + '/workdir.' + str(id_sim + 1)
 
     print(id_sim)
 
     try:
-        shutil.copytree(work_dir + templatedirFolder, current_dir_i)
+        shutil.copytree(work_dir + '/templatedir', current_dir_i)
     except Exception as ex:
         errlog = errorLog(work_dir)
         msg = 'Error running FEM: ' + str(ex)
@@ -2103,7 +1955,7 @@ def run_FEM(X, id_sim, rv_name, work_dir, workflowDriver, runIdx):
     return g, id_sim
 
 
-def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool, t_init, t_thr, runIdx):
+def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool, t_init, t_thr):
     X = np.atleast_2d(X)
     # Windows
     if os_type.lower().startswith('win'):
@@ -2115,7 +1967,7 @@ def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool
     if not do_parallel:
         Y = np.zeros((nsamp,y_dim))
         for ns in range(nsamp):
-            Y[ns,:], id_sim_current = run_FEM(X[ns,:],id_sim+ns,rv_name, work_dir, workflowDriver, runIdx)
+            Y[ns,:], id_sim_current = run_FEM(X[ns,:],id_sim+ns,rv_name, work_dir, workflowDriver)
             if time.time() - t_init > t_thr:
                 X = X[:ns, :]
                 Y = Y[:ns, :]
@@ -2126,7 +1978,7 @@ def run_FEM_batch(X,id_sim, rv_name, do_parallel, y_dim, os_type, run_type, pool
     if do_parallel:
         print("Running {} simulations in parallel".format(nsamp))
         tmp = time.time()
-        iterables = ((X[i, :][np.newaxis], id_sim + i, rv_name, work_dir, workflowDriver, runIdx) for i in range(nsamp))
+        iterables = ((X[i, :][np.newaxis], id_sim + i, rv_name, work_dir, workflowDriver) for i in range(nsamp))
         try:
             result_objs = list(pool.starmap(run_FEM, iterables))
             print("Simulation time = {} s".format(time.time() - tmp));  tmp = time.time();
@@ -2262,6 +2114,7 @@ if __name__ == "__main__":
     os_type = inputArgs[2]
 
     errlog = errorLog(work_dir)
+
     if error_tag==True:
         if os_type.lower().startswith('win'):
             msg = 'Failed to load python module [' + moduleName + ']. Go to [File-Preference-Python] and reset the path.'
