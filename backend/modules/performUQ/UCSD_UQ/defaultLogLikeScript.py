@@ -12,8 +12,8 @@ class CovError(Exception):
         self.message = message
 
 
-def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
-                   covarianceMultiplierList, scaleFactors, shiftFactors):
+def log_likelihood(calibrationData, prediction, parameters, numExperiments, covarianceMatrixList, edpNamesList,
+                   edpLengthsList, covarianceMultiplierList, scaleFactors, shiftFactors):
     """ Compute the log-likelihood
 
     :param calibrationData: Calibration data consisting of the measured values of response. Each row contains the data
@@ -23,6 +23,9 @@ def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrix
     :param prediction: Prediction of the response from the model, evaluated using the parameter values for
     which the log-likelihood function needs to be calculated.
     :type prediction: numpy ndarray (atleast_2d)
+
+    :param parameters: A sample value of the model parameter vector.
+    :type parameters: numpy ndarray
 
     :param numExperiments: Number of experiments from which data is available, this is equal to the number of rows
     (i.e., the first index) of the calibration data array
