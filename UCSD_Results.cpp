@@ -193,7 +193,7 @@ int UCSD_Results::processResults(QString &dirName)
 
 int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
 {
-    statusMessage(tr("Processing Results"));
+//    statusMessage(tr("Processing Results"));
 
     this->clear();
 
@@ -316,7 +316,7 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
 //    tabWidget->addTab(thePlot, tr("Plots"));
     tabWidget->adjustSize();
 
-    statusMessage(tr(""));
+    statusMessage(tr("Results Displayed"));
 
     return 0;
 }
