@@ -286,7 +286,7 @@ int DakotaResultsCalibration::processResults(QString &dirName)
 
 int DakotaResultsCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
-    statusMessage(tr("Processing Calibration Results"));
+    statusMessage(tr("Processing Dakota Calibration Results"));
 
     this->clear();
 
@@ -445,7 +445,7 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
 
     statusMessage(tr("Results Displayed"));
 
-    return 0;
+    return true;
 }
 
 extern QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit);

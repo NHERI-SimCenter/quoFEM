@@ -603,7 +603,7 @@ int FEM::parseInputfilesForRV(QString name1){
       // No need to do anything here for custom
     }
 
-    if (tag>0)
+    if (tag>0 && !isGP) // Multifidelity shares same RVs - sy
         this->addTagId();
 
     // qDebug() << "VARNAMESANDVALUES: " << varNamesAndValues;

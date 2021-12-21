@@ -318,7 +318,7 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
 
     statusMessage(tr("Results Displayed"));
 
-    return 0;
+    return true;
 }
 
 

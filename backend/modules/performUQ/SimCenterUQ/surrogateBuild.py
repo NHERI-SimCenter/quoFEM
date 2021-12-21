@@ -7,20 +7,33 @@ import math
 import pickle
 import glob
 import json
-from scipy.stats import lognorm, norm
-import numpy as np
-import GPy as GPy
 
 from copy import deepcopy
-from pyDOE import lhs
 import warnings
 import random
 
 from multiprocessing import Pool
 
-import emukit.multi_fidelity as emf
-from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
-from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
+# import emukit.multi_fidelity as emf
+# from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
+# from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
+
+try:
+    moduleName = "emukit"
+    import emukit.multi_fidelity as emf
+    from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
+    from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
+    moduleName = "pyDOE"
+    from pyDOE import lhs
+    moduleName = "GPy"
+    import GPy as GPy
+    moduleName = "scipy"
+    from scipy.stats import lognorm, norm
+    moduleName = "numpy"
+    import numpy as np
+    error_tag=False
+except:
+    error_tag=True
 
 class GpFromModel(object):
 
@@ -2097,11 +2110,18 @@ def build_surrogate(work_dir, os_type, run_type):
 if __name__ == "__main__":
     inputArgs = sys.argv
     work_dir = inputArgs[1].replace(os.sep, '/')
+    run_type = inputArgs[3]
+    os_type = inputArgs[2]
 
     errlog = errorLog(work_dir)
 
-    run_type = inputArgs[3]
-    os_type = inputArgs[2]
+    if error_tag==True:
+        if os_type.lower().startswith('win'):
+            msg = 'Failed to load python module [' + moduleName + ']. Go to [File-Preference-Python] and reset the path.'
+        else:
+            msg = 'Failed to load python module [' + moduleName + ']. Did you forget <pip3 install nheri_simcenter --upgrade>?'
+        errlog.exit(msg)
+
     result_file = "results.out"
     #sys.exit(build_surrogate(work_dir, os_type, run_type))    
     build_surrogate(work_dir, os_type, run_type)

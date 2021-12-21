@@ -322,7 +322,7 @@ int DakotaResultsBayesianCalibration::processResults(QString &dirName)
 
 int DakotaResultsBayesianCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
-    statusMessage(tr("Processing Bayesian Calibration Results"));
+    statusMessage(tr("Processing Dakota Bayesian Calibration Results"));
 
     //
     // check it actually ran with no errors
@@ -468,7 +468,7 @@ int DakotaResultsBayesianCalibration::processResults(QString &filenameResults, Q
 
     statusMessage(tr("Results Displayed"));
 
-    return 0;
+    return true;
 }
 
 

@@ -200,8 +200,9 @@ int SimCenterUQResultsSurrogate::processResults(QString &dirName)
 
 int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QString &filenameTab)
 {
-    statusMessage(tr("Processing Results ... "));
+    //statusMessage(tr("Processing Results ... "));
 
+    statusMessage(tr("Analysis Done, Processing SimCenterUQ Surrogate Modeling Results..."));
     this->clear();
     lastPath = "";
 
@@ -264,7 +265,7 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
 
     QFile file(filenameResults);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QString message = QString("Error: could not open file") + filenameResults;
+        QString message = QString("Error: could not open file ") + filenameResults;
         errorMessage(message);
         return 0;
     }
@@ -306,9 +307,9 @@ int SimCenterUQResultsSurrogate::processResults(QString &filenameResults, QStrin
     tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
-    statusMessage(tr(""));
+    //statusMessage(tr(""));
 
-    return 0;
+    return true;
 }
 
 

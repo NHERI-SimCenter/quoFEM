@@ -141,8 +141,7 @@ int DakotaResultsReliability::processResults(QString &dirName)
 int DakotaResultsReliability::processResults(QString &filenameResults, QString &filenameTab)
 {
 
-  statusMessage(tr("Processing Reliability Results"));
-
+  statusMessage(tr("Processing Dakota Reliability Analysis Results"));
 
 
   //
@@ -351,10 +350,10 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
 
   this->onSpreadsheetCellClicked(0,1);
   if (numSpreadsheetRows == 0)
-      statusMessage(tr("No Result Data Found .. dakota failed .. possibly no QoI provided"));
+      errorMessage(tr("No Result Data Found .. dakota failed .. possibly no QoI provided"));
 
   statusMessage(tr("Results Displayed"));
-  return 0;
+  return true;
 }
 
 

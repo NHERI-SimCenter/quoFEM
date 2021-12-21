@@ -127,6 +127,8 @@ UQ_Results::processResults(QString &filenameResults, QString &filenameTab) {
 int 
 UQ_Results::processResults(QString &dirName) {
 
+    statusMessage(tr("Analysis Done, Processing USCD-UQ Bayesian Calibration Results..."));
+
     if (resultWidget != 0)
         return resultWidget->processResults(dirName);
     else {
