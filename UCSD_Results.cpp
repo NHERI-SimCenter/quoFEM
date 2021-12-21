@@ -316,9 +316,9 @@ int UCSD_Results::processResults(QString &filenameTab, QString &filenamePrior)
 //    tabWidget->addTab(thePlot, tr("Plots"));
     tabWidget->adjustSize();
 
-    statusMessage(tr(""));
+    //statusMessage(tr(""));
 
-    return 0;
+    return true;
 }
 
 

@@ -197,7 +197,9 @@ int SimCenterUQResultsSensitivity::processResults(QString &dirName)
 
 int SimCenterUQResultsSensitivity::processResults(QString &filenameResults, QString &filenameTab)
 {
-    statusMessage(tr("Processing Sampling Results"));
+    statusMessage(tr("Analysis Done, Processing SimCenterUQ Sensitivity Analysis Results..."));
+
+    //statusMessage(tr("Processing Sampling Results"));
 
     this->clear();
 
@@ -333,9 +335,9 @@ Node_2_Disp Sobol' indices:
     tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
-    statusMessage(tr(""));
+    //statusMessage(tr(""));
 
-    return 0;
+    return true;
 }
 
 
