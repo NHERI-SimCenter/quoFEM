@@ -353,6 +353,7 @@ int DakotaResultsReliability::processResults(QString &filenameResults, QString &
   if (numSpreadsheetRows == 0)
       statusMessage(tr("No Result Data Found .. dakota failed .. possibly no QoI provided"));
 
+  statusMessage(tr("Results Displayed"));
   return 0;
 }
 
