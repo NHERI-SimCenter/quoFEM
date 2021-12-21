@@ -211,15 +211,19 @@ void
 InputWidgetFEM::femProgramChanged(const QString& arg1) {
 
     // remove existing boxes
-    this->clear();
     if (arg1 == "MultipleModels")
     {
+        this->clear();
         for (int i =0 ; i<numInputs; i++) {
             this->addFEM(i+1);
         }
         //verticalLayout->addStretch();
     } else {
-        this->addFEM(0);
+
+        if (numInputs>1){
+            this->clear();
+            this->addFEM(0);
+        }
         theFEMs.at(0)->femProgramChanged(arg1);
     }
 }
