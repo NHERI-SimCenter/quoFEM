@@ -39,7 +39,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterWidget.h>
+#include <SimCenterAppWidget.h>
 
 #include "FEM.h"
 #include <QGroupBox>
@@ -50,7 +50,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "InputWidgetParameters.h"
 
-class InputWidgetFEM : public SimCenterWidget
+class InputWidgetFEM : public SimCenterAppWidget
 {
     Q_OBJECT
 
@@ -58,9 +58,14 @@ public:
     explicit InputWidgetFEM(InputWidgetParameters *theParams, InputWidgetEDP *edpwidget, QWidget *parent = 0);
     ~InputWidgetFEM();
 
+    bool outputAppDataToJSON(QJsonObject &jsonObject);
+    bool inputAppDataFromJSON(QJsonObject &jsonObject);
+  
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
+    bool copyFiles(QString &destName);
 
+  
     int processResults(double *data);
     int getNumFEM(void);
     void setFemNames(QStringList femNames);

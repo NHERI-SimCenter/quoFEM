@@ -93,6 +93,8 @@ using namespace QtCharts;
 #include <QFileInfo>
 #include <QFile>
 
+#include <ResultsDataChart.h>
+
 // QLabel *best_fit_label_text;
 //#define NUM_DIVISIONS 10
 

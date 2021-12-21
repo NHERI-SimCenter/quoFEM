@@ -1,5 +1,5 @@
-#ifndef DAKOTA_RESULTS_SAMPLING_H
-#define DAKOTA_RESULTS_SAMPLING_H
+#ifndef DAKOTA_RESULTS_CALIBRATION_H
+#define DAKOTA_RESULTS_CALIBRATION_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -41,61 +41,56 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <UQ_Results.h>
 #include <QtCharts/QChart>
-#include <QMessageBox>
-#include <QPushButton>
-#include "ResultsDataChart.h"
-
 
 using namespace QtCharts;
 
 class QTextEdit;
 class QTabWidget;
 class MyTableWidget;
-class MainWindow;
+class ResultsDataChart;
 class RandomVariablesContainer;
 
 //class QChart;
 
-class DakotaResultsSampling : public UQ_Results
+class DakotaResultsCalibration : public UQ_Results
 {
     Q_OBJECT
 public:
-  explicit DakotaResultsSampling(RandomVariablesContainer *, QWidget *parent = 0);
-    ~DakotaResultsSampling();
+    explicit DakotaResultsCalibration(RandomVariablesContainer * theRVs, QWidget *parent = 0);
+    ~DakotaResultsCalibration();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
     int processResults(QString &dirName);  
-    QWidget *createResultEDPWidget(QString &name, QVector<double> statistics);
+    QWidget *createResultParameterWidget(QString &name, double value);
 
 signals:
 
 public slots:
    void clear(void);
 
-   // modified by padhye 08/25/2018
-
 private:
    RandomVariablesContainer *theRVs;
+
    QTabWidget *tabWidget;
+   QTextEdit  *dakotaText;
+   MyTableWidget *spreadsheet;
+   QChart *chart;
+   ResultsDataChart* theDataTable;
 
-   QPushButton* save_spreadheet; // save the data from spreadsheet 
-   QLabel *label;
-   QLabel *best_fit_instructions;
-
+   int col1, col2;
+   bool mLeft;
    QStringList theHeadings;
 
    QVector<QString>theNames;
-   QVector<double>theMeans;
-   QVector<double>theStdDevs;
-   QVector<double>theKurtosis;
-   QVector<double>theSkewness;
-   ResultsDataChart *theDataTable;
+   QVector<double>theBestValues;
 
-   bool isSurrogate = false;
+   QWidget *summary;
+   QVBoxLayout *summaryLayout;
 
+   bool isSurrogate;
 };
 
-#endif // DAKOTA_RESULTS_SAMPLING_H
+#endif // DAKOTA_RESULTS_CALIBRATION_H
