@@ -1827,7 +1827,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.4.0 "));
+                       tr("Version 2.4.1 "));
 }
 
 void MainWindow::preferences()
