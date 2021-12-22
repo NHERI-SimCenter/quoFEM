@@ -287,7 +287,7 @@ int DakotaResultsCalibration::processResults(QString &dirName)
 
 int DakotaResultsCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
-    statusMessage(tr("Dakota Calibration Processing Sampling Results"));
+    statusMessage(tr("Analysis Done, Processing Dakota Calibration Results..."));
 
     this->clear();
 
@@ -444,9 +444,9 @@ int DakotaResultsCalibration::processResults(QString &filenameResults, QString &
     tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
-    statusMessage(tr(""));
+    // statusMessage(tr("Results Displayed"));
 
-    return 0;
+    return true;
 }
 
 extern QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit);

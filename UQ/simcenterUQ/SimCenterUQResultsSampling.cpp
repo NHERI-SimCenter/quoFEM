@@ -191,7 +191,8 @@ int SimCenterUQResultsSampling::processResults(QString &dirName)
 
 int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString &filenameTab)
 {
-    statusMessage(tr("Processing Sampling Results"));
+    //statusMessage(tr("Processing Sampling Results"));
+    statusMessage(tr("Analysis Done, Processing SimCenterUQ Sampling Results..."));
 
     this->clear();
 
@@ -283,9 +284,9 @@ int SimCenterUQResultsSampling::processResults(QString &filenameResults, QString
     tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
-    statusMessage(tr(""));
+    //statusMessage(tr(""));
 
-    return 0;
+    return true;
 }
 
 

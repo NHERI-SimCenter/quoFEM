@@ -188,7 +188,7 @@ int DakotaResultsSensitivity::processResults(QString &dirName)
 
 int DakotaResultsSensitivity::processResults(QString &filenameResults, QString &filenameTab)
 {
-    statusMessage(tr("Processing Results ... "));
+    statusMessage(tr("Analysis Done, Processing Dakota Sensitivity Analysis Results..."));
 
     this->clear();
 
@@ -359,9 +359,9 @@ Node_2_Disp Sobol' indices:
     tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
-    statusMessage(tr(""));
+    // statusMessage(tr("Results Displayed"));
 
-    return 0;
+    return true;
 }
 
 void DakotaResultsSensitivity::gsaChart(QScrollArea *&sa) {

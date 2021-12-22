@@ -322,7 +322,7 @@ int DakotaResultsBayesianCalibration::processResults(QString &dirName)
 
 int DakotaResultsBayesianCalibration::processResults(QString &filenameResults, QString &filenameTab) {
 
-    statusMessage(tr("Processing Sampling Results"));
+    statusMessage(tr("Analysis Done, Processing Dakota Bayesian Calibration Results..."));
 
     //
     // check it actually ran with no errors
@@ -466,9 +466,9 @@ int DakotaResultsBayesianCalibration::processResults(QString &filenameResults, Q
     tabWidget->addTab(theDataTable, tr("Data Values"));
     tabWidget->adjustSize();
 
-    statusMessage(tr(""));
+    // statusMessage(tr("Results Displayed"));
 
-    return 0;
+    return true;
 }
 
 

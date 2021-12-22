@@ -62,7 +62,8 @@ if __name__ == '__main__':
     logFile.write("\nParsing the json input file {}".format(dakotaJsonLocation))
 
     (numberOfSamples, seedVal, calDataFileName, logLikeModule, writeOutputs, variablesList, lineLength, edpNamesList,
-     edpLengthsList) = parseDataFunction(dakotaJsonLocation, logFile, workdirMain, mainscriptDir)
+     edpLengthsList) = parseDataFunction(dakotaJsonLocation, logFile, workdirMain,
+                                                                  mainscriptDir)
 
     logFile.flush()
     os.fsync(logFile.fileno())
@@ -436,6 +437,15 @@ if __name__ == '__main__':
                 VariableScaleParam = float(variables['Par2'][i])
 
                 AllPars.append(pdfs.WeibullDist(shape=VariableShapeParam, scale=VariableScaleParam))
+
+            if variables["distributions"][i] == "JeffreysPrior":
+                VariableLowerBound = float(variables['Par1'][i])
+                VariableUpperBound = float(variables['Par2'][i])
+
+                AllPars.append(
+                    pdfs.JeffreysPriorForNormalVariance(lowerBound=VariableLowerBound, upperBound=VariableUpperBound))
+
+        logFile.write('\n\n\tNumber of parameters: {}'.format(len(AllPars)))
 
         # Run the Algorithm
         logFile.write('\n\n\t==========================')

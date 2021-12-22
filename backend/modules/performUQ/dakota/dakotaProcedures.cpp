@@ -547,7 +547,7 @@ writeInterface(std::ostream &dakotaFile, json_t *uqData, std::string &workflowDr
     dakotaFile << "  id_interface = '" << idInterface << "'\n";
 
   dakotaFile << "  analysis_driver = '" << workflowDriver << "'\n";
-
+  dakotaFile << "  file_save\n";
   dakotaFile << "  fork\n";
 
   dakotaFile << "   parameters_file = 'paramsDakota.in'\n";

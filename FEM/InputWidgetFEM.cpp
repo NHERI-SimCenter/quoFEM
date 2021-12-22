@@ -105,7 +105,7 @@ InputWidgetFEM::makeFEM(void)
     femSelection->addItem(tr("Custom"));
     femSelection->addItem(tr("SurrogateGP"));
     femSelection->setMinimumWidth(120);
-    //femSelection->addItem(tr("MultipleModels"));
+    //femSelection->addItem(tr("MultipleModels")); // not shown by default
     connect(femSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(femProgramChanged(QString)));
 
     QScrollArea *sa = new QScrollArea;
@@ -161,6 +161,7 @@ InputWidgetFEM::makeFEM(void)
 int
 InputWidgetFEM::setFEMforGP(QString option){
     GPoption = option;
+    // Remove MultipleModels Option
     int index = femSelection->findText("MultipleModels");
     if (index>-1) {
         femSelection->removeItem(index);
@@ -170,9 +171,6 @@ InputWidgetFEM::setFEMforGP(QString option){
     {
         numInputs=1;
         femSelection -> setDisabled(false);
-        //this->femProgramChanged("OpenSees");
-        //femSelection->setCurrentIndex(1);
-        //femSelection->setCurrentIndex(0);
         this -> setContentsVisible(true);
         theFEMs.at(0)->setAsGP(false);
         this->parseAllInputfiles();
@@ -180,8 +178,6 @@ InputWidgetFEM::setFEMforGP(QString option){
     } else if (option == "GPdata") {
         numInputs=1;
         femSelection -> setDisabled(true);
-        //femSelection->setCurrentIndex(1);
-        //femSelection->setCurrentIndex(0);
         femProgramChanged("OpenSees");
         this -> setContentsVisible(false);
         theFEMs.at(0)->setAsGP(true);
@@ -191,9 +187,6 @@ InputWidgetFEM::setFEMforGP(QString option){
     {
         numInputs=1;
         femSelection -> setDisabled(false);
-        //femSelection->setCurrentIndex(1);
-        //femSelection->setCurrentIndex(0);
-        //femProgramChanged("OpenSees");
         this -> setContentsVisible(true);
         theFEMs.at(0)->setAsGP(true);
         this->parseAllInputfiles();
@@ -218,21 +211,21 @@ void
 InputWidgetFEM::femProgramChanged(const QString& arg1) {
 
     // remove existing boxes
-    this->clear();
     if (arg1 == "MultipleModels")
     {
+        this->clear();
         for (int i =0 ; i<numInputs; i++) {
             this->addFEM(i+1);
         }
         //verticalLayout->addStretch();
     } else {
-        this->addFEM(0);
+
+        if (numInputs>1){
+            this->clear();
+            this->addFEM(0);
+        }
         theFEMs.at(0)->femProgramChanged(arg1);
     }
-//        int numFem = theFEMs.size();
-//        for (int i = numFem-1; i >= 0; i--) {
-//            FEM *theFEM = theFEMs.at(i);
-//            theFEM->femProgramChanged(arg1);
 }
 
 QString InputWidgetFEM::getApplicationName(void) {
