@@ -24,6 +24,8 @@ void eraseAllSubstring(std::string & mainStr, const std::string & toErase)
 }
 
 int main(int argc, const char **argv) {
+  std::string errMsg;
+  std::ofstream theErrorFile; // Error log
 
   if (argc < 4) {
     std::cerr << "createOpenSeesDriver:: expecting 3 inputs\n";
@@ -60,12 +62,19 @@ int main(int argc, const char **argv) {
   std::cerr << "fileName: " << fileName << '\n';  
 
   
-  std::string fullPath = std::filesystem::path(inputFile).remove_filename().generic_string();
+  std::string fullPath = std::filesystem::path(inputFile).remove_filename().generic_string(); // templatedir
+  std::string templateDir = std::filesystem::path(fullPath).parent_path().generic_string();
 
-  std::filesystem::current_path(fullPath); //getting path
+
   std::filesystem::current_path(fullPath); //getting path
   path = std::filesystem::current_path(); //getting path
   std::cerr << "PATH: " << path << '\n';
+
+  //
+  // Creat dakota.err  at tmp.SimCenter
+  //
+
+  theErrorFile.open((std::filesystem::path(templateDir).parent_path().generic_string()+"/dakota.err").c_str(),std::ofstream::out );
 
   //
   // Get WorkflowApplication.json
@@ -78,7 +87,12 @@ int main(int argc, const char **argv) {
   json_t *workflowApps = json_load_file(workflowAppsDir.c_str(), 0, &error);
   std::cerr << "PATH: " << workflowAppsDir << '\n';
   if (workflowApps == NULL) {
-    std::cerr << "createMultipleModelsDriver:: workflowApplications file " << workflowApps << " is not valid JSON\n";
+    std::stringstream errStream;
+    errStream << "createMultipleModelsDriver:: workflowApplications file " << ((workflowAppsDir)) << " is not valid JSON";
+    errMsg = errStream.str();
+    std::cerr << errMsg << "\n";
+    theErrorFile << errMsg << std::endl;
+    theErrorFile.close();
     exit(801); 
   } 
   json_t *workflowFems = json_object_get(json_object_get(workflowApps,"femApplications"),"Applications");
@@ -94,7 +108,10 @@ int main(int argc, const char **argv) {
   
   json_t *rootInput = json_load_file(inputFile.c_str(), 0, &error);
   if (rootInput == NULL) {
-    std::cerr << "createMultipleModelsDriver:: input file " << inputFile << " is not valid JSON\n";
+    errMsg = "createMultipleModelsDriver:: input file " + inputFile + " is not valid JSON";
+    std::cerr << errMsg << "\n";
+    theErrorFile << errMsg << std::endl;
+    theErrorFile.close();
     exit(801); 
   } 
 
@@ -112,9 +129,7 @@ int main(int argc, const char **argv) {
     // Copy templatedir
     // ====================================================================================
     
-    std::string workDir = std::filesystem::path(fullPath).parent_path().generic_string();
-
-    std::string sub_template = workDir + "." + std::to_string(tag);
+    std::string sub_template = templateDir + "." + std::to_string(tag);
 
     const auto copyOptions =
       std::filesystem::copy_options::update_existing
@@ -147,6 +162,7 @@ int main(int argc, const char **argv) {
     json_t *copiedInput = json_deep_copy(rootInput);
     json_t *copiedSubModels=  json_object_get(json_object_get(copiedInput, "fem"), "submodels");
 
+    bool tag_found = false;
     for (int j=0; j<numMod; j++) {
 
       json_t *model = json_array_get(copiedSubModels,j);
@@ -157,11 +173,20 @@ int main(int argc, const char **argv) {
 
       if (tag_model == tag) {
         std::cout <<"survived" <<std::endl;
-
+        tag_found = true;
         json_object_set(copiedInput, "fem", model);
         break;
-      }
+      } 
     }
+
+    if (tag_found == false) {
+      errMsg = "createMultipleModelsDriver:: modelTag " + std::to_string(tag) + " is not found";
+      std::cerr << errMsg << "\n";
+      theErrorFile << errMsg << std::endl;
+      theErrorFile.close();
+      exit(801); 
+    }
+
 
     json_t *copiedRV=  json_object_get(copiedInput, "randomVariables");
   

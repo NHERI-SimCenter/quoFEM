@@ -119,6 +119,7 @@ SimCenterGraphPlot::addLine(QVector<double> &x, QVector<double> &y, int width, i
     pen.setWidth(width);
     pen.setColor(QColor(r,g,b));
     graph->setPen(pen);
+    graph->setBrush(QBrush(QColor(0, 0, 255, 20))); // adding color below PDF - sy
 
     thePlot->graph(numGraphs)->setData(x, y, true);
     numGraphs++;

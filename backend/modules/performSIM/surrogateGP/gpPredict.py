@@ -6,15 +6,22 @@ import sys
 import json as json
 import shutil
 from scipy.stats import lognorm, norm
-import GPy as GPy
 import subprocess
+
+try:
+    moduleName = "GPy"
+    import GPy as GPy
+    error_tag=False
+except:
+    error_tag=True
 
 # from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
 
 def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
     global error_file
 
-    os_type='win'
+
+    os_type=sys.platform.lower()
     run_type ='runninglocal'
 
     #
@@ -118,7 +125,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
         kg = kr
         m_list = list()
         for ny in range(ng_sur):
-            m_list = m_list + [GPy.models.GPRegression(X, Y[:, ny][np.newaxis].transpose(), kernel=kg.copy())]
+            m_list = m_list + [GPy.models.GPRegression(X, Y[:, ny][np.newaxis].transpose(), kernel=kg.copy(),normalizer=True)]
             for key, val in sur["modelInfo"][g_name_sur[ny]].items():
                 exec('m_list[ny].' + key + '= np.array(val)')
 
@@ -204,6 +211,7 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
     nsamp = np.sum(m_list[0].X[:, -1] == 0)
 
     y_pred_median = np.zeros(y_dim)
+    y_pred_var_tmp=np.zeros(y_dim)
     y_pred_var=np.zeros(y_dim)
     y_data_var=np.zeros(y_dim)
     y_samp = np.zeros(y_dim)
@@ -212,35 +220,35 @@ def main(params_dir,surrogate_dir,json_dir,result_file, dakota_path):
     for ny in range(y_dim):
         y_data_var[ny] = np.var(m_list[ny].Y)
         #y_pred_tmp, y_pred_var_tmp  = m_list[ny].predict(rv_val)
-        y_pred_median_tmp, y_pred_var_tmp = predict(m_list[ny],rv_val,did_mf)
+        y_pred_median_tmp, y_pred_var_tmp[ny] = predict(m_list[ny],rv_val,did_mf)
 
-        y_samp_tmp = np.random.normal(y_pred_median_tmp,np.sqrt(y_pred_var_tmp))
+        y_samp_tmp = np.random.normal(y_pred_median_tmp,np.sqrt(y_pred_var_tmp[ny]))
         if did_logtransform:
             y_pred_median[ny] = np.exp(y_pred_median_tmp)
             # y_var_val = np.var(np.log(m_list[ny].Y))
-            y_pred_var[ny] = np.exp(2 * y_pred_median_tmp + y_pred_var_tmp) * (np.exp(y_pred_var_tmp) - 1)
+            y_pred_var[ny] = np.exp(2 * y_pred_median_tmp + y_pred_var_tmp[ny]) * (np.exp(y_pred_var_tmp[ny]) - 1)
             y_samp[ny] = np.exp(y_samp_tmp)
 
             #mu = np.log(y_pred_median_tmp)
-            #sig = np.sqrt(np.log(y_pred_var_tmp/ pow(y_pred_median_tmp, 2) + 1))
+            #sig = np.sqrt(np.log(y_pred_var_tmp[ny]/ pow(y_pred_median_tmp, 2) + 1))
 
-            y_q1[ny] = lognorm.ppf(0.05, s=np.sqrt(y_pred_var_tmp), scale=np.exp(y_pred_median_tmp))
-            y_q3[ny] = lognorm.ppf(0.95, s=np.sqrt(y_pred_var_tmp), scale=np.exp(y_pred_median_tmp))
+            y_q1[ny] = lognorm.ppf(0.05, s=np.sqrt(y_pred_var_tmp[ny]), scale=np.exp(y_pred_median_tmp))
+            y_q3[ny] = lognorm.ppf(0.95, s=np.sqrt(y_pred_var_tmp[ny]), scale=np.exp(y_pred_median_tmp))
 
         else:
             
             y_pred_median[ny]=y_pred_median_tmp
-            y_pred_var[ny] = y_pred_var_tmp
+            y_pred_var[ny] = y_pred_var_tmp[ny]
             y_samp[ny] = y_samp_tmp
-            y_q1[ny] = norm.ppf(0.05, loc=y_pred_median_tmp, scale=np.sqrt(y_pred_var_tmp))
-            y_q3[ny] = norm.ppf(0.95, loc=y_pred_median_tmp, scale=np.sqrt(y_pred_var_tmp))
+            y_q1[ny] = norm.ppf(0.05, loc=y_pred_median_tmp, scale=np.sqrt(y_pred_var_tmp[ny]))
+            y_q3[ny] = norm.ppf(0.95, loc=y_pred_median_tmp, scale=np.sqrt(y_pred_var_tmp[ny]))
 
         #for parname in m_list[ny].parameter_names():
         #    if (kern_name in parname) and parname.endswith('variance'):
         #        exec('y_pred_prior_var[ny]=m_list[ny].' + parname)
 
     #error_ratio1 = y_pred_var.T / y_pred_prior_var
-    error_ratio2 = y_pred_var.T / y_data_var
+    error_ratio2 = y_pred_var_tmp / y_data_var
     idx = np.argmax(error_ratio2) + 1
 
     '''

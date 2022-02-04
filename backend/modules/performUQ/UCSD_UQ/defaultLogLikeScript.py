@@ -12,8 +12,8 @@ class CovError(Exception):
         self.message = message
 
 
-def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrixList, edpNamesList, edpLengthsList,
-                   covarianceMultiplierList, scaleFactors, shiftFactors):
+def log_likelihood(calibrationData, prediction, parameters, numExperiments, covarianceMatrixList, edpNamesList,
+                   edpLengthsList, covarianceMultiplierList, scaleFactors, shiftFactors):
     """ Compute the log-likelihood
 
     :param calibrationData: Calibration data consisting of the measured values of response. Each row contains the data
@@ -24,12 +24,16 @@ def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrix
     which the log-likelihood function needs to be calculated.
     :type prediction: numpy ndarray (atleast_2d)
 
+    :param parameters: A sample value of the model parameter vector.
+    :type parameters: numpy ndarray
+
     :param numExperiments: Number of experiments from which data is available, this is equal to the number of rows
     (i.e., the first index) of the calibration data array
     :type numExperiments: int
 
     :param covarianceMatrixList: A list of length numExperiments * numResponses, where each item in the list contains
-    the covariacne matrix or variance value corresponding to that experiment and response quantity
+    the covariance matrix or variance value corresponding to that experiment and response quantity, i.e., each item in
+    the list is a block on the diagonal of the error covariance matrix
     :type covarianceMatrixList: list of numpy ndarrays
 
     :param edpNamesList: A list containing the names of the response quantities
@@ -38,18 +42,17 @@ def log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrix
     :param edpLengthsList: A list containing the length of each response quantity
     :type edpLengthsList: list of ints
 
-    :param covarianceMultiplierList: A list containing the covariance matrices or variance values. The length of this
-    list is equal to the product of the number of experiments and the number of response quantities.
-    :type covarianceMultiplierList: list of numpy ndarrays
+    :param covarianceMultiplierList: A list containing multipliers on the default covariance matrices or variance
+    values. The length of this list is equal to the number of response quantities. These additional variables, one
+    per response quantity, are parameters of the likelihood model whose values are also calibrated.
+    :type covarianceMultiplierList: list of floats
 
     :param scaleFactors: A list containing the normalizing factors used to scale (i.e. divide) the model
     prediction values. The length of this list is equal to the number of response quantities.
     :type scaleFactors: list of ints
 
-    :param shiftFactors: A list containing the values used to shift the prediction values. The locShift values are 0.0,
-    unless the abs max of the data of that response quantity is 0. In this case, the locShift = 1.0. LocShift values
-    must be added to the response quantities since they are added to the data. The length of this list is equal to the
-    number of response quantities.
+    :param shiftFactors: A list containing the values used to shift (i.e. added to) the prediction values. The length of
+    this list is equal to the number of response quantities.
     :type shiftFactors: list of ints
 
     :return: loglikelihood. This is a scalar value, which is equal to the logpdf of a zero-mean multivariate normal

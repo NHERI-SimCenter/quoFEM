@@ -78,5 +78,5 @@ def runFEM(ParticleNum, par, variables, workdirMain, log_likelihood, calibration
 
     # os.chdir(workdirMain)
 
-    return log_likelihood(calibrationData, prediction, numExperiments, covarianceMatrixList, edpNamesList,
+    return log_likelihood(calibrationData, prediction, par, numExperiments, covarianceMatrixList, edpNamesList,
                           edpLengthsList, covarianceMultiplierList, scaleFactors, shiftFactors)

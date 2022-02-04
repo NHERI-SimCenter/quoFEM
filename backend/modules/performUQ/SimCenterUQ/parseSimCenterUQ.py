@@ -122,13 +122,15 @@ if run_type in ['runningLocal']:
     LATER, CHANGE THE LOCATION
     '''
     #  
+
     if uq_data['uqType'] == 'Train GP Surrogate Model':
         # simCenterUQCommand = 'python "{}/{}" {} {} {}'.format(myScriptDir,surrogate,workdir_main,osType,run_type)
-        simCenterUQCommand = '{} "{}/{}" {} {} {}'.format(data['python3'],myScriptDir,surrogate,workdir_main,osType,run_type)
+        simCenterUQCommand = '"{}" "{}/{}" "{}" {} {}'.format(data['python'],myScriptDir,surrogate,workdir_main,osType,run_type)
     elif uq_data['uqType'] == 'Sensitivity Analysis':
-        simCenterUQCommand = '"{}/{}" {} {} {}'.format(myScriptDir,natafExe,workdir_main,osType,run_type)
+        simCenterUQCommand = '"{}/{}" "{}" {} {}'.format(myScriptDir,natafExe,workdir_main,osType,run_type)
     elif uq_data['uqType'] == 'Forward Propagation':
-        simCenterUQCommand = '"{}/{}" {} {} {}'.format(myScriptDir,natafExe,workdir_main,osType,run_type)
+        simCenterUQCommand = '"{}/{}" "{}" {} {}'.format(myScriptDir,natafExe,workdir_main,osType,run_type)
+
 
 
     print('running SimCenterUQ: ', simCenterUQCommand)

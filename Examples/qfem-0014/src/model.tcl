@@ -1,7 +1,6 @@
 #Generalized eigenValue Problem
 
 # units: in, kips
-
 wipe
 
 #model builder
@@ -14,19 +13,12 @@ model BasicBuilder -ndm 2 -ndf 3
 set m1 [expr 0.52/2.];
 set m2 [expr 0.26/2.];
 
-#number of modes  
-set numModes 2
-
 #material properties
+set E 29000.0 
 
 #column
 set Ac 110.0 
-#input from the algorithm
 
-#pset k1 958.61
-#pset k2 958.61
-
-set E 29000.0 
 #beam
 set Ib 10e+12 
 set Ab 10e+12 
@@ -34,6 +26,10 @@ set Ab 10e+12
 #geometry
 set L 400. 
 set h  120. 
+
+#input from the algorithm
+pset k1 958.61
+pset k2 958.61
 
 #nodes
 node 1   0.  0. ;
@@ -77,6 +73,9 @@ element elasticBeamColumn 4 4 6 $Ac $E  [expr 2.*$k2*(pow($h,3.))/48./$E] $Trans
 # beams
 element elasticBeamColumn 5 3 4 $Ab $E  $Ib $TransfTag; #beam flexurally rigid mimicing a rigid diaghraphm
 element elasticBeamColumn 6 5 6 $Ab $E  $Ib $TransfTag;
+
+#number of modes  
+set numModes 2
 
 # eigenValue
 set eigenValues [eigen -fullGenLapack $numModes]

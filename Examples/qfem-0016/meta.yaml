@@ -1,4 +1,4 @@
-summary: Surrogate modeling for mean and variance of EQ response
+summary: This example constructs a Gaussian process-based surrogate model for the mean and variance of building responses subjected to ten different ground motions. A floor response of a six-story shear building model is investigated.
 author:
 - family: Yi
   given: Sangri

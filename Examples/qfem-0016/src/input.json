@@ -23,14 +23,14 @@
             "accuracyLimit": 0.02,
             "advancedOpt": true,
             "existingDoE": false,
-            "initialDoE": 10,
             "kernel": "Matern 5/2",
             "linear": true,
             "logTransform": true,
             "method": "Sampling and Simulation",
             "samples": 300,
             "seed": 32,
-            "timeLimit": 60
+            "timeLimit": 20,
+            "DoEmethod":"None"
         },
         "uqEngine": "SimCenterUQ",
         "uqType": "Train GP Surrogate Model"

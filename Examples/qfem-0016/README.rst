@@ -7,7 +7,7 @@ Surrogate Modeling to Predict Mean and Variance of Earthquake Response
 +----------------+------------------------------------------+
 
 .. note::
-   This example may run up to 60 minutes depending on the computer performance. For a quick test, the user may want to reduce **Max Computation Time**.
+   This example may run up to 20 minutes depending on the computer performance. For a quick test run, the user may want to reduce the **Max Computation Time** or **Max Number of model Runs**.
 
 Outline
 -------
@@ -106,7 +106,6 @@ When the user needs to manually add random variables with **add** button, eg. wh
 7. Save the surrogate model by clicking ``Save GP Surrogate``
 
 
-
 Sensitivity analysis using the Surrogate model
 -----------------------------------------------
 
@@ -170,8 +169,8 @@ Also correlation between the floor weight and roof weight is assumed to be 0.3.
    :figclass: align-center
    :width: 1200
 
-| **Surrogate model training time**: 58.9 min. (number of simulation model runs: 300)
-| **Analysis time**: 16.3 min. (number of surrogate model evaluations: 1400)
+| **Surrogate model training time**: 14.6 min. (number of simulation model runs: 300)
+| **Analysis time**: 11.8 min. (number of surrogate model evaluations: 1400)
 
 * Reference simulation model results
 
@@ -180,4 +179,4 @@ Also correlation between the floor weight and roof weight is assumed to be 0.3.
    :figclass: align-center
    :width: 1200
 
-| **Analysis time**: 83.0 min. (number of simulation model runs: 1400)
+| **Analysis time**: 83.7 min. (number of simulation model runs: 1400)
