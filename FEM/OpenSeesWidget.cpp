@@ -36,7 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "FEM.h"
+#include "OpenSeesWidget.h"
 #include <QGridLayout>
 #include <QComboBox>
 #include <QCheckBox>
@@ -62,7 +62,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <qjsondocument.h>
 
-FEM::FEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, int tagId, QString modelName, QWidget *parent)
+OpenSeesWidget::OpenSeesWidget(InputWidgetParameters *param, InputWidgetEDP *edpwidget, int tagId, QString modelName, QWidget *parent)
   : SimCenterWidget(parent), theParameters(param), theEdpWidget(edpwidget), numInputs(1)
 {
     this->tag = tagId;
@@ -75,8 +75,8 @@ FEM::FEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, int tagId, QSt
     // text and add button at top
     QHBoxLayout *titleLayout = new QHBoxLayout();
     button = new QRadioButton();
-    QLabel *textFEM=new QLabel(" Model " + QString::number(tag) + " " + modelName);
-    textFEM->setStyleSheet("font-weight: bold");
+    QLabel *textOpenSeesWidget=new QLabel(" Model " + QString::number(tag) + " " + modelName);
+    textOpenSeesWidget->setStyleSheet("font-weight: bold");
     QSpacerItem *spacer = new QSpacerItem(50,10);
 
     femSelection = new QComboBox();
@@ -89,7 +89,7 @@ FEM::FEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, int tagId, QSt
     connect(femSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(femProgramChanged(QString)));
 
     titleLayout->addWidget(button);
-    titleLayout->addWidget(textFEM);
+    titleLayout->addWidget(textOpenSeesWidget);
     titleLayout->addItem(spacer);
     titleLayout->addWidget(femSelection);
     titleLayout->addStretch();
@@ -119,17 +119,17 @@ FEM::FEM(InputWidgetParameters *param, InputWidgetEDP *edpwidget, int tagId, QSt
 
 }
 
-void FEM::hideHeader(bool tog) {
+void OpenSeesWidget::hideHeader(bool tog) {
     titleWidget->setVisible(!tog);
 }
 
 
-FEM::~FEM()
+OpenSeesWidget::~OpenSeesWidget()
 {
 }
 
 bool
-FEM::outputToJSON(QJsonObject &jsonObject)
+OpenSeesWidget::outputToJSON(QJsonObject &jsonObject)
 {
     QJsonArray apps;
     jsonObject["program"]=femSelection->currentText();
@@ -213,14 +213,14 @@ FEM::outputToJSON(QJsonObject &jsonObject)
 //        jsonObject["fileInfo"] = apps;
 //    }
 
-//    jsonObject["FEM"]=fem;
+//    jsonObject["OpenSeesWidget"]=fem;
 
     return true;
 }
 
 
 bool
-FEM::inputFromJSON(QJsonObject &femObject)
+OpenSeesWidget::inputFromJSON(QJsonObject &femObject)
 {
     //this->clear();
 
@@ -296,13 +296,13 @@ FEM::inputFromJSON(QJsonObject &femObject)
         }
 
     //} else {
-    //    emit sendErrorMessage("ERROR: FEM Input - no fem section in input file");
+    //    emit sendErrorMessage("ERROR: OpenSeesWidget Input - no fem section in input file");
     //    return false;
     //}
     return true;
 }
 
-void FEM::femProgramChanged(const QString &arg1)
+void OpenSeesWidget::femProgramChanged(const QString &arg1)
 {
     if (arg1!="MultipleModels")
         femSelection->setCurrentText(arg1);
@@ -582,7 +582,7 @@ void FEM::femProgramChanged(const QString &arg1)
     oldFemSpecific->deleteLater();
 }
 
-int FEM::parseInputfilesForRV(QString name1){
+int OpenSeesWidget::parseInputfilesForRV(QString name1){
     QString fileName1 = name1;
     //  file1->setText(name1);
 
@@ -615,7 +615,7 @@ int FEM::parseInputfilesForRV(QString name1){
     return 0;
 }
 
-void FEM::parseAllInputfiles(void){
+void OpenSeesWidget::parseAllInputfiles(void){
     theParameters->clear();
     if (femSelection->currentText() == "OpenSeesPy") {
         this->parseInputfilesForRV(parametersFilenames.at(0)->text());
@@ -625,7 +625,7 @@ void FEM::parseAllInputfiles(void){
 
 }
 
-void FEM::addTagId(void) {
+void OpenSeesWidget::addTagId(void) {
     //for ( const auto& i : varNamesAndValues  )
     for (int i=0; i<varNamesAndValues.size();i++)
     {
@@ -636,12 +636,12 @@ void FEM::addTagId(void) {
 }
 
 void
-FEM::numModelsChanged(int newNum) {
+OpenSeesWidget::numModelsChanged(int newNum) {
     numInputs = newNum;
     this->femProgramChanged(femSelection->currentText());
 }
 
-void FEM::customInputNumberChanged(int numCustomInputs) {
+void OpenSeesWidget::customInputNumberChanged(int numCustomInputs) {
   // numInputs = numCustomInputs;
   auto tempLayout = theCustomFileInputs;
 
@@ -711,7 +711,7 @@ void FEM::customInputNumberChanged(int numCustomInputs) {
 
 
 void
-FEM::specialCopyMainInput(QString fileName, QStringList varNames) {
+OpenSeesWidget::specialCopyMainInput(QString fileName, QStringList varNames) {
     // if OpenSees or FEAP parse the file for the variables
     if (femSelection->currentText() != "Custom")
     {
@@ -768,11 +768,11 @@ FEM::specialCopyMainInput(QString fileName, QStringList varNames) {
     }
 }
 
-QString FEM::getApplicationName() {
+QString OpenSeesWidget::getApplicationName() {
     return femSelection->currentText();
 }
 
-QString FEM::getMainInput() {
+QString OpenSeesWidget::getMainInput() {
   if (inputFilenames.length() != 0) {
     return inputFilenames.at(0)->text();
   } else {
@@ -780,7 +780,7 @@ QString FEM::getMainInput() {
   }
 }
 
-QVector< QString > FEM::getCustomInputs() const {
+QVector< QString > OpenSeesWidget::getCustomInputs() const {
    QVector< QString > stringOutput(customInputFiles.size());
 
    unsigned int count = 0;
@@ -795,13 +795,13 @@ QVector< QString > FEM::getCustomInputs() const {
 
 
 // for surrogate. It makes RVs to be uniform
-void FEM::setAsGP(bool tog){
+void OpenSeesWidget::setAsGP(bool tog){
     isGP = tog;
 }
 
 
 // Simple interpolation to show the percentage value.
-double FEM::interpolateForGP(QVector<double> X, QVector<double> Y, double Xval){
+double OpenSeesWidget::interpolateForGP(QVector<double> X, QVector<double> Y, double Xval){
     int N = X.count();
 
     if (X.size()==1) {
@@ -835,7 +835,7 @@ double FEM::interpolateForGP(QVector<double> X, QVector<double> Y, double Xval){
 }
 
 
-QStringList FEM::parseGPInputs(QString file1){
+QStringList OpenSeesWidget::parseGPInputs(QString file1){
 
     //
     // make a GP option box
@@ -891,7 +891,7 @@ QStringList FEM::parseGPInputs(QString file1){
                 QJsonObject jsonPred = jsonSur["predError"].toObject();
                 QJsonArray precArray = jsonPred["percent"].toArray();
                 QJsonArray valsArray = jsonPred["value"].toArray();
-                QJsonObject jsonFEM = jsonSur["fem"].toObject();
+                QJsonObject jsonOpenSeesWidget = jsonSur["fem"].toObject();
                 // interpolate
                 QVector<double> percVal_tmp, thrsVal_tmp;
                 foreach (const QJsonValue & v, precArray)
@@ -902,9 +902,9 @@ QStringList FEM::parseGPInputs(QString file1){
                 thrsVals=thrsVal_tmp;
                 thres = this->interpolateForGP(percVal_tmp,thrsVal_tmp,0.5);
                 // save names
-                appName = jsonFEM["program"].toString();
-                mainScriptDir = jsonFEM["inputFile"].toString();
-                postScriptDir = jsonFEM["postprocessScript"].toString();
+                appName = jsonOpenSeesWidget["program"].toString();
+                mainScriptDir = jsonOpenSeesWidget["inputFile"].toString();
+                postScriptDir = jsonOpenSeesWidget["postprocessScript"].toString();
             }
         } else {
             appName = "NA";
@@ -932,7 +932,7 @@ QStringList FEM::parseGPInputs(QString file1){
     option2Button = new QRadioButton();
     QLabel *option2Label = new QLabel("     Ignore and Continue");
     option3Button = new QRadioButton();
-    QLabel *option3Label = new QLabel("     Run Exact FEM Simulation");
+    QLabel *option3Label = new QLabel("     Run Exact OpenSeesWidget Simulation");
     QLabel *labelThresMsg = new QLabel(" ");
     labelThresMsg->setStyleSheet("color: red");
 
@@ -967,7 +967,7 @@ QStringList FEM::parseGPInputs(QString file1){
         option2Button -> setDisabled(true);
         option3Button -> setDisabled(true);
         labelThresMsg -> setVisible(false);
-        option3Label->setText("     Run Exact FEM simulation");
+        option3Label->setText("     Run Exact OpenSeesWidget simulation");
         thresVal->setDisabled(true);
     } else if (appName == "data") {
         option1Button -> setDisabled(false);
@@ -975,7 +975,7 @@ QStringList FEM::parseGPInputs(QString file1){
         option3Button -> setDisabled(true);
         option2Button -> setChecked(true);
         labelThresMsg->setVisible(false);
-        option3Label->setText("     Run Exact FEM simulation (not supported for data-based surrogate model)");
+        option3Label->setText("     Run Exact OpenSeesWidget simulation (not supported for data-based surrogate model)");
         option3Label->setStyleSheet("color: grey");
         percVals={0};
         thrsVals={0};
@@ -988,7 +988,7 @@ QStringList FEM::parseGPInputs(QString file1){
         option2Button -> setDisabled(false);
         option3Button -> setDisabled(false);
         labelThresMsg -> setVisible(true);
-        option3Label->setText("     Run Exact FEM simulation");
+        option3Label->setText("     Run Exact OpenSeesWidget simulation");
         option3Label->setStyleSheet("color: black");
         labelProgName->setText("      • Application Name: " + appName);
         labelProgDir1->setText("      • Main Script: "+ mainScriptDir);
@@ -1089,7 +1089,7 @@ QStringList FEM::parseGPInputs(QString file1){
 }
 
 
-void FEM::gpShowSeed(const QString &arg1)
+void OpenSeesWidget::gpShowSeed(const QString &arg1)
 {
     if (arg1==tr("Random samples"))
     {

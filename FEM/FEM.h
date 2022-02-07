@@ -88,6 +88,7 @@ public:
 
   private:
 
+  
     QVBoxLayout *layout;
     QWidget     *femSpecific;
     QComboBox   *femSelection;
