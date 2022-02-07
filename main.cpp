@@ -36,14 +36,19 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "MainWindow.h"
 #include <QApplication>
 #include <QFile>
 #include <QTime>
+#include <QThread>
 #include <QTextStream>
-#include <GoogleAnalytics.h>
 #include <QDir>
 #include <QStandardPaths>
+#include <QStatusBar>
+
+#include <MainWindowWorkflowApp.h>
+#include <WorkflowApp_quoFEM.h>
+#include <GoogleAnalytics.h>
+#include <AgaveCurl.h>
 
  // customMessgaeOutput code from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
@@ -81,11 +86,18 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
+
+#ifdef Q_OS_WIN
+    QApplication::setAttribute(Qt::AA_UseOpenGLES);
+#else
+    QApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+#endif
+    
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("quoFEM");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("2.4.1");
-    GoogleAnalytics::SetTrackingId("UA-121636495-1");
+    QCoreApplication::setApplicationVersion("2.4.0");
+    // GoogleAnalytics::SetTrackingId("UA-121636495-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
 
@@ -123,9 +135,61 @@ int main(int argc, char *argv[])
   //
 
   QApplication app(argc, argv);
-  MainWindow w;
-  w.show();
+
+    //
+    // create a remote interface
+    //
+
+    QString tenant("designsafe");
+    QString storage("agave://designsafe.storage.default/");
+    QString dirName("quoFEM");
+
+    AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage, &dirName);
+
+
+    //
+    // create the main window
+    //
+
+    WorkflowAppWidget *theInputApp = new WorkflowApp_quoFEM(theRemoteService);
+    MainWindowWorkflowApp w(QString("quoFEM: Quantified Undertainty with "), theInputApp, theRemoteService);
+    
+    QString aboutTitle = "About the SimCenter EE-UQ Application"; // this is the title displayed in the on About dialog
+    QString aboutSource = ":/resources/docs/textAboutEEUQ.html";  // this is an HTML file stored under resources
+    w.setAbout(aboutTitle, aboutSource);
+
+    QString version("Version 3.0.0");
+    w.setVersion(version);
+
+  QString citeText = QString("1) Frank McKenna, Adam Zsarnoczay, Michael Gardner, Wael Elhaddad, Sang-ri Yi, & Aakash Bangalore Satish. (2021). NHERI-SimCenter/quoFEM: Version 2.4.0 (v2.4.0). Zenodo. https://doi.org/10.5281/zenodo.5558000 \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
   
+    w.setCite(citeText);
+
+    QString manualURL("https://nheri-simcenter.github.io/quoFEM-Documentation/");
+    w.setDocumentationURL(manualURL);
+
+    QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=4.0");
+    w.setFeedbackURL(messageBoardURL);
+
+    //
+    // move remote interface to a thread
+    //
+
+    QThread *thread = new QThread();
+    theRemoteService->moveToThread(thread);
+
+    QWidget::connect(thread, SIGNAL(finished()), theRemoteService, SLOT(deleteLater()));
+    QWidget::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+
+    thread->start();
+
+    //
+    // show the main window, set styles & start the event loop
+    //
+
+    w.show();
+    w.statusBar()->showMessage("Ready", 5000);
+    
   // load style sheet
 
 #ifdef Q_OS_WIN
