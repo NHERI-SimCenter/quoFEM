@@ -1,10 +1,19 @@
 {
     "Applications": {
         "UQ": {
-            "Application": "SimCenterUQ-UQ",
+            "Application": "SimCenter-UQ",
             "ApplicationData": {
             }
-        }
+        },
+        "FEM": {
+            "Application": "OpenSeesPy",
+            "ApplicationData": {
+		"MS_Path": "{Current_Dir}/",
+		"mainScript": "CWH.py",
+		"parametersScript": "params.py",
+		"PA_Path": "{Current_Dir}/"
+	    }
+        }			
     },
     "EDP": [
         {
@@ -30,17 +39,6 @@
         },
         "uqEngine": "SimCenterUQ",
         "uqType": "Train GP Surrogate Model"
-    },
-    "fem": {
-        "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/CWH.py",
-        "mainInput": "CWH.py",
-        "mainPostprocessScript": "",
-        "numInputs": 1,
-        "parametersFile": "params.py",
-        "parametersScript": "{Current_Dir}/params.py",
-        "postprocessScript": "",
-        "program": "OpenSeesPy"
     },
     "localAppDir": "C:/Tools/quoFEM/quoFEM",
     "python": "python",

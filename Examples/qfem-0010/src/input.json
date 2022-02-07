@@ -8,16 +8,7 @@
         "uqEngine": "Dakota",
         "uqType": "Forward Propagation"
     },
-    "fem": {
-        "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/TrussModel.tcl",
-        "mainInput": "TrussModel.tcl",
-        "mainPostprocessScript": "TrussPost.tcl",
-        "numInputs": 1,
-        "postprocessScript": "{Current_Dir}/TrussPost.tcl",
-        "parametersFile": "",
-        "parametersScript": "",
-        "program": "FEAPpv"
+    "FEM":{
     },
     "EDP": [
         {
@@ -76,11 +67,15 @@
         "UQ": {
             "Application": "Dakota-UQ",
             "ApplicationData": {}
-        }
-    },
-    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
-    "uqResults": {},
-    "workingDir": "C:/Workdir/quoFEM",
-    "localAppDir": "C:/Tools/quoFEM/quoFEM",
-    "python": "python"
+        },
+	"FEM": {
+            "Application": "FEAPpv",
+            "ApplicationData": {
+		"inputFile": "TrussTemplate.txt",
+		"IF_Path": "{Current_Dir}/",		
+		"postprocessScript": "postprocess.py",
+		"PS_Path": "{Current_Dir}/"		
+	    }
+	}
+    }
 }

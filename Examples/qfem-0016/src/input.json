@@ -1,10 +1,19 @@
 {
     "Applications": {
         "UQ": {
-            "Application": "SimCenterUQ-UQ",
+            "Application": "SimCenter-UQ",
             "ApplicationData": {
             }
-        }
+        },
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+		"MS_Path": "{Current_Dir}/",
+		"mainScript": "ShearBuilding_NL.tcl",
+		"postprocessScript": "postprocess.tcl",
+		"PS_Path": "{Current_Dir}/"
+	    }
+        }		
     },
     "EDP": [
         {
@@ -35,15 +44,8 @@
         "uqEngine": "SimCenterUQ",
         "uqType": "Train GP Surrogate Model"
     },
-    "fem": {
-        "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/ShearBuilding_NL.tcl",
-        "mainInput": "ShearBuilding_NL.tcl",
-        "mainPostprocessScript": "postprocess.tcl",
-        "numInputs": 1,
-        "postprocessScript": "{Current_Dir}/postprocess.tcl",
-        "program": "OpenSees"
-    },
+    "FEM": {
+    },    
     "localAppDir": "C:/Users/yisan/Desktop/Development/quoFEM/backend",
     "python": "C:/Users/yisan/AppData/Local/Programs/Python/Python38/python.exe",
     "randomVariables": [
@@ -98,8 +100,5 @@
             "variableClass": "Uncertain"
         }
     ],
-    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
-    "uqResults": {
-    },
-    "workingDir": "C:/Users/yisan/Documents/quoFEM/LocalWorkDir"
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0"
 }

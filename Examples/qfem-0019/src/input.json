@@ -4,7 +4,14 @@
             "Application": "UCSD-UQ",
             "ApplicationData": {
             }
-        }
+        },
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+		"MS_Path": "{Current_Dir}/",
+		"mainScript": "matTestAllParamsReadStrain.tcl"
+	    }
+        }		
     },
     "EDP": [
         {
@@ -22,16 +29,6 @@
         "seed": 0,
         "uqEngine": "UCSD-UQ",
         "uqType": "Transitional Markov chain Monte Carlo"
-    },
-    "fem": {
-        "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/matTestAllParamsReadStrain.tcl",
-        "mainInput": "matTestAllParamsReadStrain.tcl",
-        "mainPostprocessScript": "",
-        "modelTag": 0,
-        "numInputs": 1,
-        "postprocessScript": "",
-        "program": "OpenSees"
     },
     "localAppDir": "/Users/aakash/SimCenter/quoFEM/backend",
     "python": "/Users/aakash/.pyenv/shims/python",

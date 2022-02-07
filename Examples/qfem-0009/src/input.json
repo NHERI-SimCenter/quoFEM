@@ -1,10 +1,19 @@
 {
     "Applications": {
         "UQ": {
-            "Application": "SimCenterUQ-UQ",
+            "Application": "SimCenterUQ",
             "ApplicationData": {
             }
-        }
+        },
+	"FEM":{
+            "Application": "OpenSees",
+            "ApplicationData": {
+		"MS_Path": "{Current_Dir}/",
+		"mainScript": "TrussModel.tcl",
+		"postprocessScript": "TrussPost.tcl",
+		"PS_Path": "{Current_Dir}/"
+	    }
+	}
     },
     "EDP": [
         {
@@ -41,14 +50,7 @@
         0.5,
         1
     ],
-    "fem": {
-        "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/TrussModel.tcl",
-        "mainInput": "TrussModel.tcl",
-        "mainPostprocessScript": "TrussPost.tcl",
-        "numInputs": 1,
-        "postprocessScript": "{Current_Dir}/TrussPost.tcl",
-        "program": "OpenSees"
+    "FEM":{
     },
     "localAppDir": "",
     "python": "",
@@ -95,10 +97,5 @@
             "value": "RV.Ao",
             "variableClass": "Uncertain"
         }
-    ],
-    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.2.0",
-    "uqResults": {
-        "resultType": "SimCenterUQResultsSensitivity"
-    },
-    "workingDir": ""
+    ]
 }
