@@ -4,15 +4,18 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts concurrent network printsupport
+QT       += core gui charts concurrent network printsupport 3dcore 3drender 3dextras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+CONFIG += c++17
 
 TARGET = quoFEM
 TEMPLATE = app
 
 VERSION=2.3.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+DEFINES += _GRAPHICS_Qt3D
 
 INCLUDEPATH += ../SimCenterCommon/RandomVariables
 INCLUDEPATH += ../SimCenterCommon/Workflow/WORKFLOW
@@ -43,134 +46,35 @@ win32 {
     }
 }
 
-include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/Common/Common.pri)
-include(../SimCenterCommon/Workflow/JsonConfiguredWidgets.pri)
+include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
+#include(../SimCenterCommon/Workflow/JsonConfiguredWidgets.pri)
+include(../SimCenterCommon/Workflow/Workflow.pri)
+include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
 
 
 SOURCES += main.cpp\
-    MainWindow.cpp \
-    SidebarWidgetSelection.cpp \
-    filterEngine.cpp \
-    SimCenterGraphPlot.cpp \    
-    InputWidgetParameters.cpp \
-    RemoteJobCreator.cpp \
-    MyTableWidget.cpp \
-    RemoteJobManager.cpp \
-    AgaveCurl.cpp \
-    RemoteService.cpp \
-    CustomizedItemModel.cpp \
-    qcustomplot.cpp \
-    EDP/EDP.cpp  \
+    WorkflowApp_quoFEM.cpp \
+    RunWidget.cpp \
+    EDP/quoEDP.cpp  \
     EDP/InputWidgetEDP.cpp \
-    FEM/InputWidgetFEM.cpp \
-    FEM/FEM.cpp  \    
-    FEM/OpenSeesParser.cpp \
+    FEM/FEM_Selection.cpp \
+    FEM/OpenSeesFEM.cpp \
+    FEM/OpenSeesPyFEM.cpp \
+    FEM/FEAPpvFEM.cpp \    
     FEM/FEAPpvParser.cpp \
-    FEM/OpenSeesPyParser.cpp \
-    UQ/UQ_EngineSelection.cpp \
-    UQ/UQ_MethodInputWidget.cpp \
-    UQ/UQ_Results.cpp \
-    UQ/UQ_Engine.cpp \
-    UQ/UQpyEngine.cpp \    
-    UQ/customUQ/CustomUQ_Results.cpp \
-    UQ/common/ResultsDataChart.cpp \
-    UQ/UQ_JsonEngine.cpp \
-    UQ/dakota/DakotaEngine.cpp \
-    UQ/dakota/DakotaInputSampling.cpp \
-    UQ/dakota/DakotaResultsSampling.cpp \
-    UQ/dakota/MonteCarloInputWidget.cpp \
-    UQ/dakota/MultiFidelityMonteCarlo.cpp \
-    UQ/dakota/LatinHypercubeInputWidget.cpp \
-    UQ/dakota/ImportanceSamplingInputWidget.cpp \
-    UQ/dakota/GaussianProcessInputWidget.cpp \
-    UQ/dakota/PCEInputWidget.cpp \
-    UQ/dakota/DakotaInputBayesianCalibration.cpp \
-    UQ/dakota/DakotaResultsBayesianCalibration.cpp \
-    UQ/dakota/DakotaResultsCalibration.cpp \
-    UQ/dakota/DakotaInputCalibration.cpp \
-    UQ/dakota/DakotaInputSensitivity.cpp \
-    UQ/dakota/DakotaResultsSensitivity.cpp \
-    UQ/dakota/DakotaInputReliability.cpp \
-    UQ/dakota/DakotaResultsReliability.cpp \    
-    UQ/dakota/LocalReliabilityWidget.cpp \
-    UQ/dakota/GlobalReliabilityWidget.cpp \
-    UQ/ucsd/UCSD_Engine.cpp \
-    UQ/ucsd/UCSD_TMMC.cpp \
-    UQ/ucsd/UCSD_Results.cpp \
-    UQ/ucsd/BayesPlots.cpp \
-    UQ/simcenterUQ/SimCenterUQEngine.cpp \
-    UQ/simcenterUQ/SimCenterUQInputSampling.cpp \
-    UQ/simcenterUQ/SimCenterUQResultsSampling.cpp \    
-    UQ/simcenterUQ/SimCenterUQInputSensitivity.cpp \
-    UQ/simcenterUQ/SimCenterUQResultsSensitivity.cpp \    
-    UQ/simcenterUQ/SimCenterUQInputSurrogate.cpp \
-    UQ/simcenterUQ/SimCenterUQResultsSurrogate.cpp \
-    UQ/simcenterUQ/SurrogateNoDoEInputWidget.cpp \
-    UQ/simcenterUQ/SurrogateDoEInputWidget.cpp \
-    UQ/simcenterUQ/SurrogateMFInputWidget.cpp
+    FEM/OpenSeesPyParser.cpp
 
-
-HEADERS  += MainWindow.h \
-    SidebarWidgetSelection.h \
-    filterEngine.h \
-    InputWidgetParameters.h \
-    RemoteJobCreator.h \
-    MyTableWidget.h \
-    RemoteJobManager.h \
-    AgaveCurl.h \
-    RemoteService.h \
-    CustomizedItemModel.h \
-    SimCenterGraphPlot.h \        
-    qcustomplot.h \
+HEADERS  += WorkflowApp_quoFEM.h \    
+    RunWidget.h \        
     EDP/InputWidgetEDP.h \
-    EDP/EDP.h \
-    FEM/FEM.h \
-    FEM/InputWidgetFEM.h \
-    FEM/OpenSeesParser.h \
+    EDP/quoEDP.h \
+    FEM/FEM_Selection.h \
+    FEM/OpenSeesFEM.h \
+    FEM/OpenSeesPyFEM.h \
+    FEM/FEAPpvFEM.h \    
     FEM/FEAPpvParser.h \
-    FEM/OpenSeesPyParser.h \
-    UQ/UQ_EngineSelection.h \
-    UQ/UQ_Results.h \
-    UQ/UQ_Engine.h \
-    UQ/UQpyEngine.h \
-    UQ/UQ_MethodInputWidget.h \    
-    UQ/common/ResultsDataChart.h \
-    UQ/UQ_JsonEngine.h \
-    UQ/dakota/DakotaEngine.h \    
-    UQ/dakota/DakotaInputSampling.h \
-    UQ/dakota/DakotaInputCalibration.h \
-    UQ/dakota/DakotaResultsCalibration.h \
-    UQ/dakota/DakotaResultsSensitivity.h \    
-    UQ/dakota/DakotaResultsSampling.h \    
-    UQ/dakota/DakotaInputSensitivity.h \
-    UQ/dakota/DakotaInputBayesianCalibration.h \
-    UQ/dakota/DakotaResultsBayesianCalibration.h \
-    UQ/dakota/MonteCarloInputWidget.h \
-    UQ/dakota/MultiFidelityMonteCarlo.h \
-    UQ/dakota/LatinHypercubeInputWidget.h \
-    UQ/dakota/ImportanceSamplingInputWidget.h \
-    UQ/dakota/GaussianProcessInputWidget.h \
-    UQ/dakota/PCEInputWidget.h \
-    UQ/dakota/DakotaInputReliability.h \
-    UQ/dakota/DakotaResultsReliability.h \    
-    UQ/dakota/LocalReliabilityWidget.h \
-    UQ/dakota/GlobalReliabilityWidget.h \
-    UQ/ucsd/UCSD_Engine.h \
-    UQ/ucsd/UCSD_TMMC.h \
-    UQ/ucsd/UCSD_Results.h \
-    UQ/ucsd/BayesPlots.h \
-    UQ/customUQ/CustomUQ_Results.h \
-    UQ/simcenterUQ/SimCenterUQEngine.h \    
-    UQ/simcenterUQ/SimCenterUQInputSampling.h \    
-    UQ/simcenterUQ/SimCenterUQInputSensitivity.h \
-    UQ/simcenterUQ/SimCenterUQInputSurrogate.h \
-    UQ/simcenterUQ/SimCenterUQResultsSensitivity.h \
-    UQ/simcenterUQ/SimCenterUQResultsSurrogate.h \    
-    UQ/simcenterUQ/SimCenterUQResultsSampling.h \    
-    UQ/simcenterUQ/SurrogateNoDoEInputWidget.h \
-    UQ/simcenterUQ/SurrogateDoEInputWidget.h \
-    UQ/simcenterUQ/SurrogateMFInputWidget.h
+    FEM/OpenSeesPyParser.h
 
 FORMS    += mainwindow.ui
 

@@ -4,15 +4,10 @@ rm -fr quoFEM.app
 make
 macdeployqt ./quoFEM.app
 
-# copy files
-cd ../backend/build;
-cmake -DCMAKE_BUILD_TYPE=Release ..
-make
-make install
-cd ../../build
 
-
-cp -fr ../backend/applications ./quoFEM.app/Contents/MacOS/
+mkdir ./quoFEM.app/Contents/MacOS/applications
+cp -fr ../../SimCenterBackendApplications/applications/performUQ ./quoFEM.app/Contents/MacOS/applications
+cp -fr ../../SimCenterBackendApplications/applications/performFEM ./quoFEM.app/Contents/MacOS/applications
 mkdir  ./quoFEM.app/Contents/MacOS/applications/opensees
 mkdir  ./quoFEM.app/Contents/MacOS/applications/dakota
 cp -fr /Users/fmckenna/bin/OpenSees3.2.2/* ./quoFEM.app/Contents/MacOS/applications/opensees
