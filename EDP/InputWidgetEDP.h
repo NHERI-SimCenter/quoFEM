@@ -41,20 +41,20 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <SimCenterWidget.h>
 
-#include "EDP.h"
+#include "quoEDP.h"
 #include <QGroupBox>
 #include <QVector>
 #include <QVBoxLayout>
 #include <QCheckBox>
 
-#include "InputWidgetParameters.h"
+class RandomVariablesContainer;
 
 class InputWidgetEDP : public SimCenterWidget
 {
     Q_OBJECT
 
 public:
-    explicit InputWidgetEDP(InputWidgetParameters *param, QWidget *parent = 0);
+    explicit InputWidgetEDP(QWidget *parent = 0);
     ~InputWidgetEDP();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -65,8 +65,7 @@ public:
     void setGPQoINames(QStringList quiNames);
     void showAdvancedSensitivity(bool tog);
 
-    QVector<EDP *>theEDPs;
-
+    QVector<quoEDP *>theEDPs;
 
 signals:
 
@@ -84,13 +83,8 @@ private:
     QCheckBox *theCheckButton;
     QVBoxLayout *verticalLayout;
     QVBoxLayout *edpLayout;
-    //QGroupBox *edp;
     QFrame *edp;
-    //QWidget *edp;
     QLineEdit *theGroupEdit;
-//    QVector<EDP *>theEDPs;
-
-    InputWidgetParameters *theParameters;
 };
 
 #endif // INPUTWIDGETEDP_H

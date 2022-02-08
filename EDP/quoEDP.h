@@ -1,5 +1,5 @@
-#ifndef SimCenterUQ_ENGINE_H
-#define SimCenterUQ_ENGINE_H
+#ifndef QUO_EDP_H
+#define QUO_EDP_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,60 +39,47 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <UQ_Engine.h>
+#include <QWidget>
 
-class QComboBox;
-class QStackedWidget;
-class UQ_Results;
-class RandomVariablesContainer;
-class InputWidgetEDP;
-class InputWidgetParameters;
-class InputWidgetFEM;
+class QLineEdit;
+class QHBoxLayout;
+class QRadioButton;
+class QLabel;
 
-class SimCenterUQEngine : public UQ_Engine
+//class EDP_Data;
+
+class quoEDP : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SimCenterUQEngine(InputWidgetParameters *param,InputWidgetFEM *femWidget,InputWidgetEDP *edpWidget, QWidget *parent = 0);
-    virtual ~SimCenterUQEngine();
+    explicit quoEDP(QString EDPname="", QWidget *parent = 0);
+    ~quoEDP();
 
-    int getMaxNumParallelTasks(void);
-    bool outputToJSON(QJsonObject &jsonObject);
-    bool inputFromJSON(QJsonObject &jsonObject);
-    bool outputAppDataToJSON(QJsonObject &jsonObject);
-    bool inputAppDataFromJSON(QJsonObject &jsonObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
-    int processResults(QString &filenameResults, QString &filenameTab);
-    RandomVariablesContainer *getParameters();
-    UQ_Results *getResults(void);
+    void setResults(double *);
 
-    QString getProcessingScript();
-    QString getMethodName();
+    bool isSelectedForRemoval(void);
 
-    bool copyFiles(QString &fileName);
-
+    QLineEdit *variableName;
+    QLineEdit *varLength;
 
 signals:
-    void onUQ_EngineChanged(void);
-    void onNumModelsChanged(int newNum);
 
 public slots:
-    void engineSelectionChanged(const QString &arg1);
-    void numModelsChanged(int newNum);
 
 private:
-   QComboBox   *theEngineSelectionBox;
-   QStackedWidget *theStackedWidget;
-
-   UQ_Engine *theCurrentEngine;
-   UQ_Engine *theOldEngine;
-   UQ_Engine *theSurrogateEngine;
-   UQ_Engine *theSensitivityEngine;
-   UQ_Engine *theSamplingEngine;
-
-   InputWidgetParameters *theParameters;
-   InputWidgetFEM *theFemWidget;
-   InputWidgetEDP *theEdpWidget;
+   // EDPData *theData;
+    QRadioButton *button;
+//    QLineEdit *variableName;
+//    QLineEdit *varLength;
+//    QLineEdit *varNumIndCoords;
+//    QLineEdit *varExperimentVarianceType;
+    QHBoxLayout *mainLayout;
+    bool resultsSet;
+    QLineEdit *mean;
+    QLineEdit *stdDev;
 };
 
-#endif // SimCenterUQ_ENGINE_H
+#endif // QUO_EDP_H

@@ -36,7 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "EDP.h"
+#include "quoEDP.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QComboBox>
@@ -50,10 +50,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QValidator>
 
 //
-// headers for EDPDistribution subclasses that user can select
+// headers for quoEDPDistribution subclasses that user can select
 //
 
-QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit){
+static QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit){
 
     QVBoxLayout *theLayout = new QVBoxLayout();
     QLabel *theLabel = new QLabel();
@@ -147,7 +147,7 @@ QWidget *addOneEDP(QString theLabelName, QLineEdit **theLineEdit,
 // abs - changing the EDP method to support field data
 //EDP::EDP(QString EDPname, QWidget *parent)
 //    :QWidget(parent),resultsSet(false),mean(0),stdDev(0)
-EDP::EDP(QString EDPname, QWidget *parent)
+quoEDP::quoEDP(QString EDPname, QWidget *parent)
     :QWidget(parent),resultsSet(false),mean(0),stdDev(0)
 {
     //
@@ -176,18 +176,18 @@ EDP::EDP(QString EDPname, QWidget *parent)
     this->setLayout(mainLayout);
 }
 
-EDP::~EDP()
+quoEDP::~quoEDP()
 {
 
 }
 
 bool
-EDP::isSelectedForRemoval(void)
+quoEDP::isSelectedForRemoval(void)
 {
     return button->isChecked();
 }
 
-bool EDP::outputToJSON(QJsonObject &jsonObject){
+bool quoEDP::outputToJSON(QJsonObject &jsonObject){
     jsonObject["name"]=variableName->text().simplified();
     if (resultsSet == true) {
         jsonObject["mean"]=mean->text().toDouble();
@@ -207,7 +207,7 @@ bool EDP::outputToJSON(QJsonObject &jsonObject){
     return true;
 }
 
-bool EDP::inputFromJSON(QJsonObject &jsonObject){
+bool quoEDP::inputFromJSON(QJsonObject &jsonObject){
     QJsonValue theMeanValue = jsonObject["name"];
     variableName->setText(theMeanValue.toString().simplified());
 
@@ -247,7 +247,7 @@ bool EDP::inputFromJSON(QJsonObject &jsonObject){
     return true;
 }
 
-void EDP::setResults(double *data)
+void quoEDP::setResults(double *data)
 {
     if (mean == 0) {
         // create mean and stdDev boxes, fill in

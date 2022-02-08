@@ -47,14 +47,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QSpacerItem>
 #include <QCheckBox>
 #include <QLineEdit>
-
-#include "InputWidgetParameters.h"
-
+#include <RandomVariablesContainer.h>
+#include <quoEDP.h>
 #include <QDebug>
 
 
-InputWidgetEDP::InputWidgetEDP(InputWidgetParameters *param, QWidget *parent)
-    : SimCenterWidget(parent), theParameters(param)
+InputWidgetEDP::InputWidgetEDP(QWidget *parent)
+    : SimCenterWidget(parent)
 {
     verticalLayout = new QVBoxLayout();
     this->setLayout(verticalLayout);
@@ -129,7 +128,7 @@ void InputWidgetEDP::setGPQoINames(QStringList quiNames) {
     // remove existing boxes
     int numEDPs = theEDPs.size();
     for (int i = numEDPs-1; i >= 0; i--) {
-        EDP *theEDP = theEDPs.at(i);
+        quoEDP *theEDP = theEDPs.at(i);
         theEDP->close();
         edpLayout->removeWidget(theEDP);
         theEDPs.remove(i);
@@ -140,7 +139,7 @@ void InputWidgetEDP::setGPQoINames(QStringList quiNames) {
     int numVar = quiNames.count();
     for (int i=0; i<numVar; i++) {
         QString varName = quiNames.at(i);
-        EDP *theEDP = new EDP(varName);
+        quoEDP *theEDP = new quoEDP(varName);
         theEDPs.append(theEDP);
         edpLayout->insertWidget(edpLayout->count()-1, theEDP);
     }
@@ -195,12 +194,13 @@ InputWidgetEDP::AdvancedSensitivity(void) {
 
     return containterWidget;
 }
-// SLOT function
+
 void InputWidgetEDP::setDefaultGroup(bool tog)
 {
     if (tog) {
         theGroupEdit->setDisabled(0);
-        QStringList rvNames = theParameters->getParametereNames();
+	RandomVariablesContainer *theRVs=RandomVariablesContainer::getInstance();
+        QStringList rvNames = theRVs->getRandomVariableNames();
         if (rvNames.count()>0) {
             QString rvNameString;
             for (QString eleName : rvNames)
@@ -230,7 +230,7 @@ void InputWidgetEDP::showAdvancedSensitivity(bool tog){
 
 void InputWidgetEDP::addEDP(void)
 {
-    EDP *theEDP = new EDP();
+    quoEDP *theEDP = new quoEDP();
     theEDPs.append(theEDP);
     edpLayout->insertWidget(edpLayout->count()-1, theEDP);
 }
@@ -245,7 +245,7 @@ void InputWidgetEDP::clear(void)
 {
     // loop over random variables, removing from layout & deleting
     for (int i = 0; i <theEDPs.size(); ++i) {
-        EDP *theEDP = theEDPs.at(i);
+        quoEDP *theEDP = theEDPs.at(i);
         edpLayout->removeWidget(theEDP);
         delete theEDP;
     }
@@ -258,7 +258,7 @@ void InputWidgetEDP::removeEDP(void)
     // find the ones selected & remove them
     int numEDPs = theEDPs.size();
     for (int i = numEDPs-1; i >= 0; i--) {
-        EDP *theEDP = theEDPs.at(i);
+        quoEDP *theEDP = theEDPs.at(i);
         if (theEDP->isSelectedForRemoval()) {
             theEDP->close();
             edpLayout->removeWidget(theEDP);
@@ -310,7 +310,7 @@ InputWidgetEDP::inputFromJSON(QJsonObject &rvObject)
     QJsonArray rvArray = rvObject["EDP"].toArray();
     foreach (const QJsonValue &rvValue, rvArray) {
         QJsonObject rvObject = rvValue.toObject();
-        EDP *theEDP = new EDP();
+        quoEDP *theEDP = new quoEDP();
         if (theEDP->inputFromJSON(rvObject) == true) {
             theEDPs.append(theEDP);
             edpLayout->insertWidget(edpLayout->count()-1, theEDP);
