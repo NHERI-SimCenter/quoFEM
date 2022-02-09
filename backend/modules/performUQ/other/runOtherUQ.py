@@ -2,10 +2,12 @@
 
 import json
 import os
-import sys
 import platform
+import sys
+
 # import argparse
 from configureAndRunUQ import configureAndRunUQ
+
 
 def main():
     # KEEP THIS FOR NOW--MAYBE BACKEND WILL BE UPDATED ACCEPT DIFFERENT ARGUMENTS...
@@ -15,8 +17,8 @@ def main():
     # parser.add_argument('--runType', '-r', required=True, help="Type of run")
     # parser.add_argument('--inputFile', '-i', required=True, help="Input JSON file with configuration from UI")
     # Options for run type
-    runTypeOptions=["runningLocal", "runningRemote"]
-    
+    runTypeOptions = ["runningLocal", "runningRemote"]
+
     # args = parser.parse_args()
 
     # workDirMain = args.mainWorkDir
@@ -24,19 +26,21 @@ def main():
     # runType = args.runType
     # inputFile = args.inputFile
 
-    inputArgs = sys.argv    
+    inputArgs = sys.argv
     workDirMain = inputArgs[1]
     workDirTemp = inputArgs[2]
     runType = inputArgs[3]
-    inputFile = "dakota.json" # Why is this hardcoded, you might ask? Check with Frank...
-    
+    inputFile = (
+        "dakota.json"  # Why is this hardcoded, you might ask? Check with Frank...
+    )
+
     if runType not in runTypeOptions:
         raise ValueError("ERROR: Input run type has to be either local or remote")
-    
+
     # change workdir to the templatedir
     os.chdir(workDirTemp)
     cwd = os.getcwd()
-    
+
     # Open input file
     inputdata = {}
     with open(inputFile) as data_file:
@@ -51,7 +55,17 @@ def main():
     remoteAppDir = inputData["remoteAppDir"]
 
     # Run UQ based on data and selected UQ engine--if you need to preprocess files with custom delimiters, use preprocessUQ.py
-    configureAndRunUQ(uqData, simulationData, randomVarsData, demandParams, workDirTemp, runType, localAppDir, remoteAppDir)
+    configureAndRunUQ(
+        uqData,
+        simulationData,
+        randomVarsData,
+        demandParams,
+        workDirTemp,
+        runType,
+        localAppDir,
+        remoteAppDir,
+    )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

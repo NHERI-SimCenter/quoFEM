@@ -6,5 +6,5 @@ simcenter_add_python_script(SCRIPT processUQpyOutput.py)
 simcenter_add_python_script(SCRIPT uqRunner.py)
 simcenter_add_python_script(SCRIPT createTemplate.py)
 simcenter_add_python_script(SCRIPT runOtherUQ.py)
-
+simcenter_add_python_script(SCRIPT HeirBayesRunner.py)
 
