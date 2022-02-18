@@ -80,7 +80,7 @@
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0.05,
+            "lowerbound": 0.10,
             "name": "alp",
             "refCount": 1,
             "upperbound": 0.15,
