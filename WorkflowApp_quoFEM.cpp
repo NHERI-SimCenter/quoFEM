@@ -417,7 +417,6 @@ WorkflowApp_quoFEM::setUpForApplicationRun(QString &workingDir, QString &subDir)
     *********************************************** */
 
     QString tmpDirName = QString("tmp.SimCenter");
-    qDebug() << "TMP_DIR: " << tmpDirName;
     QDir workDir(workingDir);
 
     QString tmpDirectory = workDir.absoluteFilePath(tmpDirName);
@@ -496,8 +495,6 @@ WorkflowApp_quoFEM::loadFile(const QString fileName){
     QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject jsonObj = doc.object();
 
-    qDebug() << "LOADED:" << jsonObj;
-    
     //Resolve absolute paths from relative ones
     QFileInfo fileInfo(fileName);
     SCUtils::ResolveAbsolutePaths(jsonObj, fileInfo.dir());
