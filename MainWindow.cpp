@@ -667,7 +667,7 @@ void MainWindow::onRunButtonClicked() {
 
     GoogleAnalytics::ReportLocalRun();
     statusMessage("Running Analysis...");
-    QApplication::processEvents();
+    QApplication::processEvents(); // for the immediate display
 
     //
     // get program & input file from fem widget
@@ -1828,7 +1828,7 @@ void MainWindow::copyright()
 void MainWindow::version()
 {
     QMessageBox::about(this, tr("Version"),
-                       tr("Version 2.4.0 "));
+                       tr("Version 2.4.1 "));
 }
 
 void MainWindow::preferences()
