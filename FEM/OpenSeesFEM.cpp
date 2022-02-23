@@ -149,7 +149,7 @@ OpenSeesFEM::outputAppDataToJSON(QJsonObject &jsonObject) {
     // and all data to be used in ApplicationDate
     //
 
-    jsonObject["Application"] = "OpenSeesFEM";
+    jsonObject["Application"] = "OpenSees";
     QJsonObject dataObj;
 
     QString fileName = inputScript->text();
