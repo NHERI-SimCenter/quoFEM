@@ -1,5 +1,19 @@
 
-#set motion elCentro
+
+# making it to nd-digit pricision
+set nd 5
+set w [expr { double(round($w * pow(10,$nd -ceil(log10($w)))) / pow(10,$nd -ceil(log10($w)))) }]
+set wR [expr { double(round($wR * pow(10,$nd -ceil(log10($wR)))) / pow(10,$nd -ceil(log10($wR)))) }]
+set k [expr { double(round($k * pow(10,$nd -ceil(log10($k)))) / pow(10,$nd -ceil(log10($k)))) }]
+set Fy [expr { double(round($Fy  * pow(10,$nd -ceil(log10($Fy )))) / pow(10,$nd -ceil(log10($Fy )))) }]
+set alp [expr { double(round($alp  * pow(10,$nd -ceil(log10($alp )))) / pow(10,$nd -ceil(log10($alp )))) }]
+
+puts $w
+puts $wR
+ puts $k
+puts $Fy 
+puts $alp 
+
 
 model BasicBuilder -ndm 2 -ndf 3
 node 1 0 0 
