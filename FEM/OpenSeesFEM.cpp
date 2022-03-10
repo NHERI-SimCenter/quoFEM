@@ -82,7 +82,7 @@ OpenSeesFEM::OpenSeesFEM(QWidget *parent)
     connect(choosePostprocessScript, &QPushButton::clicked, this, [this](){
       QString selectedFile = QFileDialog::getOpenFileName(this,
 							  tr("Postprocess Script"),
-							  "C://",
+                              "",
 							  "All files (*)");
 
         if(!selectedFile.isEmpty()) {
@@ -254,9 +254,11 @@ OpenSeesFEM::setMainScript(QString name1){
 void
 OpenSeesFEM::chooseMainScript(void) {
     QString fileName=QFileDialog::getOpenFileName(this,tr("Open File"),
-						  "C://",
+                          "",
 						  "All files (*.tcl)");
-    this->setMainScript(fileName);
+    if(!fileName.isEmpty()) {
+        this->setMainScript(fileName);
+    }
 }
 
 void
