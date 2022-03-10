@@ -72,7 +72,7 @@ OpenSeesPyFEM::OpenSeesPyFEM(QWidget *parent)
     connect(chooseMS_Button, &QPushButton::clicked, this, [this](){
       QString selectedFile = QFileDialog::getOpenFileName(this,
 							  tr("MainScript"),
-							  "C://",
+                              "",
 							  "All files (*.py)");
 
         if(!selectedFile.isEmpty()) {
@@ -92,7 +92,7 @@ OpenSeesPyFEM::OpenSeesPyFEM(QWidget *parent)
     connect(choosePostprocessScript, &QPushButton::clicked, this, [this](){
       QString selectedFile = QFileDialog::getOpenFileName(this,
 							  tr("Postprocess Script"),
-							  "C://",
+                              "",
 							  "All files (*.py)");
 
         if(!selectedFile.isEmpty()) {
@@ -297,9 +297,11 @@ OpenSeesPyFEM::setParametersScript(QString name1){
 void
 OpenSeesPyFEM::chooseParametersScript(void) {
   QString fileName=QFileDialog::getOpenFileName(this,tr("Open File"),
-						"C://",
+                        "",
 						"All files (*.py)");
-  this->setParametersScript(fileName);
+  if(!fileName.isEmpty()) {
+      this->setParametersScript(fileName);
+  }
 }
  
 bool
