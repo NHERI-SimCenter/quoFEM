@@ -168,6 +168,7 @@ OpenSeesPyFEM::outputToJSON(QJsonObject &jsonObject) {
 bool
 OpenSeesPyFEM::outputAppDataToJSON(QJsonObject &jsonObject) {
 
+    bool result = true;
     //
     // per API, need to add name of application to be called in AppLication
     // and all data to be used in ApplicationDate
@@ -184,30 +185,50 @@ OpenSeesPyFEM::outputAppDataToJSON(QJsonObject &jsonObject) {
       dataObj["MS_Path"]=fileInfo.path();
     } else {
       QString msg = QString("OpenSeesPy - mainScript " ) + fileName + QString(" does not exist!");
-      return false;
+      this->errorMessage(msg);
+      dataObj["mainScript"]=fileName;
+      dataObj["MS_Path"]=QString("");
+      result = false;
     }
 
     QString fileName1 = postprocessScript->text();
     QFileInfo fileInfo1(fileName1);
 
     if (fileInfo1.exists() && fileInfo1.isFile()) {
-	dataObj["postprocessScript"]=fileInfo1.fileName();
-	dataObj["PS_Path"]=fileInfo1.path();
-    } else
-      dataObj["postprocessScript"]=QString("");
+        dataObj["postprocessScript"]=fileInfo1.fileName();
+        dataObj["PS_Path"]=fileInfo1.path();
+    } else {
+        if (fileName1.isEmpty())
+            dataObj["postprocessScript"]=QString("");
+        else {
+            QString msg = QString("OpenSeesPy - postprocessScript " ) + fileName1 + QString(" does not exist!");
+            this->errorMessage(msg);
+            dataObj["postprocessScript"]=fileName1;
+            result = false;
+        }
+    }
     
     QString fileName2 = parametersScript->text();
     QFileInfo fileInfo2(fileName2);
 
     if (fileInfo2.exists() && fileInfo2.isFile()) {
-      dataObj["parametersScript"]=fileInfo2.fileName();
-      dataObj["PS_Path"]=fileInfo1.path();        
-    } else
-      dataObj["parametersScript"]=QString("");
+        dataObj["parametersScript"]=fileInfo2.fileName();
+        dataObj["PS_Path"]=fileInfo1.path();
+    } else {
+        if (fileName2.isEmpty())
+            dataObj["parametersScript"]=QString("");
+        else {
+            QString msg = QString("OpenSeesPy - parametersScript " ) + fileName2 + QString(" does not exist!");
+            this->errorMessage(msg);
+            dataObj["parametersScript"]=fileName2;
+            result = false;
+        }
+    }
+
     
     jsonObject["ApplicationData"] = dataObj;
 
-    return true;
+    return true; // copyFiles returns false, if not true JSON object is empty!
 }
 
  bool

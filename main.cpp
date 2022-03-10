@@ -152,10 +152,12 @@ int main(int argc, char *argv[])
     //
 
     WorkflowAppWidget *theInputApp = new WorkflowApp_quoFEM(theRemoteService);
+    
     MainWindowWorkflowApp w(QString("quoFEM: Quantified Uncertainty with Optimization for the Finite Element Method"), theInputApp, theRemoteService);
     
     QString aboutTitle = "About the SimCenter quoFEM Application"; // this is the title displayed in the on About dialog
-    QString aboutSource = ":/resources/docs/textAboutEEUQ.html";  // this is an HTML file stored under resources
+    QString aboutSource = ":/resources/docs/quoFEM.html";  // this is an HTML file stored under resources
+
     w.setAbout(aboutTitle, aboutSource);
 
     QString version("Version 3.0.0");

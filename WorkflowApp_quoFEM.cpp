@@ -146,12 +146,12 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
 
     connect(localApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
     connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)), theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
-    connect(localApp,SIGNAL(processResults(QString, QString, QString)), this, SLOT(processResults(QString, QString, QString)));
+    connect(localApp,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
 
-    connect(remoteApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
+    connect(remoteApp,SIGNAL(setupForRun(QString &, QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
 
-    connect(theJobManager,SIGNAL(processResults(QString , QString, QString)), this, SLOT(processResults(QString, QString, QString)));
-    connect(theJobManager,SIGNAL(loadFile(QString)), this, SLOT(loadFile(QString)));
+    connect(theJobManager,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
+    connect(theJobManager,SIGNAL(loadFile(QString&)), this, SLOT(loadFile(QString&)));
 
     connect(remoteApp,SIGNAL(successfullJobStart()), theRunWidget, SLOT(hide()));
 
@@ -262,9 +262,8 @@ WorkflowApp_quoFEM::outputToJSON(QJsonObject &jsonObjectTop) {
     return result;
 }
 
-
 void
-WorkflowApp_quoFEM::processResults(QString dakotaOut, QString dakotaTab, QString inputFile){
+WorkflowApp_quoFEM::processResults(QString &dirName){
 
 
   //
@@ -299,7 +298,8 @@ WorkflowApp_quoFEM::processResults(QString dakotaOut, QString dakotaTab, QString
   // process results
   // 
 
-  theResults->processResults(dakotaOut, dakotaTab);
+  theResults->processResults(dirName);
+
   // theRunWidget->hide();
   theComponentSelection->displayComponent("RES");
 }
@@ -417,7 +417,6 @@ WorkflowApp_quoFEM::setUpForApplicationRun(QString &workingDir, QString &subDir)
     *********************************************** */
 
     QString tmpDirName = QString("tmp.SimCenter");
-    qDebug() << "TMP_DIR: " << tmpDirName;
     QDir workDir(workingDir);
 
     QString tmpDirectory = workDir.absoluteFilePath(tmpDirName);
@@ -473,9 +472,9 @@ WorkflowApp_quoFEM::setUpForApplicationRun(QString &workingDir, QString &subDir)
 }
 
 int
-WorkflowApp_quoFEM::loadFile(const QString fileName){
+WorkflowApp_quoFEM::loadFile(QString &fileName){
 
-    errorMessage("");
+    statusMessage(QString("Loading File .. ") + fileName);
 
     //
     // open file
@@ -496,8 +495,6 @@ WorkflowApp_quoFEM::loadFile(const QString fileName){
     QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject jsonObj = doc.object();
 
-    qDebug() << "LOADED:" << jsonObj;
-    
     //Resolve absolute paths from relative ones
     QFileInfo fileInfo(fileName);
     SCUtils::ResolveAbsolutePaths(jsonObj, fileInfo.dir());
