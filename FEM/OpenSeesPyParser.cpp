@@ -109,7 +109,7 @@ OpenSeesPyParser::getVariables(QString inFilename)
 void 
 OpenSeesPyParser::writeFile(QString inFilename, QString outFilename, QStringList varToChange)
 {
-    qDebug() << "in: " << inFilename << " " << outFilename;
+
     ifstream inFile(inFilename.toStdString());
     ofstream outFile(outFilename.toStdString());
 
