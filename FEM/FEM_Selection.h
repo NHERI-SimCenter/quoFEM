@@ -48,9 +48,11 @@ class FEM_Selection : public  SimCenterAppSelection
     Q_OBJECT
 
 public:
-  explicit FEM_Selection(QWidget *parent = 0);
-    ~FEM_Selection();
+  explicit FEM_Selection(bool doMulti = true, QWidget *parent = 0);
+  ~FEM_Selection();
 
+  SimCenterAppWidget *getClone();
+  
 private:
 
 };

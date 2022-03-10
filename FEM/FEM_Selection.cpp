@@ -39,9 +39,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <OpenSeesFEM.h>
 #include <OpenSeesPyFEM.h>
 #include <FEAPpvFEM.h>
+#include <SimCenterAppMulti.h>
 
 
-FEM_Selection::FEM_Selection(QWidget *parent)
+FEM_Selection::FEM_Selection(bool inclMulti, QWidget *parent)
   : SimCenterAppSelection(QString("FEM"), QString("FEM"), parent)
 {
     SimCenterAppWidget *opensees = new OpenSeesFEM();
@@ -50,7 +51,11 @@ FEM_Selection::FEM_Selection(QWidget *parent)
 
     this->addComponent(QString("OpenSees"), QString("OpenSees"), opensees);
     this->addComponent(QString("OpenSeesPy"), QString("OpenSeesPy"), openseesPy);
-    this->addComponent(QString("FEAPpv"), QString("FEAPpv"), FEAPpv);    
+    this->addComponent(QString("FEAPpv"), QString("FEAPpv"), FEAPpv);
+    if (inclMulti == true) {
+      SimCenterAppWidget *multi = new SimCenterAppMulti(QString("FEM"), QString("MultiModel-FEM"),this, this);
+      this->addComponent(QString("Multi Model"), QString("MultiModel-FEM"), multi);
+    }
 }
 
 
@@ -59,6 +64,12 @@ FEM_Selection::~FEM_Selection()
 
 }
 
+SimCenterAppWidget *
+FEM_Selection::getClone()
+{
+  FEM_Selection *newSelection = new FEM_Selection(false);
+  return newSelection;
+}
 
 
 

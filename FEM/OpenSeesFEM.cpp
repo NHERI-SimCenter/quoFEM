@@ -144,32 +144,50 @@ OpenSeesFEM::outputToJSON(QJsonObject &jsonObject) {
 bool
 OpenSeesFEM::outputAppDataToJSON(QJsonObject &jsonObject) {
 
+    bool result = true;
     //
     // per API, need to add name of application to be called in AppLication
     // and all data to be used in ApplicationDate
     //
 
-    jsonObject["Application"] = "OpenSeesFEM";
+    jsonObject["Application"] = "OpenSees";
     QJsonObject dataObj;
 
     QString fileName = inputScript->text();
     QFileInfo fileInfo(fileName);
 
-    dataObj["mainScript"]=fileInfo.fileName();
-    dataObj["MS_Path"]=fileInfo.path();
+    if (fileInfo.exists() && fileInfo.isFile()) {
+        dataObj["mainScript"]=fileInfo.fileName();
+        dataObj["MS_Path"]=fileInfo.path();
+    } else {
+        QString msg = QString("OpenSees - mainScript " ) + fileName + QString(" does not exist!");
+        this->errorMessage(msg);
+        dataObj["mainScript"]=fileName;
+        dataObj["MS_Path"]=QString("");
+        result = false;
+    }
 
     QString fileName1 = postprocessScript->text();
     QFileInfo fileInfo1(fileName1);
 
     if (fileInfo1.exists() && fileInfo1.isFile()) {
-	dataObj["postprocessScript"]=fileInfo1.fileName();
-	dataObj["PS_Path"]=fileInfo1.path();
-    } else
-      dataObj["postprocessScript"]=QString("");
+        dataObj["postprocessScript"]=fileInfo1.fileName();
+        dataObj["PS_Path"]=fileInfo1.path();
+    } else {
+        if (fileName1.isEmpty()) {
+            dataObj["postprocessScript"]=QString("");
+        } else {
+            QString msg = QString("OpenSees - postprocessScript " ) + fileName1 + QString(" does not exist!");
+            this->errorMessage(msg);
+            dataObj["postprocessScript"]=fileName1;
+            dataObj["PS_Path"]=QString("");
+            result = false;
+        }
+    }
 
     jsonObject["ApplicationData"] = dataObj;
 
-    return true;
+    return true; // needed for json file to save, copyFiles will return false
 }
 
  bool
@@ -193,31 +211,31 @@ OpenSeesFEM::inputAppDataFromJSON(QJsonObject &jsonObject) {
       QJsonValue theName = dataObject["mainScript"];
       fileName = theName.toString();
     } else
-      return false;
+        return false;
     
     if (dataObject.contains("MS_Path")) {
-      QJsonValue theName = dataObject["MS_Path"];
-      filePath = theName.toString();
+        QJsonValue theName = dataObject["MS_Path"];
+        filePath = theName.toString();
     } else
-      return false;
+        return false;
     
     inputScript->setText(QDir(filePath).filePath(fileName));
 
     if (dataObject.contains("postprocessScript")) {
-      QJsonValue theName = dataObject["postprocessScript"];
-      fileName = theName.toString();
-    
-      if (dataObject.contains("PS_Path")) {
-	QJsonValue theName = dataObject["PS_Path"];
-	filePath = theName.toString();
-	postprocessScript->setText(QDir(filePath).filePath(fileName)); 	
-      } else
-	postprocessScript->setText(fileName);
+        QJsonValue theName = dataObject["postprocessScript"];
+        fileName = theName.toString();
+
+        if (dataObject.contains("PS_Path")) {
+            QJsonValue theName = dataObject["PS_Path"];
+            filePath = theName.toString();
+            postprocessScript->setText(QDir(filePath).filePath(fileName));
+        } else
+            postprocessScript->setText(fileName);
     } else {
-      postprocessScript->setText("");
+        postprocessScript->setText("");
     }
   } else
-    return false;
+      return false;
 
   return true;
 }
