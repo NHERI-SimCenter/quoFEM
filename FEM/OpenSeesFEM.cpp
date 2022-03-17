@@ -114,23 +114,25 @@ void OpenSeesFEM::clear(void)
 
   RandomVariablesContainer *theRVs=RandomVariablesContainer::getInstance();
   theRVs->removeRandomVariables(names);
+  postprocessScript->setText("");
+  inputScript->setText("");
 }
 
 bool
 OpenSeesFEM::inputFromJSON(QJsonObject &jsonObject)
 {
-  varNamesAndValues.clear();
+//  varNamesAndValues.clear();
 
-  if (jsonObject.contains("randomVar")) {
-    QJsonArray randomVars = jsonObject["randomVar"].toArray();
-    foreach (const QJsonValue & value, randomVars) {
-      QJsonObject theRV = value.toObject();
-      QString name = theRV["name"].toString();
-      QString zero = "0";
-      varNamesAndValues.append(name);
-      varNamesAndValues.append(zero);
-    }
-  }
+//  if (jsonObject.contains("randomVariables")) {
+//    QJsonArray randomVars = jsonObject["randomVariables"].toArray();
+//    foreach (const QJsonValue & value, randomVars) {
+//      QJsonObject theRV = value.toObject();
+//      QString name = theRV["name"].toString();
+//      QString zero = "0";
+//      varNamesAndValues.append(name);
+//      varNamesAndValues.append(zero);
+//    }
+//  }
     
   return true;
 }
@@ -220,6 +222,7 @@ OpenSeesFEM::inputAppDataFromJSON(QJsonObject &jsonObject) {
         return false;
     
     inputScript->setText(QDir(filePath).filePath(fileName));
+    setMainScript(inputScript->text());
 
     if (dataObject.contains("postprocessScript")) {
         QJsonValue theName = dataObject["postprocessScript"];
