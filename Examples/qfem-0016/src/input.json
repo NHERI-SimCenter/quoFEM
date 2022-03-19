@@ -57,7 +57,7 @@
             "refCount": 1,
             "upperbound": 150,
             "value": "RV.w",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -67,7 +67,7 @@
             "refCount": 1,
             "upperbound": 80,
             "value": "RV.wR",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -77,7 +77,7 @@
             "refCount": 1,
             "upperbound": 360,
             "value": "RV.k",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -87,7 +87,7 @@
             "refCount": 1,
             "upperbound": 0.15,
             "value": "RV.alp",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -97,7 +97,7 @@
             "refCount": 1,
             "upperbound": 22,
             "value": "RV.Fy",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         }
     ],
     "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0"
