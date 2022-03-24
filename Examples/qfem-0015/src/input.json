@@ -51,7 +51,7 @@
             "refCount": 4,
             "upperbound": 1,
             "value": "RV.materialQuality",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -61,7 +61,7 @@
             "refCount": 4,
             "upperbound": 2400,
             "value": "RV.planArea",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -71,7 +71,7 @@
             "refCount": 4,
             "upperbound": 0.8,
             "value": "RV.aspectRatio",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -81,7 +81,7 @@
             "refCount": 4,
             "upperbound": 0.1,
             "value": "RV.damping",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -91,7 +91,7 @@
             "refCount": 4,
             "upperbound": 0.8,
             "value": "RV.extDensity_x",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -101,7 +101,7 @@
             "refCount": 4,
             "upperbound": 0.8,
             "value": "RV.extDensity_z",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -111,7 +111,7 @@
             "refCount": 4,
             "upperbound": 0.08,
             "value": "RV.intDensity",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -121,7 +121,7 @@
             "refCount": 4,
             "upperbound": 0.5,
             "value": "RV.extEcc_x",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -131,7 +131,7 @@
             "refCount": 4,
             "upperbound": 0.5,
             "value": "RV.extEcc_z",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -141,7 +141,7 @@
             "refCount": 4,
             "upperbound": 0.5,
             "value": "RV.intEcc_x",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -151,7 +151,7 @@
             "refCount": 4,
             "upperbound": 0.5,
             "value": "RV.intEcc_z",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -161,7 +161,7 @@
             "refCount": 4,
             "upperbound": 15.5,
             "value": "RV.floor1Weight",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -171,7 +171,7 @@
             "refCount": 4,
             "upperbound": 15.5,
             "value": "RV.floor2Weight",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -181,7 +181,7 @@
             "refCount": 4,
             "upperbound": 15.5,
             "value": "RV.roofWeight",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         }
     ],
     "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
