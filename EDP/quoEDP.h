@@ -66,8 +66,10 @@ public:
     QLineEdit *varLength;
 
 signals:
+    void removeEDPclicked(quoEDP *);
 
 public slots:
+    void xButtonClicked(void);
 
 private:
    // EDPData *theData;
