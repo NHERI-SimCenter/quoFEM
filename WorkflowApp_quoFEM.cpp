@@ -441,6 +441,11 @@ WorkflowApp_quoFEM::setUpForApplicationRun(QString &workingDir, QString &subDir)
         return;      
     }
 
+    if (theRVs->copyFiles(templateDirectory) != true) {
+        emit errorMessage("RV tab failed to copy files");
+        return;
+    }
+
     //
     // in new templatedir dir save the UI data into a file (same result as using saveAs)
     // NOTE: we append object workingDir to this which points to template dir
