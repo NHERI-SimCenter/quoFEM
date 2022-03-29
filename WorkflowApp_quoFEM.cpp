@@ -308,6 +308,8 @@ void
 WorkflowApp_quoFEM::clear(void)
 {
     theFEM_Selection->clear();
+    theRVs->clear();
+    theEDPs->clear();
     theUQ_Selection->clear();
 }
 
