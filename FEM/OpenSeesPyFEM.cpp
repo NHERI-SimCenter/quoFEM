@@ -138,6 +138,11 @@ void OpenSeesPyFEM::clear(void)
 
   RandomVariablesContainer *theRVs=RandomVariablesContainer::getInstance();
   theRVs->removeRandomVariables(names);
+
+  postprocessScript->setText("");
+  inputScript->setText("");
+  parametersScript->setText("");
+
 }
 
 bool
