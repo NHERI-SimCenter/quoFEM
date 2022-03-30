@@ -1,5 +1,5 @@
-#ifndef QUO_EDP_H
-#define QUO_EDP_H
+#ifndef SURROGATE_GP_FEM_MODEL_H
+#define SURROGATE_GP_FEM_MODEL_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,49 +39,54 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <QWidget>
+#include <SimCenterAppWidget.h>
 
-class QLineEdit;
-class QHBoxLayout;
-class QRadioButton;
-class QLabel;
+#include <QGroupBox>
+#include <QVector>
+#include <QGridLayout>
+#include <QComboBox>
+#include <QRadioButton>
+#include <QLabel>
 
-//class EDP_Data;
+class InputWidgetParameters;
+class RandomVariablesContainer;
 
-class quoEDP : public QWidget
+class surrogateGpFEM : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit quoEDP(QString EDPname="", QWidget *parent = 0);
-    ~quoEDP();
+    explicit surrogateGpFEM(QWidget *parent = 0);
+    ~surrogateGpFEM();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-
-    void setResults(double *);
-
-    bool isSelectedForRemoval(void);
-
-    QLineEdit *variableName;
-    QLineEdit *varLength;
+    bool outputToJSON(QJsonObject &rvObject) override;
+    bool inputFromJSON(QJsonObject &rvObject) override;
+    bool outputAppDataToJSON(QJsonObject &rvObject) override;
+    bool inputAppDataFromJSON(QJsonObject &rvObject) override;
+    bool copyFiles(QString &dirName) override;
+    void setMainScript(QString filnema1);
 
 signals:
-    void removeEDPclicked(quoEDP *);
 
 public slots:
-    void xButtonClicked(void);
+   void clear(void);
+   void updateMessage(QString);
+   void showGpOptions(QString);
 
 private:
-   // EDPData *theData;
-    QRadioButton *button;
-//    QLineEdit *variableName;
-//    QLineEdit *varLength;
-//    QLineEdit *varNumIndCoords;
-//    QLineEdit *varExperimentVarianceType;
-    QHBoxLayout *mainLayout;
-    bool resultsSet;
-    QLineEdit *mean;
-    QLineEdit *stdDev;
+  void specialCopyMainScript(QString fileName, QStringList varNamesAndValues);
+  double interpolateForGP(QVector<double> X, QVector<double> Y, double Xval);
+  
+  QLineEdit *inputScript;
+  QLineEdit *postprocessScript;
+  QStringList varNamesAndValues;  
+  QWidget *femWidget;
+  QGroupBox *groupBox;
+  QRadioButton *option1Button, *option2Button, *option3Button;
+  QLineEdit *thresVal;
+  bool isData;
+  QVector<double> percVals, thrsVals;
+  QComboBox * gpOutputComboBox;
+  QLabel *labelProgName, *labelProgDir1, *labelProgDir2, *labelThresMsg , *qoiNames;
 };
 
-#endif // QUO_EDP_H
+#endif // SURROGATE_GP_FEM_MODEL_H

@@ -48,6 +48,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDebug>
 #include <QGridLayout>
 #include <QValidator>
+#include <QPushButton>
 
 //
 // headers for quoEDPDistribution subclasses that user can select
@@ -165,8 +166,20 @@ quoEDP::quoEDP(QString EDPname, QWidget *parent)
 
     variableName->setText(EDPname);
 
-    button = new QRadioButton();
-    mainLayout->addWidget(button);
+    //button = new QRadioButton();
+    //mainLayout->addWidget(button);
+
+    //
+    // create remove button (not used any more - sy)
+    //
+    QPushButton *removeButton = new QPushButton("×");
+    const QSize BUTTON_SIZE = QSize(15, 15);
+    removeButton->setFixedSize(BUTTON_SIZE);
+    removeButton->setStyleSheet("QPushButton { font-size:15px;  font-weight: bold;padding: 0px 0px 2px 0px; }");
+    mainLayout->addWidget(removeButton);
+    connect(removeButton, SIGNAL(clicked()), this, SLOT(xButtonClicked()) );
+
+
     mainLayout->addWidget(nameWidget);;
     mainLayout->addStretch();
 
@@ -179,6 +192,11 @@ quoEDP::quoEDP(QString EDPname, QWidget *parent)
 quoEDP::~quoEDP()
 {
 
+}
+
+void
+quoEDP::xButtonClicked(void){
+    emit removeEDPclicked(this);
 }
 
 bool

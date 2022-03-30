@@ -1,0 +1,16 @@
+title: Hierarchical Bayesian Calibration of Material Model Parameters using CustomUQ Engine
+summary: |
+  In this example, simulated data of the response of a number of steel coupons, subjected to 
+  six different strain histories are used to calibrate the the parameters of the STEEL02 
+  material model in OpenSees corresponding to each coupon, as well as the parameters of a 
+  multivariate normal distribution defining the distribution of the calibrated STEEL02 model 
+  parameters across the set of coupons, using Hierarchical Bayesian Calibration. 
+  The synthetic data is generated using the STEEL02 model to represent the
+  response of steel coupons, where each coupon's material parameters are randomly
+  sampled from a multivariate normal distribution. 
+  
+author:
+- family: Bangalore Satish
+  given: Aakash
+collection-title: Material Model
+difficulty: 1
