@@ -1,5 +1,5 @@
-#ifndef QUO_EDP_H
-#define QUO_EDP_H
+#ifndef SURROGATE_GP_PARSER_H
+#define SURROGATE_GP_PARSER_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,49 +39,19 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <QWidget>
+#include <QStringList>
 
-class QLineEdit;
-class QHBoxLayout;
-class QRadioButton;
-class QLabel;
-
-//class EDP_Data;
-
-class quoEDP : public QWidget
+class surrogateGpParser
 {
-    Q_OBJECT
 public:
-    explicit quoEDP(QString EDPname="", QWidget *parent = 0);
-    ~quoEDP();
+    surrogateGpParser();
+    ~surrogateGpParser();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-
-    void setResults(double *);
-
-    bool isSelectedForRemoval(void);
-
-    QLineEdit *variableName;
-    QLineEdit *varLength;
-
-signals:
-    void removeEDPclicked(quoEDP *);
-
-public slots:
-    void xButtonClicked(void);
+    QStringList getVariables(QString inFilename);
+    void writeFile(QString infilename, QString outFilename, QStringList varToChange);
 
 private:
-   // EDPData *theData;
-    QRadioButton *button;
-//    QLineEdit *variableName;
-//    QLineEdit *varLength;
-//    QLineEdit *varNumIndCoords;
-//    QLineEdit *varExperimentVarianceType;
-    QHBoxLayout *mainLayout;
-    bool resultsSet;
-    QLineEdit *mean;
-    QLineEdit *stdDev;
+
 };
 
-#endif // QUO_EDP_H
+#endif // SURROGATE_GP_PARSER_H

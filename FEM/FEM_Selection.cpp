@@ -39,6 +39,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <OpenSeesFEM.h>
 #include <OpenSeesPyFEM.h>
 #include <FEAPpvFEM.h>
+#include <surrogateGpFEM.h>
 #include <SimCenterAppMulti.h>
 
 
@@ -48,10 +49,12 @@ FEM_Selection::FEM_Selection(bool inclMulti, QWidget *parent)
     SimCenterAppWidget *opensees = new OpenSeesFEM();
     SimCenterAppWidget *openseesPy = new OpenSeesPyFEM();
     SimCenterAppWidget *FEAPpv = new FEAPpvFEM();
+    SimCenterAppWidget *surrogateGp = new surrogateGpFEM();
 
     this->addComponent(QString("OpenSees"), QString("OpenSees"), opensees);
     this->addComponent(QString("OpenSeesPy"), QString("OpenSeesPy"), openseesPy);
     this->addComponent(QString("FEAPpv"), QString("FEAPpv"), FEAPpv);
+    this->addComponent(QString("SurrogateGP"), QString("SurrogateGP"), surrogateGp);
     if (inclMulti == true) {
       SimCenterAppWidget *multi = new SimCenterAppMulti(QString("FEM"), QString("MultiModel-FEM"),this, this);
       this->addComponent(QString("Multi Model"), QString("MultiModel-FEM"), multi);

@@ -62,7 +62,7 @@ public:
 
     int processResults(double *data);
     int getNumEDP(void);
-    void setGPQoINames(QStringList quiNames);
+    //void setGPQoINames(QStringList quiNames);
     void showAdvancedSensitivity(bool tog);
 
     QVector<quoEDP *>theEDPs;
@@ -73,7 +73,8 @@ public slots:
    void addEDP(void);
    void removeEDP(void);
    void clear(void);
-   void setDefaultGroup(bool tog);
+   //void setDefaultGroup(bool tog);
+   void removeThisEDP(quoEDP *);
 
 private:
     void makeEDP(void);
@@ -85,6 +86,7 @@ private:
     QVBoxLayout *edpLayout;
     QFrame *edp;
     QLineEdit *theGroupEdit;
+    bool x_button_clicked_before;
 };
 
 #endif // INPUTWIDGETEDP_H

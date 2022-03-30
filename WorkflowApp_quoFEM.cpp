@@ -308,6 +308,8 @@ void
 WorkflowApp_quoFEM::clear(void)
 {
     theFEM_Selection->clear();
+    theRVs->clear();
+    theEDPs->clear();
     theUQ_Selection->clear();
 }
 
@@ -439,6 +441,11 @@ WorkflowApp_quoFEM::setUpForApplicationRun(QString &workingDir, QString &subDir)
     if (theUQ_Selection->copyFiles(templateDirectory) != true) {
         emit errorMessage("UQ selection failed to copy files");
         return;      
+    }
+
+    if (theRVs->copyFiles(templateDirectory) != true) {
+        emit errorMessage("RV tab failed to copy files");
+        return;
     }
 
     //
