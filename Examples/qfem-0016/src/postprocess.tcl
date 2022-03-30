@@ -1,3 +1,6 @@
+# This postprocess script calculates mean and variance of peak responses
+# and parse QoInames give as $listQoI
+
 set resultFile [open results.out w]
 set results []
 

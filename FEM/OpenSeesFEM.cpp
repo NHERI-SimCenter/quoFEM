@@ -82,7 +82,7 @@ OpenSeesFEM::OpenSeesFEM(QWidget *parent)
     connect(choosePostprocessScript, &QPushButton::clicked, this, [this](){
       QString selectedFile = QFileDialog::getOpenFileName(this,
 							  tr("Postprocess Script"),
-							  "C://",
+                              "",
 							  "All files (*)");
 
         if(!selectedFile.isEmpty()) {
@@ -114,23 +114,25 @@ void OpenSeesFEM::clear(void)
 
   RandomVariablesContainer *theRVs=RandomVariablesContainer::getInstance();
   theRVs->removeRandomVariables(names);
+  postprocessScript->setText("");
+  inputScript->setText("");
 }
 
 bool
 OpenSeesFEM::inputFromJSON(QJsonObject &jsonObject)
 {
-  varNamesAndValues.clear();
+//  varNamesAndValues.clear();
 
-  if (jsonObject.contains("randomVar")) {
-    QJsonArray randomVars = jsonObject["randomVar"].toArray();
-    foreach (const QJsonValue & value, randomVars) {
-      QJsonObject theRV = value.toObject();
-      QString name = theRV["name"].toString();
-      QString zero = "0";
-      varNamesAndValues.append(name);
-      varNamesAndValues.append(zero);
-    }
-  }
+//  if (jsonObject.contains("randomVariables")) {
+//    QJsonArray randomVars = jsonObject["randomVariables"].toArray();
+//    foreach (const QJsonValue & value, randomVars) {
+//      QJsonObject theRV = value.toObject();
+//      QString name = theRV["name"].toString();
+//      QString zero = "0";
+//      varNamesAndValues.append(name);
+//      varNamesAndValues.append(zero);
+//    }
+//  }
     
   return true;
 }
@@ -220,6 +222,7 @@ OpenSeesFEM::inputAppDataFromJSON(QJsonObject &jsonObject) {
         return false;
     
     inputScript->setText(QDir(filePath).filePath(fileName));
+    setMainScript(inputScript->text());
 
     if (dataObject.contains("postprocessScript")) {
         QJsonValue theName = dataObject["postprocessScript"];
@@ -272,9 +275,11 @@ OpenSeesFEM::setMainScript(QString name1){
 void
 OpenSeesFEM::chooseMainScript(void) {
     QString fileName=QFileDialog::getOpenFileName(this,tr("Open File"),
-						  "C://",
+                          "",
 						  "All files (*.tcl)");
-    this->setMainScript(fileName);
+    if(!fileName.isEmpty()) {
+        this->setMainScript(fileName);
+    }
 }
 
 void

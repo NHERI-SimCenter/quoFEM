@@ -1,0 +1,114 @@
+{
+    "Applications": {
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+                "MS_Path": "/Users/aakash/SimCenter/quoFEM/examples/qfem-0017/src",
+                "PS_Path": "/Users/aakash/SimCenter/quoFEM/examples/qfem-0017/src",
+                "mainScript": "TrussModel.tcl",
+                "postprocessScript": "TrussPost.tcl"
+            }
+        },
+        "UQ": {
+            "Application": "CustomUQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 1,
+            "name": "Node_3_Disp_2",
+            "type": "scalar"
+        }
+    ],
+    "FEM": {
+    },
+    "UQ_Method": {
+        "Config File": "/Users/aakash/SimCenter/quoFEM/examples/qfem-0017/src/UQpySimpleExample.json",
+        "Parameters": [
+            {
+                "name": "Sampling Method",
+                "type": "ComboBox",
+                "value": "LHS",
+                "values": [
+                    "LHS"
+                ]
+            },
+            {
+                "name": "Number of Samples",
+                "type": "SpinBox",
+                "value": 50
+            },
+            {
+                "name": "Number of Concurrent Tasks",
+                "type": "SpinBox",
+                "value": 1
+            },
+            {
+                "name": "Number of Nodes",
+                "type": "SpinBox",
+                "value": 1
+            },
+            {
+                "name": "Cores per Task",
+                "type": "SpinBox",
+                "value": 8
+            },
+            {
+                "name": "UQ Driver",
+                "type": "LineEdit",
+                "value": "UQpy"
+            }
+        ],
+        "uqEngine": "CustomUQ"
+    },
+    "WorkflowType": "Building Simulation",
+    "localAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 150,
+            "name": "E",
+            "refCount": 1,
+            "upperbound": 250,
+            "value": "RV.E",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 15,
+            "name": "P",
+            "refCount": 1,
+            "upperbound": 35,
+            "value": "RV.P",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 400,
+            "name": "Au",
+            "refCount": 1,
+            "upperbound": 600,
+            "value": "RV.Au",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 200,
+            "name": "Ao",
+            "refCount": 1,
+            "upperbound": 300,
+            "value": "RV.Ao",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
+    "runDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir/tmp.SimCenter",
+    "runType": "runningLocal",
+    "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
+}
