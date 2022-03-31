@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("quoFEM");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("2.4.0");
+    QCoreApplication::setApplicationVersion("3.0.0");
     // GoogleAnalytics::SetTrackingId("UA-121636495-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
     MainWindowWorkflowApp w(QString("quoFEM: Quantified Uncertainty with Optimization for the Finite Element Method"), theInputApp, theRemoteService);
     
     QString aboutTitle = "About the SimCenter quoFEM Application"; // this is the title displayed in the on About dialog
-    QString aboutSource = ":/resources/docs/quoFEM.html";  // this is an HTML file stored under resources
+    QString aboutSource = ":/images/aboutQUOFEM.html";  // this is an HTML file stored under resources
 
     w.setAbout(aboutTitle, aboutSource);
 
