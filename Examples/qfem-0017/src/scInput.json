@@ -3,8 +3,8 @@
         "FEM": {
             "Application": "OpenSees",
             "ApplicationData": {
-                "MS_Path": "/Users/aakash/SimCenter/quoFEM/examples/qfem-0017/src",
-                "PS_Path": "/Users/aakash/SimCenter/quoFEM/examples/qfem-0017/src",
+                "MS_Path": "{Current_Dir}/.",
+                "PS_Path": "{Current_Dir}/.",
                 "mainScript": "TrussModel.tcl",
                 "postprocessScript": "TrussPost.tcl"
             }
@@ -25,7 +25,7 @@
     "FEM": {
     },
     "UQ_Method": {
-        "Config File": "/Users/aakash/SimCenter/quoFEM/examples/qfem-0017/src/UQpySimpleExample.json",
+        "Config File": "{Current_Dir}/UQpySimpleExample.json",
         "Parameters": [
             {
                 "name": "Sampling Method",
@@ -37,8 +37,13 @@
             },
             {
                 "name": "Number of Samples",
-                "type": "SpinBox",
-                "value": 50
+                "type": "LineEdit",
+                "value": "50"
+            },
+            {
+                "name": "Seed",
+                "type": "LineEdit",
+                "value": "1"
             },
             {
                 "name": "Number of Concurrent Tasks",
