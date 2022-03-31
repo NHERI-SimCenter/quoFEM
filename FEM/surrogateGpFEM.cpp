@@ -120,16 +120,16 @@ surrogateGpFEM::surrogateGpFEM(QWidget *parent)
     labelThresMsg->setStyleSheet("color: red");
     option2Button->setChecked(true);
 
-    femWidget = new QWidget();
-    QVBoxLayout *femLayout = new QVBoxLayout();
-    femWidget->setLayout(femLayout);
-    labelProgName=new QLabel();
-    labelProgDir1=new QLabel();
-    labelProgDir2=new QLabel();
-    femLayout->addWidget(labelProgName);
-    femLayout->addWidget(labelProgDir1);
-    femLayout->addWidget(labelProgDir2);
-    femWidget->setVisible(false);
+    //femWidget = new QWidget();
+    //QVBoxLayout *femLayout = new QVBoxLayout();
+    //femWidget->setLayout(femLayout);
+    //labelProgName=new QLabel();
+    //labelProgDir1=new QLabel();
+    //labelProgDir2=new QLabel();
+    //femLayout->addWidget(labelProgName);
+    //femLayout->addWidget(labelProgDir1);
+    //femLayout->addWidget(labelProgDir2);
+    //femWidget->setVisible(false);
 
     QHBoxLayout * gpOutputLayout = new QHBoxLayout();
     gpOutputComboBox= new QComboBox;
@@ -141,9 +141,9 @@ surrogateGpFEM::surrogateGpFEM(QWidget *parent)
     connect(option3Button, &QRadioButton::toggled, this, [=](bool tog){
         if (tog==false)
         {
-            femWidget->setVisible(false);
+            //femWidget->setVisible(false);
         } else {
-            femWidget->setVisible(true);
+            //femWidget->setVisible(true);
         }
     });
 
@@ -156,7 +156,7 @@ surrogateGpFEM::surrogateGpFEM(QWidget *parent)
     optionsLayout->addWidget(option1Button, 3,0,1,-1);
     optionsLayout->addWidget(option2Button, 4,0,1,-1);
     optionsLayout->addWidget(option3Button, 5,0,1,-1);
-    optionsLayout->addWidget(femWidget, 6,0);
+    //optionsLayout->addWidget(femWidget, 6,0);
     optionsLayout->addWidget(qoiNames, 6,0);
     optionsLayout->addLayout(gpOutputLayout, 8,0,1,-1);
 
@@ -403,9 +403,9 @@ surrogateGpFEM::showGpOptions(QString name1) {
         file.close();
 
         auto GPidentifier = jsonSur.find("kernName"); // should be right .json file
-
+        QJsonObject jsonHif = jsonSur["highFidelityInfo"].toObject();
         if (!jsonSur.isEmpty() && GPidentifier != jsonSur.end()) {
-            bool from_data=!jsonSur["doSimulation"].toBool();
+            bool from_data=!jsonHif["doSimulation"].toBool();
             QJsonArray RVArray = jsonSur["randomVariables"].toArray();
             QJsonArray QoIArray = jsonSur["ylabels"].toArray();
 
@@ -426,7 +426,7 @@ surrogateGpFEM::showGpOptions(QString name1) {
                 QJsonObject jsonPred = jsonSur["predError"].toObject();
                 QJsonArray precArray = jsonPred["percent"].toArray();
                 QJsonArray valsArray = jsonPred["value"].toArray();
-                QJsonObject jsonFEM = jsonSur["fem"].toObject();
+                //QJsonObject jsonFEM = jsonSur["fem"].toObject();
                 // interpolate
                 QVector<double> percVal_tmp, thrsVal_tmp;
                 foreach (const QJsonValue & v, precArray)
@@ -438,12 +438,12 @@ surrogateGpFEM::showGpOptions(QString name1) {
                 thresVal->setText(QString::number(this->interpolateForGP(percVal_tmp,thrsVal_tmp,0.5)));
                 this->updateMessage( thresVal->text());
                 // save names
-                appName = jsonFEM["program"].toString();
-                mainScriptDir = jsonFEM["inputFile"].toString();
-                postScriptDir = jsonFEM["postprocessScript"].toString();
-                labelProgName->setText("      • Application Name: " + appName);
-                labelProgDir1->setText("      • Main Script: "+ mainScriptDir);
-                labelProgDir2->setText("      • Postprocess Script: "+ postScriptDir );
+                //appName = jsonFEM["program"].toString();
+                //mainScriptDir = jsonFEM["inputFile"].toString();
+                //postScriptDir = jsonFEM["postprocessScript"].toString();
+                //labelProgName->setText("      • Application Name: " + appName);
+                //labelProgDir1->setText("      • Main Script: "+ mainScriptDir);
+                //labelProgDir2->setText("      • Postprocess Script: "+ postScriptDir );
                 groupBox->setVisible(true);
             }
         } else {

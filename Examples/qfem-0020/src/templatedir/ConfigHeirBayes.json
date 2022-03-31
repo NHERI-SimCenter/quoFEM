@@ -1,0 +1,28 @@
+{
+    "Parameters": [
+      {
+        "type": "FileInput",
+        "name": "File To Run"
+      },
+      {
+      "type" : "LineEdit",
+      "name" : "# Samples"
+      },
+      {
+      "type" : "LineEdit",
+      "name" : "# Burn-in"
+      },
+      {
+      "type" : "LineEdit",
+      "name" : "Tuning Interval"
+      },
+      {
+      "type" : "LineEdit",
+      "name" : "Seed"
+      },
+      {
+        "type": "LineEdit",
+        "name": "UQ Driver"
+      }
+    ]
+}

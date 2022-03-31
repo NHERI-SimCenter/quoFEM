@@ -23,11 +23,10 @@ The stress-strain data generated synthetically from simulation of a cyclic test 
    :width: 400
    :figclass: align-center
    
-   Stress-strain curve from cyclic test on test coupon from reinforcing steel bar.
+   Sample stress-strain curve from cyclic test on test coupon from reinforcing steel bar.
 
 
-This stress-strain data was obtained corresponding to a randomized strain history similar to those observed experimentally in reinforcing steel during seismic tests, as shown in :numref:`figExperimentalDataSteelCouponStrain`.
-
+This sample stress-strain data was obtained corresponding to a randomized strain history similar to those observed experimentally in reinforcing steel during seismic tests, as shown in :numref:`figExperimentalDataSteelCouponStrain`. 
 
 .. _figExperimentalDataSteelCouponStrain:
 
@@ -38,37 +37,38 @@ This stress-strain data was obtained corresponding to a randomized strain histor
    
    The test coupon was subjected to this strain history.
 
-The corresponding stress history is shown in :numref:`figExperimentalDataSteelCouponStress`.
 
-.. _figExperimentalDataSteelCouponStress:
+Six such strain histories, shown in :numref:`figCouponStrainHistories` are used to generate synthetic stress-strain data from the Steel02 model in OpenSees. Six sets of stress-strain data are obtained corresponding to each of the six strain histories, thereby resulting in a set of 36 synthetic stress-strain curves, that are used in this hierarchical Bayesian calibration example. To generate the stress response, a cyclic uniaxial test was simulated with the Steel02 model in OpenSees, with the material model parameter values sampled randomly from an assumed multivariate Gaussian distribution for the parameters. Zero-mean idenically distributed independent Gaussian noise was added to the stress response obtained from the OpenSees model to generate the stress-strain data.
 
-.. figure:: figures/qf-0019-StressHistory.png
+.. _figCouponStrainHistories:
+
+.. figure:: figures/StrainHistories.png
    :align: center
    :width: 400
    :figclass: align-center
    
-   The stress history obtained from the experiment.
+   Strain histories used to generate synthetic data.
 
 
-Model
-+++++
+Hierarchical Model
+++++++++++++++++++
 For this example, the STEEL02 material model in OpenSees was selected to represent the cyclic stress-strain response of the steel reinforcing bar in finite element simulations. The STEEL02 material model in OpenSees can take a total of 11 parameter values as input, as described in the `documentation <https://opensees.berkeley.edu/wiki/index.php/Steel02_Material_--_Giuffré-Menegotto-Pinto_Model_with_Isotropic_Strain_Hardening>`_. Of these 11 parameters, the value of 7 parameters shown in `Table 1`_ will be calibrated in this example.
 
 .. _Table 1:
 
 Table 1: Parameters of the STEEL02 material model whose values are being calibrated. 
 
-==========================================================  =========== ===========
-Variable                                                    lower bound upper bound
-==========================================================  =========== ===========
-Yield strength :math:`f_y`                                  300		    700
-Initial elastic tangent :math:`E`                           150000	    250000
-Strain hardening ratio :math:`b`                            0	        0.2
-Elastic-plastic transition parameter 1 :math:`cR_1`    	    0	        1
-Elastic-plastic transition parameter 2 :math:`cR_2`         0	    	0.2
-Isotropic hardening parameter for compression :math:`a_1`   0	    	0.1
-Isotropic hardening parameter for tension :math:`a_3`       0		   	0.1
-==========================================================  =========== ===========
+==========================================================  
+Variable                                                    
+==========================================================  
+Yield strength :math:`f_y`                                  
+Initial elastic tangent :math:`E`                           
+Strain hardening ratio :math:`b`                            
+Elastic-plastic transition parameter 1 :math:`cR_1`    	   
+Elastic-plastic transition parameter 2 :math:`cR_2`         
+Isotropic hardening parameter for compression :math:`a_1`   
+Isotropic hardening parameter for tension :math:`a_3`       
+==========================================================  
 	 
 
 The value of the other four parameters are kept fixed at:
@@ -81,12 +81,19 @@ Isotropic hardening parameter for compression :math:`a_2`   1
 Isotropic hardening parameter for tension :math:`a_4`       1
 Initial stress value :math:`sigInit`                        0
 ==========================================================  =========== 
+
+For each coupon, the estimated parameter values will be different, since the data was generated using parameters drawn randomly from a multivariate Gaussian distribution. The variability in the estimated parameters from coupon-to-coupon is also modeled using a multivariate Gaussian distribution with unknown parameters being the mean vector and the covariance matrix of this multivariate Gaussian distribution.
+
+The prediction error for each experiment is assumed to be independent. The standard deviation of the prediction error for each coupon are also estimated.
+
  
 Parameter estimation setup
 ++++++++++++++++++++++++++
-In this example, the values of the parameters shown in `Table 1`_ are being estimated. The table also shows the lower and upper bounds of the uniform distribution that is assumed to the prior probability distribution for these parameters. The unkown parameters in this problem, :math:`\mathbf{\theta}=(f_y, E, b, cR_1, cR_2, a_1, a_3)^T` are estimated using the data of the stress response corresponding to the strain history shown in :numref:`figExperimentalDataSteelCouponStrain`. 
+In this example, the values of the parameters shown in `Table 1`_ are being estimated, along with the hyperparameters which are the mean vector and the covariance matrix of the multivariate Gaussian distribution defining the distribution of the population of the estimated, and the standard deviation of the prediction errors for each coupon. The unknown parameters are the material model parameters of each coupon, :math:`\mathbf{\theta_i}=(f_y, E, b, cR_1, cR_2, a_1, a_3)^T; i \in {1, \ldots, 36}`, which are estimated using the data of the stress response corresponding to the strain history for that coupon, the mean vector :math:`\mathbf{\mu_\theta}`, the covariance matrix :math:`\mathbf{\Sigma_theta}`, and the standard deviation of the prediction errors :math:`\sigma_i`. 
 
-The Gaussian likelihood that is used by default in quoFEM is employed for this problem. This assumes that the errors (i.e. the differences between the finite element prediction of the stress history and the experimentally obtained stress history) follow a zero-mean Gaussian distribution. The components of the error vector are assumed to be statistically independent and identically distributed. Under this assumption, the standard deviation of the error is also an unknown parameter of the likelihood model and is also estimated during the calibration process. quoFEM automatically sets up the prior probability distribution for this additional parameter.
+The prediction errors (i.e. the differences between the finite element prediction of the stress history and the experimentally obtained stress history) are assumed to follow a zero-mean Gaussian distribution. The components of the error vector are assumed to be statistically independent and identically distributed. Under this assumption, the standard deviation of the error is also an unknown parameter of the likelihood model and is also estimated during the calibration process.
+
+All of these parameters are jointly estimated using Bayesian calibration.
 
 
 Files required
