@@ -1,0 +1,141 @@
+{
+    "Applications": {
+        "FEM": {
+            "Application": "OpenSeesPy",
+            "ApplicationData": {
+                "MS_Path": "{Current_Dir}/.",
+                "PS_Path": "",
+                "mainScript": "modelScript.py",
+                "parametersScript": "{Current_Dir}/modelParams.py",
+                "postprocessScript": ""
+            }
+        },
+        "UQ": {
+            "Application": "CustomUQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 1,
+            "name": "",
+            "type": "scalar"
+        }
+    ],
+    "FEM": {
+    },
+    "UQ_Method": {
+        "Config File": "{Current_Dir}/ConfigHeirBayes.json",
+        "Parameters": [
+            {
+                "name": "File To Run",
+                "type": "FileInput",
+                "value": "{Current_Dir}/main_synthetic_data.py"
+            },
+            {
+                "name": "# Samples",
+                "type": "LineEdit",
+                "value": "50"
+            },
+            {
+                "name": "# Burn-in",
+                "type": "LineEdit",
+                "value": "40"
+            },
+            {
+                "name": "Tuning Interval",
+                "type": "LineEdit",
+                "value": "10"
+            },
+            {
+                "name": "Seed",
+                "type": "LineEdit",
+                "value": "1"
+            },
+            {
+                "name": "UQ Driver",
+                "type": "LineEdit",
+                "value": "HeirBayes"
+            }
+        ],
+        "uqEngine": "CustomUQ"
+    },
+    "localAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
+    "randomVariables": [
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 480,
+            "name": "fy",
+            "refCount": 2,
+            "stdDev": 48,
+            "value": "RV.fy",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 205000,
+            "name": "E",
+            "refCount": 2,
+            "stdDev": 20500,
+            "value": "RV.E",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 0.019,
+            "name": "b",
+            "refCount": 2,
+            "stdDev": 0.0019,
+            "value": "RV.b",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 0.847,
+            "name": "cR1",
+            "refCount": 2,
+            "stdDev": 0.0847,
+            "value": "RV.cR1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 0.183,
+            "name": "cR2",
+            "refCount": 2,
+            "stdDev": 0.0183,
+            "value": "RV.cR2",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 0.029,
+            "name": "a1",
+            "refCount": 2,
+            "stdDev": 0.0029,
+            "value": "RV.a1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 0.017,
+            "name": "a3",
+            "refCount": 2,
+            "stdDev": 0.0017,
+            "value": "RV.a3",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
+    "runDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir/tmp.SimCenter",
+    "runType": "runningLocal",
+    "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
+}
