@@ -1,5 +1,0 @@
-[fy, E, b, R0, cR1, cR2, a1, a3] 
-[4.67266029e+02 2.06527111e+05 1.85091845e-02 8.16062197e-01
- 1.88902317e-01 2.94539375e-02 1.68392891e-02 1.00000000e+01]
-Standard deviation of error =  10
-Strain History --> 7 (SH5_STATIC_SMOOTH) 

@@ -1,5 +1,0 @@
-[fy, E, b, R0, cR1, cR2, a1, a3] 
-[5.08681400e+02 2.25382019e+05 1.91435739e-02 8.42966688e-01
- 1.78176232e-01 2.85337022e-02 1.69841664e-02 1.00000000e+01]
-Standard deviation of error =  10
-Strain History --> 8 (SH2Dynamic_Sin) 
