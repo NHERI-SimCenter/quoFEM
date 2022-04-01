@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
     QString version("Version 3.0.0");
     w.setVersion(version);
 
-    QString citeText = QString("1) Frank McKenna, Adam Zsarnoczay, Michael Gardner, Wael Elhaddad, Sang-ri Yi, & Aakash Bangalore Satish. (2021). NHERI-SimCenter/quoFEM: Version 2.4.0 (v2.4.0). Zenodo. https://doi.org/10.5281/zenodo.5558000 \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
+    QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, Kuanshi Zhong, & Wael Elhaddad. (2022). NHERI-SimCenter/quoFEM: Version 3.0.0 (v3.0.0). Zenodo. https://doi.org/10.5281/zenodo.6404498  \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
   
     w.setCite(citeText);
 
