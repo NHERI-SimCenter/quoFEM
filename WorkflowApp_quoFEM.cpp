@@ -78,7 +78,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QHostInfo>
-#include <DakotaResultsSampling.h>
+//#include <DakotaResultsSampling.h>
+#include <UQ_Results.h>
 #include <Utils/PythonProgressDialog.h>
 #include <Utils/RelativePathResolver.h>
 
@@ -257,6 +258,10 @@ WorkflowApp_quoFEM::outputToJSON(QJsonObject &jsonObjectTop) {
     if (result == false)
         return result;
 
+    result = theResults->outputToJSON(jsonObjectTop);
+    if (result == false)
+        return result;
+
     //theRunLocalWidget->outputToJSON(jsonObjectTop);
     
     return result;
@@ -301,7 +306,7 @@ WorkflowApp_quoFEM::processResults(QString &dirName){
   theResults->processResults(dirName);
 
   // theRunWidget->hide();
-  theComponentSelection->displayComponent("RES");
+  theComponentSelection->displayComponent(QString("RES"));
 }
 
 void
@@ -344,9 +349,15 @@ WorkflowApp_quoFEM::inputFromJSON(QJsonObject &jsonObject)
 
   theEDPs->inputFromJSON(jsonObject);
   theRVs->inputFromJSON(jsonObject);
+
   theRunWidget->inputFromJSON(jsonObject);
-  
-    return true;
+
+  auto* theNewResults = theUQ_Selection->getResults();
+  //
+  if (theNewResults->inputFromJSON(jsonObject) == false)
+      emit errorMessage("quoFEM: failed to read RES  data");
+  theResults->setResultWidget(theNewResults);
+  return true;
 }
 
 
