@@ -1,0 +1,2 @@
+"/Users/aakash/SimCenter/SimCenterBackendApplications/applications/performUQ/templateSub/simCenterSub"  params.in  tmpSimCenter.params  modelParams.py
+python3 modelScript.py 

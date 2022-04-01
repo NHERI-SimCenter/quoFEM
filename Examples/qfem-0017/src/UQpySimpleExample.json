@@ -6,8 +6,12 @@
 	    "values" : ["LHS"]
 	},
 	{
-	    "type" : "SpinBox",
+	    "type" : "LineEdit",
 	    "name" : "Number of Samples"
+	},
+	{
+		"type" : "LineEdit",
+		"name" : "Seed"
 	},
 	{
 	    "type" : "SpinBox",
