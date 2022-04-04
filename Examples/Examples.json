@@ -69,6 +69,11 @@
       "name": "Material Model: Deterministic Calibration",
       "description": "In this example, non-linear least squares minimization is used to calibrate the parameters values of a material model subjected to cyclic strain history.",
       "inputFile": "qfem-0018/src/input.json"
+    },
+    {
+      "name": "Surrogate modeling with design of experiments",
+      "description": "In this example illustrates different design of experiments strategies.",
+      "inputFile": "qfem-0021/src/input.json"
     }
   ]
 }
