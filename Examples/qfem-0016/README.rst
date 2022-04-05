@@ -156,11 +156,11 @@ Also correlation between the floor weight and roof weight is assumed to be 0.3.
    :width: 300
 
 
-5. Once the SurrogateGP Info field in the **FEM** tab is entered, the **QoI tab** is automatically populated by ``Node_2_Disp_1_Mean`` and ``Node_2_Disp_1_Std``. Users are allowed to remove some of the QoIs if not interested but may not add new QoIs or modify the names of existing QoIs.
+5. Users need to manually fill in the **QoI tab**. Users do not need to include here all the QoIs used for the training, but the users may not add new QoIs or modify the names of existing QoIs. [Tip] List of the trained QoI names can be found and copied in the **FEM tab**.
 
-5. Click on the **Run** button. This will cause the back-end application to launch dakota.
+6. Click on the **Run** button. This will cause the back-end application to launch dakota.
 
-6. When done, the **RES** tab will be selected and the results will be displayed. 
+7. When done, the **RES** tab will be selected and the results will be displayed. 
 
 * Surrogate model prediction
 
