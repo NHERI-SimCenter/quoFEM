@@ -23,11 +23,11 @@ The structure (:qfem-0016:`three story nonlinear building stick model <src/Shear
 ============================= ============ =========
 Random Variable               lower bound  upper bound			      
 ============================= ============ =========
-weight (w)                    0.0          1.0
-roof weight (wR)              800          2400
-initial stiffness (k)         0.4          0.8
-post-yield stiff. ratio (alp) 0.02         0.1
-yield strength (Fy)           0.5          0.8
+weight (w)                    50           150
+roof weight (wR)              40           80
+initial stiffness (k)         240          360
+post-yield stiff. ratio (alp) 0.05         0.15
+yield strength (Fy)           18           22
 ============================= ============ =========
 
 The goal is to make a surrogate model that predicts mean and standard deviation of the peak displacement at node 1.
