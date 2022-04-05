@@ -84,6 +84,11 @@
       "name": "Deterministic Calibration of Material Model",
       "description": "~",
       "InputFile": "qfem-0018/input.json"
+    },
+    {
+      "name": "Surrogate modeling with design of experiments",
+      "description": "In this example illustrates different design of experiments strategies.",
+      "inputFile": "qfem-0021/src/input.json"
     }
   ]
 }

@@ -1,0 +1,81 @@
+{
+    "Applications": {
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+                "MS_Path": "{Current_Dir}/.",
+                "mainScript": "input_.tcl",
+                "postprocessScript": ""
+            }
+        },
+        "UQ": {
+            "Application": "SimCenter-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 1,
+            "name": "Node_3_Disp_2",
+            "type": "scalar"
+        }
+    ],
+    "FEM": {
+    },
+    "UQ_Method": {
+        "surrogateMethodInfo": {
+            "DoEmethod": "IMSEw",
+            "accuracyLimit": 0.02,
+            "advancedOpt": true,
+            "existingDoE": false,
+            "initialDoE": 0,
+            "inpFile": "NA",
+            "kernel": "Matern 5/2",
+            "linear": false,
+            "logTransform": false,
+            "method": "Sampling and Simulation",
+            "nuggetOpt": "Optimize",
+            "nuggetString": "",
+            "outFile": "NA",
+            "parallelExecution": true,
+            "samples": 100,
+            "seed": 719,
+            "timeLimit": 60
+        },
+        "uqEngine": "SimCenterUQ",
+        "uqType": "Train GP Surrogate Model"
+    },
+    "correlationMatrix": [
+        1,
+        0,
+        0,
+        1
+    ],
+    "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": -5,
+            "name": "x1",
+            "refCount": 1,
+            "upperbound": 5,
+            "value": "RV.x1",
+            "variableClass": "Uniform"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": -5,
+            "name": "x2",
+            "refCount": 1,
+            "upperbound": 5,
+            "value": "RV.x2",
+            "variableClass": "Uniform"
+        }
+    ],
+    "remoteAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "runType": "runningLocal",
+    "workingDir": "C:/Users/SimCenter/Documents/quoFEM/LocalWorkDir"
+}

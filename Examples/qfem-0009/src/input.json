@@ -83,17 +83,17 @@
             "mean": 500,
             "name": "Au",
             "refCount": 1,
-            "stdDev": 25,
+            "stdDev": 100,
             "value": "RV.Au",
             "variableClass": "Uncertain"
         },
         {
-            "distribution": "Normal",
+            "distribution": "Lognormal",
             "inputType": "Moments",
             "mean": 250,
             "name": "Ao",
             "refCount": 1,
-            "stdDev": 10,
+            "stdDev": 50,
             "value": "RV.Ao",
             "variableClass": "Uncertain"
         }
