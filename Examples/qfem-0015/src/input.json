@@ -58,142 +58,142 @@
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0.45,
+            "lowerbound": 0.2,
             "name": "materialQuality",
-            "refCount": 1,
-            "upperbound": 0.55,
+            "refCount": 4,
+            "upperbound": 1,
             "value": "RV.materialQuality",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 1350,
+            "lowerbound": 800,
             "name": "planArea",
-            "refCount": 1,
-            "upperbound": 1650,
+            "refCount": 4,
+            "upperbound": 2400,
             "value": "RV.planArea",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0.54,
+            "lowerbound": 0.4,
             "name": "aspectRatio",
-            "refCount": 1,
-            "upperbound": 0.66,
+            "refCount": 4,
+            "upperbound": 0.8,
             "value": "RV.aspectRatio",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0.063,
+            "lowerbound": 0.02,
             "name": "damping",
-            "refCount": 1,
-            "upperbound": 0.077,
+            "refCount": 4,
+            "upperbound": 0.1,
             "value": "RV.damping",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0.585,
+            "lowerbound": 0.5,
             "name": "extDensity_x",
-            "refCount": 1,
-            "upperbound": 0.715,
+            "refCount": 4,
+            "upperbound": 0.8,
             "value": "RV.extDensity_x",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0.54,
+            "lowerbound": 0.5,
             "name": "extDensity_z",
-            "refCount": 1,
-            "upperbound": 0.66,
+            "refCount": 4,
+            "upperbound": 0.8,
             "value": "RV.extDensity_z",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0.063,
+            "lowerbound": 0.06,
             "name": "intDensity",
-            "refCount": 1,
-            "upperbound": 0.077,
+            "refCount": 4,
+            "upperbound": 0.08,
             "value": "RV.intDensity",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0.18,
+            "lowerbound": 0,
             "name": "extEcc_x",
-            "refCount": 1,
-            "upperbound": 0.22,
+            "refCount": 4,
+            "upperbound": 0.5,
             "value": "RV.extEcc_x",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0.18,
+            "lowerbound": 0,
             "name": "extEcc_z",
-            "refCount": 1,
-            "upperbound": 0.22,
+            "refCount": 4,
+            "upperbound": 0.5,
             "value": "RV.extEcc_z",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0.18,
+            "lowerbound": 0,
             "name": "intEcc_x",
-            "refCount": 1,
-            "upperbound": 0.22,
+            "refCount": 4,
+            "upperbound": 0.5,
             "value": "RV.intEcc_x",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0.18,
+            "lowerbound": 0,
             "name": "intEcc_z",
-            "refCount": 1,
-            "upperbound": 0.22,
+            "refCount": 4,
+            "upperbound": 0.5,
             "value": "RV.intEcc_z",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 11.7,
+            "lowerbound": 10,
             "name": "floor1Weight",
-            "refCount": 1,
-            "upperbound": 14.3,
+            "refCount": 4,
+            "upperbound": 15.5,
             "value": "RV.floor1Weight",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 11.7,
+            "lowerbound": 10,
             "name": "floor2Weight",
-            "refCount": 1,
-            "upperbound": 14.3,
+            "refCount": 4,
+            "upperbound": 15.5,
             "value": "RV.floor2Weight",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 9.9,
+            "lowerbound": 10,
             "name": "roofWeight",
-            "refCount": 1,
-            "upperbound": 12.1,
+            "refCount": 4,
+            "upperbound": 15.5,
             "value": "RV.roofWeight",
-            "variableClass": "Uniform"
+            "variableClass": "Uncertain"
         }
     ],
     "remoteAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
