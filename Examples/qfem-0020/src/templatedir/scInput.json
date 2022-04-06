@@ -26,7 +26,7 @@
     "FEM": {
     },
     "UQ_Method": {
-        "Config File": "{Current_Dir}/ConfigHeirBayes.json",
+        "Config File": "{Current_Dir}/ConfigHierBayes.json",
         "Parameters": [
             {
                 "name": "File To Run",
@@ -56,7 +56,7 @@
             {
                 "name": "UQ Driver",
                 "type": "LineEdit",
-                "value": "HeirBayes"
+                "value": "HierBayes"
             }
         ],
         "uqEngine": "CustomUQ"

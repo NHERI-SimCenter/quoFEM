@@ -15,7 +15,7 @@ from synthetic_data import read_synthetic_data
 from hierarchical_inference_sampling_v2 import HierarchicalInferenceSampling
 
 
-class HeirBayesSampler(object):
+class HierBayesSampler(object):
     def perform_sampling(self, n_samples=50, n_burn_in=20, tuning_interval=10, seed=1):
         DATA_LOCATION = os.path.abspath(os.path.join(__file__, "../synthetic_data"))
 
@@ -72,8 +72,8 @@ class HeirBayesSampler(object):
 
 def main():
     t1 = time.time()
-    sampler = HeirBayesSampler()
-    trace, time_taken, inf_object = sampler.perform_sampling(
+    sampler = HierBayesSampler()
+    trace, time_taken, inf_object, _ = sampler.perform_sampling(
         n_samples=50, n_burn_in=20, tuning_interval=10, seed=1
     )
     filename = sampler.save_results(
