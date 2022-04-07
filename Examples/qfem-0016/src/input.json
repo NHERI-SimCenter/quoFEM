@@ -1,19 +1,19 @@
 {
     "Applications": {
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+                "MS_Path": "{Current_Dir}/",
+                "PS_Path": "{Current_Dir}/",
+                "mainScript": "ShearBuilding_NL.tcl",
+                "postprocessScript": "postprocess.tcl"
+            }
+        },
         "UQ": {
             "Application": "SimCenter-UQ",
             "ApplicationData": {
             }
-        },
-        "FEM": {
-            "Application": "OpenSees",
-            "ApplicationData": {
-		"MS_Path": "{Current_Dir}/",
-		"mainScript": "ShearBuilding_NL.tcl",
-		"postprocessScript": "postprocess.tcl",
-		"PS_Path": "{Current_Dir}/"
-	    }
-        }		
+        }
     },
     "EDP": [
         {
@@ -27,27 +27,33 @@
             "type": "scalar"
         }
     ],
+    "FEM": {
+    },
     "UQ_Method": {
         "surrogateMethodInfo": {
+            "DoEmethod": "None",
             "accuracyLimit": 0.02,
             "advancedOpt": true,
             "existingDoE": false,
+            "initialDoE": 0,
+            "inpFile": "NA",
             "kernel": "Matern 5/2",
             "linear": true,
             "logTransform": true,
             "method": "Sampling and Simulation",
-            "samples": 300,
+            "nuggetOpt": "Optimize",
+            "nuggetString": "",
+            "outFile": "NA",
+            "parallelExecution": true,
+            "samples": 50,
             "seed": 32,
-            "timeLimit": 20,
-            "DoEmethod":"None"
+            "timeLimit": 20
         },
         "uqEngine": "SimCenterUQ",
         "uqType": "Train GP Surrogate Model"
     },
-    "FEM": {
-    },    
-    "localAppDir": "C:/Users/yisan/Desktop/Development/quoFEM/backend",
-    "python": "C:/Users/yisan/AppData/Local/Programs/Python/Python38/python.exe",
+    "isSurrogate": true,
+    "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
     "randomVariables": [
         {
             "distribution": "Uniform",
@@ -82,7 +88,7 @@
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0.10,
+            "lowerbound": 0.05,
             "name": "alp",
             "refCount": 1,
             "upperbound": 0.15,
@@ -100,5 +106,8 @@
             "variableClass": "Uniform"
         }
     ],
-    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0"
+    "remoteAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "resultType": "SimCenterUQResultsSurrogate",
+    "runType": "runningLocal",
+    "workingDir": "C:/Users/SimCenter/Documents/quoFEM/LocalWorkDir"
 }

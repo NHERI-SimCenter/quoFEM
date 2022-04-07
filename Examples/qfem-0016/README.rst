@@ -6,9 +6,6 @@ Surrogate Modeling to Predict Mean and Variance of Earthquake Response
 | Problem files  | :github:`Github <Examples/qfem-0016/>`   |
 +----------------+------------------------------------------+
 
-.. note::
-   This example may run up to 20 minutes depending on the computer performance. For a quick test run, the user may want to reduce the **Max Computation Time** or **Max Number of model Runs**.
-
 Outline
 -------
 
@@ -23,11 +20,11 @@ The structure (:qfem-0016:`three story nonlinear building stick model <src/Shear
 ============================= ============ =========
 Random Variable               lower bound  upper bound			      
 ============================= ============ =========
-weight (w)                    0.0          1.0
-roof weight (wR)              800          2400
-initial stiffness (k)         0.4          0.8
-post-yield stiff. ratio (alp) 0.02         0.1
-yield strength (Fy)           0.5          0.8
+weight (w)                    50           150
+roof weight (wR)              40           80
+initial stiffness (k)         240          360
+post-yield stiff. ratio (alp) 0.05         0.15
+yield strength (Fy)           18           22
 ============================= ============ =========
 
 The goal is to make a surrogate model that predicts mean and standard deviation of the peak displacement at node 1.
@@ -51,7 +48,7 @@ Once the user selects OpenSeesPy as FEM applications, the below two fields are r
 UQ Workflow
 -------------
 
-1. Since the model is provided, Training Dataset can be obtained by **Sampling and Simulation**. Since it is known that the mean and variance of peak drift are always positive, log-transform is introduced. Since a trend is expected, a linear trend function is introduced. The number of Initial Design of Experiments are set as 10.
+1. Since the model is provided, Training Dataset can be obtained by **Sampling and Simulation**. Since it is known that the mean and variance of peak drift are always positive, log-transform is introduced. Since a trend is expected, a linear trend function is introduced. 
 
 
 .. figure:: figures/SUR2-UQtab.png
@@ -78,14 +75,14 @@ UQ Workflow
 When the user needs to manually add random variables with **add** button, eg. when using a custom FEM application, the user should set the distribution to be **Uniform** using the drop-down menu.
 
 
-4. Select the **QoI** tab. Here enter two output names as ``Node_2_Disp_1_Mean`` and ``Node_2_Disp_1_Std``. Note that Node_2_Disp_1 means x-direction displacement of second story floor. 
+4. Select the **QoI** tab. Here enter two output names as ``Node_2_Disp_1_Mean`` and ``Node_2_Disp_1_Std``. Note that Node_2_Disp_1 means x-direction displacement of second story floor. These QoI names are processed in the ``postprocess.tcl`` provided at the **FEM** tab.
 
 .. figure:: figures/SUR2-QoItab.png
    :align: center
    :figclass: align-center
    :width: 1200
 
-5. Click on the **Run** button. This will cause the back-end application to run SimCenterUQ Engine.
+5. Click on the **Run** button. This will cause the backend application to run SimCenterUQ Engine.
 
 6. When done, the **RES** tab will be selected and the results will be displayed.
 
@@ -101,7 +98,7 @@ When the user needs to manually add random variables with **add** button, eg. wh
 .. figure:: figures/SUR2-REStab2.png
    :align: center
    :figclass: align-center
-   :width: 800
+   :width: 1200
 
 7. Save the surrogate model by clicking ``Save GP Surrogate``
 
@@ -138,7 +135,7 @@ Once the surrogate model is trained, it can be used for various UQ/optimization 
 
 
 .. note::
-	The **Continue** option should be used only when users are familiar with the process and potential issues.
+	The **Continue** option should be used only when users are familiar with potential issues.
 
 
 4. Once the SurrogateGP Info field in the **FEM** tab is entered, the **RV tab** is automatically populated. The user can select the distribution and its parameters. This example applied the following distributions.
@@ -148,19 +145,11 @@ Once the surrogate model is trained, it can be used for various UQ/optimization 
    :figclass: align-center
    :width: 1200
 
-Also correlation between the floor weight and roof weight is assumed to be 0.3.
+5. Users need to manually fill in the **QoI tab**. Users do not need to include here all the QoIs used for the training, but the users may not add new QoIs or modify the names of existing QoIs. **[Tip]** List of the trained QoI names can be found and copied in the **FEM tab**.
 
-.. figure:: figures/SUR2-VER3.png
-   :align: center
-   :figclass: align-center
-   :width: 300
+6. Click on the **Run** button. This will cause the backend application to launch dakota.
 
-
-5. Once the SurrogateGP Info field in the **FEM** tab is entered, the **QoI tab** is automatically populated by ``Node_2_Disp_1_Mean`` and ``Node_2_Disp_1_Std``. Users are allowed to remove some of the QoIs if not interested but may not add new QoIs or modify the names of existing QoIs.
-
-5. Click on the **Run** button. This will cause the back-end application to launch dakota.
-
-6. When done, the **RES** tab will be selected and the results will be displayed. 
+7. When done, the **RES** tab will be selected and the results will be displayed. 
 
 * Surrogate model prediction
 
@@ -169,8 +158,8 @@ Also correlation between the floor weight and roof weight is assumed to be 0.3.
    :figclass: align-center
    :width: 1200
 
-| **Surrogate model training time**: 14.6 min. (number of simulation model runs: 300)
-| **Analysis time**: 11.8 min. (number of surrogate model evaluations: 1400)
+| **Surrogate model training time**: 1.4 min. (number of FEM runs: 50)
+| **Sensitivity analysis time**: 10.3 min. (number of surrogate model evaluations: 1400)
 
 * Reference simulation model results
 
@@ -179,4 +168,4 @@ Also correlation between the floor weight and roof weight is assumed to be 0.3.
    :figclass: align-center
    :width: 1200
 
-| **Analysis time**: 83.7 min. (number of simulation model runs: 1400)
+| **Sensitivity analysis time**: 83.7 min. (number of FEM runs: 1400)
