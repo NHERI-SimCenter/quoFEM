@@ -1,0 +1,8 @@
+title:  Two-Dimensional Truss - PLoM Modeling and Simulation
+summary: |
+  Consider the problem simulating response of a two-dimensional truss structure with uncertain material properties. The goal of the exercise is to demonstrate the use of ``PLoM model`` method under ``SimCenterUQ`` to predict the response of the truss under the given load.
+author:
+- family: Zhong
+  given: Kuanshi
+collection-title: Surrogate training - building
+difficulty: 0

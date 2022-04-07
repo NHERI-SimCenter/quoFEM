@@ -86,6 +86,10 @@
       "InputFile": "qfem-0018/input.json"
     },
     {
+      "name": "Two-Dimensional Truss: PLoM Modeling and Simulation",
+      "description": "In this example, the goal is to demonstrate the use of PLoM model method to predict the response of the example truss under the given load.",
+      "inputFile": "qfem-0022/src/input.json"},
+    {
       "name": "Surrogate modeling with design of experiments",
       "description": "In this example illustrates different design of experiments strategies.",
       "inputFile": "qfem-0021/src/input.json"
