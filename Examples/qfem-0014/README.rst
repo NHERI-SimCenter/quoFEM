@@ -195,7 +195,7 @@ For each variable, specify the prior probability distribution - from the **Distr
 
 .. note::   
 
-   For this particular problem setup in which the user is not using a postprocessing script, the user may specify any names for the QoI variables. They are only being used by Dakota to return information on the results.
+   For this particular problem setup in which the user is not using a postprocessing script, the user may specify any names for the QoI variables. They are only being used by the UCSD_UQ engine to return information on the results.
 
 
 5. Next click on the **Run** button. This will cause the backend application to launch the **UCSD_UQ** engine, which performs Bayesian calibration using the TMCMC algorithm. When done, the **RES** tab will be selected and the results will be displayed as shown in the figure below. The results show the first four moments of the posterior marginal probability distribution of :math:`k_1` and :math:`k_2`. The true value of both :math:`k_1` and :math:`k_2` is **958.61  kips/in**.
@@ -227,7 +227,7 @@ Various views of the graphical display can be obtained by left and right clickin
    :figclass: align-center
    :width: 600
 
-If a singular column of the tabular data is pressed with both right and left buttons a histogram and CDF will be displayed, as shown in the figures below.
+If a single column of the tabular data is pressed with both right and left buttons a histogram and CDF will be displayed, as shown in the figures below.
 
 .. figure:: figures/qfem-0014-RES4.png
    :align: center

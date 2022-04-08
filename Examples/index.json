@@ -363,6 +363,7 @@
         "qfem-0017/src/UQpySimpleExample.json",
         "qfem-0017/figures/CUS_UQtab.png",
         "qfem-0017/figures/CUS_UQtab2.png",
+        "qfem-0017/figures/CUS_UQtab3.png",
         "qfem-0017/figures/CUS_FEMtab.png"
       ],
       "entry_point": "qfem-0017/./input.json",
