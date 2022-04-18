@@ -44,6 +44,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDir>
 #include <QStandardPaths>
 #include <QStatusBar>
+#include <QProcessEnvironment>
 
 #include <MainWindowWorkflowApp.h>
 #include <WorkflowApp_quoFEM.h>
@@ -105,12 +106,17 @@ int main(int argc, char *argv[])
     // set up logging of output messages for user debugging
     //
 
-
     logFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + QDir::separator() + QCoreApplication::applicationName()
             + QDir::separator() + QString("debug.log");
 
 
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();    
+    QString workDir = env.value("SIMCENTER_WORKDIR","None");
+    if (workDir != "None") {
+      logFilePath = workDir + QDir::separator() + QString("debug.log");
+    }    
+    
     // remove old log file
     QFile debugFile(logFilePath);
     debugFile.remove();
