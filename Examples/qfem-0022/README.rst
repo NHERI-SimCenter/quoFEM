@@ -7,6 +7,23 @@ Two-Dimensional Truss: PLoM Modeling and Simulation
 | Problem files  | :github:`Download <Examples/qfem-0022>`  |
 +----------------+------------------------------------------+
 
+About PLoM
+^^^^^^^^^^^^
+
+**PLoM** is an open source python package that implements the algorithm of **Probabilistic 
+Learning on Manifolds** with and without constraints ([SoizeGhanem2016]_, [SoizeGhanem2020]_) 
+for *generating realizations of a random vector in a finite Euclidean space that are 
+statistically consistent with a given dataset of that vector*. 
+
+PLoM functionality in SimCenter tools is built upon `PLoM <https://github.com/sanjayg0/PLoM>`_ 
+package (available under MIT license), an opensource python package for Probabilistic 
+Learning on Manifolds [ZhongGualGovindjee2021]_. The package mainly consists of python 
+modules and invokes a dynamic library for more efficiently computing the gradient of 
+the potential, and can be imported and run on Linux, macOS, and Windows platform. 
+
+Problem Statement
+^^^^^^^^^^^^^^^^^^^
+
 Consider the problem simulating response of a two-dimensional truss structure with uncertain material properties shown in the following figure.
 The goal of the exercise is to demonstrate the use of ``PLoM model`` method under ``SimCenterUQ``.
 
@@ -97,3 +114,13 @@ page would bring up a dialogue window for saving the model file to a user-define
 .. figure:: figures/RES4.png
    :align: center
    :figclass: align-center
+
+
+.. [SoizeGhanem2016]
+    Soize, C., & Ghanem, R. (2016). Data-driven probability concentration and sampling on manifold. Journal of Computational Physics, 321, 242-258.
+
+.. [SoizeGhanem2020]
+    Soize, C., & Ghanem, R. (2020). Physics‐constrained non‐Gaussian probabilistic learning on manifolds. International Journal for Numerical Methods in Engineering, 121(1), 110-145.
+
+.. [ZhongGualGovindjee2021] 
+    Zhong, K., Gual, J., and Govindjee, S., PLoM python package v1.0, https://github.com/sanjayg0/PLoM (2021).
