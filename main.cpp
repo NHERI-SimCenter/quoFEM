@@ -107,15 +107,24 @@ int main(int argc, char *argv[])
     //
 
     logFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-            + QDir::separator() + QCoreApplication::applicationName()
-            + QDir::separator() + QString("debug.log");
+      + QDir::separator() + QCoreApplication::applicationName();
 
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();    
     QString workDir = env.value("SIMCENTER_WORKDIR","None");
     if (workDir != "None") {
-      logFilePath = workDir + QDir::separator() + QString("debug.log");
-    }    
+      logFilePath = workDir;
+    }
+
+    // make sure tool dir exists in Documentss folder
+    QDir dirWork(logFilePath);
+    if (!dirWork.exists())
+      if (!dirWork.mkpath(logFilePath)) {
+	qDebug() << QString("Could not create Working Dir: ") << logFilePath;
+      }
+
+    // full path to debug.log file
+    logFilePath = logFilePath + QDir::separator() + QString("debug.log");    
     
     // remove old log file
     QFile debugFile(logFilePath);
