@@ -1,3 +1,4 @@
+.. _qfem-0008:
 
 Steel Frame Calibration with DREAM
 ==================================

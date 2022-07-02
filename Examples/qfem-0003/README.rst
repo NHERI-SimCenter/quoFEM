@@ -1,3 +1,4 @@
+.. _qfem-0003:
 
 Reliability Analysis
 ====================

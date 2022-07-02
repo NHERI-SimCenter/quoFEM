@@ -1,3 +1,4 @@
+.. _qfem-0016:
 
 Surrogate Modeling to Predict Mean and Variance of Earthquake Response
 ======================================================================
