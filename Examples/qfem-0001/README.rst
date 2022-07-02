@@ -63,13 +63,8 @@ To perform a sampling or forward propagation uncertainty analysis the user would
    :align: center
    :figclass: align-center
 
-* Number of samples - 1000: Note that in MCS, the standard error of the mean decreases in a rate of :math:`N^{1/2}`. For example, the standard deviation of the mean estimator (:math:`\bar{y}`) is
-
-.. math::
-   \sigma_{\bar{Y}} = \frac{\sigma_{Y}}{\sqrt{N}}
-
-where :math:\sigma_{\bar{Y}} is the variance of QoI. However, since Latin hypercube sampling (LHS) algorithm is selected, the confidence interval is further narrowed. The amount of variance reduction is roughly proportional to the sum of the higher-order Sobol indices.
-
+* Sample size is related to the confidence interval of the estimates. Please refer to :ref:`here<lblDakotaForward>`.
+* Random seed is used to ensure that results are reproducible.
 
 2. Next select the **FEM** panel from the input panel. This will default in the OpenSees FEM engine. For the main script copy the path name to ``TrussModel.tcl`` or select **choose** and navigate to the file. For the **post-process script** field, repeat the same procedure for the ``TrussPost.tcl`` script.
 
