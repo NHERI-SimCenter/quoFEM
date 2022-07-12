@@ -87,7 +87,7 @@ surrogateGpFEM::surrogateGpFEM(QWidget *parent)
 
     QLabel *label2 = new QLabel("SurrogateGP Model (.pkl)");
     postprocessScript = new QLineEdit;
-    postprocessScript->setPlaceholderText("(Optional)");
+    postprocessScript->setPlaceholderText("");
     QPushButton *choosePostprocessScript = new QPushButton();
     choosePostprocessScript->setText(tr("Choose"));
     connect(choosePostprocessScript, &QPushButton::clicked, this, [this](){
