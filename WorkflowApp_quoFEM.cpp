@@ -526,6 +526,8 @@ WorkflowApp_quoFEM::loadFile(QString &fileName){
 
     this->clear();
     bool result = this->inputFromJSON(jsonObj);
+    this->statusMessage("Done Loading File");
+    
     if (result == true)
       return 0;
     else

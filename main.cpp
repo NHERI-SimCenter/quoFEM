@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("quoFEM");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("3.0.0");
+    QCoreApplication::setApplicationVersion("3.1.0");
     // GoogleAnalytics::SetTrackingId("UA-121636495-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
@@ -107,15 +107,24 @@ int main(int argc, char *argv[])
     //
 
     logFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-            + QDir::separator() + QCoreApplication::applicationName()
-            + QDir::separator() + QString("debug.log");
+      + QDir::separator() + QCoreApplication::applicationName();
 
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();    
     QString workDir = env.value("SIMCENTER_WORKDIR","None");
     if (workDir != "None") {
-      logFilePath = workDir + QDir::separator() + QString("debug.log");
-    }    
+      logFilePath = workDir;
+    }
+
+    // make sure tool dir exists in Documentss folder
+    QDir dirWork(logFilePath);
+    if (!dirWork.exists())
+      if (!dirWork.mkpath(logFilePath)) {
+	qDebug() << QString("Could not create Working Dir: ") << logFilePath;
+      }
+
+    // full path to debug.log file
+    logFilePath = logFilePath + QDir::separator() + QString("debug.log");    
     
     // remove old log file
     QFile debugFile(logFilePath);
@@ -166,7 +175,7 @@ int main(int argc, char *argv[])
 
     w.setAbout(aboutTitle, aboutSource);
 
-    QString version("Version 3.0.0");
+    QString version = QString("Version ") + QCoreApplication::applicationVersion();
     w.setVersion(version);
 
     QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, Kuanshi Zhong, & Wael Elhaddad. (2022). NHERI-SimCenter/quoFEM: Version 3.0.0 (v3.0.0). Zenodo. https://doi.org/10.5281/zenodo.6404498  \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
