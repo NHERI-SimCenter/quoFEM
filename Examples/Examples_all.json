@@ -84,6 +84,21 @@
       "name": "Deterministic Calibration of Material Model",
       "description": "~",
       "InputFile": "qfem-0018/input.json"
+    },
+    {
+      "name": "Two-Dimensional Truss: PLoM Modeling and Simulation",
+      "description": "In this example, the goal is to demonstrate the use of PLoM model method to predict the response of the example truss under the given load.",
+      "inputFile": "qfem-0022/src/input.json"
+    },
+    {
+      "name": "Surrogate modeling with design of experiments",
+      "description": "In this example illustrates different design of experiments strategies.",
+      "inputFile": "qfem-0021/src/input.json"
+    },
+    {
+      "name": "Global Sensitivity Analysis for Field QoI",
+      "description": "In this example, the global sensitivity analysis is demonstrated for field QoI quantities. To gain efficiency dealing with high-dimension outputs, principal component analysis and probability model-based global sensitivity analysis (PCA-PSA) method is used in the analysis.",
+      "inputFile": "qfem-0023/src/input.json"
     }
   ]
 }

@@ -1,0 +1,120 @@
+{
+    "Applications": {
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+                "MS_Path": "{Current_Dir}/",
+                "mainScript": "matTestAllParamsReadStrain.tcl",
+                "postprocessScript": ""
+            }
+        },
+        "UQ": {
+            "Application": "SimCenter-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 342,
+            "name": "stress",
+            "type": "field"
+        }
+    ],
+    "FEM": {
+    },
+    "UQ_Method": {
+        "PCAvarianceRatio": 0.99,
+        "RVdataGroup": "",
+        "RVsensitivityGroup": "",
+        "advancedOptions": true,
+        "performPCA": "Automatic",
+        "samplingMethodData": {
+            "method": "Monte Carlo",
+            "samples": 300,
+            "seed": 487
+        },
+        "uqEngine": "SimCenterUQ",
+        "uqType": "Sensitivity Analysis"
+    },
+    "isSurrogate": false,
+    "localAppDir": "",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 300,
+            "name": "fy",
+            "refCount": 0,
+            "upperbound": 700,
+            "value": "RV.fy",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 150000,
+            "name": "E",
+            "refCount": 0,
+            "upperbound": 250000,
+            "value": "RV.E",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "b",
+            "refCount": 0,
+            "upperbound": 0.2,
+            "value": "RV.b",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "cR1",
+            "refCount": 0,
+            "upperbound": 1,
+            "value": "RV.cR1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "cR2",
+            "refCount": 0,
+            "upperbound": 0.2,
+            "value": "RV.cR2",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "a1",
+            "refCount": 0,
+            "upperbound": 0.1,
+            "value": "RV.a1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "a3",
+            "refCount": 0,
+            "upperbound": 0.1,
+            "value": "RV.a3",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "",
+    "resultType": "SimCenterUQResultsSampling",
+    "runType": "runningLocal",
+    "summary": [
+    ],
+    "workingDir": ""
+}

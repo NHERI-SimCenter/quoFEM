@@ -36,14 +36,20 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "MainWindow.h"
 #include <QApplication>
 #include <QFile>
 #include <QTime>
+#include <QThread>
 #include <QTextStream>
-#include <GoogleAnalytics.h>
 #include <QDir>
 #include <QStandardPaths>
+#include <QStatusBar>
+#include <QProcessEnvironment>
+
+#include <MainWindowWorkflowApp.h>
+#include <WorkflowApp_quoFEM.h>
+#include <GoogleAnalytics.h>
+#include <AgaveCurl.h>
 
  // customMessgaeOutput code from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
@@ -81,11 +87,18 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
+
+#ifdef Q_OS_WIN
+    QApplication::setAttribute(Qt::AA_UseOpenGLES);
+#else
+    QApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+#endif
+    
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("quoFEM");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("2.4.1");
-    GoogleAnalytics::SetTrackingId("UA-121636495-1");
+    QCoreApplication::setApplicationVersion("3.1.0");
+    // GoogleAnalytics::SetTrackingId("UA-121636495-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
 
@@ -93,12 +106,26 @@ int main(int argc, char *argv[])
     // set up logging of output messages for user debugging
     //
 
-
     logFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-            + QDir::separator() + QCoreApplication::applicationName()
-            + QDir::separator() + QString("debug.log");
+      + QDir::separator() + QCoreApplication::applicationName();
 
 
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();    
+    QString workDir = env.value("SIMCENTER_WORKDIR","None");
+    if (workDir != "None") {
+      logFilePath = workDir;
+    }
+
+    // make sure tool dir exists in Documentss folder
+    QDir dirWork(logFilePath);
+    if (!dirWork.exists())
+      if (!dirWork.mkpath(logFilePath)) {
+	qDebug() << QString("Could not create Working Dir: ") << logFilePath;
+      }
+
+    // full path to debug.log file
+    logFilePath = logFilePath + QDir::separator() + QString("debug.log");    
+    
     // remove old log file
     QFile debugFile(logFilePath);
     debugFile.remove();
@@ -123,9 +150,63 @@ int main(int argc, char *argv[])
   //
 
   QApplication app(argc, argv);
-  MainWindow w;
-  w.show();
+
+    //
+    // create a remote interface
+    //
+
+    QString tenant("designsafe");
+    QString storage("agave://designsafe.storage.default/");
+    QString dirName("quoFEM");
+
+    AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage, &dirName);
+
+
+    //
+    // create the main window
+    //
+
+    WorkflowAppWidget *theInputApp = new WorkflowApp_quoFEM(theRemoteService);
+    
+    MainWindowWorkflowApp w(QString("quoFEM: Quantified Uncertainty with Optimization for the Finite Element Method"), theInputApp, theRemoteService);
+    
+    QString aboutTitle = "About the SimCenter quoFEM Application"; // this is the title displayed in the on About dialog
+    QString aboutSource = ":/images/aboutQUOFEM.html";  // this is an HTML file stored under resources
+
+    w.setAbout(aboutTitle, aboutSource);
+
+    QString version = QString("Version ") + QCoreApplication::applicationVersion();
+    w.setVersion(version);
+
+    QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, Kuanshi Zhong, & Wael Elhaddad. (2022). NHERI-SimCenter/quoFEM: Version 3.0.0 (v3.0.0). Zenodo. https://doi.org/10.5281/zenodo.6404498  \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
   
+    w.setCite(citeText);
+
+    QString manualURL("https://nheri-simcenter.github.io/quoFEM-Documentation/");
+    w.setDocumentationURL(manualURL);
+
+    QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=4.0");
+    w.setFeedbackURL(messageBoardURL);
+
+    //
+    // move remote interface to a thread
+    //
+
+    QThread *thread = new QThread();
+    theRemoteService->moveToThread(thread);
+
+    QWidget::connect(thread, SIGNAL(finished()), theRemoteService, SLOT(deleteLater()));
+    QWidget::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+
+    thread->start();
+
+    //
+    // show the main window, set styles & start the event loop
+    //
+
+    w.show();
+    w.statusBar()->showMessage("Ready", 5000);
+    
   // load style sheet
 
 #ifdef Q_OS_WIN

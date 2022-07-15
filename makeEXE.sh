@@ -1,28 +1,16 @@
 #!/bin/bash
-
 #
-# build backend
+# make build dir, remove old app
 #
 
-cd backend
 mkdir -p build
 cd build
-conan install .. --build missing
-cmake -DCMAKE_BUILD_TYPE=Release ..
-status=$?; if [[ $status != 0 ]]; then echo "cmake failed"; exit $status; fi
-make
-status=$?; if [[ $status != 0 ]]; then echo "make backend failed"; exit $status; fi
-make install
-status=$?; if [[ $status != 0 ]]; then echo "install backend failed"; exit $status; fi
+rm -fr quoFEM.app quoFEM
 
 #
 # build UI
 #
 
-cd ..
-cd ..
-mkdir -p build
-cd build
 conan install .. --build missing
 status=$?; if [[ $status != 0 ]]; then echo "conan install failed"; exit $status; fi
 qmake ../quoFEM.pro
@@ -31,9 +19,44 @@ make
 status=$?; if [[ $status != 0 ]]; then echo "make failed"; exit $status; fi
 
 #
+# Copy applications from SimCentreBackend
+#
+
+mkdir ./quoFEM.app/Contents/MacOS/applications
+cp -fr ../../SimCenterBackendApplications/applications/performUQ ./quoFEM.app/Contents/MacOS/applications
+cp -fr ../../SimCenterBackendApplications/applications/performFEM ./quoFEM.app/Contents/MacOS/applications
+cp -fr ../../SimCenterBackendApplications/applications/Workflow ./quoFEM.app/Contents/MacOS/applications
+
+cp ../../nataf_gsa_cpp_mpi/build/bin/nataf_gsa ./quoFEM.app/Contents/MacOS/applications/performUQ/SimCenterUQ
+cp /usr/local/opt/libomp/lib/libomp.dylib ./quoFEM.app/Contents/MacOS/applications/performUQ/SimCenterUQ
+install_name_tool -change /usr/local/opt/libomp/lib/libomp.dylib @executable_path/libomp.dylib ./quoFEM.app/Contents/MacOS/applications/performUQ/SimCenterUQ/nataf_gsa
+
+
+#
+# Copy OpenSees and Dakota
+#
+
+mkdir  ./quoFEM.app/Contents/MacOS/applications/opensees
+mkdir  ./quoFEM.app/Contents/MacOS/applications/dakota
+cp -fr /Users/fmckenna/bin/OpenSees3.2.2/* ./quoFEM.app/Contents/MacOS/applications/opensees
+cp -fr /Users/fmckenna/dakota-6.12.0/* ./quoFEM.app/Contents/MacOS/applications/dakota
+
+#
+# Copy Example files
+#
+
+cp -fr ../Examples ./quoFEM.app/Contents/MacOS/
+rm -fr ./quoFEM.app/Contents/MacOS/Examples/.archive
+rm -fr ./quoFEM.app/Contents/MacOS/Examples/.aurore
+rm -fr ./quoFEM.app/Contents/MacOS/Examples/.gitignore
+
+#
 # cd back to were we started
 #
+
 cd ..
+
+
 
 
 

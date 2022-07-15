@@ -1,15 +1,6 @@
 {
-    "fem": {
-        "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/TrussModel.py",
-        "mainInput": "TrussModel.py",
-        "mainPostprocessScript": "",
-        "numInputs": 1,
-        "parametersFile": "TrussParams.py",
-        "parametersScript": "{Current_Dir}/TrussParams.py",
-        "postprocessScript": "",
-        "program": "OpenSeesPy"
-    },
+    "FEM": {
+    },    
     "UQ_Method": {
         "samplingMethodData": {
             "method": "LHS",
@@ -76,11 +67,15 @@
         "UQ": {
             "Application": "Dakota-UQ",
             "ApplicationData": {}
-        }
-    },
-    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
-    "uqResults": {},
-    "workingDir": "C:/Workdir/quoFEM",
-    "localAppDir": "C:/Tools/quoFEM/quoFEM",
-    "python": "python"
+        },
+        "FEM": {
+            "Application": "OpenSeesPy",
+            "ApplicationData": {
+		"MS_Path": "{Current_Dir}/",
+		"mainScript": "TrussModel.py",
+		"parametersScript": "TrussParams.py",
+		"PA_Path": "{Current_Dir}/"
+	    }
+        }		
+    }
 }

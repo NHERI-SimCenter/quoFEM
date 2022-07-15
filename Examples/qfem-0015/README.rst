@@ -1,3 +1,4 @@
+.. _qfem-0015:
 
 Surrogate Modeling for One Story Building Earthquake Response
 ===============================================================
@@ -198,7 +199,9 @@ Once surrogate model is constructed, it can be used for various UQ/optimization 
    :figclass: align-center
    :width: 1200
 
-5. Once the SurrogateGP Info field in the **FEM** tab is entered, the **QoI tab** is automatically populated. Users are allowed to remove some of the QoIs if not interested but may not add new QoIs or modify the names of existing QoIs.
+
+5. Users need to manually fill in the **QoI tab**. Users do not need to include here all the QoIs used for the training, but the users may not add new QoIs or modify the names of existing QoIs. [Tip] List of the trained QoI names can be found and copied in the **FEM tab**.
+
 
 .. figure:: figures/SUR-VER5.png
    :align: center

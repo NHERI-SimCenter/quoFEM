@@ -37,7 +37,7 @@ The ``TrussPost.tcl`` script shown below will accept as input any of the 6 nodes
 
 .. note::
 
-   The use has the option to provide no post-process script (in which case the main script must create a ``results.out`` file containing a single line with as many space separated numbers as QoI or the user may provide a Python script that also performs the postprocessing. An example of a postprocessing Python script is :quo-01:`TrussPost.py <src/TrussPost.py>`. 
+   The use has the option to provide no post-process script (in which case the main script must create a ``results.out`` file containing a single line with as many space separated numbers as QoI or the user may provide a Python script that also performs the postprocessing. An example of a postprocessing Python script is :qfem-0001:`TrussPost.py <src/TrussPost.py>`. 
 
    .. literalinclude:: ../qfem-0001/src/TrussPost.py
       :language: python
@@ -62,6 +62,9 @@ To perform a sampling or forward propagation uncertainty analysis the user would
 .. figure:: figures/trussUQ.png
    :align: center
    :figclass: align-center
+
+* Sample size is related to the confidence interval of the estimates. Please refer to :ref:`here<lblDakotaForward>`.
+* Random seed is used to ensure that results are reproducible.
 
 2. Next select the **FEM** panel from the input panel. This will default in the OpenSees FEM engine. For the main script copy the path name to ``TrussModel.tcl`` or select **choose** and navigate to the file. For the **post-process script** field, repeat the same procedure for the ``TrussPost.tcl`` script.
 

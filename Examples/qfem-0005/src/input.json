@@ -8,16 +8,7 @@
         "uqEngine": "Dakota",
         "uqType": "Forward Propagation"
     },
-    "fem": {
-        "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/rosenbrock.py",
-        "mainInput": "rosenbrock.py",
-        "mainPostprocessScript": "",
-        "numInputs": 1,
-        "parametersFile": "params.py",
-        "parametersScript": "{Current_Dir}/params.py",
-        "postprocessScript": "",
-        "program": "OpenSeesPy"
+    "FEM":{
     },
     "EDP": [
         {
@@ -51,11 +42,15 @@
         "UQ": {
             "Application": "Dakota-UQ",
             "ApplicationData": {}
+        },
+        "FEM": {
+            "Application": "OpenSeesPy",
+            "ApplicationData": {
+		"MS_Path": "{Current_Dir}/",
+		"mainScript": "rosenbrock.py",
+		"parametersScript": "params.py",
+		"PA_Path": "{Current_Dir}/"
+	    }
         }
-    },
-    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
-    "uqResults": {},
-    "workingDir": "C:/Workdir/quoFEM",
-    "localAppDir": "C:/Tools/quoFEM/quoFEM",
-    "python": "python"
+    }
 }

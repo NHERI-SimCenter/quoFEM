@@ -71,11 +71,14 @@ ResultsDataChart::ResultsDataChart(QJsonObject spread, bool isSur, int nRV, QWid
     col2 = 0;
     spreadsheet = new MyTableWidget();
     this->readTableFromJson(spread);
-    this->makeChart();
-
-    if (isSur) {
-        for (int i=nrv+nqoi+1; i<colCount; i++)
-            spreadsheet->setColumnHidden(i,true);
+    if (rowCount==0) {
+        errorMessage("ERROR: reading Dakota Results - no result widget set!");
+    } else {
+        this->makeChart();
+        if (isSur) {
+            for (int i=nrv+nqoi+1; i<colCount; i++)
+                spreadsheet->setColumnHidden(i,true);
+        }
     }
 
 }
@@ -89,11 +92,14 @@ ResultsDataChart::ResultsDataChart(QString filenameTab, bool isSur, int nRV, QWi
     col2 = 0;
     spreadsheet = new MyTableWidget();
     this->readTableFromTab(filenameTab);
-    this->makeChart();
-
-    if (isSur) {
-        for (int i=nrv+nqoi+1; i<colCount; i++)
-            spreadsheet->setColumnHidden(i,true);
+    if (rowCount==0) {
+        errorMessage("ERROR: reading Dakota Results - no result widget set!");
+    } else {
+        this->makeChart();
+        if (isSur) {
+            for (int i=nrv+nqoi+1; i<colCount; i++)
+                spreadsheet->setColumnHidden(i,true);
+        }
     }
 
 }

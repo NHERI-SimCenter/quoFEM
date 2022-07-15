@@ -1,0 +1,94 @@
+{
+    "$schema": "https://raw.githubusercontent.com/claudioperez/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",
+    "Applications": {
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+                "MS_Path": "{Current_Dir}/",
+                "mainScript": "TrussModel.tcl",
+                "postprocessScript": "TrussPost.tcl",
+                "PS_Path": "{Current_Dir}/"
+            }
+        },
+        "UQ": {
+            "Application": "SimCenter-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 1,
+            "name": "Node_3_Disp_2",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "Node_2_Disp_2",
+            "type": "scalar"
+        }
+    ],
+    "FEM": {
+    },
+    "UQ_Method": {
+        "surrogateMethodInfo": {
+            "advancedOpt": false,
+            "inpFile": "PLoM_variables.csv",
+            "method": "Sampling and Simulation",
+            "newSampleRatio": 5,
+            "outFile": "PLoM_responses.csv",
+            "outputData": true,
+            "parallelExecution": false,
+            "preTrained": false,
+            "samplingMethod": {
+                "method": "LHS",
+                "samples": 50,
+                "seed": 150
+            }
+        },
+        "uqEngine": "SimCenterUQ",
+        "uqType": "PLoM Model"
+    },
+    "randomVariables": [
+        {
+            "distribution": "Lognormal",
+            "inputType": "Moments",
+            "mean": 205,
+            "name": "E",
+            "refCount": 1,
+            "stdDev": 15,
+            "value": "RV.E",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 25,
+            "name": "P",
+            "refCount": 1,
+            "stdDev": 3,
+            "value": "RV.P",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Lognormal",
+            "inputType": "Moments",
+            "mean": 250,
+            "name": "Ao",
+            "refCount": 1,
+            "stdDev": 10,
+            "value": "RV.Ao",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 500,
+            "name": "Au",
+            "refCount": 1,
+            "stdDev": 25,
+            "value": "RV.Au",
+            "variableClass": "Uncertain"
+        }
+    ]
+}

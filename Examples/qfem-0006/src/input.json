@@ -32,16 +32,7 @@
             "variableClass": "Uncertain"
         }
     ],
-    "fem": {
-        "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/Rosen.py",
-        "mainInput": "Rosen.py",
-        "mainPostprocessScript": "",
-        "numInputs": 1,
-        "parametersFile": "RosenParams.py",
-        "parametersScript": "{Current_Dir}/RosenParams.py",
-        "postprocessScript": "",
-        "program": "OpenSeesPy"
+    "FEM":{
     },
     "EDP": [
         {
@@ -53,11 +44,15 @@
         "UQ": {
             "Application": "Dakota-UQ",
             "ApplicationData": {}
-        }
-    },
-    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
-    "uqResults": {},
-    "workingDir": "C:/Workdir/quoFEM",
-    "localAppDir": "C:/Tools/quoFEM/quoFEM",
-    "python": "python"
+        },
+        "FEM": {
+            "Application": "OpenSeesPy",
+            "ApplicationData": {
+		"MS_Path": "{Current_Dir}/",
+		"mainScript": "Rosen.py",
+		"parametersScript": "RosenParams.py",
+		"PA_Path": "{Current_Dir}/"
+	    }
+        }	
+    }
 }

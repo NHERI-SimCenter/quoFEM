@@ -77,3 +77,7 @@ backend/applications
 backend/build
 applications/build
 applications/applications
+
+*html
+*Doxyfile
+*latex

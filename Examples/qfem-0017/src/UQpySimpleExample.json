@@ -1,29 +1,33 @@
 {
     "Parameters" :  [
 	{
-	    "type" : "ComboBox",
-	    "name" : "Sampling Method",
-	    "values" : ["LHS"]
+		"type" : "ComboBox",
+		"name" : "Sampling Method",
+		"values" : ["LHS"]
 	},
 	{
-	    "type" : "SpinBox",
-	    "name" : "Number of Samples"
+		"type" : "LineEdit",
+		"name" : "Number of Samples"
 	},
 	{
-	    "type" : "SpinBox",
-	    "name" : "Number of Concurrent Tasks"
+		"type" : "LineEdit",
+		"name" : "Seed"
 	},
 	{
-	    "type" : "SpinBox",
-	    "name" : "Number of Nodes"
+		"type" : "SpinBox",
+		"name" : "Number of Concurrent Tasks"
 	},
 	{
-	    "type" : "SpinBox",
-	    "name" : "Cores per Task"
+		"type" : "SpinBox",
+		"name" : "Number of Nodes"
 	},
 	{
-	    "type" : "LineEdit",
-	    "name" : "UQ Driver"
+		"type" : "SpinBox",
+		"name" : "Cores per Task"
+	},
+	{
+		"type" : "LineEdit",
+		"name" : "UQ Driver"
 	}	
     ]
 }
