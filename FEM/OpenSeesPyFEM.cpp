@@ -218,7 +218,7 @@ OpenSeesPyFEM::outputAppDataToJSON(QJsonObject &jsonObject) {
 
     if (fileInfo2.exists() && fileInfo2.isFile()) {
         dataObj["parametersScript"]=fileInfo2.fileName();
-        dataObj["PS_Path"]=fileInfo1.path();
+        dataObj["PA_Path"]=fileInfo2.path();
     } else {
         if (fileName2.isEmpty())
             dataObj["parametersScript"]=QString("");
@@ -253,6 +253,8 @@ OpenSeesPyFEM::inputAppDataFromJSON(QJsonObject &jsonObject) {
     QString fileName;
     QString filePath;
     
+    // Main ==
+
     if (dataObject.contains("mainScript")) {
       QJsonValue theName = dataObject["mainScript"];
       fileName = theName.toString();
@@ -267,31 +269,39 @@ OpenSeesPyFEM::inputAppDataFromJSON(QJsonObject &jsonObject) {
     
     inputScript->setText(QDir(filePath).filePath(fileName));
 
+    // Post ==
+
     if (dataObject.contains("postprocessScript")) {
       QJsonValue theName = dataObject["postprocessScript"];
       fileName = theName.toString();
       
       if (dataObject.contains("PS_Path")) {
-	QJsonValue theName = dataObject["PS_Path"];
-	filePath = theName.toString();
-	postprocessScript->setText(QDir(filePath).filePath(fileName));	
-      } else 
-	postprocessScript->setText(fileName);	
-    } else
+        QJsonValue theName = dataObject["PS_Path"];
+        filePath = theName.toString();
+        postprocessScript->setText(QDir(filePath).filePath(fileName));
+      } else {
+        postprocessScript->setText(fileName);
+      }
+    } else  {
       postprocessScript->setText("");
+    }
+
+    // Params ==
 
     if (dataObject.contains("parametersScript")) {
       QJsonValue theName = dataObject["parametersScript"];
       fileName = theName.toString();
-      
+
       if (dataObject.contains("PA_Path")) {
-	QJsonValue theName = dataObject["PA_Path"];
-	filePath = theName.toString();
-	parametersScript->setText(QDir(filePath).filePath(fileName));
-      } else
-	parametersScript->setText(fileName);
-    } else 
-      parametersScript->setText("");
+        QJsonValue theName = dataObject["PA_Path"];
+        filePath = theName.toString();
+        parametersScript->setText(QDir(filePath).filePath(fileName));
+      } else {
+        parametersScript->setText(fileName);
+      }
+    } else  {
+        parametersScript->setText("");
+    }
 
   } else
     return false;

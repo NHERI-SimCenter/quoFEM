@@ -76,9 +76,13 @@ surrogateGpParser::getVariables(QString inFilename)
     if (file.open(QFile::ReadOnly | QFile::Text)) {
         QString val;
         val=file.readAll();
+        file.close();
+        val.replace(QString("NaN"),QString("null"));
+        val.replace(QString("Infinity"),QString("inf"));
+
         QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
         QJsonObject jsonSur = doc.object();
-        file.close();
+
 
         auto GPidentifier = jsonSur.find("kernName"); // should be the right .json file
         if (!jsonSur.isEmpty() && GPidentifier != jsonSur.end()) {
