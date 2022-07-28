@@ -27,7 +27,6 @@ cp -fr ../../SimCenterBackendApplications/applications/performUQ ./quoFEM.app/Co
 cp -fr ../../SimCenterBackendApplications/applications/performFEM ./quoFEM.app/Contents/MacOS/applications
 cp -fr ../../SimCenterBackendApplications/applications/Workflow ./quoFEM.app/Contents/MacOS/applications
 
-cp ../../nataf_gsa_cpp_mpi/build/bin/nataf_gsa ./quoFEM.app/Contents/MacOS/applications/performUQ/SimCenterUQ
 cp /usr/local/opt/libomp/lib/libomp.dylib ./quoFEM.app/Contents/MacOS/applications/performUQ/SimCenterUQ
 install_name_tool -change /usr/local/opt/libomp/lib/libomp.dylib @executable_path/libomp.dylib ./quoFEM.app/Contents/MacOS/applications/performUQ/SimCenterUQ/nataf_gsa
 
