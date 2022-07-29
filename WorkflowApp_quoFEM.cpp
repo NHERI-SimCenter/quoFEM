@@ -157,6 +157,7 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
     connect(remoteApp,SIGNAL(successfullJobStart()), theRunWidget, SLOT(hide()));
 
     connect(localApp,SIGNAL(runComplete()), this, SLOT(runComplete()));
+    connect(localApp, SIGNAL(runComplete()), this, SIGNAL(sendLocalRunComplete()));
     connect(remoteApp,SIGNAL(successfullJobStart()), this, SLOT(runComplete()));
     connect(theService, SIGNAL(closeDialog()), this, SLOT(runComplete()));
     connect(theJobManager, SIGNAL(closeDialog()), this, SLOT(runComplete()));
