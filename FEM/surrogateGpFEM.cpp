@@ -87,7 +87,7 @@ surrogateGpFEM::surrogateGpFEM(QWidget *parent)
 
     QLabel *label2 = new QLabel("SurrogateGP Model (.pkl)");
     postprocessScript = new QLineEdit;
-    postprocessScript->setPlaceholderText("(Optional)");
+    postprocessScript->setPlaceholderText("");
     QPushButton *choosePostprocessScript = new QPushButton();
     choosePostprocessScript->setText(tr("Choose"));
     connect(choosePostprocessScript, &QPushButton::clicked, this, [this](){
@@ -134,8 +134,10 @@ surrogateGpFEM::surrogateGpFEM(QWidget *parent)
     QHBoxLayout * gpOutputLayout = new QHBoxLayout();
     gpOutputComboBox= new QComboBox;
     gpOutputComboBox->addItem("Median (representative) prediction");
+    //gpOutputComboBox->addItem("Random sample under prediction uncertainty");
     gpOutputLayout->addWidget( new QLabel("GP output   "));
     gpOutputLayout->addWidget(gpOutputComboBox);
+    gpOutputComboBox->setMinimumWidth(400);
     gpOutputLayout->addStretch(1);
 
     connect(option3Button, &QRadioButton::toggled, this, [=](bool tog){
@@ -398,6 +400,8 @@ surrogateGpFEM::showGpOptions(QString name1) {
     if (file.open(QFile::ReadOnly | QFile::Text)) {
         QString val;
         val=file.readAll();
+        val.replace(QString("NaN"),QString("null"));
+        val.replace(QString("Infinity"),QString("inf"));
         QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
         QJsonObject jsonSur = doc.object();
         file.close();
