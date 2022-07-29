@@ -106,7 +106,9 @@ python3 -m pip install nheri-simcenter
 sudo spctl --master-disable
 
 # Run the test app
-./build/R2DTest
+for example in Examples/*/; do
+  ./build/qfem "$example/src/input.json"
+done
 
 status=$?
 if [[ $status != 0 ]]
