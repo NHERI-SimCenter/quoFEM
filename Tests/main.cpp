@@ -47,6 +47,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QProcessEnvironment>
 
 #include <MainWindowWorkflowApp.h>
+#include "WorkflowCLI.h"
 #include <WorkflowApp_quoFEM.h>
 #include <GoogleAnalytics.h>
 #include <AgaveCurl.h>
@@ -149,7 +150,7 @@ int main(int argc, char *argv[])
   // start Qt mainwindow per normal
   //
 
-  QApplication app(argc, argv);
+   QApplication app(argc, argv);
 
     //
     // create a remote interface
@@ -177,7 +178,8 @@ int main(int argc, char *argv[])
 
     QString version = QString("Version ") + QCoreApplication::applicationVersion();
     w.setVersion(version);
-QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, Kuanshi Zhong, & Wael Elhaddad. (2022). NHERI-SimCenter/quoFEM: Version 3.1.0 (v3.1.0). Zenodo. https://doi.org/10.5281/zenodo.6903846  \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
+
+    QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, Kuanshi Zhong, & Wael Elhaddad. (2022). NHERI-SimCenter/quoFEM: Version 3.0.0 (v3.0.0). Zenodo. https://doi.org/10.5281/zenodo.6404498  \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
   
     w.setCite(citeText);
 
@@ -186,6 +188,14 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
 
     QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=4.0");
     w.setFeedbackURL(messageBoardURL);
+
+    if (argc > 1) {
+      logToFile = true;  
+      WorkflowCLI cli(&w, theInputApp);
+      int cli_complete;
+      if ((cli_complete = cli.parseAndRun(argc, argv)) <= 0)
+        return cli_complete;
+    }
 
     //
     // move remote interface to a thread
@@ -202,7 +212,6 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
     //
     // show the main window, set styles & start the event loop
     //
-
     w.show();
     w.statusBar()->showMessage("Ready", 5000);
     
