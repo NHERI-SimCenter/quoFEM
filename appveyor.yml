@@ -38,9 +38,10 @@ for:
        - cd ..
 
     test_script:
-       - qmake --version
-       - gcc --version
-       - python --version
+      #- qmake --version
+      #- gcc --version
+      #- python --version
+       - ./RunTests.sh
 
   # Ubuntu1804 
   -

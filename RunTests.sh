@@ -1,113 +1,116 @@
 #!/bin/bash 
 
-# Script to run SimCenter unit tests
-# Adapted from script by Stevan Gavrilovic
+executable="qfem"
+build_dir="build-cli"
 
-BASEDIR=$(dirname "$0")
+func() {
+  # Script to run SimCenter unit tests
+  # Adapted from script by Stevan Gavrilovic
 
-cd $BASEDIR
+  BASEDIR=$(dirname "$0")
 
-echo "Script file is in directory " $PWD
+  cd $BASEDIR
 
-cd build
+  echo "Script file is in directory " $PWD
 
-# Run qmake for Tests
-qmake ../quoFEM-Tests.pri
-status=$?
-if [[ $status != 0 ]]
-then
-    echo "RunTests: qmake failed";
-    exit $status;
-fi
+  mkdir -p ./build-cli/ && cd ./build-cli
 
-# make
-make -j8
-status=$?;
-if [[ $status != 0 ]]
-then
-    echo "RunTests: make failed";
-    exit $status;
-fi
+  # Run qmake for Tests
+  qmake "../quoFEM-Test.pri"
 
-cd ..
+  status=$?
+  if [[ $status != 0 ]]
+  then
+      echo "RunTests: qmake failed";
+      exit $status;
+  fi
+
+  # make
+  make -j8
+  status="$?";
+  if [[ $status != 0 ]]
+  then
+      echo "RunTests: make failed";
+      exit $status;
+  fi
 
 
-# Copy over the applications dir
 
-cp -Rf ../SimCenterBackendApplications/applications build/
+  # Copy over the applications dir
+  cd ..
+  cp -Rf "../SimCenterBackendApplications/applications" "$build_dir/"
 
-status=$?;
-if [[ $status != 0 ]]
-then
-    echo "Error copying the applications";
-    exit $status;
-fi
+  status=$?;
+  if [[ $status != 0 ]]
+  then
+      echo "Error copying backend applications";
+      exit $status;
+  fi
 
-# Download dakota and opensees, extract them, and install them to the build/applications folder
-mkdir dakota
+  # Download dakota and opensees, extract them, and install them to the build/applications folder
+  mkdir -p dakota && cd dakota
+  curl -O  https://dakota.sandia.gov/sites/default/files/distributions/public/dakota-6.15.0-public-darwin.Darwin.x86_64-cli.tar.gz
+  tar -xf *.tar.gz
 
-cd dakota
+  cd ..
 
-curl -O  https://dakota.sandia.gov/sites/default/files/distributions/public/dakota-6.15.0-public-darwin.Darwin.x86_64-cli.tar.gz
-tar -xf *.tar.gz
+  mkdir  ./$build_dir/applications/dakota
 
-cd ..
+  status=$?;
+  if [[ $status != 0 ]]
+  then
+      echo "Error making the dakota dir";
+      exit $status;
+  fi
 
-mkdir  ./build/applications/dakota
+  cp -rf ./dakota/dakota-*/* ./$build_dir/applications/dakota
 
-status=$?;
-if [[ $status != 0 ]]
-then
-    echo "Error making the dakota dir";
-    exit $status;
-fi
+  status=$?;
+  if [[ $status != 0 ]]
+  then
+      echo "Error copying dakota to $build_dir/applications/dakota dir";
+      exit $status;
+  fi
 
-cp -rf ./dakota/dakota-*/* ./build/applications/dakota
+  mkdir opensees
 
-status=$?;
-if [[ $status != 0 ]]
-then
-    echo "Error copying dakota to build/applications/dakota dir";
-    exit $status;
-fi
+  cd opensees
 
-mkdir opensees
+  curl -O  https://opensees.berkeley.edu/OpenSees/code/OpenSees3.3.0Mac.tar.gz
 
-cd opensees
+  tar -xf *.tar.gz
 
-curl -O  https://opensees.berkeley.edu/OpenSees/code/OpenSees3.3.0Mac.tar.gz
+  cd ..
 
-tar -xf *.tar.gz
+  mkdir  ./$build_dir/applications/opensees
 
-cd ..
+  status=$?;
+  if [[ $status != 0 ]]
+  then
+      echo "Error making the $build_dir/applications/opensees dir";
+      exit $status;
+  fi
 
-mkdir  ./build/applications/opensees
+  cp -rf ./opensees/OpenSees*/* ./$build_dir/applications/opensees
 
-status=$?;
-if [[ $status != 0 ]]
-then
-    echo "Error making the build/applications/opensees dir";
-    exit $status;
-fi
+  status=$?;
+  if [[ $status != 0 ]]
+  then
+      echo "Error copying opensees to applications dir";
+      exit $status;
+  fi
 
-cp -rf ./opensees/OpenSees*/* ./build/applications/opensees
-
-status=$?;
-if [[ $status != 0 ]]
-then
-    echo "Error copying opensees to applications dir";
-    exit $status;
-fi
-
-# Install nheri-sincenter python repositories
-python3 -m pip install nheri-simcenter
+  # Install nheri-sincenter python repositories
+  yes | python3 -m pip install nheri-simcenter
+}
 
 # Disable gatekeeper because dakota is unsigned
-sudo spctl --master-disable
+# sudo spctl --master-disable
 
 # Run the test app
 for example in Examples/*/; do
-  ./build/qfem "$example/src/input.json"
+  echo "Running example $example"
+  ./$build_dir/$executable "$example/src/input.json"
 done
 
 status=$?
