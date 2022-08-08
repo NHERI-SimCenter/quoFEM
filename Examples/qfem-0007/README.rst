@@ -1,3 +1,4 @@
+.. _qfem-0007:
 
 Steel Frame: Conventional Calibration
 ======================================

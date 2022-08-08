@@ -1,3 +1,4 @@
+.. _qfem-0004:
 
 Sensitivity Analysis
 ====================
