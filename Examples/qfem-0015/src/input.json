@@ -3,8 +3,8 @@
         "FEM": {
             "Application": "OpenSeesPy",
             "ApplicationData": {
-                "MS_Path": "{Current_Dir}/",
-                "PA_Path": "{Current_Dir}/",
+                "MS_Path": "{Current_Dir}/.",
+                "PA_Path": "{Current_Dir}/.",
                 "mainScript": "CWH.py",
                 "parametersScript": "params.py",
                 "postprocessScript": ""
@@ -53,6 +53,7 @@
         "uqEngine": "SimCenterUQ",
         "uqType": "Train GP Surrogate Model"
     },
+    "isSurrogate": false,
     "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
     "randomVariables": [
         {
@@ -63,7 +64,7 @@
             "refCount": 4,
             "upperbound": 1,
             "value": "RV.materialQuality",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -73,7 +74,7 @@
             "refCount": 4,
             "upperbound": 2400,
             "value": "RV.planArea",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -83,7 +84,7 @@
             "refCount": 4,
             "upperbound": 0.8,
             "value": "RV.aspectRatio",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -93,7 +94,7 @@
             "refCount": 4,
             "upperbound": 0.1,
             "value": "RV.damping",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -103,7 +104,7 @@
             "refCount": 4,
             "upperbound": 0.8,
             "value": "RV.extDensity_x",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -113,7 +114,7 @@
             "refCount": 4,
             "upperbound": 0.8,
             "value": "RV.extDensity_z",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -123,47 +124,47 @@
             "refCount": 4,
             "upperbound": 0.08,
             "value": "RV.intDensity",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0,
+            "lowerbound": 0.05,
             "name": "extEcc_x",
             "refCount": 4,
             "upperbound": 0.5,
             "value": "RV.extEcc_x",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0,
+            "lowerbound": 0.05,
             "name": "extEcc_z",
             "refCount": 4,
             "upperbound": 0.5,
             "value": "RV.extEcc_z",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0,
+            "lowerbound": 0.05,
             "name": "intEcc_x",
             "refCount": 4,
             "upperbound": 0.5,
             "value": "RV.intEcc_x",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0,
+            "lowerbound": 0.05,
             "name": "intEcc_z",
             "refCount": 4,
             "upperbound": 0.5,
             "value": "RV.intEcc_z",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -173,7 +174,7 @@
             "refCount": 4,
             "upperbound": 15.5,
             "value": "RV.floor1Weight",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -183,7 +184,7 @@
             "refCount": 4,
             "upperbound": 15.5,
             "value": "RV.floor2Weight",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         },
         {
             "distribution": "Uniform",
@@ -193,10 +194,13 @@
             "refCount": 4,
             "upperbound": 15.5,
             "value": "RV.roofWeight",
-            "variableClass": "Uncertain"
+            "variableClass": "Uniform"
         }
     ],
     "remoteAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "resultType": "SimCenterUQResultsSampling",
     "runType": "runningLocal",
+    "summary": [
+    ],
     "workingDir": "C:/Users/SimCenter/Documents/quoFEM/LocalWorkDir"
 }
