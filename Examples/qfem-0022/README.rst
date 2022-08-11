@@ -4,7 +4,7 @@ Two-Dimensional Truss: PLoM Modeling and Simulation
 =====================================================
 
 +----------------+------------------------------------------+
-| Problem files  | :github:`Download <Examples/qfem-0022>`  |
+| Problem files  | :github:`Download <Examples/qfem-0022/>`  |
 +----------------+------------------------------------------+
 
 About PLoM
@@ -40,14 +40,14 @@ The exercise requires two files:
 
 1. :qfem-0022:`TrussTemplate.tcl <src/TrussModel.tcl>`
 
-.. literalinclude:: ./src/TrussModel.tcl
+.. literalinclude:: src/TrussModel.tcl
    :language: tcl
 
 2. :qfem-0001:`TrussPost.tcl </src/TrussPost.tcl>`. 
 
 The ``TrussPost.tcl`` script shown below will accept as input any of the 6 nodes in the domain and for each of the two dof directions.
 
-.. literalinclude:: ./src/TrussPost.tcl
+.. literalinclude:: src/TrussPost.tcl
    :language: tcl
 
 PLoM Modeling
