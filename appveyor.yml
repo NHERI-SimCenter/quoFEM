@@ -2,8 +2,8 @@ version: 1.0.{build}
 
 image:
   - macOS
-  - Ubuntu1804
-  - Visual Studio 2019
+  # - Ubuntu1804
+  # - Visual Studio 2019
 
 stack: python 3.8
 
