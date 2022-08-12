@@ -41,7 +41,7 @@ for:
       #- qmake --version
       #- gcc --version
       #- python --version
-       - ./RunTests.sh
+       - ./RunTests.sh macos
 
   # Ubuntu1804 
   -

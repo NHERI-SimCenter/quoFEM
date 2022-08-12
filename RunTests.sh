@@ -109,6 +109,14 @@ build_macOS() {
 
 }
 
+case $1 in
+  macos)
+    build_macOS
+    build_all
+    ;;
+  *)
+esac
+
 # Run the test app
 for example in Examples/*000[12]/; do
   echo "Running example $example"
