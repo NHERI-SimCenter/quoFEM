@@ -26,8 +26,8 @@ for:
        
     install:
        - uname
-       - git clone https://github.com/NHERI-SimCenter/SimCenterCommon.git
-       - git clone https://github.com/NHERI-SimCenter/quoFEM.git
+       - git clone https://github.com/claudioperez/SimCenterCommon.git
+       - git clone https://github.com/claudioperez/quoFEM.git
 
     build_script:
 
