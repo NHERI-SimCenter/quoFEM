@@ -1,0 +1,5 @@
+[fy, E, b, R0, cR1, cR2, a1, a3] 
+[5.04316403e+02 2.02255441e+05 2.04131660e-02 8.83115989e-01
+ 1.93139916e-01 3.06231165e-02 1.60494444e-02 1.00000000e+01]
+Standard deviation of error =  10
+Strain History --> 5 (SH3Static_Sin) 

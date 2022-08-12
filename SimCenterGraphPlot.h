@@ -26,7 +26,7 @@ public:
 
     void clear();
     void addLine(QVector<double> &x, QVector<double> &y, int width = 1, int r=0, int g=0, int b=0);
-
+    void drawPDF(QVector<double> &x, QVector<double> &y) ;
 signals:
 
 public slots:

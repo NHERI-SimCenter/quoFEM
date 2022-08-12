@@ -41,20 +41,20 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <SimCenterWidget.h>
 
-#include "EDP.h"
+#include "quoEDP.h"
 #include <QGroupBox>
 #include <QVector>
 #include <QVBoxLayout>
 #include <QCheckBox>
 
-#include "InputWidgetParameters.h"
+class RandomVariablesContainer;
 
 class InputWidgetEDP : public SimCenterWidget
 {
     Q_OBJECT
 
 public:
-    explicit InputWidgetEDP(InputWidgetParameters *param, QWidget *parent = 0);
+    explicit InputWidgetEDP(QWidget *parent = 0);
     ~InputWidgetEDP();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -62,11 +62,10 @@ public:
 
     int processResults(double *data);
     int getNumEDP(void);
-    void setGPQoINames(QStringList quiNames);
+    //void setGPQoINames(QStringList quiNames);
     void showAdvancedSensitivity(bool tog);
 
-    QVector<EDP *>theEDPs;
-
+    QVector<quoEDP *>theEDPs;
 
 signals:
 
@@ -74,7 +73,8 @@ public slots:
    void addEDP(void);
    void removeEDP(void);
    void clear(void);
-   void setDefaultGroup(bool tog);
+   //void setDefaultGroup(bool tog);
+   void removeThisEDP(quoEDP *);
 
 private:
     void makeEDP(void);
@@ -84,13 +84,9 @@ private:
     QCheckBox *theCheckButton;
     QVBoxLayout *verticalLayout;
     QVBoxLayout *edpLayout;
-    //QGroupBox *edp;
     QFrame *edp;
-    //QWidget *edp;
     QLineEdit *theGroupEdit;
-//    QVector<EDP *>theEDPs;
-
-    InputWidgetParameters *theParameters;
+    bool x_button_clicked_before;
 };
 
 #endif // INPUTWIDGETEDP_H

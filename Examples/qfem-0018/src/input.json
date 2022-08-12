@@ -4,7 +4,14 @@
             "Application": "Dakota-UQ",
             "ApplicationData": {
             }
-        }
+        },
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+		"MS_Path": "{Current_Dir}/",
+		"mainScript": "matTestAllParamsReadStrain.tcl"
+	    }
+        }	
     },
     "EDP": [
         {
@@ -13,6 +20,8 @@
             "type": "field"
         }
     ],
+    "FEM":{
+    },
     "UQ_Method": {
         "calibrationMethodData": {
             "calibrationDataFile": "{Current_Dir}/calDataField.csv",
@@ -24,16 +33,6 @@
         "parallelExecution": true,
         "uqEngine": "Dakota",
         "uqType": "Parameters Estimation"
-    },
-    "fem": {
-        "dir": "{Current_Dir}/src",
-        "inputFile": "{Current_Dir}/matTestAllParamsReadStrain.tcl",
-        "mainInput": "matTestAllParamsReadStrain.tcl",
-        "mainPostprocessScript": "",
-        "modelTag": 0,
-        "numInputs": 1,
-        "postprocessScript": "",
-        "program": "OpenSees"
     },
     "localAppDir": "/Users/aakash/SimCenter/quoFEM/backend",
     "python": "/Library/Frameworks/Python.framework/Versions/3.7/bin/python3",

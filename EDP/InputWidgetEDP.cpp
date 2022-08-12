@@ -47,18 +47,18 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QSpacerItem>
 #include <QCheckBox>
 #include <QLineEdit>
-
-#include "InputWidgetParameters.h"
-
+#include <RandomVariablesContainer.h>
+#include <quoEDP.h>
 #include <QDebug>
+#include <QMessageBox>
 
-
-InputWidgetEDP::InputWidgetEDP(InputWidgetParameters *param, QWidget *parent)
-    : SimCenterWidget(parent), theParameters(param)
+InputWidgetEDP::InputWidgetEDP(QWidget *parent)
+    : SimCenterWidget(parent)
 {
     verticalLayout = new QVBoxLayout();
     this->setLayout(verticalLayout);
     this->makeEDP();
+    x_button_clicked_before=false;
 }
 
 InputWidgetEDP::~InputWidgetEDP()
@@ -87,7 +87,7 @@ InputWidgetEDP::makeEDP(void)
     QPushButton *removeEDP = new QPushButton();
     removeEDP->setMinimumWidth(75);
     removeEDP->setMaximumWidth(75);
-    removeEDP->setText(tr("Remove"));
+    removeEDP->setText(tr("Clear all"));
     connect(removeEDP,SIGNAL(clicked()),this,SLOT(removeEDP()));
 
     titleLayout->addWidget(title);
@@ -124,27 +124,27 @@ InputWidgetEDP::makeEDP(void)
 
 }
 
-void InputWidgetEDP::setGPQoINames(QStringList quiNames) {
+//void InputWidgetEDP::setGPQoINames(QStringList quiNames) {
 
-    // remove existing boxes
-    int numEDPs = theEDPs.size();
-    for (int i = numEDPs-1; i >= 0; i--) {
-        EDP *theEDP = theEDPs.at(i);
-        theEDP->close();
-        edpLayout->removeWidget(theEDP);
-        theEDPs.remove(i);
-        //theEDP->setParent(0);
-        delete theEDP;
-    }
+//    // remove existing boxes
+//    int numEDPs = theEDPs.size();
+//    for (int i = numEDPs-1; i >= 0; i--) {
+//        quoEDP *theEDP = theEDPs.at(i);
+//        theEDP->close();
+//        edpLayout->removeWidget(theEDP);
+//        theEDPs.remove(i);
+//        //theEDP->setParent(0);
+//        delete theEDP;
+//    }
 
-    int numVar = quiNames.count();
-    for (int i=0; i<numVar; i++) {
-        QString varName = quiNames.at(i);
-        EDP *theEDP = new EDP(varName);
-        theEDPs.append(theEDP);
-        edpLayout->insertWidget(edpLayout->count()-1, theEDP);
-    }
-}
+//    int numVar = quiNames.count();
+//    for (int i=0; i<numVar; i++) {
+//        QString varName = quiNames.at(i);
+//        quoEDP *theEDP = new quoEDP(varName);
+//        theEDPs.append(theEDP);
+//        edpLayout->insertWidget(edpLayout->count()-1, theEDP);
+//    }
+//}
 
 
 
@@ -195,27 +195,28 @@ InputWidgetEDP::AdvancedSensitivity(void) {
 
     return containterWidget;
 }
-// SLOT function
-void InputWidgetEDP::setDefaultGroup(bool tog)
-{
-    if (tog) {
-        theGroupEdit->setDisabled(0);
-        QStringList rvNames = theParameters->getParametereNames();
-        if (rvNames.count()>0) {
-            QString rvNameString;
-            for (QString eleName : rvNames)
-            {
-                rvNameString.push_back("{"+eleName+"},");
-            }
-            //int pos = rvNameString.lastIndexOf(QChar(','));
-            rvNameString.truncate(rvNameString.lastIndexOf(QChar(',')));
-            theGroupEdit->setText(rvNameString);
-        }
-    } else {
-        theGroupEdit->setDisabled(1);
-        theGroupEdit->setText("");
-    }
-}
+
+//void InputWidgetEDP::setDefaultGroup(bool tog)
+//{
+//    if (tog) {
+//        theGroupEdit->setDisabled(0);
+//	RandomVariablesContainer *theRVs=RandomVariablesContainer::getInstance();
+//        QStringList rvNames = theRVs->getRandomVariableNames();
+//        if (rvNames.count()>0) {
+//            QString rvNameString;
+//            for (QString eleName : rvNames)
+//            {
+//                rvNameString.push_back("{"+eleName+"},");
+//            }
+//            //int pos = rvNameString.lastIndexOf(QChar(','));
+//            rvNameString.truncate(rvNameString.lastIndexOf(QChar(',')));
+//            theGroupEdit->setText(rvNameString);
+//        }
+//    } else {
+//        theGroupEdit->setDisabled(1);
+//        theGroupEdit->setText("");
+//    }
+//}
 
 void InputWidgetEDP::showAdvancedSensitivity(bool tog){
     if (tog) {
@@ -230,9 +231,42 @@ void InputWidgetEDP::showAdvancedSensitivity(bool tog){
 
 void InputWidgetEDP::addEDP(void)
 {
-    EDP *theEDP = new EDP();
+    quoEDP *theEDP = new quoEDP();
+    connect(theEDP,SIGNAL(removeEDPclicked(quoEDP*)),this,SLOT(removeThisEDP(quoEDP*)));
+
     theEDPs.append(theEDP);
     edpLayout->insertWidget(edpLayout->count()-1, theEDP);
+}
+
+
+
+void InputWidgetEDP::removeThisEDP(quoEDP *theEDP)
+{
+
+    if (x_button_clicked_before == false) {
+        x_button_clicked_before = true;
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::information(this,
+                                      "Remove QoI",
+                                      "Are you sure you want to remove this quantity of interest?",
+                                       QMessageBox::Yes|QMessageBox::No);
+
+        if (reply == QMessageBox::No)
+            return;
+    }
+
+   // int i=0;
+
+
+   // RandomVariable *theRV = theRandomVariables.at(i);
+    int i = theEDPs.indexOf(theEDP);
+
+    theEDP->close();
+    edpLayout->removeWidget(theEDP);
+    theEDPs.remove(i);
+    delete theEDP;
+
+
 }
 
 
@@ -245,7 +279,7 @@ void InputWidgetEDP::clear(void)
 {
     // loop over random variables, removing from layout & deleting
     for (int i = 0; i <theEDPs.size(); ++i) {
-        EDP *theEDP = theEDPs.at(i);
+        quoEDP *theEDP = theEDPs.at(i);
         edpLayout->removeWidget(theEDP);
         delete theEDP;
     }
@@ -255,16 +289,26 @@ void InputWidgetEDP::clear(void)
 
 void InputWidgetEDP::removeEDP(void)
 {
-    // find the ones selected & remove them
-    int numEDPs = theEDPs.size();
-    for (int i = numEDPs-1; i >= 0; i--) {
-        EDP *theEDP = theEDPs.at(i);
-        if (theEDP->isSelectedForRemoval()) {
-            theEDP->close();
-            edpLayout->removeWidget(theEDP);
-            theEDPs.remove(i);
-            //theEDP->setParent(0);
-            delete theEDP;
+
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::warning(this,
+                                  "Clear all quantities of interest",
+                                  "Are you sure you want to remove all quantities of interest?",
+                                   QMessageBox::Yes|QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        // find the ones selected & remove them
+        int numEDPs = theEDPs.size();
+        for (int i = numEDPs-1; i >= 0; i--) {
+            quoEDP *theEDP = theEDPs.at(i);
+            //if (theEDP->isSelectedForRemoval()) {
+                theEDP->close();
+                edpLayout->removeWidget(theEDP);
+                theEDPs.remove(i);
+                //theEDP->setParent(0);
+                delete theEDP;
+            //}
         }
     }
 }
@@ -310,7 +354,8 @@ InputWidgetEDP::inputFromJSON(QJsonObject &rvObject)
     QJsonArray rvArray = rvObject["EDP"].toArray();
     foreach (const QJsonValue &rvValue, rvArray) {
         QJsonObject rvObject = rvValue.toObject();
-        EDP *theEDP = new EDP();
+        quoEDP *theEDP = new quoEDP();
+        connect(theEDP,SIGNAL(removeEDPclicked(quoEDP*)),this,SLOT(removeThisEDP(quoEDP*)));
         if (theEDP->inputFromJSON(rvObject) == true) {
             theEDPs.append(theEDP);
             edpLayout->insertWidget(edpLayout->count()-1, theEDP);

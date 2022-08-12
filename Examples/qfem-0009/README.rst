@@ -1,3 +1,4 @@
+.. _qfem-0009:
 
 Two-Dimensional Truss: Global Sensitivity Analysis using SimCenterUQ Engine
 ===========================================================================
@@ -124,29 +125,29 @@ QuoFEM also supports MCS-based sensitivity analysis method offered in Dakota eng
      - N=500
      - N=1000
    * - E
-     - 0.74
-     - 0.19
-     - 0.14
+     - 0.18
+     - 0.23
+     - 0.23
      - 0.12
-     - 0.12
+     - 0.13
    * - P
-     - 0.76
-     - 0.35
-     - 0.28
-     - 0.23
-     - 0.23
+     - 0.60
+     - 0.36
+     - 0.29
+     - 0.24
+     - 0.25
    * - Ao
-     - 0.16
-     - 0.39
+     - 0.06
+     - 0.45
      - 0.42
-     - 0.42
-     - 0.44
+     - 0.43
+     - 0.46
    * - Au
-     - 0.28
-     - 0.32
-     - 0.27
-     - 0.17
-     - 0.15
+     - 0.26
+     - 0.29
+     - 0.25
+     - 0.18
+     - 0.16
 
 .. list-table:: Dakota: Sensitivity indices from different number of samples (the first raw is the user-specified number of samples and the second raw is the actual number of simulation calls)
    :header-rows: 2

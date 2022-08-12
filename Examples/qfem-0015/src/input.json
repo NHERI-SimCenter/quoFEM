@@ -1,54 +1,64 @@
 {
     "Applications": {
+        "FEM": {
+            "Application": "OpenSeesPy",
+            "ApplicationData": {
+                "MS_Path": "{Current_Dir}/",
+                "PA_Path": "{Current_Dir}/",
+                "mainScript": "CWH.py",
+                "parametersScript": "params.py",
+                "postprocessScript": ""
+            }
+        },
         "UQ": {
-            "Application": "SimCenterUQ-UQ",
+            "Application": "SimCenter-UQ",
             "ApplicationData": {
             }
         }
     },
     "EDP": [
         {
-            "name": "InterstoryDrift_x"
+            "length": 1,
+            "name": "InterstoryDrift_x",
+            "type": "scalar"
         },
         {
-            "name": "Accel_Roof_x"
+            "length": 1,
+            "name": "Accel_Roof_x",
+            "type": "scalar"
         }
     ],
+    "FEM": {
+    },
     "UQ_Method": {
         "surrogateMethodInfo": {
+            "DoEmethod": "None",
             "accuracyLimit": 0.02,
             "advancedOpt": true,
             "existingDoE": false,
+            "initialDoE": 0,
+            "inpFile": "NA",
             "kernel": "Matern 5/2",
             "linear": false,
             "logTransform": false,
             "method": "Sampling and Simulation",
+            "nuggetOpt": "Optimize",
+            "nuggetString": "",
+            "outFile": "NA",
+            "parallelExecution": true,
             "samples": 150,
             "seed": 71,
-            "timeLimit": 20,
-            "DoEmethod":"None"
+            "timeLimit": 20
         },
         "uqEngine": "SimCenterUQ",
         "uqType": "Train GP Surrogate Model"
     },
-    "fem": {
-        "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/CWH.py",
-        "mainInput": "CWH.py",
-        "mainPostprocessScript": "",
-        "numInputs": 1,
-        "parametersFile": "params.py",
-        "parametersScript": "{Current_Dir}/params.py",
-        "postprocessScript": "",
-        "program": "OpenSeesPy"
-    },
-    "localAppDir": "C:/Tools/quoFEM/quoFEM",
-    "python": "python",
+    "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
     "randomVariables": [
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
-            "lowerbound": 0,
+            "lowerbound": 0.2,
             "name": "materialQuality",
             "refCount": 4,
             "upperbound": 1,
@@ -186,7 +196,7 @@
             "variableClass": "Uncertain"
         }
     ],
-    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
-    "workingDir": "C:/Workdir/quoFEM",
-    "uqResults": {}
+    "remoteAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "runType": "runningLocal",
+    "workingDir": "C:/Users/SimCenter/Documents/quoFEM/LocalWorkDir"
 }

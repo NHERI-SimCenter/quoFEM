@@ -9,7 +9,7 @@
             "method": "DREAM",
             "seed": 107
         },
-		"parallelExecution": true,
+	"parallelExecution": true,
         "uqEngine": "Dakota",
         "uqType": "Inverse Problem"
     },
@@ -35,17 +35,6 @@
             "variableClass": "Uncertain"
         }
     ],
-    "fem": {
-        "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/fem.tcl",
-        "mainInput": "fem.tcl",
-        "mainPostprocessScript": "",
-        "numInputs": 1,
-        "postprocessScript": "",
-        "parametersFile": "",
-        "parametersScript": "",
-        "program": "OpenSees"
-    },
     "EDP": [
         {
             "name": "lambda"
@@ -59,11 +48,14 @@
         "UQ": {
             "Application": "Dakota-UQ",
             "ApplicationData": {}
-        }
-    },
-    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
-    "uqResults": {},
-    "workingDir": "C:/Workdir/quoFEM",
-    "localAppDir": "C:/Tools/quoFEM/quoFEM",
-    "python": "python"
+        },
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+		"MS_Path": "{Current_Dir}/",
+		"mainScript": "fem.tcl",
+		"postprocessScript": ""
+	    }
+        }	
+    }
 }
