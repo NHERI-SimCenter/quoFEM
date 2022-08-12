@@ -2,8 +2,8 @@ version: 1.0.{build}
 
 image:
   - macOS
-  # - Ubuntu1804
-  # - Visual Studio 2019
+  - Ubuntu1804
+  - Visual Studio 2019
 
 stack: python 3.8
 
@@ -26,8 +26,8 @@ for:
        
     install:
        - uname
-       - git clone https://github.com/claudioperez/SimCenterCommon.git
-       - git clone https://github.com/claudioperez/quoFEM.git
+       - git clone https://github.com/NHERI-SimCenter/SimCenterCommon.git
+       - git clone https://github.com/NHERI-SimCenter/quoFEM.git
 
     build_script:
 
@@ -38,10 +38,9 @@ for:
        - cd ..
 
     test_script:
-      #- qmake --version
-      #- gcc --version
-      #- python --version
-       - ./RunTests.sh macos
+       - qmake --version
+       - gcc --version
+       - python --version
 
   # Ubuntu1804 
   -
