@@ -22,7 +22,7 @@ build_macOS() {
   mkdir -p "./$build_dir/" && cd "./$build_dir"
 
   # Run qmake for Tests
-  qmake "../quoFEM-Test.pri"
+  qmake "../quoFEM-Test.pro"
 
   status=$?
   if [[ $status != 0 ]]
@@ -118,7 +118,7 @@ case $1 in
 esac
 
 # Run the test app
-for example in Examples/*000[12]/; do
+for example in Examples/*000[12]; do
   echo "Running example $example"
   ./$build_dir/$executable --config appDir="$app_dir" "$example/src/input.json"
 done
