@@ -4,18 +4,11 @@ executable="qfem"
 build_dir="build-qfem"
 app_dir="$(dirname $PWD)/SimCenterBackendApplications/"
 
-build_all() {
+run_build() {
   # Install nheri-sincenter python repositories
   yes | python3 -m pip install nheri-simcenter
-}
 
-build_macOS() {
-  # Script to run SimCenter unit tests
-  # Adapted from script by Stevan Gavrilovic
-
-  BASEDIR=$(dirname "$0")
-
-  cd $BASEDIR
+  cd $(dirname "$0")
 
   echo "Script file is in directory " $PWD
 
@@ -40,22 +33,18 @@ build_macOS() {
       exit $status;
   fi
 
-  # # Copy over the applications dir
-  # cd ..
-  # cp -Rf "../SimCenterBackendApplications/applications" "$build_dir/"
+  cd -
+}
 
-  # status=$?;
-  # if [[ $status != 0 ]]
-  # then
-  #     echo "Error copying backend applications";
-  #     exit $status;
-  # fi
+install_macOS() {
+  # Script to install SimCenter unit tests on MacOS
+  # Adapted from script by Stevan Gavrilovic
+  cd $(dirname "$0")
 
-  # Download dakota and opensees, extract them, and install them to the build/applications folder
+  # Download Dakota and OpenSees, extract them, and install them to the build/applications folder
   mkdir -p dakota && cd dakota
   curl -O  https://dakota.sandia.gov/sites/default/files/distributions/public/dakota-6.15.0-public-darwin.Darwin.x86_64-cli.tar.gz
   tar -xf *.tar.gz
-
   cd ..
 
   mkdir  "./$build_dir/applications/dakota"
@@ -77,17 +66,13 @@ build_macOS() {
   fi
 
   mkdir opensees
-
   cd opensees
-
   curl -O  https://opensees.berkeley.edu/OpenSees/code/OpenSees3.3.0Mac.tar.gz
-
   tar -xf *.tar.gz
 
   cd ..
 
   mkdir  "./$build_dir/applications/opensees"
-
   status=$?;
   if [[ $status != 0 ]]
   then
@@ -96,7 +81,6 @@ build_macOS() {
   fi
 
   cp -rf "./opensees/OpenSees*/*" "./$build_dir/applications/opensees"
-
   status=$?;
   if [[ $status != 0 ]]
   then
@@ -104,23 +88,29 @@ build_macOS() {
       exit $status;
   fi
 
-# Disable gatekeeper because dakota is unsigned
+  # Disable gatekeeper because dakota is unsigned
   sudo spctl --master-disable
-
 }
 
 case $1 in
   macos)
-    build_macOS
-    build_all
+    run_build
+    install_macOS
+    ;;
+  linux)
+    run_build
     ;;
   *)
 esac
 
 # Run the test app
+localWorkDir="$(./$build_dir/$executable --config localWorkDir)"
 for example in Examples/*000[12]; do
   echo "Running example $example"
-  ./$build_dir/$executable --config appDir="$app_dir" "$example/src/input.json"
+  ./$build_dir/$executable \
+    --config localWorkDir \
+    --config appDir="$app_dir" \
+    "$example/src/input.json"
 done
 
 status=$?

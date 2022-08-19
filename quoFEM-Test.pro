@@ -1,9 +1,9 @@
 include(quoFEM.pro)
 
 SOURCES  -= main.cpp
-SOURCES  += "Tests/main.cpp"
+SOURCES  += Tests/main.cpp
 
-#HEADERS  += "Tests/MainCommandLineWorkflowApp2.h"
+DEFINES  -= QT_NO_DEBUG
 
 CONFIG   += cmdline
 QT       -= gui
