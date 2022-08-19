@@ -1,7 +1,7 @@
 #!/bin/bash 
 
-executable="qfem"
-build_dir="build-qfem"
+executable="quoFEM"
+build_dir="build-cli"
 app_dir="$(dirname $PWD)/SimCenterBackendApplications/"
 
 run_build() {
@@ -104,13 +104,12 @@ case $1 in
 esac
 
 # Run the test app
-localWorkDir="$(./$build_dir/$executable --config localWorkDir)"
 for example in Examples/*000[12]; do
-  echo "Running example $example"
-  ./$build_dir/$executable \
-    --config localWorkDir \
-    --config appDir="$app_dir" \
-    "$example/src/input.json"
+    echo "Running example $example"
+    ./$build_dir/$executable \
+        --config localWorkDir \
+        --config appDir="$app_dir" \
+        "$example/src/input.json"
 done
 
 status=$?

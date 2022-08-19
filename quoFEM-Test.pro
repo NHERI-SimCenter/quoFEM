@@ -8,4 +8,4 @@ DEFINES  -= QT_NO_DEBUG
 CONFIG   += cmdline
 QT       -= gui
 
-TARGET   = qfem
+#TARGET   = qfem
