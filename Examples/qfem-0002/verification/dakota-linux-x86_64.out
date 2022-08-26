@@ -1,0 +1,4168 @@
+Dakota version 6.14 released May 17 2021.
+Repository revision 382229e53 (2021-05-12) built Nov  8 2021 17:11:24.
+Running serial Dakota executable in serial mode.
+Start time: Fri Aug 26 09:39:01 2022
+
+-----------------------
+Begin DAKOTA input file
+dakota.in
+-----------------------
+environment 
+ tabular_data 
+ tabular_data_file = 'dakotaTab.out' 
+
+method,
+ sampling
+ sample_type = lhs 
+ samples = 200 
+ seed = 949
+
+variables 
+ active uncertain 
+  normal_uncertain = 1
+    means = 500 
+    std_deviations = 25 
+    descriptors = 'Au' 
+  lognormal_uncertain = 1
+    means = 250 
+    std_deviations = 10 
+    descriptors = 'Ao' 
+  weibull_uncertain = 1
+    alphas = 20 
+    betas = 210 
+    descriptors = 'E' 
+  beta_uncertain = 1
+    alphas = 2 
+    betas = 2 
+    lower_bounds = 20 
+    upper_bounds = 30 
+    descriptors = 'P' 
+
+
+
+interface 
+  analysis_driver = 'workflow_driver1'
+  fork
+   parameters_file = 'paramsDakota.in'
+   results_file = 'results.out' 
+   aprepro 
+   work_directory
+     named 'workdir' 
+     directory_tag
+     directory_save
+     copy_files = 'templatedir/*' 
+  asynchronous evaluation_concurrency = 12
+
+responses
+ response_functions = 2
+ response_descriptors = 'Node_3_Disp_2' 'Node_2_Disp_2' 
+ no_gradients
+ no_hessians
+
+---------------------
+End DAKOTA input file
+---------------------
+
+Using Dakota input file 'dakota.in'
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running random_sampling iterator.
+
+NonD lhs Samples = 200 Seed (user-specified) = 949
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      5.0108600435e+02 Au
+                      2.4112338669e+02 Ao
+                      2.7539975043e+01 P
+                      2.0584743006e+02 E
+
+(Asynchronous job 1 added to queue)
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      4.7220585401e+02 Au
+                      2.4687068537e+02 Ao
+                      2.6024383985e+01 P
+                      2.0810749438e+02 E
+
+(Asynchronous job 2 added to queue)
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      5.0403872471e+02 Au
+                      2.5060450248e+02 Ao
+                      2.3731048090e+01 P
+                      2.1044939269e+02 E
+
+(Asynchronous job 3 added to queue)
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      5.0439248517e+02 Au
+                      2.3568380456e+02 Ao
+                      2.5007343034e+01 P
+                      1.8484543940e+02 E
+
+(Asynchronous job 4 added to queue)
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      5.1594216845e+02 Au
+                      2.4399620363e+02 Ao
+                      2.4911510879e+01 P
+                      2.0635361430e+02 E
+
+(Asynchronous job 5 added to queue)
+
+---------------------
+Begin Evaluation    6
+---------------------
+Parameters for evaluation 6:
+                      4.9499487111e+02 Au
+                      2.5278339532e+02 Ao
+                      2.8321359199e+01 P
+                      1.9293157663e+02 E
+
+(Asynchronous job 6 added to queue)
+
+---------------------
+Begin Evaluation    7
+---------------------
+Parameters for evaluation 7:
+                      4.9530277990e+02 Au
+                      2.3890973685e+02 Ao
+                      2.3534938878e+01 P
+                      2.0598806903e+02 E
+
+(Asynchronous job 7 added to queue)
+
+---------------------
+Begin Evaluation    8
+---------------------
+Parameters for evaluation 8:
+                      4.8903352416e+02 Au
+                      2.5183625418e+02 Ao
+                      2.4407534854e+01 P
+                      2.1673532216e+02 E
+
+(Asynchronous job 8 added to queue)
+
+---------------------
+Begin Evaluation    9
+---------------------
+Parameters for evaluation 9:
+                      4.9592081285e+02 Au
+                      2.6437241766e+02 Ao
+                      2.2399972738e+01 P
+                      1.9834836833e+02 E
+
+(Asynchronous job 9 added to queue)
+
+---------------------
+Begin Evaluation   10
+---------------------
+Parameters for evaluation 10:
+                      5.1101672691e+02 Au
+                      2.5052129889e+02 Ao
+                      2.1927169479e+01 P
+                      2.0521995654e+02 E
+
+(Asynchronous job 10 added to queue)
+
+---------------------
+Begin Evaluation   11
+---------------------
+Parameters for evaluation 11:
+                      4.4922246115e+02 Au
+                      2.5731112705e+02 Ao
+                      2.9514026645e+01 P
+                      2.1491419034e+02 E
+
+(Asynchronous job 11 added to queue)
+
+---------------------
+Begin Evaluation   12
+---------------------
+Parameters for evaluation 12:
+                      4.9644729588e+02 Au
+                      2.4986375850e+02 Ao
+                      2.1405403478e+01 P
+                      2.1621361171e+02 E
+
+(Asynchronous job 12 added to queue)
+
+---------------------
+Begin Evaluation   13
+---------------------
+Parameters for evaluation 13:
+                      5.1921446951e+02 Au
+                      2.5820407606e+02 Ao
+                      2.4493372381e+01 P
+                      2.0927207705e+02 E
+
+(Asynchronous job 13 added to queue)
+
+---------------------
+Begin Evaluation   14
+---------------------
+Parameters for evaluation 14:
+                      5.0022540886e+02 Au
+                      2.4669612928e+02 Ao
+                      2.0105799988e+01 P
+                      1.7176879499e+02 E
+
+(Asynchronous job 14 added to queue)
+
+---------------------
+Begin Evaluation   15
+---------------------
+Parameters for evaluation 15:
+                      4.1330853752e+02 Au
+                      2.4550604705e+02 Ao
+                      2.2690363405e+01 P
+                      1.7316981868e+02 E
+
+(Asynchronous job 15 added to queue)
+
+---------------------
+Begin Evaluation   16
+---------------------
+Parameters for evaluation 16:
+                      4.9439775550e+02 Au
+                      2.6091365548e+02 Ao
+                      2.7090767946e+01 P
+                      1.7782282418e+02 E
+
+(Asynchronous job 16 added to queue)
+
+---------------------
+Begin Evaluation   17
+---------------------
+Parameters for evaluation 17:
+                      4.5302553980e+02 Au
+                      2.5647219677e+02 Ao
+                      2.4375812285e+01 P
+                      1.9194644726e+02 E
+
+(Asynchronous job 17 added to queue)
+
+---------------------
+Begin Evaluation   18
+---------------------
+Parameters for evaluation 18:
+                      5.1396772281e+02 Au
+                      2.3953574528e+02 Ao
+                      2.4452104814e+01 P
+                      1.8885947647e+02 E
+
+(Asynchronous job 18 added to queue)
+
+---------------------
+Begin Evaluation   19
+---------------------
+Parameters for evaluation 19:
+                      5.1326401705e+02 Au
+                      2.4566004124e+02 Ao
+                      2.9298047517e+01 P
+                      2.2200166238e+02 E
+
+(Asynchronous job 19 added to queue)
+
+---------------------
+Begin Evaluation   20
+---------------------
+Parameters for evaluation 20:
+                      4.6819922563e+02 Au
+                      2.5212421311e+02 Ao
+                      2.7827115008e+01 P
+                      2.0831215400e+02 E
+
+(Asynchronous job 20 added to queue)
+
+---------------------
+Begin Evaluation   21
+---------------------
+Parameters for evaluation 21:
+                      5.1568582534e+02 Au
+                      2.4000325553e+02 Ao
+                      2.0804700511e+01 P
+                      2.1527841636e+02 E
+
+(Asynchronous job 21 added to queue)
+
+---------------------
+Begin Evaluation   22
+---------------------
+Parameters for evaluation 22:
+                      5.3695328866e+02 Au
+                      2.3981808737e+02 Ao
+                      2.2594111429e+01 P
+                      2.0852157110e+02 E
+
+(Asynchronous job 22 added to queue)
+
+---------------------
+Begin Evaluation   23
+---------------------
+Parameters for evaluation 23:
+                      5.5442829571e+02 Au
+                      2.3835512715e+02 Ao
+                      2.8074712093e+01 P
+                      2.1214987376e+02 E
+
+(Asynchronous job 23 added to queue)
+
+---------------------
+Begin Evaluation   24
+---------------------
+Parameters for evaluation 24:
+                      4.7108949496e+02 Au
+                      2.4441948546e+02 Ao
+                      2.2057767525e+01 P
+                      2.0624516369e+02 E
+
+(Asynchronous job 24 added to queue)
+
+---------------------
+Begin Evaluation   25
+---------------------
+Parameters for evaluation 25:
+                      5.2681787521e+02 Au
+                      2.4191211282e+02 Ao
+                      2.3302040918e+01 P
+                      2.1763695593e+02 E
+
+(Asynchronous job 25 added to queue)
+
+---------------------
+Begin Evaluation   26
+---------------------
+Parameters for evaluation 26:
+                      4.6707616292e+02 Au
+                      2.2815983729e+02 Ao
+                      2.1773642546e+01 P
+                      2.0213012327e+02 E
+
+(Asynchronous job 26 added to queue)
+
+---------------------
+Begin Evaluation   27
+---------------------
+Parameters for evaluation 27:
+                      5.1847821039e+02 Au
+                      2.4771885274e+02 Ao
+                      2.3569042248e+01 P
+                      2.1393677461e+02 E
+
+(Asynchronous job 27 added to queue)
+
+---------------------
+Begin Evaluation   28
+---------------------
+Parameters for evaluation 28:
+                      4.8397925092e+02 Au
+                      2.4086570428e+02 Ao
+                      2.5520577474e+01 P
+                      2.0533385001e+02 E
+
+(Asynchronous job 28 added to queue)
+
+---------------------
+Begin Evaluation   29
+---------------------
+Parameters for evaluation 29:
+                      4.6263936400e+02 Au
+                      2.4529450499e+02 Ao
+                      2.3807152978e+01 P
+                      1.9119893156e+02 E
+
+(Asynchronous job 29 added to queue)
+
+---------------------
+Begin Evaluation   30
+---------------------
+Parameters for evaluation 30:
+                      5.0996301166e+02 Au
+                      2.5926051196e+02 Ao
+                      2.7165149773e+01 P
+                      2.0086981751e+02 E
+
+(Asynchronous job 30 added to queue)
+
+---------------------
+Begin Evaluation   31
+---------------------
+Parameters for evaluation 31:
+                      4.8369514738e+02 Au
+                      2.6508032526e+02 Ao
+                      2.2928639823e+01 P
+                      1.9780020076e+02 E
+
+(Asynchronous job 31 added to queue)
+
+---------------------
+Begin Evaluation   32
+---------------------
+Parameters for evaluation 32:
+                      4.8560694728e+02 Au
+                      2.5936885463e+02 Ao
+                      2.5659312408e+01 P
+                      1.8953467663e+02 E
+
+(Asynchronous job 32 added to queue)
+
+---------------------
+Begin Evaluation   33
+---------------------
+Parameters for evaluation 33:
+                      5.0449425727e+02 Au
+                      2.3781553110e+02 Ao
+                      2.1625501345e+01 P
+                      1.9982567369e+02 E
+
+(Asynchronous job 33 added to queue)
+
+---------------------
+Begin Evaluation   34
+---------------------
+Parameters for evaluation 34:
+                      4.5140931141e+02 Au
+                      2.5488678083e+02 Ao
+                      2.4349118397e+01 P
+                      1.9426576751e+02 E
+
+(Asynchronous job 34 added to queue)
+
+---------------------
+Begin Evaluation   35
+---------------------
+Parameters for evaluation 35:
+                      5.0354385635e+02 Au
+                      2.6629556946e+02 Ao
+                      2.4592895935e+01 P
+                      2.0707589342e+02 E
+
+(Asynchronous job 35 added to queue)
+
+---------------------
+Begin Evaluation   36
+---------------------
+Parameters for evaluation 36:
+                      4.7341945448e+02 Au
+                      2.5558686378e+02 Ao
+                      2.3835173247e+01 P
+                      2.0450047944e+02 E
+
+(Asynchronous job 36 added to queue)
+
+---------------------
+Begin Evaluation   37
+---------------------
+Parameters for evaluation 37:
+                      5.3427550794e+02 Au
+                      2.4699471257e+02 Ao
+                      2.5828621923e+01 P
+                      1.9459836170e+02 E
+
+(Asynchronous job 37 added to queue)
+
+---------------------
+Begin Evaluation   38
+---------------------
+Parameters for evaluation 38:
+                      4.9273138149e+02 Au
+                      2.6020865735e+02 Ao
+                      2.3621709249e+01 P
+                      2.0736419119e+02 E
+
+(Asynchronous job 38 added to queue)
+
+---------------------
+Begin Evaluation   39
+---------------------
+Parameters for evaluation 39:
+                      4.9019457071e+02 Au
+                      2.5401158009e+02 Ao
+                      2.4629651057e+01 P
+                      1.8758029114e+02 E
+
+(Asynchronous job 39 added to queue)
+
+---------------------
+Begin Evaluation   40
+---------------------
+Parameters for evaluation 40:
+                      5.0627550926e+02 Au
+                      2.5773123339e+02 Ao
+                      2.5143937715e+01 P
+                      2.1106552072e+02 E
+
+(Asynchronous job 40 added to queue)
+
+---------------------
+Begin Evaluation   41
+---------------------
+Parameters for evaluation 41:
+                      5.0908982764e+02 Au
+                      2.3199688712e+02 Ao
+                      2.8969393684e+01 P
+                      2.1348914678e+02 E
+
+(Asynchronous job 41 added to queue)
+
+---------------------
+Begin Evaluation   42
+---------------------
+Parameters for evaluation 42:
+                      5.4366866694e+02 Au
+                      2.5684105778e+02 Ao
+                      2.4895048064e+01 P
+                      1.9266298506e+02 E
+
+(Asynchronous job 42 added to queue)
+
+---------------------
+Begin Evaluation   43
+---------------------
+Parameters for evaluation 43:
+                      5.2147635027e+02 Au
+                      2.6220624365e+02 Ao
+                      2.9234519265e+01 P
+                      2.0490788606e+02 E
+
+(Asynchronous job 43 added to queue)
+
+---------------------
+Begin Evaluation   44
+---------------------
+Parameters for evaluation 44:
+                      5.2480920632e+02 Au
+                      2.4063374994e+02 Ao
+                      2.6784872150e+01 P
+                      2.0068549444e+02 E
+
+(Asynchronous job 44 added to queue)
+
+---------------------
+Begin Evaluation   45
+---------------------
+Parameters for evaluation 45:
+                      4.7681418371e+02 Au
+                      2.5036452706e+02 Ao
+                      2.5686255092e+01 P
+                      2.0500524210e+02 E
+
+(Asynchronous job 45 added to queue)
+
+---------------------
+Begin Evaluation   46
+---------------------
+Parameters for evaluation 46:
+                      4.8346796964e+02 Au
+                      2.4880054978e+02 Ao
+                      2.3017170117e+01 P
+                      2.1933074191e+02 E
+
+(Asynchronous job 46 added to queue)
+
+---------------------
+Begin Evaluation   47
+---------------------
+Parameters for evaluation 47:
+                      4.4296297576e+02 Au
+                      2.5516936425e+02 Ao
+                      2.6128146058e+01 P
+                      1.9312862413e+02 E
+
+(Asynchronous job 47 added to queue)
+
+---------------------
+Begin Evaluation   48
+---------------------
+Parameters for evaluation 48:
+                      4.6563083879e+02 Au
+                      2.5023919783e+02 Ao
+                      2.7940974734e+01 P
+                      2.1376064405e+02 E
+
+(Asynchronous job 48 added to queue)
+
+---------------------
+Begin Evaluation   49
+---------------------
+Parameters for evaluation 49:
+                      4.9580643758e+02 Au
+                      2.4181278623e+02 Ao
+                      2.1470797657e+01 P
+                      2.1543881249e+02 E
+
+(Asynchronous job 49 added to queue)
+
+---------------------
+Begin Evaluation   50
+---------------------
+Parameters for evaluation 50:
+                      4.9981753313e+02 Au
+                      2.4901781887e+02 Ao
+                      2.6492693434e+01 P
+                      1.9517310356e+02 E
+
+(Asynchronous job 50 added to queue)
+
+---------------------
+Begin Evaluation   51
+---------------------
+Parameters for evaluation 51:
+                      4.9672313277e+02 Au
+                      2.5316939329e+02 Ao
+                      2.7919537417e+01 P
+                      2.1573548182e+02 E
+
+(Asynchronous job 51 added to queue)
+
+---------------------
+Begin Evaluation   52
+---------------------
+Parameters for evaluation 52:
+                      4.9952932920e+02 Au
+                      2.4924003346e+02 Ao
+                      2.2649330907e+01 P
+                      1.6370360551e+02 E
+
+(Asynchronous job 52 added to queue)
+
+---------------------
+Begin Evaluation   53
+---------------------
+Parameters for evaluation 53:
+                      5.3126365615e+02 Au
+                      2.4650408723e+02 Ao
+                      2.5912352921e+01 P
+                      1.9925184202e+02 E
+
+(Asynchronous job 53 added to queue)
+
+---------------------
+Begin Evaluation   54
+---------------------
+Parameters for evaluation 54:
+                      4.9800984826e+02 Au
+                      2.4877392120e+02 Ao
+                      2.3761030371e+01 P
+                      2.1881870006e+02 E
+
+(Asynchronous job 54 added to queue)
+
+---------------------
+Begin Evaluation   55
+---------------------
+Parameters for evaluation 55:
+                      5.1460208617e+02 Au
+                      2.5433660921e+02 Ao
+                      2.7561018016e+01 P
+                      2.1635480308e+02 E
+
+(Asynchronous job 55 added to queue)
+
+---------------------
+Begin Evaluation   56
+---------------------
+Parameters for evaluation 56:
+                      4.8715493485e+02 Au
+                      2.4120635696e+02 Ao
+                      2.3069462349e+01 P
+                      2.1195805089e+02 E
+
+(Asynchronous job 56 added to queue)
+
+---------------------
+Begin Evaluation   57
+---------------------
+Parameters for evaluation 57:
+                      5.3539395055e+02 Au
+                      2.3136110674e+02 Ao
+                      2.4044498113e+01 P
+                      2.0408260452e+02 E
+
+(Asynchronous job 57 added to queue)
+
+---------------------
+Begin Evaluation   58
+---------------------
+Parameters for evaluation 58:
+                      4.8941301947e+02 Au
+                      2.5448787992e+02 Ao
+                      2.4125544192e+01 P
+                      2.0260981434e+02 E
+
+(Asynchronous job 58 added to queue)
+
+---------------------
+Begin Evaluation   59
+---------------------
+Parameters for evaluation 59:
+                      4.7006671057e+02 Au
+                      2.6144325621e+02 Ao
+                      2.6207845174e+01 P
+                      2.1740712579e+02 E
+
+(Asynchronous job 59 added to queue)
+
+---------------------
+Begin Evaluation   60
+---------------------
+Parameters for evaluation 60:
+                      5.2790803228e+02 Au
+                      2.5755008234e+02 Ao
+                      2.2811065645e+01 P
+                      1.9706933898e+02 E
+
+(Asynchronous job 60 added to queue)
+
+---------------------
+Begin Evaluation   61
+---------------------
+Parameters for evaluation 61:
+                      5.6132934540e+02 Au
+                      2.5205695504e+02 Ao
+                      2.7034710114e+01 P
+                      1.9659486996e+02 E
+
+(Asynchronous job 61 added to queue)
+
+---------------------
+Begin Evaluation   62
+---------------------
+Parameters for evaluation 62:
+                      5.3448407798e+02 Au
+                      2.5109509245e+02 Ao
+                      2.6436733709e+01 P
+                      2.2153055757e+02 E
+
+(Asynchronous job 62 added to queue)
+
+---------------------
+Begin Evaluation   63
+---------------------
+Parameters for evaluation 63:
+                      4.9841989878e+02 Au
+                      2.4617513123e+02 Ao
+                      2.8430251491e+01 P
+                      1.9669436941e+02 E
+
+(Asynchronous job 63 added to queue)
+
+---------------------
+Begin Evaluation   64
+---------------------
+Parameters for evaluation 64:
+                      4.5820853958e+02 Au
+                      2.5460388082e+02 Ao
+                      2.4321948780e+01 P
+                      1.9852870017e+02 E
+
+(Asynchronous job 64 added to queue)
+
+---------------------
+Begin Evaluation   65
+---------------------
+Parameters for evaluation 65:
+                      4.8630315435e+02 Au
+                      2.4231974494e+02 Ao
+                      2.8337203399e+01 P
+                      2.1518583947e+02 E
+
+(Asynchronous job 65 added to queue)
+
+---------------------
+Begin Evaluation   66
+---------------------
+Parameters for evaluation 66:
+                      5.1806985556e+02 Au
+                      2.4854263806e+02 Ao
+                      2.6593028270e+01 P
+                      2.0385036942e+02 E
+
+(Asynchronous job 66 added to queue)
+
+---------------------
+Begin Evaluation   67
+---------------------
+Parameters for evaluation 67:
+                      4.7463586680e+02 Au
+                      2.5415146848e+02 Ao
+                      2.5056499655e+01 P
+                      1.8516432366e+02 E
+
+(Asynchronous job 67 added to queue)
+
+---------------------
+Begin Evaluation   68
+---------------------
+Parameters for evaluation 68:
+                      4.6471561863e+02 Au
+                      2.4812385207e+02 Ao
+                      2.8447020328e+01 P
+                      2.2102316305e+02 E
+
+(Asynchronous job 68 added to queue)
+
+---------------------
+Begin Evaluation   69
+---------------------
+Parameters for evaluation 69:
+                      4.8430774367e+02 Au
+                      2.4589143320e+02 Ao
+                      2.8757699305e+01 P
+                      2.0007852248e+02 E
+
+(Asynchronous job 69 added to queue)
+
+---------------------
+Begin Evaluation   70
+---------------------
+Parameters for evaluation 70:
+                      4.9140359732e+02 Au
+                      2.5467922162e+02 Ao
+                      2.7748620365e+01 P
+                      2.1158447246e+02 E
+
+(Asynchronous job 70 added to queue)
+
+---------------------
+Begin Evaluation   71
+---------------------
+Parameters for evaluation 71:
+                      4.7157012162e+02 Au
+                      2.4326302358e+02 Ao
+                      2.6385712002e+01 P
+                      2.0865871078e+02 E
+
+(Asynchronous job 71 added to queue)
+
+---------------------
+Begin Evaluation   72
+---------------------
+Parameters for evaluation 72:
+                      4.6158228338e+02 Au
+                      2.4856144311e+02 Ao
+                      2.8518538096e+01 P
+                      2.1241147357e+02 E
+
+(Asynchronous job 72 added to queue)
+
+---------------------
+Begin Evaluation   73
+---------------------
+Parameters for evaluation 73:
+                      4.9420768645e+02 Au
+                      2.4215821581e+02 Ao
+                      2.5382198871e+01 P
+                      2.0771879595e+02 E
+
+(Asynchronous job 73 added to queue)
+
+---------------------
+Begin Evaluation   74
+---------------------
+Parameters for evaluation 74:
+                      4.8661870305e+02 Au
+                      2.4510894786e+02 Ao
+                      2.2962883109e+01 P
+                      2.0201794031e+02 E
+
+(Asynchronous job 74 added to queue)
+
+---------------------
+Begin Evaluation   75
+---------------------
+Parameters for evaluation 75:
+                      5.0279654225e+02 Au
+                      2.5177445274e+02 Ao
+                      2.1534986477e+01 P
+                      2.1425670361e+02 E
+
+(Asynchronous job 75 added to queue)
+
+---------------------
+Begin Evaluation   76
+---------------------
+Parameters for evaluation 76:
+                      5.3050173961e+02 Au
+                      2.4911429524e+02 Ao
+                      2.4822150178e+01 P
+                      1.9240673049e+02 E
+
+(Asynchronous job 76 added to queue)
+
+---------------------
+Begin Evaluation   77
+---------------------
+Parameters for evaluation 77:
+                      5.1679120038e+02 Au
+                      2.7046393688e+02 Ao
+                      2.3204771291e+01 P
+                      2.2537872320e+02 E
+
+(Asynchronous job 77 added to queue)
+
+---------------------
+Begin Evaluation   78
+---------------------
+Parameters for evaluation 78:
+                      4.9863937218e+02 Au
+                      2.3748962034e+02 Ao
+                      2.6052657053e+01 P
+                      2.0388171959e+02 E
+
+(Asynchronous job 78 added to queue)
+
+---------------------
+Begin Evaluation   79
+---------------------
+Parameters for evaluation 79:
+                      5.0778842613e+02 Au
+                      2.5889019931e+02 Ao
+                      2.3924859010e+01 P
+                      2.2386238368e+02 E
+
+(Asynchronous job 79 added to queue)
+
+---------------------
+Begin Evaluation   80
+---------------------
+Parameters for evaluation 80:
+                      5.2167320231e+02 Au
+                      2.5296379669e+02 Ao
+                      2.2870155484e+01 P
+                      2.1599166152e+02 E
+
+(Asynchronous job 80 added to queue)
+
+---------------------
+Begin Evaluation   81
+---------------------
+Parameters for evaluation 81:
+                      4.9759618988e+02 Au
+                      2.4372117246e+02 Ao
+                      2.5566382379e+01 P
+                      2.1281488260e+02 E
+
+(Asynchronous job 81 added to queue)
+
+---------------------
+Begin Evaluation   82
+---------------------
+Parameters for evaluation 82:
+                      5.1046180918e+02 Au
+                      2.5858731442e+02 Ao
+                      2.5602478451e+01 P
+                      2.1233224051e+02 E
+
+(Asynchronous job 82 added to queue)
+
+---------------------
+Begin Evaluation   83
+---------------------
+Parameters for evaluation 83:
+                      5.0583505386e+02 Au
+                      2.5138863798e+02 Ao
+                      2.5901970255e+01 P
+                      1.9989116885e+02 E
+
+(Asynchronous job 83 added to queue)
+
+---------------------
+Begin Evaluation   84
+---------------------
+Parameters for evaluation 84:
+                      4.9321309688e+02 Au
+                      2.4343775239e+02 Ao
+                      2.9705051931e+01 P
+                      1.6962039398e+02 E
+
+(Asynchronous job 84 added to queue)
+
+---------------------
+Begin Evaluation   85
+---------------------
+Parameters for evaluation 85:
+                      5.4383621057e+02 Au
+                      2.4498592515e+02 Ao
+                      2.4503517610e+01 P
+                      2.0911608793e+02 E
+
+(Asynchronous job 85 added to queue)
+
+---------------------
+Begin Evaluation   86
+---------------------
+Parameters for evaluation 86:
+                      5.7342911113e+02 Au
+                      2.6926844455e+02 Ao
+                      2.6820682343e+01 P
+                      2.0043073291e+02 E
+
+(Asynchronous job 86 added to queue)
+
+---------------------
+Begin Evaluation   87
+---------------------
+Parameters for evaluation 87:
+                      5.0823282566e+02 Au
+                      2.6193236097e+02 Ao
+                      2.5088252437e+01 P
+                      2.1080327225e+02 E
+
+(Asynchronous job 87 added to queue)
+
+---------------------
+Begin Evaluation   88
+---------------------
+Parameters for evaluation 88:
+                      5.2853451565e+02 Au
+                      2.5953948524e+02 Ao
+                      2.3675858165e+01 P
+                      2.0996033563e+02 E
+
+(Asynchronous job 88 added to queue)
+
+---------------------
+Begin Evaluation   89
+---------------------
+Parameters for evaluation 89:
+                      5.0694349600e+02 Au
+                      2.2688866587e+02 Ao
+                      2.2299775439e+01 P
+                      2.0303791422e+02 E
+
+(Asynchronous job 89 added to queue)
+
+---------------------
+Begin Evaluation   90
+---------------------
+Parameters for evaluation 90:
+                      5.1245742553e+02 Au
+                      2.3511491444e+02 Ao
+                      2.3349091010e+01 P
+                      2.2278005487e+02 E
+
+(Asynchronous job 90 added to queue)
+
+---------------------
+Begin Evaluation   91
+---------------------
+Parameters for evaluation 91:
+                      4.9223812071e+02 Au
+                      2.4822135843e+02 Ao
+                      2.5860248270e+01 P
+                      1.9366769158e+02 E
+
+(Asynchronous job 91 added to queue)
+
+---------------------
+Begin Evaluation   92
+---------------------
+Parameters for evaluation 92:
+                      5.3144263558e+02 Au
+                      2.4432057102e+02 Ao
+                      2.1809170672e+01 P
+                      2.1704210893e+02 E
+
+(Asynchronous job 92 added to queue)
+
+---------------------
+Begin Evaluation   93
+---------------------
+Parameters for evaluation 93:
+                      4.8736282819e+02 Au
+                      2.4035194669e+02 Ao
+                      2.7674512357e+01 P
+                      2.2253044881e+02 E
+
+(Asynchronous job 93 added to queue)
+
+---------------------
+Begin Evaluation   94
+---------------------
+Parameters for evaluation 94:
+                      4.8979415600e+02 Au
+                      2.5838201596e+02 Ao
+                      2.4015343756e+01 P
+                      2.0702604447e+02 E
+
+(Asynchronous job 94 added to queue)
+
+---------------------
+Begin Evaluation   95
+---------------------
+Parameters for evaluation 95:
+                      5.2005169622e+02 Au
+                      2.4377085188e+02 Ao
+                      2.8125402287e+01 P
+                      2.0118816407e+02 E
+
+(Asynchronous job 95 added to queue)
+
+---------------------
+Begin Evaluation   96
+---------------------
+Parameters for evaluation 96:
+                      5.0832618303e+02 Au
+                      2.3792692809e+02 Ao
+                      2.5765329994e+01 P
+                      2.1838680312e+02 E
+
+(Asynchronous job 96 added to queue)
+
+---------------------
+Begin Evaluation   97
+---------------------
+Parameters for evaluation 97:
+                      4.7813966057e+02 Au
+                      2.5670221491e+02 Ao
+                      2.6732970691e+01 P
+                      2.1586987613e+02 E
+
+(Asynchronous job 97 added to queue)
+
+---------------------
+Begin Evaluation   98
+---------------------
+Parameters for evaluation 98:
+                      5.0144380741e+02 Au
+                      2.6607689377e+02 Ao
+                      2.5466746066e+01 P
+                      1.9172806020e+02 E
+
+(Asynchronous job 98 added to queue)
+
+---------------------
+Begin Evaluation   99
+---------------------
+Parameters for evaluation 99:
+                      5.0164749511e+02 Au
+                      2.5578703771e+02 Ao
+                      2.6096148347e+01 P
+                      2.1815896682e+02 E
+
+(Asynchronous job 99 added to queue)
+
+---------------------
+Begin Evaluation  100
+---------------------
+Parameters for evaluation 100:
+                      4.6933752331e+02 Au
+                      2.6749532162e+02 Ao
+                      2.0504791914e+01 P
+                      2.2564637046e+02 E
+
+(Asynchronous job 100 added to queue)
+
+---------------------
+Begin Evaluation  101
+---------------------
+Parameters for evaluation 101:
+                      5.4062422845e+02 Au
+                      2.6007394525e+02 Ao
+                      2.4287740963e+01 P
+                      2.0803787256e+02 E
+
+(Asynchronous job 101 added to queue)
+
+---------------------
+Begin Evaluation  102
+---------------------
+Parameters for evaluation 102:
+                      5.2941871055e+02 Au
+                      2.5233475108e+02 Ao
+                      2.3641610124e+01 P
+                      1.8073924053e+02 E
+
+(Asynchronous job 102 added to queue)
+
+---------------------
+Begin Evaluation  103
+---------------------
+Parameters for evaluation 103:
+                      5.2210768861e+02 Au
+                      2.4291486076e+02 Ao
+                      2.8628291542e+01 P
+                      1.8241828437e+02 E
+
+(Asynchronous job 103 added to queue)
+
+---------------------
+Begin Evaluation  104
+---------------------
+Parameters for evaluation 104:
+                      5.0562797775e+02 Au
+                      2.5253709276e+02 Ao
+                      2.5422209537e+01 P
+                      2.0984980065e+02 E
+
+(Asynchronous job 104 added to queue)
+
+---------------------
+Begin Evaluation  105
+---------------------
+Parameters for evaluation 105:
+                      5.2722896274e+02 Au
+                      2.5899898175e+02 Ao
+                      2.1077609247e+01 P
+                      2.0466208344e+02 E
+
+(Asynchronous job 105 added to queue)
+
+---------------------
+Begin Evaluation  106
+---------------------
+Parameters for evaluation 106:
+                      5.1011478634e+02 Au
+                      2.4164062074e+02 Ao
+                      2.5622988940e+01 P
+                      1.8642936489e+02 E
+
+(Asynchronous job 106 added to queue)
+
+---------------------
+Begin Evaluation  107
+---------------------
+Parameters for evaluation 107:
+                      5.1176860984e+02 Au
+                      2.4598327350e+02 Ao
+                      2.2500591406e+01 P
+                      1.9631661899e+02 E
+
+(Asynchronous job 107 added to queue)
+
+---------------------
+Begin Evaluation  108
+---------------------
+Parameters for evaluation 108:
+                      4.7588726889e+02 Au
+                      2.4077846418e+02 Ao
+                      2.6646348626e+01 P
+                      1.9887907907e+02 E
+
+(Asynchronous job 108 added to queue)
+
+---------------------
+Begin Evaluation  109
+---------------------
+Parameters for evaluation 109:
+                      4.9897061144e+02 Au
+                      2.5641882245e+02 Ao
+                      2.2767044481e+01 P
+                      2.0679586961e+02 E
+
+(Asynchronous job 109 added to queue)
+
+---------------------
+Begin Evaluation  110
+---------------------
+Parameters for evaluation 110:
+                      5.1079442793e+02 Au
+                      2.4300014483e+02 Ao
+                      2.5133330838e+01 P
+                      1.8668161311e+02 E
+
+(Asynchronous job 110 added to queue)
+
+---------------------
+Begin Evaluation  111
+---------------------
+Parameters for evaluation 111:
+                      4.9079421486e+02 Au
+                      2.4836943641e+02 Ao
+                      2.2911399613e+01 P
+                      2.1384367236e+02 E
+
+(Asynchronous job 111 added to queue)
+
+---------------------
+Begin Evaluation  112
+---------------------
+Parameters for evaluation 112:
+                      4.7866008492e+02 Au
+                      2.3818705176e+02 Ao
+                      2.8192776762e+01 P
+                      2.1145278209e+02 E
+
+(Asynchronous job 112 added to queue)
+
+---------------------
+Begin Evaluation  113
+---------------------
+Parameters for evaluation 113:
+                      5.3297887658e+02 Au
+                      2.4748700790e+02 Ao
+                      2.6692527769e+01 P
+                      1.8599292516e+02 E
+
+(Asynchronous job 113 added to queue)
+
+---------------------
+Begin Evaluation  114
+---------------------
+Parameters for evaluation 114:
+                      4.8133709474e+02 Au
+                      2.5271961778e+02 Ao
+                      2.2219059132e+01 P
+                      2.0160403455e+02 E
+
+(Asynchronous job 114 added to queue)
+
+---------------------
+Begin Evaluation  115
+---------------------
+Parameters for evaluation 115:
+                      4.6735554056e+02 Au
+                      2.5165748981e+02 Ao
+                      2.1731236572e+01 P
+                      2.2753865789e+02 E
+
+(Asynchronous job 115 added to queue)
+
+---------------------
+Begin Evaluation  116
+---------------------
+Parameters for evaluation 116:
+                      4.9909119711e+02 Au
+                      2.5379630978e+02 Ao
+                      2.3508775231e+01 P
+                      1.9811879458e+02 E
+
+(Asynchronous job 116 added to queue)
+
+---------------------
+Begin Evaluation  117
+---------------------
+Parameters for evaluation 117:
+                      5.0639116344e+02 Au
+                      2.6947374055e+02 Ao
+                      2.5490843570e+01 P
+                      1.7671795214e+02 E
+
+(Asynchronous job 117 added to queue)
+
+---------------------
+Begin Evaluation  118
+---------------------
+Parameters for evaluation 118:
+                      5.2298978070e+02 Au
+                      2.7293081466e+02 Ao
+                      2.6530237556e+01 P
+                      2.1201874769e+02 E
+
+(Asynchronous job 118 added to queue)
+
+---------------------
+Begin Evaluation  119
+---------------------
+Parameters for evaluation 119:
+                      4.9363798578e+02 Au
+                      2.4137183175e+02 Ao
+                      2.6888389976e+01 P
+                      2.1742343260e+02 E
+
+(Asynchronous job 119 added to queue)
+
+---------------------
+Begin Evaluation  120
+---------------------
+Parameters for evaluation 120:
+                      4.8869671066e+02 Au
+                      2.5003635315e+02 Ao
+                      2.7049187991e+01 P
+                      2.1058161961e+02 E
+
+(Asynchronous job 120 added to queue)
+
+---------------------
+Begin Evaluation  121
+---------------------
+Parameters for evaluation 121:
+                      5.2536819252e+02 Au
+                      2.5713533588e+02 Ao
+                      2.5722035796e+01 P
+                      2.1474420423e+02 E
+
+(Asynchronous job 121 added to queue)
+
+---------------------
+Begin Evaluation  122
+---------------------
+Parameters for evaluation 122:
+                      5.0873906555e+02 Au
+                      2.4790960225e+02 Ao
+                      2.1602391283e+01 P
+                      1.9434555817e+02 E
+
+(Asynchronous job 122 added to queue)
+
+---------------------
+Begin Evaluation  123
+---------------------
+Parameters for evaluation 123:
+                      5.4984990314e+02 Au
+                      2.5606383720e+02 Ao
+                      2.5305232774e+01 P
+                      1.9090447688e+02 E
+
+(Asynchronous job 123 added to queue)
+
+---------------------
+Begin Evaluation  124
+---------------------
+Parameters for evaluation 124:
+                      4.5586797973e+02 Au
+                      2.3939003007e+02 Ao
+                      2.4961262852e+01 P
+                      2.1409795545e+02 E
+
+(Asynchronous job 124 added to queue)
+
+---------------------
+Begin Evaluation  125
+---------------------
+Parameters for evaluation 125:
+                      4.8526401062e+02 Au
+                      2.3261963177e+02 Ao
+                      2.7497893422e+01 P
+                      2.1136925822e+02 E
+
+(Asynchronous job 125 added to queue)
+
+---------------------
+Begin Evaluation  126
+---------------------
+Parameters for evaluation 126:
+                      5.1360228980e+02 Au
+                      2.6272440728e+02 Ao
+                      2.6318317416e+01 P
+                      2.0336160682e+02 E
+
+(Asynchronous job 126 added to queue)
+
+---------------------
+Begin Evaluation  127
+---------------------
+Parameters for evaluation 127:
+                      4.7645042484e+02 Au
+                      2.4481316873e+02 Ao
+                      2.6256498854e+01 P
+                      2.0958514895e+02 E
+
+(Asynchronous job 127 added to queue)
+
+---------------------
+Begin Evaluation  128
+---------------------
+Parameters for evaluation 128:
+                      5.2601156696e+02 Au
+                      2.3454035914e+02 Ao
+                      2.3454751676e+01 P
+                      2.1257643104e+02 E
+
+(Asynchronous job 128 added to queue)
+
+---------------------
+Begin Evaluation  129
+---------------------
+Parameters for evaluation 129:
+                      5.1953461066e+02 Au
+                      2.6474500536e+02 Ao
+                      2.3282739629e+01 P
+                      2.0893098944e+02 E
+
+(Asynchronous job 129 added to queue)
+
+---------------------
+Begin Evaluation  130
+---------------------
+Parameters for evaluation 130:
+                      4.7380969196e+02 Au
+                      2.3700346985e+02 Ao
+                      2.6341773559e+01 P
+                      1.9753643031e+02 E
+
+(Asynchronous job 130 added to queue)
+
+---------------------
+Begin Evaluation  131
+---------------------
+Parameters for evaluation 131:
+                      5.3969521370e+02 Au
+                      2.3360351611e+02 Ao
+                      2.1256982670e+01 P
+                      1.7914655615e+02 E
+
+(Asynchronous job 131 added to queue)
+
+---------------------
+Begin Evaluation  132
+---------------------
+Parameters for evaluation 132:
+                      4.8495447610e+02 Au
+                      2.6129701614e+02 Ao
+                      2.4084986561e+01 P
+                      2.0973587155e+02 E
+
+(Asynchronous job 132 added to queue)
+
+---------------------
+Begin Evaluation  133
+---------------------
+Parameters for evaluation 133:
+                      5.0473199273e+02 Au
+                      2.4942922914e+02 Ao
+                      2.3867709045e+01 P
+                      2.0169847645e+02 E
+
+(Asynchronous job 133 added to queue)
+
+---------------------
+Begin Evaluation  134
+---------------------
+Parameters for evaluation 134:
+                      5.3629660349e+02 Au
+                      2.5544482436e+02 Ao
+                      2.7210990411e+01 P
+                      2.2072080699e+02 E
+
+(Asynchronous job 134 added to queue)
+
+---------------------
+Begin Evaluation  135
+---------------------
+Parameters for evaluation 135:
+                      4.7412799500e+02 Au
+                      2.4765817407e+02 Ao
+                      2.7173290966e+01 P
+                      1.9369269680e+02 E
+
+(Asynchronous job 135 added to queue)
+
+---------------------
+Begin Evaluation  136
+---------------------
+Parameters for evaluation 136:
+                      5.1756266197e+02 Au
+                      2.6080279912e+02 Ao
+                      2.2373002674e+01 P
+                      1.7632590013e+02 E
+
+(Asynchronous job 136 added to queue)
+
+---------------------
+Begin Evaluation  137
+---------------------
+Parameters for evaluation 137:
+                      4.6932958001e+02 Au
+                      2.4017934689e+02 Ao
+                      2.2727237570e+01 P
+                      2.0651304323e+02 E
+
+(Asynchronous job 137 added to queue)
+
+---------------------
+Begin Evaluation  138
+---------------------
+Parameters for evaluation 138:
+                      4.7785082992e+02 Au
+                      2.4274893902e+02 Ao
+                      2.6557243476e+01 P
+                      1.9536472902e+02 E
+
+(Asynchronous job 138 added to queue)
+
+---------------------
+Begin Evaluation  139
+---------------------
+Parameters for evaluation 139:
+                      4.9063453654e+02 Au
+                      2.5697702839e+02 Ao
+                      2.5993529865e+01 P
+                      2.1699352838e+02 E
+
+(Asynchronous job 139 added to queue)
+
+---------------------
+Begin Evaluation  140
+---------------------
+Parameters for evaluation 140:
+                      5.0088805204e+02 Au
+                      2.5533462407e+02 Ao
+                      2.7604398285e+01 P
+                      1.8304221214e+02 E
+
+(Asynchronous job 140 added to queue)
+
+---------------------
+Begin Evaluation  141
+---------------------
+Parameters for evaluation 141:
+                      5.0036588317e+02 Au
+                      2.5504204799e+02 Ao
+                      2.8913130348e+01 P
+                      2.3024104941e+02 E
+
+(Asynchronous job 141 added to queue)
+
+---------------------
+Begin Evaluation  142
+---------------------
+Parameters for evaluation 142:
+                      5.3235944649e+02 Au
+                      2.5070192033e+02 Ao
+                      2.0589829288e+01 P
+                      1.8397122490e+02 E
+
+(Asynchronous job 142 added to queue)
+
+---------------------
+Begin Evaluation  143
+---------------------
+Parameters for evaluation 143:
+                      5.5328304929e+02 Au
+                      2.2939895208e+02 Ao
+                      2.4225326132e+01 P
+                      2.2006152549e+02 E
+
+(Asynchronous job 143 added to queue)
+
+---------------------
+Begin Evaluation  144
+---------------------
+Parameters for evaluation 144:
+                      4.8205713551e+02 Au
+                      2.3596056973e+02 Ao
+                      2.6948679925e+01 P
+                      1.9869396517e+02 E
+
+(Asynchronous job 144 added to queue)
+
+---------------------
+Begin Evaluation  145
+---------------------
+Parameters for evaluation 145:
+                      5.0699764937e+02 Au
+                      2.5006315817e+02 Ao
+                      2.8796812748e+01 P
+                      2.2449715421e+02 E
+
+(Asynchronous job 145 added to queue)
+
+---------------------
+Begin Evaluation  146
+---------------------
+Parameters for evaluation 146:
+                      5.4845748953e+02 Au
+                      2.4350002227e+02 Ao
+                      2.6285670774e+01 P
+                      2.0232267810e+02 E
+
+(Asynchronous job 146 added to queue)
+
+---------------------
+Begin Evaluation  147
+---------------------
+Parameters for evaluation 147:
+                      4.8762208249e+02 Au
+                      2.5598349369e+02 Ao
+                      2.6927406685e+01 P
+                      2.1993466898e+02 E
+
+(Asynchronous job 147 added to queue)
+
+---------------------
+Begin Evaluation  148
+---------------------
+Parameters for evaluation 148:
+                      5.2020290068e+02 Au
+                      2.4956184798e+02 Ao
+                      2.2178302021e+01 P
+                      2.1332877042e+02 E
+
+(Asynchronous job 148 added to queue)
+
+---------------------
+Begin Evaluation  149
+---------------------
+Parameters for evaluation 149:
+                      4.8822121633e+02 Au
+                      2.3918008341e+02 Ao
+                      2.1170497300e+01 P
+                      2.1310505767e+02 E
+
+(Asynchronous job 149 added to queue)
+
+---------------------
+Begin Evaluation  150
+---------------------
+Parameters for evaluation 150:
+                      4.7963820927e+02 Au
+                      2.5802821613e+02 Ao
+                      2.2335861116e+01 P
+                      2.1453323397e+02 E
+
+(Asynchronous job 150 added to queue)
+
+---------------------
+Begin Evaluation  151
+---------------------
+Parameters for evaluation 151:
+                      4.9381367180e+02 Au
+                      2.6259465273e+02 Ao
+                      2.7287582967e+01 P
+                      2.0149691737e+02 E
+
+(Asynchronous job 151 added to queue)
+
+---------------------
+Begin Evaluation  152
+---------------------
+Parameters for evaluation 152:
+                      5.1705252917e+02 Au
+                      2.6326563623e+02 Ao
+                      2.3956134057e+01 P
+                      2.0551890591e+02 E
+
+(Asynchronous job 152 added to queue)
+
+---------------------
+Begin Evaluation  153
+---------------------
+Parameters for evaluation 153:
+                      5.1217030818e+02 Au
+                      2.5130149057e+02 Ao
+                      2.2574681518e+01 P
+                      2.2131426703e+02 E
+
+(Asynchronous job 153 added to queue)
+
+---------------------
+Begin Evaluation  154
+---------------------
+Parameters for evaluation 154:
+                      5.4644610380e+02 Au
+                      2.4935203757e+02 Ao
+                      2.9096467625e+01 P
+                      2.0313640009e+02 E
+
+(Asynchronous job 154 added to queue)
+
+---------------------
+Begin Evaluation  155
+---------------------
+Parameters for evaluation 155:
+                      4.8583247576e+02 Au
+                      2.3660900333e+02 Ao
+                      2.4646029193e+01 P
+                      2.1646485442e+02 E
+
+(Asynchronous job 155 added to queue)
+
+---------------------
+Begin Evaluation  156
+---------------------
+Parameters for evaluation 156:
+                      5.2362793239e+02 Au
+                      2.6697804972e+02 Ao
+                      2.5344307112e+01 P
+                      1.9592789462e+02 E
+
+(Asynchronous job 156 added to queue)
+
+---------------------
+Begin Evaluation  157
+---------------------
+Parameters for evaluation 157:
+                      4.8022162801e+02 Au
+                      2.3731229206e+02 Ao
+                      2.3104052328e+01 P
+                      2.0433628111e+02 E
+
+(Asynchronous job 157 added to queue)
+
+---------------------
+Begin Evaluation  158
+---------------------
+Parameters for evaluation 158:
+                      5.3838652646e+02 Au
+                      2.3429842296e+02 Ao
+                      2.6466483388e+01 P
+                      1.8159896098e+02 E
+
+(Asynchronous job 158 added to queue)
+
+---------------------
+Begin Evaluation  159
+---------------------
+Parameters for evaluation 159:
+                      5.0220555694e+02 Au
+                      2.3037490406e+02 Ao
+                      2.2473727250e+01 P
+                      2.1019553393e+02 E
+
+(Asynchronous job 159 added to queue)
+
+---------------------
+Begin Evaluation  160
+---------------------
+Parameters for evaluation 160:
+                      5.2566378205e+02 Au
+                      2.5627561758e+02 Ao
+                      2.2117949233e+01 P
+                      2.1857941306e+02 E
+
+(Asynchronous job 160 added to queue)
+
+---------------------
+Begin Evaluation  161
+---------------------
+Parameters for evaluation 161:
+                      4.9489777332e+02 Au
+                      2.4629439602e+02 Ao
+                      2.0857853753e+01 P
+                      2.0837771231e+02 E
+
+(Asynchronous job 161 added to queue)
+
+---------------------
+Begin Evaluation  162
+---------------------
+Parameters for evaluation 162:
+                      5.1144914554e+02 Au
+                      2.3877338049e+02 Ao
+                      2.7386281411e+01 P
+                      2.2049653792e+02 E
+
+(Asynchronous job 162 added to queue)
+
+---------------------
+Begin Evaluation  163
+---------------------
+Parameters for evaluation 163:
+                      5.2094077988e+02 Au
+                      2.3294387051e+02 Ao
+                      2.4758384743e+01 P
+                      2.1028386205e+02 E
+
+(Asynchronous job 163 added to queue)
+
+---------------------
+Begin Evaluation  164
+---------------------
+Parameters for evaluation 164:
+                      4.7745843524e+02 Au
+                      2.3632499137e+02 Ao
+                      2.5945207713e+01 P
+                      2.0791851916e+02 E
+
+(Asynchronous job 164 added to queue)
+
+---------------------
+Begin Evaluation  165
+---------------------
+Parameters for evaluation 165:
+                      4.5913765461e+02 Au
+                      2.4658973621e+02 Ao
+                      2.4247553900e+01 P
+                      2.1179552695e+02 E
+
+(Asynchronous job 165 added to queue)
+
+---------------------
+Begin Evaluation  166
+---------------------
+Parameters for evaluation 166:
+                      4.6580588360e+02 Au
+                      2.6562268041e+02 Ao
+                      2.0944554443e+01 P
+                      2.0041365715e+02 E
+
+(Asynchronous job 166 added to queue)
+
+---------------------
+Begin Evaluation  167
+---------------------
+Parameters for evaluation 167:
+                      4.4799129720e+02 Au
+                      2.2310923938e+02 Ao
+                      2.3384119848e+01 P
+                      1.9922149220e+02 E
+
+(Asynchronous job 167 added to queue)
+
+---------------------
+Begin Evaluation  168
+---------------------
+Parameters for evaluation 168:
+                      5.0951126681e+02 Au
+                      2.5359792075e+02 Ao
+                      2.8657254632e+01 P
+                      2.0359154875e+02 E
+
+(Asynchronous job 168 added to queue)
+
+---------------------
+Begin Evaluation  169
+---------------------
+Parameters for evaluation 169:
+                      5.0753697951e+02 Au
+                      2.4972199251e+02 Ao
+                      2.5190291999e+01 P
+                      2.2323068369e+02 E
+
+(Asynchronous job 169 added to queue)
+
+---------------------
+Begin Evaluation  170
+---------------------
+Parameters for evaluation 170:
+                      4.8029544734e+02 Au
+                      2.5346922905e+02 Ao
+                      2.1960933505e+01 P
+                      2.0901508097e+02 E
+
+(Asynchronous job 170 added to queue)
+
+---------------------
+Begin Evaluation  171
+---------------------
+Parameters for evaluation 171:
+                      4.3624862855e+02 Au
+                      2.5331437994e+02 Ao
+                      2.1882884992e+01 P
+                      2.1467318835e+02 E
+
+(Asynchronous job 171 added to queue)
+
+---------------------
+Begin Evaluation  172
+---------------------
+Parameters for evaluation 172:
+                      4.9706536736e+02 Au
+                      2.7508626704e+02 Ao
+                      2.8252370259e+01 P
+                      1.9711901143e+02 E
+
+(Asynchronous job 172 added to queue)
+
+---------------------
+Begin Evaluation  173
+---------------------
+Parameters for evaluation 173:
+                      4.6046234874e+02 Au
+                      2.6372342890e+02 Ao
+                      2.3184061350e+01 P
+                      2.1946589858e+02 E
+
+(Asynchronous job 173 added to queue)
+
+---------------------
+Begin Evaluation  174
+---------------------
+Parameters for evaluation 174:
+                      5.2423373566e+02 Au
+                      2.6053699823e+02 Ao
+                      2.3145487964e+01 P
+                      2.0673198928e+02 E
+
+(Asynchronous job 174 added to queue)
+
+---------------------
+Begin Evaluation  175
+---------------------
+Parameters for evaluation 175:
+                      5.4148591065e+02 Au
+                      2.4541541479e+02 Ao
+                      2.4698720325e+01 P
+                      1.9494841271e+02 E
+
+(Asynchronous job 175 added to queue)
+
+---------------------
+Begin Evaluation  176
+---------------------
+Parameters for evaluation 176:
+                      5.1292017012e+02 Au
+                      2.5240539233e+02 Ao
+                      2.1296436940e+01 P
+                      2.1914432788e+02 E
+
+(Asynchronous job 176 added to queue)
+
+---------------------
+Begin Evaluation  177
+---------------------
+Parameters for evaluation 177:
+                      4.9194764457e+02 Au
+                      2.4731007791e+02 Ao
+                      2.7461768650e+01 P
+                      2.0605535081e+02 E
+
+(Asynchronous job 177 added to queue)
+
+---------------------
+Begin Evaluation  178
+---------------------
+Parameters for evaluation 178:
+                      4.9737813461e+02 Au
+                      2.5797509648e+02 Ao
+                      2.7723438205e+01 P
+                      2.1298423780e+02 E
+
+(Asynchronous job 178 added to queue)
+
+---------------------
+Begin Evaluation  179
+---------------------
+Parameters for evaluation 179:
+                      4.5742515612e+02 Au
+                      2.5104419590e+02 Ao
+                      2.8018883369e+01 P
+                      1.4648261803e+02 E
+
+(Asynchronous job 179 added to queue)
+
+---------------------
+Begin Evaluation  180
+---------------------
+Parameters for evaluation 180:
+                      4.9130345574e+02 Au
+                      2.5978246992e+02 Ao
+                      2.5294297404e+01 P
+                      2.0101595282e+02 E
+
+(Asynchronous job 180 added to queue)
+
+---------------------
+Begin Evaluation  181
+---------------------
+Parameters for evaluation 181:
+                      4.8864294252e+02 Au
+                      2.4258245356e+02 Ao
+                      2.5219468005e+01 P
+                      2.1068829499e+02 E
+
+(Asynchronous job 181 added to queue)
+
+---------------------
+Begin Evaluation  182
+---------------------
+Parameters for evaluation 182:
+                      5.0208561071e+02 Au
+                      2.8291407833e+02 Ao
+                      2.3915836351e+01 P
+                      1.9963318997e+02 E
+
+(Asynchronous job 182 added to queue)
+
+---------------------
+Begin Evaluation  183
+---------------------
+Parameters for evaluation 183:
+                      4.8076569407e+02 Au
+                      2.5090245964e+02 Ao
+                      2.4861781849e+01 P
+                      2.0733765680e+02 E
+
+(Asynchronous job 183 added to queue)
+
+---------------------
+Begin Evaluation  184
+---------------------
+Parameters for evaluation 184:
+                      5.0520365308e+02 Au
+                      2.5154943437e+02 Ao
+                      2.4976763590e+01 P
+                      2.0352692595e+02 E
+
+(Asynchronous job 184 added to queue)
+
+---------------------
+Begin Evaluation  185
+---------------------
+Parameters for evaluation 185:
+                      4.8259707458e+02 Au
+                      2.7188185716e+02 Ao
+                      2.6741936843e+01 P
+                      2.0566460797e+02 E
+
+(Asynchronous job 185 added to queue)
+
+---------------------
+Begin Evaluation  186
+---------------------
+Parameters for evaluation 186:
+                      5.1644854015e+02 Au
+                      2.4575372943e+02 Ao
+                      2.2064489306e+01 P
+                      1.8854422860e+02 E
+
+(Asynchronous job 186 added to queue)
+
+---------------------
+Begin Evaluation  187
+---------------------
+Parameters for evaluation 187:
+                      5.1455423202e+02 Au
+                      2.5394341010e+02 Ao
+                      2.4707122793e+01 P
+                      1.8997741253e+02 E
+
+(Asynchronous job 187 added to queue)
+
+---------------------
+Begin Evaluation  188
+---------------------
+Parameters for evaluation 188:
+                      4.7902811192e+02 Au
+                      2.6843037067e+02 Ao
+                      2.4555582499e+01 P
+                      2.0277364748e+02 E
+
+(Asynchronous job 188 added to queue)
+
+---------------------
+Begin Evaluation  189
+---------------------
+Parameters for evaluation 189:
+                      4.8170669413e+02 Au
+                      2.4451806438e+02 Ao
+                      2.7364781530e+01 P
+                      2.1318190079e+02 E
+
+(Asynchronous job 189 added to queue)
+
+---------------------
+Begin Evaluation  190
+---------------------
+Parameters for evaluation 190:
+                      5.1781944023e+02 Au
+                      2.6168820010e+02 Ao
+                      2.3257307826e+01 P
+                      2.1113287313e+02 E
+
+(Asynchronous job 190 added to queue)
+
+---------------------
+Begin Evaluation  191
+---------------------
+Parameters for evaluation 191:
+                      5.2879585106e+02 Au
+                      2.4719157119e+02 Ao
+                      2.5775912508e+01 P
+                      2.1801639591e+02 E
+
+(Asynchronous job 191 added to queue)
+
+---------------------
+Begin Evaluation  192
+---------------------
+Parameters for evaluation 192:
+                      5.1516163119e+02 Au
+                      2.4462154095e+02 Ao
+                      2.4160003913e+01 P
+                      2.0250352452e+02 E
+
+(Asynchronous job 192 added to queue)
+
+---------------------
+Begin Evaluation  193
+---------------------
+Parameters for evaluation 193:
+                      4.7516159969e+02 Au
+                      2.5306644262e+02 Ao
+                      2.5257874096e+01 P
+                      1.9581227750e+02 E
+
+(Asynchronous job 193 added to queue)
+
+---------------------
+Begin Evaluation  194
+---------------------
+Parameters for evaluation 194:
+                      4.7296470852e+02 Au
+                      2.3514936986e+02 Ao
+                      2.4770144961e+01 P
+                      1.8924312993e+02 E
+
+(Asynchronous job 194 added to queue)
+
+---------------------
+Begin Evaluation  195
+---------------------
+Parameters for evaluation 195:
+                      4.6373397077e+02 Au
+                      2.6309523683e+02 Ao
+                      2.4111345966e+01 P
+                      2.0479609535e+02 E
+
+(Asynchronous job 195 added to queue)
+
+---------------------
+Begin Evaluation  196
+---------------------
+Parameters for evaluation 196:
+                      4.8308877239e+02 Au
+                      2.6409712442e+02 Ao
+                      2.6165170449e+01 P
+                      2.0754403919e+02 E
+
+(Asynchronous job 196 added to queue)
+
+---------------------
+Begin Evaluation  197
+---------------------
+Parameters for evaluation 197:
+                      5.0336497471e+02 Au
+                      2.4711345677e+02 Ao
+                      2.7876598376e+01 P
+                      1.9760202670e+02 E
+
+(Asynchronous job 197 added to queue)
+
+---------------------
+Begin Evaluation  198
+---------------------
+Parameters for evaluation 198:
+                      5.0300175618e+02 Au
+                      2.4800146826e+02 Ao
+                      2.7318420074e+01 P
+                      1.8791901434e+02 E
+
+(Asynchronous job 198 added to queue)
+
+---------------------
+Begin Evaluation  199
+---------------------
+Parameters for evaluation 199:
+                      4.9247028140e+02 Au
+                      2.4408258264e+02 Ao
+                      2.3432539175e+01 P
+                      1.9033326358e+02 E
+
+(Asynchronous job 199 added to queue)
+
+---------------------
+Begin Evaluation  200
+---------------------
+Parameters for evaluation 200:
+                      5.2286824180e+02 Au
+                      2.4246209920e+02 Ao
+                      2.6999049253e+01 P
+                      2.0949371522e+02 E
+
+(Asynchronous job 200 added to queue)
+
+Blocking synchronize of 200 asynchronous evaluations
+First pass: initiating 12 local asynchronous jobs
+Initiating evaluation 1
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 2
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 3
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 4
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 5
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 6
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 7
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 8
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 9
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 10
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 11
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 12
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Second pass: scheduling 188 remaining local asynchronous jobs
+Waiting on completed jobs
+Evaluation 1 has completed
+Evaluation 2 has completed
+Evaluation 3 has completed
+Evaluation 4 has completed
+Evaluation 5 has completed
+Evaluation 6 has completed
+Evaluation 7 has completed
+Initiating evaluation 13
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 14
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 15
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 16
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 17
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 18
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 19
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 8 has completed
+Evaluation 9 has completed
+Evaluation 10 has completed
+Evaluation 11 has completed
+Evaluation 12 has completed
+Evaluation 13 has completed
+Evaluation 14 has completed
+Initiating evaluation 20
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 21
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 22
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 23
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 24
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 25
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 26
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 15 has completed
+Evaluation 16 has completed
+Evaluation 17 has completed
+Evaluation 18 has completed
+Evaluation 19 has completed
+Evaluation 20 has completed
+Evaluation 21 has completed
+Initiating evaluation 27
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 28
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 29
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 30
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 31
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 32
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 33
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 22 has completed
+Evaluation 23 has completed
+Evaluation 24 has completed
+Evaluation 25 has completed
+Evaluation 26 has completed
+Evaluation 27 has completed
+Initiating evaluation 34
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 35
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 36
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 37
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 38
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 39
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 28 has completed
+Evaluation 29 has completed
+Evaluation 30 has completed
+Evaluation 31 has completed
+Evaluation 32 has completed
+Evaluation 33 has completed
+Initiating evaluation 40
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 41
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 42
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 43
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 44
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 45
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 34 has completed
+Evaluation 35 has completed
+Evaluation 36 has completed
+Evaluation 37 has completed
+Evaluation 38 has completed
+Evaluation 39 has completed
+Initiating evaluation 46
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 47
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 48
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 49
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 50
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 51
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 40 has completed
+Evaluation 41 has completed
+Evaluation 42 has completed
+Evaluation 43 has completed
+Evaluation 44 has completed
+Evaluation 45 has completed
+Initiating evaluation 52
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 53
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 54
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 55
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 56
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 57
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 46 has completed
+Evaluation 47 has completed
+Evaluation 48 has completed
+Evaluation 49 has completed
+Evaluation 50 has completed
+Evaluation 51 has completed
+Initiating evaluation 58
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 59
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 60
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 61
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 62
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 63
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 52 has completed
+Evaluation 53 has completed
+Evaluation 54 has completed
+Evaluation 55 has completed
+Evaluation 56 has completed
+Evaluation 57 has completed
+Initiating evaluation 64
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 65
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 66
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 67
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 68
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 69
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 58 has completed
+Evaluation 59 has completed
+Evaluation 60 has completed
+Evaluation 61 has completed
+Evaluation 62 has completed
+Evaluation 63 has completed
+Initiating evaluation 70
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 71
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 72
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 73
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 74
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 75
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 64 has completed
+Evaluation 65 has completed
+Evaluation 66 has completed
+Evaluation 67 has completed
+Evaluation 68 has completed
+Evaluation 69 has completed
+Initiating evaluation 76
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 77
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 78
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 79
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 80
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 81
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 70 has completed
+Evaluation 71 has completed
+Evaluation 72 has completed
+Evaluation 73 has completed
+Evaluation 74 has completed
+Evaluation 75 has completed
+Initiating evaluation 82
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 83
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 84
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 85
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 86
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 87
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 76 has completed
+Evaluation 77 has completed
+Evaluation 78 has completed
+Evaluation 79 has completed
+Evaluation 80 has completed
+Evaluation 81 has completed
+Evaluation 82 has completed
+Initiating evaluation 88
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 89
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 90
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 91
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 92
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 93
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 94
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 83 has completed
+Evaluation 84 has completed
+Evaluation 85 has completed
+Evaluation 86 has completed
+Evaluation 87 has completed
+Evaluation 88 has completed
+Evaluation 89 has completed
+Initiating evaluation 95
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 96
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 97
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 98
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 99
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 100
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 101
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 90 has completed
+Evaluation 91 has completed
+Evaluation 92 has completed
+Evaluation 93 has completed
+Evaluation 94 has completed
+Evaluation 95 has completed
+Initiating evaluation 102
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 103
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 104
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 105
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 106
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 107
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 96 has completed
+Evaluation 97 has completed
+Evaluation 98 has completed
+Evaluation 99 has completed
+Evaluation 100 has completed
+Evaluation 101 has completed
+Initiating evaluation 108
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 109
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 110
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 111
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 112
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 113
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 102 has completed
+Evaluation 103 has completed
+Evaluation 104 has completed
+Evaluation 105 has completed
+Evaluation 106 has completed
+Evaluation 107 has completed
+Evaluation 108 has completed
+Initiating evaluation 114
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 115
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 116
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 117
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 118
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 119
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 120
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 109 has completed
+Evaluation 110 has completed
+Evaluation 111 has completed
+Evaluation 112 has completed
+Evaluation 113 has completed
+Evaluation 114 has completed
+Initiating evaluation 121
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 122
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 123
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 124
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 125
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 126
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 115 has completed
+Evaluation 116 has completed
+Evaluation 117 has completed
+Evaluation 118 has completed
+Evaluation 119 has completed
+Evaluation 120 has completed
+Initiating evaluation 127
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 128
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 129
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 130
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 131
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 132
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 121 has completed
+Evaluation 122 has completed
+Evaluation 123 has completed
+Evaluation 124 has completed
+Evaluation 125 has completed
+Evaluation 126 has completed
+Initiating evaluation 133
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 134
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 135
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 136
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 137
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 138
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 127 has completed
+Evaluation 128 has completed
+Evaluation 129 has completed
+Evaluation 130 has completed
+Evaluation 131 has completed
+Evaluation 132 has completed
+Initiating evaluation 139
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 140
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 141
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 142
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 143
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 144
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 133 has completed
+Evaluation 134 has completed
+Evaluation 135 has completed
+Evaluation 136 has completed
+Evaluation 137 has completed
+Evaluation 138 has completed
+Initiating evaluation 145
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 146
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 147
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 148
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 149
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 150
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 139 has completed
+Evaluation 140 has completed
+Evaluation 141 has completed
+Evaluation 142 has completed
+Evaluation 143 has completed
+Evaluation 144 has completed
+Evaluation 145 has completed
+Initiating evaluation 151
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 152
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 153
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 154
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 155
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 156
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 157
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 146 has completed
+Evaluation 147 has completed
+Evaluation 148 has completed
+Evaluation 149 has completed
+Evaluation 150 has completed
+Evaluation 151 has completed
+Initiating evaluation 158
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 159
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 160
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 161
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 162
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 163
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 152 has completed
+Evaluation 153 has completed
+Evaluation 154 has completed
+Evaluation 155 has completed
+Evaluation 156 has completed
+Evaluation 157 has completed
+Initiating evaluation 164
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 165
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 166
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 167
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 168
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 169
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 158 has completed
+Evaluation 159 has completed
+Evaluation 160 has completed
+Evaluation 161 has completed
+Evaluation 162 has completed
+Evaluation 163 has completed
+Initiating evaluation 170
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 171
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 172
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 173
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 174
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 175
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 164 has completed
+Evaluation 165 has completed
+Evaluation 166 has completed
+Evaluation 167 has completed
+Evaluation 168 has completed
+Evaluation 169 has completed
+Initiating evaluation 176
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 177
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 178
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 179
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 180
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 181
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 170 has completed
+Evaluation 171 has completed
+Evaluation 172 has completed
+Evaluation 173 has completed
+Evaluation 174 has completed
+Evaluation 175 has completed
+Initiating evaluation 182
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 183
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 184
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 185
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 186
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 187
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 176 has completed
+Evaluation 177 has completed
+Evaluation 178 has completed
+Evaluation 179 has completed
+Evaluation 180 has completed
+Evaluation 181 has completed
+Initiating evaluation 188
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 189
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 190
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 191
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 192
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 193
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 182 has completed
+Evaluation 183 has completed
+Evaluation 184 has completed
+Evaluation 185 has completed
+Evaluation 186 has completed
+Evaluation 187 has completed
+Initiating evaluation 194
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 195
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 196
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 197
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 198
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 199
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 188 has completed
+Evaluation 189 has completed
+Evaluation 190 has completed
+Evaluation 191 has completed
+Evaluation 192 has completed
+Evaluation 193 has completed
+Initiating evaluation 200
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 194 has completed
+Waiting on completed jobs
+Evaluation 195 has completed
+Waiting on completed jobs
+Evaluation 196 has completed
+Waiting on completed jobs
+Evaluation 197 has completed
+Waiting on completed jobs
+Evaluation 198 has completed
+Waiting on completed jobs
+Evaluation 199 has completed
+Waiting on completed jobs
+Evaluation 200 has completed
+
+Active response data for evaluation 1:
+Active set vector = { 1 1 }
+                     -8.1715457802e+00 Node_3_Disp_2
+                     -1.0034966429e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 2:
+Active set vector = { 1 1 }
+                     -7.7547815854e+00 Node_3_Disp_2
+                     -9.4278838200e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 1 }
+                     -6.7274269200e+00 Node_3_Disp_2
+                     -8.2290000172e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 4:
+Active set vector = { 1 1 }
+                     -8.3419896342e+00 Node_3_Disp_2
+                     -1.0280454576e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 5:
+Active set vector = { 1 1 }
+                     -7.2293643699e+00 Node_3_Disp_2
+                     -8.8964722377e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 6:
+Active set vector = { 1 1 }
+                     -8.7917076128e+00 Node_3_Disp_2
+                     -1.0719152227e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 7:
+Active set vector = { 1 1 }
+                     -7.0507639253e+00 Node_3_Disp_2
+                     -8.6561189671e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 8:
+Active set vector = { 1 1 }
+                     -6.7967834020e+00 Node_3_Disp_2
+                     -8.2784374875e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 9:
+Active set vector = { 1 1 }
+                     -6.6010257343e+00 Node_3_Disp_2
+                     -8.0060830807e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 10:
+Active set vector = { 1 1 }
+                     -6.3351147568e+00 Node_3_Disp_2
+                     -7.7623287724e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 11:
+Active set vector = { 1 1 }
+                     -8.5435391204e+00 Node_3_Disp_2
+                     -1.0270770421e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 12:
+Active set vector = { 1 1 }
+                     -5.9577222414e+00 Node_3_Disp_2
+                     -7.2767124561e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 13:
+Active set vector = { 1 1 }
+                     -6.7777460232e+00 Node_3_Disp_2
+                     -8.2903392960e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 14:
+Active set vector = { 1 1 }
+                     -7.0671861720e+00 Node_3_Disp_2
+                     -8.6530956182e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 15:
+Active set vector = { 1 1 }
+                     -8.7018391992e+00 Node_3_Disp_2
+                     -1.0413986307e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 16:
+Active set vector = { 1 1 }
+                     -8.9791886686e+00 Node_3_Disp_2
+                     -1.0903918674e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 17:
+Active set vector = { 1 1 }
+                     -7.8802167756e+00 Node_3_Disp_2
+                     -9.4870637048e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 18:
+Active set vector = { 1 1 }
+                     -7.8458794808e+00 Node_3_Disp_2
+                     -9.6720593497e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 19:
+Active set vector = { 1 1 }
+                     -7.8923998950e+00 Node_3_Disp_2
+                     -9.6984276886e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 20:
+Active set vector = { 1 1 }
+                     -8.2274590497e+00 Node_3_Disp_2
+                     -9.9663726229e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 21:
+Active set vector = { 1 1 }
+                     -5.8412794252e+00 Node_3_Disp_2
+                     -7.2020690579e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 22:
+Active set vector = { 1 1 }
+                     -6.4356868509e+00 Node_3_Disp_2
+                     -7.9738955448e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 23:
+Active set vector = { 1 1 }
+                     -7.7785068221e+00 Node_3_Disp_2
+                     -9.6810514030e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 24:
+Active set vector = { 1 1 }
+                     -6.6744146266e+00 Node_3_Disp_2
+                     -8.1219716554e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 25:
+Active set vector = { 1 1 }
+                     -6.3820538525e+00 Node_3_Disp_2
+                     -7.8814409940e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 26:
+Active set vector = { 1 1 }
+                     -7.0013017745e+00 Node_3_Disp_2
+                     -8.5823143031e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 27:
+Active set vector = { 1 1 }
+                     -6.5284525434e+00 Node_3_Disp_2
+                     -8.0240648221e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 28:
+Active set vector = { 1 1 }
+                     -7.7182781715e+00 Node_3_Disp_2
+                     -9.4398968033e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 29:
+Active set vector = { 1 1 }
+                     -7.8236058429e+00 Node_3_Disp_2
+                     -9.4952103037e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 30:
+Active set vector = { 1 1 }
+                     -7.8804947665e+00 Node_3_Disp_2
+                     -9.6134195147e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 31:
+Active set vector = { 1 1 }
+                     -6.8487718636e+00 Node_3_Disp_2
+                     -8.2784149825e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 32:
+Active set vector = { 1 1 }
+                     -8.0732296077e+00 Node_3_Disp_2
+                     -9.7893607244e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 33:
+Active set vector = { 1 1 }
+                     -6.6395376092e+00 Node_3_Disp_2
+                     -8.1737821883e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 34:
+Active set vector = { 1 1 }
+                     -7.8157762163e+00 Node_3_Disp_2
+                     -9.4125388470e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 35:
+Active set vector = { 1 1 }
+                     -6.8651708270e+00 Node_3_Disp_2
+                     -8.3346224342e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 36:
+Active set vector = { 1 1 }
+                     -7.0900609221e+00 Node_3_Disp_2
+                     -8.5858885059e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 37:
+Active set vector = { 1 1 }
+                     -7.7720563443e+00 Node_3_Disp_2
+                     -9.5903067333e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 38:
+Active set vector = { 1 1 }
+                     -6.7343493899e+00 Node_3_Disp_2
+                     -8.1772168625e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 39:
+Active set vector = { 1 1 }
+                     -7.8800423123e+00 Node_3_Disp_2
+                     -9.5905524049e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 40:
+Active set vector = { 1 1 }
+                     -6.9873982685e+00 Node_3_Disp_2
+                     -8.5225406765e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 41:
+Active set vector = { 1 1 }
+                     -8.4055855852e+00 Node_3_Disp_2
+                     -1.0389792419e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 42:
+Active set vector = { 1 1 }
+                     -7.3475239393e+00 Node_3_Disp_2
+                     -9.0430072988e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 43:
+Active set vector = { 1 1 }
+                     -8.1778680369e+00 Node_3_Disp_2
+                     -9.9895571371e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 44:
+Active set vector = { 1 1 }
+                     -7.9926004916e+00 Node_3_Disp_2
+                     -9.8721036698e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 45:
+Active set vector = { 1 1 }
+                     -7.6773367287e+00 Node_3_Disp_2
+                     -9.3287787180e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 46:
+Active set vector = { 1 1 }
+                     -6.4089719066e+00 Node_3_Disp_2
+                     -7.8067339655e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 47:
+Active set vector = { 1 1 }
+                     -8.5113955651e+00 Node_3_Disp_2
+                     -1.0224940871e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 48:
+Active set vector = { 1 1 }
+                     -8.1033291141e+00 Node_3_Disp_2
+                     -9.8184218085e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 49:
+Active set vector = { 1 1 }
+                     -6.1072805793e+00 Node_3_Disp_2
+                     -7.4878314741e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 50:
+Active set vector = { 1 1 }
+                     -8.1575583397e+00 Node_3_Disp_2
+                     -9.9758519639e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 51:
+Active set vector = { 1 1 }
+                     -7.7318837939e+00 Node_3_Disp_2
+                     -9.4292263135e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 52:
+Active set vector = { 1 1 }
+                     -8.3130577691e+00 Node_3_Disp_2
+                     -1.0164202970e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 53:
+Active set vector = { 1 1 }
+                     -7.6428245640e+00 Node_3_Disp_2
+                     -9.4267187550e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 54:
+Active set vector = { 1 1 }
+                     -6.5402618014e+00 Node_3_Disp_2
+                     -7.9955040722e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 55:
+Active set vector = { 1 1 }
+                     -7.4677081579e+00 Node_3_Disp_2
+                     -9.1411019579e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 56:
+Active set vector = { 1 1 }
+                     -6.7333309138e+00 Node_3_Disp_2
+                     -8.2403621696e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 57:
+Active set vector = { 1 1 }
+                     -7.1503776698e+00 Node_3_Disp_2
+                     -8.8939129056e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 58:
+Active set vector = { 1 1 }
+                     -7.1445872983e+00 Node_3_Disp_2
+                     -8.6917729133e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 59:
+Active set vector = { 1 1 }
+                     -7.2739011172e+00 Node_3_Disp_2
+                     -8.7763076390e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 60:
+Active set vector = { 1 1 }
+                     -6.6608622882e+00 Node_3_Disp_2
+                     -8.1662411102e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 61:
+Active set vector = { 1 1 }
+                     -7.7894851605e+00 Node_3_Disp_2
+                     -9.6451261457e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 62:
+Active set vector = { 1 1 }
+                     -6.9235839930e+00 Node_3_Disp_2
+                     -8.5269449141e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 63:
+Active set vector = { 1 1 }
+                     -8.7514175386e+00 Node_3_Disp_2
+                     -1.0713330793e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 64:
+Active set vector = { 1 1 }
+                     -7.5873881690e+00 Node_3_Disp_2
+                     -9.1556264859e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 65:
+Active set vector = { 1 1 }
+                     -8.1333260546e+00 Node_3_Disp_2
+                     -9.9460442218e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 66:
+Active set vector = { 1 1 }
+                     -7.7193528866e+00 Node_3_Disp_2
+                     -9.4831076764e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 67:
+Active set vector = { 1 1 }
+                     -8.2453716914e+00 Node_3_Disp_2
+                     -9.9949926718e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 68:
+Active set vector = { 1 1 }
+                     -8.0216931920e+00 Node_3_Disp_2
+                     -9.7272857066e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 69:
+Active set vector = { 1 1 }
+                     -8.8253503215e+00 Node_3_Disp_2
+                     -1.0767784464e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 70:
+Active set vector = { 1 1 }
+                     -7.8507011368e+00 Node_3_Disp_2
+                     -9.5546538608e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 71:
+Active set vector = { 1 1 }
+                     -7.9074992874e+00 Node_3_Disp_2
+                     -9.6292545722e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 72:
+Active set vector = { 1 1 }
+                     -8.3876945919e+00 Node_3_Disp_2
+                     -1.0160472529e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 73:
+Active set vector = { 1 1 }
+                     -7.4935736368e+00 Node_3_Disp_2
+                     -9.1823336574e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 74:
+Active set vector = { 1 1 }
+                     -6.9755699669e+00 Node_3_Disp_2
+                     -8.5190931009e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 75:
+Active set vector = { 1 1 }
+                     -5.9883686297e+00 Node_3_Disp_2
+                     -7.3186615436e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 76:
+Active set vector = { 1 1 }
+                     -7.5427401251e+00 Node_3_Disp_2
+                     -9.2899755260e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 77:
+Active set vector = { 1 1 }
+                     -5.8306796848e+00 Node_3_Disp_2
+                     -7.0877453300e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 78:
+Active set vector = { 1 1 }
+                     -7.8871273738e+00 Node_3_Disp_2
+                     -9.6976744236e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 79:
+Active set vector = { 1 1 }
+                     -6.2449160632e+00 Node_3_Disp_2
+                     -7.6155417501e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 80:
+Active set vector = { 1 1 }
+                     -6.1862118582e+00 Node_3_Disp_2
+                     -7.5898859314e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 81:
+Active set vector = { 1 1 }
+                     -7.3186123108e+00 Node_3_Disp_2
+                     -8.9683754220e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 82:
+Active set vector = { 1 1 }
+                     -7.0326824930e+00 Node_3_Disp_2
+                     -8.5829043475e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 83:
+Active set vector = { 1 1 }
+                     -7.7050357198e+00 Node_3_Disp_2
+                     -9.4253073959e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 84:
+Active set vector = { 1 1 }
+                     -1.0719172702e+01 Node_3_Disp_2
+                     -1.3123301521e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 85:
+Active set vector = { 1 1 }
+                     -6.8386500783e+00 Node_3_Disp_2
+                     -8.4645636495e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 86:
+Active set vector = { 1 1 }
+                     -7.2381227994e+00 Node_3_Disp_2
+                     -8.9148102431e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 87:
+Active set vector = { 1 1 }
+                     -6.9086895569e+00 Node_3_Disp_2
+                     -8.4139195035e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 88:
+Active set vector = { 1 1 }
+                     -6.4585319304e+00 Node_3_Disp_2
+                     -7.9119646079e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 89:
+Active set vector = { 1 1 }
+                     -6.9014650230e+00 Node_3_Disp_2
+                     -8.5488855620e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 90:
+Active set vector = { 1 1 }
+                     -6.4254487651e+00 Node_3_Disp_2
+                     -7.9358462701e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 91:
+Active set vector = { 1 1 }
+                     -8.0959883386e+00 Node_3_Disp_2
+                     -9.8860687742e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 92:
+Active set vector = { 1 1 }
+                     -5.9335889744e+00 Node_3_Disp_2
+                     -7.3265969004e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 93:
+Active set vector = { 1 1 }
+                     -7.7067992250e+00 Node_3_Disp_2
+                     -9.4362443492e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 94:
+Active set vector = { 1 1 }
+                     -6.9027047243e+00 Node_3_Disp_2
+                     -8.3827363091e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 95:
+Active set vector = { 1 1 }
+                     -8.3459030598e+00 Node_3_Disp_2
+                     -1.0281386380e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 96:
+Active set vector = { 1 1 }
+                     -7.2117237407e+00 Node_3_Disp_2
+                     -8.8857333372e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 97:
+Active set vector = { 1 1 }
+                     -7.4802848692e+00 Node_3_Disp_2
+                     -9.0646321752e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 98:
+Active set vector = { 1 1 }
+                     -7.6969166501e+00 Node_3_Disp_2
+                     -9.3405578046e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 99:
+Active set vector = { 1 1 }
+                     -7.0749103936e+00 Node_3_Disp_2
+                     -8.6275883484e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 100:
+Active set vector = { 1 1 }
+                     -5.4245229865e+00 Node_3_Disp_2
+                     -6.5252158236e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 101:
+Active set vector = { 1 1 }
+                     -6.6102199164e+00 Node_3_Disp_2
+                     -8.1178820672e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 102:
+Active set vector = { 1 1 }
+                     -7.6012066963e+00 Node_3_Disp_2
+                     -9.3452926496e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 103:
+Active set vector = { 1 1 }
+                     -9.3707693995e+00 Node_3_Disp_2
+                     -1.1554230458e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 104:
+Active set vector = { 1 1 }
+                     -7.1872831887e+00 Node_3_Disp_2
+                     -8.7866696820e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 105:
+Active set vector = { 1 1 }
+                     -5.9119752078e+00 Node_3_Disp_2
+                     -7.2420705145e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 106:
+Active set vector = { 1 1 }
+                     -8.3169990790e+00 Node_3_Disp_2
+                     -1.0232884087e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 107:
+Active set vector = { 1 1 }
+                     -6.8585237738e+00 Node_3_Disp_2
+                     -8.4236809742e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 108:
+Active set vector = { 1 1 }
+                     -8.3877242087e+00 Node_3_Disp_2
+                     -1.0238158424e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 109:
+Active set vector = { 1 1 }
+                     -6.5194967135e+00 Node_3_Disp_2
+                     -7.9427198195e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 110:
+Active set vector = { 1 1 }
+                     -8.1171902511e+00 Node_3_Disp_2
+                     -9.9819227632e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 111:
+Active set vector = { 1 1 }
+                     -6.5029468977e+00 Node_3_Disp_2
+                     -7.9373871721e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 112:
+Active set vector = { 1 1 }
+                     -8.3723061273e+00 Node_3_Disp_2
+                     -1.0239974083e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 113:
+Active set vector = { 1 1 }
+                     -8.4035242783e+00 Node_3_Disp_2
+                     -1.0364036139e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 114:
+Active set vector = { 1 1 }
+                     -6.6898869311e+00 Node_3_Disp_2
+                     -8.1290002668e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 115:
+Active set vector = { 1 1 }
+                     -5.8929902714e+00 Node_3_Disp_2
+                     -7.1385456704e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 116:
+Active set vector = { 1 1 }
+                     -7.0641861396e+00 Node_3_Disp_2
+                     -8.6173443807e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 117:
+Active set vector = { 1 1 }
+                     -8.2646206781e+00 Node_3_Disp_2
+                     -1.0025969559e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 118:
+Active set vector = { 1 1 }
+                     -7.0127606189e+00 Node_3_Disp_2
+                     -8.5276389314e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 119:
+Active set vector = { 1 1 }
+                     -7.6012722308e+00 Node_3_Disp_2
+                     -9.3166639920e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 120:
+Active set vector = { 1 1 }
+                     -7.7844254995e+00 Node_3_Disp_2
+                     -9.4888694215e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 121:
+Active set vector = { 1 1 }
+                     -6.9140116547e+00 Node_3_Disp_2
+                     -8.4733191040e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 122:
+Active set vector = { 1 1 }
+                     -6.6415138974e+00 Node_3_Disp_2
+                     -8.1436624311e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 123:
+Active set vector = { 1 1 }
+                     -7.5115956363e+00 Node_3_Disp_2
+                     -9.2608103748e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 124:
+Active set vector = { 1 1 }
+                     -7.4716457775e+00 Node_3_Disp_2
+                     -9.0787316088e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 125:
+Active set vector = { 1 1 }
+                     -8.2220433388e+00 Node_3_Disp_2
+                     -1.0101617922e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 126:
+Active set vector = { 1 1 }
+                     -7.4634920929e+00 Node_3_Disp_2
+                     -9.0978960145e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 127:
+Active set vector = { 1 1 }
+                     -7.7698623870e+00 Node_3_Disp_2
+                     -9.4661972531e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 128:
+Active set vector = { 1 1 }
+                     -6.6959755091e+00 Node_3_Disp_2
+                     -8.2980305248e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 129:
+Active set vector = { 1 1 }
+                     -6.3661076604e+00 Node_3_Disp_2
+                     -7.7638096699e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 130:
+Active set vector = { 1 1 }
+                     -8.4359592810e+00 Node_3_Disp_2
+                     -1.0311323781e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 131:
+Active set vector = { 1 1 }
+                     -7.1372464768e+00 Node_3_Disp_2
+                     -8.8758672985e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 132:
+Active set vector = { 1 1 }
+                     -6.8263254382e+00 Node_3_Disp_2
+                     -8.2685191453e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 133:
+Active set vector = { 1 1 }
+                     -7.0730172982e+00 Node_3_Disp_2
+                     -8.6580897392e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 134:
+Active set vector = { 1 1 }
+                     -7.0747184581e+00 Node_3_Disp_2
+                     -8.6986894369e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 135:
+Active set vector = { 1 1 }
+                     -8.6684366580e+00 Node_3_Disp_2
+                     -1.0539790767e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 136:
+Active set vector = { 1 1 }
+                     -7.3195113148e+00 Node_3_Disp_2
+                     -8.9386931906e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 137:
+Active set vector = { 1 1 }
+                     -6.9439059336e+00 Node_3_Disp_2
+                     -8.4640903609e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 138:
+Active set vector = { 1 1 }
+                     -8.4569827454e+00 Node_3_Disp_2
+                     -1.0317638406e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 139:
+Active set vector = { 1 1 }
+                     -7.1425241636e+00 Node_3_Disp_2
+                     -8.6815816098e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 140:
+Active set vector = { 1 1 }
+                     -8.9343142419e+00 Node_3_Disp_2
+                     -1.0895400010e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 141:
+Active set vector = { 1 1 }
+                     -7.4477193530e+00 Node_3_Disp_2
+                     -9.0826112419e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 142:
+Active set vector = { 1 1 }
+                     -6.5104885468e+00 Node_3_Disp_2
+                     -8.0158661617e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 143:
+Active set vector = { 1 1 }
+                     -6.6206673785e+00 Node_3_Disp_2
+                     -8.2749061541e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 144:
+Active set vector = { 1 1 }
+                     -8.5318096863e+00 Node_3_Disp_2
+                     -1.0455852102e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 145:
+Active set vector = { 1 1 }
+                     -7.6407763608e+00 Node_3_Disp_2
+                     -9.3552792478e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 146:
+Active set vector = { 1 1 }
+                     -7.5800987936e+00 Node_3_Disp_2
+                     -9.3984583309e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 147:
+Active set vector = { 1 1 }
+                     -7.3365344592e+00 Node_3_Disp_2
+                     -8.9149063086e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 148:
+Active set vector = { 1 1 }
+                     -6.1266477656e+00 Node_3_Disp_2
+                     -7.5265085587e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 149:
+Active set vector = { 1 1 }
+                     -6.1675049718e+00 Node_3_Disp_2
+                     -7.5575916122e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 150:
+Active set vector = { 1 1 }
+                     -6.2626624382e+00 Node_3_Disp_2
+                     -7.5872296795e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 151:
+Active set vector = { 1 1 }
+                     -7.9597320883e+00 Node_3_Disp_2
+                     -9.6569412875e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 152:
+Active set vector = { 1 1 }
+                     -6.6938303795e+00 Node_3_Disp_2
+                     -8.1642939830e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 153:
+Active set vector = { 1 1 }
+                     -6.0314898102e+00 Node_3_Disp_2
+                     -7.3895386833e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 154:
+Active set vector = { 1 1 }
+                     -8.2600445813e+00 Node_3_Disp_2
+                     -1.0208280335e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 155:
+Active set vector = { 1 1 }
+                     -7.1259855186e+00 Node_3_Disp_2
+                     -8.7383249275e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 156:
+Active set vector = { 1 1 }
+                     -7.3297969047e+00 Node_3_Disp_2
+                     -8.9384808419e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 157:
+Active set vector = { 1 1 }
+                     -7.1033413342e+00 Node_3_Disp_2
+                     -8.6952287853e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 158:
+Active set vector = { 1 1 }
+                     -8.7607564435e+00 Node_3_Disp_2
+                     -1.0887955258e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 159:
+Active set vector = { 1 1 }
+                     -6.6892255791e+00 Node_3_Disp_2
+                     -8.2617834270e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 160:
+Active set vector = { 1 1 }
+                     -5.8499746110e+00 Node_3_Disp_2
+                     -7.1726959011e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 161:
+Active set vector = { 1 1 }
+                     -6.0788999055e+00 Node_3_Disp_2
+                     -7.4348622358e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 162:
+Active set vector = { 1 1 }
+                     -7.5564224004e+00 Node_3_Disp_2
+                     -9.3133097083e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 163:
+Active set vector = { 1 1 }
+                     -7.2031849469e+00 Node_3_Disp_2
+                     -8.9235769343e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 164:
+Active set vector = { 1 1 }
+                     -7.8780191877e+00 Node_3_Disp_2
+                     -9.6416470186e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 165:
+Active set vector = { 1 1 }
+                     -7.2002047551e+00 Node_3_Disp_2
+                     -8.7248426129e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 166:
+Active set vector = { 1 1 }
+                     -6.2841104521e+00 Node_3_Disp_2
+                     -7.5587288547e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 167:
+Active set vector = { 1 1 }
+                     -7.8717662607e+00 Node_3_Disp_2
+                     -9.6268167571e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 168:
+Active set vector = { 1 1 }
+                     -8.3026151982e+00 Node_3_Disp_2
+                     -1.0154450829e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 169:
+Active set vector = { 1 1 }
+                     -6.7233888284e+00 Node_3_Disp_2
+                     -8.2344570831e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 170:
+Active set vector = { 1 1 }
+                     -6.3745029007e+00 Node_3_Disp_2
+                     -7.7409143759e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 171:
+Active set vector = { 1 1 }
+                     -6.4859834559e+00 Node_3_Disp_2
+                     -7.7840640079e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 172:
+Active set vector = { 1 1 }
+                     -8.1993649099e+00 Node_3_Disp_2
+                     -9.8989992578e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 173:
+Active set vector = { 1 1 }
+                     -6.4118816145e+00 Node_3_Disp_2
+                     -7.7082531364e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 174:
+Active set vector = { 1 1 }
+                     -6.4235328278e+00 Node_3_Disp_2
+                     -7.8576717123e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 175:
+Active set vector = { 1 1 }
+                     -7.4009761852e+00 Node_3_Disp_2
+                     -9.1539768473e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 176:
+Active set vector = { 1 1 }
+                     -5.7289023230e+00 Node_3_Disp_2
+                     -7.0163450652e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 177:
+Active set vector = { 1 1 }
+                     -8.0985759059e+00 Node_3_Disp_2
+                     -9.8929352475e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 178:
+Active set vector = { 1 1 }
+                     -7.6953056747e+00 Node_3_Disp_2
+                     -9.3646468751e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 179:
+Active set vector = { 1 1 }
+                     -1.1941495848e+01 Node_3_Disp_2
+                     -1.4431662650e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 180:
+Active set vector = { 1 1 }
+                     -7.4556484268e+00 Node_3_Disp_2
+                     -9.0516584335e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 181:
+Active set vector = { 1 1 }
+                     -7.3722375157e+00 Node_3_Disp_2
+                     -9.0193857048e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 182:
+Active set vector = { 1 1 }
+                     -6.7233227526e+00 Node_3_Disp_2
+                     -8.0989709474e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 183:
+Active set vector = { 1 1 }
+                     -7.3102060872e+00 Node_3_Disp_2
+                     -8.8893075958e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 184:
+Active set vector = { 1 1 }
+                     -7.2988334652e+00 Node_3_Disp_2
+                     -8.9263724943e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 185:
+Active set vector = { 1 1 }
+                     -7.5927387327e+00 Node_3_Disp_2
+                     -9.1464881195e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 186:
+Active set vector = { 1 1 }
+                     -6.9774290732e+00 Node_3_Disp_2
+                     -8.5800612295e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 187:
+Active set vector = { 1 1 }
+                     -7.6305913161e+00 Node_3_Disp_2
+                     -9.3421273002e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 188:
+Active set vector = { 1 1 }
+                     -7.1433287965e+00 Node_3_Disp_2
+                     -8.6108039239e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 189:
+Active set vector = { 1 1 }
+                     -7.9251653859e+00 Node_3_Disp_2
+                     -9.6697250617e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 190:
+Active set vector = { 1 1 }
+                     -6.3415353469e+00 Node_3_Disp_2
+                     -7.7416547167e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 191:
+Active set vector = { 1 1 }
+                     -6.9520797853e+00 Node_3_Disp_2
+                     -8.5671301504e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 192:
+Active set vector = { 1 1 }
+                     -7.1394756700e+00 Node_3_Disp_2
+                     -8.7815644071e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 193:
+Active set vector = { 1 1 }
+                     -7.8728694851e+00 Node_3_Disp_2
+                     -9.5497508000e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 194:
+Active set vector = { 1 1 }
+                     -8.3220175607e+00 Node_3_Disp_2
+                     -1.0179534040e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 195:
+Active set vector = { 1 1 }
+                     -7.1293056520e+00 Node_3_Disp_2
+                     -8.5807713992e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 196:
+Active set vector = { 1 1 }
+                     -7.4673347157e+00 Node_3_Disp_2
+                     -9.0288339571e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 197:
+Active set vector = { 1 1 }
+                     -8.4852937803e+00 Node_3_Disp_2
+                     -1.0395167748e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 198:
+Active set vector = { 1 1 }
+                     -8.7299270440e+00 Node_3_Disp_2
+                     -1.0689296040e+01 Node_2_Disp_2
+
+
+Active response data for evaluation 199:
+Active set vector = { 1 1 }
+                     -7.5301030328e+00 Node_3_Disp_2
+                     -9.2143480058e+00 Node_2_Disp_2
+
+
+Active response data for evaluation 200:
+Active set vector = { 1 1 }
+                     -7.6982079059e+00 Node_3_Disp_2
+                     -9.4957137816e+00 Node_2_Disp_2
+
+<<<<< Function evaluation summary: 200 total (200 new, 0 duplicate)
+-----------------------------------------------------------------------------
+Statistics based on 200 samples:
+
+Sample moment statistics for each response function:
+                            Mean           Std Dev          Skewness          Kurtosis
+ Node_3_Disp_2 -7.3811478497e+00  8.8166591796e-01 -8.7168831412e-01  3.2627300635e+00
+ Node_2_Disp_2 -9.0209850313e+00  1.0735520107e+00 -8.2217089441e-01  2.9932634563e+00
+
+95% confidence intervals for each response function:
+                    LowerCI_Mean      UpperCI_Mean    LowerCI_StdDev    UpperCI_StdDev
+ Node_3_Disp_2 -7.5040859209e+00 -7.2582097784e+00  8.0289998970e-01  9.7770130891e-01
+ Node_2_Disp_2 -9.1706793894e+00 -8.8712906733e+00  9.7764343702e-01  1.1904885793e+00
+
+Simple Correlation Matrix among all inputs and outputs:
+                       Au           Ao            P            E Node_3_Disp_2 Node_2_Disp_2 
+          Au  1.00000e+00 
+          Ao  1.27849e-04  1.00000e+00 
+           P  5.44859e-03  5.13495e-03  1.00000e+00 
+           E  1.09479e-02  4.34669e-03 -1.00279e-02  1.00000e+00 
+Node_3_Disp_2  2.14290e-01  1.74110e-01 -7.58031e-01  5.87185e-01  1.00000e+00 
+Node_2_Disp_2  1.62373e-01  2.14644e-01 -7.60674e-01  5.87152e-01  9.97789e-01  1.00000e+00 
+
+Partial Correlation Matrix between input and output:
+             Node_3_Disp_2 Node_2_Disp_2 
+          Au  8.75577e-01  8.12634e-01 
+          Ao  8.31986e-01  8.82953e-01 
+           P -9.88183e-01 -9.88681e-01 
+           E  9.80021e-01  9.80749e-01 
+
+Simple Rank Correlation Matrix among all inputs and outputs:
+                       Au           Ao            P            E Node_3_Disp_2 Node_2_Disp_2 
+          Au  1.00000e+00 
+          Ao -7.65619e-03  1.00000e+00 
+           P -3.22448e-02 -1.68559e-02  1.00000e+00 
+           E -2.30991e-02 -1.81505e-03 -1.51399e-02  1.00000e+00 
+Node_3_Disp_2  2.24040e-01  2.04743e-01 -7.94666e-01  4.96425e-01  1.00000e+00 
+Node_2_Disp_2  1.76488e-01  2.44092e-01 -7.94411e-01  4.97121e-01  9.97253e-01  1.00000e+00 
+
+Partial Rank Correlation Matrix between input and output:
+             Node_3_Disp_2 Node_2_Disp_2 
+          Au  6.80114e-01  5.81711e-01 
+          Ao  6.48112e-01  7.12067e-01 
+           P -9.59465e-01 -9.58945e-01 
+           E  9.06493e-01  9.05149e-01 
+
+-----------------------------------------------------------------------------
+
+<<<<< Iterator random_sampling completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =    1.67736 [parent =    1.67732, child =    4.4e-05]
+  Total wall clock =    5.24816

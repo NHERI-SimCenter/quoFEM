@@ -1,0 +1,4942 @@
+Dakota version 6.14 released May 17 2021.
+Repository revision 382229e53 (2021-05-12) built Nov  8 2021 17:11:24.
+Running serial Dakota executable in serial mode.
+Start time: Fri Aug 26 09:17:20 2022
+
+-----------------------
+Begin DAKOTA input file
+dakota.in
+-----------------------
+environment 
+ tabular_data 
+ tabular_data_file = 'dakotaTab.out' 
+
+method, 
+ nl2sol
+  convergence_tolerance = 1e-10 
+   max_iterations = 1000
+  scaling
+
+
+variables 
+   continuous_design = 2
+    initial_point = 1500 500 
+    lower_bounds = 500 500 
+    upper_bounds = 2000 2000 
+    descriptors = 'Ic1' 'Ic2' 
+
+interface 
+  analysis_driver = 'workflow_driver1'
+  fork
+   parameters_file = 'paramsDakota.in'
+   results_file = 'results.out' 
+   aprepro 
+   work_directory
+     named 'workdir' 
+     directory_tag
+     directory_save
+     copy_files = 'templatedir/*' 
+  asynchronous evaluation_concurrency = 12
+
+responses
+  id_responses = 'calibration'
+ calibration_terms = 2
+ response_descriptors = 'lambda' 'phi' 
+  calibration_data_file = 'quoFEMScalarCalibrationData.cal'
+    freeform
+    num_experiments = 5
+ numerical_gradients
+ no_hessians
+
+---------------------
+End DAKOTA input file
+---------------------
+
+Using Dakota input file 'dakota.in'
+Writing new restart file 'dakota.rst'.
+
+Reading scalar experimental data from file quoFEMScalarCalibrationData.cal:
+  5 experiment(s) for
+  2 scalar responses
+
+ScalingModel: Scaling enabled
+
+>>>>> Executing environment.
+
+>>>>> Running nl2sol iterator.
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      1.5000000000e+03 Ic1
+                      5.0000000000e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 1:
+Active set vector = { 1 1 }
+                      9.7962333421e+02 lambda
+                      2.7336569688e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      1.5015000000e+03 Ic1
+                      5.0000000000e+02 Ic2
+
+(Asynchronous job 2 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      1.5000000000e+03 Ic1
+                      5.0050000000e+02 Ic2
+
+(Asynchronous job 3 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 2
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 3
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 2 has completed
+Waiting on completed jobs
+Evaluation 3 has completed
+
+Active response data for evaluation 2:
+Active set vector = { 1 1 }
+                      9.8011145100e+02 lambda
+                      2.7360183776e+00 phi
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 1 }
+                      9.8011166559e+02 lambda
+                      2.7313004036e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  3.2541119045e-01  9.7666274744e-01 ] lambda gradient
+ [  1.5742725147e-03 -4.7131304429e-03 ] phi gradient
+ [  3.2541119045e-01  9.7666274744e-01 ] lambda gradient
+ [  1.5742725147e-03 -4.7131304429e-03 ] phi gradient
+ [  3.2541119045e-01  9.7666274744e-01 ] lambda gradient
+ [  1.5742725147e-03 -4.7131304429e-03 ] phi gradient
+ [  3.2541119045e-01  9.7666274744e-01 ] lambda gradient
+ [  1.5742725147e-03 -4.7131304429e-03 ] phi gradient
+ [  3.2541119045e-01  9.7666274744e-01 ] lambda gradient
+ [  1.5742725147e-03 -4.7131304429e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      1.5020369415e+03 Ic1
+                      5.0067878801e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 4:
+Active set vector = { 1 1 }
+                      9.8095008329e+02 lambda
+                      2.7336599651e+00 phi
+
+
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      1.5081477337e+03 Ic1
+                      5.0271516274e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 5:
+Active set vector = { 1 1 }
+                      9.8493018866e+02 lambda
+                      2.7336691448e+00 phi
+
+
+
+---------------------
+Begin Evaluation    6
+---------------------
+Parameters for evaluation 6:
+                      1.5325902570e+03 Ic1
+                      5.1086087674e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 6:
+Active set vector = { 1 1 }
+                      1.0008497717e+03 lambda
+                      2.7337034113e+00 phi
+
+
+
+---------------------
+Begin Evaluation    7
+---------------------
+Parameters for evaluation 7:
+                      1.6260229389e+03 Ic1
+                      5.4360821412e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 7:
+Active set vector = { 1 1 }
+                      1.0632606986e+03 lambda
+                      2.7268500027e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation    8
+---------------------
+Parameters for evaluation 8:
+                      1.6276489618e+03 Ic1
+                      5.4360821412e+02 Ic2
+
+(Asynchronous job 8 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation    9
+---------------------
+Parameters for evaluation 9:
+                      1.6260229389e+03 Ic1
+                      5.4415182234e+02 Ic2
+
+(Asynchronous job 9 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 8
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 9
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 8 has completed
+Waiting on completed jobs
+Evaluation 9 has completed
+
+Active response data for evaluation 8:
+Active set vector = { 1 1 }
+                      1.0637917078e+03 lambda
+                      2.7292015014e+00 phi
+
+
+Active response data for evaluation 9:
+Active set vector = { 1 1 }
+                      1.0637892705e+03 lambda
+                      2.7245035171e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  3.2656928611e-01  9.7233976379e-01 ] lambda gradient
+ [  1.4461657710e-03 -4.3165014156e-03 ] phi gradient
+ [  3.2656928611e-01  9.7233976379e-01 ] lambda gradient
+ [  1.4461657710e-03 -4.3165014156e-03 ] phi gradient
+ [  3.2656928611e-01  9.7233976379e-01 ] lambda gradient
+ [  1.4461657710e-03 -4.3165014156e-03 ] phi gradient
+ [  3.2656928611e-01  9.7233976379e-01 ] lambda gradient
+ [  1.4461657710e-03 -4.3165014156e-03 ] phi gradient
+ [  3.2656928611e-01  9.7233976379e-01 ] lambda gradient
+ [  1.4461657710e-03 -4.3165014156e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   10
+---------------------
+Parameters for evaluation 10:
+                      1.3705774197e+03 Ic1
+                      6.2971180912e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 10:
+Active set vector = { 1 1 }
+                      1.0280323708e+03 lambda
+                      2.1228231601e+00 phi
+
+
+
+---------------------
+Begin Evaluation   11
+---------------------
+Parameters for evaluation 11:
+                      1.6008953061e+03 Ic1
+                      5.5235731287e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 11:
+Active set vector = { 1 1 }
+                      1.0632025513e+03 lambda
+                      2.6542968763e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   12
+---------------------
+Parameters for evaluation 12:
+                      1.6024962014e+03 Ic1
+                      5.5235731287e+02 Ic2
+
+(Asynchronous job 12 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   13
+---------------------
+Parameters for evaluation 13:
+                      1.6008953061e+03 Ic1
+                      5.5290967018e+02 Ic2
+
+(Asynchronous job 13 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 12
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 13
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 12 has completed
+Waiting on completed jobs
+Evaluation 13 has completed
+
+Active response data for evaluation 12:
+Active set vector = { 1 1 }
+                      1.0637479897e+03 lambda
+                      2.6565493170e+00 phi
+
+
+Active response data for evaluation 13:
+Active set vector = { 1 1 }
+                      1.0637166387e+03 lambda
+                      2.6520494812e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  3.4070836410e-01  9.3071533537e-01 ] lambda gradient
+ [  1.4069880988e-03 -4.0687343092e-03 ] phi gradient
+ [  3.4070836410e-01  9.3071533537e-01 ] lambda gradient
+ [  1.4069880988e-03 -4.0687343092e-03 ] phi gradient
+ [  3.4070836410e-01  9.3071533537e-01 ] lambda gradient
+ [  1.4069880988e-03 -4.0687343092e-03 ] phi gradient
+ [  3.4070836410e-01  9.3071533537e-01 ] lambda gradient
+ [  1.4069880988e-03 -4.0687343092e-03 ] phi gradient
+ [  3.4070836410e-01  9.3071533537e-01 ] lambda gradient
+ [  1.4069880988e-03 -4.0687343092e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   14
+---------------------
+Parameters for evaluation 14:
+                      1.5769613575e+03 Ic1
+                      5.6150483397e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 14:
+Active set vector = { 1 1 }
+                      1.0632046611e+03 lambda
+                      2.5849283641e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   15
+---------------------
+Parameters for evaluation 15:
+                      1.5785383188e+03 Ic1
+                      5.6150483397e+02 Ic2
+
+(Asynchronous job 15 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   16
+---------------------
+Parameters for evaluation 16:
+                      1.5769613575e+03 Ic1
+                      5.6206633880e+02 Ic2
+
+(Asynchronous job 16 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 15
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 16
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 15 has completed
+Waiting on completed jobs
+Evaluation 16 has completed
+
+Active response data for evaluation 15:
+Active set vector = { 1 1 }
+                      1.0637644987e+03 lambda
+                      2.5870854028e+00 phi
+
+
+Active response data for evaluation 16:
+Active set vector = { 1 1 }
+                      1.0637044119e+03 lambda
+                      2.5827763897e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  3.5501036631e-01  8.9002059295e-01 ] lambda gradient
+ [  1.3678449923e-03 -3.8325126305e-03 ] phi gradient
+ [  3.5501036631e-01  8.9002059295e-01 ] lambda gradient
+ [  1.3678449923e-03 -3.8325126305e-03 ] phi gradient
+ [  3.5501036631e-01  8.9002059295e-01 ] lambda gradient
+ [  1.3678449923e-03 -3.8325126305e-03 ] phi gradient
+ [  3.5501036631e-01  8.9002059295e-01 ] lambda gradient
+ [  1.3678449923e-03 -3.8325126305e-03 ] phi gradient
+ [  3.5501036631e-01  8.9002059295e-01 ] lambda gradient
+ [  1.3678449923e-03 -3.8325126305e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   17
+---------------------
+Parameters for evaluation 17:
+                      1.5565169438e+03 Ic1
+                      5.7173887231e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 17:
+Active set vector = { 1 1 }
+                      1.0647074667e+03 lambda
+                      2.5192941986e+00 phi
+
+
+
+---------------------
+Begin Evaluation   18
+---------------------
+Parameters for evaluation 18:
+                      1.5541184294e+03 Ic1
+                      5.7101759025e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 18:
+Active set vector = { 1 1 }
+                      1.0632072604e+03 lambda
+                      2.5187134709e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   19
+---------------------
+Parameters for evaluation 19:
+                      1.5556725478e+03 Ic1
+                      5.7101759025e+02 Ic2
+
+(Asynchronous job 19 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   20
+---------------------
+Parameters for evaluation 20:
+                      1.5541184294e+03 Ic1
+                      5.7158860784e+02 Ic2
+
+(Asynchronous job 20 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 19
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 20
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 19 has completed
+Waiting on completed jobs
+Evaluation 20 has completed
+
+Active response data for evaluation 19:
+Active set vector = { 1 1 }
+                      1.0637813980e+03 lambda
+                      2.5207788556e+00 phi
+
+
+Active response data for evaluation 20:
+Active set vector = { 1 1 }
+                      1.0636927122e+03 lambda
+                      2.5166531991e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  3.6942974355e-01  8.5015200865e-01 ] lambda gradient
+ [  1.3289751068e-03 -3.6080705843e-03 ] phi gradient
+ [  3.6942974355e-01  8.5015200865e-01 ] lambda gradient
+ [  1.3289751068e-03 -3.6080705843e-03 ] phi gradient
+ [  3.6942974355e-01  8.5015200865e-01 ] lambda gradient
+ [  1.3289751068e-03 -3.6080705843e-03 ] phi gradient
+ [  3.6942974355e-01  8.5015200865e-01 ] lambda gradient
+ [  1.3289751068e-03 -3.6080705843e-03 ] phi gradient
+ [  3.6942974355e-01  8.5015200865e-01 ] lambda gradient
+ [  1.3289751068e-03 -3.6080705843e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   21
+---------------------
+Parameters for evaluation 21:
+                      1.5323625590e+03 Ic1
+                      5.8088840041e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 21:
+Active set vector = { 1 1 }
+                      1.0632128476e+03 lambda
+                      2.4556310995e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   22
+---------------------
+Parameters for evaluation 22:
+                      1.5338949216e+03 Ic1
+                      5.8088840041e+02 Ic2
+
+(Asynchronous job 22 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   23
+---------------------
+Parameters for evaluation 23:
+                      1.5323625590e+03 Ic1
+                      5.8146928881e+02 Ic2
+
+(Asynchronous job 23 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 22
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 23
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 22 has completed
+Waiting on completed jobs
+Evaluation 23 has completed
+
+Active response data for evaluation 22:
+Active set vector = { 1 1 }
+                      1.0638011221e+03 lambda
+                      2.4576085981e+00 phi
+
+
+Active response data for evaluation 23:
+Active set vector = { 1 1 }
+                      1.0636841998e+03 lambda
+                      2.4536586389e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  3.8390033297e-01  8.1143324312e-01 ] lambda gradient
+ [  1.2904900349e-03 -3.3955930401e-03 ] phi gradient
+ [  3.8390033297e-01  8.1143324312e-01 ] lambda gradient
+ [  1.2904900349e-03 -3.3955930401e-03 ] phi gradient
+ [  3.8390033297e-01  8.1143324312e-01 ] lambda gradient
+ [  1.2904900349e-03 -3.3955930401e-03 ] phi gradient
+ [  3.8390033297e-01  8.1143324312e-01 ] lambda gradient
+ [  1.2904900349e-03 -3.3955930401e-03 ] phi gradient
+ [  3.8390033297e-01  8.1143324312e-01 ] lambda gradient
+ [  1.2904900349e-03 -3.3955930401e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   24
+---------------------
+Parameters for evaluation 24:
+                      1.5116720926e+03 Ic1
+                      5.9110719981e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 24:
+Active set vector = { 1 1 }
+                      1.0632192173e+03 lambda
+                      2.3956290102e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   25
+---------------------
+Parameters for evaluation 25:
+                      1.5131837647e+03 Ic1
+                      5.9110719981e+02 Ic2
+
+(Asynchronous job 25 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   26
+---------------------
+Parameters for evaluation 26:
+                      1.5116720926e+03 Ic1
+                      5.9169830701e+02 Ic2
+
+(Asynchronous job 26 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 25
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 26
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 25 has completed
+Waiting on completed jobs
+Evaluation 26 has completed
+
+Active response data for evaluation 25:
+Active set vector = { 1 1 }
+                      1.0638214559e+03 lambda
+                      2.3975225339e+00 phi
+
+
+Active response data for evaluation 26:
+Active set vector = { 1 1 }
+                      1.0636765805e+03 lambda
+                      2.3937406841e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  3.9839234408e-01  7.7373972925e-01 ] lambda gradient
+ [  1.2526021777e-03 -3.1945577273e-03 ] phi gradient
+ [  3.9839234408e-01  7.7373972925e-01 ] lambda gradient
+ [  1.2526021777e-03 -3.1945577273e-03 ] phi gradient
+ [  3.9839234408e-01  7.7373972925e-01 ] lambda gradient
+ [  1.2526021777e-03 -3.1945577273e-03 ] phi gradient
+ [  3.9839234408e-01  7.7373972925e-01 ] lambda gradient
+ [  1.2526021777e-03 -3.1945577273e-03 ] phi gradient
+ [  3.9839234408e-01  7.7373972925e-01 ] lambda gradient
+ [  1.2526021777e-03 -3.1945577273e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   27
+---------------------
+Parameters for evaluation 27:
+                      1.4920281265e+03 Ic1
+                      6.0166423972e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 27:
+Active set vector = { 1 1 }
+                      1.0632290952e+03 lambda
+                      2.3386422627e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   28
+---------------------
+Parameters for evaluation 28:
+                      1.4935201546e+03 Ic1
+                      6.0166423972e+02 Ic2
+
+(Asynchronous job 28 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   29
+---------------------
+Parameters for evaluation 29:
+                      1.4920281265e+03 Ic1
+                      6.0226590396e+02 Ic2
+
+(Asynchronous job 29 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 28
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 29
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 28 has completed
+Waiting on completed jobs
+Evaluation 29 has completed
+
+Active response data for evaluation 28:
+Active set vector = { 1 1 }
+                      1.0638450315e+03 lambda
+                      2.3404555484e+00 phi
+
+
+Active response data for evaluation 29:
+Active set vector = { 1 1 }
+                      1.0636727256e+03 lambda
+                      2.3368342373e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  4.1281815073e-01  7.3733893005e-01 ] lambda gradient
+ [  1.2153160013e-03 -3.0050405841e-03 ] phi gradient
+ [  4.1281815073e-01  7.3733893005e-01 ] lambda gradient
+ [  1.2153160013e-03 -3.0050405841e-03 ] phi gradient
+ [  4.1281815073e-01  7.3733893005e-01 ] lambda gradient
+ [  1.2153160013e-03 -3.0050405841e-03 ] phi gradient
+ [  4.1281815073e-01  7.3733893005e-01 ] lambda gradient
+ [  1.2153160013e-03 -3.0050405841e-03 ] phi gradient
+ [  4.1281815073e-01  7.3733893005e-01 ] lambda gradient
+ [  1.2153160013e-03 -3.0050405841e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   30
+---------------------
+Parameters for evaluation 30:
+                      1.4733990280e+03 Ic1
+                      6.1254515857e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 30:
+Active set vector = { 1 1 }
+                      1.0632396448e+03 lambda
+                      2.2845914019e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   31
+---------------------
+Parameters for evaluation 31:
+                      1.4748724270e+03 Ic1
+                      6.1254515857e+02 Ic2
+
+(Asynchronous job 31 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   32
+---------------------
+Parameters for evaluation 32:
+                      1.4733990280e+03 Ic1
+                      6.1315770373e+02 Ic2
+
+(Asynchronous job 32 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 31
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 32
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 31 has completed
+Waiting on completed jobs
+Evaluation 32 has completed
+
+Active response data for evaluation 31:
+Active set vector = { 1 1 }
+                      1.0638689994e+03 lambda
+                      2.2863282434e+00 phi
+
+
+Active response data for evaluation 32:
+Active set vector = { 1 1 }
+                      1.0636699430e+03 lambda
+                      2.2828597255e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  4.2714472380e-01  7.0247592413e-01 ] lambda gradient
+ [  1.1787991403e-03 -2.8270182843e-03 ] phi gradient
+ [  4.2714472380e-01  7.0247592413e-01 ] lambda gradient
+ [  1.1787991403e-03 -2.8270182843e-03 ] phi gradient
+ [  4.2714472380e-01  7.0247592413e-01 ] lambda gradient
+ [  1.1787991403e-03 -2.8270182843e-03 ] phi gradient
+ [  4.2714472380e-01  7.0247592413e-01 ] lambda gradient
+ [  1.1787991403e-03 -2.8270182843e-03 ] phi gradient
+ [  4.2714472380e-01  7.0247592413e-01 ] lambda gradient
+ [  1.1787991403e-03 -2.8270182843e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   33
+---------------------
+Parameters for evaluation 33:
+                      1.4557507109e+03 Ic1
+                      6.2373460443e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 33:
+Active set vector = { 1 1 }
+                      1.0632493830e+03 lambda
+                      2.2333846462e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   34
+---------------------
+Parameters for evaluation 34:
+                      1.4572064616e+03 Ic1
+                      6.2373460443e+02 Ic2
+
+(Asynchronous job 34 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   35
+---------------------
+Parameters for evaluation 35:
+                      1.4557507109e+03 Ic1
+                      6.2435833904e+02 Ic2
+
+(Asynchronous job 35 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 34
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 35
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 34 has completed
+Waiting on completed jobs
+Evaluation 35 has completed
+
+Active response data for evaluation 34:
+Active set vector = { 1 1 }
+                      1.0638918408e+03 lambda
+                      2.2350487765e+00 phi
+
+
+Active response data for evaluation 35:
+Active set vector = { 1 1 }
+                      1.0636665660e+03 lambda
+                      2.2317256811e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  4.4132401860e-01  6.6884696426e-01 ] lambda gradient
+ [  1.1431423735e-03 -2.6597291833e-03 ] phi gradient
+ [  4.4132401860e-01  6.6884696426e-01 ] lambda gradient
+ [  1.1431423735e-03 -2.6597291833e-03 ] phi gradient
+ [  4.4132401860e-01  6.6884696426e-01 ] lambda gradient
+ [  1.1431423735e-03 -2.6597291833e-03 ] phi gradient
+ [  4.4132401860e-01  6.6884696426e-01 ] lambda gradient
+ [  1.1431423735e-03 -2.6597291833e-03 ] phi gradient
+ [  4.4132401860e-01  6.6884696426e-01 ] lambda gradient
+ [  1.1431423735e-03 -2.6597291833e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   36
+---------------------
+Parameters for evaluation 36:
+                      1.4390537679e+03 Ic1
+                      6.3521846597e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 36:
+Active set vector = { 1 1 }
+                      1.0632617272e+03 lambda
+                      2.1849232979e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   37
+---------------------
+Parameters for evaluation 37:
+                      1.4404928217e+03 Ic1
+                      6.3521846597e+02 Ic2
+
+(Asynchronous job 37 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   38
+---------------------
+Parameters for evaluation 38:
+                      1.4390537679e+03 Ic1
+                      6.3585368443e+02 Ic2
+
+(Asynchronous job 38 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 37
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 38
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 37 has completed
+Waiting on completed jobs
+Evaluation 38 has completed
+
+Active response data for evaluation 37:
+Active set vector = { 1 1 }
+                      1.0639169596e+03 lambda
+                      2.1865184088e+00 phi
+
+
+Active response data for evaluation 38:
+Active set vector = { 1 1 }
+                      1.0636661657e+03 lambda
+                      2.1833333724e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  4.5532167720e-01  6.3669192865e-01 ] lambda gradient
+ [  1.1084442252e-03 -2.5029586076e-03 ] phi gradient
+ [  4.5532167720e-01  6.3669192865e-01 ] lambda gradient
+ [  1.1084442252e-03 -2.5029586076e-03 ] phi gradient
+ [  4.5532167720e-01  6.3669192865e-01 ] lambda gradient
+ [  1.1084442252e-03 -2.5029586076e-03 ] phi gradient
+ [  4.5532167720e-01  6.3669192865e-01 ] lambda gradient
+ [  1.1084442252e-03 -2.5029586076e-03 ] phi gradient
+ [  4.5532167720e-01  6.3669192865e-01 ] lambda gradient
+ [  1.1084442252e-03 -2.5029586076e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   39
+---------------------
+Parameters for evaluation 39:
+                      1.4232671639e+03 Ic1
+                      6.4697897382e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 39:
+Active set vector = { 1 1 }
+                      1.0632745500e+03 lambda
+                      2.1390977460e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   40
+---------------------
+Parameters for evaluation 40:
+                      1.4246904310e+03 Ic1
+                      6.4697897382e+02 Ic2
+
+(Asynchronous job 40 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   41
+---------------------
+Parameters for evaluation 41:
+                      1.4232671639e+03 Ic1
+                      6.4762595280e+02 Ic2
+
+(Asynchronous job 41 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 40
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 41
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 40 has completed
+Waiting on completed jobs
+Evaluation 41 has completed
+
+Active response data for evaluation 40:
+Active set vector = { 1 1 }
+                      1.0639421715e+03 lambda
+                      2.1406273510e+00 phi
+
+
+Active response data for evaluation 41:
+Active set vector = { 1 1 }
+                      1.0636666012e+03 lambda
+                      2.1375733493e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  4.6907671684e-01  6.0597201659e-01 ] lambda gradient
+ [  1.0747138997e-03 -2.3561765980e-03 ] phi gradient
+ [  4.6907671684e-01  6.0597201659e-01 ] lambda gradient
+ [  1.0747138997e-03 -2.3561765980e-03 ] phi gradient
+ [  4.6907671684e-01  6.0597201659e-01 ] lambda gradient
+ [  1.0747138997e-03 -2.3561765980e-03 ] phi gradient
+ [  4.6907671684e-01  6.0597201659e-01 ] lambda gradient
+ [  1.0747138997e-03 -2.3561765980e-03 ] phi gradient
+ [  4.6907671684e-01  6.0597201659e-01 ] lambda gradient
+ [  1.0747138997e-03 -2.3561765980e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   42
+---------------------
+Parameters for evaluation 42:
+                      1.4083512062e+03 Ic1
+                      6.5899891116e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 42:
+Active set vector = { 1 1 }
+                      1.0632877424e+03 lambda
+                      2.0957935537e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   43
+---------------------
+Parameters for evaluation 43:
+                      1.4097595574e+03 Ic1
+                      6.5899891116e+02 Ic2
+
+(Asynchronous job 43 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   44
+---------------------
+Parameters for evaluation 44:
+                      1.4083512062e+03 Ic1
+                      6.5965791007e+02 Ic2
+
+(Asynchronous job 44 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 43
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 44
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 43 has completed
+Waiting on completed jobs
+Evaluation 44 has completed
+
+Active response data for evaluation 43:
+Active set vector = { 1 1 }
+                      1.0639673672e+03 lambda
+                      2.0972611005e+00 phi
+
+
+Active response data for evaluation 44:
+Active set vector = { 1 1 }
+                      1.0636678720e+03 lambda
+                      2.0943311065e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  4.8256770385e-01  5.7682890729e-01 ] lambda gradient
+ [  1.0420318820e-03 -2.2191951202e-03 ] phi gradient
+ [  4.8256770385e-01  5.7682890729e-01 ] lambda gradient
+ [  1.0420318820e-03 -2.2191951202e-03 ] phi gradient
+ [  4.8256770385e-01  5.7682890729e-01 ] lambda gradient
+ [  1.0420318820e-03 -2.2191951202e-03 ] phi gradient
+ [  4.8256770385e-01  5.7682890729e-01 ] lambda gradient
+ [  1.0420318820e-03 -2.2191951202e-03 ] phi gradient
+ [  4.8256770385e-01  5.7682890729e-01 ] lambda gradient
+ [  1.0420318820e-03 -2.2191951202e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   45
+---------------------
+Parameters for evaluation 45:
+                      1.3942623612e+03 Ic1
+                      6.7126017854e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 45:
+Active set vector = { 1 1 }
+                      1.0632998116e+03 lambda
+                      2.0548907551e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   46
+---------------------
+Parameters for evaluation 46:
+                      1.3956566236e+03 Ic1
+                      6.7126017854e+02 Ic2
+
+(Asynchronous job 46 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   47
+---------------------
+Parameters for evaluation 47:
+                      1.3942623612e+03 Ic1
+                      6.7193143872e+02 Ic2
+
+(Asynchronous job 47 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 46
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 47
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 46 has completed
+Waiting on completed jobs
+Evaluation 47 has completed
+
+Active response data for evaluation 46:
+Active set vector = { 1 1 }
+                      1.0639910623e+03 lambda
+                      2.0562996092e+00 phi
+
+
+Active response data for evaluation 47:
+Active set vector = { 1 1 }
+                      1.0636683989e+03 lambda
+                      2.0534869901e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  4.9578237293e-01  5.4909763564e-01 ] lambda gradient
+ [  1.0104655513e-03 -2.0912382729e-03 ] phi gradient
+ [  4.9578237293e-01  5.4909763564e-01 ] lambda gradient
+ [  1.0104655513e-03 -2.0912382729e-03 ] phi gradient
+ [  4.9578237293e-01  5.4909763564e-01 ] lambda gradient
+ [  1.0104655513e-03 -2.0912382729e-03 ] phi gradient
+ [  4.9578237293e-01  5.4909763564e-01 ] lambda gradient
+ [  1.0104655513e-03 -2.0912382729e-03 ] phi gradient
+ [  4.9578237293e-01  5.4909763564e-01 ] lambda gradient
+ [  1.0104655513e-03 -2.0912382729e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   48
+---------------------
+Parameters for evaluation 48:
+                      1.3809615164e+03 Ic1
+                      6.8374629578e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 48:
+Active set vector = { 1 1 }
+                      1.0633124813e+03 lambda
+                      2.0162695481e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   49
+---------------------
+Parameters for evaluation 49:
+                      1.3823424779e+03 Ic1
+                      6.8374629578e+02 Ic2
+
+(Asynchronous job 49 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   50
+---------------------
+Parameters for evaluation 50:
+                      1.3809615164e+03 Ic1
+                      6.8443004208e+02 Ic2
+
+(Asynchronous job 50 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 49
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 50
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 49 has completed
+Waiting on completed jobs
+Evaluation 50 has completed
+
+Active response data for evaluation 49:
+Active set vector = { 1 1 }
+                      1.0640149370e+03 lambda
+                      2.0176228642e+00 phi
+
+
+Active response data for evaluation 50:
+Active set vector = { 1 1 }
+                      1.0636699398e+03 lambda
+                      2.0149212738e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  5.0867148598e-01  5.2279401890e-01 ] lambda gradient
+ [  9.7998100243e-04 -1.9718926228e-03 ] phi gradient
+ [  5.0867148598e-01  5.2279401890e-01 ] lambda gradient
+ [  9.7998100243e-04 -1.9718926228e-03 ] phi gradient
+ [  5.0867148598e-01  5.2279401890e-01 ] lambda gradient
+ [  9.7998100243e-04 -1.9718926228e-03 ] phi gradient
+ [  5.0867148598e-01  5.2279401890e-01 ] lambda gradient
+ [  9.7998100243e-04 -1.9718926228e-03 ] phi gradient
+ [  5.0867148598e-01  5.2279401890e-01 ] lambda gradient
+ [  9.7998100243e-04 -1.9718926228e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   51
+---------------------
+Parameters for evaluation 51:
+                      1.3684052185e+03 Ic1
+                      6.9643991310e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 51:
+Active set vector = { 1 1 }
+                      1.0633247968e+03 lambda
+                      1.9798078301e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   52
+---------------------
+Parameters for evaluation 52:
+                      1.3697736237e+03 Ic1
+                      6.9643991310e+02 Ic2
+
+(Asynchronous job 52 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   53
+---------------------
+Parameters for evaluation 53:
+                      1.3684052185e+03 Ic1
+                      6.9713635301e+02 Ic2
+
+(Asynchronous job 53 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 52
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 53
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 52 has completed
+Waiting on completed jobs
+Evaluation 53 has completed
+
+Active response data for evaluation 52:
+Active set vector = { 1 1 }
+                      1.0640380344e+03 lambda
+                      1.9811086280e+00 phi
+
+
+Active response data for evaluation 53:
+Active set vector = { 1 1 }
+                      1.0636714698e+03 lambda
+                      1.9785119825e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  5.2121818766e-01  4.9777880431e-01 ] lambda gradient
+ [  9.5059402210e-04 -1.8606740080e-03 ] phi gradient
+ [  5.2121818766e-01  4.9777880431e-01 ] lambda gradient
+ [  9.5059402210e-04 -1.8606740080e-03 ] phi gradient
+ [  5.2121818766e-01  4.9777880431e-01 ] lambda gradient
+ [  9.5059402210e-04 -1.8606740080e-03 ] phi gradient
+ [  5.2121818766e-01  4.9777880431e-01 ] lambda gradient
+ [  9.5059402210e-04 -1.8606740080e-03 ] phi gradient
+ [  5.2121818766e-01  4.9777880431e-01 ] lambda gradient
+ [  9.5059402210e-04 -1.8606740080e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   54
+---------------------
+Parameters for evaluation 54:
+                      1.3565537637e+03 Ic1
+                      7.0932517429e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 54:
+Active set vector = { 1 1 }
+                      1.0633381443e+03 lambda
+                      1.9453858180e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   55
+---------------------
+Parameters for evaluation 55:
+                      1.3579103175e+03 Ic1
+                      7.0932517429e+02 Ic2
+
+(Asynchronous job 55 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   56
+---------------------
+Parameters for evaluation 56:
+                      1.3565537637e+03 Ic1
+                      7.1003449946e+02 Ic2
+
+(Asynchronous job 56 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 55
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 56
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 55 has completed
+Waiting on completed jobs
+Evaluation 56 has completed
+
+Active response data for evaluation 55:
+Active set vector = { 1 1 }
+                      1.0640617621e+03 lambda
+                      1.9466370107e+00 phi
+
+
+Active response data for evaluation 56:
+Active set vector = { 1 1 }
+                      1.0636743793e+03 lambda
+                      1.9441396057e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  5.3342361536e-01  4.7402096109e-01 ] lambda gradient
+ [  9.2233185451e-04 -1.7568983712e-03 ] phi gradient
+ [  5.3342361536e-01  4.7402096109e-01 ] lambda gradient
+ [  9.2233185451e-04 -1.7568983712e-03 ] phi gradient
+ [  5.3342361536e-01  4.7402096109e-01 ] lambda gradient
+ [  9.2233185451e-04 -1.7568983712e-03 ] phi gradient
+ [  5.3342361536e-01  4.7402096109e-01 ] lambda gradient
+ [  9.2233185451e-04 -1.7568983712e-03 ] phi gradient
+ [  5.3342361536e-01  4.7402096109e-01 ] lambda gradient
+ [  9.2233185451e-04 -1.7568983712e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   57
+---------------------
+Parameters for evaluation 57:
+                      1.3453660747e+03 Ic1
+                      7.2238633256e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 57:
+Active set vector = { 1 1 }
+                      1.0633522112e+03 lambda
+                      1.9128853266e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   58
+---------------------
+Parameters for evaluation 58:
+                      1.3467114408e+03 Ic1
+                      7.2238633256e+02 Ic2
+
+(Asynchronous job 58 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   59
+---------------------
+Parameters for evaluation 59:
+                      1.3453660747e+03 Ic1
+                      7.2310871889e+02 Ic2
+
+(Asynchronous job 59 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 58
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 59
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 58 has completed
+Waiting on completed jobs
+Evaluation 59 has completed
+
+Active response data for evaluation 58:
+Active set vector = { 1 1 }
+                      1.0640857923e+03 lambda
+                      1.9140896464e+00 phi
+
+
+Active response data for evaluation 59:
+Active set vector = { 1 1 }
+                      1.0636785271e+03 lambda
+                      1.9116859144e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  5.4526510417e-01  4.5171945766e-01 ] lambda gradient
+ [  8.9516146339e-04 -1.6603472642e-03 ] phi gradient
+ [  5.4526510417e-01  4.5171945766e-01 ] lambda gradient
+ [  8.9516146339e-04 -1.6603472642e-03 ] phi gradient
+ [  5.4526510417e-01  4.5171945766e-01 ] lambda gradient
+ [  8.9516146339e-04 -1.6603472642e-03 ] phi gradient
+ [  5.4526510417e-01  4.5171945766e-01 ] lambda gradient
+ [  8.9516146339e-04 -1.6603472642e-03 ] phi gradient
+ [  5.4526510417e-01  4.5171945766e-01 ] lambda gradient
+ [  8.9516146339e-04 -1.6603472642e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   60
+---------------------
+Parameters for evaluation 60:
+                      1.3347974109e+03 Ic1
+                      7.3560728182e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 60:
+Active set vector = { 1 1 }
+                      1.0633637460e+03 lambda
+                      1.8821888511e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   61
+---------------------
+Parameters for evaluation 61:
+                      1.3361322083e+03 Ic1
+                      7.3560728182e+02 Ic2
+
+(Asynchronous job 61 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   62
+---------------------
+Parameters for evaluation 62:
+                      1.3347974109e+03 Ic1
+                      7.3634288911e+02 Ic2
+
+(Asynchronous job 62 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 61
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 62
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 61 has completed
+Waiting on completed jobs
+Evaluation 62 has completed
+
+Active response data for evaluation 61:
+Active set vector = { 1 1 }
+                      1.0641069242e+03 lambda
+                      1.8833489518e+00 phi
+
+
+Active response data for evaluation 62:
+Active set vector = { 1 1 }
+                      1.0636805414e+03 lambda
+                      1.8810336810e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  5.5677222377e-01  4.3065829219e-01 ] lambda gradient
+ [  8.6912118186e-04 -1.5703626052e-03 ] phi gradient
+ [  5.5677222377e-01  4.3065829219e-01 ] lambda gradient
+ [  8.6912118186e-04 -1.5703626052e-03 ] phi gradient
+ [  5.5677222377e-01  4.3065829219e-01 ] lambda gradient
+ [  8.6912118186e-04 -1.5703626052e-03 ] phi gradient
+ [  5.5677222377e-01  4.3065829219e-01 ] lambda gradient
+ [  8.6912118186e-04 -1.5703626052e-03 ] phi gradient
+ [  5.5677222377e-01  4.3065829219e-01 ] lambda gradient
+ [  8.6912118186e-04 -1.5703626052e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   63
+---------------------
+Parameters for evaluation 63:
+                      1.3248130231e+03 Ic1
+                      7.4897507238e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 63:
+Active set vector = { 1 1 }
+                      1.0633751324e+03 lambda
+                      1.8531871166e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   64
+---------------------
+Parameters for evaluation 64:
+                      1.3261378361e+03 Ic1
+                      7.4897507238e+02 Ic2
+
+(Asynchronous job 64 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   65
+---------------------
+Parameters for evaluation 65:
+                      1.3248130231e+03 Ic1
+                      7.4972404745e+02 Ic2
+
+(Asynchronous job 65 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 64
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 65
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 64 has completed
+Waiting on completed jobs
+Evaluation 65 has completed
+
+Active response data for evaluation 64:
+Active set vector = { 1 1 }
+                      1.0641275080e+03 lambda
+                      1.8543054363e+00 phi
+
+
+Active response data for evaluation 65:
+Active set vector = { 1 1 }
+                      1.0636827893e+03 lambda
+                      1.8520736965e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  5.6791076286e-01  4.1077043242e-01 ] lambda gradient
+ [  8.4413398556e-04 -1.4865916833e-03 ] phi gradient
+ [  5.6791076286e-01  4.1077043242e-01 ] lambda gradient
+ [  8.4413398556e-04 -1.4865916833e-03 ] phi gradient
+ [  5.6791076286e-01  4.1077043242e-01 ] lambda gradient
+ [  8.4413398556e-04 -1.4865916833e-03 ] phi gradient
+ [  5.6791076286e-01  4.1077043242e-01 ] lambda gradient
+ [  8.4413398556e-04 -1.4865916833e-03 ] phi gradient
+ [  5.6791076286e-01  4.1077043242e-01 ] lambda gradient
+ [  8.4413398556e-04 -1.4865916833e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   66
+---------------------
+Parameters for evaluation 66:
+                      1.3153758096e+03 Ic1
+                      7.6247664696e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 66:
+Active set vector = { 1 1 }
+                      1.0633860454e+03 lambda
+                      1.8257736362e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   67
+---------------------
+Parameters for evaluation 67:
+                      1.3166911854e+03 Ic1
+                      7.6247664696e+02 Ic2
+
+(Asynchronous job 67 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   68
+---------------------
+Parameters for evaluation 68:
+                      1.3153758096e+03 Ic1
+                      7.6323912361e+02 Ic2
+
+(Asynchronous job 68 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 67
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 68
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 67 has completed
+Waiting on completed jobs
+Evaluation 68 has completed
+
+Active response data for evaluation 67:
+Active set vector = { 1 1 }
+                      1.0641472063e+03 lambda
+                      1.8268524393e+00 phi
+
+
+Active response data for evaluation 68:
+Active set vector = { 1 1 }
+                      1.0636849665e+03 lambda
+                      1.8246996103e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  5.7866416925e-01  3.9203960784e-01 ] lambda gradient
+ [  8.2014820570e-04 -1.4086017177e-03 ] phi gradient
+ [  5.7866416925e-01  3.9203960784e-01 ] lambda gradient
+ [  8.2014820570e-04 -1.4086017177e-03 ] phi gradient
+ [  5.7866416925e-01  3.9203960784e-01 ] lambda gradient
+ [  8.2014820570e-04 -1.4086017177e-03 ] phi gradient
+ [  5.7866416925e-01  3.9203960784e-01 ] lambda gradient
+ [  8.2014820570e-04 -1.4086017177e-03 ] phi gradient
+ [  5.7866416925e-01  3.9203960784e-01 ] lambda gradient
+ [  8.2014820570e-04 -1.4086017177e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   69
+---------------------
+Parameters for evaluation 69:
+                      1.3064498300e+03 Ic1
+                      7.7609976780e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 69:
+Active set vector = { 1 1 }
+                      1.0633958567e+03 lambda
+                      1.7998466757e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   70
+---------------------
+Parameters for evaluation 70:
+                      1.3077562798e+03 Ic1
+                      7.7609976780e+02 Ic2
+
+(Asynchronous job 70 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   71
+---------------------
+Parameters for evaluation 71:
+                      1.3064498300e+03 Ic1
+                      7.7687586757e+02 Ic2
+
+(Asynchronous job 71 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 70
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 71
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 70 has completed
+Waiting on completed jobs
+Evaluation 71 has completed
+
+Active response data for evaluation 70:
+Active set vector = { 1 1 }
+                      1.0641654440e+03 lambda
+                      1.8008881503e+00 phi
+
+
+Active response data for evaluation 71:
+Active set vector = { 1 1 }
+                      1.0636863889e+03 lambda
+                      1.7988098820e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  5.8906766407e-01  3.7434904167e-01 ] lambda gradient
+ [  7.9717915228e-04 -1.3359026241e-03 ] phi gradient
+ [  5.8906766407e-01  3.7434904167e-01 ] lambda gradient
+ [  7.9717915228e-04 -1.3359026241e-03 ] phi gradient
+ [  5.8906766407e-01  3.7434904167e-01 ] lambda gradient
+ [  7.9717915228e-04 -1.3359026241e-03 ] phi gradient
+ [  5.8906766407e-01  3.7434904167e-01 ] lambda gradient
+ [  7.9717915228e-04 -1.3359026241e-03 ] phi gradient
+ [  5.8906766407e-01  3.7434904167e-01 ] lambda gradient
+ [  7.9717915228e-04 -1.3359026241e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   72
+---------------------
+Parameters for evaluation 72:
+                      1.2980035417e+03 Ic1
+                      7.8983374468e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 72:
+Active set vector = { 1 1 }
+                      1.0634055921e+03 lambda
+                      1.7753111452e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   73
+---------------------
+Parameters for evaluation 73:
+                      1.2993015452e+03 Ic1
+                      7.8983374468e+02 Ic2
+
+(Asynchronous job 73 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   74
+---------------------
+Parameters for evaluation 74:
+                      1.2980035417e+03 Ic1
+                      7.9062357842e+02 Ic2
+
+(Asynchronous job 74 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 73
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 74
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 73 has completed
+Waiting on completed jobs
+Evaluation 74 has completed
+
+Active response data for evaluation 73:
+Active set vector = { 1 1 }
+                      1.0641832800e+03 lambda
+                      1.7763173705e+00 phi
+
+
+Active response data for evaluation 74:
+Active set vector = { 1 1 }
+                      1.0636879763e+03 lambda
+                      1.7743096915e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  5.9914161973e-01  3.5752357915e-01 ] lambda gradient
+ [  7.7520998788e-04 -1.2679298127e-03 ] phi gradient
+ [  5.9914161973e-01  3.5752357915e-01 ] lambda gradient
+ [  7.7520998788e-04 -1.2679298127e-03 ] phi gradient
+ [  5.9914161973e-01  3.5752357915e-01 ] lambda gradient
+ [  7.7520998788e-04 -1.2679298127e-03 ] phi gradient
+ [  5.9914161973e-01  3.5752357915e-01 ] lambda gradient
+ [  7.7520998788e-04 -1.2679298127e-03 ] phi gradient
+ [  5.9914161973e-01  3.5752357915e-01 ] lambda gradient
+ [  7.7520998788e-04 -1.2679298127e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   75
+---------------------
+Parameters for evaluation 75:
+                      1.2900083062e+03 Ic1
+                      8.0366899121e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 75:
+Active set vector = { 1 1 }
+                      1.0634168497e+03 lambda
+                      1.7520780502e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   76
+---------------------
+Parameters for evaluation 76:
+                      1.2912983145e+03 Ic1
+                      8.0366899121e+02 Ic2
+
+(Asynchronous job 76 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   77
+---------------------
+Parameters for evaluation 77:
+                      1.2900083062e+03 Ic1
+                      8.0447266020e+02 Ic2
+
+(Asynchronous job 77 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 76
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 77
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 76 has completed
+Waiting on completed jobs
+Evaluation 77 has completed
+
+Active response data for evaluation 76:
+Active set vector = { 1 1 }
+                      1.0642022762e+03 lambda
+                      1.7530509131e+00 phi
+
+
+Active response data for evaluation 77:
+Active set vector = { 1 1 }
+                      1.0636915813e+03 lambda
+                      1.7511098648e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  6.0885381931e-01  3.4184666388e-01 ] lambda gradient
+ [  7.5415242443e-04 -1.2047066375e-03 ] phi gradient
+ [  6.0885381931e-01  3.4184666388e-01 ] lambda gradient
+ [  7.5415242443e-04 -1.2047066375e-03 ] phi gradient
+ [  6.0885381931e-01  3.4184666388e-01 ] lambda gradient
+ [  7.5415242443e-04 -1.2047066375e-03 ] phi gradient
+ [  6.0885381931e-01  3.4184666388e-01 ] lambda gradient
+ [  7.5415242443e-04 -1.2047066375e-03 ] phi gradient
+ [  6.0885381931e-01  3.4184666388e-01 ] lambda gradient
+ [  7.5415242443e-04 -1.2047066375e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   78
+---------------------
+Parameters for evaluation 78:
+                      1.2824276110e+03 Ic1
+                      8.1759466131e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 78:
+Active set vector = { 1 1 }
+                      1.0634248151e+03 lambda
+                      1.7300589054e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   79
+---------------------
+Parameters for evaluation 79:
+                      1.2837100386e+03 Ic1
+                      8.1759466131e+02 Ic2
+
+(Asynchronous job 79 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   80
+---------------------
+Parameters for evaluation 80:
+                      1.2824276110e+03 Ic1
+                      8.1841225597e+02 Ic2
+
+(Asynchronous job 80 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 79
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 80
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 79 has completed
+Waiting on completed jobs
+Evaluation 80 has completed
+
+Active response data for evaluation 79:
+Active set vector = { 1 1 }
+                      1.0642176511e+03 lambda
+                      1.7310001961e+00 phi
+
+
+Active response data for evaluation 80:
+Active set vector = { 1 1 }
+                      1.0636922066e+03 lambda
+                      1.7291222415e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  6.1823063725e-01  3.2704659664e-01 ] lambda gradient
+ [  7.3399131386e-04 -1.1456334890e-03 ] phi gradient
+ [  6.1823063725e-01  3.2704659664e-01 ] lambda gradient
+ [  7.3399131386e-04 -1.1456334890e-03 ] phi gradient
+ [  6.1823063725e-01  3.2704659664e-01 ] lambda gradient
+ [  7.3399131386e-04 -1.1456334890e-03 ] phi gradient
+ [  6.1823063725e-01  3.2704659664e-01 ] lambda gradient
+ [  7.3399131386e-04 -1.1456334890e-03 ] phi gradient
+ [  6.1823063725e-01  3.2704659664e-01 ] lambda gradient
+ [  7.3399131386e-04 -1.1456334890e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   81
+---------------------
+Parameters for evaluation 81:
+                      1.2752385065e+03 Ic1
+                      8.3160332294e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 81:
+Active set vector = { 1 1 }
+                      1.0634325237e+03 lambda
+                      1.7091763536e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   82
+---------------------
+Parameters for evaluation 82:
+                      1.2765137450e+03 Ic1
+                      8.3160332294e+02 Ic2
+
+(Asynchronous job 82 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   83
+---------------------
+Parameters for evaluation 83:
+                      1.2752385065e+03 Ic1
+                      8.3243492626e+02 Ic2
+
+(Asynchronous job 83 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 82
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 83
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 82 has completed
+Waiting on completed jobs
+Evaluation 83 has completed
+
+Active response data for evaluation 82:
+Active set vector = { 1 1 }
+                      1.0642324465e+03 lambda
+                      1.7100877408e+00 phi
+
+
+Active response data for evaluation 83:
+Active set vector = { 1 1 }
+                      1.0636928016e+03 lambda
+                      1.7082695939e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  6.2727309672e-01  3.1298329064e-01 ] lambda gradient
+ [  7.1467984704e-04 -1.0903752635e-03 ] phi gradient
+ [  6.2727309672e-01  3.1298329064e-01 ] lambda gradient
+ [  7.1467984704e-04 -1.0903752635e-03 ] phi gradient
+ [  6.2727309672e-01  3.1298329064e-01 ] lambda gradient
+ [  7.1467984704e-04 -1.0903752635e-03 ] phi gradient
+ [  6.2727309672e-01  3.1298329064e-01 ] lambda gradient
+ [  7.1467984704e-04 -1.0903752635e-03 ] phi gradient
+ [  6.2727309672e-01  3.1298329064e-01 ] lambda gradient
+ [  7.1467984704e-04 -1.0903752635e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   84
+---------------------
+Parameters for evaluation 84:
+                      1.2684170894e+03 Ic1
+                      8.4568765203e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 84:
+Active set vector = { 1 1 }
+                      1.0634411368e+03 lambda
+                      1.6893569893e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   85
+---------------------
+Parameters for evaluation 85:
+                      1.2696855065e+03 Ic1
+                      8.4568765203e+02 Ic2
+
+(Asynchronous job 85 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   86
+---------------------
+Parameters for evaluation 86:
+                      1.2684170894e+03 Ic1
+                      8.4653333968e+02 Ic2
+
+(Asynchronous job 86 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 85
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 86
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 85 has completed
+Waiting on completed jobs
+Evaluation 86 has completed
+
+Active response data for evaluation 85:
+Active set vector = { 1 1 }
+                      1.0642478531e+03 lambda
+                      1.6902400531e+00 phi
+
+
+Active response data for evaluation 86:
+Active set vector = { 1 1 }
+                      1.0636946723e+03 lambda
+                      1.6884785074e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  6.3600237860e-01  2.9979803446e-01 ] lambda gradient
+ [  6.9619356462e-04 -1.0387782543e-03 ] phi gradient
+ [  6.3600237860e-01  2.9979803446e-01 ] lambda gradient
+ [  6.9619356462e-04 -1.0387782543e-03 ] phi gradient
+ [  6.3600237860e-01  2.9979803446e-01 ] lambda gradient
+ [  6.9619356462e-04 -1.0387782543e-03 ] phi gradient
+ [  6.3600237860e-01  2.9979803446e-01 ] lambda gradient
+ [  6.9619356462e-04 -1.0387782543e-03 ] phi gradient
+ [  6.3600237860e-01  2.9979803446e-01 ] lambda gradient
+ [  6.9619356462e-04 -1.0387782543e-03 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   87
+---------------------
+Parameters for evaluation 87:
+                      1.2619357332e+03 Ic1
+                      8.5983994215e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 87:
+Active set vector = { 1 1 }
+                      1.0634481098e+03 lambda
+                      1.6705297060e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   88
+---------------------
+Parameters for evaluation 88:
+                      1.2631976689e+03 Ic1
+                      8.5983994215e+02 Ic2
+
+(Asynchronous job 88 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   89
+---------------------
+Parameters for evaluation 89:
+                      1.2619357332e+03 Ic1
+                      8.6069978210e+02 Ic2
+
+(Asynchronous job 89 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 88
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 89
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 88 has completed
+Waiting on completed jobs
+Evaluation 89 has completed
+
+Active response data for evaluation 88:
+Active set vector = { 1 1 }
+                      1.0642613080e+03 lambda
+                      1.6713858898e+00 phi
+
+
+Active response data for evaluation 89:
+Active set vector = { 1 1 }
+                      1.0636951585e+03 lambda
+                      1.6696779778e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  6.4440535579e-01  2.8731935400e-01 ] lambda gradient
+ [  6.7846861493e-04 -9.9056601208e-04 ] phi gradient
+ [  6.4440535579e-01  2.8731935400e-01 ] lambda gradient
+ [  6.7846861493e-04 -9.9056601208e-04 ] phi gradient
+ [  6.4440535579e-01  2.8731935400e-01 ] lambda gradient
+ [  6.7846861493e-04 -9.9056601208e-04 ] phi gradient
+ [  6.4440535579e-01  2.8731935400e-01 ] lambda gradient
+ [  6.7846861493e-04 -9.9056601208e-04 ] phi gradient
+ [  6.4440535579e-01  2.8731935400e-01 ] lambda gradient
+ [  6.7846861493e-04 -9.9056601208e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   90
+---------------------
+Parameters for evaluation 90:
+                      1.2557744510e+03 Ic1
+                      8.7405435497e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 90:
+Active set vector = { 1 1 }
+                      1.0634549823e+03 lambda
+                      1.6526310820e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   91
+---------------------
+Parameters for evaluation 91:
+                      1.2570302254e+03 Ic1
+                      8.7405435497e+02 Ic2
+
+(Asynchronous job 91 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   92
+---------------------
+Parameters for evaluation 92:
+                      1.2557744510e+03 Ic1
+                      8.7492840933e+02 Ic2
+
+(Asynchronous job 92 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 91
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 92
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 91 has completed
+Waiting on completed jobs
+Evaluation 92 has completed
+
+Active response data for evaluation 91:
+Active set vector = { 1 1 }
+                      1.0642744268e+03 lambda
+                      1.6534618016e+00 phi
+
+
+Active response data for evaluation 92:
+Active set vector = { 1 1 }
+                      1.0636958307e+03 lambda
+                      1.6518048268e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  6.5254115225e-01  2.7555312533e-01 ] lambda gradient
+ [  6.6151980197e-04 -9.4531328566e-04 ] phi gradient
+ [  6.5254115225e-01  2.7555312533e-01 ] lambda gradient
+ [  6.6151980197e-04 -9.4531328566e-04 ] phi gradient
+ [  6.5254115225e-01  2.7555312533e-01 ] lambda gradient
+ [  6.6151980197e-04 -9.4531328566e-04 ] phi gradient
+ [  6.5254115225e-01  2.7555312533e-01 ] lambda gradient
+ [  6.6151980197e-04 -9.4531328566e-04 ] phi gradient
+ [  6.5254115225e-01  2.7555312533e-01 ] lambda gradient
+ [  6.6151980197e-04 -9.4531328566e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   93
+---------------------
+Parameters for evaluation 93:
+                      1.2499119972e+03 Ic1
+                      8.8832509374e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 93:
+Active set vector = { 1 1 }
+                      1.0634613780e+03 lambda
+                      1.6356009023e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   94
+---------------------
+Parameters for evaluation 94:
+                      1.2511619092e+03 Ic1
+                      8.8832509374e+02 Ic2
+
+(Asynchronous job 94 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   95
+---------------------
+Parameters for evaluation 95:
+                      1.2499119972e+03 Ic1
+                      8.8921341884e+02 Ic2
+
+(Asynchronous job 95 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 94
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 95
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 94 has completed
+Waiting on completed jobs
+Evaluation 95 has completed
+
+Active response data for evaluation 94:
+Active set vector = { 1 1 }
+                      1.0642867866e+03 lambda
+                      1.6364074227e+00 phi
+
+
+Active response data for evaluation 95:
+Active set vector = { 1 1 }
+                      1.0636962835e+03 lambda
+                      1.6347987710e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  6.6037331353e-01  2.6443641432e-01 ] lambda gradient
+ [  6.4526169369e-04 -9.0297052272e-04 ] phi gradient
+ [  6.6037331353e-01  2.6443641432e-01 ] lambda gradient
+ [  6.4526169369e-04 -9.0297052272e-04 ] phi gradient
+ [  6.6037331353e-01  2.6443641432e-01 ] lambda gradient
+ [  6.4526169369e-04 -9.0297052272e-04 ] phi gradient
+ [  6.6037331353e-01  2.6443641432e-01 ] lambda gradient
+ [  6.4526169369e-04 -9.0297052272e-04 ] phi gradient
+ [  6.6037331353e-01  2.6443641432e-01 ] lambda gradient
+ [  6.4526169369e-04 -9.0297052272e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   96
+---------------------
+Parameters for evaluation 96:
+                      1.2443291457e+03 Ic1
+                      9.0264701721e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 96:
+Active set vector = { 1 1 }
+                      1.0634672401e+03 lambda
+                      1.6193834636e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation   97
+---------------------
+Parameters for evaluation 97:
+                      1.2455734749e+03 Ic1
+                      9.0264701721e+02 Ic2
+
+(Asynchronous job 97 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation   98
+---------------------
+Parameters for evaluation 98:
+                      1.2443291457e+03 Ic1
+                      9.0354966422e+02 Ic2
+
+(Asynchronous job 98 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 97
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 98
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 97 has completed
+Waiting on completed jobs
+Evaluation 98 has completed
+
+Active response data for evaluation 97:
+Active set vector = { 1 1 }
+                      1.0642983805e+03 lambda
+                      1.6201670047e+00 phi
+
+
+Active response data for evaluation 98:
+Active set vector = { 1 1 }
+                      1.0636964672e+03 lambda
+                      1.6186043095e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  6.6794256123e-01  2.5394992117e-01 ] lambda gradient
+ [  6.2968959233e-04 -8.6318803851e-04 ] phi gradient
+ [  6.6794256123e-01  2.5394992117e-01 ] lambda gradient
+ [  6.2968959233e-04 -8.6318803851e-04 ] phi gradient
+ [  6.6794256123e-01  2.5394992117e-01 ] lambda gradient
+ [  6.2968959233e-04 -8.6318803851e-04 ] phi gradient
+ [  6.6794256123e-01  2.5394992117e-01 ] lambda gradient
+ [  6.2968959233e-04 -8.6318803851e-04 ] phi gradient
+ [  6.6794256123e-01  2.5394992117e-01 ] lambda gradient
+ [  6.2968959233e-04 -8.6318803851e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation   99
+---------------------
+Parameters for evaluation 99:
+                      1.2390079623e+03 Ic1
+                      9.1701546989e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 99:
+Active set vector = { 1 1 }
+                      1.0634725136e+03 lambda
+                      1.6039270584e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  100
+---------------------
+Parameters for evaluation 100:
+                      1.2402469703e+03 Ic1
+                      9.1701546989e+02 Ic2
+
+(Asynchronous job 100 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  101
+---------------------
+Parameters for evaluation 101:
+                      1.2390079623e+03 Ic1
+                      9.1793248536e+02 Ic2
+
+(Asynchronous job 101 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 100
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 101
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 100 has completed
+Waiting on completed jobs
+Evaluation 101 has completed
+
+Active response data for evaluation 100:
+Active set vector = { 1 1 }
+                      1.0643091273e+03 lambda
+                      1.6046887271e+00 phi
+
+
+Active response data for evaluation 101:
+Active set vector = { 1 1 }
+                      1.0636962509e+03 lambda
+                      1.6031697350e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  6.7522863195e-01  2.4398417885e-01 ] lambda gradient
+ [  6.1474075416e-04 -8.2585673324e-04 ] phi gradient
+ [  6.7522863195e-01  2.4398417885e-01 ] lambda gradient
+ [  6.1474075416e-04 -8.2585673324e-04 ] phi gradient
+ [  6.7522863195e-01  2.4398417885e-01 ] lambda gradient
+ [  6.1474075416e-04 -8.2585673324e-04 ] phi gradient
+ [  6.7522863195e-01  2.4398417885e-01 ] lambda gradient
+ [  6.1474075416e-04 -8.2585673324e-04 ] phi gradient
+ [  6.7522863195e-01  2.4398417885e-01 ] lambda gradient
+ [  6.1474075416e-04 -8.2585673324e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  102
+---------------------
+Parameters for evaluation 102:
+                      1.2339330975e+03 Ic1
+                      9.3142646571e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 102:
+Active set vector = { 1 1 }
+                      1.0634780257e+03 lambda
+                      1.5891842375e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  103
+---------------------
+Parameters for evaluation 103:
+                      1.2351670306e+03 Ic1
+                      9.3142646571e+02 Ic2
+
+(Asynchronous job 103 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  104
+---------------------
+Parameters for evaluation 104:
+                      1.2339330975e+03 Ic1
+                      9.3235789217e+02 Ic2
+
+(Asynchronous job 104 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 103
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 104
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 103 has completed
+Waiting on completed jobs
+Evaluation 104 has completed
+
+Active response data for evaluation 103:
+Active set vector = { 1 1 }
+                      1.0643199278e+03 lambda
+                      1.5899251262e+00 phi
+
+
+Active response data for evaluation 104:
+Active set vector = { 1 1 }
+                      1.0636965110e+03 lambda
+                      1.5884477132e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  6.8229156475e-01  2.3457070794e-01 ] lambda gradient
+ [  6.0042857162e-04 -7.9074870795e-04 ] phi gradient
+ [  6.8229156475e-01  2.3457070794e-01 ] lambda gradient
+ [  6.0042857162e-04 -7.9074870795e-04 ] phi gradient
+ [  6.8229156475e-01  2.3457070794e-01 ] lambda gradient
+ [  6.0042857162e-04 -7.9074870795e-04 ] phi gradient
+ [  6.8229156475e-01  2.3457070794e-01 ] lambda gradient
+ [  6.0042857162e-04 -7.9074870795e-04 ] phi gradient
+ [  6.8229156475e-01  2.3457070794e-01 ] lambda gradient
+ [  6.0042857162e-04 -7.9074870795e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  105
+---------------------
+Parameters for evaluation 105:
+                      1.2290882607e+03 Ic1
+                      9.4587605893e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 105:
+Active set vector = { 1 1 }
+                      1.0634831634e+03 lambda
+                      1.5751101012e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  106
+---------------------
+Parameters for evaluation 106:
+                      1.2303173489e+03 Ic1
+                      9.4587605893e+02 Ic2
+
+(Asynchronous job 106 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  107
+---------------------
+Parameters for evaluation 107:
+                      1.2290882607e+03 Ic1
+                      9.4682193499e+02 Ic2
+
+(Asynchronous job 107 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 106
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 107
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 106 has completed
+Waiting on completed jobs
+Evaluation 107 has completed
+
+Active response data for evaluation 106:
+Active set vector = { 1 1 }
+                      1.0643300878e+03 lambda
+                      1.5758311536e+00 phi
+
+
+Active response data for evaluation 107:
+Active set vector = { 1 1 }
+                      1.0636966463e+03 lambda
+                      1.5743933187e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  6.8906720032e-01  2.2569853826e-01 ] lambda gradient
+ [  5.8665633136e-04 -7.5779753621e-04 ] phi gradient
+ [  6.8906720032e-01  2.2569853826e-01 ] lambda gradient
+ [  5.8665633136e-04 -7.5779753621e-04 ] phi gradient
+ [  6.8906720032e-01  2.2569853826e-01 ] lambda gradient
+ [  5.8665633136e-04 -7.5779753621e-04 ] phi gradient
+ [  6.8906720032e-01  2.2569853826e-01 ] lambda gradient
+ [  5.8665633136e-04 -7.5779753621e-04 ] phi gradient
+ [  6.8906720032e-01  2.2569853826e-01 ] lambda gradient
+ [  5.8665633136e-04 -7.5779753621e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  108
+---------------------
+Parameters for evaluation 108:
+                      1.2244581996e+03 Ic1
+                      9.6036067202e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 108:
+Active set vector = { 1 1 }
+                      1.0634870887e+03 lambda
+                      1.5616629009e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  109
+---------------------
+Parameters for evaluation 109:
+                      1.2256826578e+03 Ic1
+                      9.6036067202e+02 Ic2
+
+(Asynchronous job 109 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  110
+---------------------
+Parameters for evaluation 110:
+                      1.2244581996e+03 Ic1
+                      9.6132103269e+02 Ic2
+
+(Asynchronous job 110 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 109
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 110
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 109 has completed
+Waiting on completed jobs
+Evaluation 110 has completed
+
+Active response data for evaluation 109:
+Active set vector = { 1 1 }
+                      1.0643388677e+03 lambda
+                      1.5623650755e+00 phi
+
+
+Active response data for evaluation 110:
+Active set vector = { 1 1 }
+                      1.0636957112e+03 lambda
+                      1.5609649760e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  6.9563751977e-01  2.1723353934e-01 ] lambda gradient
+ [  5.7345735616e-04 -7.2673211234e-04 ] phi gradient
+ [  6.9563751977e-01  2.1723353934e-01 ] lambda gradient
+ [  5.7345735616e-04 -7.2673211234e-04 ] phi gradient
+ [  6.9563751977e-01  2.1723353934e-01 ] lambda gradient
+ [  5.7345735616e-04 -7.2673211234e-04 ] phi gradient
+ [  6.9563751977e-01  2.1723353934e-01 ] lambda gradient
+ [  5.7345735616e-04 -7.2673211234e-04 ] phi gradient
+ [  6.9563751977e-01  2.1723353934e-01 ] lambda gradient
+ [  5.7345735616e-04 -7.2673211234e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  111
+---------------------
+Parameters for evaluation 111:
+                      1.2200323927e+03 Ic1
+                      9.7487765115e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 111:
+Active set vector = { 1 1 }
+                      1.0634918404e+03 lambda
+                      1.5488055603e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  112
+---------------------
+Parameters for evaluation 112:
+                      1.2212524251e+03 Ic1
+                      9.7487765115e+02 Ic2
+
+(Asynchronous job 112 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  113
+---------------------
+Parameters for evaluation 113:
+                      1.2200323927e+03 Ic1
+                      9.7585252880e+02 Ic2
+
+(Asynchronous job 113 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 112
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 113
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 112 has completed
+Waiting on completed jobs
+Evaluation 113 has completed
+
+Active response data for evaluation 112:
+Active set vector = { 1 1 }
+                      1.0643482996e+03 lambda
+                      1.5494897425e+00 phi
+
+
+Active response data for evaluation 113:
+Active set vector = { 1 1 }
+                      1.0636958073e+03 lambda
+                      1.5481256178e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.0199705092e-01  2.0922306301e-01 ] lambda gradient
+ [  5.6079016676e-04 -6.9746447774e-04 ] phi gradient
+ [  7.0199705092e-01  2.0922306301e-01 ] lambda gradient
+ [  5.6079016676e-04 -6.9746447774e-04 ] phi gradient
+ [  7.0199705092e-01  2.0922306301e-01 ] lambda gradient
+ [  5.6079016676e-04 -6.9746447774e-04 ] phi gradient
+ [  7.0199705092e-01  2.0922306301e-01 ] lambda gradient
+ [  5.6079016676e-04 -6.9746447774e-04 ] phi gradient
+ [  7.0199705092e-01  2.0922306301e-01 ] lambda gradient
+ [  5.6079016676e-04 -6.9746447774e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  114
+---------------------
+Parameters for evaluation 114:
+                      1.2157968440e+03 Ic1
+                      9.8942393253e+02 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 114:
+Active set vector = { 1 1 }
+                      1.0634960800e+03 lambda
+                      1.5365018121e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  115
+---------------------
+Parameters for evaluation 115:
+                      1.2170126409e+03 Ic1
+                      9.8942393253e+02 Ic2
+
+(Asynchronous job 115 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  116
+---------------------
+Parameters for evaluation 116:
+                      1.2157968440e+03 Ic1
+                      9.9041335647e+02 Ic2
+
+(Asynchronous job 116 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 115
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 116
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 115 has completed
+Waiting on completed jobs
+Evaluation 116 has completed
+
+Active response data for evaluation 115:
+Active set vector = { 1 1 }
+                      1.0643569832e+03 lambda
+                      1.5371687774e+00 phi
+
+
+Active response data for evaluation 116:
+Active set vector = { 1 1 }
+                      1.0636955929e+03 lambda
+                      1.5358390296e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.0809788610e-01  2.0164554045e-01 ] lambda gradient
+ [  5.4858288414e-04 -6.6986699978e-04 ] phi gradient
+ [  7.0809788610e-01  2.0164554045e-01 ] lambda gradient
+ [  5.4858288414e-04 -6.6986699978e-04 ] phi gradient
+ [  7.0809788610e-01  2.0164554045e-01 ] lambda gradient
+ [  5.4858288414e-04 -6.6986699978e-04 ] phi gradient
+ [  7.0809788610e-01  2.0164554045e-01 ] lambda gradient
+ [  5.4858288414e-04 -6.6986699978e-04 ] phi gradient
+ [  7.0809788610e-01  2.0164554045e-01 ] lambda gradient
+ [  5.4858288414e-04 -6.6986699978e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  117
+---------------------
+Parameters for evaluation 117:
+                      1.2117398618e+03 Ic1
+                      1.0039969526e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 117:
+Active set vector = { 1 1 }
+                      1.0634995835e+03 lambda
+                      1.5247185133e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  118
+---------------------
+Parameters for evaluation 118:
+                      1.2129516016e+03 Ic1
+                      1.0039969526e+03 Ic2
+
+(Asynchronous job 118 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  119
+---------------------
+Parameters for evaluation 119:
+                      1.2117398618e+03 Ic1
+                      1.0050009495e+03 Ic2
+
+(Asynchronous job 119 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 118
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 119
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 118 has completed
+Waiting on completed jobs
+Evaluation 119 has completed
+
+Active response data for evaluation 118:
+Active set vector = { 1 1 }
+                      1.0643647920e+03 lambda
+                      1.5253690576e+00 phi
+
+
+Active response data for evaluation 119:
+Active set vector = { 1 1 }
+                      1.0636948408e+03 lambda
+                      1.5240721174e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.1402170077e-01  1.9448001912e-01 ] lambda gradient
+ [  5.3686797295e-04 -6.4382263022e-04 ] phi gradient
+ [  7.1402170077e-01  1.9448001912e-01 ] lambda gradient
+ [  5.3686797295e-04 -6.4382263022e-04 ] phi gradient
+ [  7.1402170077e-01  1.9448001912e-01 ] lambda gradient
+ [  5.3686797295e-04 -6.4382263022e-04 ] phi gradient
+ [  7.1402170077e-01  1.9448001912e-01 ] lambda gradient
+ [  5.3686797295e-04 -6.4382263022e-04 ] phi gradient
+ [  7.1402170077e-01  1.9448001912e-01 ] lambda gradient
+ [  5.3686797295e-04 -6.4382263022e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  120
+---------------------
+Parameters for evaluation 120:
+                      1.2078512121e+03 Ic1
+                      1.0185944873e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 120:
+Active set vector = { 1 1 }
+                      1.0635025565e+03 lambda
+                      1.5134252192e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  121
+---------------------
+Parameters for evaluation 121:
+                      1.2090590633e+03 Ic1
+                      1.0185944873e+03 Ic2
+
+(Asynchronous job 121 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  122
+---------------------
+Parameters for evaluation 122:
+                      1.2078512121e+03 Ic1
+                      1.0196130818e+03 Ic2
+
+(Asynchronous job 122 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 121
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 122
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 121 has completed
+Waiting on completed jobs
+Evaluation 122 has completed
+
+Active response data for evaluation 121:
+Active set vector = { 1 1 }
+                      1.0643719214e+03 lambda
+                      1.5140600762e+00 phi
+
+
+Active response data for evaluation 122:
+Active set vector = { 1 1 }
+                      1.0636936632e+03 lambda
+                      1.5127945010e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.1976164182e-01  1.8761804254e-01 ] lambda gradient
+ [  5.2560865745e-04 -6.1920441938e-04 ] phi gradient
+ [  7.1976164182e-01  1.8761804254e-01 ] lambda gradient
+ [  5.2560865745e-04 -6.1920441938e-04 ] phi gradient
+ [  7.1976164182e-01  1.8761804254e-01 ] lambda gradient
+ [  5.2560865745e-04 -6.1920441938e-04 ] phi gradient
+ [  7.1976164182e-01  1.8761804254e-01 ] lambda gradient
+ [  5.2560865745e-04 -6.1920441938e-04 ] phi gradient
+ [  7.1976164182e-01  1.8761804254e-01 ] lambda gradient
+ [  5.2560865745e-04 -6.1920441938e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  123
+---------------------
+Parameters for evaluation 123:
+                      1.2041227090e+03 Ic1
+                      1.0332147049e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 123:
+Active set vector = { 1 1 }
+                      1.0635062686e+03 lambda
+                      1.5025942180e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  124
+---------------------
+Parameters for evaluation 124:
+                      1.2053268317e+03 Ic1
+                      1.0332147049e+03 Ic2
+
+(Asynchronous job 124 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  125
+---------------------
+Parameters for evaluation 125:
+                      1.2041227090e+03 Ic1
+                      1.0342479197e+03 Ic2
+
+(Asynchronous job 125 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 124
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 125
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 124 has completed
+Waiting on completed jobs
+Evaluation 125 has completed
+
+Active response data for evaluation 124:
+Active set vector = { 1 1 }
+                      1.0643796012e+03 lambda
+                      1.5032140443e+00 phi
+
+
+Active response data for evaluation 125:
+Active set vector = { 1 1 }
+                      1.0636934165e+03 lambda
+                      1.5019784894e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.2528531558e-01  1.8113161844e-01 ] lambda gradient
+ [  5.1475339593e-04 -5.9593480090e-04 ] phi gradient
+ [  7.2528531558e-01  1.8113161844e-01 ] lambda gradient
+ [  5.1475339593e-04 -5.9593480090e-04 ] phi gradient
+ [  7.2528531558e-01  1.8113161844e-01 ] lambda gradient
+ [  5.1475339593e-04 -5.9593480090e-04 ] phi gradient
+ [  7.2528531558e-01  1.8113161844e-01 ] lambda gradient
+ [  5.1475339593e-04 -5.9593480090e-04 ] phi gradient
+ [  7.2528531558e-01  1.8113161844e-01 ] lambda gradient
+ [  5.1475339593e-04 -5.9593480090e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  126
+---------------------
+Parameters for evaluation 126:
+                      1.2005431217e+03 Ic1
+                      1.0478554408e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 126:
+Active set vector = { 1 1 }
+                      1.0635090426e+03 lambda
+                      1.4921981658e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  127
+---------------------
+Parameters for evaluation 127:
+                      1.2017436648e+03 Ic1
+                      1.0478554408e+03 Ic2
+
+(Asynchronous job 127 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  128
+---------------------
+Parameters for evaluation 128:
+                      1.2005431217e+03 Ic1
+                      1.0489032962e+03 Ic2
+
+(Asynchronous job 128 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 127
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 128
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 127 has completed
+Waiting on completed jobs
+Evaluation 128 has completed
+
+Active response data for evaluation 127:
+Active set vector = { 1 1 }
+                      1.0643862235e+03 lambda
+                      1.4928036220e+00 phi
+
+
+Active response data for evaluation 128:
+Active set vector = { 1 1 }
+                      1.0636923921e+03 lambda
+                      1.4915967601e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.3065343920e-01  1.7497598237e-01 ] lambda gradient
+ [  5.0431854583e-04 -5.7393960127e-04 ] phi gradient
+ [  7.3065343920e-01  1.7497598237e-01 ] lambda gradient
+ [  5.0431854583e-04 -5.7393960127e-04 ] phi gradient
+ [  7.3065343920e-01  1.7497598237e-01 ] lambda gradient
+ [  5.0431854583e-04 -5.7393960127e-04 ] phi gradient
+ [  7.3065343920e-01  1.7497598237e-01 ] lambda gradient
+ [  5.0431854583e-04 -5.7393960127e-04 ] phi gradient
+ [  7.3065343920e-01  1.7497598237e-01 ] lambda gradient
+ [  5.0431854583e-04 -5.7393960127e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  129
+---------------------
+Parameters for evaluation 129:
+                      1.1971048536e+03 Ic1
+                      1.0625151275e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 129:
+Active set vector = { 1 1 }
+                      1.0635116134e+03 lambda
+                      1.4822128171e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  130
+---------------------
+Parameters for evaluation 130:
+                      1.1983019585e+03 Ic1
+                      1.0625151275e+03 Ic2
+
+(Asynchronous job 130 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  131
+---------------------
+Parameters for evaluation 131:
+                      1.1971048536e+03 Ic1
+                      1.0635776426e+03 Ic2
+
+(Asynchronous job 131 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 130
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 131
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 130 has completed
+Waiting on completed jobs
+Evaluation 131 has completed
+
+Active response data for evaluation 130:
+Active set vector = { 1 1 }
+                      1.0643925097e+03 lambda
+                      1.4828045112e+00 phi
+
+
+Active response data for evaluation 131:
+Active set vector = { 1 1 }
+                      1.0636912540e+03 lambda
+                      1.4816252170e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.3585561026e-01  1.6907113666e-01 ] lambda gradient
+ [  4.9427085704e-04 -5.5302752055e-04 ] phi gradient
+ [  7.3585561026e-01  1.6907113666e-01 ] lambda gradient
+ [  4.9427085704e-04 -5.5302752055e-04 ] phi gradient
+ [  7.3585561026e-01  1.6907113666e-01 ] lambda gradient
+ [  4.9427085704e-04 -5.5302752055e-04 ] phi gradient
+ [  7.3585561026e-01  1.6907113666e-01 ] lambda gradient
+ [  4.9427085704e-04 -5.5302752055e-04 ] phi gradient
+ [  7.3585561026e-01  1.6907113666e-01 ] lambda gradient
+ [  4.9427085704e-04 -5.5302752055e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  132
+---------------------
+Parameters for evaluation 132:
+                      1.1938010124e+03 Ic1
+                      1.0771923588e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 132:
+Active set vector = { 1 1 }
+                      1.0635146506e+03 lambda
+                      1.4726158049e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  133
+---------------------
+Parameters for evaluation 133:
+                      1.1949948134e+03 Ic1
+                      1.0771923588e+03 Ic2
+
+(Asynchronous job 133 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  134
+---------------------
+Parameters for evaluation 134:
+                      1.1938010124e+03 Ic1
+                      1.0782695511e+03 Ic2
+
+(Asynchronous job 134 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 133
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 134
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 133 has completed
+Waiting on completed jobs
+Evaluation 134 has completed
+
+Active response data for evaluation 133:
+Active set vector = { 1 1 }
+                      1.0643990855e+03 lambda
+                      1.4731942773e+00 phi
+
+
+Active response data for evaluation 134:
+Active set vector = { 1 1 }
+                      1.0636907698e+03 lambda
+                      1.4720413564e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.4085621163e-01  1.6349830986e-01 ] lambda gradient
+ [  4.8456350354e-04 -5.3328305322e-04 ] phi gradient
+ [  7.4085621163e-01  1.6349830986e-01 ] lambda gradient
+ [  4.8456350354e-04 -5.3328305322e-04 ] phi gradient
+ [  7.4085621163e-01  1.6349830986e-01 ] lambda gradient
+ [  4.8456350354e-04 -5.3328305322e-04 ] phi gradient
+ [  7.4085621163e-01  1.6349830986e-01 ] lambda gradient
+ [  4.8456350354e-04 -5.3328305322e-04 ] phi gradient
+ [  7.4085621163e-01  1.6349830986e-01 ] lambda gradient
+ [  4.8456350354e-04 -5.3328305322e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  135
+---------------------
+Parameters for evaluation 135:
+                      1.1906222757e+03 Ic1
+                      1.0918854861e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 135:
+Active set vector = { 1 1 }
+                      1.0635167918e+03 lambda
+                      1.4633849005e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  136
+---------------------
+Parameters for evaluation 136:
+                      1.1918128980e+03 Ic1
+                      1.0918854861e+03 Ic2
+
+(Asynchronous job 136 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  137
+---------------------
+Parameters for evaluation 137:
+                      1.1906222757e+03 Ic1
+                      1.0929773716e+03 Ic2
+
+(Asynchronous job 137 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 136
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 137
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 136 has completed
+Waiting on completed jobs
+Evaluation 137 has completed
+
+Active response data for evaluation 136:
+Active set vector = { 1 1 }
+                      1.0644046852e+03 lambda
+                      1.4639507185e+00 phi
+
+
+Active response data for evaluation 137:
+Active set vector = { 1 1 }
+                      1.0636894457e+03 lambda
+                      1.4628231309e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.4573894943e-01  1.5812454345e-01 ] lambda gradient
+ [  4.7522881678e-04 -5.1449494914e-04 ] phi gradient
+ [  7.4573894943e-01  1.5812454345e-01 ] lambda gradient
+ [  4.7522881678e-04 -5.1449494914e-04 ] phi gradient
+ [  7.4573894943e-01  1.5812454345e-01 ] lambda gradient
+ [  4.7522881678e-04 -5.1449494914e-04 ] phi gradient
+ [  7.4573894943e-01  1.5812454345e-01 ] lambda gradient
+ [  4.7522881678e-04 -5.1449494914e-04 ] phi gradient
+ [  7.4573894943e-01  1.5812454345e-01 ] lambda gradient
+ [  4.7522881678e-04 -5.1449494914e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  138
+---------------------
+Parameters for evaluation 138:
+                      1.1875642001e+03 Ic1
+                      1.1065935438e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 138:
+Active set vector = { 1 1 }
+                      1.0635197114e+03 lambda
+                      1.4545013323e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  139
+---------------------
+Parameters for evaluation 139:
+                      1.1887517643e+03 Ic1
+                      1.1065935438e+03 Ic2
+
+(Asynchronous job 139 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  140
+---------------------
+Parameters for evaluation 140:
+                      1.1875642001e+03 Ic1
+                      1.1077001374e+03 Ic2
+
+(Asynchronous job 140 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 139
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 140
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 139 has completed
+Waiting on completed jobs
+Evaluation 140 has completed
+
+Active response data for evaluation 139:
+Active set vector = { 1 1 }
+                      1.0644109092e+03 lambda
+                      1.4550549821e+00 phi
+
+
+Active response data for evaluation 140:
+Active set vector = { 1 1 }
+                      1.0636891359e+03 lambda
+                      1.4539516876e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.5044182171e-01  1.5310461491e-01 ] lambda gradient
+ [  4.6620614308e-04 -4.9669979077e-04 ] phi gradient
+ [  7.5044182171e-01  1.5310461491e-01 ] lambda gradient
+ [  4.6620614308e-04 -4.9669979077e-04 ] phi gradient
+ [  7.5044182171e-01  1.5310461491e-01 ] lambda gradient
+ [  4.6620614308e-04 -4.9669979077e-04 ] phi gradient
+ [  7.5044182171e-01  1.5310461491e-01 ] lambda gradient
+ [  4.6620614308e-04 -4.9669979077e-04 ] phi gradient
+ [  7.5044182171e-01  1.5310461491e-01 ] lambda gradient
+ [  4.6620614308e-04 -4.9669979077e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  141
+---------------------
+Parameters for evaluation 141:
+                      1.1846170634e+03 Ic1
+                      1.1213149747e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 141:
+Active set vector = { 1 1 }
+                      1.0635209314e+03 lambda
+                      1.4459452000e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  142
+---------------------
+Parameters for evaluation 142:
+                      1.1858016804e+03 Ic1
+                      1.1213149747e+03 Ic2
+
+(Asynchronous job 142 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  143
+---------------------
+Parameters for evaluation 143:
+                      1.1846170634e+03 Ic1
+                      1.1224362897e+03 Ic2
+
+(Asynchronous job 143 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 142
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 143
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 142 has completed
+Waiting on completed jobs
+Evaluation 143 has completed
+
+Active response data for evaluation 142:
+Active set vector = { 1 1 }
+                      1.0644153192e+03 lambda
+                      1.4464871608e+00 phi
+
+
+Active response data for evaluation 143:
+Active set vector = { 1 1 }
+                      1.0636871808e+03 lambda
+                      1.4454071922e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.5500161510e-01  1.4826287814e-01 ] lambda gradient
+ [  4.5749867183e-04 -4.7980080113e-04 ] phi gradient
+ [  7.5500161510e-01  1.4826287814e-01 ] lambda gradient
+ [  4.5749867183e-04 -4.7980080113e-04 ] phi gradient
+ [  7.5500161510e-01  1.4826287814e-01 ] lambda gradient
+ [  4.5749867183e-04 -4.7980080113e-04 ] phi gradient
+ [  7.5500161510e-01  1.4826287814e-01 ] lambda gradient
+ [  4.5749867183e-04 -4.7980080113e-04 ] phi gradient
+ [  7.5500161510e-01  1.4826287814e-01 ] lambda gradient
+ [  4.5749867183e-04 -4.7980080113e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  144
+---------------------
+Parameters for evaluation 144:
+                      1.1817780290e+03 Ic1
+                      1.1360491053e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 144:
+Active set vector = { 1 1 }
+                      1.0635228599e+03 lambda
+                      1.4377004409e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  145
+---------------------
+Parameters for evaluation 145:
+                      1.1829598070e+03 Ic1
+                      1.1360491053e+03 Ic2
+
+(Asynchronous job 145 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  146
+---------------------
+Parameters for evaluation 146:
+                      1.1817780290e+03 Ic1
+                      1.1371851544e+03 Ic2
+
+(Asynchronous job 146 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 145
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 146
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 145 has completed
+Waiting on completed jobs
+Evaluation 146 has completed
+
+Active response data for evaluation 145:
+Active set vector = { 1 1 }
+                      1.0644203324e+03 lambda
+                      1.4382311688e+00 phi
+
+
+Active response data for evaluation 146:
+Active set vector = { 1 1 }
+                      1.0636860426e+03 lambda
+                      1.4371736408e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.5942561688e-01  1.4364051046e-01 ] lambda gradient
+ [  4.4909272973e-04 -4.6371246183e-04 ] phi gradient
+ [  7.5942561688e-01  1.4364051046e-01 ] lambda gradient
+ [  4.4909272973e-04 -4.6371246183e-04 ] phi gradient
+ [  7.5942561688e-01  1.4364051046e-01 ] lambda gradient
+ [  4.4909272973e-04 -4.6371246183e-04 ] phi gradient
+ [  7.5942561688e-01  1.4364051046e-01 ] lambda gradient
+ [  4.4909272973e-04 -4.6371246183e-04 ] phi gradient
+ [  7.5942561688e-01  1.4364051046e-01 ] lambda gradient
+ [  4.4909272973e-04 -4.6371246183e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  147
+---------------------
+Parameters for evaluation 147:
+                      1.1790404836e+03 Ic1
+                      1.1507948549e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 147:
+Active set vector = { 1 1 }
+                      1.0635246333e+03 lambda
+                      1.4297505565e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  148
+---------------------
+Parameters for evaluation 148:
+                      1.1802195241e+03 Ic1
+                      1.1507948549e+03 Ic2
+
+(Asynchronous job 148 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  149
+---------------------
+Parameters for evaluation 149:
+                      1.1790404836e+03 Ic1
+                      1.1519456498e+03 Ic2
+
+(Asynchronous job 149 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 148
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 149
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 148 has completed
+Waiting on completed jobs
+Evaluation 149 has completed
+
+Active response data for evaluation 148:
+Active set vector = { 1 1 }
+                      1.0644250950e+03 lambda
+                      1.4302704857e+00 phi
+
+
+Active response data for evaluation 149:
+Active set vector = { 1 1 }
+                      1.0636848265e+03 lambda
+                      1.4292345411e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.6372417904e-01  1.3920222429e-01 ] lambda gradient
+ [  4.4097655297e-04 -4.4839907469e-04 ] phi gradient
+ [  7.6372417904e-01  1.3920222429e-01 ] lambda gradient
+ [  4.4097655297e-04 -4.4839907469e-04 ] phi gradient
+ [  7.6372417904e-01  1.3920222429e-01 ] lambda gradient
+ [  4.4097655297e-04 -4.4839907469e-04 ] phi gradient
+ [  7.6372417904e-01  1.3920222429e-01 ] lambda gradient
+ [  4.4097655297e-04 -4.4839907469e-04 ] phi gradient
+ [  7.6372417904e-01  1.3920222429e-01 ] lambda gradient
+ [  4.4097655297e-04 -4.4839907469e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  150
+---------------------
+Parameters for evaluation 150:
+                      1.1763997529e+03 Ic1
+                      1.1655514119e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 150:
+Active set vector = { 1 1 }
+                      1.0635267442e+03 lambda
+                      1.4220806088e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  151
+---------------------
+Parameters for evaluation 151:
+                      1.1775761527e+03 Ic1
+                      1.1655514119e+03 Ic2
+
+(Asynchronous job 151 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  152
+---------------------
+Parameters for evaluation 152:
+                      1.1763997529e+03 Ic1
+                      1.1667169633e+03 Ic2
+
+(Asynchronous job 152 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 151
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 152
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 151 has completed
+Waiting on completed jobs
+Evaluation 152 has completed
+
+Active response data for evaluation 151:
+Active set vector = { 1 1 }
+                      1.0644300794e+03 lambda
+                      1.4225901363e+00 phi
+
+
+Active response data for evaluation 152:
+Active set vector = { 1 1 }
+                      1.0636840814e+03 lambda
+                      1.4215749444e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.6788116420e-01  1.3498953265e-01 ] lambda gradient
+ [  4.3312445361e-04 -4.3384131801e-04 ] phi gradient
+ [  7.6788116420e-01  1.3498953265e-01 ] lambda gradient
+ [  4.3312445361e-04 -4.3384131801e-04 ] phi gradient
+ [  7.6788116420e-01  1.3498953265e-01 ] lambda gradient
+ [  4.3312445361e-04 -4.3384131801e-04 ] phi gradient
+ [  7.6788116420e-01  1.3498953265e-01 ] lambda gradient
+ [  4.3312445361e-04 -4.3384131801e-04 ] phi gradient
+ [  7.6788116420e-01  1.3498953265e-01 ] lambda gradient
+ [  4.3312445361e-04 -4.3384131801e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  153
+---------------------
+Parameters for evaluation 153:
+                      1.1738497922e+03 Ic1
+                      1.1803178563e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 153:
+Active set vector = { 1 1 }
+                      1.0635282245e+03 lambda
+                      1.4146760446e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  154
+---------------------
+Parameters for evaluation 154:
+                      1.1750236420e+03 Ic1
+                      1.1803178563e+03 Ic2
+
+(Asynchronous job 154 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  155
+---------------------
+Parameters for evaluation 155:
+                      1.1738497922e+03 Ic1
+                      1.1814981741e+03 Ic2
+
+(Asynchronous job 155 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 154
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 155
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 154 has completed
+Waiting on completed jobs
+Evaluation 155 has completed
+
+Active response data for evaluation 154:
+Active set vector = { 1 1 }
+                      1.0644343258e+03 lambda
+                      1.4151755486e+00 phi
+
+
+Active response data for evaluation 155:
+Active set vector = { 1 1 }
+                      1.0636827477e+03 lambda
+                      1.4141804006e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.7190572016e-01  1.3091661266e-01 ] lambda gradient
+ [  4.2552635806e-04 -4.1992411973e-04 ] phi gradient
+ [  7.7190572016e-01  1.3091661266e-01 ] lambda gradient
+ [  4.2552635806e-04 -4.1992411973e-04 ] phi gradient
+ [  7.7190572016e-01  1.3091661266e-01 ] lambda gradient
+ [  4.2552635806e-04 -4.1992411973e-04 ] phi gradient
+ [  7.7190572016e-01  1.3091661266e-01 ] lambda gradient
+ [  4.2552635806e-04 -4.1992411973e-04 ] phi gradient
+ [  7.7190572016e-01  1.3091661266e-01 ] lambda gradient
+ [  4.2552635806e-04 -4.1992411973e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  156
+---------------------
+Parameters for evaluation 156:
+                      1.1713875477e+03 Ic1
+                      1.1950936171e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 156:
+Active set vector = { 1 1 }
+                      1.0635301891e+03 lambda
+                      1.4075242480e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  157
+---------------------
+Parameters for evaluation 157:
+                      1.1725589352e+03 Ic1
+                      1.1950936171e+03 Ic2
+
+(Asynchronous job 157 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  158
+---------------------
+Parameters for evaluation 158:
+                      1.1713875477e+03 Ic1
+                      1.1962887107e+03 Ic2
+
+(Asynchronous job 158 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 157
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 158
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 157 has completed
+Waiting on completed jobs
+Evaluation 158 has completed
+
+Active response data for evaluation 157:
+Active set vector = { 1 1 }
+                      1.0644389861e+03 lambda
+                      1.4080141052e+00 phi
+
+
+Active response data for evaluation 158:
+Active set vector = { 1 1 }
+                      1.0636820264e+03 lambda
+                      1.4070382310e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.7582948073e-01  1.2705052928e-01 ] lambda gradient
+ [  4.1818537702e-04 -4.0667694343e-04 ] phi gradient
+ [  7.7582948073e-01  1.2705052928e-01 ] lambda gradient
+ [  4.1818537702e-04 -4.0667694343e-04 ] phi gradient
+ [  7.7582948073e-01  1.2705052928e-01 ] lambda gradient
+ [  4.1818537702e-04 -4.0667694343e-04 ] phi gradient
+ [  7.7582948073e-01  1.2705052928e-01 ] lambda gradient
+ [  4.1818537702e-04 -4.0667694343e-04 ] phi gradient
+ [  7.7582948073e-01  1.2705052928e-01 ] lambda gradient
+ [  4.1818537702e-04 -4.0667694343e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  159
+---------------------
+Parameters for evaluation 159:
+                      1.1688294525e+03 Ic1
+                      1.2109649129e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 159:
+Active set vector = { 1 1 }
+                      1.0635269921e+03 lambda
+                      1.4001108389e+00 phi
+
+
+
+---------------------
+Begin Evaluation  160
+---------------------
+Parameters for evaluation 160:
+                      1.1702175812e+03 Ic1
+                      1.2024883400e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 160:
+Active set vector = { 1 1 }
+                      1.0635548957e+03 lambda
+                      1.4040500356e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  161
+---------------------
+Parameters for evaluation 161:
+                      1.1713877988e+03 Ic1
+                      1.2024883400e+03 Ic2
+
+(Asynchronous job 161 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  162
+---------------------
+Parameters for evaluation 162:
+                      1.1702175812e+03 Ic1
+                      1.2036908284e+03 Ic2
+
+(Asynchronous job 162 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 161
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 162
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 161 has completed
+Waiting on completed jobs
+Evaluation 162 has completed
+
+Active response data for evaluation 161:
+Active set vector = { 1 1 }
+                      1.0644650500e+03 lambda
+                      1.4045352289e+00 phi
+
+
+Active response data for evaluation 162:
+Active set vector = { 1 1 }
+                      1.0637054142e+03 lambda
+                      1.4035686895e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.7776504338e-01  1.2517255764e-01 ] lambda gradient
+ [  4.1461802584e-04 -4.0029169320e-04 ] phi gradient
+ [  7.7776504338e-01  1.2517255764e-01 ] lambda gradient
+ [  4.1461802584e-04 -4.0029169320e-04 ] phi gradient
+ [  7.7776504338e-01  1.2517255764e-01 ] lambda gradient
+ [  4.1461802584e-04 -4.0029169320e-04 ] phi gradient
+ [  7.7776504338e-01  1.2517255764e-01 ] lambda gradient
+ [  4.1461802584e-04 -4.0029169320e-04 ] phi gradient
+ [  7.7776504338e-01  1.2517255764e-01 ] lambda gradient
+ [  4.1461802584e-04 -4.0029169320e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  163
+---------------------
+Parameters for evaluation 163:
+                      1.1690367929e+03 Ic1
+                      1.2098819722e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 163:
+Active set vector = { 1 1 }
+                      1.0635550852e+03 lambda
+                      1.4006227426e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  164
+---------------------
+Parameters for evaluation 164:
+                      1.1702058297e+03 Ic1
+                      1.2098819722e+03 Ic2
+
+(Asynchronous job 164 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  165
+---------------------
+Parameters for evaluation 165:
+                      1.1690367929e+03 Ic1
+                      1.2110918542e+03 Ic2
+
+(Asynchronous job 165 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 164
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 165
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 164 has completed
+Waiting on completed jobs
+Evaluation 165 has completed
+
+Active response data for evaluation 164:
+Active set vector = { 1 1 }
+                      1.0644665085e+03 lambda
+                      1.4011033139e+00 phi
+
+
+Active response data for evaluation 165:
+Active set vector = { 1 1 }
+                      1.0637043886e+03 lambda
+                      1.4001459827e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.7963612936e-01  1.2340328426e-01 ] lambda gradient
+ [  4.1108310935e-04 -3.9405489362e-04 ] phi gradient
+ [  7.7963612936e-01  1.2340328426e-01 ] lambda gradient
+ [  4.1108310935e-04 -3.9405489362e-04 ] phi gradient
+ [  7.7963612936e-01  1.2340328426e-01 ] lambda gradient
+ [  4.1108310935e-04 -3.9405489362e-04 ] phi gradient
+ [  7.7963612936e-01  1.2340328426e-01 ] lambda gradient
+ [  4.1108310935e-04 -3.9405489362e-04 ] phi gradient
+ [  7.7963612936e-01  1.2340328426e-01 ] lambda gradient
+ [  4.1108310935e-04 -3.9405489362e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  166
+---------------------
+Parameters for evaluation 166:
+                      1.1688297137e+03 Ic1
+                      1.2112462893e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 166:
+Active set vector = { 1 1 }
+                      1.0635618344e+03 lambda
+                      1.4000002358e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  167
+---------------------
+Parameters for evaluation 167:
+                      1.1699985434e+03 Ic1
+                      1.2112462893e+03 Ic2
+
+(Asynchronous job 167 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  168
+---------------------
+Parameters for evaluation 168:
+                      1.1688297137e+03 Ic1
+                      1.2124575356e+03 Ic2
+
+(Asynchronous job 168 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 167
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 168
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 167 has completed
+Waiting on completed jobs
+Evaluation 168 has completed
+
+Active response data for evaluation 167:
+Active set vector = { 1 1 }
+                      1.0644735123e+03 lambda
+                      1.4004799778e+00 phi
+
+
+Active response data for evaluation 168:
+Active set vector = { 1 1 }
+                      1.0637109035e+03 lambda
+                      1.3995243109e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.7999208330e-01  1.2307083047e-01 ] lambda gradient
+ [  4.1044641508e-04 -3.9292166693e-04 ] phi gradient
+ [  7.7999208330e-01  1.2307083047e-01 ] lambda gradient
+ [  4.1044641508e-04 -3.9292166693e-04 ] phi gradient
+ [  7.7999208330e-01  1.2307083047e-01 ] lambda gradient
+ [  4.1044641508e-04 -3.9292166693e-04 ] phi gradient
+ [  7.7999208330e-01  1.2307083047e-01 ] lambda gradient
+ [  4.1044641508e-04 -3.9292166693e-04 ] phi gradient
+ [  7.7999208330e-01  1.2307083047e-01 ] lambda gradient
+ [  4.1044641508e-04 -3.9292166693e-04 ] phi gradient
+
+
+
+---------------------
+Begin Evaluation  169
+---------------------
+Parameters for evaluation 169:
+                      1.1688298147e+03 Ic1
+                      1.2112469950e+03 Ic2
+
+blocking fork: workflow_driver1 paramsDakota.in results.out
+
+Active response data for evaluation 169:
+Active set vector = { 1 1 }
+                      1.0635620131e+03 lambda
+                      1.3999999836e+00 phi
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  170
+---------------------
+Parameters for evaluation 170:
+                      1.1699986445e+03 Ic1
+                      1.2112469950e+03 Ic2
+
+(Asynchronous job 170 added to queue)
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  171
+---------------------
+Parameters for evaluation 171:
+                      1.1688298147e+03 Ic1
+                      1.2124582420e+03 Ic2
+
+(Asynchronous job 171 added to queue)
+
+
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 170
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Initiating evaluation 171
+nonblocking fork: workflow_driver1 paramsDakota.in results.out
+Waiting on completed jobs
+Evaluation 170 has completed
+Waiting on completed jobs
+Evaluation 171 has completed
+
+Active response data for evaluation 170:
+Active set vector = { 1 1 }
+                      1.0644736912e+03 lambda
+                      1.4004797252e+00 phi
+
+
+Active response data for evaluation 171:
+Active set vector = { 1 1 }
+                      1.0637110805e+03 lambda
+                      1.3995240593e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.7999215519e-01  1.2306934654e-01 ] lambda gradient
+ [  4.1044606769e-04 -3.9292091961e-04 ] phi gradient
+ [  7.7999215519e-01  1.2306934654e-01 ] lambda gradient
+ [  4.1044606769e-04 -3.9292091961e-04 ] phi gradient
+ [  7.7999215519e-01  1.2306934654e-01 ] lambda gradient
+ [  4.1044606769e-04 -3.9292091961e-04 ] phi gradient
+ [  7.7999215519e-01  1.2306934654e-01 ] lambda gradient
+ [  4.1044606769e-04 -3.9292091961e-04 ] phi gradient
+ [  7.7999215519e-01  1.2306934654e-01 ] lambda gradient
+ [  4.1044606769e-04 -3.9292091961e-04 ] phi gradient
+
+
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> map at X performed previously and results retrieved
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation  172
+---------------------
+Parameters for evaluation 172:
+                      1.1699986445e+03 Ic1
+                      1.2112469950e+03 Ic2
+
+Duplication detected: analysis_drivers not invoked.
+
+
+>>>>> Dakota finite difference gradient evaluation for x[2] + h:
+
+---------------------
+Begin Evaluation  173
+---------------------
+Parameters for evaluation 173:
+                      1.1688298147e+03 Ic1
+                      1.2124582420e+03 Ic2
+
+Duplication detected: analysis_drivers not invoked.
+
+
+
+Blocking synchronize of 0 asynchronous evaluations, 0 cached evaluations, and 2 duplicates
+
+Active response data for evaluation 172:
+Active set vector = { 1 1 }
+                      1.0644736912e+03 lambda
+                      1.4004797252e+00 phi
+
+
+Active response data for evaluation 173:
+Active set vector = { 1 1 }
+                      1.0637110805e+03 lambda
+                      1.3995240593e+00 phi
+
+>>>>> Total response returned to iterator:
+
+Active set vector = { 2 2 2 2 2 2 2 2 2 2 } Deriv vars vector = { 1 2 }
+ [  7.7999215519e-01  1.2306934654e-01 ] lambda gradient
+ [  4.1044606769e-04 -3.9292091961e-04 ] phi gradient
+ [  7.7999215519e-01  1.2306934654e-01 ] lambda gradient
+ [  4.1044606769e-04 -3.9292091961e-04 ] phi gradient
+ [  7.7999215519e-01  1.2306934654e-01 ] lambda gradient
+ [  4.1044606769e-04 -3.9292091961e-04 ] phi gradient
+ [  7.7999215519e-01  1.2306934654e-01 ] lambda gradient
+ [  4.1044606769e-04 -3.9292091961e-04 ] phi gradient
+ [  7.7999215519e-01  1.2306934654e-01 ] lambda gradient
+ [  4.1044606769e-04 -3.9292091961e-04 ] phi gradient
+
+
+<<<<< Function evaluation summary: 173 total (171 new, 2 duplicate)
+<<<<< Best parameters          =
+                      1.1688298147e+03 Ic1
+                      1.2112469950e+03 Ic2
+Original (as-posed) response:
+<<<<< Best model responses =
+                      1.0635620131e+03
+                      1.3999999836e+00
+Original (as-posed) residuals:
+<<<<< Best residual terms =
+                      3.8352013145e+01
+                     -1.3000001645e-01
+                     -7.4547986855e+01
+                      1.5999998355e-01
+                     -3.5827986855e+01
+                      1.9999983552e-02
+                      6.1152013145e+01
+                     -1.0000001645e-01
+                      1.0872013145e+01
+                      4.9999983552e-02
+<<<<< Best residual norm =  1.1031658388e+02; 0.5 * norm^2 =  6.0848743400e+03
+<<<<< Best residual terms =
+                      3.8352013145e+01
+                     -1.3000001645e-01
+                     -7.4547986855e+01
+                      1.5999998355e-01
+                     -3.5827986855e+01
+                      1.9999983552e-02
+                      6.1152013145e+01
+                     -1.0000001645e-01
+                      1.0872013145e+01
+                      4.9999983552e-02
+<<<<< Best residual norm =  1.1031658388e+02; 0.5 * norm^2 =  6.0848743400e+03
+<<<<< Best data not found in evaluation cache
+
+Warning: Confidence intervals may be inaccurate when num_experiments > 1
+Confidence Intervals on Calibrated Parameters:
+           Ic1: [ 1.1688298147e+03, 1.1688298147e+03 ]
+           Ic2: [ 1.2112469950e+03, 1.2112469950e+03 ]
+
+<<<<< Iterator nl2sol completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =    1.77272 [parent =    1.77269, child =    3.4e-05]
+  Total wall clock =    13.1999

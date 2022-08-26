@@ -1,0 +1,530 @@
+**********************************************************
+OPT++ version 2.4
+Job run at Fri Aug 26 08:56:18 2022
+
+**********************************************************
+
+		 NIPS Iteration Summary
+
+	Nonlinear Interior-Point Method Method with Line Search 
+ 
+  Merit Function =  1 
+
+  Iter    F(x)       mu          alpha      Merit    feval    btracks  Penalty
+
+    0 0x1.96b76baa72deep+2 0x1.0109560b666b1p+1 
+    1 0x1.6525c41419688p+2 0x1.0109560b666b1p+1      0x1p+0 0x1.f2f28c108304ap+8    2   0   0x1.9p+6
+    2 0x1.35a4bf141a69bp+2 0x1.4901b5d126ef7p-60x1.c97a73918cffbp-1 0x1.d6864501a8583p+7    3   0   0x1.9p+6
+    3 0x1.3747099b31f95p+2 0x1.4901b5d126ef7p-6      0x1p+0 0x1.614b2f0787d1ap+6    4   0   0x1.9p+6
+    4 0x1.422356aa8c898p+2 0x1.4901b5d126ef7p-6      0x1p+0 0x1.4ee9dcb76582cp+6    5   0   0x1.9p+6
+    5 0x1.408fe0d21cd6p+2 0x1.a520e8b9cb6ffp-13      0x1p+0 0x1.a2acad500ce16p+2    6   0   0x1.9p+6
+    6 0x1.40baec3f6a47p+2 0x1.0d85b3aa1bcccp-19      0x1p+0 0x1.422e0c8c3247bp+2    7   0   0x1.9p+6
+L2 norm = 0x1.56f21b1366a64p-10  ftol = 0x1.a36e2eb1c432dp-14
+
+
+=========  Solution from Opt++  ===========
+
+Optimization method       = Nonlinear Interior-Point Method
+Dimension of the problem  = 4
+No. equalities            = 1
+No. inequalities          = 8
+Merit Function (0= NormFmu, 1 = Argaez, 2 = Vanderbei) = 1
+Return code               = 2 (Algorithm converged - Norm of gradient less than relative gradient tolerance)
+No. iterations taken      = 6
+No. function evaluations  = 7
+No. gradient evaluations  = 7
+No. backtracks in lnsrch  = 0
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	    xc 		 grad  		 fcn_accrcy 
+     00x1.0b71b28befc74p+0	-0x1.97cf1f72dbb41p-2	     0x1p-52
+     10x1.59f609dcc11e8p+0	-0x1.078ab361e8fb7p-1	     0x1p-52
+     2-0x1.2b30c118c300bp+0	0x1.c8d110ed0c7fp-2	     0x1p-52
+     30x1.389a995b63fd9p-1	-0x1.dfd5b4c491697p-3	     0x1p-52
+Function Value     = 0x1.40baec3f6a47p+2
+Norm of gradient   = 0x1.a56a9a3c2afbp-1
+
+
+==============================================
+
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	   y    
+
+    0-0x1.d85e8d609bbbp-1
+
+
+=====================================
+
+
+    i	    z 	      s
+
+    00x1.8664c13c3274p-230x1.616e36517df8fp+3
+    10x1.ae49828a9e88p-230x1.6b3ec13b9823dp+3
+    20x1.06b8c047fca4p-220x1.1a99e7dce79ffp+3
+    30x1.70e944b9f668p-230x1.5389a995b63fep+3
+    40x1.e1aa810b5238p-230x1.1e91c9ae82071p+3
+    50x1.872d4e6e41ap-230x1.14c13ec467dc3p+3
+    60x1.6e4d5bb5c0d8p-230x1.6566182318601p+3
+    70x1.10c2cb0639dcp-220x1.2c76566a49c02p+3
+
+
+==========  Tolerances  ===========
+
+Machine Epsilon      = 2.22045e-16
+Maximum Step         = 1000
+Minimum Step         = 1.49012e-08
+Maximum Iter         = 100
+Maximum Backtracks   = 5
+Maximum Fcn Eval     = 1000
+Step Tolerance       = 1.49012e-08
+Function Tolerance   = 0.0001
+Constraint Tolerance = 1.49012e-08
+Gradient Tolerance   = 0.0001
+LineSearch Tolerance = 0.0001
+**********************************************************
+OPT++ version 2.4
+Job run at Fri Aug 26 08:56:38 2022
+
+**********************************************************
+
+		 NIPS Iteration Summary
+
+	Nonlinear Interior-Point Method Method with Line Search 
+ 
+  Merit Function =  1 
+
+  Iter    F(x)       mu          alpha      Merit    feval    btracks  Penalty
+
+    0 0x1.97695787208aap+2 0x1.27c9c8710b376p+1 
+    1 0x1.9d38737964a89p+2 0x1.27c9c8710b376p+1      0x1p+0 0x1.206d9d23b5ee4p+8    2   0   0x1.9p+6
+    2 0x1.9c3d9b46f086fp+2 0x1.7a9be1d86046ep-6      0x1p+0 0x1.79ca707d8c5afp+6    3   0   0x1.9p+6
+    3 0x1.9c7627d0705f8p+2 0x1.e49e91b8cd278p-13      0x1p+0 0x1.059f8d12786dcp+3    4   0   0x1.9p+6
+L2 norm = 0x1.9ff8a80c9bf23p-11  ftol = 0x1.a36e2eb1c432dp-14
+
+
+=========  Solution from Opt++  ===========
+
+Optimization method       = Nonlinear Interior-Point Method
+Dimension of the problem  = 4
+No. equalities            = 1
+No. inequalities          = 8
+Merit Function (0= NormFmu, 1 = Argaez, 2 = Vanderbei) = 1
+Return code               = 2 (Algorithm converged - Norm of gradient less than relative gradient tolerance)
+No. iterations taken      = 3
+No. function evaluations  = 4
+No. gradient evaluations  = 4
+No. backtracks in lnsrch  = 0
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	    xc 		 grad  		 fcn_accrcy 
+     00x1.5c9e65c4e3728p-2	-0x1.1f4a7d8771cf7p-1	     0x1p-52
+     10x1.a7af113a5c9e4p-2	-0x1.5cfa0e7f5f308p-1	     0x1p-52
+     2-0x1.ac6fcc6acf6e7p-2	0x1.6179ac6e9ff57p-1	     0x1p-52
+     30x1.abe37d0672e63p-3	-0x1.60ccc270712fcp-2	     0x1p-52
+Function Value     = 0x1.9c7627d0705f8p+2
+Norm of gradient   = 0x1.2c28cd1899e68p+0
+
+
+==============================================
+
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	   y    
+
+    0-0x1.5d3aee3311d79p+0
+
+
+=====================================
+
+
+    i	    z 	      s
+
+    00x1.7f3fd9196308p-160x1.4ae4f32e271bap+3
+    10x1.8e7646e1ca8p-160x1.4d3d7889d2e4fp+3
+    20x1.a8d1da51def8p-160x1.329c819ca9849p+3
+    30x1.7a5cab584bdp-160x1.46af8df419cbap+3
+    40x1.86a5f7763da8p-160x1.351b0cd1d8e46p+3
+    50x1.7405791f9308p-160x1.32c287762d1b1p+3
+    60x1.66d1aaee38c8p-160x1.4d637e63567b7p+3
+    70x1.8da97455a58p-160x1.3950720be6346p+3
+
+
+==========  Tolerances  ===========
+
+Machine Epsilon      = 2.22045e-16
+Maximum Step         = 1000
+Minimum Step         = 1.49012e-08
+Maximum Iter         = 100
+Maximum Backtracks   = 5
+Maximum Fcn Eval     = 1000
+Step Tolerance       = 1.49012e-08
+Function Tolerance   = 0.0001
+Constraint Tolerance = 1.49012e-08
+Gradient Tolerance   = 0.0001
+LineSearch Tolerance = 0.0001
+**********************************************************
+OPT++ version 2.4
+Job run at Fri Aug 26 08:56:55 2022
+
+**********************************************************
+
+		 NIPS Iteration Summary
+
+	Nonlinear Interior-Point Method Method with Line Search 
+ 
+  Merit Function =  1 
+
+  Iter    F(x)       mu          alpha      Merit    feval    btracks  Penalty
+
+    0 0x1.c3e8c96d459c2p+2 0x1.4e60a4f1f1bc4p+1 
+    1 0x1.cb60a7c61a57ap+2 0x1.4e60a4f1f1bc4p+1      0x1p+0 0x1.16ae91389df2cp+6    2   0   0x1.9p+6
+    2 0x1.c9bc1e4496946p+2 0x1.ac00d321356bep-6      0x1p+0 0x1.a0794ae717802p+6    3   0   0x1.9p+6
+    3 0x1.ca16fb55bcb72p+2 0x1.11ec0c3e36ab7p-12      0x1p+0 0x1.22cd5d14b3d88p+3    4   0   0x1.9p+6
+L2 norm = 0x1.8f239c78288eep-11  ftol = 0x1.a36e2eb1c432dp-14
+
+
+=========  Solution from Opt++  ===========
+
+Optimization method       = Nonlinear Interior-Point Method
+Dimension of the problem  = 4
+No. equalities            = 1
+No. inequalities          = 8
+Merit Function (0= NormFmu, 1 = Argaez, 2 = Vanderbei) = 1
+Return code               = 2 (Algorithm converged - Norm of gradient less than relative gradient tolerance)
+No. iterations taken      = 3
+No. function evaluations  = 4
+No. gradient evaluations  = 4
+No. backtracks in lnsrch  = 0
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	    xc 		 grad  		 fcn_accrcy 
+     00x1.1b4b7aa7fe583p-4	-0x1.4dabb9304b1b5p-1	     0x1p-52
+     10x1.4b38d89577e6p-4	-0x1.8611a439d9a09p-1	     0x1p-52
+     2-0x1.4d7b014280dc6p-4	0x1.88b576b9181ddp-1	     0x1p-52
+     30x1.606513775c49fp-5	-0x1.9f166c8ec097cp-2	     0x1p-52
+Function Value     = 0x1.ca16fb55bcb72p+2
+Norm of gradient   = 0x1.5367d4bfcc595p+0
+
+
+==============================================
+
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	   y    
+
+    0-0x1.913ca4d3b244fp+0
+
+
+=====================================
+
+
+    i	    z 	      s
+
+    00x1.baf7a9b9217p-160x1.423696f54ffccp+3
+    10x1.bbeb8e7e1d3p-160x1.429671b12aefdp+3
+    20x1.adbb5918373p-160x1.3d6509fd7afe5p+3
+    30x1.b95552785738p-160x1.41606513775c5p+3
+    40x1.afb20bf3375p-160x1.3dc9690ab0034p+3
+    50x1.ae03985cf098p-160x1.3d698e4ed5103p+3
+    60x1.bc28c7749ec8p-160x1.429af6028501bp+3
+    70x1.b27e6b28494p-160x1.3e9f9aec88a3bp+3
+
+
+==========  Tolerances  ===========
+
+Machine Epsilon      = 2.22045e-16
+Maximum Step         = 1000
+Minimum Step         = 1.49012e-08
+Maximum Iter         = 100
+Maximum Backtracks   = 5
+Maximum Fcn Eval     = 1000
+Step Tolerance       = 1.49012e-08
+Function Tolerance   = 0.0001
+Constraint Tolerance = 1.49012e-08
+Gradient Tolerance   = 0.0001
+LineSearch Tolerance = 0.0001
+**********************************************************
+OPT++ version 2.4
+Job run at Fri Aug 26 08:57:11 2022
+
+**********************************************************
+
+		 NIPS Iteration Summary
+
+	Nonlinear Interior-Point Method Method with Line Search 
+ 
+  Merit Function =  1 
+
+  Iter    F(x)       mu          alpha      Merit    feval    btracks  Penalty
+
+    0 -0x1.e2b75727cadaap+2 0x1.672493f3307aep+1 
+    1 -0x1.f505bc6593237p+2 0x1.672493f3307aep+1      0x1p+0 -0x1.8dcce766f613ep+6    2   0   0x1.9p+6
+    2 -0x1.f826815798ffbp+2 0x1.cbb3f09371412p-6      0x1p+0 0x1.7b6f0418c61bap+6    3   0   0x1.9p+6
+    3 -0x1.f8a459d00ffa3p+2 0x1.2635b8b0487bap-12      0x1p+0 -0x1.74ffa3d4576fcp+2    4   0   0x1.9p+6
+    4 -0x1.f8baebd30193bp+2 0x1.7896aef61f569p-19      0x1p+0 -0x1.f6c5e75395656p+2    5   0   0x1.9p+6
+    5 -0x1.f8c303769d507p+2 0x1.e2088e07d6316p-26      0x1p+0 -0x1.f8c522d3063eap+2    6   0   0x1.9p+6
+L2 norm = 0x1.78024b3877abdp-10  ftol = 0x1.a36e2eb1c432dp-14
+
+
+=========  Solution from Opt++  ===========
+
+Optimization method       = Nonlinear Interior-Point Method
+Dimension of the problem  = 4
+No. equalities            = 1
+No. inequalities          = 8
+Merit Function (0= NormFmu, 1 = Argaez, 2 = Vanderbei) = 1
+Return code               = 2 (Algorithm converged - Norm of gradient less than relative gradient tolerance)
+No. iterations taken      = 5
+No. function evaluations  = 6
+No. gradient evaluations  = 6
+No. backtracks in lnsrch  = 0
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	    xc 		 grad  		 fcn_accrcy 
+     0-0x1.8ffff1bc66101p-3	0x1.82bd8ee6017e4p-1	     0x1p-52
+     1-0x1.be39468c67d89p-3	0x1.aeeb2bf55b149p-1	     0x1p-52
+     20x1.af1085ecd3825p-3	-0x1.a0308a1191802p-1	     0x1p-52
+     3-0x1.f5a38a2df71aap-4	0x1.e50b55e1c6693p-2	     0x1p-52
+Function Value     = -0x1.f8c303769d507p+2
+Norm of gradient   = 0x1.7897ddbf812d1p+0
+
+
+==============================================
+
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	   y    
+
+    00x1.3bd85366932a7p+0
+
+
+=====================================
+
+
+    i	    z 	      s
+
+    00x1.98485a9c38a8p-290x1.39c000390e67cp+3
+    10x1.88dfdfdc6438p-290x1.39071ae5ce60ap+3
+    20x1.88b331f6c6c8p-290x1.46bc4217b34e1p+3
+    30x1.911af39a0aap-290x1.3c14b8eba411dp+3
+    40x1.6cc012f74288p-290x1.463fffc6f1984p+3
+    50x1.7a9f73e7fb68p-290x1.46f8e51a319f6p+3
+    60x1.79bcf691214p-290x1.3943bde84cb1fp+3
+    70x1.72f5a53b2478p-290x1.43eb47145bee3p+3
+
+
+==========  Tolerances  ===========
+
+Machine Epsilon      = 2.22045e-16
+Maximum Step         = 1000
+Minimum Step         = 1.49012e-08
+Maximum Iter         = 100
+Maximum Backtracks   = 5
+Maximum Fcn Eval     = 1000
+Step Tolerance       = 1.49012e-08
+Function Tolerance   = 0.0001
+Constraint Tolerance = 1.49012e-08
+Gradient Tolerance   = 0.0001
+LineSearch Tolerance = 0.0001
+**********************************************************
+OPT++ version 2.4
+Job run at Fri Aug 26 08:57:26 2022
+
+**********************************************************
+
+		 NIPS Iteration Summary
+
+	Nonlinear Interior-Point Method Method with Line Search 
+ 
+  Merit Function =  1 
+
+  Iter    F(x)       mu          alpha      Merit    feval    btracks  Penalty
+
+    0 -0x1.29c8ee15b018bp+3 0x1.bd7edf188421cp+1 
+    1 -0x1.1c1c2df4520f2p+3 0x1.bd7edf188421cp+1      0x1p+0 -0x1.686bb6ee8cf49p+9    2   0   0x1.9p+6
+    2 -0x1.1a3d488957b4ap+3 0x1.1d1dff6bd9af3p-5      0x1p+0 0x1.c2c9679cc9dabp+6    3   0   0x1.9p+6
+    3 -0x1.19f7cbad085e9p+3 0x1.6cf3327591841p-12      0x1p+0 -0x1.944a094674facp+2    4   0   0x1.9p+6
+    4 -0x1.19ec090f5716fp+3 0x1.d322cff2a5c7cp-19      0x1p+0 -0x1.18b4948addc39p+3    5   0   0x1.9p+6
+L2 norm = 0x1.e28354c46d913p-11  ftol = 0x1.a36e2eb1c432dp-14
+
+
+=========  Solution from Opt++  ===========
+
+Optimization method       = Nonlinear Interior-Point Method
+Dimension of the problem  = 4
+No. equalities            = 1
+No. inequalities          = 8
+Merit Function (0= NormFmu, 1 = Argaez, 2 = Vanderbei) = 1
+Return code               = 2 (Algorithm converged - Norm of gradient less than relative gradient tolerance)
+No. iterations taken      = 4
+No. function evaluations  = 5
+No. gradient evaluations  = 5
+No. backtracks in lnsrch  = 0
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	    xc 		 grad  		 fcn_accrcy 
+     0-0x1.116ae4418a0f8p-1	0x1.d2a50df2526c1p-1	     0x1p-52
+     1-0x1.193f3640cf543p-1	0x1.dfb39de450f0dp-1	     0x1p-52
+     20x1.fa741da6e9c17p-2	-0x1.b0aaba1dc978ep-1	     0x1p-52
+     3-0x1.56fb728a81658p-2	0x1.24968b8ce99aep-1	     0x1p-52
+Function Value     = -0x1.19ec090f5716fp+3
+Norm of gradient   = 0x1.a876d527e35fap+0
+
+
+==============================================
+
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	   y    
+
+    00x1.6d249d5d9373cp+0
+
+
+=====================================
+
+
+    i	    z 	      s
+
+    00x1.885ecfbd21c8p-220x1.2ee951bbe75f1p+3
+    10x1.88a80714d958p-220x1.2e6c0c9bf30acp+3
+    20x1.63cda236ad78p-220x1.4fd3a0ed374e1p+3
+    30x1.809057801d2p-220x1.3548246babf4dp+3
+    40x1.64d4301b00e8p-220x1.5116ae4418a0fp+3
+    50x1.64af008f5aa8p-220x1.5193f3640cf54p+3
+    60x1.8981f53797b8p-220x1.302c5f12c8b1fp+3
+    70x1.6b8247714118p-220x1.4ab7db94540b3p+3
+
+
+==========  Tolerances  ===========
+
+Machine Epsilon      = 2.22045e-16
+Maximum Step         = 1000
+Minimum Step         = 1.49012e-08
+Maximum Iter         = 100
+Maximum Backtracks   = 5
+Maximum Fcn Eval     = 1000
+Step Tolerance       = 1.49012e-08
+Function Tolerance   = 0.0001
+Constraint Tolerance = 1.49012e-08
+Gradient Tolerance   = 0.0001
+LineSearch Tolerance = 0.0001
+**********************************************************
+OPT++ version 2.4
+Job run at Fri Aug 26 08:57:46 2022
+
+**********************************************************
+
+		 NIPS Iteration Summary
+
+	Nonlinear Interior-Point Method Method with Line Search 
+ 
+  Merit Function =  1 
+
+  Iter    F(x)       mu          alpha      Merit    feval    btracks  Penalty
+
+    0 -0x1.6f947fea69859p+3 0x1.1e8496e45734ep+2 
+    1 -0x1.6b19859d430bbp+3 0x1.1e8496e45734ep+2      0x1p+0 -0x1.c98e1577cffdcp+10    2   0   0x1.9p+6
+    2 -0x1.6a6d521322c78p+3 0x1.6ebe31c81db45p-50x1.ff5d562490442p-1 0x1.546a15513add2p+7    3   0   0x1.9p+6
+    3 -0x1.6a38ab3e89743p+3 0x1.6ebe31c81db45p-5      0x1p+0 0x1.0ecab9e0bd6bp+7    4   0   0x1.9p+6
+    4 -0x1.69ff0e7fb355ep+3 0x1.d56e54335938cp-12      0x1p+0 -0x1.05cb525e8a14ap+3    5   0   0x1.9p+6
+    5 -0x1.69d836114d35fp+3 0x1.2c6f920c620fep-18      0x1p+0 -0x1.68347c1ec6a3fp+3    6   0   0x1.9p+6
+step_type = -1
+
+
+=========  Solution from Opt++  ===========
+
+Optimization method       = Nonlinear Interior-Point Method
+Dimension of the problem  = 4
+No. equalities            = 1
+No. inequalities          = 8
+Merit Function (0= NormFmu, 1 = Argaez, 2 = Vanderbei) = 1
+Return code               = -1 (Algorithm terminated - Number of backtracks exceeds the specified limit)
+No. iterations taken      = 6
+No. function evaluations  = 11
+No. gradient evaluations  = 11
+No. backtracks in lnsrch  = 5
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	    xc 		 grad  		 fcn_accrcy 
+     0-0x1.91952f14b8829p+0	0x1.a86cab3bd0804p+0	     0x1p-52
+     1-0x1.0c4d974ff8c15p+0	0x1.1c4ba22985591p+0	     0x1p-52
+     20x1.c4280af6c9a82p-1	-0x1.dd483dd3e0641p-1	     0x1p-52
+     3-0x1.b0b17ea8b4444p-1	0x1.c61f35443c469p-1	     0x1p-52
+Function Value     = -0x1.69d836114d35fp+3
+Norm of gradient   = 0x1.2feb2fa43e9d1p+1
+
+
+==============================================
+
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	   y    
+
+    00x1.fd49eeef2e465p+0
+
+
+=====================================
+
+
+    i	    z 	      s
+
+    00x1.3c583a106d2p-210x1.0dcd5a1d68efap+3
+    10x1.f40273a502bp-220x1.1e764d1600e7dp+3
+    20x1.9328226188b8p-220x1.5c4280af6c9a8p+3
+    30x1.b9dd8da885a8p-220x1.24f4e81574bbcp+3
+    40x1.89f61c49aebp-220x1.7232a5e297106p+3
+    50x1.e3c694f7cbep-220x1.6189b2e9ff183p+3
+    60x1.288167affd44p-210x1.23bd7f5093658p+3
+    70x1.07adf5a00efp-210x1.5b0b17ea8b444p+3
+
+
+==========  Tolerances  ===========
+
+Machine Epsilon      = 2.22045e-16
+Maximum Step         = 1000
+Minimum Step         = 1.49012e-08
+Maximum Iter         = 100
+Maximum Backtracks   = 5
+Maximum Fcn Eval     = 1000
+Step Tolerance       = 1.49012e-08
+Function Tolerance   = 0.0001
+Constraint Tolerance = 1.49012e-08
+Gradient Tolerance   = 0.0001
+LineSearch Tolerance = 0.0001

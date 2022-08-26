@@ -1,0 +1,296 @@
+1
+
+                                             * * * * * * * * *  L H S  * * * * * * * * *
+
+                                             LATIN HYPERCUBE AND RANDOM SAMPLING PROGRAM
+
+                                             * * * * * * * * * * * * * * * * * * * * * *
+
+
+    Run on  8/26/22 at 13:33: 4.94 with LHS Version: 2.30 Release 1, Compiled May 31, 2001        
+
+
+0    Pecos::LHSDriver
+
+    Random Seed =         150
+
+    Number of Variables =   4
+
+    Number of Observations =   50
+0   The sample was written to the file: LHS_samples.out
+0   Input was read from the file: 
+0   The sample input vectors will be printed along with their corresponding ranks.
+0   Histograms of the actual sample will be plotted for each input variable.
+0   The correlation matrices (raw data and rank correlations) will be printed.
+1
+
+    Pecos::LHSDriver                                                                                                             
+
+    VARIABLE  DISTRIBUTION          RANGE            LABEL
+0       1     NORMAL WITH THE PARAMETERS BELOW                                                       
+                           MU =   25.0                   SIGMA =   3.00    
+0       2     NORMAL WITH THE PARAMETERS BELOW                                                       
+                           MU =   500.                   SIGMA =   25.0    
+0       3     LOGNORMAL-N WITH THE PARAMETERS BELOW                                                       
+                           MU =   5.32                   SIGMA =  7.307E-02
+0       4     LOGNORMAL-N WITH THE PARAMETERS BELOW                                                       
+                           MU =   5.52                   SIGMA =  3.998E-02
+1Pecos::LHSDriver                                                                                                             
+0LATIN HYPERCUBE SAMPLE INPUT VECTORS
+
+ RUN NO. X(1)      X(2)      X(3)      X(4)
+0    1  25.7      503.      220.      257.    
+0    2  24.4      490.      237.      248.    
+0    3  26.7      482.      174.      251.    
+0    4  24.7      552.      197.      237.    
+0    5  18.7      529.      200.      259.    
+0    6  19.7      514.      203.      269.    
+0    7  23.4      483.      206.      251.    
+0    8  25.4      471.      210.      232.    
+0    9  23.1      447.      227.      237.    
+0   10  23.6      512.      196.      244.    
+0   11  21.9      489.      214.      239.    
+0   12  22.4      455.      217.      253.    
+0   13  25.5      469.      211.      240.    
+0   14  30.3      462.      205.      265.    
+0   15  22.6      521.      206.      236.    
+0   16  28.7      517.      220.      263.    
+0   17  24.9      488.      208.      250.    
+0   18  27.0      510.      204.      249.    
+0   19  24.0      520.      213.      253.    
+0   20  29.9      458.      195.      234.    
+0   21  21.1      476.      192.      243.    
+0   22  25.1      494.      202.      246.    
+0   23  22.8      480.      178.      267.    
+0   24  27.6      486.      199.      256.    
+0   25  19.9      544.      194.      247.    
+0   26  20.6      497.      183.      257.    
+0   27  24.2      474.      208.      249.    
+0   28  21.3      506.      223.      248.    
+0   29  24.6      495.      210.      277.    
+0   30  27.2      507.      188.      246.    
+0   31  26.9      513.      226.      249.    
+0   32  23.5      508.      186.      258.    
+0   33  26.0      492.      191.      241.    
+0   34  27.9      551.      212.      260.    
+0   35  26.2      518.      201.      242.    
+0   36  22.2      500.      222.      245.    
+0   37  26.3      478.      229.      261.    
+0   38  23.9      466.      182.      263.    
+0   39  29.5      536.      207.      246.    
+0   40  21.7      530.      218.      259.    
+0   41  28.9      498.      198.      245.    
+0   42  32.5      524.      202.      256.    
+0   43  28.3      500.      193.      251.    
+0   44  24.3      502.      201.      252.    
+0   45  26.5      504.      194.      243.    
+0   46  27.4      533.      244.      241.    
+0   47  25.2      485.      215.      255.    
+0   48  25.8      516.      214.      254.    
+0   49  28.1      492.      186.      254.    
+0   50  23.1      525.      189.      225.    
+1Pecos::LHSDriver                                                                                                             
+0RANKS OF LATIN HYPERCUBE SAMPLE INPUT VECTORS
+
+ RUN NO.    X(1)      X(2)      X(3)      X(4)
+0    1       30.       28.       42.       39.
+0    2       22.       18.       49.       22.
+0    3       36.       12.        1.       28.
+0    4       24.       50.       16.        5.
+0    5        1.       44.       19.       41.
+0    6        2.       36.       24.       49.
+0    7       15.       13.       28.       29.
+0    8       28.        7.       32.        2.
+0    9       14.        1.       47.        6.
+0   10       17.       34.       15.       14.
+0   11        8.       17.       38.        7.
+0   12       10.        2.       40.       31.
+0   13       29.        6.       34.        8.
+0   14       49.        4.       26.       47.
+0   15       11.       41.       27.        4.
+0   16       45.       38.       43.       46.
+0   17       25.       16.       30.       26.
+0   18       38.       33.       25.       24.
+0   19       19.       40.       36.       32.
+0   20       48.        3.       14.        3.
+0   21        5.        9.       10.       12.
+0   22       26.       21.       23.       19.
+0   23       12.       11.        2.       48.
+0   24       41.       15.       18.       37.
+0   25        3.       48.       12.       20.
+0   26        4.       23.        4.       38.
+0   27       20.        8.       31.       23.
+0   28        6.       30.       45.       21.
+0   29       23.       22.       33.       50.
+0   30       39.       31.        7.       18.
+0   31       37.       35.       46.       25.
+0   32       16.       32.        5.       40.
+0   33       32.       20.        9.       10.
+0   34       42.       49.       35.       43.
+0   35       33.       39.       21.       11.
+0   36        9.       25.       44.       16.
+0   37       34.       10.       48.       44.
+0   38       18.        5.        3.       45.
+0   39       47.       47.       29.       17.
+0   40        7.       45.       41.       42.
+0   41       46.       24.       17.       15.
+0   42       50.       42.       22.       36.
+0   43       44.       26.       11.       27.
+0   44       21.       27.       20.       30.
+0   45       35.       29.       13.       13.
+0   46       40.       46.       50.        9.
+0   47       27.       14.       39.       35.
+0   48       31.       37.       37.       33.
+0   49       43.       19.        6.       34.
+0   50       13.       43.        8.        1.
+1   Pecos::LHSDriver                                                                                                             
+0  HISTOGRAM FOR VARIABLE NO.  1     NORMAL DISTRIBUTION
+
+     Midpoint          Freq.
+
+   1.8975000E+01         1    X
+   1.9665000E+01         2    XX
+   2.0355000E+01         1    X
+   2.1045000E+01         2    XX
+   2.1735000E+01         2    XX
+   2.2424999E+01         3    XXX
+   2.3114999E+01         4    XXXX
+   2.3804999E+01         4    XXXX
+   2.4494999E+01         5    XXXXX
+   2.5184999E+01         5    XXXXX
+   2.5874999E+01         3    XXX
+   2.6564999E+01         5    XXXXX
+   2.7254999E+01         3    XXX
+   2.7944999E+01         4    XXXX
+   2.8634999E+01         2    XX
+   2.9324999E+01         1    X
+   3.0014999E+01         2    XX
+   3.0704999E+01         0
+   3.1394999E+01         0
+   3.2084999E+01         0
+   3.2774999E+01         1    X
+0                       50
+
+
+      Min            Max           Range           Mean          Median        Variance
+
+   1.8720804E+01  3.2477016E+01  1.3756212E+01  2.5027380E+01  2.5001473E+01  8.5486230E+00
+
+1   Pecos::LHSDriver                                                                                                             
+0  HISTOGRAM FOR VARIABLE NO.  2     NORMAL DISTRIBUTION
+
+     Midpoint          Freq.
+
+   4.4459999E+02         1    X
+   4.4979999E+02         0
+   4.5499999E+02         1    X
+   4.6019999E+02         2    XX
+   4.6539999E+02         1    X
+   4.7059999E+02         2    XX
+   4.7579999E+02         3    XXX
+   4.8099999E+02         3    XXX
+   4.8619999E+02         3    XXX
+   4.9139999E+02         5    XXXXX
+   4.9659999E+02         3    XXX
+   5.0179999E+02         5    XXXXX
+   5.0699999E+02         3    XXX
+   5.1219999E+02         4    XXXX
+   5.1739999E+02         3    XXX
+   5.2259999E+02         4    XXXX
+   5.2779999E+02         1    X
+   5.3299999E+02         2    XX
+   5.3819999E+02         1    X
+   5.4339999E+02         1    X
+   5.4859999E+02         1    X
+   5.5379999E+02         1    X
+0                       50
+
+
+      Min            Max           Range           Mean          Median        Variance
+
+   4.4712913E+02  5.5188533E+02  1.0475620E+02  5.0009363E+02  4.9991571E+02  5.9449631E+02
+
+1   Pecos::LHSDriver                                                                                                             
+0  HISTOGRAM FOR VARIABLE NO.  3     LOGNORMAL-N DISTRIBUTION
+
+     Midpoint          Freq.
+
+   1.7325000E+02         1    X
+   1.7675000E+02         1    X
+   1.8025000E+02         1    X
+   1.8375000E+02         1    X
+   1.8725000E+02         3    XXX
+   1.9075000E+02         3    XXX
+   1.9425000E+02         4    XXXX
+   1.9775000E+02         4    XXXX
+   2.0125000E+02         6    XXXXXX
+   2.0475000E+02         4    XXXX
+   2.0825000E+02         5    XXXXX
+   2.1175000E+02         3    XXX
+   2.1525000E+02         4    XXXX
+   2.1875000E+02         3    XXX
+   2.2225000E+02         2    XX
+   2.2574999E+02         2    XX
+   2.2924999E+02         1    X
+   2.3274999E+02         0
+   2.3624999E+02         1    X
+   2.3974999E+02         0
+   2.4324999E+02         1    X
+0                       50
+
+
+      Min            Max           Range           Mean          Median        Variance
+
+   1.7381267E+02  2.4412739E+02  7.0314716E+01  2.0498577E+02  2.0443274E+02  2.2153728E+02
+
+1   Pecos::LHSDriver                                                                                                             
+0  HISTOGRAM FOR VARIABLE NO.  4     LOGNORMAL-N DISTRIBUTION
+
+     Midpoint          Freq.
+
+   2.2489999E+02         1    X
+   2.2749999E+02         0
+   2.3009999E+02         0
+   2.3269999E+02         2    XX
+   2.3529999E+02         1    X
+   2.3789999E+02         3    XXX
+   2.4049999E+02         4    XXXX
+   2.4309999E+02         3    XXX
+   2.4569999E+02         6    XXXXXX
+   2.4829999E+02         5    XXXXX
+   2.5089999E+02         5    XXXXX
+   2.5349999E+02         5    XXXXX
+   2.5609999E+02         4    XXXX
+   2.5869999E+02         3    XXX
+   2.6129999E+02         2    XX
+   2.6389999E+02         2    XX
+   2.6649999E+02         2    XX
+   2.6909999E+02         1    X
+   2.7169999E+02         0
+   2.7429999E+02         0
+   2.7689999E+02         1    X
+0                       50
+
+
+      Min            Max           Range           Mean          Median        Variance
+
+   2.2486015E+02  2.7734024E+02  5.2480090E+01  2.5001126E+02  2.4959221E+02  1.0259644E+02
+
+1Pecos::LHSDriver                                                                                                             
+0CORRELATIONS AMONG INPUT VARIABLES CREATED BY THE LATIN HYPERCUBE SAMPLE FOR RAW DATA                              PAGE   1
+0    1  1.0000
+0    2 -0.0307  1.0000
+0    3  0.0213  0.0467  1.0000
+0    4 -0.0127 -0.0076 -0.0314  1.0000
+0            1       2       3       4
+0VARIABLES
+0THE VARIANCE INFLATION FACTOR FOR THIS MATRIX IS  1.00
+1Pecos::LHSDriver                                                                                                             
+0CORRELATIONS AMONG INPUT VARIABLES CREATED BY THE LATIN HYPERCUBE SAMPLE FOR RANK DATA                              PAGE   1
+0    1  1.0000
+0    2 -0.0028  1.0000
+0    3 -0.0052  0.0320  1.0000
+0    4  0.0010 -0.0053  0.0137  1.0000
+0            1       2       3       4
+0VARIABLES
+0THE VARIANCE INFLATION FACTOR FOR THIS MATRIX IS  1.00

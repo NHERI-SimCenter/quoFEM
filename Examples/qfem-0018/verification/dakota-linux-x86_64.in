@@ -1,0 +1,42 @@
+environment 
+ tabular_data 
+ tabular_data_file = 'dakotaTab.out' 
+
+method, 
+ nl2sol
+  convergence_tolerance = 0.0001 
+   max_iterations = 1000
+  scaling
+
+
+variables 
+   continuous_design = 7
+    initial_point = 500 200000 0.5 1 1 0.25 0.25 
+    lower_bounds = 300 100000 1e-06 1e-06 1e-06 1e-06 1e-06 
+    upper_bounds = 700 300000 1 2 2 0.5 0.5 
+    descriptors = 'fy' 'E' 'b' 'cR1' 'cR2' 'a1' 'a3' 
+
+interface 
+  analysis_driver = 'workflow_driver1'
+  fork
+   parameters_file = 'paramsDakota.in'
+   results_file = 'results.out' 
+   aprepro 
+   work_directory
+     named 'workdir' 
+     directory_tag
+     directory_save
+     copy_files = 'templatedir/*' 
+  asynchronous evaluation_concurrency = 12
+
+responses
+  id_responses = 'calibration'
+ calibration_terms = 1
+ response_descriptors = 'stress' 
+  field_calibration_terms = 1
+   lengths = 342 
+  calibration_data
+   num_experiments = 1
+ numerical_gradients
+ no_hessians
+

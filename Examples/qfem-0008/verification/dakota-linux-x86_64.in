@@ -1,0 +1,45 @@
+environment 
+ tabular_data 
+ tabular_data_file = 'dakotaTab.out' 
+
+method 
+ bayes_calibration dream 
+  chain_samples = 100
+  chains = 4
+  jump_step = 5
+  burn_in_samples = 0
+  calibrate_error_multipliers per_response
+  scaling
+
+variables 
+  uniform_uncertain = 2
+    lower_bounds = 500 500 
+    upper_bound = 2000 2000 
+    descriptors = 'Ic1' 'Ic2' 
+
+
+
+interface 
+  analysis_driver = 'workflow_driver1'
+  fork
+   parameters_file = 'paramsDakota.in'
+   results_file = 'results.out' 
+   aprepro 
+   work_directory
+     named 'workdir' 
+     directory_tag
+     directory_save
+     copy_files = 'templatedir/*' 
+  asynchronous evaluation_concurrency = 12
+
+responses
+  id_responses = 'BayesCalibration'
+ calibration_terms = 2
+ response_descriptors = 'lambda' 'phi' 
+  calibration_data_file = 'quoFEMScalarCalibrationData.cal'
+    freeform
+    num_experiments = 5
+    experiment_variance_type = 'scalar' 
+ no_gradients
+ no_hessians
+

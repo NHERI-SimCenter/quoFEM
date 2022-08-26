@@ -1,0 +1,41 @@
+environment 
+ tabular_data 
+ tabular_data_file = 'dakotaTab.out' 
+
+method, 
+ nl2sol
+  convergence_tolerance = 1e-10 
+   max_iterations = 1000
+  scaling
+
+
+variables 
+   continuous_design = 2
+    initial_point = 1500 500 
+    lower_bounds = 500 500 
+    upper_bounds = 2000 2000 
+    descriptors = 'Ic1' 'Ic2' 
+
+interface 
+  analysis_driver = 'workflow_driver1'
+  fork
+   parameters_file = 'paramsDakota.in'
+   results_file = 'results.out' 
+   aprepro 
+   work_directory
+     named 'workdir' 
+     directory_tag
+     directory_save
+     copy_files = 'templatedir/*' 
+  asynchronous evaluation_concurrency = 12
+
+responses
+  id_responses = 'calibration'
+ calibration_terms = 2
+ response_descriptors = 'lambda' 'phi' 
+  calibration_data_file = 'quoFEMScalarCalibrationData.cal'
+    freeform
+    num_experiments = 5
+ numerical_gradients
+ no_hessians
+
