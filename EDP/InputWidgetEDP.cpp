@@ -87,7 +87,7 @@ InputWidgetEDP::makeEDP(void)
     QPushButton *removeEDP = new QPushButton();
     removeEDP->setMinimumWidth(75);
     removeEDP->setMaximumWidth(75);
-    removeEDP->setText(tr("Clear all"));
+    removeEDP->setText(tr("Clear All"));
     connect(removeEDP,SIGNAL(clicked()),this,SLOT(removeEDP()));
 
     titleLayout->addWidget(title);
