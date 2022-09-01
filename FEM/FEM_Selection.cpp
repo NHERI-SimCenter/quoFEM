@@ -39,22 +39,26 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <OpenSeesFEM.h>
 #include <OpenSeesPyFEM.h>
 #include <FEAPpvFEM.h>
+#include <CustomFEM.h>
 #include <surrogateGpFEM.h>
 #include <SimCenterAppMulti.h>
 
 
 FEM_Selection::FEM_Selection(bool inclMulti, QWidget *parent)
-  : SimCenterAppSelection(QString("FEM"), QString("FEM"), parent)
+  : SimCenterAppSelection(QString("FEM"), QString("Simulation Model"), parent)
 {
     SimCenterAppWidget *opensees = new OpenSeesFEM();
     SimCenterAppWidget *openseesPy = new OpenSeesPyFEM();
     SimCenterAppWidget *FEAPpv = new FEAPpvFEM();
     SimCenterAppWidget *surrogateGp = new surrogateGpFEM();
+    SimCenterAppWidget *customFEM = new CustomFEM();
 
     this->addComponent(QString("OpenSees"), QString("OpenSees"), opensees);
     this->addComponent(QString("OpenSeesPy"), QString("OpenSeesPy"), openseesPy);
     this->addComponent(QString("FEAPpv"), QString("FEAPpv"), FEAPpv);
     this->addComponent(QString("SurrogateGP"), QString("SurrogateGP"), surrogateGp);
+    this->addComponent(QString("CustomFEM"), QString("CustomFEM"), customFEM);
+
     if (inclMulti == true) {
       SimCenterAppWidget *multi = new SimCenterAppMulti(QString("FEM"), QString("MultiModel-FEM"),this, this);
       this->addComponent(QString("Multi Model"), QString("MultiModel-FEM"), multi);

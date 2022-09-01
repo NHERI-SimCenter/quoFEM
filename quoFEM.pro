@@ -59,7 +59,8 @@ SOURCES += main.cpp\
     FEM/FEAPpvParser.cpp \
     FEM/OpenSeesPyParser.cpp \
     FEM/surrogateGpFEM.cpp \
-    FEM/surrogateGpParser.cpp
+    FEM/surrogateGpParser.cpp \
+    FEM/CustomFEM.cpp \
 
 HEADERS  += WorkflowApp_quoFEM.h \    
     RunWidget.h \        
@@ -73,6 +74,7 @@ HEADERS  += WorkflowApp_quoFEM.h \
     FEM/OpenSeesPyParser.h \
     FEM/surrogateGpFEM.h \
     FEM/surrogateGpParser.h \
+    FEM/CustomFEM.h \
 
 FORMS    += mainwindow.ui
 
