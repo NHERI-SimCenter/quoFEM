@@ -193,8 +193,10 @@ int main(int argc, char *argv[])
       logToFile = true;  
       WorkflowCLI cli(&w, theInputApp);
       int cli_complete;
-      if ((cli_complete = cli.parseAndRun(argc, argv)) <= 0)
-        return cli_complete;
+      // if ((cli_complete = cli.parseAndRun(argc, argv)) <= 0) 
+      //     return cli_complete;
+      cli.parseAndRun(argc, argv);
+      return 0;
     }
 
     //
