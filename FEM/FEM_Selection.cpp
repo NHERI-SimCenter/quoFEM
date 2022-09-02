@@ -45,7 +45,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 FEM_Selection::FEM_Selection(bool inclMulti, QWidget *parent)
-  : SimCenterAppSelection(QString("FEM"), QString("Simulation Model"), parent)
+  : SimCenterAppSelection(QString("FEM"), QString("FEM"), parent)
 {
     SimCenterAppWidget *opensees = new OpenSeesFEM();
     SimCenterAppWidget *openseesPy = new OpenSeesPyFEM();
