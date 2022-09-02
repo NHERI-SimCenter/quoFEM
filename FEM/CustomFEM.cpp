@@ -163,8 +163,8 @@ void CustomFEM::clear(void)
 
   RandomVariablesContainer *theRVs=RandomVariablesContainer::getInstance();
   theRVs->removeRandomVariables(names);
-  postprocessScript->setText("");
-  driverFile->setText("");
+  //postprocessScript->setText("");
+  //driverFile->setText("");
 }
 
 bool
