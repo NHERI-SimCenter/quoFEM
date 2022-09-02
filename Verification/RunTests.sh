@@ -112,7 +112,7 @@ outDir="$(pwd)/_verification/"
 archName="$(uname -s | awk '{print tolower($0)}')-$(uname -m)"
 
 # Run the test app
-for example in Examples/*-001[0-9]*; do
+for example in Examples/*-00[0-9][0-9]; do
 
   # Run examples that we have exected outputs for.
   if [ -d "$example/verification" ] && [ "$(find "$example/verification/" -name *$archName* | wc -l)" -gt 0 ]
