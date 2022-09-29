@@ -48,6 +48,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <MainWindowWorkflowApp.h>
 #include <WorkflowApp_quoFEM.h>
+#include <WorkflowCLI.h>
 #include <GoogleAnalytics.h>
 #include <AgaveCurl.h>
 
@@ -186,6 +187,16 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
 
     QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=4.0");
     w.setFeedbackURL(messageBoardURL);
+
+    if (argc > 1) {
+      logToFile = true;
+      WorkflowCLI cli(&w, theInputApp);
+      int cli_complete;
+      // if ((cli_complete = cli.parseAndRun(argc, argv)) <= 0)
+      //     return cli_complete;
+      cli.parseAndRun(argc, argv);
+      return 0;
+    }
 
     //
     // move remote interface to a thread
