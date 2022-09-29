@@ -12,24 +12,26 @@
     },
     "randomVariables": [
         {
+            "distribution": "ContinuousDesign",
+            "initialpoint": 0,
+            "inputType": "Parameters",
+            "lowerbound": -2,
             "name": "X",
-            "title": "first variable",
-            "distribution": "Uniform",
-            "lowerbound": -2.0,
             "refCount": 1,
-            "upperbound": 2.0,
+            "upperbound": 2,
             "value": "RV.X",
-            "variableClass": "Uncertain"
+            "variableClass": "Design"
         },
         {
+            "distribution": "ContinuousDesign",
+            "initialpoint": 0,
+            "inputType": "Parameters",
+            "lowerbound": -2,
             "name": "Y",
-            "title": "second variable",
-            "distribution": "Uniform",
-            "lowerbound": -2.0,
             "refCount": 1,
-            "upperbound": 2.0,
+            "upperbound": 2,
             "value": "RV.Y",
-            "variableClass": "Uncertain"
+            "variableClass": "Design"
         }
     ],
     "FEM":{
