@@ -67,7 +67,7 @@ Once the user selects OpenSeesPy as FEM applications, below three fields are req
 UQ Workflow
 -------------
 
-1. Start the application, and the **UQ** Selection will be highlighted. Change the UQ Engine to **SimCenterUQ** and the Method Category to **Training GP Surrogate Model**. Since the model is provided, the Training Dataset will be obtained by **Sampling and Simulation**. 
+1. Start the application, and the **UQ** Selection will be highlighted. Change the UQ Engine to **SimCenterUQ** and the Method Category to **Training GP Surrogate Model**. Since the model is provided, the Training Dataset will be obtained by **Sampling and Simulation**. Default settings are used for the advanced options.
 
 .. figure:: figures/SUR-UQtab1.png
    :align: center
@@ -144,6 +144,8 @@ Well-trained model will form a clear diagonal line while poorly trained model ar
    :figclass: align-center
    :width: 1200
 
+.. note::
+   Note that in the second training period, 150 initial samples were provided from the data files and 150 more simulations were conducted. However, the number of total samples used to train the surrogate model is displayed as 299 since one simulation is consumed to check the consistency between the user provided model (in the **FEM tab**) and the dataset (in the **UQ tab**).
 
 * Leave-one-out cross-validation (LOOCV) predictions:
 
@@ -154,8 +156,6 @@ Well-trained model will form a clear diagonal line while poorly trained model ar
    
 Users may want to perform additional simulations in a similar way.
 
-.. note::
-   Note that in the second training period, 150 initial samples were provided from the data files and 150 more simulations were conducted. However, the number of total samples used to train the surrogate model is displayed as 299 since one simulation is consumed to check the consistency between the user provided model (in the **FEM tab**) and the dataset (in the **UQ tab**).
 
 
 
@@ -174,6 +174,10 @@ Once surrogate model is constructed, it can be used for various UQ/optimization 
 .. note::
    * Do not change the name of ``templatedir_SIM``. **SurrogateGP Info and model** file names may be changed.
    * When location of the files are changed, ``templatedir_SIM`` should be always located in the directory same to the **SurroateGP Info file**.
+   
+.. warning::
+
+   Do not place above surrogate model files in your root, downloads, or desktop folder as when the application runs it will copy the contents on the directories and subdirectories containing these files multiple times. If you are like us, your root, Downloads or Documents folders contains and awful lot of files and when the backend workflow runs you will slowly find you will run out of disk space!
 
 2. Restart the quoFEM (or press **UQ tab**) and select Dakota Forward Propagation method.
 

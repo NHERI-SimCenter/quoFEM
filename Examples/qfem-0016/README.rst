@@ -16,7 +16,7 @@ This example constructs a Gaussian process-based surrogate model for mean and st
 Problem description
 -------------------
 
-The structure (:qfem-0016:`three story nonlinear building stick model <src/ShearBuilding_NL.py>`) has the following uncertain properties:
+The structure ( :ref:`three story nonlinear building stick model <https://github.com/NHERI-SimCenter/quoFEM/blob/master/Examples/qfem-0016/src/ShearBuilding_NL.tcl>`_ ) has the following uncertain properties:
 
 ============================= ============ =========
 Random Variable               lower bound  upper bound			      
@@ -119,6 +119,9 @@ Once the surrogate model is trained, it can be used for various UQ/optimization 
 .. note::
    * Do not change the name of ``templatedir_SIM``. **SurrogateGP Info and model** file names may be changed.
    * When location of the files are changed, ``templatedir_SIM`` should be always located in the directory same to the **SurroateGP Info file**.
+
+.. warning::
+   Do not place above surrogate model files in your root, downloads, or desktop folder as when the application runs it will copy the contents on the directories and subdirectories containing these files multiple times. If you are like us, your root, Downloads or Documents folders contains and awful lot of files and when the backend workflow runs you will slowly find you will run out of disk space!
 
 2. Restart the quoFEM (or press **UQ tab**) and select Dakota sensitivity analysis method.
 
