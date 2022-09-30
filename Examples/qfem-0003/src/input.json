@@ -1,5 +1,5 @@
 {
-    "UQ_Method": {
+    "UQ": {
         "reliabilityMethodData": {
             "integrationMethod": "Second Order",
             "levelType": "Probability Levels",

@@ -30,7 +30,7 @@
     ],
     "FEM": {
     },
-    "UQ_Method": {
+    "UQ": {
         "surrogateMethodInfo": {
             "DoEmethod": "None",
             "accuracyLimit": 0.02,

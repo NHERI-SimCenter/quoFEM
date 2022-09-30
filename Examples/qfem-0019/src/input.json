@@ -20,7 +20,7 @@
             "type": "field"
         }
     ],
-    "UQ_Method": {
+    "UQ": {
         "calDataFile": "calDataField.csv",
         "calDataFilePath": "{Current_Dir}/.",
         "logLikelihoodFile": "",

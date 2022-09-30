@@ -30,7 +30,7 @@
     ],
     "FEM": {
     },
-    "UQ_Method": {
+    "UQ": {
         "surrogateMethodInfo": {
             "advancedOpt": false,
             "inpFile": "PLoM_variables.csv",

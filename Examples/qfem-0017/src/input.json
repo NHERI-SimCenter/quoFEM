@@ -11,7 +11,7 @@
             "name": "Node_3_Disp_2"
         }
     ],
-    "UQ_Method": {
+    "UQ": {
         "Config File": "{Current_Dir}/UQpySimpleExample.json",
         "Parameters": [
             {

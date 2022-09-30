@@ -24,7 +24,7 @@
     ],
     "FEM": {
     },
-    "UQ_Method": {
+    "UQ": {
         "Config File": "{Current_Dir}/UQpySimpleExample.json",
         "Parameters": [
             {

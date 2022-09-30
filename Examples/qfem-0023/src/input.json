@@ -23,7 +23,7 @@
     ],
     "FEM": {
     },
-    "UQ_Method": {
+    "UQ": {
         "PCAvarianceRatio": 0.99,
         "RVdataGroup": "",
         "RVsensitivityGroup": "",
