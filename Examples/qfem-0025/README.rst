@@ -68,12 +68,14 @@ The steps involved are as follows:
 .. figure:: figures/qf-0025-UQ.png
    :align: center
    :figclass: align-center
+   :width: 1200
 
 2. Next in the **FEM** panel , select **Python** FEM engine. Enter the paths to the ``rosenbrock.py`` and ``params.py`` or select **Choose** and navigate to the files. 
 
 .. figure:: figures/qf-0025-FEM.png
    :align: center
    :figclass: align-center
+   :width: 1200
 
 .. note::
    Since the python script creates a ``results.out`` file when it runs, no postprocessing script is needed. 
@@ -83,6 +85,7 @@ The steps involved are as follows:
 .. figure:: figures/qf-0025-RV.png
    :align: center
    :figclass: align-center
+   :width: 1200
 
 
 4. In the **QoI** panel enter a variable named ``f`` with length 1.
@@ -90,6 +93,7 @@ The steps involved are as follows:
 .. figure:: figures/qf-0025-EDP.png
    :align: center
    :figclass: align-center
+   :width: 1200
 
 
 5. Click on the **Run** button. This will cause the backed application to launch the **SimCenterUQ** engine, which performs the surrogate training. 
@@ -102,6 +106,7 @@ The steps involved are as follows:
 .. figure:: figures/qf-0025-RES1.png
    :align: center
    :figclass: align-center
+   :width: 1200
 
 * Leave-one-out cross-validation (LOOCV) predictions:
 
