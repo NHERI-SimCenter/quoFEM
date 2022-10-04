@@ -205,7 +205,7 @@ class testRunUQ:
             input_data = json.load(f)
 
         self.ApplicationData = input_data["Applications"]
-        self.uqData = input_data["UQ_Method"]
+        self.uqData = input_data["UQ"]
         self.simulationData = self.ApplicationData["FEM"]
         self.randomVarsData = input_data["randomVariables"]
         self.demandParams = input_data["EDP"]

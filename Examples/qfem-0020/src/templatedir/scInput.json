@@ -25,7 +25,7 @@
     ],
     "FEM": {
     },
-    "UQ_Method": {
+    "UQ": {
         "Config File": "{Current_Dir}/ConfigHierBayes.json",
         "Parameters": [
             {

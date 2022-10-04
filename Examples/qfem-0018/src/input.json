@@ -22,7 +22,7 @@
     ],
     "FEM":{
     },
-    "UQ_Method": {
+    "UQ": {
         "calibrationMethodData": {
             "calibrationDataFile": "{Current_Dir}/calDataField.csv",
             "convergenceTol": 0.0001,

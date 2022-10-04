@@ -23,7 +23,7 @@
             "name": "Node_2_Disp_2"
         }
     ],
-    "UQ_Method": {
+    "UQ": {
         "samplingMethodData": {
             "method": "Monte Carlo",
             "samples": 500,

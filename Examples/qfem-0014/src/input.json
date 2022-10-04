@@ -25,7 +25,7 @@
             "type": "scalar"
         }
     ],
-    "UQ_Method": {
+    "UQ": {
         "calDataFile": "eigData.csv",
         "calDataFilePath": "{Current_Dir}/.",
         "logLikelihoodFile": "",

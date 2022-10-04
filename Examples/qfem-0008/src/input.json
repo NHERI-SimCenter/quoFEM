@@ -1,5 +1,5 @@
 {
-    "UQ_Method": {
+    "UQ": {
         "bayesianCalibrationMethodData": {
             "burnInSamples": 0,
 			"calibrationDataFile": "{Current_Dir}/eigData.csv",

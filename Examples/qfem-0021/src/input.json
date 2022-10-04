@@ -23,7 +23,7 @@
     ],
     "FEM": {
     },
-    "UQ_Method": {
+    "UQ": {
         "surrogateMethodInfo": {
             "DoEmethod": "IMSEw",
             "accuracyLimit": 0.02,
