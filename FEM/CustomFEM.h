@@ -86,7 +86,7 @@ private:
   QVector<QLineEdit *>customInputFiles;
 
   QLineEdit *driverFile;
-  QLineEdit *postprocessScript;
+  QLineEdit *postProcessScript;
   QStringList varNamesAndValues;  
 };
 

@@ -111,7 +111,7 @@ CustomFEM::CustomFEM(QWidget *parent)
     // Add location to add post-processing script
     QLabel *postProcessingLabel = new QLabel();
     postProcessingLabel->setText(tr("Postprocessing script"));
-    QLineEdit *postProcessScript = new QLineEdit;
+    postProcessScript = new QLineEdit;
     postProcessScript->setPlaceholderText(tr("Optional"));
     QPushButton *choosePostProcessing = new QPushButton();
 
@@ -204,13 +204,13 @@ CustomFEM::outputAppDataToJSON(QJsonObject &jsonObject) {
     // and all data to be used in ApplicationDate
     //
 
-    jsonObject["Application"] = "customFEM";
+    jsonObject["Application"] = "CustomFEM";
     QJsonObject dataObj;
 
     QString driverScript      = driverFile->text();
-    QString postProcessScript = postprocessScript->text();
+    QString postprocessingScript = postProcessScript->text();
     dataObj["inputFile"]          = driverScript;
-    dataObj["postprocessScript"]  = postProcessScript;
+    dataObj["postprocessScript"]  = postprocessingScript;
 
 //    QFileInfo driverInfo(driverScript);
 
@@ -236,19 +236,19 @@ CustomFEM::outputAppDataToJSON(QJsonObject &jsonObject) {
 //    dataObj["mainPostprocessScript"] = postProcessInfo.fileName();
 //    dataObj["PS_Path"]=postProcessInfo.path();
 
-    QFileInfo fileInfo1(postProcessScript);
+    QFileInfo fileInfo1(postprocessingScript);
 
     if (fileInfo1.exists() && fileInfo1.isFile()) {
         dataObj["postprocessScript"]=fileInfo1.fileName();
         dataObj["PS_Path"]=fileInfo1.path();
     } else {
-        if (postProcessScript.isEmpty()) {
+        if (postprocessingScript.isEmpty()) {
             dataObj["postprocessScript"]=QString("");
             dataObj["PS_Path"]=QString("");
         } else {
-            QString msg = QString("OpenSees - postprocessScript " ) + postProcessScript + QString(" does not exist!");
+            QString msg = QString("OpenSees - postprocessScript " ) + postprocessingScript + QString(" does not exist!");
             this->errorMessage(msg);
-            dataObj["postprocessScript"]=postProcessScript;
+            dataObj["postprocessScript"]=postprocessingScript;
             dataObj["PS_Path"]=QString("");
             result = false;
         }
@@ -315,16 +315,17 @@ CustomFEM::inputAppDataFromJSON(QJsonObject &jsonObject) {
        if (dataObject.contains("postprocessScript")) {
            QJsonValue theName = dataObject["postprocessScript"];
            fileName = theName.toString();
-
-           if (dataObject.contains("PS_Path")) {
-               QJsonValue theName = dataObject["PS_Path"];
-               filePath = theName.toString();
-               postprocessScript->setText(QDir(filePath).filePath(fileName));
+           if (!fileName.isEmpty()){
+               if (dataObject.contains("PS_Path")) {
+                   QJsonValue theName = dataObject["PS_Path"];
+                   filePath = theName.toString();
+                   postProcessScript->setText(QDir(filePath).filePath(fileName));
+               } else
+                   postProcessScript->setText(fileName);
            } else
-               postprocessScript->setText(fileName);
-       } else {
-           postprocessScript->setText("");
-       }
+               postProcessScript->setText("");
+       } else
+           postProcessScript->setText("");
      } else
          return false;
 
