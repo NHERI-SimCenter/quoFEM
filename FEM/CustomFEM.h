@@ -83,9 +83,9 @@ private:
   QWidget *theCustomFileInputWidget;
   QVBoxLayout *theCustomFileInputs;
   
-   QVector<QLineEdit *>customInputFiles;
+  QVector<QLineEdit *>customInputFiles;
 
-   QLineEdit *driverFile;
+  QLineEdit *driverFile;
   QLineEdit *postprocessScript;
   QStringList varNamesAndValues;  
 };
