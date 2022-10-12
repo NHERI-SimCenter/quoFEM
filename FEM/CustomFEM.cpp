@@ -204,7 +204,7 @@ CustomFEM::outputAppDataToJSON(QJsonObject &jsonObject) {
     // and all data to be used in ApplicationDate
     //
 
-    jsonObject["Application"] = "CustomFEM";
+    jsonObject["Application"] = "Custom";
     QJsonObject dataObj;
 
     QString driverScript      = driverFile->text();
