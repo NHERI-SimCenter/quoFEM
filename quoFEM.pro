@@ -110,14 +110,5 @@ export(copydata.commands)
 
 QMAKE_EXTRA_TARGETS += first copydata CopyDLLs
 
-}else {
-
-  mac {
-    # Copies over the examples folder into the build directory
-    copydata.commands = $(COPY_DIR) \"$$shell_path($$PWD/Examples)\" \"$$shell_path($$PATH_TO_BINARY)\"
-    first.depends = $(first) copydata
-    export(first.depends)
-    export(copydata.commands)
-    QMAKE_EXTRA_TARGETS += first copydata
-  }
 }
+
