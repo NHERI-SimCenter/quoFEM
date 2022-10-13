@@ -78,6 +78,9 @@ backend/build
 applications/build
 applications/applications
 
-*html
+
 *Doxyfile
-*latex
+*/html/
+*/latex/
+
+*.vscode

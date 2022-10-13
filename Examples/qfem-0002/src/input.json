@@ -1,7 +1,7 @@
 {
     "FEM": {
     },    
-    "UQ_Method": {
+    "UQ": {
         "samplingMethodData": {
             "method": "LHS",
             "samples": 200,

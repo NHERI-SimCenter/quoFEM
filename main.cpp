@@ -48,6 +48,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <MainWindowWorkflowApp.h>
 #include <WorkflowApp_quoFEM.h>
+#include <WorkflowCLI.h>
 #include <GoogleAnalytics.h>
 #include <AgaveCurl.h>
 
@@ -97,7 +98,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("quoFEM");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("3.1.0");
+    QCoreApplication::setApplicationVersion("3.2.0");
     // GoogleAnalytics::SetTrackingId("UA-121636495-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
@@ -177,7 +178,7 @@ int main(int argc, char *argv[])
 
     QString version = QString("Version ") + QCoreApplication::applicationVersion();
     w.setVersion(version);
-QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, Kuanshi Zhong, & Wael Elhaddad. (2022). NHERI-SimCenter/quoFEM: Version 3.1.0 (v3.1.0). Zenodo. https://doi.org/10.5281/zenodo.6903846  \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
+QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, & Wael Elhaddad. (2022). NHERI-SimCenter/quoFEM: Version 3.2.0 (v3.2.0). Zenodo. https://doi.org/10.5281/zenodo.7131444   \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
   
     w.setCite(citeText);
 
@@ -186,6 +187,16 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
 
     QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=4.0");
     w.setFeedbackURL(messageBoardURL);
+
+    if (argc > 1) {
+      logToFile = true;
+      WorkflowCLI cli(&w, theInputApp);
+      int cli_complete;
+      // if ((cli_complete = cli.parseAndRun(argc, argv)) <= 0)
+      //     return cli_complete;
+      cli.parseAndRun(argc, argv);
+      return 0;
+    }
 
     //
     // move remote interface to a thread

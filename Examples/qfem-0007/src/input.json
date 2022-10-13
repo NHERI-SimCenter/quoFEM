@@ -1,5 +1,5 @@
 {
-    "UQ_Method": {
+    "UQ": {
         "calibrationMethodData": {
             "convergenceTol": 1e-10,
             "factors": "",
