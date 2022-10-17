@@ -79,6 +79,11 @@
       "name": "Global Sensitivity Analysis for Field QoI",
       "description": "In this example, the global sensitivity analysis is demonstrated for field QoI quantities. To gain efficiency dealing with high-dimension outputs, principal component analysis and probability model-based global sensitivity analysis (PCA-PSA) method is used in the analysis.",
       "inputFile": "qfem-0023/src/input.json"
+    },
+    {
+      "name": "Heteroscedastic Gaussian Process",
+      "description": "The Heteroscedastic Gaussian process model is trained based on partial replication strategy",
+      "inputFile": "qfem-0025/src/input.json"
     }
   ]
 }
