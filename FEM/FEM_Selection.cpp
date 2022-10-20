@@ -57,7 +57,7 @@ FEM_Selection::FEM_Selection(bool inclMulti, QWidget *parent)
     this->addComponent(QString("Python"), QString("OpenSeesPy"), openseesPy);
     this->addComponent(QString("FEAPpv"), QString("FEAPpv"), FEAPpv);
     this->addComponent(QString("SurrogateGP"), QString("SurrogateGP"), surrogateGp);
-    //this->addComponent(QString("CustomFEM"), QString("CustomFEM"), customFEM);
+    this->addComponent(QString("Custom"), QString("Custom"), customFEM);
     this->addComponent(QString("None"), QString("None"), new SimCenterAppWidget());
 
     if (inclMulti == true) {

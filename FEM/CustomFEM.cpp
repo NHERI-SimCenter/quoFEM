@@ -63,6 +63,8 @@ CustomFEM::CustomFEM(QWidget *parent)
   : SimCenterAppWidget(parent)
 {
 
+    QVBoxLayout *customLayout = new QVBoxLayout();
+
     theCustomInputNumber = new QSpinBox();
     theCustomLayout = new QVBoxLayout();
     theCustomFileInputs = new QVBoxLayout();
@@ -82,14 +84,11 @@ CustomFEM::CustomFEM(QWidget *parent)
     theCustomFileInputWidget->setLayout(theCustomFileInputs);
     theCustomLayout->addWidget(theCustomFileInputWidget);
 
-    QVBoxLayout *customLayout = new QVBoxLayout();
-
     // Add location to add driver script
     QLabel *textCustom=new QLabel();
     textCustom->setStyleSheet("font-weight: bold");
-
     textCustom->setText(tr("Input driver script that runs and post-processes application"));
-    QSpacerItem *customSpacer = new QSpacerItem(50,10);
+//    QSpacerItem *customSpacer = new QSpacerItem(50,10);
 
     QLabel *driverLabel = new QLabel();
     driverLabel->setText(tr("Driver script"));
@@ -104,17 +103,16 @@ CustomFEM::CustomFEM(QWidget *parent)
           });
     chooseDriver->setToolTip(tr("Push to choose a file from your file system"));
 
-    QGridLayout *driverLayout = new QGridLayout();
-    driverLayout->addWidget(driverLabel, 1, 0);
-    driverLayout->addWidget(driverFile, 1, 1);
-    driverLayout->addWidget(chooseDriver, 1, 2);
-    driverLayout->setColumnStretch(3,1);
-    driverLayout->setColumnStretch(1,3);
+    QGridLayout *scriptsLayout = new QGridLayout();
+    scriptsLayout->addWidget(driverLabel, 1, 0);
+    scriptsLayout->addWidget(driverFile, 1, 1);
+    scriptsLayout->addWidget(chooseDriver, 1, 2);
 
     // Add location to add post-processing script
     QLabel *postProcessingLabel = new QLabel();
-    postProcessingLabel->setText("Postprocessing script");
-    QLineEdit *postProcessScript = new QLineEdit;
+    postProcessingLabel->setText(tr("Postprocessing script"));
+    postProcessScript = new QLineEdit;
+    postProcessScript->setPlaceholderText(tr("Optional"));
     QPushButton *choosePostProcessing = new QPushButton();
 
     connect(choosePostProcessing, &QPushButton::clicked, this, [=](){
@@ -126,20 +124,21 @@ CustomFEM::CustomFEM(QWidget *parent)
     choosePostProcessing->setText(tr("Choose"));
     choosePostProcessing->setToolTip(tr("Push to choose a file from your file system"));
 
-    QGridLayout *postProcessLayout = new QGridLayout();
-    postProcessLayout->addWidget(postProcessingLabel, 1, 0);
-    postProcessLayout->addWidget(postProcessScript, 1, 1);
-    postProcessLayout->addWidget(choosePostProcessing, 1, 2);
-    postProcessLayout->setColumnStretch(3,1);
-    postProcessLayout->setColumnStretch(1,3);
+//    QGridLayout *postProcessLayout = new QGridLayout();
+    scriptsLayout->addWidget(postProcessingLabel, 2, 0);
+    scriptsLayout->addWidget(postProcessScript, 2, 1);
+    scriptsLayout->addWidget(choosePostProcessing, 2, 2);
+    scriptsLayout->setColumnStretch(3,1);
+    scriptsLayout->setColumnStretch(1,3);
 
     // Add custom layout for specifying additional inputs
     customLayout->addWidget(textCustom);
-    customLayout->addItem(customSpacer);
-    customLayout->addLayout(driverLayout);
-    customLayout->addLayout(postProcessLayout);
+//    customLayout->addItem(customSpacer);
+//    customLayout->addLayout(driverLayout);
+//    customLayout->addLayout(postProcessLayout);
+    customLayout->addLayout(scriptsLayout);
     customLayout->addLayout(theCustomLayout);
-    //customLayout->addStretch();
+    customLayout->addStretch();
 
     connect(theCustomInputNumber, SIGNAL(valueChanged(int)), this, SLOT(customInputNumberChanged(int)));
     theCustomInputNumber->setValue(0);
@@ -205,22 +204,55 @@ CustomFEM::outputAppDataToJSON(QJsonObject &jsonObject) {
     // and all data to be used in ApplicationDate
     //
 
-    jsonObject["Application"] = "customFEM";
+    jsonObject["Application"] = "Custom";
     QJsonObject dataObj;
 
     QString driverScript      = driverFile->text();
-    QString postProcessScript = postprocessScript->text();
+    QString postprocessingScript = postProcessScript->text();
     dataObj["inputFile"]          = driverScript;
-    dataObj["postprocessScript"]  = postProcessScript;
+    dataObj["postprocessScript"]  = postprocessingScript;
 
-    QFileInfo driverInfo(driverScript);
+//    QFileInfo driverInfo(driverScript);
 
-    dataObj["mainInput"] = driverInfo.fileName();
-    QString path     = driverInfo.absolutePath();
-    dataObj["dir"]       = path;
+//    dataObj["mainInput"] = driverInfo.fileName();
+//    QString path         = driverInfo.absolutePath();
+//    dataObj["dir"]       = path;
 
-    QFileInfo postProcessInfo(postProcessScript);
-    dataObj["mainPostprocessScript"] = postProcessInfo.fileName();
+    QString fileName = driverFile->text();
+    QFileInfo fileInfo(fileName);
+
+    if (fileInfo.exists() && fileInfo.isFile()) {
+        dataObj["mainScript"]=fileInfo.fileName();
+        dataObj["MS_Path"]=fileInfo.path();
+    } else {
+        QString msg = QString("OpenSees - mainScript " ) + fileName + QString(" does not exist!");
+        this->errorMessage(msg);
+        dataObj["mainScript"]=fileName;
+        dataObj["MS_Path"]=QString("");
+        result = false;
+    }
+
+//    QFileInfo postProcessInfo(postProcessScript);
+//    dataObj["mainPostprocessScript"] = postProcessInfo.fileName();
+//    dataObj["PS_Path"]=postProcessInfo.path();
+
+    QFileInfo fileInfo1(postprocessingScript);
+
+    if (fileInfo1.exists() && fileInfo1.isFile()) {
+        dataObj["postprocessScript"]=fileInfo1.fileName();
+        dataObj["PS_Path"]=fileInfo1.path();
+    } else {
+        if (postprocessingScript.isEmpty()) {
+            dataObj["postprocessScript"]=QString("");
+            dataObj["PS_Path"]=QString("");
+        } else {
+            QString msg = QString("OpenSees - postprocessScript " ) + postprocessingScript + QString(" does not exist!");
+            this->errorMessage(msg);
+            dataObj["postprocessScript"]=postprocessingScript;
+            dataObj["PS_Path"]=QString("");
+            result = false;
+        }
+    }
 
     // Add all additional input files to JSON
     QJsonArray apps;
@@ -241,29 +273,67 @@ CustomFEM::inputAppDataFromJSON(QJsonObject &jsonObject) {
   //
   // from ApplicationData
   //
-  
-  if (jsonObject.contains("ApplicationData")) {
-    QJsonObject dataObject = jsonObject["ApplicationData"].toObject();
-    
-    //
-    // retrieve filename and path, set the QLIne Edit
-    //
-    
-    int count = 0;
-    auto fileListArray = dataObject["fileInfo"].toArray();
-    auto numFiles = fileListArray.count();
-    theCustomInputNumber->setValue(numFiles);
-    customInputFiles.resize(numFiles);
-    for (auto const& val :  fileListArray) {
-        auto b = val.toString();
-        //auto inputFile = new QLineEdit(b);
-        //customInputFiles.append(inputFile);
-        customInputFiles.at(count)->setText(b);
-        count++;
-    }
-  }
 
-  return true;
+     if (jsonObject.contains("ApplicationData")) {
+       QJsonObject dataObject = jsonObject["ApplicationData"].toObject();
+
+         int count = 0;
+         auto fileListArray = dataObject["fileInfo"].toArray();
+         auto numFiles = fileListArray.count();
+         theCustomInputNumber->setValue(numFiles);
+         customInputFiles.resize(numFiles);
+         for (auto const& val :  fileListArray) {
+             auto b = val.toString();
+             //auto inputFile = new QLineEdit(b);
+             //customInputFiles.append(inputFile);
+             customInputFiles.at(count)->setText(b);
+             count++;
+         }
+
+       //
+       // retrieve filename and path, set the QLineEdit
+       //
+
+       QString fileName;
+       QString filePath;
+
+       if (dataObject.contains("mainScript")) {
+         QJsonValue theName = dataObject["mainScript"];
+         fileName = theName.toString();
+       } else
+           return false;
+
+       if (dataObject.contains("MS_Path")) {
+           QJsonValue theName = dataObject["MS_Path"];
+           filePath = theName.toString();
+       } else
+           return false;
+
+       driverFile->setText(QDir(filePath).filePath(fileName));
+       setMainScript(driverFile->text());
+
+       if (dataObject.contains("postprocessScript")) {
+           QJsonValue theName = dataObject["postprocessScript"];
+           fileName = theName.toString();
+           if (!fileName.isEmpty()){
+               if (dataObject.contains("PS_Path")) {
+                   QJsonValue theName = dataObject["PS_Path"];
+                   filePath = theName.toString();
+                   postProcessScript->setText(QDir(filePath).filePath(fileName));
+               } else
+                   postProcessScript->setText(fileName);
+           } else
+               postProcessScript->setText("");
+       } else
+           postProcessScript->setText("");
+     } else
+         return false;
+
+     return true;
+  
+
+
+//  return true;
  }
 
 
@@ -277,7 +347,7 @@ void
 CustomFEM::chooseMainScript(void) {
     QString fileName=QFileDialog::getOpenFileName(this,tr("Open File"),
                           "",
-						  "All files (*.tcl)");
+                          "All files (*)");
     if(!fileName.isEmpty()) {
         this->setMainScript(fileName);
     }

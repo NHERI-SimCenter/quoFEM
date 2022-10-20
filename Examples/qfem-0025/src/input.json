@@ -1,0 +1,74 @@
+{
+    "Applications": {
+        "FEM": {
+            "Application": "OpenSeesPy",
+            "ApplicationData": {
+                "MS_Path": "{Current_Dir}/.",
+                "PA_Path": "{Current_Dir}/.",
+                "mainScript": "rosenbrock.py",
+                "parametersScript": "params.py",
+                "postprocessScript": ""
+            }
+        },
+        "UQ": {
+            "Application": "SimCenter-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 1,
+            "name": "f",
+            "type": "scalar"
+        }
+    ],
+    "FEM": {
+    },
+    "UQ": {
+        "surrogateMethodInfo": {
+            "DoEmethod": "None",
+            "accuracyLimit": 0.02,
+            "advancedOpt": true,
+            "existingDoE": false,
+            "initialDoE": 0,
+            "inpFile": "NA",
+            "kernel": "Matern 5/2",
+            "linear": false,
+            "logTransform": false,
+            "method": "Sampling and Simulation",
+            "nuggetOpt": "Heteroscedastic",
+            "nuggetString": "",
+            "numRepl": 5,
+            "numSampToBeRepl": 16,
+            "outFile": "NA",
+            "parallelExecution": true,
+            "samples": 60,
+            "seed": 94,
+            "timeLimit": 60
+        },
+        "uqEngine": "SimCenterUQ",
+        "uqType": "Train GP Surrogate Model"
+    },
+    "correlationMatrix": [
+        1
+    ],
+    "isSurrogate": true,
+    "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": -2,
+            "name": "X",
+            "refCount": 1,
+            "upperbound": 2,
+            "value": "RV.X",
+            "variableClass": "Uniform"
+        }
+    ],
+    "remoteAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "resultType": "SimCenterUQResultsSurrogate",
+    "runType": "runningLocal",
+    "workingDir": "C:/Users/SimCenter/Documents/quoFEM/LocalWorkDir"
+}
