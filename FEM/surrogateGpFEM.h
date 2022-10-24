@@ -68,7 +68,7 @@ public:
 signals:
 
 public slots:
-   void clear(void);
+   void clear(void) override;
    void updateMessage(QString);
    void showGpOptions(QString);
 

@@ -69,7 +69,7 @@ public:
 signals:
 
 public slots:
-   void clear(void);
+   void clear(void) override;
    void chooseMainScript(void);
    void customInputNumberChanged(int numCustomInputs) ;
 
