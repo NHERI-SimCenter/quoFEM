@@ -173,7 +173,7 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
     QHBoxLayout *horizontalLayout = new QHBoxLayout();
     this->setLayout(horizontalLayout);
     this->setContentsMargins(0,5,0,5);
-    horizontalLayout->setMargin(0);
+    //horizontalLayout->setMargin(0);
 
     //
     // create the component selection & add the components to it

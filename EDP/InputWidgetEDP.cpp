@@ -116,7 +116,7 @@ InputWidgetEDP::makeEDP(void)
     this->addEDP();
 
     sa->setWidget(edp);
-    verticalLayout->setMargin(0);
+    //verticalLayout->setMargin(0);
     verticalLayout->addWidget(sa);
 
     // show if SimCenterUQ && Sensitivity analysis
@@ -159,7 +159,7 @@ InputWidgetEDP::AdvancedSensitivity(void) {
     SectionTitle *title2=new SectionTitle();
     title2->setText(tr("Advanced Option for Global Sensitivity Analysis"));
     title2->setMinimumWidth(250);
-    theAdvancedLayout->setMargin(0);
+    //theAdvancedLayout->setMargin(0);
 
     //Contents
     QLabel *theLabel = new QLabel();
@@ -180,7 +180,7 @@ InputWidgetEDP::AdvancedSensitivity(void) {
 
     theGroupLayout->addStretch();
     //theGroupLayout->setSpacing(10);
-    theGroupLayout->setMargin(10);
+    //theGroupLayout->setMargin(10);
 
     theAdvancedLayout->addWidget(title2);
     theAdvancedLayout->addLayout(theGroupLayout);

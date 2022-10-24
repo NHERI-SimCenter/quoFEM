@@ -67,7 +67,7 @@ static QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit
     theLayout->addWidget(theLabel);
     theLayout->addWidget(theEdit);
     theLayout->setSpacing(0);
-    theLayout->setMargin(0);
+    //theLayout->setMargin(0);
 
     QWidget *theWidget = new QWidget();
     theWidget->setLayout(theLayout);
@@ -128,7 +128,7 @@ QWidget *addOneEDP(QString theLabelName, QLineEdit **theLineEdit,
 //    theLayout->setSpacing(0);
     theLayout->setHorizontalSpacing(10);
     theLayout->setVerticalSpacing(0);
-    theLayout->setMargin(0);
+    //theLayout->setMargin(0);
 
     theLayout->setColumnStretch(0, 4);
     theLayout->setColumnStretch(1, 1);
@@ -184,7 +184,7 @@ quoEDP::quoEDP(QString EDPname, QWidget *parent)
     mainLayout->addStretch();
 
     mainLayout->setSpacing(10);
-    mainLayout->setMargin(0);
+    //mainLayout->setMargin(0);
 
     this->setLayout(mainLayout);
 }

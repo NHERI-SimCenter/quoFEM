@@ -169,6 +169,7 @@ void CustomFEM::clear(void)
 bool
 CustomFEM::inputFromJSON(QJsonObject &jsonObject)
 {
+
 //  varNamesAndValues.clear();
 
 //  if (jsonObject.contains("randomVariables")) {
@@ -187,6 +188,7 @@ CustomFEM::inputFromJSON(QJsonObject &jsonObject)
 
 bool
 CustomFEM::outputToJSON(QJsonObject &jsonObject) {
+   Q_UNUSED(jsonObject);
 
     // Add driver script and post-processing script to JSON file
 
@@ -340,6 +342,8 @@ CustomFEM::inputAppDataFromJSON(QJsonObject &jsonObject) {
 void
 CustomFEM::setMainScript(QString name1){
 
+    Q_UNUSED(name1);
+
     return;
 }
 
@@ -356,6 +360,8 @@ CustomFEM::chooseMainScript(void) {
 void
 CustomFEM::specialCopyMainScript(QString fileName, QStringList varNames) {
    // pass
+    Q_UNUSED(fileName);
+    Q_UNUSED(varNames);
 }
 
 bool

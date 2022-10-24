@@ -233,6 +233,7 @@ OpenSeesPyFEM::outputAppDataToJSON(QJsonObject &jsonObject) {
     
     jsonObject["ApplicationData"] = dataObj;
 
+
     return true; // copyFiles returns false, if not true JSON object is empty!
 }
 
