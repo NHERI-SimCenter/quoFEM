@@ -139,6 +139,7 @@ OpenSeesFEM::inputFromJSON(QJsonObject &jsonObject)
 
 bool
 OpenSeesFEM::outputToJSON(QJsonObject &jsonObject) {
+    Q_UNUSED(jsonObject);
   return true;
 }
 

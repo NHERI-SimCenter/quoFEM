@@ -137,6 +137,7 @@ FEAPpvFEM::inputFromJSON(QJsonObject &jsonObject)
 
 bool
 FEAPpvFEM::outputToJSON(QJsonObject &jsonObject) {
+    Q_UNUSED(jsonObject);
   return true;
 }
 
