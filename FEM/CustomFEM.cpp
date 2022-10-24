@@ -169,6 +169,7 @@ void CustomFEM::clear(void)
 bool
 CustomFEM::inputFromJSON(QJsonObject &jsonObject)
 {
+    Q_UNUSED(jsonObject);
 
 //  varNamesAndValues.clear();
 

@@ -215,6 +215,7 @@ void surrogateGpFEM::updateMessage(QString textval){
 bool
 surrogateGpFEM::inputFromJSON(QJsonObject &jsonObject)
 {
+
 //  varNamesAndValues.clear();
 
 //  if (jsonObject.contains("randomVariables")) {
@@ -233,6 +234,7 @@ surrogateGpFEM::inputFromJSON(QJsonObject &jsonObject)
 
 bool
 surrogateGpFEM::outputToJSON(QJsonObject &jsonObject) {
+     Q_UNUSED(jsonObject);
   return true;
 }
 

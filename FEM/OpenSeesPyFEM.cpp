@@ -166,6 +166,7 @@ OpenSeesPyFEM::inputFromJSON(QJsonObject &jsonObject)
 
 bool
 OpenSeesPyFEM::outputToJSON(QJsonObject &jsonObject) {
+     Q_UNUSED(jsonObject);
   return true;
 }
 
