@@ -5,7 +5,7 @@ pattern UniformExcitation  1 1 -accel 1
 
 recorder EnvelopeNode -file $nodefile.out -node 1 2 3 4 5 6 7 -dof 1 2 disp
 recorder Element -file $Fofile.out -time -ele 1 force;
-recorder Drift -file $Drfile.out -time -iNode 1 -jNode 2 -dof 1 -perpDirn 3;
+#recorder Drift -file $Drfile.out -time -iNode 1 -jNode 2 -dof 1 -perpDirn 3;
 
 
 set xDamp 0.05;

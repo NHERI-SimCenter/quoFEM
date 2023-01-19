@@ -15,21 +15,16 @@ puts $Fy
 puts $alp 
 
 
-model BasicBuilder -ndm 2 -ndf 3
+model BasicBuilder -ndm 2 -ndf 2
 node 1 0 0 
-fix 1 1 1 1 
-node 2 0 0 144 -mass [expr $w/$g]  [expr $w/$g] 5.4522e-11 
-fix 2 0 0 0 
-node 3 0 0 288 -mass [expr $w/$g]  [expr $w/$g]  5.4522e-11 
-fix 3 0 0 0 
-node 4 0 0 432 -mass [expr $w/$g]  [expr $w/$g] 5.4522e-11 
-fix 4 0 0 0 
-node 5 0 0 576 -mass [expr $w/$g]  [expr $w/$g]  5.4522e-11 
-fix 5 0 0 0 
-node 6 0 0 720 -mass [expr $w/$g]  [expr $w/$g]  5.4522e-11 
-fix 6 0 0 0 
-node 7 0 0 864 -mass [expr $wR/$g]  [expr $wR/$g]  5.4522e-11 
-fix 7 0 0 0 
+fix 1 1 1 
+node 2 0 0 144 -mass [expr $w/$g]  [expr $w/$g] 
+node 3 0 0 288 -mass [expr $w/$g]  [expr $w/$g] 
+node 4 0 0 432 -mass [expr $w/$g]  [expr $w/$g] 
+node 5 0 0 576 -mass [expr $w/$g]  [expr $w/$g] 
+node 6 0 0 720 -mass [expr $w/$g]  [expr $w/$g] 
+node 7 0 0 864 -mass [expr $wR/$g]  [expr $wR/$g]
+
 uniaxialMaterial Steel02  1 $Fy $k $alp 15 0.925 0.15
 uniaxialMaterial Elastic 2 1e+10
 uniaxialMaterial Steel02  3 $Fy $k $alp 15 0.925 0.15
