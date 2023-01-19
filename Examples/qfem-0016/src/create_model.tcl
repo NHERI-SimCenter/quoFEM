@@ -10,7 +10,7 @@ set alp [expr { double(round($alp  * pow(10,$nd -ceil(log10($alp )))) / pow(10,$
 
 puts $w
 puts $wR
- puts $k
+puts $k
 puts $Fy 
 puts $alp 
 
@@ -18,7 +18,7 @@ puts $alp
 model BasicBuilder -ndm 2 -ndf 2
 node 1 0 0 
 fix 1 1 1 
-node 2 0 0 144 -mass [expr $w/$g]  [expr $w/$g] 
+node 2 0 0 144 -mass [expr $w/$g]  [expr $w/$g] # The node coordinate (0,0,144) is not really used in the analysis becase we only output the horizental displacement (not drift) and do not consider p-delta.
 node 3 0 0 288 -mass [expr $w/$g]  [expr $w/$g] 
 node 4 0 0 432 -mass [expr $w/$g]  [expr $w/$g] 
 node 5 0 0 576 -mass [expr $w/$g]  [expr $w/$g] 
