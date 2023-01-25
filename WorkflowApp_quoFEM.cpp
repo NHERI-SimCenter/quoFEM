@@ -80,10 +80,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QHostInfo>
 //#include <DakotaResultsSampling.h>
 #include <UQ_Results.h>
-#include <Utils/PythonProgressDialog.h>
+#include <Utils/ProgramOutputDialog.h>
 #include <Utils/RelativePathResolver.h>
 
 #include <GoogleAnalytics.h>
+#include <SimCenterDirWatcher.h>
 
 // static pointer for global procedure set in constructor
 static WorkflowApp_quoFEM *theApp = 0;
@@ -192,7 +193,7 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
     manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/eeuq/use.php")));
 
 
-    PythonProgressDialog *theDialog=PythonProgressDialog::getInstance();
+    ProgramOutputDialog *theDialog=ProgramOutputDialog::getInstance();
     theDialog->appendInfoMessage("Welcome to quoFEM");
     //    theDialog->hideAfterElapsedTime(1);
 }
@@ -477,7 +478,8 @@ WorkflowApp_quoFEM::setUpForApplicationRun(QString &workingDir, QString &subDir)
     file.write(doc.toJson());
     file.close();
 
-
+    // theDirWatcher.setDirToMonitor(tmpDirectory);
+    
     statusMessage("SetUp Done .. Now starting application");
 
     emit setUpForApplicationRunDone(tmpDirectory, inputFile);
