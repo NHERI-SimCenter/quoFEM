@@ -511,7 +511,7 @@
       ],
       "entry_point": "qfem-0025/./input.json",
       "summary": "The Heteroscedastic Gaussian process model is trained based on partial replication strategy",
-      "logo": "qfem-0025/figures/qf-0025-data.png",
+      "logo": "qfem-0025/figures/qf-0025-main.png",
       "published": "2022-06-30T21:26:53.946381-08:00",
       "categories": {
         "Simulation": "OpenSeesPy",
