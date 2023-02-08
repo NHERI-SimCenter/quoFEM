@@ -1,19 +1,19 @@
 {
     "Applications": {
         "UQ": {
-            "Application": "SimCenterUQ",
+            "Application": "SimCenter-UQ",
             "ApplicationData": {
             }
         },
-	"FEM":{
-            "Application": "OpenSees",
-            "ApplicationData": {
-		"MS_Path": "{Current_Dir}/",
-		"mainScript": "TrussModel.tcl",
-		"postprocessScript": "TrussPost.tcl",
-		"PS_Path": "{Current_Dir}/"
-	    }
-	}
+    	"FEM":{
+                "Application": "OpenSees",
+                "ApplicationData": {
+    		"MS_Path": "{Current_Dir}/",
+    		"mainScript": "TrussModel.tcl",
+    		"postprocessScript": "TrussPost.tcl",
+    		"PS_Path": "{Current_Dir}/"
+    	    }
+    	}
     },
     "EDP": [
         {
@@ -29,7 +29,7 @@
             "samples": 500,
             "seed": 536
         },
-        "uqEngine": "SimCenterUQ",
+        "uqEngine": "SimCenter-UQ",
         "uqType": "Sensitivity Analysis"
     },
     "correlationMatrix": [
