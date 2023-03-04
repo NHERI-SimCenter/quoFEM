@@ -20,6 +20,12 @@ This example constructs a Gaussian process-based surrogate model for the respons
    :figclass: align-center
    :width: 600
 
+   Conceptual illustration of surrogate modeling
+
+The building model based on the work described in [Zou2020]_.
+
+.. [Zou2020]
+   Zou, J., Welch, D. P., Zsarnoczay, A., Taflanidis, A., & Deierlein, G. G. (2020). Surrogate Modeling for the Seismic Response Estimation of Residential Wood Frame Structures. In Proceedings of the 17th World Conference on Earthquake Engineering, Japan. [`link <https://www.researchgate.net/publication/344803660_Surrogate_Modeling_for_the_Seismic_Response_Estimation_of_Residential_Wood_Frame_Structures>`_]
 
 Problem description
 -------------------
@@ -52,6 +58,7 @@ Below is the time history of the ground motion excitation.
    :align: center
    :figclass: align-center
    :width: 600
+
 
 Input files
 -------------
