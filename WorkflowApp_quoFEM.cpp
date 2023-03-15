@@ -105,7 +105,7 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
     //
 
     theRVs = RandomVariablesContainer::getInstance();
-    theFEM_Selection = new FEM_Selection(false);
+    theFEM_Selection = new FEM_Selection(true);
     theUQ_Selection = new UQ_EngineSelection();
     theEDPs = new InputWidgetEDP();
 
