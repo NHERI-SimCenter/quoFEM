@@ -41,7 +41,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QWidget>
 #include <WorkflowAppWidget.h>
-#include <SimCenterDirWatcher.h>
+//#include <SimCenterDirWatcher.h>
 
 class SimCenterComponentSelection;
 class RandomVariablesContainer;
@@ -108,7 +108,7 @@ private:
   QJsonObject *jsonObjOrig;
   QNetworkAccessManager *manager;
 
-  SimCenterDirWatcher theDirWatcher;
+  //SimCenterDirWatcher theDirWatcher;
 };
 
 #endif // WORKFLOW_APP_QUO_FEM_H
