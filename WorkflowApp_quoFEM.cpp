@@ -70,7 +70,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RemoteJobManager.h>
 #include <RunWidget.h>
 
-#include "CustomizedItemModel.h"
+//#include "CustomizedItemModel.h"
 
 #include <QSettings>
 #include <QUuid>
@@ -105,7 +105,7 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
     //
 
     theRVs = RandomVariablesContainer::getInstance();
-    theFEM_Selection = new FEM_Selection(false);
+    theFEM_Selection = new FEM_Selection(true);
     theUQ_Selection = new UQ_EngineSelection();
     theEDPs = new InputWidgetEDP();
 
@@ -139,11 +139,11 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
     connect(remoteApp,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
     connect(remoteApp,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
 
-    connect(localApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
-    connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)), theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
+    connect(localApp,SIGNAL(setupForRun(QString&,QString&)), this, SLOT(setUpForApplicationRun(QString&,QString&)));
+    connect(this,SIGNAL(setUpForApplicationRunDone(QString&,QString&)), theRunWidget, SLOT(setupForRunApplicationDone(QString&,QString&)));
     connect(localApp,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
 
-    connect(remoteApp,SIGNAL(setupForRun(QString &, QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
+    connect(remoteApp,SIGNAL(setupForRun(QString&,QString&)), this, SLOT(setUpForApplicationRun(QString&,QString&)));
 
     connect(theJobManager,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
     connect(theJobManager,SIGNAL(loadFile(QString&)), this, SLOT(loadFile(QString&)));
@@ -325,22 +325,22 @@ WorkflowApp_quoFEM::inputFromJSON(QJsonObject &jsonObject)
     QJsonObject theApplicationObject = jsonObject["Applications"].toObject();
     
     if (theUQ_Selection->inputAppDataFromJSON(theApplicationObject) == false)
-      emit errorMessage("quoFEM: failed to read UQ application");
+      this->errorMessage("quoFEM: failed to read UQ application");
     
     if (theFEM_Selection->inputAppDataFromJSON(theApplicationObject) == false)
-      emit errorMessage("quoFEM: failed to read FEM application");
+      this->errorMessage("quoFEM: failed to read FEM application");
     
   } else {
     qDebug() << jsonObject;
-    emit errorMessage("quoFEM: failed to find Applicatons section in JSON");
+    this->errorMessage("quoFEM: failed to find Applicatons section in JSON");
     return false;
   }
 
   if (theUQ_Selection->inputFromJSON(jsonObject) == false)
-    emit errorMessage("quoFEM: failed to read UQ Method data");
+    this->errorMessage("quoFEM: failed to read UQ Method data");
   
   if (theFEM_Selection->inputFromJSON(jsonObject) == false)
-    emit errorMessage("quoFEM: failed to read FEM Method data");
+    this->errorMessage("quoFEM: failed to read FEM Method data");
 
   theEDPs->inputFromJSON(jsonObject);
   theRVs->inputFromJSON(jsonObject);
@@ -350,7 +350,7 @@ WorkflowApp_quoFEM::inputFromJSON(QJsonObject &jsonObject)
   auto* theNewResults = theUQ_Selection->getResults();
   //
   if (theNewResults->inputFromJSON(jsonObject) == false)
-      emit errorMessage("quoFEM: failed to read RES  data");
+      this->errorMessage("quoFEM: failed to read RES  data");
   theResults->setResultWidget(theNewResults);
   return true;
 }
@@ -366,7 +366,7 @@ WorkflowApp_quoFEM::onRunButtonClicked() {
 
 void
 WorkflowApp_quoFEM::onRemoteRunButtonClicked(){
-    emit errorMessage("");
+    this->errorMessage("");
 
     bool loggedIn = theRemoteService->isLoggedIn();
 
@@ -385,7 +385,7 @@ WorkflowApp_quoFEM::onRemoteRunButtonClicked(){
 void
 WorkflowApp_quoFEM::onRemoteGetButtonClicked(){
 
-    emit errorMessage("");
+    this->errorMessage("");
 
     bool loggedIn = theRemoteService->isLoggedIn();
 
@@ -440,17 +440,17 @@ WorkflowApp_quoFEM::setUpForApplicationRun(QString &workingDir, QString &subDir)
 
     // copyPath(path, tmpDirectory, false);
     if (theFEM_Selection->copyFiles(templateDirectory) != true) {
-        emit errorMessage("FEM selection failed to copy files");
+        this->errorMessage("FEM selection failed to copy files");
         return;      
     }
     
     if (theUQ_Selection->copyFiles(templateDirectory) != true) {
-        emit errorMessage("UQ selection failed to copy files");
+        this->errorMessage("UQ selection failed to copy files");
         return;      
     }
 
     if (theRVs->copyFiles(templateDirectory) != true) {
-        emit errorMessage("RV tab failed to copy files");
+        this->errorMessage("RV tab failed to copy files");
         return;
     }
 
@@ -467,7 +467,7 @@ WorkflowApp_quoFEM::setUpForApplicationRun(QString &workingDir, QString &subDir)
     }
     QJsonObject json;
     if (this->outputToJSON(json) == false) {
-        emit errorMessage("WorkflowApp - failed in outputToJson");
+        this->errorMessage("WorkflowApp - failed in outputToJson");
         return;
     }
     json["runDir"]=tmpDirectory;
@@ -496,7 +496,7 @@ WorkflowApp_quoFEM::loadFile(QString &fileName){
 
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        emit errorMessage(QString("Could Not Open File: ") + fileName);
+        this->errorMessage(QString("Could Not Open File: ") + fileName);
         return -1;
     }
 

@@ -370,18 +370,18 @@ OpenSeesPyFEM::copyFiles(QString &dirName) {
      // now do interesting stuff
      
      QString fileNameP = parametersScript->text();
-     QFileInfo fileInfo1(fileName);
+     QFileInfo fileInfo1(fileNameP);
      if (fileInfo1.exists() && fileInfo1.isFile()) {
 
-       QString newName = dirName + QDir::separator() + "tmpSimCenter.params";
+       QString newName = dirName + QDir::separator() + fileInfo1.fileName();
        OpenSeesPyParser theParser;
        theParser.writeFile(fileNameP, newName, varNames);
        
      } else {
        
-       QString newName = dirName + QDir::separator() + "tmpSimCenter.script";
+       QString newName = dirName + QDir::separator() + theFile;
        QFile::copy(fileName, newName);
-       
+
      }
 
      return true;

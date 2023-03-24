@@ -358,8 +358,7 @@ surrogateGpFEM::outputAppDataToJSON(QJsonObject &jsonObject) {
     }
 
     jsonObject["ApplicationData"] = dataObj;
-
-     return true; // needed for json file to save, copyFiles will return false
+    return true; // needed for json file to save, copyFiles will return false
 }
 
  bool
