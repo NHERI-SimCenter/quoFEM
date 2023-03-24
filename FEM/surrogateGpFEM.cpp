@@ -234,7 +234,16 @@ surrogateGpFEM::inputFromJSON(QJsonObject &jsonObject)
 
 bool
 surrogateGpFEM::outputToJSON(QJsonObject &jsonObject) {
-     Q_UNUSED(jsonObject);
+    jsonObject["varThres"]=thresVal->text().toDouble();
+    if (option1Button->isChecked()) {
+        jsonObject["femOption"]="giveError";
+    } else if (option2Button->isChecked()) {
+        jsonObject["femOption"]="continue";
+    } else if (option3Button->isChecked()) {
+        jsonObject["femOption"]="doSimulation";
+    }
+    jsonObject["predictionOption"]=gpOutputComboBox->currentText();
+    jsonObject["gpSeed"]=1;
   return true;
 }
 
@@ -284,17 +293,6 @@ surrogateGpFEM::outputAppDataToJSON(QJsonObject &jsonObject) {
     }
 
     jsonObject["ApplicationData"] = dataObj;
-
-    jsonObject["varThres"]=thresVal->text().toDouble();
-    if (option1Button->isChecked()) {
-        jsonObject["femOption"]="giveError";
-    } else if (option2Button->isChecked()) {
-        jsonObject["femOption"]="continue";
-    } else if (option3Button->isChecked()) {
-        jsonObject["femOption"]="doSimulation";
-    }
-    jsonObject["predictionOption"]=gpOutputComboBox->currentText();
-    jsonObject["gpSeed"]=1;
     return true; // needed for json file to save, copyFiles will return false
 }
 
