@@ -47,6 +47,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QComboBox>
 #include <QRadioButton>
 #include <QLabel>
+#include <QPushButton>
 
 class InputWidgetParameters;
 class RandomVariablesContainer;
@@ -77,6 +78,7 @@ private:
   double interpolateForGP(QVector<double> X, QVector<double> Y, double Xval);
   
   QLineEdit *inputScript;
+  QLineEdit *tempDir;
   QLineEdit *postprocessScript;
   QStringList varNamesAndValues;  
   QWidget *femWidget;
@@ -87,6 +89,8 @@ private:
   QVector<double> percVals, thrsVals;
   QComboBox * gpOutputComboBox;
   QLabel *labelProgName, *labelProgDir1, *labelProgDir2, *labelThresMsg , *qoiNames;
+  QLabel *label2 ;
+  QPushButton *choosePostprocessScript ;
 };
 
 #endif // SURROGATE_GP_FEM_MODEL_H

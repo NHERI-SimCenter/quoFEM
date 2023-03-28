@@ -85,11 +85,16 @@ surrogateGpFEM::surrogateGpFEM(QWidget *parent)
     layout->addWidget(inputScript,0,1);
     layout->addWidget(chooseMS_Button,0,2);
 
-    QLabel *label2 = new QLabel("SurrogateGP Model (.pkl)");
+    label2 = new QLabel("SurrogateGP Model (.pkl)");
     postprocessScript = new QLineEdit;
     postprocessScript->setPlaceholderText("");
-    QPushButton *choosePostprocessScript = new QPushButton();
+    choosePostprocessScript = new QPushButton();
     choosePostprocessScript->setText(tr("Choose"));
+
+    label2->hide();
+    postprocessScript->hide();
+    choosePostprocessScript->hide();
+
     connect(choosePostprocessScript, &QPushButton::clicked, this, [this](){
       QString selectedFile = QFileDialog::getOpenFileName(this,
 							  tr("Postprocess Script"),
@@ -114,11 +119,68 @@ surrogateGpFEM::surrogateGpFEM(QWidget *parent)
     labelVarThresLayout->addStretch(1);
     QLabel *optionsLabel = new QLabel("When surrogate model gives imprecise prediction at certain sample locations");
     option1Button = new QRadioButton("Stop Analysis");
-    option2Button = new QRadioButton("Ignore and Continue");
+    option2Button = new QRadioButton("Give Warning and Continue");
     option3Button = new QRadioButton("Run Exact FEM Simulation");
     labelThresMsg = new QLabel(" ");
     labelThresMsg->setStyleSheet("color: red");
     option2Button->setChecked(true);
+
+    //
+    // set template_SIM
+    //
+    femWidget = new QWidget();
+
+    QHBoxLayout *tmpDirLayout = new QHBoxLayout(femWidget);
+    QLabel *labelTempDir = new QLabel("Template Directory");
+    tempDir = new QLineEdit;
+    QPushButton *chooseTD_Button = new QPushButton();
+    chooseTD_Button->setText(tr("Choose"));
+    connect(chooseTD_Button, &QPushButton::clicked, this, [this](){
+        QString mainScriptName=QFileDialog::getExistingDirectory(this,tr("Open Folder"),"");
+        if(!mainScriptName.isEmpty()) {
+            tempDir->setText(mainScriptName);
+        }
+    });
+    tmpDirLayout->addWidget(labelTempDir);
+    tmpDirLayout->addWidget(tempDir);
+    tmpDirLayout->addWidget(chooseTD_Button);
+
+    //QVBoxLayout *femLayout = new QVBoxLayout(femWidget);
+    //labelProgName=new QLabel();
+    //labelProgDir1=new QLabel();
+    //labelProgDir2=new QLabel();
+
+    //femLayout->addLayout(tmpDirLayout);
+    //femLayout->addWidget(labelProgName);
+    //femLayout->addWidget(labelProgDir1);
+    //femLayout->addWidget(labelProgDir2);
+    femWidget->setVisible(false);
+
+
+//    advancedLayout->addWidget(optionsLabel);
+//    advancedLayout->addWidget(option1Button);
+//    advancedLayout->addWidget(option2Button);
+//    advancedLayout->addWidget(option3Button);
+//    advancedLayout->addWidget(femWidget);
+
+//    advancedOptions->hide();
+//    connect(advanced, &QCheckBox::clicked, this, [=](bool tog){
+//        if (tog==false)
+//        {
+//            advancedOptions->hide();
+//        } else {
+//            advancedOptions->show();
+//        }
+//    });
+    connect(option3Button, &QRadioButton::toggled, this, [=](bool tog){
+        if (tog==false)
+        {
+            tempDir->setText("");
+            femWidget->hide();
+        } else {
+            femWidget->show();
+        }
+    });
 
     //femWidget = new QWidget();
     //QVBoxLayout *femLayout = new QVBoxLayout();
@@ -134,7 +196,9 @@ surrogateGpFEM::surrogateGpFEM(QWidget *parent)
     QHBoxLayout * gpOutputLayout = new QHBoxLayout();
     gpOutputComboBox= new QComboBox;
     gpOutputComboBox->addItem("Median (representative) prediction");
-    //gpOutputComboBox->addItem("Random sample under prediction uncertainty");
+    gpOutputComboBox->addItem("Random sample under prediction uncertainty");
+    gpOutputComboBox->setCurrentIndex(1);
+
     gpOutputLayout->addWidget( new QLabel("GP output   "));
     gpOutputLayout->addWidget(gpOutputComboBox);
     gpOutputComboBox->setMinimumWidth(400);
@@ -158,8 +222,8 @@ surrogateGpFEM::surrogateGpFEM(QWidget *parent)
     optionsLayout->addWidget(option1Button, 3,0,1,-1);
     optionsLayout->addWidget(option2Button, 4,0,1,-1);
     optionsLayout->addWidget(option3Button, 5,0,1,-1);
-    //optionsLayout->addWidget(femWidget, 6,0);
-    optionsLayout->addWidget(qoiNames, 6,0);
+    optionsLayout->addWidget(femWidget, 6,0);
+    optionsLayout->addWidget(qoiNames, 7,0);
     optionsLayout->addLayout(gpOutputLayout, 8,0,1,-1);
 
     optionsLayout->setColumnStretch(5,1.0);
@@ -244,6 +308,7 @@ surrogateGpFEM::outputToJSON(QJsonObject &jsonObject) {
     }
     jsonObject["predictionOption"]=gpOutputComboBox->currentText();
     jsonObject["gpSeed"]=1;
+
   return true;
 }
 
@@ -385,6 +450,40 @@ surrogateGpFEM::setMainScript(QString name1){
 
     theRVs->addRVsWithValues(varNamesAndValues);
 
+    //
+    // check if multifidelity
+    //
+
+    bool isMultiFidelity = false;
+    QFile file(name1);
+    if (file.open(QFile::ReadOnly | QFile::Text)) {
+        QString val;
+        val=file.readAll();
+        file.close();
+        val.replace(QString("NaN"),QString("null"));
+        val.replace(QString("Infinity"),QString("inf"));
+
+        QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
+        QJsonObject jsonSur = doc.object();
+
+        auto GPidentifier = jsonSur.find("kernName"); // should be the right .json file
+        if (!jsonSur.isEmpty() && GPidentifier != jsonSur.end()) {
+            isMultiFidelity = jsonSur["doMultiFidelity"].toBool();
+        }
+    }
+    if (isMultiFidelity) {
+        label2->show();
+        postprocessScript->show();
+        choosePostprocessScript->show();
+    } else {
+        label2->hide();
+        postprocessScript->hide();
+        choosePostprocessScript->hide();
+        postprocessScript->setText("");
+
+    }
+
+
     return;
 }
 void
@@ -483,17 +582,49 @@ surrogateGpFEM::copyFiles(QString &dirName) {
      QFileInfo fileInfo(fileName);
 
      QString theFile = fileInfo.fileName();
-     QString thePath = fileInfo.path();
 
-     SimCenterAppWidget::copyPath(thePath, dirName, false);
+     //QString thePath = fileInfo.path();
+     QFile::copy(fileName, dirName + QDir::separator() + theFile);
 
-     RandomVariablesContainer *theRVs=RandomVariablesContainer::getInstance();
-     QStringList varNames = theRVs->getRandomVariableNames();
 
-     // now create special copy of original main script that handles the RV
-     surrogateGpParser theParser;
-     QString copiedFile = dirName + QDir::separator() + theFile;
-     theParser.writeFile(fileName, copiedFile, varNames);
+     //
+     // copy pkl
+     //
+
+     QString pklName = postprocessScript->text();
+
+     if (!pklName.isEmpty()) {
+         QFileInfo pfileInfo(pklName);
+
+         QString thePklFile = pfileInfo.fileName();
+         //QString thePath = fileInfo.path();
+
+         QFile::copy(pklName, dirName + QDir::separator() + thePklFile);
+     }
+
+     //
+     // template dir
+     //
+
+     QString theTmpDir = tempDir->text();
+     qDebug() << theTmpDir;
+     if (theTmpDir!="") {
+         SimCenterAppWidget::copyPath(theTmpDir, dirName + QDir::separator() + "templatedir_SIM", true);
+     }
+
+     //SimCenterAppWidget::copyPath(thePath, dirName, false);
+
+     //
+     //
+     //
+
+//     RandomVariablesContainer *theRVs=RandomVariablesContainer::getInstance();
+//     QStringList varNames = theRVs->getRandomVariableNames();
+
+//     // now create special copy of original main script that handles the RV
+//     surrogateGpParser theParser;
+//     QString copiedFile = dirName + QDir::separator() + theFile;
+//     theParser.writeFile(fileName, copiedFile, varNames);
 
      return true;
 }

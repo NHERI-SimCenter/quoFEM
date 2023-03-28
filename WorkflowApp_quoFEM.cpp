@@ -84,7 +84,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <Utils/RelativePathResolver.h>
 
 #include <GoogleAnalytics.h>
-#include <SimCenterDirWatcher.h>
+//#include <SimCenterDirWatcher.h>
 
 // static pointer for global procedure set in constructor
 static WorkflowApp_quoFEM *theApp = 0;
