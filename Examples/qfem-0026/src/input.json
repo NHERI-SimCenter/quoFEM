@@ -1,0 +1,81 @@
+{
+    "UQ": {
+        "reliabilityMethodData": {
+            "reliabilityMethod": "Subset Simulation",
+            "mcmcMethod": "Metropolis-Hastings",
+            "samplesPerSubset": "1000",
+            "conditionalProbability": "0.1",
+            "thresholdValue": "0.4",
+            "seed": "123"
+        },
+        "uqEngine": "UQpy",
+        "uqType": "Reliability Analysis"
+    },
+    "FEM": {
+    },
+    "EDP": [
+        {
+            "name": "Node_3_Disp_2"
+        }
+    ],
+    "randomVariables": [
+        {
+            "name": "E",
+            "title": "elastic modulus",
+            "distribution": "Weibull",
+            "refCount": 1,
+            "scaleparam": 210.0,
+            "shapeparam": 20.0,
+            "value": "RV.E",
+            "variableClass": "Uncertain"
+        },
+        {
+            "name": "P",
+            "title": "load magnitude",
+            "distribution": "Beta",
+            "alphas": 2.0,
+            "betas": 2.0,
+            "lowerbound": 20.0,
+            "refCount": 1,
+            "upperbound": 30.0,
+            "value": "RV.P",
+            "variableClass": "Uncertain"
+        },
+        {
+            "name": "Ao",
+            "title": "cross sectional area for the other six bars",
+            "distribution": "Lognormal",
+            "mean": 250.0,
+            "refCount": 1,
+            "stdDev": 50.0,
+            "value": "RV.Ao",
+            "variableClass": "Uncertain"
+        },
+        {
+            "name": "Au",
+            "title": "cross sectional area for the upper three bars",
+            "distribution": "Normal",
+            "mean": 500.0,
+            "refCount": 1,
+            "stdDev": 100.0,
+            "value": "RV.Au",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "$schema": "https://raw.githubusercontent.com/claudioperez/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",
+    "Applications": {
+        "UQ": {
+            "Application": "UQpy",
+            "ApplicationData": {}
+        },
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+		"MS_Path": "{Current_Dir}/",
+		"mainScript": "TrussModel.tcl",
+		"postprocessScript": "TrussPost.tcl",
+		"PS_Path": "{Current_Dir}/"
+	    }
+        }		
+    }
+}

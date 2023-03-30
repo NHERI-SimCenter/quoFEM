@@ -517,6 +517,44 @@
         "Simulation": "OpenSeesPy",
         "Difficulty": "0"
       }
+    },
+    "qfem-0027": {
+      "id": "qfem-0027",
+      "title": "Forward Propagation with Multiple FE Models",
+      "base": "qfem-0027",
+      "doc": [
+        "qfem-0027/README.rst",
+        "qfem-0027/src/model1/ShearBuilding_NL_1.tcl",
+        "qfem-0027/src/model1/create_model_1.tcl",
+        "qfem-0027/src/model1/run_analysis.tcl",
+        "qfem-0027/src/model1/postprocess.tcl",
+        "qfem-0027/src/model1/R331.dat",
+        "qfem-0027/src/model2/ShearBuilding_NL_2.tcl",
+        "qfem-0027/src/model2/create_model_2.tcl",
+        "qfem-0027/src/model2/run_analysis.tcl",
+        "qfem-0027/src/model2/postprocess.tcl",
+        "qfem-0027/src/model2/R331.dat",
+        "qfem-0027/figures/UQ.png",
+        "qfem-0027/figures/FEM1.png",
+        "qfem-0027/figures/FEM2.png",
+        "qfem-0027/figures/RV.png",
+        "qfem-0027/figures/EDP.png",
+        "qfem-0027/figures/RES1.png",
+        "qfem-0027/figures/RES2.png",
+        "qfem-0027/figures/RES3.png",
+        "qfem-0027/figures/RES4.png",
+        "qfem-0027/figures/RES5.png",
+        "qfem-0027/figures/RES6.png",
+        "qfem-0027/figures/RES7.png"
+      ],
+      "entry_point": "qfem-0027/./inputs_two_models.json",
+      "summary": "In this example, two finite element models of a 6-story structure are used to predict the maximum base shear by conducting a nonlinear time history analysis of the structure subjected to seismic excitation.",
+      "logo": "qfem-0027/figures/main.png",
+      "published": "2022-06-30T21:26:53.946381-08:00",
+      "categories": {
+        "Simulation": "OpenSees",
+        "Difficulty": "0"
+      }
     }
   },
   "categories": {
