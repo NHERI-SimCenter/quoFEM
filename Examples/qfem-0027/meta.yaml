@@ -1,0 +1,8 @@
+title: Forward propagation with 2 FE models
+summary: |
+  Two models of a 6-story structure are used to predict the maximum base shear experienced during a nonlinear time history analysis of the structure subjected to seismic excitation
+author:
+- family: Bangalore Satish
+  given: Aakash
+collection-title: Basic example
+difficulty: 0
