@@ -18,7 +18,7 @@ The structure has uncertain properties that all follow normal distribution:
 
 The goal of the exercise is to estimate the mean and standard deviation of the vertical displacement at node 3. The exercise requires two files. The user is required to download these files and place them in a **NEW** folder. The two files are: 
 
-.. dropdown:: 1. Main file: :qfem-0001:`TrussTemplate.tcl <src/TrussModel.tcl>`
+1. Main file: :qfem-0001:`TrussTemplate.tcl <src/TrussModel.tcl>`
 
    .. literalinclude:: ../qfem-0001/src/TrussModel.tcl
       :language: tcl
@@ -29,7 +29,7 @@ The goal of the exercise is to estimate the mean and standard deviation of the v
 
 The ``TrussPost.tcl`` script shown below will accept as input any of the 6 nodes in the domain and for each of the two dof directions.
 
-.. dropdown:: 2. Postprocessing file: :qfem-0001:`TrussPost.tcl <../qfem-0001/src/TrussPost.tcl>`. 
+2. Postprocessing file: :qfem-0001:`TrussPost.tcl <../qfem-0001/src/TrussPost.tcl>`. 
 
    .. literalinclude:: ../qfem-0001/src/TrussPost.tcl
       :language: tcl
@@ -39,7 +39,7 @@ The ``TrussPost.tcl`` script shown below will accept as input any of the 6 nodes
 
    The use has the option to provide no post-process script (in which case the main script must create a ``results.out`` file containing a single line with as many space separated numbers as QoI or the user may provide a Python script that also performs the postprocessing. Below is an example of a postprocessing Python script.
 
-   .. dropdown:: Alternative postprocessing file: :qfem-0001:`TrussPost.py <src/TrussPost.py>`
+   Alternative postprocessing file: :qfem-0001:`TrussPost.py <src/TrussPost.py>`
 
       .. literalinclude:: ../qfem-0001/src/TrussPost.py
          :language: python
