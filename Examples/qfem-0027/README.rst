@@ -18,13 +18,11 @@ Model 1 uses Steel01 material for the columns and model 2 uses Steel02 for the c
 There are three random variables in each model which correspond to three parameters in the uniaxial material models Steel01 and Steel02: the initial elastic stiffness of the columns (k), the yield strength of the columns (Fy), and the strain hardening ratio of the columns (alp), i.e., the ratio between the post-yield stiffness and the initial elastic stiffness. 
 
 .. literalinclude:: create_model_1.tcl
-   :linenos: 
    :language: tcl
    :lines: 24-35
 
 
 .. literalinclude:: create_model_2.tcl
-   :linenos: 
    :language: tcl
    :lines: 24-35
 
@@ -33,26 +31,22 @@ The output quantity of interest (QoI) is the amplitude of the maximum base shear
  
 Files required
 --------------
-The exercise requires one main script file and one supplementary file. The user should download these files and place them in a **NEW** folder. 
+The exercise uses two finite element models of a structure. The required files to run each model are collected into separate directories per model. In each directory, the following files are required: one main tcl script file, two supplementary tcl scripts used to build the model and run the analysis, one supplementary file that contains the ground motion, and a tcl script to postprocess the output created during the OpenSees analysis and create the quantity of interest which is the maximum absolute value of the base shear. The user should download the required directories and files and place them in a **NEW** folder. 
 
 .. warning::
    Do NOT place the files in your root, downloads, or desktop folder as when the application runs it will copy the contents on the directories and subdirectories containing these files multiple times. If you are like us, your root, Downloads or Documents folders contains a lot of files.
 
-1. :qfem-0025:`rosenbrock.py <src/rosenbrock.py>` - This is a python script that computes the model. The script is based on :ref:`this example<qfem-0005>`, but with :math:`y=0`. Further,  :math:`\varepsilon(x)` is generated using numpy random sampler.
+The following files are needed to evaluate Model 1. Evaluating Model 2 also requires a set of 5 files with the first two files in the following list replaced by the corresponding ones for Model 2.
 
-   .. literalinclude:: src/rosenbrock.py
-            :language: py
-            :caption: rosenbrock.py
+1. :qfem-0027:`ShearBuilding_NL_1.tcl <src/model1/ShearBuilding_NL_1.tcl>` - This is a tcl script that evaluates the model and generates a file containing the time history of the element forces for element 1. The horizontal component of the element forces (the second column in the file) corresponds to the base shear experienced by this model of the structure. 
 
-2. :qfem-0025:`params.py <src/params.py>`- This file defines the input variable(s) that the surrogate model will take
+2. :qfem-0027:`create_model_1.tcl <src/model1/create_model_1.tcl>`- This file contains tcl and OpenSees commands that create the nodes, materials, and elements that make up the finite element model of the structure.
 
-      
-   .. literalinclude:: src/params.py
-            :language: py
-            :caption: params.py
+3. :qfem-0027:`run_analysis.tcl <src/model1/run_analysis.tcl>` - This file contains tcl and OpenSees commands to create the load, record the output, and perform a time history analysis of the structural response to the applied earthquake excitation.
 
-.. note::
-   Since the python script creates a ``results.out`` file when it runs, no postprocessing script is needed. 
+4. :qfem-0027:`R331.dat <src/model1/R331.dat>` - This text file contains the time history of the earthquake acceleration applied to the base of the model.
+
+5. :qfem-0027:`postprocess.tcl <src/model1/postprocess.tcl>` - This file contains tcl commands to read the time history of the base shear from the file created during the analysis, and to compute the maximum absolute value of the base shear experienced by the model.
 
 
 UQ workflow
