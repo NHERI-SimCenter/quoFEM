@@ -13,18 +13,22 @@ In this example, two models of a 6-story structure are used to predict the maxim
 
 The structure is modeled as having flexible columns and stiff elastic beams. The structure is subjected to an earthquake excitation at the base which is strong enough to result in nonlinear response. 
 
-Model 1 uses Steel01 material for the columns and model 2 uses Steel02 for the columns, with R0 set to 18, and cR1 and cR2 set to their recommended values of 0.925 and 0.15, respectively.
+Model 1 uses Steel01 material to represent the behavior of the columns while model 2 uses Steel02. There are three random variables in each model which correspond to three parameters in the uniaxial material models Steel01 and Steel02: the initial elastic stiffness of the columns (k), the yield strength of the columns (Fy), and the strain hardening ratio of the columns (alp), i.e., the ratio between the post-yield stiffness and the initial elastic stiffness. For Steel02, R0 is set to 15, and cR1 and cR2 are set to their recommended values of 0.925 and 0.15, respectively.
 
-There are three random variables in each model which correspond to three parameters in the uniaxial material models Steel01 and Steel02: the initial elastic stiffness of the columns (k), the yield strength of the columns (Fy), and the strain hardening ratio of the columns (alp), i.e., the ratio between the post-yield stiffness and the initial elastic stiffness. 
+
+Material used in Model 1:
 
 .. literalinclude:: create_model_1.tcl
    :language: tcl
-   :lines: 24-35
+   :lines: 24
 
+
+Material used in Model 2:
 
 .. literalinclude:: create_model_2.tcl
    :language: tcl
-   :lines: 24-35
+   :lines: 24
+
 
 The output quantity of interest (QoI) is the amplitude of the maximum base shear.
 
@@ -58,7 +62,7 @@ The steps involved are as follows:
 
 .. figure:: figures/UQ.png
    :align: center
-   :width: 400
+   :width: 1200
    :figclass: align-center
 
 
@@ -107,7 +111,7 @@ When we plot the QoI vs MultiModel-FEM, we see a systematic difference in the ra
 .. figure:: figures/RES2.png
    :align: center
    :figclass: align-center
-   :width: 600
+   :width: 1200
 
 This scatter plot shows that the maximum base shear predicted by Model 1 is higher than that predicted by Model 2.
 
@@ -116,7 +120,7 @@ This scatter plot shows that the maximum base shear predicted by Model 1 is high
 .. figure:: figures/RES3.png
    :align: center
    :figclass: align-center
-   :width: 600
+   :width: 1200
 
 If only Model 1 was used:
 
@@ -132,7 +136,7 @@ If only Model 1 was used:
 .. figure:: figures/RES5.png
    :align: center
    :figclass: align-center
-   :width: 600
+   :width: 1200
 
 If only Model 2 was used:
 
@@ -148,7 +152,7 @@ If only Model 2 was used:
 .. figure:: figures/RES7.png
    :align: center
    :figclass: align-center
-   :width: 600
+   :width: 1200
 
 
 We observe from the summary statistics and the histograms that if it is not known which of the two models considered is the best model to be used to represent the behavior of the structure, the predicted range of the maximum base shear is larger (i.e., the standard deviation of the maximum base shear is higher when using the two models than in the case when either of the two models are used on their own). The mean value of the base shear predicted in this case will be the mean of the maximum base shear predicted by the two models when used on their own (here we numerically estimate the mean by sampling values of the inputs from the specified distribution, hence there is sampling variablity in the estimate of the mean). 
