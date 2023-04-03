@@ -1,7 +1,7 @@
 {
     "Examples": [
     {
-      "name": "Forward Propogation - OpenSees",
+      "name": "Forward Propagation - OpenSees",
       "description": "This example illustrates how quoFEM interacts with the Tcl interpreter for OpenSees. A simple forward propagation procedure is run to estimate the first and second central moments of a FE model's response, given the marginal distributions of various random parameters.",
       "inputFile": "qfem-0001/src/input.json"
     },
@@ -16,7 +16,7 @@
       "inputFile": "qfem-0005/src/input.json"
     },
     {
-      "name": "Forward Propogattion - Multiple FEM Models",
+      "name": "Forward Propagation - Multiple FEM Models",
 	"description": "This example illustrates how multiple finite element models could be used to estimate the first amd second central moments of a response given two different finite element models of the system.",
       "inputFile": "qfem-0027/src/inputs_two_models.json"
     },	
