@@ -548,7 +548,7 @@
         "qfem-0027/figures/RES6.png",
         "qfem-0027/figures/RES7.png"
       ],
-      "entry_point": "qfem-0027/./inputs_two_models.json",
+      "entry_point": "qfem-0027/input.json",
       "summary": "In this example, two finite element models of a 6-story structure are used to predict the maximum base shear by conducting a nonlinear time history analysis of the structure subjected to seismic excitation.",
       "logo": "qfem-0027/figures/main.png",
       "published": "2022-06-30T21:26:53.946381-08:00",
