@@ -43,7 +43,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QJsonObject>
 #include <QLabel>
 #include <QFrame>
-#include <sectiontitle.h>
+#include <SectionTitle.h>
 #include <QSpacerItem>
 #include <QCheckBox>
 #include <QLineEdit>
