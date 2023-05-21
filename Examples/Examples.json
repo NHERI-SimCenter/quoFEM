@@ -17,7 +17,7 @@
     },
     {
       "name": "Forward Propagation - Multiple FEM Models",
-	    "description": "This example illustrates how multiple finite element models could be used to estimate the first amd second central moments of a response given two different finite element models of the system.",
+      "description": "This example illustrates how multiple finite element models could be used to estimate the first amd second central moments of a response given two different finite element models of the system.",
       "inputFile": "qfem-0027/src/input.json"
     },	
     {
