@@ -94,7 +94,7 @@ The steps involved are as follows:
    :align: center
    :figclass: align-center
 
-If the total number of QoI components exceeds 15, quoFEM will automatically run 'principal component analysis and probability model-based sensitivity analysis (PCA-PSA)' [Jung2022]_ to gain efficiency.
+If the total number of QoI components exceeds 15, quoFEM will automatically run 'principal component analysis and probability model-based sensitivity analysis (PCA-PSA)' [Jung2023]_ to gain efficiency.
 Because this example have 342 QoI components representing stress values of discretized time series, PCA will be performed for the QoI vector by default to gain efficiency.
 
 2. Next select the **FEM** panel from the input panel selection. This will default to the **OpenSees** FEM engine. In the **Input Script** field, enter the path to the ``matTestAllParamsReadStrain.tcl`` file or select **Choose** and navigate to the file. 
@@ -158,5 +158,5 @@ Using the same configuration but without PCA (with ``No`` option selected for 'P
    :figclass: align-center
 
 
-.. [Jung2022]
-   To be added
+.. [Jung2023]
+   Jung, W.H., & Taflanidis, A.A. (2023). Efficient global sensitivity analysis for high-dimensional outputs combining data-driven probability models and dimensionality reduction. Reliability Engineering & System Safety, Volume 231, 108805.
