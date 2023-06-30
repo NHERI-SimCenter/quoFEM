@@ -95,13 +95,10 @@ int main(int argc, char *argv[])
     QApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
 #endif
     
-    //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
+    //Setting Core Application Name, Organization, and Version
     QCoreApplication::setApplicationName("quoFEM");
     QCoreApplication::setOrganizationName("SimCenter");
     QCoreApplication::setApplicationVersion("3.3.3");
-    // GoogleAnalytics::SetTrackingId("UA-121636495-1");
-    GoogleAnalytics::StartSession();
-    GoogleAnalytics::ReportStart();
 
     //
     // set up logging of output messages for user debugging
@@ -151,6 +148,12 @@ int main(int argc, char *argv[])
   //
 
   QApplication app(argc, argv);
+
+    //Setting Google Analytics Tracking Information
+    GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
+    GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
+    GoogleAnalytics::CreateSessionId();
+    GoogleAnalytics::StartSession();
 
     //
     // create a remote interface
