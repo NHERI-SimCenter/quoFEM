@@ -1,4 +1,4 @@
-FROM simcenterbackend
+FROM noamelisha/simcenterbackend:latest
 
 COPY /quoFEM /app/quoFEM
 
