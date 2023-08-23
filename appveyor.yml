@@ -20,7 +20,7 @@ for:
        - export PATH="$HOME/Qt/5.15.2/clang_64/bin:$HOME/venv3.9/bin:$PATH"
        - python --version
        - python -m pip install --upgrade pip
-       - pip install conan
+       - pip install conan==1.60.1
        - conan user
        - conan remote add simcenter https://nherisimcenter.jfrog.io/artifactory/api/conan/simcenter
        
