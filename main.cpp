@@ -51,6 +51,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <WorkflowCLI.h>
 #include <GoogleAnalytics.h>
 #include <AgaveCurl.h>
+#include <QWebEngineView>
+#include <QtWebEngine/QtWebEngine>
+#include <QDialog>
 
  // customMessgaeOutput code from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
@@ -149,11 +152,6 @@ int main(int argc, char *argv[])
 
   QApplication app(argc, argv);
 
-    //Setting Google Analytics Tracking Information
-  //    GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
-    GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
-    GoogleAnalytics::CreateSessionId();
-    GoogleAnalytics::StartSession();
 
     //
     // create a remote interface
@@ -191,6 +189,8 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
     QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=4.0");
     w.setFeedbackURL(messageBoardURL);
 
+
+    
     if (argc > 1) {
       logToFile = true;
       WorkflowCLI cli(&w, theInputApp);
@@ -219,6 +219,20 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
 
     w.show();
     w.statusBar()->showMessage("Ready", 5000);
+
+  //Setting Google Analytics Tracking Information
+  GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
+  GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
+  GoogleAnalytics::CreateSessionId();
+  GoogleAnalytics::StartSession();
+
+  // Opening a QWebEngineView and using github to get app geographic usage
+  QWebEngineView view;
+  view.setUrl(QUrl("https://nheri-simcenter.github.io/quoFEM/GA4.html"));
+  view.resize(1024, 750);
+  view.show();
+  view.hide();
+
     
   // load style sheet
 
