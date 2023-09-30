@@ -52,8 +52,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <GoogleAnalytics.h>
 #include <AgaveCurl.h>
 #include <QWebEngineView>
-#include <QtWebEngine/QtWebEngine>
-#include <QDialog>
 
  // customMessgaeOutput code from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
@@ -220,21 +218,7 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
     w.show();
     w.statusBar()->showMessage("Ready", 5000);
 
-  //Setting Google Analytics Tracking Information
-  GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
-  GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
-  GoogleAnalytics::CreateSessionId();
-  GoogleAnalytics::StartSession();
-
-  // Opening a QWebEngineView and using github to get app geographic usage
-  QWebEngineView view;
-  view.setUrl(QUrl("https://nheri-simcenter.github.io/quoFEM/GA4.html"));
-  view.resize(1024, 750);
-  view.show();
-  view.hide();
-
-    
-  // load style sheet
+    // load style sheet
 
 #ifdef Q_OS_WIN
     QFile file(":/styleCommon/stylesheetWIN.qss");
@@ -255,6 +239,21 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
       qDebug() << "could not open stylesheet";
   }
 
+  //Setting Google Analytics Tracking Information
+  GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
+  GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
+  GoogleAnalytics::CreateSessionId();
+  GoogleAnalytics::StartSession();
+
+  /************ TRY LATER
+  // Opening a QWebEngineView and using github to get app geographic usage
+  QWebEngineView view;
+  view.setUrl(QUrl("https://nheri-simcenter.github.io/quoFEM/GA4.html"));
+  view.resize(1024, 750);
+  view.show();
+  view.hide();
+  ************************************/
+  
   //
   // exe application event-loop
   //
