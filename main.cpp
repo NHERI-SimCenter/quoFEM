@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, and Version
     QCoreApplication::setApplicationName("quoFEM");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("3.3.4");
+    QCoreApplication::setApplicationVersion("3.4.0");
 
     //
     // set up logging of output messages for user debugging
@@ -240,19 +240,19 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
   }
 
   //Setting Google Analytics Tracking Information
-  GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
-  GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
+  //GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
+  // GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
   GoogleAnalytics::CreateSessionId();
   GoogleAnalytics::StartSession();
 
-  /************ TRY LATER
+  /************ TRY LATER */
   // Opening a QWebEngineView and using github to get app geographic usage
   QWebEngineView view;
   view.setUrl(QUrl("https://nheri-simcenter.github.io/quoFEM/GA4.html"));
   view.resize(1024, 750);
   view.show();
   view.hide();
-  ************************************/
+  /* ************************************/
   
   //
   // exe application event-loop
