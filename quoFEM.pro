@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts concurrent network printsupport 3dcore 3drender 3dextras
+QT       += core gui charts concurrent network printsupport 3dcore 3drender 3dextras webenginewidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
