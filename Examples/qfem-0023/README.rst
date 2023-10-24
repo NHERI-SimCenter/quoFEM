@@ -11,9 +11,25 @@ Outline
 -------
 In this example, we investigate how much each parameter affects multiple outputs of a model. In particular, influence of different martial model parameters to the resulting stress time history under cyclic load setting will be compared via global sensitivity analysis. To gain efficiency dealing with such high-dimensional outputs, 'principal component analysis and probability model-based global sensitivity analysis (PCA-PSA)' method is used in the analysis.
 
+
+Video Resources 
+------------------
+Global Senstivity Analysis for Multiple outputs?  (from 7:24 to 20:15)
+
+.. raw:: html
+
+   <div style="text-align: center;">
+      <iframe src="https://www.youtube.com/embed/Z0BqspO7yuE?start=444" width="560" height="315" frameborder="5" allowfullscreen="allowfullscreen"></iframe>
+   </div>
+
+ 
+.. raw:: html
+
+   <p><br>Click to replay the video from <a href="javascript:window.location.reload(true);">7:24</a>. Please note there were minor changes in the user interface since it is recorded.</p>
+
+
 Problem description
 -------------------
-
 
 .. _figSteel02:
 

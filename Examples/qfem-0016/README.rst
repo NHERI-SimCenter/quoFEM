@@ -16,7 +16,7 @@ This example constructs a Gaussian process-based surrogate model for mean and st
 Problem description
 -------------------
 
-The structure ( :ref:`three story nonlinear building stick model <https://github.com/NHERI-SimCenter/quoFEM/blob/master/Examples/qfem-0016/src/ShearBuilding_NL.tcl>`_ ) has the following uncertain properties:
+The structure (`three story nonlinear building stick model <https://github.com/NHERI-SimCenter/quoFEM/blob/master/Examples/qfem-0016/src/ShearBuilding_NL.tcl>`_) has the following uncertain properties:
 
 ============================= ============ =========
 Random Variable               lower bound  upper bound			      
@@ -34,6 +34,23 @@ The goal is to make a surrogate model that predicts mean and standard deviation 
    :align: center
    :figclass: align-center
    :width: 600
+
+
+Video resources 
+---------------
+Note that even though we use the exact same structure, the parameters, their distributions and the quantity of interest (QoI) in the video is different from those in this example. The files for the corresponding example can be found at :github:`Github <Examples/qfem-0016/LET>`. 
+
+.. raw:: html
+
+   <div style="text-align: center;">
+      <iframe src="https://www.youtube.com/embed/Ze_K61TTuvg?start=1602" width="560" height="315" frameborder="5" allowfullscreen="allowfullscreen"></iframe>
+   </div>
+
+ 
+.. raw:: html
+
+   <p><br>Click to replay the video from <a href="javascript:window.location.reload(true);">26:42</a>. Please note there were minor changes in the user interface since it is recorded.</p>
+
 
 Input files
 -------------
