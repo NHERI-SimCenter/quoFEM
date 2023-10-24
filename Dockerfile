@@ -6,7 +6,7 @@ FROM ubuntu:bionic
 
 SHELL ["/bin/bash", "-c"]
 
-ARG versionQUO_FEM=d3.4.0
+ARG versionQUOFEM=d3.4.0
 ARG versionSimCenterCommon=v23.09
 ARG versionSimCenterBackend=v23.09
 ARG versionOpenSees=v3.5.0
@@ -34,7 +34,7 @@ RUN apt-get update \
 
 RUN  source /opt/qt515/bin/qt515-env.sh \
     && git clone -b $versionSimCenterCommon --single-branch https://github.com/NHERI-SimCenter/SimCenterCommon.git \
-    && git clone -b $versionEE --single-branch https://github.com/NHERI-SimCenter/quoFEM.git \
+    && git clone -b $versionQUOFEM --single-branch https://github.com/NHERI-SimCenter/quoFEM.git \
     && cd quoFEM \
     && mkdir build \
     && cd build \
@@ -85,7 +85,7 @@ RUN wget https://github.com/snl-dakota/dakota/releases/download/v6.15.0/dakota-6
 #    note: need newer gcc, gcc-10 which necessitates removing old conan 
 #
 
-RUN git -b $versionSimCenterBackend clone https://github.com/NHERI-SimCenter/SimCenterBackendApplications.git \
+RUN git clone -b $versionSimCenterBackend https://github.com/NHERI-SimCenter/SimCenterBackendApplications.git \
     && cp ./SimCenterBackendApplications/modules/performUQ/SimCenterUQ/nataf_gsa/CMakeLists.txt.UBUNTU ./SimCenterBackendApplications/modules/performUQ/SimCenterUQ/nataf_gsa/CMakeLists.txt \
     && rm -fr ~/.conan \
     && sudo apt-get install -y liblapack-dev libomp-dev libssl-dev apt-transport-https ca-certificates \        
