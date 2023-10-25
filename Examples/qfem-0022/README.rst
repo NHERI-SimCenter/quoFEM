@@ -120,7 +120,7 @@ page would bring up a dialogue window for saving the model file to a user-define
     Soize, C., & Ghanem, R. (2016). Data-driven probability concentration and sampling on manifold. Journal of Computational Physics, 321, 242-258.
 
 .. [SoizeGhanem2020]
-    Soize, C., & Ghanem, R. (2020). Physics‐constrained non‐Gaussian probabilistic learning on manifolds. International Journal for Numerical Methods in Engineering, 121(1), 110-145.
+    Soize, C., & Ghanem, R. (2020). Physics-constrained non-Gaussian probabilistic learning on manifolds. International Journal for Numerical Methods in Engineering, 121(1), 110-145.
 
 .. [ZhongGualGovindjee2021] 
     Zhong, K., Gual, J., and Govindjee, S., PLoM python package v1.0, https://github.com/sanjayg0/PLoM (2021).
