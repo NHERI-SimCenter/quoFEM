@@ -240,6 +240,7 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
   }
 
   //Setting Google Analytics Tracking Information
+  /* **********************************************************************
   GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
   GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
   GoogleAnalytics::CreateSessionId();
@@ -251,7 +252,7 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
   view.resize(1024, 750);
   view.show();
   view.hide();
-  /* ******************************************************************** */
+  ******************************************************************** */
   
   //
   // exe application event-loop
