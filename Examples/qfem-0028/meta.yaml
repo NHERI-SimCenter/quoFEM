@@ -1,0 +1,8 @@
+title: Bayesian calibration of hierarchical models
+summary: |
+  A hierarchical model is used to model the uncertainty in the parameters of a material model and data from multiple experiments is used to calibrate the hierarchical model
+author:
+- family: Bangalore Satish
+  given: Aakash
+collection-title: Basic example
+difficulty: 0
