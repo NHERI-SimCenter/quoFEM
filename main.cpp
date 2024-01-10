@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, and Version
     QCoreApplication::setApplicationName("quoFEM");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("3.4.0");
+    QCoreApplication::setApplicationVersion("3.5.0");
 
     //
     // set up logging of output messages for user debugging
@@ -240,6 +240,7 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
   }
 
   //Setting Google Analytics Tracking Information
+  /* **********************************************************************
   GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
   GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
   GoogleAnalytics::CreateSessionId();
@@ -251,7 +252,7 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satis
   view.resize(1024, 750);
   view.show();
   view.hide();
-  /* ******************************************************************** */
+  ******************************************************************** */
   
   //
   // exe application event-loop
