@@ -89,6 +89,11 @@
       "name": "Heteroscedastic Gaussian Process",
       "description": "The Heteroscedastic Gaussian process model is trained based on partial replication strategy",
       "inputFile": "qfem-0025/src/input.json"
+    },
+    {
+      "name": "Bayesian Calibration of Hierarchical Model",
+      "description": "In this example, a material model is fitted to each of several datasets, and a probability model is fitted to the estimated parameters of the material model from the different datasets.",
+      "inputFile": "qfem-0028/src/input.json"
     }
   ]
 }
