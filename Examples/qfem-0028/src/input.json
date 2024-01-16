@@ -1,0 +1,381 @@
+{
+    "Applications": {
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+                "MS_Path": "{Current_Dir}/model",
+                "mainScript": "matTestAllParamsReadStrain.tcl",
+                "postprocessScript": ""
+            }
+        },
+        "UQ": {
+            "Application": "UCSD-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 342,
+            "name": "1_A64_output_data",
+            "type": "field"
+        },
+        {
+            "length": 347,
+            "name": "2_A65_output_data",
+            "type": "field"
+        },
+        {
+            "length": 342,
+            "name": "3_A66_output_data",
+            "type": "field"
+        },
+        {
+            "length": 246,
+            "name": "4_A67_output_data",
+            "type": "field"
+        },
+        {
+            "length": 348,
+            "name": "5_A68_output_data",
+            "type": "field"
+        },
+        {
+            "length": 349,
+            "name": "6_A69_output_data",
+            "type": "field"
+        },
+        {
+            "length": 342,
+            "name": "7_A74_output_data",
+            "type": "field"
+        },
+        {
+            "length": 347,
+            "name": "8_A75_output_data",
+            "type": "field"
+        },
+        {
+            "length": 342,
+            "name": "9_A76_output_data",
+            "type": "field"
+        },
+        {
+            "length": 246,
+            "name": "10_A77_output_data",
+            "type": "field"
+        },
+        {
+            "length": 360,
+            "name": "11_A78_output_data",
+            "type": "field"
+        },
+        {
+            "length": 363,
+            "name": "12_A79_output_data",
+            "type": "field"
+        },
+        {
+            "length": 342,
+            "name": "13_B64_output_data",
+            "type": "field"
+        },
+        {
+            "length": 347,
+            "name": "14_B65_output_data",
+            "type": "field"
+        },
+        {
+            "length": 342,
+            "name": "15_B66_output_data",
+            "type": "field"
+        },
+        {
+            "length": 246,
+            "name": "16_B67_output_data",
+            "type": "field"
+        },
+        {
+            "length": 349,
+            "name": "17_B68_output_data",
+            "type": "field"
+        },
+        {
+            "length": 351,
+            "name": "18_B69_output_data",
+            "type": "field"
+        },
+        {
+            "length": 342,
+            "name": "19_B74_output_data",
+            "type": "field"
+        },
+        {
+            "length": 347,
+            "name": "20_B75_output_data",
+            "type": "field"
+        },
+        {
+            "length": 342,
+            "name": "21_B76_output_data",
+            "type": "field"
+        },
+        {
+            "length": 246,
+            "name": "22_B77_output_data",
+            "type": "field"
+        },
+        {
+            "length": 344,
+            "name": "23_B78_output_data",
+            "type": "field"
+        },
+        {
+            "length": 349,
+            "name": "24_B79_output_data",
+            "type": "field"
+        },
+        {
+            "length": 342,
+            "name": "25_C64_output_data",
+            "type": "field"
+        },
+        {
+            "length": 347,
+            "name": "26_C65_output_data",
+            "type": "field"
+        },
+        {
+            "length": 342,
+            "name": "27_C66_output_data",
+            "type": "field"
+        },
+        {
+            "length": 246,
+            "name": "28_C67_output_data",
+            "type": "field"
+        },
+        {
+            "length": 343,
+            "name": "29_C68_output_data",
+            "type": "field"
+        },
+        {
+            "length": 358,
+            "name": "30_C69_output_data",
+            "type": "field"
+        },
+        {
+            "length": 342,
+            "name": "31_C74_output_data",
+            "type": "field"
+        },
+        {
+            "length": 347,
+            "name": "32_C75_output_data",
+            "type": "field"
+        },
+        {
+            "length": 342,
+            "name": "33_C76_output_data",
+            "type": "field"
+        },
+        {
+            "length": 246,
+            "name": "34_C77_output_data",
+            "type": "field"
+        },
+        {
+            "length": 379,
+            "name": "35_C78_output_data",
+            "type": "field"
+        },
+        {
+            "length": 355,
+            "name": "36_C79_output_data",
+            "type": "field"
+        }
+    ],
+    "FEM": {
+    },
+    "UQ": {
+        "Calibration Data File Name": "output_data.txt",
+        "Calibration Datasets Directory": "{Current_Dir}/CouponCyclicTestData_every_20th_point",
+        "List Of Dataset Subdirectories": [
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/1_A64",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/2_A65",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/3_A66",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/4_A67",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/5_A68",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/6_A69",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/7_A74",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/8_A75",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/9_A76",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/10_A77",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/11_A78",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/12_A79",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/13_B64",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/14_B65",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/15_B66",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/16_B67",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/17_B68",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/18_B69",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/19_B74",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/20_B75",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/21_B76",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/22_B77",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/23_B78",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/24_B79",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/25_C64",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/26_C65",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/27_C66",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/28_C67",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/29_C68",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/30_C69",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/31_C74",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/32_C75",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/33_C76",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/34_C77",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/35_C78",
+            "{Current_Dir}/CouponCyclicTestData_every_20th_point/36_C79"
+        ],
+        "Random State": 946,
+        "Restart File Name": "restart_file.json",
+        "Sample Size": 200,
+        "Tuning Interval": 200,
+        "Tuning Period": 2000,
+        "method": "Bayesian Calibration",
+        "parallelExecution": true,
+        "uqType": "Metropolis Within Gibbs Sampler"
+    },
+    "correlationMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+    ],
+    "localAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
+    "randomVariables": [
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 480,
+            "name": "fy",
+            "refCount": 1,
+            "stdDev": 48,
+            "value": "RV.fy",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 208000,
+            "name": "E",
+            "refCount": 1,
+            "stdDev": 20800,
+            "value": "RV.E",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 0.018,
+            "name": "b",
+            "refCount": 1,
+            "stdDev": 0.0018,
+            "value": "RV.b",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 0.87,
+            "name": "cR1",
+            "refCount": 1,
+            "stdDev": 0.087,
+            "value": "RV.cR1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 0.06,
+            "name": "cR2",
+            "refCount": 1,
+            "stdDev": 0.006,
+            "value": "RV.cR2",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 0.02,
+            "name": "a1",
+            "refCount": 1,
+            "stdDev": 0.002,
+            "value": "RV.a1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 0.025,
+            "name": "a3",
+            "refCount": 1,
+            "stdDev": 0.0025,
+            "value": "RV.a3",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
+    "resultType": "SimCenterUQResultsSampling",
+    "runType": "runningLocal",
+    "summary": [
+    ],
+    "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
+}
