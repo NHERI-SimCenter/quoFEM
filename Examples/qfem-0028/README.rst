@@ -13,7 +13,7 @@ In this example, the focus is on employing the UCSD_UQ engine to calibrate a hie
 
 Data
 ----
-The dataset used for the inference presented in this example originates from experimental tests conducted on reinforcing steel specimens, commonly referred to as coupons, at the University of California, San Diego, in 2013. Refer [Carreño et al.]_ for details.
+The dataset used for the inference presented in this example originates from experimental tests conducted on reinforcing steel specimens, commonly referred to as coupons, at the University of California, San Diego, in 2013. Refer Carreño et al. [Carreño2020]_ for details.
 
 This dataset comprises cyclic stress-strain tests performed on thirty-six coupons. These coupons were sourced from three distinct steel manufacturing mills and adhered to two different manufacturing standards of Grade 60 steel. Specifically, each mill provided two straight #4 bars, each measuring 4.6 meters in length. One bar from each mill complied with Grade 60 A615 manufacturing standards, while the other adhered to Grade 60 A706 standards. From each bar, six coupons were extracted, and each coupon underwent cyclic strain tests with varying input strain histories.
 
@@ -263,7 +263,7 @@ In addition to the results displayed in the RES panel in quoFEM, JSON files with
 
    Sampling results files that can be used to restart the analysis
 
-.. [Carreño et al.]
+.. [Carreño2020]
    R. Carreño, K.H. Lotfizadeh, J.P. Conte, J.I. Restrepo, Material Model Parameters for the Giuffrè-Menegotto-Pinto Uniaxial Steel Stress-Strain Model, *J. Struct. Eng.* 146 (2020) 04019205. https://doi.org/10.1061/(ASCE)ST.1943-541X.0002505.
 
 

@@ -4,7 +4,7 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/oc421ri6ts88dci0?svg=true)](https://ci.appveyor.com/project/fmckenna/quofem)
 
-This is a SimCenter research application. It's purpose is to provide
+This is a SimCenter research application. Its purpose is to provide
 an application that will allow users to perform uncertainty
 quantification and optimization methods utliizng existing finite
 element applictions.
