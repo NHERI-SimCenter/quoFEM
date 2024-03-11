@@ -240,7 +240,7 @@ QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Satish, A. B., Adam Zs
   }
 
   //Setting Google Analytics Tracking Information
-  /* **********************************************************************
+  /* **************************************************************** 
   GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
   GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
   GoogleAnalytics::CreateSessionId();
