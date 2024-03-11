@@ -1,17 +1,13 @@
 # remove & rebuild app and macdeploy it
 
-NEW_METHOD="new"
+DMG_METHOD="NEW"
 
-while [[ "${1:0:1}" = "-" ]]; do
-    case $1 in
-	--new)
-	    NEW_METHOD="NEW"
-	    shift;;
-	--old)
-	    NEW_METHOD=""
-	    shift;;
-    esac
-done		
+for arg in "$@"
+do
+    if [ "$arg" == "--old" ] || [ "$arg" == "-o" ] || [ $arg == "-OLD" ]; then
+	DMG_METHOD="OLD"
+    fi
+done
 
 #
 #PARAMETERS
@@ -114,7 +110,7 @@ source $userID
 #
 
 
-if [[ -n "${NEW_METHOD}" && "${NEW_METHOD}" != "-null-" ]]; then
+if [ "$DMG_METHOD" == "NEW" ]; then
     
     #
     # mv app into empty folder for create-dmg to work
