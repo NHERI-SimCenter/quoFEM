@@ -1,8 +1,32 @@
-#!/bin/bash
+# remove & rebuild app and macdeploy it
+
+DMG_METHOD="NEW"
+
+for arg in "$@"
+do
+    if [ "$arg" == "--old" ] || [ "$arg" == "-o" ] || [ $arg == "-OLD" ]; then
+	DMG_METHOD="OLD"
+    fi
+done
+
+#
+#PARAMETERS
+#
+
+APP_NAME="quoFEM"
+APP_FILE="quoFEM.app"
+DMG_FILENAME="${APP_NAME}_Mac_Download.dmg"
+
+QTDIR="/Users/fmckenna/Qt/5.15.2/clang_64/"
+
+pathToBackendApps="/Users/fmckenna/NHERI/SimCenterBackendApplications"
+pathToOpenSees="/Users/fmckenna/bin/OpenSees3.6.0"
+pathToDakota="/Users/fmckenna/dakota-6.12.0"
+
 
 mkdir -p build
 cd build
-rm -fr quoFEM.app quoFEM
+rm -fr ${APP_FILE} ${DMG_FILENAME}
 
 #
 # build UI
@@ -14,6 +38,21 @@ qmake ../quoFEM.pro
 status=$?; if [[ $status != 0 ]]; then echo "qmake failed"; exit $status; fi
 make
 status=$?; if [[ $status != 0 ]]; then echo "make failed"; exit $status; fi
+
+#
+# Check to see if the app built
+#
+
+if ! [ -x "$(command -v open $pathApp)" ]; then
+	echo "$APP_FILE did not build. Exiting."
+	exit 
+fi
+
+#
+# macdeployqt it
+#
+
+macdeployqt ./${APP_FILE}
 
 #
 # Copy applications from SimCentreBackend
@@ -28,10 +67,10 @@ cp -fr ../../SimCenterBackendApplications/applications/Workflow ./quoFEM.app/Con
 # Copy OpenSees and Dakota
 #
 
-mkdir  ./quoFEM.app/Contents/MacOS/applications/opensees
-mkdir  ./quoFEM.app/Contents/MacOS/applications/dakota
-cp -fr /Users/fmckenna/bin/OpenSees3.2.2/* ./quoFEM.app/Contents/MacOS/applications/opensees
-cp -fr /Users/fmckenna/dakota-6.12.0/* ./quoFEM.app/Contents/MacOS/applications/dakota
+mkdir  ./$APP_FILE/Contents/MacOS/applications/opensees
+mkdir  ./$APP_FILE/Contents/MacOS/applications/dakota
+cp -fr $pathToOpenSees/* ./$APP_FILE/Contents/MacOS/applications/opensees
+cp -fr $pathToDakota/*  ./$APP_FILE/Contents/MacOS/applications/dakota
 
 #
 # Copy Example files
@@ -43,59 +82,112 @@ rm -fr ./quoFEM.app/Contents/MacOS/Examples/.aurore
 rm -fr ./quoFEM.app/Contents/MacOS/Examples/.gitignore
 
 #
-# cd back to were we started
+# clean up:
+#   1/ remove any __pyache__ files
 #
 
-macdeployqt ./quoFEM.app
-
-
-cp /usr/local/opt/libomp/lib/libomp.dylib ./quoFEM.app/Contents/MacOS/applications/performUQ/SimCenterUQ
-install_name_tool -change /usr/local/opt/libomp/lib/libomp.dylib @executable_path/libomp.dylib ./quoFEM.app/Contents/MacOS/applications/performUQ/SimCenterUQ/nataf_gsa
+find ./$APP_FILE -name __pycache__ -exec rm -rf {} +;
 
 #
-# now before we codesign and verify, check userID file exists
+# load my credential file
 #
 
 userID="../userID.sh"
 
 if [ ! -f "$userID" ]; then
+
+    echo "creating dmg $DMG_FILENAME"
+    hdiutil create $DMG_FILENAME -fs HFS+ -srcfolder ./$APP_FILE -format UDZO -volname $APP_NAME
     echo "No password & credential file to continue with codesig and App store verification"
-    hdiutil create quoFEM_Mac_Download.dmg -fs HFS+ -srcfolder ./quoFEM.app -format UDZO -volname quoFEM    
     exit
 fi
 
 source $userID
-echo $appleID
 
-#codesign files in app dir
-echo "xcrun altool --notarize-app -u $appleID -p $appleAppPassword -f ./$quoFEM_Mac_Download.dmg --primary-bundle-id altool"
-codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" quoFEM.app
 
+#
 # create dmg
-rm -fr quoFEM_Mac_Download.dmg
-echo "hdiutil create quoFEM_Mac_Download.dmg -fs HFS+ -srcfolder ./quoFEM.app -format UDZO -volname quoFEM"
+#
 
-hdiutil create quoFEM_Mac_Download.dmg -fs HFS+ -srcfolder ./quoFEM.app -format UDZO -volname quoFEM
 
-if [[ $status != 0 ]]
-then
-    echo "FAILED to create DMG .. cd to build and issue the following:"
-    echo "hdiutil create quoFEM_Mac_Download.dmg -fs HFS+ -srcfolder ./quoFEM.app -format UDZO -volname quoFEM"    
-    echo "codesign --force --sign "$appleCredential" quoFEM_Mac_Download.dmg"
-    echo "xcrun altool --notarize-app -u $appleID -p $appleAppPassword -f ./quoFEM_Mac_Download.dmg --primary-bundle-id altool"    
-    echo "xcrun altool --notarization-info ID -u $appleID -p $applePassword"
-    echo "xcrun stapler staple \"quoFEM\" quoFEM_Mac_Download.dmg"    
-    exit $status;
+if [ "$DMG_METHOD" == "NEW" ]; then
+    
+    #
+    # mv app into empty folder for create-dmg to work
+    # brew install create-dmg
+    #
+
+    echo "codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $APP_FILE"
+    codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $APP_FILE    
+    
+    mkdir app
+    mv $APP_FILE app
+    
+    # swoop
+    #create-dmg \
+	#  --volname "${APP_NAME}" \
+	#  --background "../background/background1.png" \
+	#  --window-pos 200 120 \
+	#  --window-size 550 400 \
+	#  --icon-size 150 \
+	#  --icon "${APP_NAME}.app" 150 190 \
+	#  --hide-extension "${APP_NAME}.app" \
+	#  --app-drop-link 400 185 \
+	#  "${DMG_FILENAME}" \
+	#  "app"
+    
+    # vertical 
+    #create-dmg \
+	#  --volname "${APP_NAME}" \
+	#  --background "../background/background2.png" \
+	#  --window-pos 200 120 \
+	#  --window-size 475 550 \
+	#  --icon-size 150 \
+	#  --icon "${APP_NAME}.app" 235 125 \
+	#  --hide-extension "${APP_NAME}.app" \
+	#  --app-drop-link 235 400 \
+	#  "${DMG_FILENAME}" \
+	#  "app"
+    
+    #horizontal
+    ../macInstall/create-dmg \
+	--volname "${APP_NAME}" \
+	--background "../macInstall/background3.png" \
+	--window-pos 200 120 \
+	--window-size 600 350 \
+	--no-internet-enable \
+	--icon-size 125 \
+	--icon "${APP_NAME}.app" 125 130 \
+	--hide-extension "${APP_NAME}.app" \
+	--app-drop-link 450 130 \
+	--codesign $appleCredential \
+	"${DMG_FILENAME}" \
+	"app"
+    
+    #  --notarize $appleID $appleAppPassword \
+	
+    mv ./app/$APP_FILE ./
+    rm -fr app
+
+else
+
+    echo "codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $APP_FILE"
+    codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $APP_FILE
+        
+    echo "hdiutil create $DMG_FILENAME -fs HFS+ -srcfolder ./$APP_FILE -format UDZO -volname $APP_NAME"
+    hdiutil create $DMG_FILENAME -fs HFS+ -srcfolder ./$APP_FILE -format UDZO -volname $APP_NAME
+
+    echo "Issue: codesign --force --sign "$appleCredential" $DMG_FILENAME"
+    #codesign --force --sign "$appleCredential" $DMG_FILENAME
+    
 fi
 
-#codesign dmg
-codesign --force --sign "$appleCredential" quoFEM_Mac_Download.dmg
-echo "codesign --force --sign "$appleCredential" quoFEM_Mac_Download.dmg"
-echo "xcrun altool --notarize-app -u $appleID -p $appleAppPassword -f ./quoFEM_Mac_Download.dmg --primary-bundle-id altool"
-xcrun altool --notarize-app -u $appleID -p $appleAppPassword -f ./quoFEM_Mac_Download.dmg --primary-bundle-id altool
-
-echo "Finally Done "
-echo "returns id: ID"
-echo "xcrun altool --notarization-info ID -u $appleID -p $applePassword"
-
-echo "xcrun stapler staple \"quoFEM\" quoFEM_Mac_Download.dmg"
+echo "Issue the following: " 
+echo "xcrun altool --notarize-app -u $appleID -p $appleAppPassword -f ./$DMG_FILENAME --primary-bundle-id altool"
+echo ""
+echo "returns id: ID .. wait for email indicating success"
+echo "To check status"
+echo "xcrun altool --notarization-info ID  -u $appleID  -p $appleAppPassword"
+echo ""
+echo "Finally staple the dmg"
+echo "xcrun stapler staple \"$APP_NAME\" $DMG_FILENAME"
