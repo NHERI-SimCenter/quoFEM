@@ -478,7 +478,13 @@ WorkflowApp_quoFEM::setUpForApplicationRun(QString &workingDir, QString &subDir)
     file.write(doc.toJson());
     file.close();
 
-    // theDirWatcher.setDirToMonitor(tmpDirectory);
+    //
+    // ouput citation
+    //
+    
+    QJsonObject citations;
+    QString citeFile = templateDirectory + QDir::separator() + tr("please_cite.json");    
+    this->createCitation(citations, citeFile);
     
     statusMessage("SetUp Done .. Now starting application");
 
@@ -535,3 +541,39 @@ WorkflowApp_quoFEM::getMaxNumParallelTasks() {
     return theUQ_Selection->getNumParallelTasks();
 }
 
+
+int
+WorkflowApp_quoFEM::createCitation(QJsonObject &citation, QString citeFile) {
+
+  QString cit("{\"quoFEM\": { \"citations\": [{\"citation\": \"Frank McKenna, Sang-ri Yi, Satish, A. B., Adam Zsarnoczay, Michael Gardner, & Wael Elhaddad. (2023). NHERI-SimCenter/quoFEM: Version 3.5.0 (v3.5.0). Zenodo. https://doi.org/10.5281/zenodo.10443180 \",\"description\": \"This is the overall tool reference used to indicate the version of the tool.\"},{\"citation\": \"Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Mat J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706\",\"description\": \" This marker paper describes the SimCenter application framework, which was designed to simulate the impacts of natural hazards on the built environment.It  is a necessary attribute for publishing work resulting from the use of SimCenter tools, software, and datasets.\"}]}}");
+
+  QJsonDocument docC = QJsonDocument::fromJson(cit.toUtf8());
+  if(!docC.isNull()) {
+    if(docC.isObject()) {
+      citation = docC.object();        
+    }  else {
+      qDebug() << "WorkflowdAppEE_UQ citation text is not valid JSON: \n" << cit << endl;
+    }
+  }
+  
+  theFEM_Selection->outputCitation(citation);
+  theUQ_Selection->outputCitation(citation);
+
+  // write the citation to a citeFile if provided
+  
+  if (!citeFile.isEmpty()) {
+    
+    QFile file(citeFile);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+      errorMessage(QString("writeCitation - could not open file") + citeFile);
+      progressDialog->hideProgressBar();
+      return 0;
+    }
+
+    QJsonDocument doc(citation);
+    file.write(doc.toJson());
+    file.close();
+  }
+  
+  return 0;    
+}
