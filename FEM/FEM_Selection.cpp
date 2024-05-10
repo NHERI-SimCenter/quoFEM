@@ -62,7 +62,7 @@ FEM_Selection::FEM_Selection(bool inclMulti, QWidget *parent)
 
     if (inclMulti == true) {
       SimCenterAppWidget *multi = new SimCenterAppMulti(QString("FEM"), QString("MultiModel-FEM"),this, this);
-      this->addComponent(QString("Multi Model"), QString("MultiModel"), multi);
+      this->addComponent(QString("Multiple Models"), QString("MultiModel"), multi);
     }
 }
 
