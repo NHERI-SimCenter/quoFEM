@@ -246,14 +246,18 @@
         },
         {
             "Values": [
+                80,
                 90,
                 100,
-                110
+                110,
+                120
             ],
             "Weights": [
-                0.25,
-                0.5,
-                0.25
+                0.1,
+                0.2,
+                0.4,
+                0.2,
+                0.1
             ],
             "distribution": "Discrete",
             "inputType": "Parameters",
