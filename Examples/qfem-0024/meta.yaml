@@ -1,0 +1,9 @@
+title: Bayesian Model Class Selection for Structural Models
+summary: |
+  In this example, model class selection is performed using the Bayesian approach with two candidate model classes for a steel frame in OpenSees. Experimental data is
+  passed in to quoFEM from an external file, and the data consists of measurements of the first eigenvalue and the normalized second component of the first eigenvector.
+author:
+- family: Bangalore Satish
+  given: Aakash
+collection-title: Structural Model
+difficulty: 0
