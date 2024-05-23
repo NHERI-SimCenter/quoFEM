@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, and Version
     QCoreApplication::setApplicationName("quoFEM");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("3.5.0");
+    QCoreApplication::setApplicationVersion("3.5.2");
 
     //
     // set up logging of output messages for user debugging
@@ -177,6 +177,7 @@ int main(int argc, char *argv[])
 
     QString version = QString("Version ") + QCoreApplication::applicationVersion();
     w.setVersion(version);
+
     QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, & Wael Elhaddad. (2023). NHERI-SimCenter/quoFEM: Version 3.5.0 (v3.5.0). Zenodo. https://doi.org/10.5281/zenodo.10443180 \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
   
     w.setCite(citeText);
@@ -240,7 +241,7 @@ int main(int argc, char *argv[])
   }
 
   //Setting Google Analytics Tracking Information
-  /* **************************************************************** 
+  /* ****************************************************************/
   GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
   GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
   GoogleAnalytics::CreateSessionId();
@@ -252,7 +253,7 @@ int main(int argc, char *argv[])
   view.resize(1024, 750);
   view.show();
   view.hide();
-  ******************************************************************** */
+  /******************************************************************** */
   
   //
   // exe application event-loop
