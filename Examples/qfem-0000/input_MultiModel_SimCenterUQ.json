@@ -1,11 +1,9 @@
 {
     "Applications": {
         "FEM": {
-            "Application": "OpenSees",
+            "Application": "MultiModel",
             "ApplicationData": {
-                "MS_Path": "{Current_Dir}/src",
-                "mainScript": "Shear2d.tcl",
-                "postprocessScript": ""
+                "appKey": "FEM"
             }
         },
         "UQ": {
@@ -47,13 +45,38 @@
         }
     ],
     "FEM": {
+        "modelToRun": "RV.MultiModel-FEM",
+        "models": [
+            {
+                "Application": "OpenSees",
+                "ApplicationData": {
+                    "MS_Path": "{Current_Dir}/src",
+                    "mainScript": "Moment2d.tcl",
+                    "postprocessScript": ""
+                },
+                "belief": 1,
+                "data": {
+                }
+            },
+            {
+                "Application": "OpenSees",
+                "ApplicationData": {
+                    "MS_Path": "{Current_Dir}/src",
+                    "mainScript": "Shear2d.tcl",
+                    "postprocessScript": ""
+                },
+                "belief": 1,
+                "data": {
+                }
+            }
+        ]
     },
     "UQ": {
         "samplingMethodData": {
             "RVdataGroup": "",
             "method": "Monte Carlo",
-            "samples": 50,
-            "seed": 3172
+            "samples": 20,
+            "seed": 42
         },
         "uqType": "Forward Propagation"
     },
