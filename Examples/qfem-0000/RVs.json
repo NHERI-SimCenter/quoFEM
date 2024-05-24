@@ -1,62 +1,4 @@
 {
-    "Applications": {
-        "FEM": {
-            "Application": "OpenSees",
-            "ApplicationData": {
-                "MS_Path": "{Current_Dir}/src",
-                "mainScript": "Shear2d.tcl",
-                "postprocessScript": ""
-            }
-        },
-        "UQ": {
-            "Application": "SimCenter-UQ",
-            "ApplicationData": {
-            }
-        }
-    },
-    "EDP": [
-        {
-            "length": 1,
-            "name": "disp1",
-            "type": "scalar"
-        },
-        {
-            "length": 1,
-            "name": "disp2",
-            "type": "scalar"
-        },
-        {
-            "length": 1,
-            "name": "disp3",
-            "type": "scalar"
-        },
-        {
-            "length": 1,
-            "name": "acc1",
-            "type": "scalar"
-        },
-        {
-            "length": 1,
-            "name": "acc2",
-            "type": "scalar"
-        },
-        {
-            "length": 1,
-            "name": "acc3",
-            "type": "scalar"
-        }
-    ],
-    "FEM": {
-    },
-    "UQ": {
-        "samplingMethodData": {
-            "RVdataGroup": "",
-            "method": "Monte Carlo",
-            "samples": 50,
-            "seed": 3172
-        },
-        "uqType": "Forward Propagation"
-    },
     "correlationMatrix": [
         1,
         0,
@@ -73,10 +15,6 @@
         0,
         0,
         1,
-        0.5,
-        0.5,
-        0.5,
-        0.5,
         0,
         0,
         0,
@@ -85,11 +23,12 @@
         0,
         0,
         0,
-        0.5,
+        0,
+        0,
+        0,
+        0,
+        0,
         1,
-        0.5,
-        0.5,
-        0.5,
         0,
         0,
         0,
@@ -98,11 +37,12 @@
         0,
         0,
         0,
-        0.5,
-        0.5,
+        0,
+        0,
+        0,
+        0,
+        0,
         1,
-        0.5,
-        0.5,
         0,
         0,
         0,
@@ -111,11 +51,12 @@
         0,
         0,
         0,
-        0.5,
-        0.5,
-        0.5,
+        0,
+        0,
+        0,
+        0,
+        0,
         1,
-        0.5,
         0,
         0,
         0,
@@ -124,14 +65,12 @@
         0,
         0,
         0,
-        0.5,
-        0.5,
-        0.5,
-        0.5,
+        0,
+        0,
+        0,
+        0,
+        0,
         1,
-        0.5,
-        0.5,
-        0.5,
         0,
         0,
         0,
@@ -141,10 +80,11 @@
         0,
         0,
         0,
-        0.5,
+        0,
+        0,
+        0,
+        0,
         1,
-        0.5,
-        0.5,
         0,
         0,
         0,
@@ -154,10 +94,11 @@
         0,
         0,
         0,
-        0.5,
-        0.5,
+        0,
+        0,
+        0,
+        0,
         1,
-        0.5,
         0,
         0,
         0,
@@ -167,9 +108,10 @@
         0,
         0,
         0,
-        0.5,
-        0.5,
-        0.5,
+        0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -228,7 +170,6 @@
         0,
         1
     ],
-    "localAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
     "randomVariables": [
         {
             "distribution": "Uniform",
@@ -369,9 +310,5 @@
             "value": "RV.bb",
             "variableClass": "Uncertain"
         }
-    ],
-    "remoteAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
-    "resultType": "SimCenterUQResultsSampling",
-    "runType": "runningLocal",
-    "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
+    ]
 }
