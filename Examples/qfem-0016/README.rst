@@ -32,6 +32,7 @@ The goal is to make a surrogate model that predicts mean and standard deviation 
 
 .. figure:: figures/SUR2-sturcture.PNG
    :align: center
+   :alt: The image displays a scientific dashboard containing two graphs. On the top right, there's a graph labeled "Ground motion" showing a time-series plot with oscillations. Below it on the bottom right is a "Hysteresis curve," which depicts a looped curve pattern. To the left, a vertical sidebar shows numbers from 1 to 6, each paired with a grey dot and icon, with the number 1 highlighted in green.
    :figclass: align-center
    :width: 600
 
@@ -71,6 +72,7 @@ UQ Workflow
 
 .. figure:: figures/SUR2-UQtab.png
    :align: center
+   :alt: Screenshot of a software interface for uncertainty quantification with a focus on surrogate modeling. The interface includes options to select an uncertainty quantification (UQ) method, with 'SimCenterUQ' chosen as the UQ Engine, and 'Train GP Surrogate Model' selected in the SimCenterUQ Method Category dropdown menu. Various parameters such as 'Number of Samples', 'Max Computation Time', 'Target Accuracy', 'Random Seed', and 'Parallel Execution' can be configured. Advanced options for the Gaussian Process Model are visible, including selections for 'Kernel Function', checkboxes for adding a linear trend function and log-space transform, 'DoE Options', and 'Nugget Variances'. There is also an option to 'Start with Existing Dataset' at the bottom. The sidebar contains tabs titled 'FEM', 'RV', 'EDP', and 'RES', highlighted on 'UQ'.
    :figclass: align-center
    :width: 1200
 
@@ -79,6 +81,7 @@ UQ Workflow
 
 .. figure:: figures/SUR2-FEMtab.png
    :align: center
+   :alt: This image displays a section of a graphical user interface with a focus on the "Finite Element Method Application" settings. It presents a dropdown menu with the option "OpenSees" selected. Below this, there are two fields: "Input Script" containing a file path labeled "C:/SimCenter/quoFEM/Examples/qfem-0016/src/ShearBuilding_NL.tcl," and "Postprocess Script" with a file path "C:/SimCenter/quoFEM/Examples/qfem-0016/src/postprocess.tcl." Each field has an associated "Choose" button to presumably change or confirm the file paths. On the left-hand side, vertically aligned tabs labeled "UQ," "FEM," "RV," "QoI," and "RES" are visible, suggesting different sections or functionalities within the application.
    :figclass: align-center
    :width: 1200
 
@@ -86,6 +89,7 @@ UQ Workflow
 
 .. figure:: figures/SUR2-RVtab.png
    :align: center
+   :alt: Screenshot of a user interface titled "Input Random Variables," which includes a list of variables with specified distributions and range parameters. Each variable row contains fields for "Variable Name," "Distribution" type (selected as "Uniform" for all), and numerical "Min." and "Max." values. Buttons for actions such as "Add," "Clear All," "Correlation Matrix," "Export," and "Import" are available above the list, and a "Show PDF" link is adjacent to each variable entry. The listed variables are "w" with a range of 50 to 150, "wR" from 40 to 80, "k" from 240 to 360, "alp" from 0.05 to 0.15, and "Fy" from 18 to 22.
    :figclass: align-center
    :width: 1200
 
@@ -97,6 +101,7 @@ When the user needs to manually add random variables with **add** button, eg. wh
 
 .. figure:: figures/SUR2-QoItab.png
    :align: center
+   :alt: Screenshot of a user interface segment titled "Quantities of Interest" with two listed items. Each item has a "Variable Name" and a "Length" with values "Node_2_Disp_1_Mean" and "Node_2_Disp_1_Std," both with a length of 1. To the right, there are "Add" and "Clear all" buttons. On the left sidebar, tabs are labeled "UQ," "FEM," "RV," "EDP," and "RES," with "RV" currently selected.
    :figclass: align-center
    :width: 1200
 
@@ -108,6 +113,7 @@ When the user needs to manually add random variables with **add** button, eg. wh
 
 .. figure:: figures/SUR2-REStab1.png
    :align: center
+   :alt: Screenshot of a software interface displaying the summary results of a surrogate modeling process with a notification that reads "Surrogate Modeling Completed! - Process ended as the maximum allowable number of simulations is reached." The results include the number of training samples and model simulations, both listed as 50, and the analysis time of 1.4 minutes. There are also statistics for goodness-of-fit, including Normalized error (NRMSE), R2, and Correlation coeff for 'Node_2_Disp_1_Mean' and 'Node_2_Disp_1_Std,' with values ranging from 0.016 to 0.999. A footnote indicates that some quality of life indices did not converge to the target accuracy.
    :figclass: align-center
    :width: 1200
 
@@ -115,6 +121,7 @@ When the user needs to manually add random variables with **add** button, eg. wh
 
 .. figure:: figures/SUR2-REStab2.png
    :align: center
+   :alt: The image displays two graphs side by side, both titled "Leave-One-Out Cross-Validation (LOOCV) Prediction". Each graph plots data points comparing 'Exact response' on the x-axis with 'Predicted response (LOOCV)' on the y-axis, suggesting a statistical analysis or model evaluation. The left graph shows a tight correlation between the predicted and exact responses, indicated by points closely following a diagonal line. The right graph has a similar distribution of points but also includes shaded areas representing an inter-quartile range around the line of predicted responses, which is not present in the left graph. Both graphs include a note on the bottom indicating "nugget variance (log-transformed space)" with numerical values, the left being 0.000 and the right being 0.0008011.
    :figclass: align-center
    :width: 1200
 
@@ -130,6 +137,7 @@ Once the surrogate model is trained, it can be used for various UQ/optimization 
 
 .. figure:: figures/SUR2-VER0.png
    :align: center
+   :alt: A screenshot of a computer interface showing a section labeled "Saving Options" with buttons including "Save GP Model," "Save GP Info," "RV Data," and "Qol Data." There is a highlighted correlation between the "Save GP Model" button and a selected file in a directory list below, named "SimGpModel.json," indicating that clicking the button will save information related to a GP model in the JSON file format.
    :figclass: align-center
    :width: 800
 
@@ -144,6 +152,7 @@ Once the surrogate model is trained, it can be used for various UQ/optimization 
 
 .. figure:: figures/SUR2-VER1.png
    :align: center
+   :alt: Screenshot of a software interface with various input fields and dropdown menus for running simulations. The section header "UQ Engine" displays "Dakota" selected from a dropdown menu. Under "FEM," the "Dakota Method Category" is set to "Sensitivity Analysis," and the "Method" dropdown menu shows "LHS" selected. Below, there's a field for "# Samples" filled with "200," and a "Seed" field containing the number "852." A checkbox labeled "Parallel Execution" is unchecked in the top right corner. A note at the bottom indicates "Expected number of FEM calls = (#Samples)*(#RVs+2)." The sections labeled "RV," "QoI," and "RES" on the left side are not expanded and show no additional information.
    :figclass: align-center
    :width: 1200
 
@@ -151,6 +160,7 @@ Once the surrogate model is trained, it can be used for various UQ/optimization 
 
 .. figure:: figures/SUR2-VER2.png
    :align: center
+   :alt: Screenshot of a software interface with tabs labeled UQ, FEM, RV, EDP, and RES. The FEM tab is selected, displaying fields for SurrogateGP Info (.json) and SurrogateGP Model (.pkl) with file paths, and Options for Maximum Allowable Normalized Variance with a note that around 55.3% of new samples in training range will exceed the tolerance limit, and when the surrogate model gives imprecise prediction at certain sample locations. There are radio buttons for Stop Analysis and Ignore and Continue, and a dropdown menu for GP output with 'Median (representative) predictio' visible.
    :figclass: align-center
    :width: 1200
 
@@ -163,6 +173,7 @@ Once the surrogate model is trained, it can be used for various UQ/optimization 
 
 .. figure:: figures/SUR2-VER4.png
    :align: center
+   :alt: Screenshot of a software interface with a section titled "Input Random Variables". There are rows of input data with fields including 'Variable Name', 'Distribution', 'Mean', and 'Standard Dev'. The variables listed are 'w', 'wR', 'k', 'alp', and 'Fy' with respective distributions 'Normal', 'Normal', 'Normal', 'Normal', and 'Gumbel'. Mean and standard deviation values are provided for each. Buttons for actions such as 'Add', 'Clear All', 'Correlation Matrix', 'Export', 'Import', and 'Show PDF' are visible at the top of the section.
    :figclass: align-center
    :width: 1200
 
@@ -176,6 +187,7 @@ Once the surrogate model is trained, it can be used for various UQ/optimization 
 
 .. figure:: figures/SUR2-VER5.png
    :align: center
+   :alt: Screenshot of a data analysis software interface displaying "Node_2_Disp_1_Mean Sobol' indices" and "Node_2_Disp_1_Std Sobol' indices" with corresponding tables and bar charts. The tables list random variables 'w', 'wR', 'k', 'alp', and 'Fy' with associated 'Main' and 'Total' effect values. The bar charts visually represent these Sobol' indices, with 'w' having the most significant effects in both mean and standard deviation assessments. Options for navigating through different sections such as 'Summary', 'Data Values', 'FEM', 'RV', 'EDP', and 'RES' are provided in a side menu, and a 'Save Results' button is positioned at the bottom right.
    :figclass: align-center
    :width: 1200
 
@@ -186,6 +198,7 @@ Once the surrogate model is trained, it can be used for various UQ/optimization 
 
 .. figure:: figures/SUR2-VER6.png
    :align: center
+   :alt: Screenshot of a software interface displaying two tables and corresponding bar graphs under the headings "Node_2_Disp_1_Mean Sobol' indices" and "Node_2_Disp_1_Std Sobol' indices." Each table lists random variables (w, wR, k, alp, Fy) with numerical values for 'Main' and 'Total' effects. Next to the tables, the bar graphs visually represent these values, with bars of different lengths for 'Main' and 'Total.' The colors blue and green distinguish between the two types of effects. A button for 'Save Results' is visible at the bottom right corner.
    :figclass: align-center
    :width: 1200
 

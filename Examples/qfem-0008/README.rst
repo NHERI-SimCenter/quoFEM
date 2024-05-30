@@ -17,6 +17,7 @@ the following simplified finite element model of a steel building.
 
 .. figure:: qfem-0008.png
    :width: 500px
+   :alt: Image showing error in description
    :align: center
 
 

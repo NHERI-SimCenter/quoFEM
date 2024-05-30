@@ -62,6 +62,7 @@ The steps involved are as follows:
 
 .. figure:: figures/UQ.png
    :align: center
+   :alt: Image showing error in description
    :width: 1200
    :figclass: align-center
 
@@ -70,11 +71,13 @@ The steps involved are as follows:
 
 .. figure:: figures/FEM1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
 .. figure:: figures/FEM2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -83,6 +86,7 @@ The steps involved are as follows:
 
 .. figure:: figures/RV.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -91,6 +95,7 @@ The steps involved are as follows:
 
 .. figure:: figures/EDP.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -103,6 +108,7 @@ When we plot the QoI vs MultiModel-FEM, we see a systematic difference in the ra
 
 .. figure:: figures/RES1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -110,6 +116,7 @@ When we plot the QoI vs MultiModel-FEM, we see a systematic difference in the ra
 
 .. figure:: figures/RES2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -119,6 +126,7 @@ This scatter plot shows that the maximum base shear predicted by Model 1 is high
 
 .. figure:: figures/RES3.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -128,6 +136,7 @@ If only Model 1 was used:
 
 .. figure:: figures/RES4.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -135,6 +144,7 @@ If only Model 1 was used:
 
 .. figure:: figures/RES5.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -144,6 +154,7 @@ If only Model 2 was used:
 
 .. figure:: figures/RES6.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -151,6 +162,7 @@ If only Model 2 was used:
 
 .. figure:: figures/RES7.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 

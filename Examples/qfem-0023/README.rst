@@ -35,6 +35,7 @@ Problem description
 
 .. figure:: figures/qf-0023-Steel02.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
    
@@ -89,6 +90,7 @@ The exercise requires one main script file and one supplementary file. The user 
 
 .. figure:: figures/qf-0023-StrainHistory.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
    
@@ -108,6 +110,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0023-UQ.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 If the total number of QoI components exceeds 15, quoFEM will automatically run 'principal component analysis and probability model-based sensitivity analysis (PCA-PSA)' [Jung2023]_ to gain efficiency.
@@ -117,6 +120,7 @@ Because this example have 342 QoI components representing stress values of discr
 
 .. figure:: figures/qf-0023-FEM.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -129,6 +133,7 @@ For each variable, specify the probability distribution and its parameters, as s
 
 .. figure:: figures/qf-0023-RV.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -139,6 +144,7 @@ For each variable, specify the probability distribution and its parameters, as s
 
 .. figure:: figures/qf-0023-QOI.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 **Note that the aggregated sensitivity indices will also be provided for the field QoIs. The aggregated sensitivity indices is obtained by weighted sum of the component sensitivity indices, where the weight is proportional to the variance of each QoI component. If multiple of field QoIs are defined, aggregated sensitivity indices will be provided for each of them.**
@@ -149,6 +155,7 @@ For each variable, specify the probability distribution and its parameters, as s
 
 .. figure:: figures/qf-0023-RES1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -158,6 +165,7 @@ If the user selects the **Data Values** tab in the results panel, they will be p
 
 .. figure:: figures/qf-0023-RES2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -167,10 +175,12 @@ Using the same configuration but without PCA (with ``No`` option selected for 'P
 
 .. figure:: figures/qf-0023-RES3.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 .. figure:: figures/qf-0023-RES4.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 

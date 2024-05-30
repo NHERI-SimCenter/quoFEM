@@ -23,6 +23,7 @@ Consequently, a total of 36 coupons were tested, derived from the combination of
 
 .. figure:: figures/Coupon.png
    :align: center
+   :alt: A simplified graphical representation of DNA replication. Two strands of DNA are shown unwinding from each other with a replication fork in the center where the double helix separates. The image conveys the concept of genetic material being copied, a fundamental process in cell biology.
    :figclass: align-center
    
    Test coupon
@@ -34,6 +35,7 @@ The experiments involved six distinct random cyclic strain histories, as depicte
 
 .. figure:: figures/StrainHistories.png
    :align: center
+   :alt: A series of six line graphs displayed in a vertical arrangement, each labeled differently as SH1-L, SH2-L, SH3-L, SH4-L, SH1-H, and SH2-H. The vertical axes on the left are labeled with a range from -0.075 to 0.075 with a scale marked at intervals, while the horizontal axes represent time in seconds, with varying scales. Each graph shows a slightly undulating line that varies around the horizontal midline, indicating some form of periodic data or measurement over time. The first four graphs have a time scale of 0 to 500 seconds, while the last two have a time scale of 0 to 30 seconds.
    :figclass: align-center
    
    Strain histories
@@ -74,6 +76,7 @@ The first directory contains the model scripts, which remain consistent across v
 
 .. figure:: figures/ModelAndData.png
    :align: center
+   :alt: Screenshot of a file directory within a computer interface labeled "src". It displays three items: a folder named "CouponCyclicTestData_every_20th_point" modified yesterday at 7:27 PM, a folder named "model" modified on January 5, 2024, at 9:55 AM, and a file named "input.json" modified on December 21, 2023, at 2:48 PM with a size of 11 KB, which is a JSON file. The interface contains navigation arrows, a search bar, and various view options at the top.
    :figclass: align-center
    :width: 400
    
@@ -90,6 +93,7 @@ Within each experiment's subdirectory, the strain values measured are stored in 
 
 .. figure:: figures/DataDirectory.png
    :align: center
+   :alt: Screenshot of a computer file system interface showing a list of folders named sequentially from "1_A64" to "16_B67." Each folder is marked as having been modified on Nov 8, 2023 at 11:24 PM. The folders are contained within a parent directory named "CouponCyclicTestData_every_20th_point." The size and kind columns indicate that they are folders, but the size is unspecified. The user interface elements for navigation, actions, view options, and search are visible at the top.
    :figclass: align-center
    :width: 400
    
@@ -100,6 +104,7 @@ Within each experiment's subdirectory, the strain values measured are stored in 
 
 .. figure:: figures/DatasetSubdirectory.png
    :align: center
+   :alt: Screenshot of a computer file directory listing two text files named "input_data.txt" and "output_data.txt." Both files have a date modified of November 8, 2023, at 11:25 PM, and a file size of 9 KB, labeled as text kind.
    :figclass: align-center
    :width: 400
    
@@ -112,6 +117,7 @@ Within each experiment's subdirectory, the strain values measured are stored in 
 
 .. figure:: figures/ModelFiles.png
    :align: center
+   :alt: Screenshot of a computer file directory with a search bar displaying the term "model". Two files are listed: "matTestAllParamsReadStrain.tcl" with a date modified of October 31, 2023, at 3:43 PM, a size of 926 bytes, and labeled as Tcl source; the second file "restart_file.json" with a date modified of December 6, 2023, at 12:53 PM, a size of 23 KB, and labeled as JSON. The interface resembles a typical file management system with options for navigation and settings.
    :figclass: align-center
    :width: 400
    
@@ -133,6 +139,7 @@ The inputs can also be set up manually through the following steps:
 
 .. figure:: figures/UQ.png
    :align: center
+   :alt: Screenshot of the 'quoFEM: Quantified Uncertainty with Optimization for the Finite Element Method' software interface. The application window shows various input fields related to Bayesian Calibration using a Hierarchical model. Options for the UQ engine, sample size, random state, data file names, and directories are displayed, with paths indicating file locations on a user's desktop. The bottom section lists 36 datasets for calibration found in the chosen directory, with buttons to run the analysis and interact with DesignSafe services.
    :figclass: align-center
    :width: 600
    
@@ -144,6 +151,7 @@ The inputs can also be set up manually through the following steps:
 
 .. figure:: figures/FEM.png
    :align: center
+   :alt: Screenshot of the 'quoFEM: Quantified Uncertainty with Optimization for the Finite Element Method' software interface showing a selected tab titled 'FEM' with options for OpenSees, input and postprocess script paths, and 'Choose' buttons alongside the script path fields. At the bottom, there are buttons for 'RUN', 'RUN at DesignSafe', 'GET from DesignSafe', and 'Exit'.
    :figclass: align-center
    :width: 600
    
@@ -155,6 +163,7 @@ The inputs can also be set up manually through the following steps:
 
 .. figure:: figures/RV1.png
    :align: center
+   :alt: Screenshot of the quoFEM software interface showing the 'Input Random Variables' section with a list of variables, their distributions (all set to 'Normal'), mean values, and standard deviations. Options to add new variables, clear the list, import, and export data are available, as well as buttons to show the probability density function (PDF) for each variable. On the left side of the screen, menu items for UQ, FEM, RV, EDP, and RES are visible, with RV highlighted. At the bottom, there are buttons for running simulations on DesignSafe.
    :figclass: align-center
    :width: 600
 
@@ -162,6 +171,7 @@ The inputs can also be set up manually through the following steps:
 
 .. figure:: figures/RV2.png
    :align: center
+   :alt: Screenshot of the "quoFEM: Quantified Uncertainty with Optimization for the Finite Element Method" software interface showing a section titled "Input Random Variables". There are several entries for variables named 'cR1', 'cR2', 'a1', and 'a3' each with 'Normal' distribution type, specified means, and standard deviations. Options to 'Add', 'Clear All', 'Export', and 'Import' are visible at the top, with buttons to show PDF of distributions. At the bottom, there are buttons to 'RUN', 'RUN at DesignSafe', 'GET from DesignSafe', and 'Exit'. A vertical navigation menu on the left side of the screen includes 'UQ', 'FEM', 'RV', 'EDP', and 'RES'.
    :figclass: align-center
    :width: 600
    
@@ -174,6 +184,7 @@ The inputs can also be set up manually through the following steps:
 
 .. figure:: figures/EDP1.png
    :align: center
+   :alt: Screenshot of a web application interface for quoFEM: Quantified Uncertainty with Optimization for the Finite Element Method. The interface includes menu options for UQ, FEM, RV, EDP, and RES on the left side. The main panel shows a section titled "Quantities of Interest" with four listed variables, each with a name such as "A64_output_data" and a numerical length value. There are buttons for "Add" and "Clear All" above the list, and below the interface are buttons for running the analysis or getting data from DesignSafe, as well as an "Exit" option. The "Login" button is visible in the upper right corner.
    :figclass: align-center
    :width: 600
 
@@ -181,6 +192,7 @@ The inputs can also be set up manually through the following steps:
 
 .. figure:: figures/EDP2.png
    :align: center
+   :alt: Screenshot of a software interface titled "quoFEM: Quantified Uncertainty with Optimization for the Finite Element Method". The interface shows a menu on the left with options UQ, FEM, RV, EDP, and RES highlighted in blue. The main area displays a section titled "Quantities of Interest" with a list of variable names like '33_C76_output_data', '34_C77_output_data', and similar entries, each associated with a numerical length value. At the bottom are buttons for 'RUN', 'RUN at DesignSafe', 'GET from DesignSafe', and 'Exit'.
    :figclass: align-center
    :width: 600
    
@@ -195,6 +207,7 @@ The **Summary** tab shows the mean, standard deviation, and coefficient of varia
 
 .. figure:: figures/RES1.png
    :align: center
+   :alt: Screenshot of a user interface for "quoFEM: Quantified Uncertainty with Optimization for the Finite Element Method." The interface includes tabs labeled "Summary" and "Data Values" at the top right, and a navigation sidebar on the left with options "UQ," "FEM," "RV," "EDP," and "RES" highlighted. Data input fields are displayed in the center, with entries for variables 'fy' and 'E' under "UQ," and 'b,' 'cR1,' and 'cR2' under "RES," each including mean, standard deviation (StdDev), and coefficient of variation (C.O.V.%) values. Bottom buttons read "RUN," "RUN at DesignSafe," "GET from DesignSafe," and "Exit."
    :figclass: align-center
    :width: 600
 
@@ -202,6 +215,7 @@ The **Summary** tab shows the mean, standard deviation, and coefficient of varia
 
 .. figure:: figures/RES2.png
    :align: center
+   :alt: Screenshot of the "quoFEM: Quantified Uncertainty with Optimization for the Finite Element Method" software interface displaying various parameters under 'RES' such as 'b', 'cR1', 'cR2', 'a1', and 'a3' with corresponding statistical values for 'Mean', 'StdDev', and 'C.O.V.(%)'. The screen has a side menu on the left with options 'UQ', 'FEM', 'RV', 'EDP', and 'RES' highlighted in blue. There are two tabs at the top right labeled 'Summary' and 'Data Values', and buttons at the bottom for 'RUN', 'RUN at DesignSafe', 'GET from DesignSafe', and 'Exit'.
    :figclass: align-center
    :width: 600
 
@@ -214,6 +228,7 @@ In the **Data Values** tab of the **RES** panel, a chart and a table with all th
 
 .. figure:: figures/RES3.png
    :align: center
+   :alt: Screenshot of the "quoFEM: Quantified Uncertainty with Optimization for the Finite Element Method" software interface showing a scatter plot with numerous blue points representing samples and their correlation to run number with a near-zero correlation coefficient. On the right, there is a data table with columns labeled Run #, fy, E, b, cR1, and cR2, displaying values for each run. At the bottom, there are buttons for various actions including 'Run', 'RUN at DesignSafe', 'GET from DesignSafe', and 'Exit'. The screen layout includes navigation tabs on the left side labeled UQ, FEM, RV, EDP, and RES highlighted in blue.
    :figclass: align-center
    :width: 600
 
@@ -221,6 +236,7 @@ In the **Data Values** tab of the **RES** panel, a chart and a table with all th
 
 .. figure:: figures/RES4.png
    :align: center
+   :alt: Screenshot of the quoFEM application interface showing a scatter plot with many data points and a correlation coefficient of 0.68, indicating a statistical analysis result. On the right side of the image, there is a tabular data view with columns labeled as Run #, fy, E, b, cR1, and cR2, among others, with numerical values for each entry. The interface has navigation buttons on the bottom and tabs on the top named "Summary" and "Data Values." There are additional options for saving the data table and the results in various formats.
    :figclass: align-center
    :width: 600
 
@@ -242,6 +258,7 @@ In addition to the results displayed in the RES panel in quoFEM, JSON files with
 
 .. figure:: figures/Preferences.png
    :align: center
+   :alt: A screenshot of a computer software settings window with various fields and paths specified for External Applications, Local Directories, and Remote Application Settings. Fields include the Python executable path, and custom locations for OpenSees, Dakota, local jobs directory, and remote jobs directory as well as backend applications and remote applications directory locations. The user interface contains 'Browse' buttons next to each field, as well as 'Reset', 'Save', and 'Cancel' buttons at the bottom right.
    :figclass: align-center
    :width: 600
 
@@ -251,6 +268,7 @@ In addition to the results displayed in the RES panel in quoFEM, JSON files with
 
 .. figure:: figures/RES5.png
    :align: center
+   :alt: Screenshot of a computer's file manager window showing a list of files within the 'tmp.SimCenter' directory. Files are predominantly named 'posterior_samples_table_dataset_X.out' where X is a series of consecutive numbers from 26 to 36, as well as a 'posterior_samples_table_hyperparameters.out' and 'posterior_samples_table.out'. One item, 'sampling_results', is highlighted in the list and is a folder. All files are of the type 'Sublime...cument' and were last modified 'Today at 11:24 AM'. At the bottom of the window, the path is shown as 'Macintosh HD > Users > aakash > Documents > quoFEM > LocalWorkDir > tmp.SimCenter > sampling_results'.
    :figclass: align-center
    :width: 600
 
@@ -258,6 +276,7 @@ In addition to the results displayed in the RES panel in quoFEM, JSON files with
 
 .. figure:: figures/RES6.png
    :align: center
+   :alt: A screenshot of a computer's file explorer window, with a folder named 'sampling_results' open. The window displays a list of files named 'sample_2185.json' through 'sample_2200.json,' all modified on 'Today at 11:24 AM', each 26 KB in size, and of 'JSON' file type. The file 'sample_2200.json' is highlighted, suggesting it is selected. The file path at the bottom indicates the folder is located within the user's documents directory on a Macintosh HD.
    :figclass: align-center
    :width: 600
 

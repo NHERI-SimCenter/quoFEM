@@ -17,6 +17,7 @@ This example constructs a Gaussian process-based surrogate model for the respons
 
 .. figure:: figures/SUR-Concept.PNG
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 600
 
@@ -56,6 +57,7 @@ Below is the time history of the ground motion excitation.
 
 .. figure:: figures/SUR-GM.PNG
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 600
 
@@ -78,6 +80,7 @@ UQ Workflow
 
 .. figure:: figures/SUR-UQtab1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -86,6 +89,7 @@ UQ Workflow
 
 .. figure:: figures/SUR-FEMtab.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -93,6 +97,7 @@ UQ Workflow
 
 .. figure:: figures/SUR-RVtab.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -104,6 +109,7 @@ UQ Workflow
 
 .. figure:: figures/SUR-QoItab.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -116,6 +122,7 @@ UQ Workflow
 
 .. figure:: figures/SUR-REStab1st1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -124,6 +131,7 @@ UQ Workflow
 
 .. figure:: figures/SUR-REStab1st2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -132,6 +140,7 @@ Well-trained model will form a clear diagonal line while poorly trained model ar
 
 .. figure:: figures/SUR-REStab3.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 600
 
@@ -139,6 +148,7 @@ Well-trained model will form a clear diagonal line while poorly trained model ar
 
 .. figure:: figures/SUR-UQtab2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -148,6 +158,7 @@ Well-trained model will form a clear diagonal line while poorly trained model ar
 
 .. figure:: figures/SUR-REStab2nd1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -158,6 +169,7 @@ Well-trained model will form a clear diagonal line while poorly trained model ar
 
 .. figure:: figures/SUR-REStab2nd2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-c
    :width: 1200
    
@@ -175,6 +187,7 @@ Once surrogate model is constructed, it can be used for various UQ/optimization 
 
 .. figure:: figures/SUR-VER1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -190,6 +203,7 @@ Once surrogate model is constructed, it can be used for various UQ/optimization 
 
 .. figure:: figures/SUR-VER2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -198,6 +212,7 @@ Once surrogate model is constructed, it can be used for various UQ/optimization 
 
 .. figure:: figures/SUR-VER3.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -207,6 +222,7 @@ Once surrogate model is constructed, it can be used for various UQ/optimization 
 
 .. figure:: figures/SUR-VER4.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -216,6 +232,7 @@ Once surrogate model is constructed, it can be used for various UQ/optimization 
 
 .. figure:: figures/SUR-VER5.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -250,6 +267,7 @@ Kurtosis           4.86                           9.76                     5.38
 
 .. figure:: figures/SUR-VER6.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -258,6 +276,7 @@ Kurtosis           4.86                           9.76                     5.38
 
 .. figure:: figures/SUR-VER7.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 

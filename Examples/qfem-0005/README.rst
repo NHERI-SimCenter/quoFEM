@@ -18,6 +18,7 @@ expression:
 
 .. figure:: qfem-0005.png
    :width: 500px 
+   :alt: Image showing error in description
    :align: center
 
 A forward propagation analysis will be conducted to numerically

@@ -20,6 +20,7 @@ vertical displacement at node 3 using Latin hypercube sampling.
 
 .. figure:: qfem-0002.png
    :align: center 
+   :alt: Image showing error in description
    :width: 500px
 
 The following parameters are defined in the **RV** tab of quoFEM:

@@ -25,6 +25,7 @@ Consider the two-story building structure shown in :numref:`figSteelStructuralSy
 
 .. figure:: figures/qfem-0007-SteelStructuralSystem.png
    :align: center
+   :alt: The image illustrates a three-dimensional structural drawing of a two-story building framework. The structure consists of horizontal slabs and vertical elements that seem to be beams or columns. The drawing includes dimensions: each floor is indicated to be 10 feet high, the building's length is 33 feet 4 inches, and the width is noted as 30 feet. The illustration also marks the X, Y, and Z axes for reference, with the Z-axis pointing upwards, the Y-axis to the right, and the X-axis pointing towards the viewer. The drawing uses shading and perspective to convey depth, and several cross symbols likely represent connection points or load points on the beams. Hatch patterns at the bottoms of the columns suggest foundation or support structures.
    :width: 400
    :figclass: align-center
    
@@ -40,6 +41,7 @@ A translational mass :math:`m_1/2` and :math:`m_2/2` is lumped at the nodes of f
 
 .. figure:: figures/qfem-0007.png
    :align: center
+   :alt: "Diagram depicting a structural model with labeled nodes and elements representing a frame. The frame consists of vertical and horizontal members connected at nodes numbered from 1 to 6. Each joint has rotational springs with stiffnesses k1 and k2, indicated by divided rectangles labeled 'k1/2' and 'k2/2'. Two horizontal displacements, u1 and u2, are shown applied to nodes 4 and 6. The model includes X, Y, and Z axes for reference, with dimensions given in feet and inches, such as 'h = 10' and '33' - 4"'. There is an equation in the center that reads 'k1, k2 = 48 E^col I^col / h^3', suggesting a calculation of stiffness coefficients based on column properties and height. The structural elements are marked with double arrows indicating axes of bending."
    :width: 400
    :figclass: align-center
    
@@ -70,6 +72,7 @@ The eigenvectors in :eq:`eqnEigenVectors` are normalized such that the first com
 
 .. figure:: figures/qfem-0007-NaturalModeShapes.png
    :align: center
+   :alt: The image displays two diagrams labeled (a) and (b) showing the deformation of a mechanical structure under load. Both diagrams illustrate a square frame with one corner fixed to a hatched base, representing an anchor point. In diagram (a), the square frame remains in its original shape with dotted red lines indicating the undeformed position and solid black lines with blue squares at the corners representing the deformed position, also labeled with measurements: 1.41 inches diagonally and 1.00 inch on the vertical side. In diagram (b), the frame is significantly deformed into a distorted parallelogram shape with the same labeling. The dotted lines suggest the original square shape and the solid lines show the deformed state, with the top part pushed inward by 1.41 inches and the side remaining at 1.00 inch as indicated by the measurements. The deformation suggests a compressive force applied horizontally to the top of the frame in diagram (b).
    :width: 400
    :figclass: align-center
    
@@ -159,6 +162,7 @@ UQ workflow
 
 .. figure:: figures/qfem-0007-UQ.png
    :width: 600
+   :alt: Screenshot of a software interface focusing on uncertainty quantification (UQ) settings. The section displayed is titled "UQ Method" with options for "UQ Engine" set to "Dakota" and fields such as "Parallel Execution," "Save Working dirs," "Method" selected as "NL2SOL," "Max # Iterations" set to 1000, "Convergence Tol" set to 1e-10, and a field to specify a "Calibration data file" with a path provided and a 'Choose' button next to it. On the left side, there's a vertical navigation bar with options "UQ," "FEM," "RV," "EDP," and "RES," with the "UQ" option highlighted.
    :align: center
    :figclass: align-center
 
@@ -166,6 +170,7 @@ UQ workflow
 
 .. figure:: figures/qfem-0007-FEM.png
    :width: 600
+   :alt: Screenshot of a user interface for a software application, with the "FEM" tab selected on the left side. The tab content includes fields for "Input Script" and "Postprocess Script," with a file path displayed in the Input Script field. There is a dropdown menu set to "OpenSees" and blue "Choose" buttons next to each script field. The interface has a clean, modern design with a gray and blue color scheme.
    :align: center
    :figclass: align-center
 
@@ -178,6 +183,7 @@ UQ workflow
 
 .. figure:: figures/qfem-0007-RV.png
    :width: 600
+   :alt: Screenshot of a software interface for inputting random variables. The left sidebar shows menu options with "RV" highlighted, indicating the current section is about Random Variables. The main panel is titled "Input Random Variables" with two rows of input fields. Each row corresponds to a variable, labeled "lc1" and "lc2", with fields for "Distribution" (both set to "ContinuousDesign"), "Lower Bound" (both set to "500"), "Upper Bound" (both set to "2000"), and "Initial Point" (set to "1500" for lc1 and "500" for lc2). At the top right, there are buttons for "Add," "Clear All," "Correlation Matrix," "Export," and "Import."
    :align: center
    :figclass: align-center
 
@@ -189,6 +195,7 @@ UQ workflow
 
 .. figure:: figures/qfem-0007-QoI.png
    :width: 600
+   :alt: Screenshot of a user interface with a sidebar on the left featuring menu options labeled UQ, FEM, RV, EDP, and RES, with UQ and EDP highlighted in light blue against a dark grey background. On the right side of the screen, there's a section titled "Quantities of Interest" with two rows labeled "lambda" and "phi" under the column "Variable Name," each having a corresponding "Length" value of 1. Above this section are two buttons: a blue "Add" button and a "Clear all" button.
    :align: center
    :figclass: align-center
 
@@ -201,11 +208,13 @@ UQ workflow
 
 .. figure:: figures/qfem-0007-RES1.png
    :width: 600
+   :alt: Screenshot of a software interface with a vertical navigation menu on the left showing the options UQ, FEM, RV, EDP, and RES, with RES highlighted in blue. The main content area displays two sections labeled "Name" followed by text fields with 'lc1' and 'lc2', each paired with a description "Best Parameter" and numerical values '1168.83' and '1211.25' respectively. Tabs at the top read "Summary", "General", and "Data Values", with "General" tab currently active.
    :align: center
    :figclass: align-center
 
 .. figure:: figures/qfem-0007-RES2.png
    :width: 600
+   :alt: A screenshot of a software interface displaying a scatter plot and a data table. The scatter plot on the left shows a downward trend of data points with one point highlighted in red among the others in blue, plotted against two axes labeled 'lc1' and 'Run #'. On the right, a data table lists numerical values with column headers such as 'lc1', 'lc2', 'lambda', and 'phi'. Above the table, there are two button options: "Save Table" and "Save Columns Separately". A navigation menu on the left side indicates options such as "UQ", "FEM", "RV", "EDP", and the selected option "RES".
    :align: center
    :figclass: align-center
 

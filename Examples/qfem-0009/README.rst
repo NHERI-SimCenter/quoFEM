@@ -20,6 +20,7 @@ random variables.
 
 .. figure:: figures/qfem-0009.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
 
@@ -46,6 +47,7 @@ The following parameters are defined in the **RV** tab of quoFEM:
 
 .. figure:: figures/trussSensitivity-input-SimUQ.png
    :alt: Random variables for simple truss.
+   :alt: Image showing error in description
    :align: center
 
 
@@ -54,6 +56,7 @@ The following parameters are defined in the **RV** tab of quoFEM:
 
 .. figure:: figures/trussPDF.png
    :alt: Random variables for simple truss.
+   :alt: Image showing error in description
    :align: center
 
 
@@ -101,6 +104,7 @@ figure:
 
 .. figure:: figures/trussSensitivity-RES-SimUQ.png
    :alt: Sensitivity analysis results for simple truss.
+   :alt: Image showing error in description
    :align: center
 
    Sensitivity analysis results for simple truss.
@@ -199,6 +203,7 @@ Consider the case with correlated random variables. For example, below shows cor
 
 .. figure:: figures/trussSensitivity-corr.png
    :alt: Sensitivity analysis results for simple truss.
+   :alt: Image showing error in description
    :align: center
 
    Correlation matrix
@@ -207,6 +212,7 @@ The group-wise Sobol indices for {:math:`Au,Ao`} can be defined at the **QoI** t
 
 .. figure:: figures/trussSensitivity-advanced.png
    :alt: Sensitivity analysis results for simple truss.
+   :alt: Image showing error in description
    :align: center
 
    Setting advanced options for group-wise Sobol indices
@@ -215,6 +221,7 @@ The results of sensitivity analysis:
 
 .. figure:: figures/trussSensitivity-RES-SimUQ2.png
    :alt: Sensitivity analysis results for simple truss.
+   :alt: Image showing error in description
    :align: center
 
    Sensitivity analysis results for simple truss (with correlations)

@@ -19,6 +19,7 @@ random variables.
 
 .. figure:: qfem-0004.png
    :width: 500px
+   :alt: Image showing error in description
    :align: center
 
 The following parameters are defined in the **RV** tab of quoFEM:
@@ -82,6 +83,7 @@ figure:
 
 .. figure:: figures/trussSensitivity-RES.png
    :alt: Sensitivity analysis results for simple truss.
+   :alt: Image showing error in description
 
    Sensitivity analysis results for simple truss.
 

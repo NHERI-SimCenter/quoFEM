@@ -18,6 +18,7 @@ vertical displacement at node 3 using Latin hypercube sampling.
 
 .. figure:: qfem-0001.png
    :alt: Truss schematic diagram
+   :alt: Image showing error in description
    :width: 400px
    :align: center
 

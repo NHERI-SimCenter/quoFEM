@@ -25,6 +25,7 @@ The stress-strain data obtained experimentally from a cyclic test on a coupon pr
 
 .. figure:: figures/qf-0019-StressStrainData.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
    
@@ -38,6 +39,7 @@ This stress-strain data was obtained corresponding to a randomized strain histor
 
 .. figure:: figures/qf-0019-StrainHistory.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
    
@@ -49,6 +51,7 @@ The corresponding stress history is shown in :numref:`figExperimentalDataSteelCo
 
 .. figure:: figures/qf-0019-StressHistory.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
    
@@ -123,6 +126,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0019-UQ.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -130,6 +134,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0019-FEM.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -139,6 +144,7 @@ For each variable, specify the prior probability distribution and its parameters
 
 .. figure:: figures/qf-0019-RV.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -146,6 +152,7 @@ For each variable, specify the prior probability distribution and its parameters
 
 .. figure:: figures/qf-0019-QOI.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 5. Next click on the **Run** button. This will cause the backend application to launch the **UCSD_UQ** engine, which performs Bayesian calibration using the TMCMC algorithm. When done, the **RES** tab will be selected and the results will be displayed as shown in the figure below. The results show the first four moments of the posterior marginal probability distribution of the parameters estimated in this example. Also shown are the moments of the additional parameter of the likelihood function. Finally, the moments of the predictions of the model corresponding to the samples of the parameter values from their posterior probability distribution are also shown in this panel (not visible in this figure - you can see them by scrolling down in the application).
@@ -153,6 +160,7 @@ For each variable, specify the prior probability distribution and its parameters
 
 .. figure:: figures/qf-0019-RES1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -160,6 +168,7 @@ If the user selects the **Data Values** tab in the results panel, they will be p
 
 .. figure:: figures/qf-0019-RES2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -210,12 +219,14 @@ The inputs in the **FEM** and the **QoI** panels are the same as in the Bayesian
 
 .. figure:: figures/qf-0018-UQ.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 **RV** panel:
 
 .. figure:: figures/qf-0018-RV.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -225,6 +236,7 @@ After conducting the deterministc parameter estimation, the results obtained are
 
 .. figure:: figures/qf-0018-RES1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    
 The optimum parameter values estimated in this example match closely match the mean value of the posterior samples shown in the figure of the summary tab of the results panel for the Bayesian parameter estimation case.
@@ -234,9 +246,11 @@ The fit corresponding to the optimum parameter values is shown in the figures be
 
 .. figure:: figures/qf-0019-StressResults.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 .. figure:: figures/qf-0019-DeterministicCalibrationResults.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    

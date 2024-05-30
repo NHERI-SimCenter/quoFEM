@@ -7,6 +7,7 @@ Consider the problem of uncertainty quantification in a two-dimensional truss st
 
 .. figure:: figures/truss.png
    :align: center
+   :alt: Image showing error in description
    :width: 600
 
 The structure has uncertain properties that all follow normal distribution:
@@ -65,6 +66,7 @@ To perform a sampling or forward propagation uncertainty analysis the user would
 
 .. figure:: figures/trussUQ.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 * Sample size is related to the confidence interval of the estimates. Please refer to :ref:`here<lblDakotaForward>`.
@@ -74,18 +76,21 @@ To perform a sampling or forward propagation uncertainty analysis the user would
 
 .. figure:: figures/trussFEM.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 3. Next select the **RV** panel from the input panel. This should be pre-populated with four random variables with same names as those having ``pset`` in the tcl script. For each variable, from the drop down menu change them from having a constant distribution to a normal one and then provide the means and standard deviations specified for the problem.
 
 .. figure:: figures/trussRV.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 4. Next select the **QoI** tab. Here enter ``Node_3_Disp_2`` for the one variable. 
 
 .. figure:: figures/trussQoI.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -97,6 +102,7 @@ To perform a sampling or forward propagation uncertainty analysis the user would
 
 .. figure:: figures/trussRES1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -104,12 +110,14 @@ If the user selects the **Data** tab in the results panel, they will be presente
 
 .. figure:: figures/trussRES2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 Various views of the graphical display can be obtained by left and right clicking in the columns of the tabular data. If a singular column of the tabular data is pressed with both right and left buttons a frequency and CDF will be displayed, as shown in figure below.
 
 .. figure:: figures/trussRES5.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 Reliability Analysis
@@ -124,12 +132,14 @@ If one is interested in the probability that a particular response measure will 
 
 .. figure:: figures/trussSORM-UQ.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 After the user fills in the rest of the tabs as per the previous section, the user would then press the **RUN** button. The application (after spinning for a while with the wheel of death) will present the user with the results.
 
 .. figure:: figures/trussSORM-RES.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -144,11 +154,13 @@ In a global sensitivity analysis the user is wishing to understand what is the i
 
 .. figure:: figures/trussSens-UQ.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 After the user fills in the rest of the tabs as per the previous section, the user would then press the **RUN** button. The application (after spinning for a while with the wheel of death) will present the user with the results.
 
 .. figure:: figures/trussSensitivity-RES.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 

@@ -28,6 +28,7 @@ Consider the two-story building structure shown in :numref:`figSteelStructuralSy
 
 .. figure:: figures/qfem-0014-SteelStructuralSystem.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
    
@@ -44,6 +45,7 @@ A translational mass :math:`m_1/2` and :math:`m_2/2` is lumped at the nodes of f
 
 .. figure:: figures/qfem-0014.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
    
@@ -73,6 +75,7 @@ The eigenvectors in :eq:`eqnEigenVectorsBayes` are normalized such that the firs
 
 .. figure:: figures/qfem-0014-NaturalModeShapes.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
    
@@ -165,6 +168,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qfem-0014-UQ.png
    :width: 600
+   :alt: Image showing error in description
    :align: center
    :figclass: align-center
 
@@ -173,6 +177,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qfem-0014-FEM.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 600
 
@@ -183,6 +188,7 @@ For each variable, specify the prior probability distribution - from the **Distr
 
 .. figure:: figures/qfem-0014-RV.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 600
 
@@ -191,6 +197,7 @@ For each variable, specify the prior probability distribution - from the **Distr
 
 .. figure:: figures/qfem-0014-QoI.png
    :width: 600
+   :alt: Image showing error in description
    :align: center
    :figclass: align-center
 
@@ -205,6 +212,7 @@ Also shown are the moments of the estimated aditional error parameters per respo
 
 .. figure:: figures/qfem-0014-RES1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 600
 
@@ -213,6 +221,7 @@ If the user selects the **Data Values** tab in the results panel, they will be p
 
 .. figure:: figures/qfem-0014-RES2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 600
 
@@ -220,11 +229,13 @@ Various views of the graphical display can be obtained by left and right clickin
 
 .. figure:: figures/qfem-0014-RES3.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 600
 
 .. figure:: figures/qfem-0014-RES6.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 600
 
@@ -232,10 +243,12 @@ If a single column of the tabular data is pressed with both right and left butto
 
 .. figure:: figures/qfem-0014-RES4.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 600
  
 .. figure:: figures/qfem-0014-RES5.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 600

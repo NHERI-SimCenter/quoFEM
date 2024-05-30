@@ -29,6 +29,7 @@ The goal of the exercise is to demonstrate the use of ``PLoM model`` method unde
 
 .. figure:: figures/truss.png
    :align: center
+   :alt: Image showing error in description
    :width: 600
 
 1. Elastic modulus(``E``): mean :math:`\mu_E=205 kN/{mm^2}` and standard deviation :math:`\sigma_E =15 kN/{mm^2}` (COV = 7.3%)
@@ -60,24 +61,28 @@ PLoM Modeling
 
 .. figure:: figures/UQ.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 2. Next select the **FEM** panel from the input panel. This will default in the ``OpenSees`` engine. For the main script copy the path name to ``TrussModel.tcl`` or select **choose** and navigate to the file. For the **post-process script** field, repeat the same procedure for the ``TrussPost.tcl`` script.
 
 .. figure:: figures/FEM.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 3. Next select the **RV** panel from the input panel. This should be pre-populated with four random variables with same names as those having ``pset`` in the tcl script. For each variable, from the drop down menu change them from having a constant distribution to a normal one and then provide the means and standard deviations specified for the problem.
 
 .. figure:: figures/RV.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 4. Next select the **EDP** tab. Here two response variables ``Node_2_Disp_2`` and ``Node_3_Disp_2`` are defined, which should be consistent with the post-process script. 
 
 .. figure:: figures/EDP.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 .. note::   
@@ -89,12 +94,14 @@ PLoM Modeling
 
 .. figure:: figures/RES1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
    PCA representation error versus the PCA eigenvalues overlapped by the truncating PCA eigenvalue used in training
 
 .. figure:: figures/RES2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
    Diffusion map eigenvalue by components overlapped by the truncating eigenvalue used in training
@@ -106,6 +113,7 @@ the tabular data is pressed with both right and left buttons a frequency and CDF
 
 .. figure:: figures/RES3.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 The PLoM model can be saved and be loaded back for future use. The ``Save PLoM Model`` button at the bottom of Summary 
@@ -113,6 +121,7 @@ page would bring up a dialogue window for saving the model file to a user-define
 
 .. figure:: figures/RES4.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 

@@ -20,6 +20,7 @@ The stress-strain data generated synthetically from simulation of a cyclic test 
 
 .. figure:: figures/qf-0019-StressStrainData.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
    
@@ -32,6 +33,7 @@ This sample stress-strain data was obtained corresponding to a randomized strain
 
 .. figure:: figures/qf-0019-StrainHistory.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
    
@@ -44,6 +46,7 @@ Six such strain histories, shown in :numref:`figCouponStrainHistories` are used 
 
 .. figure:: figures/StrainHistories.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
    

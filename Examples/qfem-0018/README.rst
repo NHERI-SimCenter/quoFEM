@@ -49,6 +49,7 @@ In order to calibrate the material model, the stress data measured experimentall
 
 .. figure:: figures/qf-0018-StrainHistory.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 Files required
@@ -75,6 +76,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0018-UQ.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -82,6 +84,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0018-FEM.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -92,6 +95,7 @@ For each variable, specify the lower bounds, upper bounds and initial point from
 
 .. figure:: figures/qf-0018-RV.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -99,6 +103,7 @@ For each variable, specify the lower bounds, upper bounds and initial point from
 
 .. figure:: figures/qf-0018-QOI.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 5. Next click on the **Run** button. This will cause the backend application to launch the **Dakota** engine, which performs calibration using the selected algorithm in the **UQ** panel. When done the **RES** tab will be selected and the results will be displayed as shown in the figure below. The results show a summary of the best-fit values of each parameters.
@@ -106,6 +111,7 @@ For each variable, specify the lower bounds, upper bounds and initial point from
 
 .. figure:: figures/qf-0018-RES1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -113,6 +119,7 @@ If the user selects the **Data Values** tab in the results panel, they will be p
 
 .. figure:: figures/qf-0018-RES2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 
@@ -120,9 +127,11 @@ The best-fit obtained is shown in the figures below:
 
 .. figure:: figures/qf-0018-StressResults.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
 
 .. figure:: figures/qf-0018-DeterministicCalibrationResults.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    

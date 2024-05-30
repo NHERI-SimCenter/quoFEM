@@ -20,6 +20,7 @@ magnitudes whose probabilities of exceedance are 0.02, 0.2, 0.4, 0.6,
 
 .. figure:: qfem-0003.png
    :width: 500px
+   :alt: Image showing error in description
    :align: center
 
 The following parameters are defined in the **RV** tab of quoFEM:
@@ -114,6 +115,7 @@ Other reliability methods
 
 .. figure:: figures/trussFORM-RES2.png
 
+   :alt: Image showing error in description
    Reliability analysis (First order apprximation)
 
 **Global reliability** and **Importance sampling** methods can to identify probability levels corresponding to given response thresholds.
@@ -131,6 +133,7 @@ Global reliability:
 
 .. figure:: figures/trussGP-RES2.png
 
+   :alt: Image showing error in description
    Global reliability results.
 
 Importance Sampling (IS):
@@ -147,4 +150,5 @@ Importance Sampling (IS):
 
 .. figure:: figures/trussIS-RES2.png
 
+   :alt: Image showing error in description
    Importance Sampling (IS) results.

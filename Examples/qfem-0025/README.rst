@@ -25,6 +25,7 @@ where :math:`\varepsilon` is an additive Gaussian noise that represent the varia
 
 .. figure:: figures/qf-0025-data.png
    :align: center
+   :alt: Image showing error in description
    :width: 400
    :figclass: align-center
    
@@ -67,6 +68,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0025-UQ.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -74,6 +76,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0025-FEM.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -84,6 +87,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0025-RV.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -92,6 +96,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0025-EDP.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -105,6 +110,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0025-RES1.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 1200
 
@@ -112,6 +118,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0025-RES2.png
    :align: center
+   :alt: Image showing error in description
    :figclass: align-center
    :width: 600
 
@@ -119,6 +126,7 @@ Note that the goodness-of-fit measures above do not perfectly capture *goodness*
 
 .. figure:: figures/qf-0025-RES3.png
    :align: center
+   :alt: A screenshot of a data analysis interface displaying a scatter plot with prediction bounds and a corresponding data table. The scatter plot on the left shows a collection of blue points with vertical error bars along with an orange prediction band, indicating variance, mapped across an x-axis labeled 'X' and a y-axis with numerical values. One of the data points is highlighted with a red dot. On the right side of the image, a table displays rows labeled 'Run #' with corresponding 'X' and 'f' values, with the 13th run highlighted, showing an X value of about 1.0458 and an f value of about 11.13. The interface includes buttons for various data saving options such as 'Save Table,' 'Save Columns Separately,' 'Save RVs,' 'Save QoIs,' and 'Save Surrogate Predictions.'
    :figclass: align-center
    :width: 1200
 
