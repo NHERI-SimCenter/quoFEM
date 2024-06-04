@@ -29,7 +29,7 @@ The goal of the exercise is to demonstrate the use of ``PLoM model`` method unde
 
 .. figure:: figures/truss.png
    :align: center
-   :alt: Image showing error in description
+   :alt: A technical drawing represents a structural analysis model of a truss with node labels 1 through 6 and element labels 1 through 9. The truss is composed of straight members connected at their ends, forming a series of triangles to achieve stability. There are two applied vertical loads labeled 'P' at nodes 2 and 3. Each member of the truss is annotated with a length of '4m', indicating equal member lengths. Above the truss, the OpenSees logo, which is associated with the Open System for Earthquake Engineering Simulation software, is visible.
    :width: 600
 
 1. Elastic modulus(``E``): mean :math:`\mu_E=205 kN/{mm^2}` and standard deviation :math:`\sigma_E =15 kN/{mm^2}` (COV = 7.3%)
@@ -61,28 +61,28 @@ PLoM Modeling
 
 .. figure:: figures/UQ.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface with a menu on the left side with options "UQ," "FEM," "RV," "EDP," and "RES" highlighted by a teal-colored box. The main section of the interface is titled "UQ Method" and selected as "Surrogate Modeling." Below are settings for "UQ Engine" with "SimCenterUQ" selected, "SimCenterUQ Method Category" with "PLoM Model" selected, a drop-down for "Training Dataset" set to "Sampling and Simulation," settings for "Method" with "LHS" (Latin Hypercube Sampling) selected, "# Samples" set to 50, and a "Seed" of 150. There's also an entry for "New Sample Number Ratio" with a value of 5, and a checkbox for "Advanced Options" that is unchecked. The interface has a clean, modern design with a monochromatic color scheme.
    :figclass: align-center
 
 2. Next select the **FEM** panel from the input panel. This will default in the ``OpenSees`` engine. For the main script copy the path name to ``TrussModel.tcl`` or select **choose** and navigate to the file. For the **post-process script** field, repeat the same procedure for the ``TrussPost.tcl`` script.
 
 .. figure:: figures/FEM.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface with a menu on the left side displaying options such as UQ, FEM, RV, EDP, and RES. The main panel on the right shows settings related to FEM (Finite Element Method) with dropdown menus and file paths for 'Input Script' and 'Postprocess Script'. It includes a field labeled 'OpenSees', and 'Choose' buttons next to the file paths. The design is minimalist with a color scheme of blues, whites, and greys.
    :figclass: align-center
 
 3. Next select the **RV** panel from the input panel. This should be pre-populated with four random variables with same names as those having ``pset`` in the tcl script. For each variable, from the drop down menu change them from having a constant distribution to a normal one and then provide the means and standard deviations specified for the problem.
 
 .. figure:: figures/RV.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface for inputting random variables, labeled 'Input Random Variables'. It shows a table with columns for variable name, input type, distribution, mean, and standard deviation. Four variables (E, P, Ao, Au) are listed, with different types of distributions (Lognormal, Normal) and parameters for mean and standard deviation, with an option to 'Show PDF' for each. On the upper right side, there are buttons for 'Add', 'Clear All', 'Correlation Matrix', 'Export', and 'Import'. To the left of the interface, there are four vertical tabs labeled UQ, FEM, RV, EDP, and RES, with RV (Random Variables) currently selected.
    :figclass: align-center
 
 4. Next select the **EDP** tab. Here two response variables ``Node_2_Disp_2`` and ``Node_3_Disp_2`` are defined, which should be consistent with the post-process script. 
 
 .. figure:: figures/EDP.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a user interface with a panel labeled "Quantities of Interest". In this panel, there are two entries listed under "Variable Name": "Node_3_Disp_2" and "Node_2_Disp_2", both with a "Length" value of 1. There are buttons labeled "Add" and "Clear all" at the top right. On the left side, there are vertical tabs labeled "UQ", "FEM", "RV", "EDP", and "RES", with the "EDP" tab highlighted in blue.
    :figclass: align-center
 
 .. note::   
@@ -94,14 +94,14 @@ PLoM Modeling
 
 .. figure:: figures/RES1.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a computer interface showing the completion of Surrogate Modeling with a notification "termination code unidentified" and details of the number of training samples and model simulations. Below is a graph labeled "PLOM Training Results" with a line plot depicting PCA Error (Principal Component Analysis) versus PCA Eigenvalues, where the line shows a decreasing trend in error with lower eigenvalues. Points on the graph indicate both the PCA Error and the Minimum eigen taken in PCA. A red vertical line marks the boundary on the right side of the graph. There is a 'Save PLOM Model' option below the graph.
    :figclass: align-center
 
    PCA representation error versus the PCA eigenvalues overlapped by the truncating PCA eigenvalue used in training
 
 .. figure:: figures/RES2.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface showing the results of a surrogate modeling process with a status message "Surrogate Modeling Completed! termination code unidentified". Below the status message, training sample and simulation details are provided, followed by a graph titled "PLoM Training Results". The graph plots "Diff. Maps Eigenvalue" against the "Number of Component" on a logarithmic scale, showing a rapidly decreasing curve starting at 1.0 eigenvalue for the first component and approaching zero by the 50th component. The graph includes a horizontal line indicating the minimum eigen considered. At the bottom of the image, a button is visible labeled "Save PLoM Model", indicating an option to save the model results.
    :figclass: align-center
 
    Diffusion map eigenvalue by components overlapped by the truncating eigenvalue used in training
@@ -113,7 +113,7 @@ the tabular data is pressed with both right and left buttons a frequency and CDF
 
 .. figure:: figures/RES3.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of an analysis software interface displaying both a scatter plot and a data table. The scatter plot, located on the left side, shows numerous blue points distributed across two axes labeled "Node_3_Disp_2" and "uw." A menu on the far left side of the image shows options such as UQ, FEM, RV, EDP, and RES with the last option highlighted. The table on the right side lists columns labeled Run #, E, P, Ao, Au, Node_3_Disp_2, Node_2_Disp_2, and has multiple rows of numerical data. Two buttons labeled "Save Table" and "Save Columns Separately" are located at the top of the data table section.
    :figclass: align-center
 
 The PLoM model can be saved and be loaded back for future use. The ``Save PLoM Model`` button at the bottom of Summary 
@@ -121,7 +121,7 @@ page would bring up a dialogue window for saving the model file to a user-define
 
 .. figure:: figures/RES4.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a 'Save Data' dialog window on a computer with the 'Desktop' folder selected. A field labeled 'File name:' displays 'SurrogatePLoM.h5', and the 'Save as type:' field is set to 'H5 File (*.h5)'. Two folders are visible in the Desktop folder: 'example_plom' and 'testPLoM'. There's also a blue 'Save PLoM Model' button in the lower-left corner within a section titled 'Saving Options'.
    :figclass: align-center
 
 

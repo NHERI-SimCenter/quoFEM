@@ -7,7 +7,7 @@ Consider the problem of uncertainty quantification in a two-dimensional truss st
 
 .. figure:: figures/truss.png
    :align: center
-   :alt: Image showing error in description
+   :alt: A schematic diagram of a truss structure with labeled nodes and applied loads. The top beam of the truss is divided into three sections, each 4 meters in length, with the logo of OpenSees near the right end. Below are angled and vertical elements connecting to the ground at four nodes, with fixed supports at the outer nodes and rollers at the inner nodes. Point loads labeled as "P" are applied downwards at the two central nodes at the bottom of the vertical elements. The truss is depicted in a white line drawing style on a black background.
    :width: 600
 
 The structure has uncertain properties that all follow normal distribution:
@@ -66,7 +66,7 @@ To perform a sampling or forward propagation uncertainty analysis the user would
 
 .. figure:: figures/trussUQ.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface with a left-side vertical navigation bar having entries for FEM, RV, EDP, and RES, highlighted on UQ. The main panel shows settings for 'UQ Method' with a dropdown menu set to 'Forward Propagation', an 'UQ Engine' with 'Dakota' selected, checkboxes for 'Parallel Execution' and 'Save Working dirs', and a section for 'Method' set to 'LHS' with inputs for '# Samples' set to '1000' and 'Seed' set to '20'.
    :figclass: align-center
 
 * Sample size is related to the confidence interval of the estimates. Please refer to :ref:`here<lblDakotaForward>`.
@@ -76,21 +76,21 @@ To perform a sampling or forward propagation uncertainty analysis the user would
 
 .. figure:: figures/trussFEM.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface with a focus on the Finite Element Method (FEM) configuration. It shows dropdown selections and fields with file paths for an "Input Script" and a "Postprocess Script," both pointing to Tcl script files within a directory structure. To the right of each file path field is a "Choose" button, likely for browsing and selecting files. On the left side, there are other abbreviated category labels such as UQ, RV, EDP, and RES, suggesting different modules or steps in the software process. The FEM tab is currently active, indicated by its darker shade.
    :figclass: align-center
 
 3. Next select the **RV** panel from the input panel. This should be pre-populated with four random variables with same names as those having ``pset`` in the tcl script. For each variable, from the drop down menu change them from having a constant distribution to a normal one and then provide the means and standard deviations specified for the problem.
 
 .. figure:: figures/trussRV.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a user interface for inputting random variables in a software application. There are fields for variable name, distribution, mean, and standard deviation, with options to add new variables, clear all, or access a correlation matrix. Current variables include 'E' with a lognormal distribution, mean of 205, and standard deviation of 15; 'P' with a normal distribution, mean of 25, and standard deviation of 3; 'Ao' with a lognormal distribution, mean of 250, and standard deviation of 10; and 'Au' with a normal distribution, mean of 500, and standard deviation of 25. Buttons for exporting, importing, and showing the probability distribution function (PDF) are visible.
    :figclass: align-center
 
 4. Next select the **QoI** tab. Here enter ``Node_3_Disp_2`` for the one variable. 
 
 .. figure:: figures/trussQoI.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a computer interface with a panel titled "Quantities of Interest" displaying a list with one item. The item shown is a variable named "Node_3_Disp_2" with a length value of "1". Two buttons labeled "Add" and "Clear all" are available above the list. On the left side, there is a vertical menu with abbreviated options "UQ", "FEM", "RV", highlighted "EDP", and "RES". The overall color scheme is shades of blue and gray.
    :figclass: align-center
 
 
@@ -102,7 +102,7 @@ To perform a sampling or forward propagation uncertainty analysis the user would
 
 .. figure:: figures/trussRES1.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a section of a software interface displaying statistical data. On the left is a vertical navigation bar with the labels UQ, FEM, RV, EDP, and RES, with the RV section highlighted. On the right, there is a tabbed section with 'Summary' and 'Data Values' tabs, with 'Summary' shown. Below, there's a table with headings: Name, Mean, StdDev, Skewness, and Kurtosis. One entry is visible under Name, 'Node_3_Disp_2', with corresponding statistics: Mean of 7.36686, Standard Deviation of 1.06435, Skewness of 0.210605, and Kurtosis of 3.10805. The background colors are a mix of whites and light grays, with the navigation bar having a darker gray or blue shade.
    :figclass: align-center
 
 
@@ -110,14 +110,14 @@ If the user selects the **Data** tab in the results panel, they will be presente
 
 .. figure:: figures/trussRES2.png
    :align: center
-   :alt: Image showing error in description
+   :alt: A screenshot of a computer interface displaying scientific data analysis. On the left side of the image, a scatter plot graph labeled "Samples" and "Run # 6" shows a cluster of blue data points, with the axes labeled "Node_3_Disp_2." On the right side, a spreadsheet table lists data under columns "Run #," "P," "Au," "E," "Ao," and "Node_3_Disp_2," with some cells highlighted in blue indicating selected data points. At the top right corner, there are buttons to "Save Table" and "Save Columns Separately."
    :figclass: align-center
 
 Various views of the graphical display can be obtained by left and right clicking in the columns of the tabular data. If a singular column of the tabular data is pressed with both right and left buttons a frequency and CDF will be displayed, as shown in figure below.
 
 .. figure:: figures/trussRES5.png
    :align: center
-   :alt: Image showing error in description
+   :alt: The image displays three sections of statistical analysis data. The left section shows a histogram representing frequency distribution, with the frequency percentage on the y-axis and an unknown variable labeled 'Node_3_Disp_2' on the x-axis. The central section presents a cumulative frequency distribution curve, with cumulative probability on the y-axis and the same 'Node_3_Disp_2' variable on the x-axis. The right section contains a data table with columns for 'Run #', 'P', 'Au', 'E', 'Ao', and 'Node_3_Disp_2'. Multiple rows of numerical data are shown with a specific value in the 'Node_3_Disp_2' column highlighted in blue. The top of the right section includes buttons labeled 'Save Table' and 'Save Columns Separately'.
    :figclass: align-center
 
 Reliability Analysis
@@ -132,14 +132,14 @@ If one is interested in the probability that a particular response measure will 
 
 .. figure:: figures/trussSORM-UQ.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface with settings for Uncertainty Quantification (UQ) methods. Includes fields such as UQ Method set to Reliability Analysis, UQ Engine set to Dakota, options for Parallel Execution and Save Working dirs, Reliability Method set to Local Reliability, and several dropdown menus for Local Approximation, Design Point (MPP) Search Method, Approximation Order, and Reliability Levels. The reliability levels include numerical values such as 0.02, 0.20, 0.40, 0.60, 0.80, and 0.99.
    :figclass: align-center
 
 After the user fills in the rest of the tabs as per the previous section, the user would then press the **RUN** button. The application (after spinning for a while with the wheel of death) will present the user with the results.
 
 .. figure:: figures/trussSORM-RES.png
    :align: center
-   :alt: Image showing error in description
+   :alt: A line graph displaying a probability level on the y-axis, which ranges from 0.00 to 1.00, against Node_3_Disp_2 on the x-axis, ranging approximately from 5.44 to 10.23. The line in the graph shows a steady increase in the probability level as Node_3_Disp_2 increases. Below the graph is a table with two columns. The left column lists percentages, while the right column lists corresponding values for Node_3_Disp_2, aligning with points on the graph. The user interface elements on the left side, such as UQ, FEM, RV, QoI, and RES, appear to be part of an application menu, and are not directly related to the content of the graph.
    :figclass: align-center
 
 
@@ -154,13 +154,13 @@ In a global sensitivity analysis the user is wishing to understand what is the i
 
 .. figure:: figures/trussSens-UQ.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a user interface for uncertainty quantification (UQ) analysis settings. Two dropdown menus are labeled "UQ Method" and "Sensitivity Analysis." Below the menus, "UQ Engine" is set to "Dakota," with options checked for "Parallel Execution" and "Save Working dirs." The UQ method chosen is "LHS" with "# Samples" set to 1000 and "Seed" set to 175. A note at the bottom indicates the expected number of FEM calls as a function of samples and RVs (random variables). The interface element is minimalistic with a white background.
    :figclass: align-center
 
 After the user fills in the rest of the tabs as per the previous section, the user would then press the **RUN** button. The application (after spinning for a while with the wheel of death) will present the user with the results.
 
 .. figure:: figures/trussSensitivity-RES.png
    :align: center
-   :alt: Image showing error in description
+   :alt: A screenshot of a software interface displaying "Node_3_Disp_2 Sobol' indices" with a table and a corresponding horizontal bar chart. The table lists 'Random Variable' with entries P, Au, E, and Ao, showing numerical values under 'Main' and 'Total'. The bar chart illustrates these values with bars, where P has the highest value and is represented with a longer bar in comparison to the others. There are tabs labeled 'Summary', 'Data Values', 'UQ', 'FEM', 'RV', 'EDP', and 'RES' on the left side, and a 'Save Results' button at the bottom right.
    :figclass: align-center
 

@@ -25,7 +25,7 @@ The stress-strain data obtained experimentally from a cyclic test on a coupon pr
 
 .. figure:: figures/qf-0019-StressStrainData.png
    :align: center
-   :alt: Image showing error in description
+   :alt: A graph displaying a cyclic stress-strain curve with multiple loops, which indicate the behavior of a material under repeated loading and unloading. The vertical axis is labeled "Stress (MPa)" and spans from -600 MPa to 600 MPa, while the horizontal axis is labeled "Strain" and ranges from -0.05 to 0.02. The plotted stress-strain loops are colored in blue with dashed lines, featuring distinct peaks and troughs that suggest a ductile material's response to cyclic deformation.
    :width: 400
    :figclass: align-center
    
@@ -39,7 +39,7 @@ This stress-strain data was obtained corresponding to a randomized strain histor
 
 .. figure:: figures/qf-0019-StrainHistory.png
    :align: center
-   :alt: Image showing error in description
+   :alt: A line graph displaying a waveform with oscillations marked by blue dots connected by lines, showing a parameter labeled 'Strain' on the y-axis ranging from 0.02 to -0.05 and 'Timestep' on the x-axis ranging from 0 to 300. The waveform appears to show a repeating and fluctuating signal with peaks and troughs over the time steps indicated.
    :width: 400
    :figclass: align-center
    
@@ -51,7 +51,7 @@ The corresponding stress history is shown in :numref:`figExperimentalDataSteelCo
 
 .. figure:: figures/qf-0019-StressHistory.png
    :align: center
-   :alt: Image showing error in description
+   :alt: A line graph displaying oscillating stress values in MPa against timesteps. The stress values quickly fluctuate between approximately -600 MPa and 600 MPa, suggesting a repeated cyclical or sinusoidal pattern over time. The graph has a blue color scheme with points connected by lines, demonstrating multiple cycles of rapid increases and decreases in stress over the depicted timesteps ranging from 0 to 300.
    :width: 400
    :figclass: align-center
    
@@ -126,7 +126,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0019-UQ.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface with a focus on the Uncertainty Quantification (UQ) settings. The GUI shows options such as UQ Method with 'Bayesian Calibration' selected from a dropdown menu, UQ Engine set to 'UCSD-UQ', and fields for 'Sample Size', 'Seed', 'Calibration Data File', and 'Log Likelihood Script'. Two 'Choose' buttons are visible adjacent to the file path inputs. A note recommends a sample size of at least 200. On the left side, there's a vertical navigation bar with the selected UQ tab highlighted, and other tabs labeled 'FEM', 'RV', 'EDP', and 'RES'.
    :figclass: align-center
 
 
@@ -134,7 +134,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0019-FEM.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface with a menu bar on the left side showing options UQ, FEM, RV, EDP, and RES, with the FEM category highlighted. In the main panel, there is a section labeled FEM with a dropdown menu set to "OpenSees," and input fields for "Input Script" and "Postprocess Script" with file paths provided and 'Choose' buttons next to them.
    :figclass: align-center
 
 
@@ -144,7 +144,7 @@ For each variable, specify the prior probability distribution and its parameters
 
 .. figure:: figures/qf-0019-RV.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface with a section titled "Input Random Variables" displaying a table where variables such as "fy," "E," "b," "cR1," "cR2," "a1," and "a3" are listed with their corresponding distribution types, all set to "Uniform," and their minimum and maximum values. Buttons for "Add," "Clear All," "Export," and "Import" are present at the top, as well as "Show PDF" options for each variable. On the left side, tabs labeled "UQ," "FEM," "RV," "EDP," and "RES" are shown, with "RV" being the active tab.
    :figclass: align-center
 
 
@@ -152,7 +152,7 @@ For each variable, specify the prior probability distribution and its parameters
 
 .. figure:: figures/qf-0019-QOI.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface with a panel titled "Quantities of Interest" containing input fields for a variable name and length. The variable name 'stress' is entered with a corresponding length value '342'. On the left side, there is a vertical navigation bar with highlighted options including 'UQ', 'FEM', 'RV', 'EDP' in focus, and 'RES'. The 'Add' and 'Clear all' buttons are visible at the top right of the panel.
    :figclass: align-center
 
 5. Next click on the **Run** button. This will cause the backend application to launch the **UCSD_UQ** engine, which performs Bayesian calibration using the TMCMC algorithm. When done, the **RES** tab will be selected and the results will be displayed as shown in the figure below. The results show the first four moments of the posterior marginal probability distribution of the parameters estimated in this example. Also shown are the moments of the additional parameter of the likelihood function. Finally, the moments of the predictions of the model corresponding to the samples of the parameter values from their posterior probability distribution are also shown in this panel (not visible in this figure - you can see them by scrolling down in the application).
@@ -160,7 +160,7 @@ For each variable, specify the prior probability distribution and its parameters
 
 .. figure:: figures/qf-0019-RES1.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a statistical analysis interface displaying a list of parameters with their corresponding mean, standard deviation, skewness, and kurtosis values. A side menu indicates categories such as UQ, FEM, RV, EDP, and the selected RES. Each parameter has a text field next to the name, with various statistical results including values for factors such as "fy," "E," "b," "cR1," "cR2," "a1," "a3," and "stress.CovMultiplier."
    :figclass: align-center
 
 
@@ -168,7 +168,7 @@ If the user selects the **Data Values** tab in the results panel, they will be p
 
 .. figure:: figures/qf-0019-RES2.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a computer interface showing a scatter plot with a number of data points labeled "Samples" and one data point labeled "Run #1" highlighted in red. Alongside the plot is a data table with numerical values across multiple columns labeled "Run #", "fy", "E", "b", "cR1", "cR2", "a1", and "a3". Tabs at the top indicate "Summary" and "Data Values", and there are options to "Save Table" and "Save Columns Separately". On the left side, there's a vertical navigation menu with options like "UQ", "FEM", "RV", "EDP", and "RES" highlighted.
    :figclass: align-center
 
 
@@ -219,14 +219,14 @@ The inputs in the **FEM** and the **QoI** panels are the same as in the Bayesian
 
 .. figure:: figures/qf-0018-UQ.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface with a side navigation bar showing options labeled UQ, FEM, RV, EDP, and RES. The main panel is titled 'UQ Method' with a dropdown menu set to 'Deterministic Calibration'. Below this, settings for 'UQ Engine' set to 'Dakota' with checkboxes for 'Parallel Execution' and 'Save Working dirs'. Advanced options include a 'Method' dropdown set to 'NL2SOL', fields for 'Max # Iterations' with 100 entered, and 'Convergence Tol' with 0.0001 entered. There is a 'Calibration data file' field with a file path ending in 'calDataField.csv' and a blue 'Choose' button next to it.
    :figclass: align-center
 
 **RV** panel:
 
 .. figure:: figures/qf-0018-RV.png
    :align: center
-   :alt: Image showing error in description
+   :alt: A screenshot of a software interface with a section titled "Input Random Variables" displaying a table of variable input fields and parameters. The variables 'fy,' 'E,' 'b,' 'cR1,' 'cR2,' 'a1,' and 'a3' are listed with their corresponding distribution set to 'ContinuousDesign,' along with numerical values specifying their 'Lower Bound,' 'Upper Bound,' and 'Initial Point.' To the right of the table, a navigation menu includes items such as 'UQ,' 'FEM,' 'RV,' 'EDP,' and 'RES.' Above the table, there are buttons labeled 'Add,' 'Clear All,' 'Correlation Matrix,' 'Export,' and 'Import.'
    :figclass: align-center
 
 
@@ -236,7 +236,7 @@ After conducting the deterministc parameter estimation, the results obtained are
 
 .. figure:: figures/qf-0018-RES1.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface with a menu column on the far left with options 'UQ', 'FEM', 'RV', 'EDP', highlighted 'RES', and several data fields in the main pane. The data fields are labeled as "fy," "E," "b," "cR1," "cR2," "a1," and "a3" with associated “Best Parameter” numerical values next to each, ranging from 480.529 for "fy" to 0.0250407 for "a3." Three tabs are at the top right named 'Summary', 'General', and 'Data Values', with 'General' currently selected.
    :figclass: align-center
    
 The optimum parameter values estimated in this example match closely match the mean value of the posterior samples shown in the figure of the summary tab of the results panel for the Bayesian parameter estimation case.
@@ -246,11 +246,11 @@ The fit corresponding to the optimum parameter values is shown in the figures be
 
 .. figure:: figures/qf-0019-StressResults.png
    :align: center
-   :alt: Image showing error in description
+   :alt: A line graph displaying stress over time with the stress measured in megapascals (MPa) on the y-axis ranging from -600 to 600 and the timestep on the x-axis ranging from 0 to 300. The graph depicts a series of oscillations in stress, with red lines having sharp peaks and troughs, closely accompanying a blue dashed line that smooths out these oscillations.
    :figclass: align-center
 
 .. figure:: figures/qf-0019-DeterministicCalibrationResults.png
    :align: center
-   :alt: Image showing error in description
+   :alt: A stress-strain hysteresis curve with multiple loops. The graph plots stress in megapascals (MPa) on the y-axis, ranging from -600 to 600 MPa, against strain on the x-axis, ranging from -0.05 to 0.02. There are several overlapping loops indicating cyclic loading and unloading behavior of a material, with lines in blue solid and dashed red patterns showing different test conditions or cycles.
    :figclass: align-center
    

@@ -20,7 +20,7 @@ magnitudes whose probabilities of exceedance are 0.02, 0.2, 0.4, 0.6,
 
 .. figure:: qfem-0003.png
    :width: 500px
-   :alt: Image showing error in description
+   :alt: Engineering diagram of a truss structure with labeled joints 1 through 6 and spans marked as 4 meters each. Two vertical forces labeled 'P' act downwards at joints 2 and 3. Joint 1 is fixed, and joint 4 is on a roller support. The entire structure is 12 meters in length and 4 meters in height.
    :align: center
 
 The following parameters are defined in the **RV** tab of quoFEM:
@@ -89,8 +89,7 @@ selected and the results will be displayed as shown in the following
 figure:
 
 .. figure:: figures/trussSORM-RES.png
-
-   Reliability analysis (Second order apprximation)
+   :alt: Reliability analysis (Second-order approximation)
 
 
 
@@ -114,9 +113,8 @@ Other reliability methods
 +--------------------------+------------------------------------+
 
 .. figure:: figures/trussFORM-RES2.png
-
-   :alt: Image showing error in description
-   Reliability analysis (First order apprximation)
+   :alt: Reliability analysis (First order approximation). A screenshot of a computer interface with a line graph and an accompanying data table. The graph plots 'Probability level' on the y-axis against 'Node_3_Disp_2' on the x-axis and shows a steady increase from lower left to upper right, suggesting a positive correlation between the variables. The x-axis ranges from 5.10 to 11.50, and the y-axis ranges from 0.00 to 1.00. Below the graph, there is a table with two columns labeled 'Pr(Node_3_Disp_2)' and 'Node_3_Disp_2', containing nine pairs of numerical data values corresponding to points on the graph. The sidebar on the left side of the image contains unidentified acronyms such as 'UQ', 'FEM', 'RV', 'QoI', and 'RES'.
+   
 
 **Global reliability** and **Importance sampling** methods can to identify probability levels corresponding to given response thresholds.
 
@@ -132,9 +130,8 @@ Global reliability:
 +--------------------------+------------------------------------+
 
 .. figure:: figures/trussGP-RES2.png
-
-   :alt: Image showing error in description
-   Global reliability results.
+   :alt: Global reliability results. A line graph displaying a positive linear relationship, with the horizontal axis labeled "Node_3_Disp_2" ranging from 5.00 to 9.00 and the vertical axis labeled "Probability Level" ranging from 0.00 to 1.00. The line graph depicts a steady increase in probability level as Node_3_Disp_2 increases. Below the graph is a table with two columns headed "Pr(Node_3_Disp_2)" and "Node_3_Disp_2," showing corresponding probability values and node values, ranging from approximately 0.000818 to about 0.839396 for the probabilities and 5 to 9 for the Node_3_Disp_2 values.
+   
 
 Importance Sampling (IS):
 
@@ -149,6 +146,5 @@ Importance Sampling (IS):
 +--------------------------+------------------------------------+
 
 .. figure:: figures/trussIS-RES2.png
-
-   :alt: Image showing error in description
-   Importance Sampling (IS) results.
+   :alt: Importance Sampling results. The image displays a line graph with the horizontal x-axis labeled "Node_3_Disp_2" ranging from approximately 5.00 to 9.00, and the vertical y-axis labeled "Probability Level" ranging from 0.00 to 1.00. The graph shows a blue line that starts at a lower point on the y-axis near 0.00 and gradually increases to a higher point near 1.00 as it moves from left to right along the x-axis. Below the graph, there is a table with two columns; the left column is unlabeled with rows numbered 1 through 5 showing numeric values that seem to correspond to the data points on the graph, while the right column, labeled "Node_3_Disp_2," has rows numbered 5 through 9 without corresponding values shown. To the left of the graph, there is a vertical navigation bar with various options like UQ, FEM, RV, QoI, and RES highlighted.
+   

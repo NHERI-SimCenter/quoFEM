@@ -17,7 +17,7 @@ the following simplified finite element model of a steel building.
 
 .. figure:: qfem-0008.png
    :width: 500px
-   :alt: Image showing error in description
+   :alt: A schematic diagram of a structural model with six numbered nodes connected by elements to represent a beam or frame. The structure has vertical and horizontal members with boundary conditions shown by blue squares and rollers, indicating fixed and hinged supports respectively. Displacements u1 and u2 are indicated by arrows at nodes 4 and 6. The diagram includes stiffness coefficients k1 and k2, divided by 2, shown next to the nodes 1, 2, 3, and 4. The distances between nodes are marked as 'h = 10' at two locations vertically, and '33' - 4"' horizontally. There's a central boxed equation, k1, k2 = 48*E*Icol / s^3*Iyycol / h^3, signifying a relation between stiffness coefficients, the modulus of elasticity (E), the second moment of area (I), column length (s), and column height (h). Axis labels for X, Y, and Z are shown in the lower-left corner to indicate the orientation of the structure.
    :align: center
 
 

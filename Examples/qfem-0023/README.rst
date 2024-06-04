@@ -35,7 +35,7 @@ Problem description
 
 .. figure:: figures/qf-0023-Steel02.png
    :align: center
-   :alt: Image showing error in description
+   :alt: A graph displaying stress versus strain for materials, with stress in ksi on the vertical axis and strain in inches per inch on the horizontal axis. Several curves are plotted, showing different materials' responses, typically starting from the origin and progressing through different slopes (elastic moduli), yielding points, and ultimate strengths before failure.
    :width: 400
    :figclass: align-center
    
@@ -90,7 +90,7 @@ The exercise requires one main script file and one supplementary file. The user 
 
 .. figure:: figures/qf-0023-StrainHistory.png
    :align: center
-   :alt: Image showing error in description
+   :alt: The image is a line graph displaying a fluctuating signal over time. The horizontal axis is labeled 'Timestep' and ranges from 0 to 300. The vertical axis is labeled 'Strain' and ranges from -0.05 to 0.02. The graph shows a blue oscillating line with sharp peaks and valleys, suggesting periodic behavior with some irregularities or noise. The pattern repeats approximately every 100 timesteps.
    :width: 400
    :figclass: align-center
    
@@ -110,7 +110,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0023-UQ.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface for uncertainty quantification (UQ) with a vertical menu to the left showing categories FEM, RV, EDP, and RES highlighted in teal. The main area is titled "UQ Method" with drop-down menus and fields including "Sensitivity Analysis", "UQ Engine" set to "SimCenterUO", and "Method" set to "Monte Carlo". Additional fields indicate "# Samples" as 300 and "Seed" as 487. Options for "Resample RVs from correlated dataset" and "Advanced option for global sensitivity analysis" are shown as checkboxes, both are unchecked.
    :figclass: align-center
 
 If the total number of QoI components exceeds 15, quoFEM will automatically run 'principal component analysis and probability model-based sensitivity analysis (PCA-PSA)' [Jung2023]_ to gain efficiency.
@@ -120,7 +120,7 @@ Because this example have 342 QoI components representing stress values of discr
 
 .. figure:: figures/qf-0023-FEM.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a computer interface section labeled "FEM" for finite element modeling, indicating OpenSees as the selected software. There are fields for "Input Script" with a file path provided and for "Postprocess Script" which is marked as optional. There are "Choose" buttons next to each field, and tabs labeled "UQ", "FEM", "RV", "EDP", and "RES" on the left side of the window.
    :figclass: align-center
 
 
@@ -133,7 +133,7 @@ For each variable, specify the probability distribution and its parameters, as s
 
 .. figure:: figures/qf-0023-RV.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a user interface titled "Input Random Variables" with tabs for UQ, FEM, RV, EDP, RES. The main section displays a table with columns for Variable Name, Input Type, Distribution, and Parameters. There are variable names like "fy," "E," "b," "cR1," "cR2," "a1," and "a3" with input types and uniform distribution selected. Minimum and maximum values are specified for some variables. Buttons for "Add," "Clear All," "Show PDF," "Correlation Matrix," "Export," and "Import" are visible at the top and next to the parameter inputs.
    :figclass: align-center
 
 
@@ -144,7 +144,7 @@ For each variable, specify the probability distribution and its parameters, as s
 
 .. figure:: figures/qf-0023-QOI.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a user interface with a focus on "Quantities of Interest." It shows a section where a variable named "stress" with a length of "342" is listed. On the left side, there are tabs labeled "UQ," "FEM," "RV," "EDP," and "RES." The "UQ" tab appears to be the active one. Two buttons labeled "Add" and "Clear all" are visible at the top right corner of the Quantities of Interest section.
    :figclass: align-center
 
 **Note that the aggregated sensitivity indices will also be provided for the field QoIs. The aggregated sensitivity indices is obtained by weighted sum of the component sensitivity indices, where the weight is proportional to the variance of each QoI component. If multiple of field QoIs are defined, aggregated sensitivity indices will be provided for each of them.**
@@ -155,7 +155,7 @@ For each variable, specify the probability distribution and its parameters, as s
 
 .. figure:: figures/qf-0023-RES1.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface displaying a table and a bar graph titled "[aggregated]stress Sobol' Indices." The table lists random variables, with corresponding "Main" and "Total" values for Sobol' indices, such as "fy" (0.162), "E" (0.092), "b" (0.632), among others. The bar graph visually represents these indices, with "b" showing the most significant value. Additional information indicates an elapsed time of 28.6 seconds and a note mentioning PCA is performed for QoI, explaining 99.1808% of the total variance with 5 principal components. There is a dropdown menu, tabs for "Summary" and "Data Values," and a "Save Results" button.
    :figclass: align-center
 
 
@@ -165,7 +165,7 @@ If the user selects the **Data Values** tab in the results panel, they will be p
 
 .. figure:: figures/qf-0023-RES2.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of software displaying a scatter plot and a data table. The scatter plot, labeled "Samples" and "Run #1," shows numerous blue data points spread vertically across a horizontal axis labeled "Run #," which ranges from 0 to 301.0. The vertical axis values range from 261.8 to 738.4. To the right, a data table lists variables, including Run #, fy, E, b, cR1, and cR2, with data corresponding to 12 runs. Above the table are options to 'Save Table', 'Save Columns Separately', 'Save RVs', and 'Save QoIs'. The interface has a navigation sidebar on the left with categories such as UQ, FEM, RV, EDP, and RES highlighted in blue.
    :figclass: align-center
 
 
@@ -175,12 +175,12 @@ Using the same configuration but without PCA (with ``No`` option selected for 'P
 
 .. figure:: figures/qf-0023-RES3.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface with an expandable menu titled "Advanced option for global sensitivity analysis." It contains two configurable settings: one for entering a group of variable names for Sobol indices, with an example format provided, and another dropdown menu for selecting whether to perform PCA (Principal Component Analysis) with the options "No" currently selected.
    :figclass: align-center
 
 .. figure:: figures/qf-0023-RES4.png
    :align: center
-   :alt: Image showing error in description
+   :alt: Screenshot of a software interface displaying "[aggregated] stress Sobol' Indices". There is a table on the left with columns labeled "Random Variable", "Main", and "Total". The variables listed are fy, E, b, cR1, cR2, a1, and a3 with corresponding numerical values for each under the Main and Total columns. To the right, there's a bar graph plotting these variables against values between 0.00 and 1.00. Each variable has a pair of bars representing Main and Total, with 'b' having the highest bars. At the bottom left, it reads "Elapsed time: 1198.0s". A "Save Results" button is visible at the bottom right.
    :figclass: align-center
 
 

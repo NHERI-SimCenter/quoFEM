@@ -20,7 +20,7 @@ vertical displacement at node 3 using Latin hypercube sampling.
 
 .. figure:: qfem-0002.png
    :align: center 
-   :alt: Image showing error in description
+   :alt: Technical drawing of a truss structure with labeled dimensions and applied loads. The top horizontal member consists of three 4-meter sections. The truss is supported at the ends by joints labeled '1' and '4', and has two internal vertical members labeled '2' and '3' with point loads 'P' applied at their lower ends. Diagonal members connect the top and bottom nodes, with the bottom node of '2' and '3' being joined by a horizontal member. The vertical distance from the top horizontal member to the bottom nodes is labeled as 4 meters, making the structure a right triangle in shape. The image includes Python and Python's logo on the top right, suggesting a connection to Python programming.
    :width: 500px
 
 The following parameters are defined in the **RV** tab of quoFEM:
