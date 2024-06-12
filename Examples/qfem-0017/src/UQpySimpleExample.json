@@ -3,7 +3,7 @@
 	{
 		"type" : "ComboBox",
 		"name" : "Sampling Method",
-		"values" : ["LHS"]
+		"values" : ["MCS"]
 	},
 	{
 		"type" : "LineEdit",
