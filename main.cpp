@@ -50,7 +50,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <WorkflowApp_quoFEM.h>
 #include <WorkflowCLI.h>
 #include <GoogleAnalytics.h>
-#include <AgaveCurl.h>
+#include <TapisV3.h>
 #include <QWebEngineView>
 
  // customMessgaeOutput code from web:
@@ -156,10 +156,11 @@ int main(int argc, char *argv[])
     //
 
     QString tenant("designsafe");
-    QString storage("agave://designsafe.storage.default/");
+    //QString storage("agave://designsafe.storage.default/");
+    QString storage("tapis://designsafe.storage.default/");
     QString dirName("quoFEM");
-
-    AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage, &dirName);
+    //AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage, &dirName);
+    TapisV3 *theRemoteService = new TapisV3(tenant, storage, &dirName);
 
 
     //
