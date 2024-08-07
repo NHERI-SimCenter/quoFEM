@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
 
     QString tenant("designsafe");
     //QString storage("agave://designsafe.storage.default/");
-    QString storage("tapis://designsafe.storage.default/");
+    QString storage("designsafe.storage.default/");
     QString dirName("quoFEM");
     //AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage, &dirName);
     TapisV3 *theRemoteService = new TapisV3(tenant, storage, &dirName);
