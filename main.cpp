@@ -45,13 +45,15 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStandardPaths>
 #include <QStatusBar>
 #include <QProcessEnvironment>
+#include <QWebEngineView>
 
 #include <MainWindowWorkflowApp.h>
 #include <WorkflowApp_quoFEM.h>
 #include <WorkflowCLI.h>
 #include <GoogleAnalytics.h>
 #include <TapisV3.h>
-#include <QWebEngineView>
+
+
 
  // customMessgaeOutput code from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
@@ -99,7 +101,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, and Version
     QCoreApplication::setApplicationName("quoFEM");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("3.5.3");
+    QCoreApplication::setApplicationVersion("4.0.0");
 
     //
     // set up logging of output messages for user debugging
@@ -156,7 +158,7 @@ int main(int argc, char *argv[])
     //
 
     QString tenant("designsafe");
-    //QString storage("agave://designsafe.storage.default/");
+    //QString storage("agave://designsafe.storage.default/")
     QString storage("designsafe.storage.default/");
     QString dirName("quoFEM");
     //AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage, &dirName);
@@ -179,16 +181,16 @@ int main(int argc, char *argv[])
     QString version = QString("Version ") + QCoreApplication::applicationVersion();
     w.setVersion(version);
     QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, & Wael Elhaddad. (2023). NHERI-SimCenter/quoFEM: Version 3.5.0 (v3.5.0). Zenodo. https://doi.org/10.5281/zenodo.10443180 \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
-  
+    
     w.setCite(citeText);
-
+  
     QString manualURL("https://nheri-simcenter.github.io/quoFEM-Documentation/");
     w.setDocumentationURL(manualURL);
+  
+    // QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=4.0");
 
-    QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=4.0");
+    QString messageBoardURL("https://github.com/orgs/NHERI-SimCenter/discussions/categories/quofem");
     w.setFeedbackURL(messageBoardURL);
-
-
     
     if (argc > 1) {
       logToFile = true;
