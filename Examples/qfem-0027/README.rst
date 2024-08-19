@@ -62,6 +62,7 @@ The steps involved are as follows:
 
 .. figure:: figures/UQ.png
    :align: center
+   :alt: Screenshot of a user interface related to uncertainty quantification (UQ) with a focus on settings for a method of UQ. The sidebar shows options for FEM, RV, EDP, and RES, while the main panel has options for UQ Method as 'Forward Propagation,' UQ Engine as 'Dakota,' with checked options for 'Parallel Execution' and 'Save Working dirs.' It also shows a dropdown for the Method set to 'LHS' and input fields for the number of samples as '2000' and seed as '811'.
    :width: 1200
    :figclass: align-center
 
@@ -70,11 +71,13 @@ The steps involved are as follows:
 
 .. figure:: figures/FEM1.png
    :align: center
+   :alt: Screenshot of a user interface with a navigation menu on the left side highlighting the "FEM" tab. In the main panel, there are sections for inputting and managing models, including "Multi Model" with "Add" and "Remove" buttons, tabs labeled "FEM-1" and "FEM-2", and fields showing "Belief: 1 Out of 2 (i.e., 50%)". At the bottom, there are paths to "Input Script" and "Postprocess Script" with "Choose" buttons next to file paths containing the user "aakash" and referencing a directory for examples of a finite element model (FEM). An "OpenSees" button is also present.
    :figclass: align-center
    :width: 1200
 
 .. figure:: figures/FEM2.png
    :align: center
+   :alt: Screenshot of a user interface for a simulation or modeling software, featuring a navigation panel on the left with highlighted options such as "FEM" and "UQ". On the right, there are input fields and buttons, including a "Multi Model" toggle, "Add" and "Remove" buttons, a drop-down selection for "FEM-1" and "FEM-2", as well as fields for specifying "Input Script" and "Postprocess Script" with corresponding "Choose" buttons. File paths are displayed beneath the script fields, indicating locations on the user's system.
    :figclass: align-center
    :width: 1200
 
@@ -83,6 +86,7 @@ The steps involved are as follows:
 
 .. figure:: figures/RV.png
    :align: center
+   :alt: Screenshot of a software interface displaying a list of input random variables with fields for variable name, distribution, minimum, and maximum values. Six variables labeled as k1, alp1, Fy1, k2, alp2, and Fy2 are listed, each with a uniform distribution and their respective min and max values. Options are available to add a new variable, delete variables, show probability distribution function (PDF) for each, and there are buttons titled "Clear All" and "Correlation Matrix," as well as "Export" and "Import" at the top right corner.
    :figclass: align-center
    :width: 1200
 
@@ -91,6 +95,7 @@ The steps involved are as follows:
 
 .. figure:: figures/EDP.png
    :align: center
+   :alt: Screenshot of a software interface with a navigation sidebar on the left showing menu options UQ, FEM, RV, EDP highlighted in teal, and RES. The main section is titled "Quantities of Interest" with fields to input a Variable Name "MaxBaseShear" and Length "1", with "Add" and "Clear All" buttons on the top right.
    :figclass: align-center
    :width: 1200
 
@@ -103,6 +108,7 @@ When we plot the QoI vs MultiModel-FEM, we see a systematic difference in the ra
 
 .. figure:: figures/RES1.png
    :align: center
+   :alt: Screenshot of a statistical software interface showing summary data for two variables. On the left side, a navigation bar with the options UQ, FEM, RV, EDP, and RES highlighted. The main panel is divided into two sections for different variables. The first section is labeled "MultiModel-FEM" with Mean: 1.5, StdDev: 0.500125, Skewness: 0, and Kurtosis: 0.997997. The second section is labeled "MaxBaseShear" with Mean: 21.0259, StdDev: 1.34018, Skewness: -0.0254933, and Kurtosis: 2.37179. Two tabs at the top of the main panel indicate "Summary" (selected) and "Data Values".
    :figclass: align-center
    :width: 1200
 
@@ -110,6 +116,7 @@ When we plot the QoI vs MultiModel-FEM, we see a systematic difference in the ra
 
 .. figure:: figures/RES2.png
    :align: center
+   :alt: A screenshot displaying a user interface with a navigation sidebar on the left and two main sections on the right. The left sidebar shows vertical tabs labeled UQ, FEM, RV, EDP, and RES, with the RES tab highlighted. The right side is split into a chart and a data table. The chart shows a single vertical bar graph with "Max Base Shear" on the y-axis and "MultiModel-FEM" on the x-axis, including a note saying "corr coef.f = -0.32". The data table is titled "Data Values" with a row of buttons above it including "Save Table" and "Save Columns Separately". The table lists rows numbered 1 through 12 and multiple columns with headers such as "Run #", "k1", "alp1", "Fy1", "k2", "alp2", and numbers corresponding to each row. Some rows are highlighted in gray, indicating a selection.
    :figclass: align-center
    :width: 1200
 
@@ -119,6 +126,7 @@ This scatter plot shows that the maximum base shear predicted by Model 1 is high
 
 .. figure:: figures/RES3.png
    :align: center
+   :alt: Screenshot of a software interface featuring a histogram on the left and a data table on the right. The histogram displays a bell-shaped distribution of frequencies against 'MaxBaseShear' values. The data table has columns labeled 'alp1', 'Fy1', 'k2', 'alp2', 'Fy2', 'MultiModel-FEM', and 'MaxBaseShear', with rows of numerical data. Some tabs and buttons are present, including 'Summary', 'Data Values', 'Save Table', 'Save Columns Separately', 'Save RVS', and 'Save QoIs'. There is a navigation panel on the left with the options 'UQ', 'FEM', 'RV', 'EDP', and 'RES' highlighted.
    :figclass: align-center
    :width: 1200
 
@@ -128,6 +136,7 @@ If only Model 1 was used:
 
 .. figure:: figures/RES4.png
    :align: center
+   :alt: The image shows a screenshot of a software interface with statistical data displayed. On the left is a vertical navigation menu with the options "UQ," "FEM," "RV," "EDP," and "RES" highlighted in blue. In the main panel, there is a section labeled "Summary," and below it, the following statistical measures for an item named "MaxBaseShear" are shown: "Mean" with a value of 21.4233, "StdDev" (standard deviation) with a value of 1.27395, "Skewness" with a value of 0.0799317, and "Kurtosis" with a value of 2.24344. A tab with the label "Data Values" is present next to the "Summary" label, suggesting that additional information can be displayed.
    :figclass: align-center
    :width: 1200
 
@@ -135,6 +144,7 @@ If only Model 1 was used:
 
 .. figure:: figures/RES5.png
    :align: center
+   :alt: Screenshot of a computer interface showing a histogram and accompanying data table. The histogram displays a distribution of values labeled "MaxBaseShear" on the x-axis with frequency percentages on the y-axis. The table to the right lists numerical data with columns labeled k1, apl1, Fy1, k2, apl2, Fy2, and MaxBaseShear, filled with various numerical entries. Additional buttons for saving table data are present above the table.
    :figclass: align-center
    :width: 1200
 
@@ -144,6 +154,7 @@ If only Model 2 was used:
 
 .. figure:: figures/RES6.png
    :align: center
+   :alt: A screenshot of a statistics interface displaying summary data for an item named 'MaxBaseShear'. The data includes a mean value of 20.9323, standard deviation of 1.1546, skewness of -0.0622959, and kurtosis of 2.42761. The interface has menu options on the left side labeled 'UQ', 'FEM', 'RV', 'EDP', and highlighted 'RES', with two tabs at the top right corner named 'Summary' and 'Data Values'.
    :figclass: align-center
    :width: 1200
 
@@ -151,6 +162,7 @@ If only Model 2 was used:
 
 .. figure:: figures/RES7.png
    :align: center
+   :alt: A split screen image showing a histogram on the left and a spreadsheet on the right. The histogram appears to have a bin range of approximately 15.5 to 23.5 on the x-axis, labeled "MaxBaseShear," and a frequency percentage on the y-axis that ranges up to approximately 0.13. The histogram indicates a bell-shaped distribution of data with the highest frequency just above 20 on the x-axis. On the right side, the spreadsheet contains numerical data with columns labeled "Run #," "k2," "alp1," "Fy1," "alp2," "Fy2," and "MaxBaseShear," with 23 numbered rows of data. The table entries for "Run #10" are highlighted, with values including 385.722 for k2, 0.0946541 for alp1, 19.8504 for Fy1, 0.0511268 for alp2, 21.4821 for Fy2, and 21.9684 for MaxBaseShear. There are buttons above the spreadsheet for "Save Table," "Save Columns Separately," "Save RVs," and "Save Qols."
    :figclass: align-center
    :width: 1200
 
