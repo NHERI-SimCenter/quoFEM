@@ -23,3 +23,7 @@ jobs:
         run: |
             chmod +x build_backend_apps.sh
             sh ./build_backend_apps.sh
+      - name: Run Examples
+        run: |
+            chmod +x run_examples.sh
+            sh ./run_examples.sh
