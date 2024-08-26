@@ -15,5 +15,5 @@ mkdir tmp.SimCenter
 cp -R $PWD/quoFEM/Examples/E1BasicHAZUS/input_data .
 
 # Run the example in the backend
-python $PWD/SimCenterBackendApplications/applications/Workflow/rWHALE.py ./R2DExamples/E1BasicHAZUS/input.json --registry $PWD/SimCenterBackendApplications/applications/Workflow/WorkflowApplications.json --referenceDir $PWD/input_data -w $PWD/tmp.SimCenter/Results
+python $PWD/SimCenterBackendApplications/applications/Workflow/qWHALE.py "runningLocal" $PWD/quoFEM/Examples/qfem-001/srcr/input.json $PWD/SimCenterBackendApplications/applications/Workflow/WorkflowApplications.json
 
