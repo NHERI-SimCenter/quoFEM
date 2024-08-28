@@ -5,6 +5,8 @@ echo In folder $PWD
 git clone --branch master --depth 1 https://github.com/NHERI-SimCenter/quoFEM.git
 
 
+echo In folder $PWD
+
 # Add the current dir in the example file
 sed -i "s|{Current_Dir}|$(pwd)|g" $PWD/quoFEM/Examples/qfem-001/src/input.json
 
