@@ -12,6 +12,9 @@ ls
 # Add the current dir in the example file
 sed -i "s|{Current_Dir}|$(pwd)|g" $PWD/Examples/qfem-0001/src/input.json
 
+# Add the current dir in the example file
+sed -i "s|{runDir}|$(pwd)|g" $PWD/Examples/qfem-0001/src/input.json
+
 # Create the working directoy
 mkdir tmp.SimCenter
 
