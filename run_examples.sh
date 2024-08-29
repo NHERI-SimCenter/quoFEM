@@ -9,11 +9,15 @@ echo In folder $PWD
 
 ls
 
-# Add the current dir in the example file
-sed -i "s|{Current_Dir}|$(pwd)|g" $PWD/Examples/qfem-0001/src/input.json
+sudo apt-get install jq
 
-# Add the current dir in the example file
-sed -i "s|{runDir}|$(pwd)|g" $PWD/Examples/qfem-0001/src/input.json
+q '. + { "runDir": '$PWD' }' <<<"$jsonStr"
+
+# # Add the current dir in the example file
+# sed -i "s|{Current_Dir}|$(pwd)|g" $PWD/Examples/qfem-0001/src/input.json
+
+# # Add the current dir in the example file
+# sed -i "s|{runDir}|$(pwd)|g" $PWD/Examples/qfem-0001/src/input.json
 
 cat $PWD/Examples/qfem-0001/src/input.json 
 
