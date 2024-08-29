@@ -15,10 +15,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Bootstrap
-        run: |
-            chmod +x bootstrap.sh
-            sh ./bootstrap.sh
+      # - name: Bootstrap
+      #   run: |
+      #       chmod +x bootstrap.sh
+      #       sh ./bootstrap.sh
       - name: Build SimCenter Applications
         run: |
             chmod +x build_backend_apps.sh
