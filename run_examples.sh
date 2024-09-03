@@ -12,7 +12,7 @@ ls
 
 sudo apt-get install jq
 
-cat $PWD/Examples/qfem-0001/src/input.json  | jq '. + { "runDir": '$PWD' }'
+cat $PWD/Examples/qfem-0001/src/input.json  | jq '. + { "runDir": '"$PWD"' }'
 # # Add the current dir in the example file
 # sed -i "s|{Current_Dir}|$(pwd)|g" $PWD/Examples/qfem-0001/src/input.json
 
