@@ -3,7 +3,7 @@
         "FEM": {
             "Application": "OpenSees",
             "ApplicationData": {
-                "MS_Path": "{Current_Dir}/src",
+                "MS_Path": "{Current_Dir}/",
                 "mainScript": "Shear2d.tcl",
                 "postprocessScript": ""
             }
@@ -369,9 +369,5 @@
             "value": "RV.bb",
             "variableClass": "Uncertain"
         }
-    ],
-    "remoteAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
-    "resultType": "SimCenterUQResultsSampling",
-    "runType": "runningLocal",
-    "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
+    ]
 }
