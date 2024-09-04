@@ -16,7 +16,7 @@ echo $PWD/Examples/qfem-0001/src/input.json
 # echo "$(<$PWD/Examples/qfem-0001/src/input.json)"  | jq '. + { "runDir": "'"$PWD"'" }' > $PWD/Examples/qfem-0001/src/input.json
 
 
-echo $(cat $PWD/Examples/qfem-0001/src/input.json | jq '. + { "runDir": "'"$PWD"'" }') > $PWD/Examples/qfem-0001/src/input.json
+echo $(echo "$(<$PWD/Examples/qfem-0001/src/input.json)" | jq '. + { "runDir": "'"$PWD"'" }') > $PWD/Examples/qfem-0001/src/input.json
 
 # # Add the current dir in the example file
 # sed -i "s|{Current_Dir}|$(pwd)|g" $PWD/Examples/qfem-0001/src/input.json
@@ -26,6 +26,9 @@ echo $(cat $PWD/Examples/qfem-0001/src/input.json | jq '. + { "runDir": "'"$PWD"
 
 echo "catting the thing now ==================="
 cat $PWD/Examples/qfem-0001/src/input.json 
+
+echo "echoing file ============================"
+echo "$(<$PWD/Examples/qfem-0001/src/input.json)"
 
 # Create the working directoy
 mkdir tmp.SimCenter
