@@ -5,6 +5,9 @@ echo In folder $PWD
 # Clone the examples
 git clone --branch master --depth 1 https://github.com/NHERI-SimCenter/quoFEM.git
 
+# Create the working directoy
+mkdir tmp.SimCenter
+
 sudo apt-get install jq
 
 inputfile=$PWD/Examples/qfem-0001/src/input.json
@@ -15,7 +18,7 @@ cat $inputfile
 # echo "$(<$PWD/Examples/qfem-0001/src/input.json)"  | jq '. + { "runDir": "'"$PWD"'" }' > $PWD/Examples/qfem-0001/src/input.json
 
 echo "doing jq ================="
-echo $(cat $PWD/Examples/qfem-0001/src/input.json | jq '. + { "runDir": "'"$PWD"'" }') > $PWD/Examples/qfem-0001/src/input.json
+echo $(cat $PWD/Examples/qfem-0001/src/input.json | jq '. + { "runDir": "'"$PWD/tmp.SimCenter"'" }') > $PWD/Examples/qfem-0001/src/input.json
 echo "did jq ==================="
 
 # # Add the current dir in the example file
@@ -27,8 +30,7 @@ echo "did jq ==================="
 echo "catting the thing now ==================="
 cat $PWD/Examples/qfem-0001/src/input.json 
 
-# Create the working directoy
-mkdir tmp.SimCenter
+
 
 # # Copy over the input data
 # cp -R $PWD/Examples/qfem-0001/src/input_data .
