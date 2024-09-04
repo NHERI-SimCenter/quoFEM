@@ -7,6 +7,8 @@ git clone --branch master --depth 1 https://github.com/NHERI-SimCenter/quoFEM.gi
 
 # Create the working directoy
 mkdir tmp.SimCenter
+mkdir tmp.SimCenter/templatedir
+cp -a $PWD/Examples/qfem-0001/src/. $PWD/tmp.SimCenter/templatedir/
 
 sudo apt-get install jq
 
@@ -15,26 +17,18 @@ echo $inputfile
 
 cat $inputfile
 
-# echo "$(<$PWD/Examples/qfem-0001/src/input.json)"  | jq '. + { "runDir": "'"$PWD"'" }' > $PWD/Examples/qfem-0001/src/input.json
-
 echo "doing jq ================="
-echo $(cat $PWD/Examples/qfem-0001/src/input.json | jq '. + { "runDir": "'"$PWD/tmp.SimCenter"'" }') > $PWD/Examples/qfem-0001/src/input.json
+echo $(cat $inputfile | jq '. + { "runDir": "'"$PWD/tmp.SimCenter"'" }') > $inputfile
+echo $(cat $inputfile | jq '. + { "localAppDir": "'"$PWD/SimCenterBackendApplications"'" }') > $inputfile
+echo $(cat $inputfile | jq '. + { "remoteAppDir": "'"$PWD/SimCenterBackendApplications"'" }') > $inputfile
+echo $(cat $inputfile | jq '. + { "runType": "runningLocal" }') > $inputfile
 echo "did jq ==================="
 
-# # Add the current dir in the example file
-# sed -i "s|{Current_Dir}|$(pwd)|g" $PWD/Examples/qfem-0001/src/input.json
-
-# # Add the current dir in the example file
-# sed -i "s|{runDir}|$(pwd)|g" $PWD/Examples/qfem-0001/src/input.json
-
 echo "catting the thing now ==================="
-cat $PWD/Examples/qfem-0001/src/input.json 
+cat $inputfile
 
-
-
-# # Copy over the input data
-# cp -R $PWD/Examples/qfem-0001/src/input_data .
+ls $PWD/tmp.SimCenter/templatedir
 
 # Run the example in the backend
-python $PWD/SimCenterBackendApplications/applications/Workflow/qWHALE.py "runningLocal" $PWD/Examples/qfem-0001/src/input.json $PWD/SimCenterBackendApplications/applications/Workflow/WorkflowApplications.json
+python $PWD/SimCenterBackendApplications/applications/Workflow/qWHALE.py "runningLocal" $inputfile $PWD/SimCenterBackendApplications/applications/Workflow/WorkflowApplications.json
 
