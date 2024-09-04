@@ -10,7 +10,7 @@ echo In folder $PWD
 
 sudo apt-get install jq
 
-inputfile= $PWD/Examples/qfem-0001/src/input.json
+inputfile=$PWD/Examples/qfem-0001/src/input.json
 echo $inputfile
 
 cat $inputfile
