@@ -27,9 +27,6 @@ echo "did jq ==================="
 echo "catting the thing now ==================="
 cat $PWD/Examples/qfem-0001/src/input.json 
 
-echo "echoing file ============================"
-echo "$(<$PWD/Examples/qfem-0001/src/input.json)"
-
 # Create the working directoy
 mkdir tmp.SimCenter
 
