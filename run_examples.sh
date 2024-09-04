@@ -12,7 +12,9 @@ ls
 
 sudo apt-get install jq
 
-cat $PWD/Examples/qfem-0001/src/input.json  | jq '. + { "runDir": "'"$PWD"'" }'
+
+echo "CAT JSON"
+cat $PWD/Examples/qfem-0001/src/input.json  | jq '. + { "runDir": "'"$PWD"'" }' > $PWD/Examples/qfem-0001/src/input.json
 
 
 # # Add the current dir in the example file
