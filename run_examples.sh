@@ -10,8 +10,10 @@ echo In folder $PWD
 
 sudo apt-get install jq
 
+inputfile= $PWD/Examples/qfem-0001/src/input.json
+echo $inputfile
 
-echo $PWD/Examples/qfem-0001/src/input.json
+cat $inputfile
 
 # echo "$(<$PWD/Examples/qfem-0001/src/input.json)"  | jq '. + { "runDir": "'"$PWD"'" }' > $PWD/Examples/qfem-0001/src/input.json
 
