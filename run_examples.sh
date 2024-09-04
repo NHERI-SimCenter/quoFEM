@@ -13,9 +13,6 @@ cp -a $PWD/Examples/qfem-0001/src/. $PWD/tmp.SimCenter/templatedir/
 sudo apt-get install jq
 
 inputfile=$PWD/Examples/qfem-0001/src/input.json
-echo $inputfile
-
-cat $inputfile
 
 echo "doing jq ================="
 echo $(cat $inputfile | jq '. + { "runDir": "'"$PWD/tmp.SimCenter"'" }') > $inputfile
