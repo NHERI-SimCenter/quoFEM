@@ -1,31 +1,49 @@
 {
     "Applications": {
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+                "MS_Path": "{Current_Dir}/.",
+                "PS_Path": "{Current_Dir}/.",
+                "mainScript": "TrussModel.tcl",
+                "postprocessScript": "TrussPost.tcl"
+            }
+        },
         "UQ": {
-            "Application": "Other-UQ",
+            "Application": "Custom-UQ",
             "ApplicationData": {
             }
         }
     },
     "EDP": [
         {
-            "name": "Node_3_Disp_2"
+            "length": 1,
+            "name": "Node_3_Disp_2",
+            "type": "scalar"
         }
     ],
+    "FEM": {
+    },
     "UQ": {
         "Config File": "{Current_Dir}/UQpySimpleExample.json",
         "Parameters": [
             {
                 "name": "Sampling Method",
                 "type": "ComboBox",
-                "value": "LHS",
+                "value": "MCS",
                 "values": [
-                    "LHS"
+                    "MCS"
                 ]
             },
             {
                 "name": "Number of Samples",
-                "type": "SpinBox",
-                "value": 50
+                "type": "LineEdit",
+                "value": "50"
+            },
+            {
+                "name": "Seed",
+                "type": "LineEdit",
+                "value": "1"
             },
             {
                 "name": "Number of Concurrent Tasks",
@@ -40,27 +58,34 @@
             {
                 "name": "Cores per Task",
                 "type": "SpinBox",
-                "value": 1
+                "value": 8
             },
             {
                 "name": "UQ Driver",
-                "type": "RVLineEdit",
+                "type": "LineEdit",
                 "value": "UQpy"
             }
-        ],
-        "uqEngine": "CustomUQ"
+        ]
     },
-    "fem": {
-        "dir": "{Current_Dir}/.",
-        "inputFile": "{Current_Dir}/TrussModel.tcl",
-        "mainInput": "TrussModel.tcl",
-        "mainPostprocessScript": "TrussPost.tcl",
-        "numInputs": 1,
-        "postprocessScript": "{Current_Dir}/TrussPost.tcl",
-        "program": "OpenSees"
-    },
-    "localAppDir": "C:/Users/yisan/Desktop/Development/quoFEM/backend",
-    "python": "C:/Users/yisan/AppData/Local/Programs/Python/Python38/python.exe",
+    "correlationMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+    ],
+    "localAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
     "randomVariables": [
         {
             "distribution": "Uniform",
@@ -103,8 +128,8 @@
             "variableClass": "Uncertain"
         }
     ],
-    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
-    "uqResults": {
-    },
-    "workingDir": "C:/Users/yisan/Documents/quoFEM/LocalWorkDir"
+    "remoteAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
+    "runDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir/tmp.SimCenter",
+    "runType": "runningLocal",
+    "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
 }

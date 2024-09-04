@@ -62,6 +62,7 @@ public:
     bool inputAppDataFromJSON(QJsonObject &rvObject) override;
     bool copyFiles(QString &dirName) override;
 
+    bool outputCitation(QJsonObject &jsonObject) override;
     void setMainScript(QString filnema1);
 
 signals:

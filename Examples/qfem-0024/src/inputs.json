@@ -1,0 +1,113 @@
+{
+    "Applications": {
+        "FEM": {
+            "Application": "MultiModel",
+            "ApplicationData": {
+                "appKey": "FEM"
+            }
+        },
+        "UQ": {
+            "Application": "UCSD-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 1,
+            "name": "lambda",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "phi",
+            "type": "scalar"
+        }
+    ],
+    "FEM": {
+        "modelToRun": "RV.MultiModel-FEM",
+        "models": [
+            {
+                "Application": "OpenSees",
+                "ApplicationData": {
+                    "MS_Path": "{Current_Dir}/.",
+                    "mainScript": "model_1.tcl",
+                    "postprocessScript": ""
+                },
+                "belief": 1,
+                "data": {
+                }
+            },
+            {
+                "Application": "OpenSees",
+                "ApplicationData": {
+                    "MS_Path": "{Current_Dir}/.",
+                    "mainScript": "model_2.tcl",
+                    "postprocessScript": ""
+                },
+                "belief": 1,
+                "data": {
+                }
+            }
+        ]
+    },
+    "UQ": {
+        "calDataFile": "eigData.csv",
+        "calDataFilePath": "{Current_Dir}/.",
+        "logLikelihoodFile": "",
+        "logLikelihoodPath": "",
+        "numExperiments": 5,
+        "numParticles": 100,
+        "parallelExecution": true,
+        "readUserDefinedCovarianceData": false,
+        "seed": 0,
+        "uqType": "Transitional Markov chain Monte Carlo"
+    },
+    "correlationMatrix": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+    ],
+    "localAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 300,
+            "name": "k",
+            "refCount": 1,
+            "upperbound": 1800,
+            "value": "RV.k",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 300,
+            "name": "k1",
+            "refCount": 1,
+            "upperbound": 1800,
+            "value": "RV.k1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 300,
+            "name": "k2",
+            "refCount": 1,
+            "upperbound": 1800,
+            "value": "RV.k2",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
+    "runType": "runningLocal",
+    "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
+}
