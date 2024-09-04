@@ -36,6 +36,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
+#include "SimCenterPreferences.h"
+#include "qjsondocument.h"
 #include <QApplication>
 #include <QFile>
 #include <QTime>
@@ -55,6 +57,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 
+#include <TapisV3.h>
+
+#include <QSettings>
  // customMessgaeOutput code from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
 
@@ -158,6 +163,7 @@ int main(int argc, char *argv[])
     //
 
     QString tenant("designsafe");
+
     //QString storage("agave://designsafe.storage.default/")
     QString storage("designsafe.storage.default/");
     QString dirName("quoFEM");
@@ -256,7 +262,25 @@ int main(int argc, char *argv[])
   view.show();
   view.hide();
   ******************************************************************** */
-  
+
+  // Make sure the Python environment exists and is up to date
+  //w.updatePythonEnvironment();
+
+  //TapisV3 testing
+//  QString tenantString("designsafe.tapi.io");
+//  TapisV3 *tapis = new TapisV3(tenantString, storage, &dirName);
+//  tapis->login("noamelisha", "Abcdefghijklmnop123456789");
+
+//  QString val;
+//  QFile file1;
+//  file.setFileName("C:/Users/noame/Documents/Tapis/Sample App/job.json");
+//  file.open(QIODevice::ReadOnly | QIODevice::Text);
+//  val = file.readAll();
+//  file.close();
+//  QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+//  QJsonObject sett2 = d.object();
+//  tapis->startJob(sett2);
+
   //
   // exe application event-loop
   //

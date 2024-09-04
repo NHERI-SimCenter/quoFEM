@@ -1,0 +1,30 @@
+name: Run quoFEM tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 5 * * *"
+
+jobs:
+  setup_and_test:
+    name: Setup and run tests
+    runs-on: ubuntu-latest
+    environment: quoFEM
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Bootstrap
+        run: |
+            chmod +x bootstrap.sh
+            sh ./bootstrap.sh
+      - name: Build SimCenter Applications
+        run: |
+            chmod +x build_backend_apps.sh
+            sh ./build_backend_apps.sh
+      - name: Test Examples
+        run: |
+            chmod +x run_examples.sh
+            sh ./run_examples.sh
+
