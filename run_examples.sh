@@ -5,9 +5,6 @@ echo In folder $PWD
 # Clone the examples
 git clone --branch master --depth 1 https://github.com/NHERI-SimCenter/quoFEM.git
 
-
-echo In folder $PWD
-
 sudo apt-get install jq
 
 inputfile=$PWD/Examples/qfem-0001/src/input.json
@@ -17,8 +14,9 @@ cat $inputfile
 
 # echo "$(<$PWD/Examples/qfem-0001/src/input.json)"  | jq '. + { "runDir": "'"$PWD"'" }' > $PWD/Examples/qfem-0001/src/input.json
 
-
+echo "doing jq ================="
 echo $(cat $PWD/Examples/qfem-0001/src/input.json | jq '. + { "runDir": "'"$PWD"'" }') > $PWD/Examples/qfem-0001/src/input.json
+echo "did jq ==================="
 
 # # Add the current dir in the example file
 # sed -i "s|{Current_Dir}|$(pwd)|g" $PWD/Examples/qfem-0001/src/input.json
