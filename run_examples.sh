@@ -27,23 +27,23 @@ jq -c '.Examples[]' "$json_file" | while read -r example; do
   mkdir tmp.SimCenter
   mkdir tmp.SimCenter/templatedir
   
-  cp -a $srcDir/. $PWD/tmp.SimCenter/templatedir/
+  cp -a $PWD/Examples/$srcDir/. $PWD/tmp.SimCenter/templatedir/
+
+  echo "Adding json params to input file..."
+  echo $(cat $inputfile | jq '. + { "runDir": "'"$PWD/tmp.SimCenter"'" }') > $inputfile
+  echo $(cat $inputfile | jq '. + { "localAppDir": "'"$PWD/SimCenterBackendApplications"'" }') > $inputfile
+  echo $(cat $inputfile | jq '. + { "remoteAppDir": "'"$PWD/SimCenterBackendApplications"'" }') > $inputfile
+  echo $(cat $inputfile | jq '. + { "runType": "runningLocal" }') > $inputfile
+  
+  echo "Input file contents:"
+  cat $inputfile
+  
+  echo "Template dir contents"
+  ls $PWD/tmp.SimCenter/templatedir
+  
+
+  # Run the example in the backend
+  echo "Running python"
+  python $PWD/SimCenterBackendApplications/applications/Workflow/qWHALE.py "runningLocal" $inputfile $PWD/SimCenterBackendApplications/applications/Workflow/WorkflowApplications.json
 done
-
-cp -a $PWD/Examples/qfem-0001/src/. $PWD/tmp.SimCenter/templatedir/
-
-echo "doing jq ================="
-echo $(cat $inputfile | jq '. + { "runDir": "'"$PWD/tmp.SimCenter"'" }') > $inputfile
-echo $(cat $inputfile | jq '. + { "localAppDir": "'"$PWD/SimCenterBackendApplications"'" }') > $inputfile
-echo $(cat $inputfile | jq '. + { "remoteAppDir": "'"$PWD/SimCenterBackendApplications"'" }') > $inputfile
-echo $(cat $inputfile | jq '. + { "runType": "runningLocal" }') > $inputfile
-echo "did jq ==================="
-
-echo "catting the thing now ==================="
-cat $inputfile
-
-ls $PWD/tmp.SimCenter/templatedir
-
-# Run the example in the backend
-python $PWD/SimCenterBackendApplications/applications/Workflow/qWHALE.py "runningLocal" $inputfile $PWD/SimCenterBackendApplications/applications/Workflow/WorkflowApplications.json
 
