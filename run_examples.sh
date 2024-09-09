@@ -10,7 +10,7 @@ mkdir tmp.SimCenter
 mkdir tmp.SimCenter/templatedir
 
 # Read JSON from file
-json_file="data.json"
+json_file="$PWD/Examples/Examples.json"
 
 # Iterate over array elements
 jq -c '.Examples[]' "$json_file" | while read -r example; do
