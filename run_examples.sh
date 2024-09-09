@@ -17,7 +17,8 @@ jq -c '.Examples[]' "$json_file" | while read -r example; do
   description=$(echo "$example" | jq -r '.description')
   inputfile=$(echo "$example" | jq -r '.inputFile')
   srcDir="$(dirname $inputfile)"
-  
+  inputfile="$PWD/Examples/$inputfile"
+
   echo "Example Name: $name"
   echo "Example Description: $description"
   echo "Input File: $inputfile"
@@ -27,7 +28,7 @@ jq -c '.Examples[]' "$json_file" | while read -r example; do
   mkdir tmp.SimCenter
   mkdir tmp.SimCenter/templatedir
   
-  cp -a $PWD/Examples/$srcDir/. $PWD/tmp.SimCenter/templatedir/
+  cp -a $srcDir/. $PWD/tmp.SimCenter/templatedir/
 
   echo "Adding json params to input file..."
   echo $(cat $inputfile | jq '. + { "runDir": "'"$PWD/tmp.SimCenter"'" }') > $inputfile
