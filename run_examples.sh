@@ -16,8 +16,8 @@ jq -c '.Examples[]' "$json_file" | while read -r example; do
   name=$(echo "$example" | jq -r '.name')
   description=$(echo "$example" | jq -r '.description')
   inputfile=$(echo "$example" | jq -r '.inputFile')
-  srcDir="$(dirname $inputfile)"
   inputfile="$PWD/Examples/$inputfile"
+  srcDir="$(dirname $inputfile)"
 
   echo "Example Name: $name"
   echo "Example Description: $description"
@@ -37,7 +37,8 @@ jq -c '.Examples[]' "$json_file" | while read -r example; do
   echo $(cat $inputfile | jq '. + { "runType": "runningLocal" }') > $inputfile
   
   echo "Input file contents:"
-  cat $inputfile
+  python -m json.tool $inputfile
+#   cat $inputfile
   
   echo "Template dir contents"
   ls $PWD/tmp.SimCenter/templatedir
