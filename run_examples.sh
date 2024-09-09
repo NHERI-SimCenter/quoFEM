@@ -16,12 +16,17 @@ jq -c '.Examples[]' "$json_file" | while read -r example; do
   name=$(echo "$example" | jq -r '.name')
   description=$(echo "$example" | jq -r '.description')
   inputfile=$(echo "$example" | jq -r '.inputFile')
+  srcDir="$(dirname $inputfile)"
   
-  echo "Example Name: $name, Description: $age, Input File: $inputfile"
+  echo "Example Name: $name"
+  echo "Example Description: $description"
+  echo "Input File: $inputfile"
+  echo "srcDir: $srcDir"
+  
   rm -rf tmp.SimCenter
   mkdir tmp.SimCenter
   mkdir tmp.SimCenter/templatedir
-  srcDir="$(dirname $inputFile)"
+  
   cp -a $srcDir/. $PWD/tmp.SimCenter/templatedir/
 done
 
