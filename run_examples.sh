@@ -6,8 +6,7 @@ echo In folder $PWD
 git clone --branch master --depth 1 https://github.com/NHERI-SimCenter/quoFEM.git
 
 # Create the working directoy
-mkdir tmp.SimCenter
-mkdir tmp.SimCenter/templatedir
+
 
 # Read JSON from file
 json_file="$PWD/Examples/Examples.json"
@@ -19,6 +18,10 @@ jq -c '.Examples[]' "$json_file" | while read -r example; do
   inputfile=$(echo "$example" | jq -r '.inputFile')
   
   echo "Example Name: $name, Description: $age, Input File: $inputfile"
+  rm -rf tmp.SimCenter
+  mkdir tmp.SimCenter
+  mkdir tmp.SimCenter/templatedir
+  cp -a "$PWD/Examples/$inputfile/../." $PWD/tmp.SimCenter/templatedir/
 done
 
 cp -a $PWD/Examples/qfem-0001/src/. $PWD/tmp.SimCenter/templatedir/
