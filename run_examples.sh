@@ -21,7 +21,8 @@ jq -c '.Examples[]' "$json_file" | while read -r example; do
   rm -rf tmp.SimCenter
   mkdir tmp.SimCenter
   mkdir tmp.SimCenter/templatedir
-  cp -a $PWD/Examples/$inputfile/../. $PWD/tmp.SimCenter/templatedir/
+  srcDir=$(dirname $inputFile)
+  cp -a $srcDir/. $PWD/tmp.SimCenter/templatedir/
 done
 
 cp -a $PWD/Examples/qfem-0001/src/. $PWD/tmp.SimCenter/templatedir/
