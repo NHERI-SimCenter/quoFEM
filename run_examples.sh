@@ -8,6 +8,19 @@ git clone --branch master --depth 1 https://github.com/NHERI-SimCenter/quoFEM.gi
 # Create the working directoy
 mkdir tmp.SimCenter
 mkdir tmp.SimCenter/templatedir
+
+# Read JSON from file
+json_file="data.json"
+
+# Iterate over array elements
+jq -c '.Examples[]' "$json_file" | while read -r example; do
+  name=$(echo "$example" | jq -r '.name')
+  description=$(echo "$example" | jq -r '.description')
+  inputfile=$(echo "$example" | jq -r '.inputFile')
+  
+  echo "Example Name: $name, Description: $age, Input File: $inputfile"
+done
+
 cp -a $PWD/Examples/qfem-0001/src/. $PWD/tmp.SimCenter/templatedir/
 
 sudo apt-get install jq
