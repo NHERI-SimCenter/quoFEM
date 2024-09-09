@@ -21,14 +21,10 @@ jq -c '.Examples[]' "$json_file" | while read -r example; do
   rm -rf tmp.SimCenter
   mkdir tmp.SimCenter
   mkdir tmp.SimCenter/templatedir
-  cp -a "$PWD/Examples/$inputfile/../." $PWD/tmp.SimCenter/templatedir/
+  cp -a $PWD/Examples/$inputfile/../. $PWD/tmp.SimCenter/templatedir/
 done
 
 cp -a $PWD/Examples/qfem-0001/src/. $PWD/tmp.SimCenter/templatedir/
-
-sudo apt-get install jq
-
-inputfile=$PWD/Examples/qfem-0001/src/input.json
 
 echo "doing jq ================="
 echo $(cat $inputfile | jq '. + { "runDir": "'"$PWD/tmp.SimCenter"'" }') > $inputfile
