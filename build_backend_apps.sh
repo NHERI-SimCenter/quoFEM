@@ -1,6 +1,6 @@
 #!/bin/bash
 
-git clone --branch master --depth 1 https://github.com/NHERI-SimCenter/SimCenterBackendApplications.git
+git clone --branch master https://github.com/NHERI-SimCenter/SimCenterBackendApplications.git
 
 cp ./SimCenterBackendApplications/modules/performUQ/SimCenterUQ/nataf_gsa/CMakeLists.txt.UBUNTU ./SimCenterBackendApplications/modules/performUQ/SimCenterUQ/nataf_gsa/CMakeLists.txt
 

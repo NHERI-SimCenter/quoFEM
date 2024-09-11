@@ -3,20 +3,23 @@
 echo In folder $PWD
    
 # Clone the examples
-git clone --branch master --depth 1 https://github.com/NHERI-SimCenter/quoFEM.git
+git clone --branch master https://github.com/NHERI-SimCenter/quoFEM.git
 
 # Create the working directoy
 
 
 # Read JSON from file
-json_file="$PWD/Examples/Examples.json"
+json_file="$PWD/quoFEM/Examples/Examples.json"
+
+# Install jq
+sudo apt-get install -y jq
 
 # Iterate over array elements
 jq -c '.Examples[]' "$json_file" | while read -r example; do
   name=$(echo "$example" | jq -r '.name')
   description=$(echo "$example" | jq -r '.description')
   inputfile=$(echo "$example" | jq -r '.inputFile')
-  inputfile="$PWD/Examples/$inputfile"
+  inputfile="$PWD/quoFEM/Examples/$inputfile"
   srcDir="$(dirname $inputfile)"
 
   echo "Example Name: $name"
@@ -37,15 +40,18 @@ jq -c '.Examples[]' "$json_file" | while read -r example; do
   echo $(cat $inputfile | jq '. + { "runType": "runningLocal" }') > $inputfile
   
   echo "Input file contents:"
-  python -m json.tool $inputfile
-#   cat $inputfile
-  
+  python3.9 -m json.tool $inputfile
+    
   echo "Template dir contents"
   ls $PWD/tmp.SimCenter/templatedir
   
 
   # Run the example in the backend
   echo "Running python"
-  python $PWD/SimCenterBackendApplications/applications/Workflow/qWHALE.py "runningLocal" $inputfile $PWD/SimCenterBackendApplications/applications/Workflow/WorkflowApplications.json
+  echo $PWD
+  ls
+  echo "============================="
+  ls ..
+  python3.9 $PWD/SimCenterBackendApplications/applications/Workflow/qWHALE.py "runningLocal" $inputfile $PWD/SimCenterBackendApplications/applications/Workflow/WorkflowApplications.json
 done
 

@@ -1,24 +1,34 @@
 #!/bin/bash
 
+# Set Timezone (needed for python install)
+ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # Updates the package lists for upgrades and new package installations
-sudo apt-get update
+apt-get update
+apt-get install sudo -y
+apt-get install wget -y
+sudo apt install -y software-properties-common cmake git
 
-# Installs the 'sudo' package. The '-y' flag automatically answers yes to prompts.
-apt-get install -y sudo python3.9
+# Installs the  python 3.9 package. The '-y' flag automatically answers yes to prompts.
+sudo add-apt-repository ppa:deadsnakes/ppa -y
+sudo apt update 
+sudo apt install python3.9 -y
+sudo apt install python3.9-distutils -y
 
-# Install the needed packages
-sudo apt install -y software-properties-common cmake python3-pip git
+# Install pip
+wget https://bootstrap.pypa.io/get-pip.py
+python3.9 get-pip.py
 
 # Upgrades pip (Python package installer) to the latest version
-sudo python3 -m pip install -U pip
+sudo python3.9 -m pip install -U pip
 
 # Installs the Conan package manager
-pip3 install conan==1.60.1
-pip3 install nheri-simcenter
+python3.9 -m pip install conan==1.60.1
+python3.9 -m pip install nheri-simcenter
 
-python3 --version
+python3.9 --version
 
-which python3
+which python3.9
 
 which conan
 
