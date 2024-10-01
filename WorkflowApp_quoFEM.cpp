@@ -37,6 +37,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 
 #include "WorkflowApp_quoFEM.h"
+#include <Utils/FileOperations.h>
+
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -431,9 +433,21 @@ WorkflowApp_quoFEM::setUpForApplicationRun(QString &workingDir, QString &subDir)
     QDir destinationDirectory(tmpDirectory);
 
     if(destinationDirectory.exists()) {
-      destinationDirectory.removeRecursively();
-    } else
-      destinationDirectory.mkpath(tmpDirectory);
+      if (SCUtils::isSafeToRemoveRecursivily(tmpDirectory))      
+	destinationDirectory.removeRecursively();
+      else {
+	QString msg("The Program stopped, it was about to recursivily remove: ");
+	msg.append(tmpDirectory);
+	fatalMessage(msg);
+	return;
+      }
+    } 
+
+    if (destinationDirectory.mkpath(tmpDirectory) == false) {
+      QString msg("quoFEM::setUpForApplicationRun: Could not mkdir: ");
+      msg += tmpDirectory;
+      this->fatalMessage(msg);
+    }
 
     QString templateDirectory  = destinationDirectory.absoluteFilePath(subDir);
     destinationDirectory.mkpath(templateDirectory);
