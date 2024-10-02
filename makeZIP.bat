@@ -3,7 +3,7 @@ REM ## make the exe
 
 cd build
 conan install .. --build missing
-qmake ..\quoFEM.pro
+qmake QMAKE_CXXFLAGS+=-D_SC_RELEASE ..\quoFEM.pro
 nmake
 
 REM ## copy application into folder and winddeployqt it
@@ -29,13 +29,13 @@ mkdir .\applications\opensees
 mkdir .\applications\dakota
 mkdir .\applications\python
 mkdir .\applications\common
-xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\performFEM  .\applications\performFEM
-xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\performUQ  .\applications\performUQ
-xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\Workflow  .\applications\Workflow
-xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\OpenSees  .\applications\opensees
-xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\dakota  .\applications\dakota
-xcopy /s /e /Q ..\..\..\SimCenterBackendApplications\applications\python  .\applications\python
-xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\common  .\applications\common
+xcopy /s /e    ..\..\..\SimCenterBackendApplications\applications\performFEM  .\applications\performFEM
+xcopy /s /e    ..\..\..\SimCenterBackendApplications\applications\performUQ   .\applications\performUQ
+xcopy /s /e    ..\..\..\SimCenterBackendApplications\applications\Workflow    .\applications\Workflow
+xcopy /s /e    ..\..\..\SimCenterBackendApplications\applications\OpenSees    .\applications\opensees
+xcopy /s /e    ..\..\..\SimCenterBackendApplications\applications\dakota      .\applications\dakota
+xcopy /s /e    ..\..\..\SimCenterBackendApplications\applications\python      .\applications\python
+xcopy /s /e    ..\..\..\SimCenterBackendApplications\applications\common      .\applications\common
 
 
 
