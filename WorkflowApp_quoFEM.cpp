@@ -37,6 +37,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 
 #include "WorkflowApp_quoFEM.h"
+#include <MainWindowWorkflowApp.h>
+
 #include <Utils/FileOperations.h>
 
 #include <QPushButton>
@@ -61,6 +63,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFile>
 #include <QStatusBar>
 
+#include <QMenu>
+#include <QMenuBar>
+#include <Stampede3Machine.h>
+#include <SC_ToolDialog.h>
+#include <SC_RemoteAppTool.h>
+#include <RemoteOpenSeesApp.h>
+
 #include <SimCenterComponentSelection.h>
 #include <RandomVariablesContainer.h>
 #include <UQ_EngineSelection.h>
@@ -84,7 +93,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <UQ_Results.h>
 #include <Utils/ProgramOutputDialog.h>
 #include <Utils/RelativePathResolver.h>
-
 #include <GoogleAnalytics.h>
 //#include <SimCenterDirWatcher.h>
 
@@ -209,6 +217,74 @@ WorkflowApp_quoFEM::~WorkflowApp_quoFEM()
   //    QWidget *newUQ = new QWidget();
   //    theComponentSelection->swapComponent("RV",newUQ);
 }
+
+
+void
+WorkflowApp_quoFEM::setMainWindow(MainWindowWorkflowApp* window) {
+
+  this->WorkflowAppWidget::setMainWindow(window);
+
+  //
+  // Add a Tool option to menu bar & add options to it
+  //
+  
+  auto menuBar = theMainWindow->menuBar();
+  
+  QMenu *toolsMenu = new QMenu(tr("&Tools"),menuBar);
+  SC_ToolDialog *theToolDialog = new SC_ToolDialog(this);
+
+  //
+  // Add Some Tools
+  //
+
+  // opensees@designsafe  
+  RemoteOpenSeesApp *theOpenSeesApp = new RemoteOpenSeesApp();
+
+  QString testAppName = "simcenter-opensees-frontera";
+  QString testAppVersion = "1.0.0";
+  TapisMachine *theMachine = new Stampede3Machine();
+  SC_RemoteAppTool *theOpenSeesTool = new SC_RemoteAppTool(testAppName,
+							   testAppVersion,
+							   theMachine,
+							   theRemoteService,
+							   theOpenSeesApp,
+							   theToolDialog);
+  QStringList filesToDownload; filesToDownload << "results.zip";
+  theOpenSeesTool->setFilesToDownload(filesToDownload, false);
+  theOpenSeesTool->setAppNameReport(QString("OpenSeesAtDesignSafe"));  
+				 
+  
+  theToolDialog->addTool(theOpenSeesTool, "OpenSees@DesignSafe");
+  QAction *showOpenSees = toolsMenu->addAction("&OpenSees@DesignSafe");
+  connect(showOpenSees, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theOpenSeesApp] {
+    theDialog->showTool("OpenSees@DesignSafe");
+  });
+  
+  
+  //
+  // Add Tools to menu bar
+  //
+  
+  QAction* menuAfter = nullptr;
+  foreach (QAction *action, menuBar->actions())
+  {
+    // First check for an examples menu and if that does not exist put it before the help menu
+    QString actionText = action->text();
+    if(actionText.compare("&Examples") == 0)
+    {
+        menuAfter = action;
+        break;
+    }
+    else if(actionText.compare("&Help") == 0)
+      {
+        menuAfter = action;
+        break;
+    }
+  }
+  menuBar->insertMenu(menuAfter, toolsMenu);
+  //menuBar->addMenu(toolsMenu);
+}
+
 
 void WorkflowApp_quoFEM::replyFinished(QNetworkReply *pReply)
 {
