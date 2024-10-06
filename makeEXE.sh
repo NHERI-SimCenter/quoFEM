@@ -12,12 +12,12 @@ rm -fr quoFEM.app quoFEM
 #
 
 conan install .. --build missing
-status=$?; if [[ $status != 0 ]]; then echo "conan install failed"; exit $status; fi
+cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "conan install failed"; exit $cmd_status; fi
 
 qmake ../quoFEM.pro
-status=$?; if [[ $status != 0 ]]; then echo "qmake failed"; exit $status; fi
+cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "qmake failed"; exit $cmd_status; fi
 make
-status=$?; if [[ $status != 0 ]]; then echo "make failed"; exit $status; fi
+cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "make failed"; exit $cmd_status; fi
 
 #
 # Copy applications from SimCentreBackend

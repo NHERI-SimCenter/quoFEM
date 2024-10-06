@@ -1,6 +1,6 @@
 # remove & rebuild app and macdeploy it
 
-DMG_METHOD="NEW"
+DMG_METHOD="OLD"
 
 release=${1:-"NO_RELEASE"}
 
@@ -22,22 +22,24 @@ QTDIR="/Users/fmckenna/Qt/5.15.2/clang_64/"
 mkdir -p build
 cd build
 rm -fr ${APP_FILE} ${DMG_FILENAME}
-
 #
 # build UI
 #
 
-conan install .. --build missin
-status=$?; if [[ $status != 0 ]]; then echo "conan install failed"; exit $status; fi
+conan install .. --build missing
+if [[ $0 != 0 ]]; then
+    echo "EE-UQ: conan install failed";
+fi
+
 
 if [ -n "$release" ] && [ "$release" = "release" ]; then
     echo "******** RELEASE BUILD *************"    
-    qmake QMAKE_CXXFLAGS+="-D_SC_RELEASE" ../qFEM.pro
-    status=$?; if [[ $status != 0 ]]; then echo "qmake failed"; exit $status; fi    
+    qmake QMAKE_CXXFLAGS+=-D_SC_RELEASE ../quoFEM.pro
+    cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "qmake failed"; exit $cmd_status; fi    
 else
     echo "********* NON RELEASE BUILD ********"
     qmake ../quoFEM.pro
-    status=$?; if [[ $status != 0 ]]; then echo "qmake failed"; exit $status; fi    
+    cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "qmake failed"; exit $cmd_status; fi    
 fi
 
 
@@ -48,7 +50,7 @@ fi
 
 touch ../WorkflowApp_quoFEM.cpp
 make -j 4
-status=$?; if [[ $status != 0 ]]; then echo "make failed"; exit $status; fi
+cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "make failed"; exit $cmd_status; fi
 
 #
 # Check to see if the app built
@@ -120,7 +122,7 @@ source $userID
 # create dmg
 #
 
-if [ "${DMG_METHOD}" == "NEW" ]; then
+if [ "${DMG_METHOD}" = "NEW" ]; then
     
     #
     # mv app into empty folder for create-dmg to work
@@ -174,7 +176,7 @@ if [ "${DMG_METHOD}" == "NEW" ]; then
 	--app-drop-link 450 130 \
 	--codesign $appleCredential \
 	"quoFEM_Mac_Download.dmg" \
-	"$appDir"
+	"app"
     
     #  --notarize $appleID $appleAppPassword \
 	
