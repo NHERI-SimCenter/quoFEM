@@ -13,6 +13,7 @@ rm -fr quoFEM.app quoFEM
 
 conan install .. --build missing
 status=$?; if [[ $status != 0 ]]; then echo "conan install failed"; exit $status; fi
+
 qmake ../quoFEM.pro
 status=$?; if [[ $status != 0 ]]; then echo "qmake failed"; exit $status; fi
 make

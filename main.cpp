@@ -244,6 +244,9 @@ int main(int argc, char *argv[])
 
   //Setting Google Analytics Tracking Information
 #ifdef _SC_RELEASE
+
+  qDebug() << "Running a Release Version of quoFEM";  
+  //Setting Google Analytics Tracking Information
   GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
   GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
   GoogleAnalytics::CreateSessionId();
@@ -256,12 +259,36 @@ int main(int argc, char *argv[])
   view.show();
   view.hide();
 #endif
+
+#ifdef _ANALYTICS
+
+  //Setting Google Analytics Tracking Information
+  qDebug() << "compiled with: ANALYTICS";  
+  GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
+  GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
+  GoogleAnalytics::CreateSessionId();
+  GoogleAnalytics::StartSession();
+  
+#endif
   
   //
   // exe application event-loop
   //
 
   int res = app.exec();
+
+#ifdef _GA_AFTER
+  
+    qDebug() << "compiled with: _GA_AFTER";  
+    // Opening a QWebEngineView and using github to get app geographic usage
+    QWebEngineView view;
+    view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
+    view.resize(1024, 750);
+    view.show();
+    view.hide();
+    
+#endif  
+  
   GoogleAnalytics::EndSession();
   return res;
 }
