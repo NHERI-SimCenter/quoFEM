@@ -52,6 +52,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <WorkflowCLI.h>
 #include <GoogleAnalytics.h>
 #include <TapisV3.h>
+#include <QtWebEngine>
 
 
 
@@ -146,12 +147,15 @@ int main(int argc, char *argv[])
 
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+  // software rendering
+  QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
+ 
   //
   // start Qt mainwindow per normal
   //
 
   QApplication app(argc, argv);
-
+  QtWebEngine::initialize();
 
     //
     // create a remote interface

@@ -4,11 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts concurrent network printsupport 3dcore 3drender 3dextras webenginewidgets
+QT       += core gui charts concurrent network printsupport 3dcore 3drender 3dextras webenginewidgets webengine
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
+QMAKE_APPLE_DEVICE_ARCHS="x86_64"
 
 TARGET = quoFEM
 TEMPLATE = app
