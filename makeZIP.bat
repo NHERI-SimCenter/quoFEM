@@ -39,3 +39,13 @@ xcopy /s /e    ..\..\..\SimCenterBackendApplications\applications\common      .\
 
 
 
+REM ## zip it up with 7zip
+
+set sevenzip_path="C:\Program Files\7-Zip\7z.exe"
+cd ..
+if exist .\quoFEM_Windows_Download.zip (
+    del .\quoFEM_Windows_Download.zip
+    echo File deleted.
+)
+%sevenzip_path% a -tzip .\quoFEM_Windows_Download.zip  .\quoFEM_Windows_Download
+
