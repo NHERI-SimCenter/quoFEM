@@ -66,6 +66,7 @@ public:
     explicit WorkflowApp_quoFEM(RemoteService *theService, QWidget *parent = 0);
     ~WorkflowApp_quoFEM();
 
+    void setMainWindow(MainWindowWorkflowApp* window);
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
     void clear(void);

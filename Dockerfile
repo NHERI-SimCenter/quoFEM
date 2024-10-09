@@ -6,9 +6,9 @@ FROM ubuntu:bionic
 
 SHELL ["/bin/bash", "-c"]
 
-ARG versionQUOFEM=d3.4.0
-ARG versionSimCenterCommon=v23.09
-ARG versionSimCenterBackend=v23.09
+ARG versionQUOFEM=d4.0.0
+ARG versionSimCenterCommon=v24.08
+ARG versionSimCenterBackend=v24.08
 ARG versionOpenSees=v3.5.0
 
 WORKDIR /simcenter

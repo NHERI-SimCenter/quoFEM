@@ -1,43 +1,56 @@
 # remove & rebuild app and macdeploy it
 
-DMG_METHOD="NEW"
+DMG_METHOD="OLD"
 
-for arg in "$@"
-do
-    if [ "$arg" == "--old" ] || [ "$arg" == "-o" ] || [ $arg == "-OLD" ]; then
-	DMG_METHOD="OLD"
-    fi
-done
+release=${1:-"NO_RELEASE"}
 
 #
 #PARAMETERS
 #
 
 APP_NAME="quoFEM"
-APP_FILE="quoFEM.app"
-DMG_FILENAME="${APP_NAME}_Mac_Download.dmg"
-
-QTDIR="/Users/fmckenna/Qt/5.15.2/clang_64/"
+APP_FILE=$APP_NAME".app"
+DMG_FILENAME=$APP_NAME"_Mac_Download.dmg"
+pathApp=`pwd`/build/$APP_FILE
 
 pathToBackendApps="/Users/fmckenna/NHERI/SimCenterBackendApplications"
 pathToOpenSees="/Users/fmckenna/bin/OpenSees3.6.0"
-pathToDakota="/Users/fmckenna/dakota-6.12.0"
+pathToDakota="/Users/fmckenna/dakota/dakota-6.16.0"
+QTDIR="/Users/fmckenna/Qt/5.15.2/clang_64/"
 
 
 mkdir -p build
 cd build
 rm -fr ${APP_FILE} ${DMG_FILENAME}
-
 #
 # build UI
 #
 
 conan install .. --build missing
-status=$?; if [[ $status != 0 ]]; then echo "conan install failed"; exit $status; fi
-qmake ../quoFEM.pro
-status=$?; if [[ $status != 0 ]]; then echo "qmake failed"; exit $status; fi
-make
-status=$?; if [[ $status != 0 ]]; then echo "make failed"; exit $status; fi
+if [[ $0 != 0 ]]; then
+    echo "EE-UQ: conan install failed";
+fi
+
+
+if [ -n "$release" ] && [ "$release" = "release" ]; then
+    echo "******** RELEASE BUILD *************"    
+    qmake QMAKE_CXXFLAGS+=-D_SC_RELEASE ../quoFEM.pro
+    cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "qmake failed"; exit $cmd_status; fi    
+else
+    echo "********* NON RELEASE BUILD ********"
+    qmake ../quoFEM.pro
+    cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "qmake failed"; exit $cmd_status; fi    
+fi
+
+
+
+#
+# make
+#
+
+touch ../WorkflowApp_quoFEM.cpp
+make -j 4
+cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "make failed"; exit $cmd_status; fi
 
 #
 # Check to see if the app built
@@ -109,8 +122,7 @@ source $userID
 # create dmg
 #
 
-
-if [ "$DMG_METHOD" == "NEW" ]; then
+if [ "${DMG_METHOD}" = "NEW" ]; then
     
     #
     # mv app into empty folder for create-dmg to work
@@ -122,6 +134,8 @@ if [ "$DMG_METHOD" == "NEW" ]; then
     
     mkdir app
     mv $APP_FILE app
+    appDir=$PWD/app
+    echo "appDir: $appDir"    
     
     # swoop
     #create-dmg \
@@ -157,11 +171,11 @@ if [ "$DMG_METHOD" == "NEW" ]; then
 	--window-size 600 350 \
 	--no-internet-enable \
 	--icon-size 125 \
-	--icon "${APP_NAME}.app" 125 130 \
+	--icon "$quoFEM.app" 125 130 \
 	--hide-extension "${APP_NAME}.app" \
 	--app-drop-link 450 130 \
 	--codesign $appleCredential \
-	"${DMG_FILENAME}" \
+	"quoFEM_Mac_Download.dmg" \
 	"app"
     
     #  --notarize $appleID $appleAppPassword \
@@ -169,6 +183,7 @@ if [ "$DMG_METHOD" == "NEW" ]; then
     mv ./app/$APP_FILE ./
     rm -fr app
 
+    echo "hdiutil create $DMG_FILENAME -fs HFS+ -srcfolder ./$APP_FILE -format UDZO -volname $APP_NAME"    
 else
 
     echo "codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $APP_FILE"

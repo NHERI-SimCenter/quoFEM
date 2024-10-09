@@ -6,10 +6,7 @@ FROM ubuntu:bionic
 
 SHELL ["/bin/bash", "-c"]
 
-ARG versionQUOFEM=d3.4.0
-ARG versionSimCenterCommon=v23.09
-ARG versionSimCenterBackend=v23.09
-ARG versionOpenSees=v3.5.0
+ARG versionOpenSees=v3.7.0
 
 WORKDIR /simcenter
 
@@ -33,12 +30,12 @@ RUN apt-get update \
 #
 
 RUN  source /opt/qt515/bin/qt515-env.sh \
-    && git clone https://github.com/NHERI-SimCenter/SimCenterCommon.git \
-    && git clone https://github.com/NHERI-SimCenter/quoFEM.git \
+    && git clone --single-branch https://github.com/NHERI-SimCenter/SimCenterCommon.git \
+    && git clone --single-branch https://github.com/NHERI-SimCenter/quoFEM.git \
     && cd quoFEM \
     && mkdir build \
     && cd build \
-    && qmake ../quoFEM.pro \
+    && qmake "QMAKE_CXXFLAGS+=-D_SC_RELEASE" ../quoFEM.pro \
     && make \
     && rm -fr .obj \
     && cd ../..
@@ -95,6 +92,7 @@ RUN git clone https://github.com/NHERI-SimCenter/SimCenterBackendApplications.gi
     && export CC=gcc-10 \
     && export CXX=g++-10 \
     && export FC=gfortran-10 \    
+    && conan remote add simcenter https://nherisimcenter.jfrog.io/artifactory/api/conan/simcenter \
     && cd SimCenterBackendApplications \
     && mkdir build \
     && cd build \

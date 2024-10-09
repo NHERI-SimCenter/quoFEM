@@ -37,6 +37,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 
 #include "WorkflowApp_quoFEM.h"
+#include <MainWindowWorkflowApp.h>
+
+#include <Utils/FileOperations.h>
+
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -59,6 +63,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFile>
 #include <QStatusBar>
 
+#include <QMenu>
+#include <QMenuBar>
+#include <Stampede3Machine.h>
+#include <SC_ToolDialog.h>
+#include <SC_RemoteAppTool.h>
+#include <RemoteOpenSeesApp.h>
+
 #include <SimCenterComponentSelection.h>
 #include <RandomVariablesContainer.h>
 #include <UQ_EngineSelection.h>
@@ -69,6 +80,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RemoteApplication.h>
 #include <RemoteJobManager.h>
 #include <RunWidget.h>
+#include <Stampede3Machine.h>
 
 //#include "CustomizedItemModel.h"
 
@@ -82,7 +94,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <UQ_Results.h>
 #include <Utils/ProgramOutputDialog.h>
 #include <Utils/RelativePathResolver.h>
-
 #include <GoogleAnalytics.h>
 //#include <SimCenterDirWatcher.h>
 
@@ -112,8 +123,10 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
     //theResults = new DakotaResultsSampling(theRVs);
     theResults = theUQ_Selection->getResults();
 
+    TapisMachine *theMachine = new Stampede3Machine();
+    
     localApp = new LocalApplication("qWHALE.py");
-    remoteApp = new RemoteApplication("qWHALE.py", theService);
+    remoteApp = new RemoteApplication("qWHALE.py", theService, theMachine);
 
     //    localApp = new LocalApplication("EE-UQ workflow.py");
     //   remoteApp = new RemoteApplication("EE-UQ workflow.py", theService);
@@ -131,33 +144,34 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
 
     // error messages and signals
 
+    connect(localApp,SIGNAL(setupForRun(QString&,QString&)), this, SLOT(setUpForApplicationRun(QString&,QString&)));
+    connect(localApp,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
     connect(localApp,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
     connect(localApp,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
     connect(localApp,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
+    connect(localApp,SIGNAL(runComplete()), this, SLOT(runComplete()));
+    connect(localApp, SIGNAL(runComplete()), this, SIGNAL(sendLocalRunComplete()));
 
+
+    connect(remoteApp,SIGNAL(successfullJobStart()), theRunWidget, SLOT(hide()));    
     connect(remoteApp,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
     connect(remoteApp,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
     connect(remoteApp,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
-
-    connect(localApp,SIGNAL(setupForRun(QString&,QString&)), this, SLOT(setUpForApplicationRun(QString&,QString&)));
-    connect(this,SIGNAL(setUpForApplicationRunDone(QString&,QString&)), theRunWidget, SLOT(setupForRunApplicationDone(QString&,QString&)));
-    connect(localApp,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
-
     connect(remoteApp,SIGNAL(setupForRun(QString&,QString&)), this, SLOT(setUpForApplicationRun(QString&,QString&)));
-
+    connect(remoteApp,SIGNAL(successfullJobStart()), this, SLOT(runComplete()));
+    
     connect(theJobManager,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
     connect(theJobManager,SIGNAL(loadFile(QString&)), this, SLOT(loadFile(QString&)));
-
-    connect(remoteApp,SIGNAL(successfullJobStart()), theRunWidget, SLOT(hide()));
-
-    connect(localApp,SIGNAL(runComplete()), this, SLOT(runComplete()));
-    connect(localApp, SIGNAL(runComplete()), this, SIGNAL(sendLocalRunComplete()));
-    connect(remoteApp,SIGNAL(successfullJobStart()), this, SLOT(runComplete()));
-    connect(theService, SIGNAL(closeDialog()), this, SLOT(runComplete()));
     connect(theJobManager, SIGNAL(closeDialog()), this, SLOT(runComplete()));
-
-    //connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString, QString)), this, SLOT(runLocal(QString, QString)));
-
+    connect(theJobManager,SIGNAL(sendErrorMessage(QString)),
+	    this,SLOT(errorMessage(QString)));
+    connect(theJobManager,SIGNAL(sendStatusMessage(QString)),
+	    this,SLOT(statusMessage(QString)));
+    connect(theJobManager,SIGNAL(sendFatalMessage(QString)),
+	    this,SLOT(fatalMessage(QString)));
+    
+    connect(this,SIGNAL(setUpForApplicationRunDone(QString&,QString&)), theRunWidget, SLOT(setupForRunApplicationDone(QString&,QString&)));    
+    connect(theService, SIGNAL(closeDialog()), this, SLOT(runComplete()));
 
     //
     // create layout to hold component selectio
@@ -207,6 +221,74 @@ WorkflowApp_quoFEM::~WorkflowApp_quoFEM()
   //    QWidget *newUQ = new QWidget();
   //    theComponentSelection->swapComponent("RV",newUQ);
 }
+
+
+void
+WorkflowApp_quoFEM::setMainWindow(MainWindowWorkflowApp* window) {
+
+  this->WorkflowAppWidget::setMainWindow(window);
+
+  //
+  // Add a Tool option to menu bar & add options to it
+  //
+  
+  auto menuBar = theMainWindow->menuBar();
+  
+  QMenu *toolsMenu = new QMenu(tr("&Tools"),menuBar);
+  SC_ToolDialog *theToolDialog = new SC_ToolDialog(this);
+
+  //
+  // Add Some Tools
+  //
+
+  // opensees@designsafe  
+  RemoteOpenSeesApp *theOpenSeesApp = new RemoteOpenSeesApp();
+
+  QString testAppName = "simcenter-opensees-frontera";
+  QString testAppVersion = "1.0.0";
+  TapisMachine *theMachine = new Stampede3Machine();
+  SC_RemoteAppTool *theOpenSeesTool = new SC_RemoteAppTool(testAppName,
+							   testAppVersion,
+							   theMachine,
+							   theRemoteService,
+							   theOpenSeesApp,
+							   theToolDialog);
+  QStringList filesToDownload; filesToDownload << "results.zip";
+  theOpenSeesTool->setFilesToDownload(filesToDownload, false);
+  theOpenSeesTool->setAppNameReport(QString("OpenSeesAtDesignSafe"));  
+				 
+  
+  theToolDialog->addTool(theOpenSeesTool, "OpenSees@DesignSafe");
+  QAction *showOpenSees = toolsMenu->addAction("&OpenSees@DesignSafe");
+  connect(showOpenSees, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theOpenSeesApp] {
+    theDialog->showTool("OpenSees@DesignSafe");
+  });
+  
+  
+  //
+  // Add Tools to menu bar
+  //
+  
+  QAction* menuAfter = nullptr;
+  foreach (QAction *action, menuBar->actions())
+  {
+    // First check for an examples menu and if that does not exist put it before the help menu
+    QString actionText = action->text();
+    if(actionText.compare("&Examples") == 0)
+    {
+        menuAfter = action;
+        break;
+    }
+    else if(actionText.compare("&Help") == 0)
+      {
+        menuAfter = action;
+        break;
+    }
+  }
+  menuBar->insertMenu(menuAfter, toolsMenu);
+  //menuBar->addMenu(toolsMenu);
+}
+
 
 void WorkflowApp_quoFEM::replyFinished(QNetworkReply *pReply)
 {
@@ -431,9 +513,21 @@ WorkflowApp_quoFEM::setUpForApplicationRun(QString &workingDir, QString &subDir)
     QDir destinationDirectory(tmpDirectory);
 
     if(destinationDirectory.exists()) {
-      destinationDirectory.removeRecursively();
-    } else
-      destinationDirectory.mkpath(tmpDirectory);
+      if (SCUtils::isSafeToRemoveRecursivily(tmpDirectory))      
+	destinationDirectory.removeRecursively();
+      else {
+	QString msg("The Program stopped, it was about to recursivily remove: ");
+	msg.append(tmpDirectory);
+	fatalMessage(msg);
+	return;
+      }
+    } 
+
+    if (destinationDirectory.mkpath(tmpDirectory) == false) {
+      QString msg("quoFEM::setUpForApplicationRun: Could not mkdir: ");
+      msg += tmpDirectory;
+      this->fatalMessage(msg);
+    }
 
     QString templateDirectory  = destinationDirectory.absoluteFilePath(subDir);
     destinationDirectory.mkpath(templateDirectory);
@@ -545,7 +639,7 @@ WorkflowApp_quoFEM::getMaxNumParallelTasks() {
 int
 WorkflowApp_quoFEM::createCitation(QJsonObject &citation, QString citeFile) {
 
-  QString cit("{\"quoFEM\": { \"citations\": [{\"citation\": \"Frank McKenna, Sang-ri Yi, Satish, A. B., Adam Zsarnoczay, Michael Gardner, & Wael Elhaddad. (2023). NHERI-SimCenter/quoFEM: Version 3.5.0 (v3.5.0). Zenodo. https://doi.org/10.5281/zenodo.10443180 \",\"description\": \"This is the overall tool reference used to indicate the version of the tool.\"},{\"citation\": \"Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706\",\"description\": \" This marker paper describes the SimCenter application framework, which was designed to simulate the impacts of natural hazards on the built environment.It  is a necessary attribute for publishing work resulting from the use of SimCenter tools, software, and datasets.\"}]}}");
+  QString cit("{\"quoFEM\": { \"citations\": [{\"citation\": \"Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, & Wael Elhaddad. (2024). NHERI-SimCenter/quoFEM: Version 4.0.0 (v4.0.0). Zenodo. https://doi.org/10.5281/zenodo.13324130 \",\"description\": \"This is the overall tool reference used to indicate the version of the tool.\"},{\"citation\": \"Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706\",\"description\": \" This marker paper describes the SimCenter application framework, which was designed to simulate the impacts of natural hazards on the built environment.It  is a necessary attribute for publishing work resulting from the use of SimCenter tools, software, and datasets.\"}]}}");
 
   QJsonDocument docC = QJsonDocument::fromJson(cit.toUtf8());
   if(!docC.isNull()) {
