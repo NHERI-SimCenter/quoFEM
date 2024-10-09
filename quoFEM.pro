@@ -37,7 +37,9 @@ win32 {
     ICON = icons/NHERI-quoFEM-Icon.icns
     QMAKE_INFO_PLIST=$$PWD/Info.plist    
     } else {
-      LIBS += -lglut -lGLU -lGL
+    LIBS += -lglut -lGLU -lGL
+    target.path = /usr/local/bin
+    INSTALLS += target
     }
 }
 
