@@ -1,26 +1,33 @@
 {
-    "Applications": {
-        "UQ": {
+    "Applications":
+    {
+        "UQ":
+        {
             "Application": "UCSD-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         },
-        "FEM": {
+        "FEM":
+        {
             "Application": "OpenSees",
-            "ApplicationData": {
-		"MS_Path": "{Current_Dir}/",
-		"mainScript": "matTestAllParamsReadStrain.tcl"
-	    }
-        }		
+            "ApplicationData":
+            {
+                "MS_Path": "{Current_Dir}/",
+                "mainScript": "matTestAllParamsReadStrain.tcl",
+                "postprocessScript": ""
+            }
+        }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 342,
             "name": "stress",
             "type": "field"
         }
     ],
-    "UQ": {
+    "UQ":
+    {
         "calDataFile": "calDataField.csv",
         "calDataFilePath": "{Current_Dir}/.",
         "logLikelihoodFile": "",
@@ -32,7 +39,8 @@
     },
     "localAppDir": "/Users/aakash/SimCenter/quoFEM/backend",
     "python": "/Users/aakash/.pyenv/shims/python",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
@@ -105,7 +113,7 @@
         }
     ],
     "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
-    "uqResults": {
-    },
+    "uqResults":
+    {},
     "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
 }

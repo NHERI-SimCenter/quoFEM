@@ -1,12 +1,15 @@
 {
-    "UQ": {
-        "reliabilityMethodData": {
+    "UQ":
+    {
+        "reliabilityMethodData":
+        {
             "integrationMethod": "Second Order",
             "levelType": "Probability Levels",
             "localMethod": "Most Probable Point",
             "method": "Local Reliability",
             "mpp_Method": "no_approx",
-            "probabilityLevel": [
+            "probabilityLevel":
+            [
                 0.02,
                 0.2,
                 0.4,
@@ -18,14 +21,16 @@
         "uqEngine": "Dakota",
         "uqType": "Reliability Analysis"
     },
-    "FEM": {
-    },
-    "EDP": [
+    "FEM":
+    {},
+    "EDP":
+    [
         {
             "name": "Node_3_Disp_2"
         }
     ],
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "name": "E",
             "title": "elastic modulus",
@@ -70,19 +75,24 @@
         }
     ],
     "$schema": "https://raw.githubusercontent.com/claudioperez/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",
-    "Applications": {
-        "UQ": {
+    "Applications":
+    {
+        "UQ":
+        {
             "Application": "Dakota-UQ",
-            "ApplicationData": {}
+            "ApplicationData":
+            {}
         },
-        "FEM": {
+        "FEM":
+        {
             "Application": "OpenSees",
-            "ApplicationData": {
-		"MS_Path": "{Current_Dir}/",
-		"mainScript": "TrussModel.tcl",
-		"postprocessScript": "TrussPost.tcl",
-		"PS_Path": "{Current_Dir}/"
-	    }
-        }		
+            "ApplicationData":
+            {
+                "MS_Path": "{Current_Dir}/",
+                "mainScript": "TrussModel.tcl",
+                "postprocessScript": "TrussPost.tcl",
+                "PS_Path": "{Current_Dir}/"
+            }
+        }
     }
 }

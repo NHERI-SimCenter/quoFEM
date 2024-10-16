@@ -1,8 +1,11 @@
 {
-    "Applications": {
-        "FEM": {
+    "Applications":
+    {
+        "FEM":
+        {
             "Application": "OpenSeesPy",
-            "ApplicationData": {
+            "ApplicationData":
+            {
                 "MS_Path": "{Current_Dir}/.",
                 "PA_Path": "{Current_Dir}/.",
                 "mainScript": "CWH.py",
@@ -10,13 +13,15 @@
                 "postprocessScript": ""
             }
         },
-        "UQ": {
+        "UQ":
+        {
             "Application": "SimCenter-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 1,
             "name": "InterstoryDrift_x",
@@ -28,10 +33,12 @@
             "type": "scalar"
         }
     ],
-    "FEM": {
-    },
-    "UQ": {
-        "surrogateMethodInfo": {
+    "FEM":
+    {},
+    "UQ":
+    {
+        "surrogateMethodInfo":
+        {
             "DoEmethod": "None",
             "accuracyLimit": 0.02,
             "advancedOpt": true,
@@ -55,7 +62,8 @@
     },
     "isSurrogate": false,
     "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
@@ -200,7 +208,7 @@
     "remoteAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
     "resultType": "SimCenterUQResultsSampling",
     "runType": "runningLocal",
-    "summary": [
-    ],
+    "summary":
+    [],
     "workingDir": "C:/Users/SimCenter/Documents/quoFEM/LocalWorkDir"
 }
