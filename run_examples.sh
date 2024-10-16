@@ -5,7 +5,7 @@ echo In folder $PWD
 # Clone the examples
 git clone --branch master https://github.com/NHERI-SimCenter/quoFEM.git
 
-make sure all packages are installed
+# make sure all packages are installed
 python3 -m pip install --upgrade pip
 python3 -m pip install nheri-simcenter --upgrade
 python3 -m pip install GPy==1.13.2
