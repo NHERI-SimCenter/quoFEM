@@ -80,7 +80,7 @@
             {
                 "MS_Path": "{Current_Dir}/",
                 "mainScript": "TrussModel.tcl",
-                "postprocessScript": "",
+                "postprocessScript": "TrussPost.tcl",
                 "PS_Path": "{Current_Dir}/"
             }
         }
