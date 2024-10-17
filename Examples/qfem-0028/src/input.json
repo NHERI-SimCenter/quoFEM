@@ -1,20 +1,25 @@
 {
-    "Applications": {
-        "FEM": {
+    "Applications":
+    {
+        "FEM":
+        {
             "Application": "OpenSees",
-            "ApplicationData": {
+            "ApplicationData":
+            {
                 "MS_Path": "{Current_Dir}/model",
                 "mainScript": "matTestAllParamsReadStrain.tcl",
                 "postprocessScript": ""
             }
         },
-        "UQ": {
+        "UQ":
+        {
             "Application": "UCSD-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 342,
             "name": "1_A64_output_data",
@@ -196,12 +201,14 @@
             "type": "field"
         }
     ],
-    "FEM": {
-    },
-    "UQ": {
+    "FEM":
+    {},
+    "UQ":
+    {
         "Calibration Data File Name": "output_data.txt",
         "Calibration Datasets Directory": "{Current_Dir}/CouponCyclicTestData_every_20th_point",
-        "List Of Dataset Subdirectories": [
+        "List Of Dataset Subdirectories":
+        [
             "{Current_Dir}/CouponCyclicTestData_every_20th_point/1_A64",
             "{Current_Dir}/CouponCyclicTestData_every_20th_point/2_A65",
             "{Current_Dir}/CouponCyclicTestData_every_20th_point/3_A66",
@@ -248,7 +255,8 @@
         "parallelExecution": true,
         "uqType": "Metropolis Within Gibbs Sampler"
     },
-    "correlationMatrix": [
+    "correlationMatrix":
+    [
         1,
         0,
         0,
@@ -300,7 +308,8 @@
         1
     ],
     "localAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Normal",
             "inputType": "Parameters",
@@ -375,7 +384,7 @@
     "remoteAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
     "resultType": "SimCenterUQResultsSampling",
     "runType": "runningLocal",
-    "summary": [
-    ],
+    "summary":
+    [],
     "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
 }

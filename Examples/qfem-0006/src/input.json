@@ -1,8 +1,10 @@
 {
-    "UQ": {
-        "calibrationMethodData": {
-			"calibrationDataFile": "{Current_Dir}/minimumValue.txt",
-            "convergenceTol": 1e-10,
+    "UQ":
+    {
+        "calibrationMethodData":
+        {
+            "calibrationDataFile": "{Current_Dir}/minimumValue.txt",
+            "convergenceTol": 1E-10,
             "factors": "",
             "maxIterations": 50,
             "method": "NL2SOL"
@@ -10,7 +12,8 @@
         "uqEngine": "Dakota",
         "uqType": "Parameters Estimation"
     },
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "ContinuousDesign",
             "initialpoint": 0,
@@ -34,27 +37,34 @@
             "variableClass": "Design"
         }
     ],
-    "FEM":{
-    },
-    "EDP": [
+    "FEM":
+    {},
+    "EDP":
+    [
         {
             "name": "f"
         }
     ],
     "$schema": "https://raw.githubusercontent.com/NHERI-SimCenter/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",
-    "Applications": {
-        "UQ": {
+    "Applications":
+    {
+        "UQ":
+        {
             "Application": "Dakota-UQ",
-            "ApplicationData": {}
+            "ApplicationData":
+            {}
         },
-        "FEM": {
+        "FEM":
+        {
             "Application": "OpenSeesPy",
-            "ApplicationData": {
-		"MS_Path": "{Current_Dir}/",
-		"mainScript": "Rosen.py",
-		"parametersScript": "RosenParams.py",
-		"PA_Path": "{Current_Dir}/"
-	    }
-        }	
+            "ApplicationData":
+            {
+                "MS_Path": "{Current_Dir}/",
+                "mainScript": "Rosen.py",
+                "parametersScript": "RosenParams.py",
+                "PA_Path": "{Current_Dir}/",
+                "postprocessScript": ""
+            }
+        }
     }
 }

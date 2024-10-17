@@ -1,19 +1,25 @@
 {
-    "Applications": {
-        "UQ": {
+    "Applications":
+    {
+        "UQ":
+        {
             "Application": "UCSD-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         },
-        "FEM": {
+        "FEM":
+        {
             "Application": "OpenSees",
-            "ApplicationData": {
-        "MS_Path": "{Current_Dir}/",
-        "mainScript": "model.tcl"
-        }
+            "ApplicationData":
+            {
+                "MS_Path": "{Current_Dir}/",
+                "mainScript": "model.tcl",
+                "postprocessScript": ""
+            }
         }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 1,
             "name": "lambda",
@@ -25,7 +31,8 @@
             "type": "scalar"
         }
     ],
-    "UQ": {
+    "UQ":
+    {
         "calDataFile": "eigData.csv",
         "calDataFilePath": "{Current_Dir}/.",
         "logLikelihoodFile": "",
@@ -37,7 +44,8 @@
     },
     "localAppDir": "/Users/aakash/SimCenter/quoFEM/backend",
     "python": "/Users/aakash/.pyenv/shims/python",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
@@ -60,7 +68,7 @@
         }
     ],
     "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
-    "uqResults": {
-    },
+    "uqResults":
+    {},
     "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
 }

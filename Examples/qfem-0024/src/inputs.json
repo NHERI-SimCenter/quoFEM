@@ -1,18 +1,23 @@
 {
-    "Applications": {
-        "FEM": {
+    "Applications":
+    {
+        "FEM":
+        {
             "Application": "MultiModel",
-            "ApplicationData": {
+            "ApplicationData":
+            {
                 "appKey": "FEM"
             }
         },
-        "UQ": {
+        "UQ":
+        {
             "Application": "UCSD-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 1,
             "name": "lambda",
@@ -24,34 +29,39 @@
             "type": "scalar"
         }
     ],
-    "FEM": {
+    "FEM":
+    {
         "modelToRun": "RV.MultiModel-FEM",
-        "models": [
+        "models":
+        [
             {
                 "Application": "OpenSees",
-                "ApplicationData": {
+                "ApplicationData":
+                {
                     "MS_Path": "{Current_Dir}/.",
                     "mainScript": "model_1.tcl",
                     "postprocessScript": ""
                 },
                 "belief": 1,
-                "data": {
-                }
+                "data":
+                {}
             },
             {
                 "Application": "OpenSees",
-                "ApplicationData": {
+                "ApplicationData":
+                {
                     "MS_Path": "{Current_Dir}/.",
                     "mainScript": "model_2.tcl",
                     "postprocessScript": ""
                 },
                 "belief": 1,
-                "data": {
-                }
+                "data":
+                {}
             }
         ]
     },
-    "UQ": {
+    "UQ":
+    {
         "calDataFile": "eigData.csv",
         "calDataFilePath": "{Current_Dir}/.",
         "logLikelihoodFile": "",
@@ -63,7 +73,8 @@
         "seed": 0,
         "uqType": "Transitional Markov chain Monte Carlo"
     },
-    "correlationMatrix": [
+    "correlationMatrix":
+    [
         1,
         0,
         0,
@@ -75,7 +86,8 @@
         1
     ],
     "localAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Uniform",
             "inputType": "Parameters",

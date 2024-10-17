@@ -1,21 +1,26 @@
 {
-    "Applications": {
-        "UQ": {
+    "Applications":
+    {
+        "UQ":
+        {
             "Application": "SimCenter-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         },
-    	"FEM":{
-                "Application": "OpenSees",
-                "ApplicationData": {
-    		"MS_Path": "{Current_Dir}/",
-    		"mainScript": "TrussModel.tcl",
-    		"postprocessScript": "TrussPost.tcl",
-    		"PS_Path": "{Current_Dir}/"
-    	    }
-    	}
+        "FEM":
+        {
+            "Application": "OpenSees",
+            "ApplicationData":
+            {
+                "MS_Path": "{Current_Dir}/",
+                "mainScript": "TrussModel.tcl",
+                "postprocessScript": "TrussPost.tcl",
+                "PS_Path": "{Current_Dir}/"
+            }
+        }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "name": "Node_3_Disp_2"
         },
@@ -23,8 +28,10 @@
             "name": "Node_2_Disp_2"
         }
     ],
-    "UQ": {
-        "samplingMethodData": {
+    "UQ":
+    {
+        "samplingMethodData":
+        {
             "method": "Monte Carlo",
             "samples": 500,
             "seed": 536
@@ -32,7 +39,8 @@
         "uqEngine": "SimCenter-UQ",
         "uqType": "Sensitivity Analysis"
     },
-    "correlationMatrix": [
+    "correlationMatrix":
+    [
         1,
         0,
         0,
@@ -50,11 +58,12 @@
         0.5,
         1
     ],
-    "FEM":{
-    },
+    "FEM":
+    {},
     "localAppDir": "",
     "python": "",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Weibull",
             "inputType": "Parameters",

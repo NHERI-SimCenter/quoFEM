@@ -1,22 +1,27 @@
 {
     "$schema": "https://raw.githubusercontent.com/claudioperez/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",
-    "Applications": {
-        "FEM": {
+    "Applications":
+    {
+        "FEM":
+        {
             "Application": "OpenSees",
-            "ApplicationData": {
+            "ApplicationData":
+            {
                 "MS_Path": "{Current_Dir}/",
                 "mainScript": "TrussModel.tcl",
                 "postprocessScript": "TrussPost.tcl",
                 "PS_Path": "{Current_Dir}/"
             }
         },
-        "UQ": {
+        "UQ":
+        {
             "Application": "SimCenter-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 1,
             "name": "Node_3_Disp_2",
@@ -28,10 +33,12 @@
             "type": "scalar"
         }
     ],
-    "FEM": {
-    },
-    "UQ": {
-        "surrogateMethodInfo": {
+    "FEM":
+    {},
+    "UQ":
+    {
+        "surrogateMethodInfo":
+        {
             "advancedOpt": false,
             "inpFile": "PLoM_variables.csv",
             "method": "Sampling and Simulation",
@@ -40,7 +47,8 @@
             "outputData": true,
             "parallelExecution": false,
             "preTrained": false,
-            "samplingMethod": {
+            "samplingMethod":
+            {
                 "method": "LHS",
                 "samples": 50,
                 "seed": 150
@@ -49,7 +57,8 @@
         "uqEngine": "SimCenterUQ",
         "uqType": "PLoM Model"
     },
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Lognormal",
             "inputType": "Moments",

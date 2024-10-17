@@ -1,35 +1,42 @@
 {
-    "Applications": {
-        "FEM": {
+    "Applications":
+    {
+        "FEM":
+        {
             "Application": "OpenSees",
-            "ApplicationData": {
+            "ApplicationData":
+            {
                 "MS_Path": "{Current_Dir}/",
                 "mainScript": "matTestAllParamsReadStrain.tcl",
                 "postprocessScript": ""
             }
         },
-        "UQ": {
+        "UQ":
+        {
             "Application": "SimCenter-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 342,
             "name": "stress",
             "type": "field"
         }
     ],
-    "FEM": {
-    },
-    "UQ": {
+    "FEM":
+    {},
+    "UQ":
+    {
         "PCAvarianceRatio": 0.99,
         "RVdataGroup": "",
         "RVsensitivityGroup": "",
         "advancedOptions": true,
         "performPCA": "Automatic",
-        "samplingMethodData": {
+        "samplingMethodData":
+        {
             "method": "Monte Carlo",
             "samples": 300,
             "seed": 487
@@ -39,7 +46,8 @@
     },
     "isSurrogate": false,
     "localAppDir": "",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
@@ -114,7 +122,7 @@
     "remoteAppDir": "",
     "resultType": "SimCenterUQResultsSampling",
     "runType": "runningLocal",
-    "summary": [
-    ],
+    "summary":
+    [],
     "workingDir": ""
 }

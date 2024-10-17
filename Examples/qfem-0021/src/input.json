@@ -1,30 +1,37 @@
 {
-    "Applications": {
-        "FEM": {
+    "Applications":
+    {
+        "FEM":
+        {
             "Application": "OpenSees",
-            "ApplicationData": {
+            "ApplicationData":
+            {
                 "MS_Path": "{Current_Dir}/.",
                 "mainScript": "input_.tcl",
                 "postprocessScript": ""
             }
         },
-        "UQ": {
+        "UQ":
+        {
             "Application": "SimCenter-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 1,
             "name": "Node_3_Disp_2",
             "type": "scalar"
         }
     ],
-    "FEM": {
-    },
-    "UQ": {
-        "surrogateMethodInfo": {
+    "FEM":
+    {},
+    "UQ":
+    {
+        "surrogateMethodInfo":
+        {
             "DoEmethod": "IMSEw",
             "accuracyLimit": 0.02,
             "advancedOpt": true,
@@ -46,14 +53,16 @@
         "uqEngine": "SimCenterUQ",
         "uqType": "Train GP Surrogate Model"
     },
-    "correlationMatrix": [
+    "correlationMatrix":
+    [
         1,
         0,
         0,
         1
     ],
     "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Uniform",
             "inputType": "Parameters",

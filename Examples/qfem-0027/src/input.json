@@ -1,56 +1,67 @@
 {
-    "Applications": {
-        "FEM": {
+    "Applications":
+    {
+        "FEM":
+        {
             "Application": "MultiModel",
-            "ApplicationData": {
+            "ApplicationData":
+            {
                 "appKey": "FEM"
             }
         },
-        "UQ": {
+        "UQ":
+        {
             "Application": "Dakota-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 1,
             "name": "MaxBaseShear",
             "type": "scalar"
         }
     ],
-    "FEM": {
+    "FEM":
+    {
         "modelToRun": "RV.MultiModel-FEM",
-        "models": [
+        "models":
+        [
             {
                 "Application": "OpenSees",
-                "ApplicationData": {
+                "ApplicationData":
+                {
                     "MS_Path": "{Current_Dir}/model1",
                     "PS_Path": "{Current_Dir}/model1",
                     "mainScript": "ShearBuilding_NL_1.tcl",
                     "postprocessScript": "postprocess.tcl"
                 },
                 "belief": 1,
-                "data": {
-                }
+                "data":
+                {}
             },
             {
                 "Application": "OpenSees",
-                "ApplicationData": {
+                "ApplicationData":
+                {
                     "MS_Path": "{Current_Dir}/model2",
                     "PS_Path": "{Current_Dir}/model2",
                     "mainScript": "ShearBuilding_NL_2.tcl",
                     "postprocessScript": "postprocess.tcl"
                 },
                 "belief": 1,
-                "data": {
-                }
+                "data":
+                {}
             }
         ]
     },
-    "UQ": {
+    "UQ":
+    {
         "parallelExecution": true,
-        "samplingMethodData": {
+        "samplingMethodData":
+        {
             "method": "LHS",
             "samples": 100,
             "seed": 811
@@ -59,7 +70,8 @@
         "uqType": "Forward Propagation"
     },
     "localAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Uniform",
             "inputType": "Parameters",

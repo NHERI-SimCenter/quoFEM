@@ -1,6 +1,8 @@
 {
-    "UQ": {
-        "samplingMethodData": {
+    "UQ":
+    {
+        "samplingMethodData":
+        {
             "method": "LHS",
             "samples": 200,
             "seed": 949
@@ -8,9 +10,10 @@
         "uqEngine": "Dakota",
         "uqType": "Forward Propagation"
     },
-    "FEM":{
-    },
-    "EDP": [
+    "FEM":
+    {},
+    "EDP":
+    [
         {
             "name": "Node_3_Disp_2"
         },
@@ -18,7 +21,8 @@
             "name": "Node_2_Disp_2"
         }
     ],
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "name": "E",
             "title": "elastic modulus",
@@ -63,19 +67,24 @@
         }
     ],
     "$schema": "https://raw.githubusercontent.com/claudioperez/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",
-    "Applications": {
-        "UQ": {
+    "Applications":
+    {
+        "UQ":
+        {
             "Application": "Dakota-UQ",
-            "ApplicationData": {}
+            "ApplicationData":
+            {}
         },
-	"FEM": {
+        "FEM":
+        {
             "Application": "FEAPpv",
-            "ApplicationData": {
-		"inputFile": "TrussTemplate.txt",
-		"IF_Path": "{Current_Dir}/",		
-		"postprocessScript": "postprocess.py",
-		"PS_Path": "{Current_Dir}/"		
-	    }
-	}
+            "ApplicationData":
+            {
+                "inputFile": "TrussTemplate.txt",
+                "IF_Path": "{Current_Dir}/",
+                "postprocessScript": "postprocess.py",
+                "PS_Path": "{Current_Dir}/"
+            }
+        }
     }
 }

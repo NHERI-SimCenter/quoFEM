@@ -1,29 +1,37 @@
 {
-    "Applications": {
-        "UQ": {
+    "Applications":
+    {
+        "UQ":
+        {
             "Application": "Dakota-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         },
-        "FEM": {
+        "FEM":
+        {
             "Application": "OpenSees",
-            "ApplicationData": {
-		"MS_Path": "{Current_Dir}/",
-		"mainScript": "matTestAllParamsReadStrain.tcl"
-	    }
-        }	
+            "ApplicationData":
+            {
+                "MS_Path": "{Current_Dir}/",
+                "mainScript": "matTestAllParamsReadStrain.tcl",
+                "postprocessScript": ""
+            }
+        }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 342,
             "name": "stress",
             "type": "field"
         }
     ],
-    "FEM":{
-    },
-    "UQ": {
-        "calibrationMethodData": {
+    "FEM":
+    {},
+    "UQ":
+    {
+        "calibrationMethodData":
+        {
             "calibrationDataFile": "{Current_Dir}/calDataField.csv",
             "convergenceTol": 0.0001,
             "factors": "",
@@ -36,7 +44,8 @@
     },
     "localAppDir": "/Users/aakash/SimCenter/quoFEM/backend",
     "python": "/Library/Frameworks/Python.framework/Versions/3.7/bin/python3",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "ContinuousDesign",
             "initialpoint": 500,
@@ -63,7 +72,7 @@
             "distribution": "ContinuousDesign",
             "initialpoint": 0.5,
             "inputType": "Parameters",
-            "lowerbound": 1e-6,
+            "lowerbound": 0.000001,
             "name": "b",
             "refCount": 0,
             "upperbound": 1,
@@ -74,7 +83,7 @@
             "distribution": "ContinuousDesign",
             "initialpoint": 1,
             "inputType": "Parameters",
-            "lowerbound": 1e-6,
+            "lowerbound": 0.000001,
             "name": "cR1",
             "refCount": 0,
             "upperbound": 2,
@@ -85,7 +94,7 @@
             "distribution": "ContinuousDesign",
             "initialpoint": 1,
             "inputType": "Parameters",
-            "lowerbound": 1e-6,
+            "lowerbound": 0.000001,
             "name": "cR2",
             "refCount": 0,
             "upperbound": 2,
@@ -96,7 +105,7 @@
             "distribution": "ContinuousDesign",
             "initialpoint": 0.25,
             "inputType": "Parameters",
-            "lowerbound": 1e-6,
+            "lowerbound": 0.000001,
             "name": "a1",
             "refCount": 0,
             "upperbound": 0.5,
@@ -107,7 +116,7 @@
             "distribution": "ContinuousDesign",
             "initialpoint": 0.25,
             "inputType": "Parameters",
-            "lowerbound": 1e-6,
+            "lowerbound": 0.000001,
             "name": "a3",
             "refCount": 0,
             "upperbound": 0.5,
@@ -116,7 +125,7 @@
         }
     ],
     "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
-    "uqResults": {
-    },
+    "uqResults":
+    {},
     "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
 }

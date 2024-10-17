@@ -1,6 +1,8 @@
 {
-    "UQ": {
-        "samplingMethodData": {
+    "UQ":
+    {
+        "samplingMethodData":
+        {
             "method": "LHS",
             "samples": 200,
             "seed": 949
@@ -8,14 +10,16 @@
         "uqEngine": "Dakota",
         "uqType": "Forward Propagation"
     },
-    "FEM":{
-    },
-    "EDP": [
+    "FEM":
+    {},
+    "EDP":
+    [
         {
             "name": "f"
         }
     ],
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "name": "X",
             "title": "first variable",
@@ -38,19 +42,25 @@
         }
     ],
     "$schema": "https://raw.githubusercontent.com/claudioperez/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",
-    "Applications": {
-        "UQ": {
+    "Applications":
+    {
+        "UQ":
+        {
             "Application": "Dakota-UQ",
-            "ApplicationData": {}
+            "ApplicationData":
+            {}
         },
-        "FEM": {
+        "FEM":
+        {
             "Application": "OpenSeesPy",
-            "ApplicationData": {
-		"MS_Path": "{Current_Dir}/",
-		"mainScript": "rosenbrock.py",
-		"parametersScript": "params.py",
-		"PA_Path": "{Current_Dir}/"
-	    }
+            "ApplicationData":
+            {
+                "MS_Path": "{Current_Dir}/",
+                "mainScript": "rosenbrock.py",
+                "parametersScript": "params.py",
+                "PA_Path": "{Current_Dir}/",
+                "postprocessScript": ""
+            }
         }
     }
 }

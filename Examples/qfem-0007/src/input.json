@@ -1,16 +1,19 @@
 {
-    "UQ": {
-        "calibrationMethodData": {
-            "convergenceTol": 1e-10,
+    "UQ":
+    {
+        "calibrationMethodData":
+        {
+            "convergenceTol": 1E-10,
             "factors": "",
             "maxIterations": 1000,
             "method": "NL2SOL",
-	        "calibrationDataFile": "{Current_Dir}/eigData.csv"
+            "calibrationDataFile": "{Current_Dir}/eigData.csv"
         },
         "uqEngine": "Dakota",
         "uqType": "Parameters Estimation"
     },
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "name": "Ic1",
             "distribution": "ContinuousDesign",
@@ -34,7 +37,8 @@
             "variableClass": "Design"
         }
     ],
-    "EDP": [
+    "EDP":
+    [
         {
             "name": "lambda"
         },
@@ -43,18 +47,23 @@
         }
     ],
     "$schema": "https://raw.githubusercontent.com/claudioperez/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",
-    "Applications": {
-        "UQ": {
+    "Applications":
+    {
+        "UQ":
+        {
             "Application": "Dakota-UQ",
-            "ApplicationData": {}
+            "ApplicationData":
+            {}
         },
-        "FEM": {
+        "FEM":
+        {
             "Application": "OpenSees",
-            "ApplicationData": {
-		"MS_Path": "{Current_Dir}/",
-		"mainScript": "fem.tcl",
-		"postprocessScript": ""
-	    }
-        }		
+            "ApplicationData":
+            {
+                "MS_Path": "{Current_Dir}/",
+                "mainScript": "fem.tcl",
+                "postprocessScript": ""
+            }
+        }
     }
 }
