@@ -1,0 +1,43 @@
+name: Python CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install nheri-simcenter
+          pip install GPy==1.13.2
+
+      - name: Run the script
+        run: python run_examples.py  # This assumes the python script is called 'run_examples.py'
+
+      - name: Upload output
+        if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: output
+          path: output.out
+
+      - name: Upload cache directory
+        if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: cache
+          path: cache  # This assumes the cache directory is named 'cache'
