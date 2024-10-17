@@ -1,43 +1,53 @@
-name: Python CI
+name: Cross-Platform Examples Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python 3.9
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install nheri-simcenter
-          pip install GPy==1.13.2
+          python -m pip install nheri-simcenter
+          python -m pip install GPy==1.13.2
 
-      - name: Run the script
-        run: python run_examples.py  # This assumes the python script is called 'run_examples.py'
+      - name: Run the examples
+        run: python run_examples.py
 
-      - name: Upload output
-        if: success()
-        uses: actions/upload-artifact@v2
+      - name: Check output files
+        run: python check_output.py
+
+      - name: Upload output log
+        uses: actions/upload-artifact@v3
         with:
-          name: output
-          path: output.out
+          name: output-log-${{ matrix.os }}
+          path: run_examples_output.txt
+
+      - name: Upload check output log
+        uses: actions/upload-artifact@v3
+        with:
+          name: check-output-log-${{ matrix.os }}
+          path: check_output_log.txt
 
       - name: Upload cache directory
-        if: success()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: cache
-          path: cache  # This assumes the cache directory is named 'cache'
+          name: cache-${{ matrix.os }}
+          path: cache
