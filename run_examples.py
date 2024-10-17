@@ -23,23 +23,34 @@ class StreamToLogger(object):
 
 def setup_logging(log_file="run_examples_output.txt"):
     """Sets up logging to both console and a log file."""
+    
+    # Clear any existing handlers
+    for handler in logging.getLogger().handlers[:]:
+        logging.getLogger().removeHandler(handler)
+    
+    # Set up the root logger with a default level and format
     logging.basicConfig(
         level=logging.DEBUG,  # Set the level to DEBUG to capture all messages
-        format="%(levelname)s - %(message)s",
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        datefmt="%H:%M:%S",
     )
 
     # Create a file handler for logging to a file
     file_handler = logging.FileHandler(log_file, mode="w")
     file_handler.setLevel(logging.DEBUG)  # Ensure file handler captures all messages
     file_handler.setFormatter(
-        logging.Formatter("%(levelname)s - %(message)s")
+        logging.Formatter(
+            "%(asctime)s - %(levelname)s - %(message)s", datefmt="%H:%M:%S"
+        )
     )
 
     # Create a console handler for logging to stdout
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.DEBUG)  # Set console handler to DEBUG as well
     console_handler.setFormatter(
-        logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+        logging.Formatter(
+            "%(asctime)s - %(levelname)s - %(message)s", datefmt="%H:%M:%S"
+        )
     )
 
     # Add the handlers to the root logger
@@ -212,24 +223,6 @@ def add_json_params(input_file, dst_dir, base_dir):
         logging.error(f"Error modifying JSON parameters in {input_file}: {e}")
 
 
-def check_output_files(cache_dir):
-    """Check for output files in the cache directory and report their status."""
-    logging.info("Checking output files...")
-    for dirpath in os.listdir(cache_dir):
-        dir_full_path = os.path.join(cache_dir, dirpath)
-        if any(
-            os.path.exists(os.path.join(dir_full_path, f))
-            for f in [
-                "dakotaTab.out",
-                "posterior_samples_table.out",
-                "dakota_mcmc_tabular.dat",
-            ]
-        ):
-            logging.info(f"{dir_full_path}: PASS")
-        else:
-            logging.warning(f"{dir_full_path}: FAIL")
-
-
 def main():
     """Main entry point of the script."""
     setup_logging()
@@ -256,9 +249,6 @@ def main():
     # Process each example
     for example in examples:
         process_example(example, pwd, tmp_dir, cache_dir)
-
-    # Check for output files
-    check_output_files(cache_dir)
 
 
 if __name__ == "__main__":
