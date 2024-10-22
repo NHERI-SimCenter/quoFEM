@@ -320,7 +320,7 @@ class ModelInfo:
 
 				create_wall_material(ext_mat, wall_ID, ext_L, h, Q)
 
-				element('twoNodeLink', wall_ID, base_ID[n]+storynum-1, base_ID[n]+storynum, '-mat', wall_ID, '-dir', wall_dir[n], '-orient', 1., 0., 0., '-doRayleigh')
+				element('twoNodeLink', wall_ID, base_ID[n]+storynum-1, base_ID[n]+storynum, '-mat', wall_ID, '-dir', wall_dir[n], '-orient', 0., 1., 0., 1., 0., 0., '-doRayleigh')
 
 			# interior walls
 			wall_ID_x = 621000 + storynum
