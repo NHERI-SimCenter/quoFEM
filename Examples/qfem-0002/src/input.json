@@ -80,10 +80,10 @@
             "Application": "OpenSeesPy",
             "ApplicationData":
             {
-                "MS_Path": "{Current_Dir}/",
+                "MS_Path": "{Current_Dir}/.",
                 "mainScript": "TrussModel.py",
                 "parametersScript": "TrussParams.py",
-                "PA_Path": "{Current_Dir}/",
+                "PA_Path": "{Current_Dir}/.",
                 "postprocessScript": ""
             }
         }
