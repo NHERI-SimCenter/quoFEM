@@ -1,8 +1,11 @@
 {
-    "Applications": {
-        "FEM": {
+    "Applications":
+    {
+        "FEM":
+        {
             "Application": "OpenSeesPy",
-            "ApplicationData": {
+            "ApplicationData":
+            {
                 "MS_Path": "{Current_Dir}/.",
                 "PA_Path": "{Current_Dir}/.",
                 "mainScript": "rosenbrock.py",
@@ -10,23 +13,27 @@
                 "postprocessScript": ""
             }
         },
-        "UQ": {
+        "UQ":
+        {
             "Application": "SimCenter-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 1,
             "name": "f",
             "type": "scalar"
         }
     ],
-    "FEM": {
-    },
-    "UQ": {
-        "surrogateMethodInfo": {
+    "FEM":
+    {},
+    "UQ":
+    {
+        "surrogateMethodInfo":
+        {
             "DoEmethod": "None",
             "accuracyLimit": 0.02,
             "advancedOpt": true,
@@ -50,12 +57,14 @@
         "uqEngine": "SimCenterUQ",
         "uqType": "Train GP Surrogate Model"
     },
-    "correlationMatrix": [
+    "correlationMatrix":
+    [
         1
     ],
     "isSurrogate": true,
     "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Uniform",
             "inputType": "Parameters",

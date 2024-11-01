@@ -1,37 +1,45 @@
 {
-    "Applications": {
-        "FEM": {
+    "Applications":
+    {
+        "FEM":
+        {
             "Application": "OpenSees",
-            "ApplicationData": {
+            "ApplicationData":
+            {
                 "MS_Path": "{Current_Dir}/.",
                 "PS_Path": "{Current_Dir}/.",
                 "mainScript": "TrussModel.tcl",
                 "postprocessScript": "TrussPost.tcl"
             }
         },
-        "UQ": {
+        "UQ":
+        {
             "Application": "Custom-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 1,
             "name": "Node_3_Disp_2",
             "type": "scalar"
         }
     ],
-    "FEM": {
-    },
-    "UQ": {
+    "FEM":
+    {},
+    "UQ":
+    {
         "Config File": "{Current_Dir}/UQpySimpleExample.json",
-        "Parameters": [
+        "Parameters":
+        [
             {
                 "name": "Sampling Method",
                 "type": "ComboBox",
                 "value": "MCS",
-                "values": [
+                "values":
+                [
                     "MCS"
                 ]
             },
@@ -67,7 +75,8 @@
             }
         ]
     },
-    "correlationMatrix": [
+    "correlationMatrix":
+    [
         1,
         0,
         0,
@@ -86,7 +95,8 @@
         1
     ],
     "localAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Uniform",
             "inputType": "Parameters",
