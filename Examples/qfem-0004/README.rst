@@ -19,6 +19,7 @@ random variables.
 
 .. figure:: qfem-0004.png
    :width: 500px
+   :alt: A technical drawing of a truss structure with labeled points and support indicators. The truss is composed of straight segments joined at endpoints forming two triangles and a rectangle-like shape. It spans horizontally with markings every 4 meters along the top. Vertical arrows labeled "P" indicate downward forces at two joints, and there are three types of support symbols at points 1, 2, and 4, indicating different constraints. Point 1 has a support with a filled triangle, point 2 is supported by a simple line with an arrow pointing down, and point 4 has a support with a circle and a filled triangle, suggesting a roller support. The entire truss structure has a vertical height of 4 meters labeled on the right side.
    :align: center
 
 The following parameters are defined in the **RV** tab of quoFEM:
@@ -82,6 +83,7 @@ figure:
 
 .. figure:: figures/trussSensitivity-RES.png
    :alt: Sensitivity analysis results for simple truss.
+   :alt: A screenshot of a software interface displaying a table titled "Node_3_Disp_2 Sobol' indices" with columns for Random Variable, Main, and Total. The table contains four rows of random variables (E, P, Ao, Au) with their corresponding Main and Total Sobol' index values in scientific notation. The interface includes tabs labeled Summary and Data Values, with the Summary tab currently selected.
 
    Sensitivity analysis results for simple truss.
 
