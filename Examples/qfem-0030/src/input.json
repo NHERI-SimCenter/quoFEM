@@ -1,0 +1,119 @@
+{
+    "Applications":
+    {
+        "UQ":
+        {
+            "Application": "UCSD-UQ",
+            "ApplicationData":
+            {}
+        },
+        "FEM":
+        {
+            "Application": "OpenSees",
+            "ApplicationData":
+            {
+                "MS_Path": "{Current_Dir}/",
+                "mainScript": "matTestAllParamsReadStrain.tcl"
+            }
+        }
+    },
+    "EDP":
+    [
+        {
+            "length": 342,
+            "name": "stress",
+            "type": "field"
+        }
+    ],
+    "UQ":
+    {
+        "calDataFile": "calDataField.csv",
+        "calDataFilePath": "{Current_Dir}/.",
+        "logLikelihoodFile": "",
+        "logLikelihoodPath": "",
+        "method": "Bayesian Calibration",
+        "numParticles": 200,
+        "seed": 0,
+        "uqType": "Transitional Markov chain Monte Carlo",
+        "useApproximation": true
+    },
+    "localAppDir": "/Users/aakash/SimCenter/quoFEM/backend",
+    "python": "/Users/aakash/.pyenv/shims/python",
+    "randomVariables":
+    [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 300,
+            "name": "fy",
+            "refCount": 0,
+            "upperbound": 700,
+            "value": "RV.fy",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 150000,
+            "name": "E",
+            "refCount": 0,
+            "upperbound": 250000,
+            "value": "RV.E",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "b",
+            "refCount": 0,
+            "upperbound": 0.2,
+            "value": "RV.b",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "cR1",
+            "refCount": 0,
+            "upperbound": 1,
+            "value": "RV.cR1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "cR2",
+            "refCount": 0,
+            "upperbound": 0.2,
+            "value": "RV.cR2",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "a1",
+            "refCount": 0,
+            "upperbound": 0.1,
+            "value": "RV.a1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0,
+            "name": "a3",
+            "refCount": 0,
+            "upperbound": 0.1,
+            "value": "RV.a3",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/v2.3.0",
+    "uqResults":
+    {},
+    "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
+}
