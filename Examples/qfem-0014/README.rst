@@ -28,6 +28,7 @@ Consider the two-story building structure shown in :numref:`figSteelStructuralSy
 
 .. figure:: figures/qfem-0014-SteelStructuralSystem.png
    :align: center
+   :alt: Technical drawing of a three-dimensional structure with two levels. The structure features a measurement labeling system, with heights marked as "h=10' " for both levels. Dimensions for the structure's length and width are given, with one side labeled "33'-4"" and another side "30'". Coordinate axes labeled X, Y, and Z are shown in the lower left corner to indicate the structure's orientation in space. The drawing includes multiple arrows indicating dimensions and supports at the bottom, designated by hatched areas.
    :width: 400
    :figclass: align-center
    
@@ -44,6 +45,7 @@ A translational mass :math:`m_1/2` and :math:`m_2/2` is lumped at the nodes of f
 
 .. figure:: figures/qfem-0014.png
    :align: center
+   :alt: A schematic illustration of a structural analysis problem, featuring a 2D framework with labeled nodes 1 to 6, and two horizontal members. Vertical members connect the nodes with distances labeled as 'h = 10'' '. Components k1/2 and k2/2 represent rotational spring constants at the connections. The bottom member shows a horizontal length of 33' - 4" with x, y, and z axes defined at the lower left corner. Arrows labeled "u1" and "u2" indicate horizontal deformations at nodes 4 and 6. A central formula box shows "k1, k2 = 48E*Icol / syy*Icol / h^3", suggesting a calculation related to the stiffness of the columns.
    :width: 400
    :figclass: align-center
    
@@ -73,6 +75,7 @@ The eigenvectors in :eq:`eqnEigenVectorsBayes` are normalized such that the firs
 
 .. figure:: figures/qfem-0014-NaturalModeShapes.png
    :align: center
+   :alt: The image shows two diagrams labeled (a) and (b). Both depict mechanical systems with solid black lines representing rigid bars, red dashed lines representing springs, and blue squares indicating pivot points. Each system is anchored at the bottom to a hatched base, suggesting a fixed support. Diagram (a) is a square shape with diagonal springs inside, and measurements indicating a size of "1.41 in" along the diagonal and "1.00 in" on the sides. Diagram (b) has a similar structure but is distorted, with the top bar skewed to the left, resulting in a diagonal measurement of "-1.41 in" and a vertical side labeled "1.00 in." The springs in (b) appear stretched, indicating movement or deformation of the system from its original square shape.
    :width: 400
    :figclass: align-center
    
@@ -165,6 +168,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qfem-0014-UQ.png
    :width: 600
+   :alt: The image displays a graphical user interface for a software application with a focus on uncertainty quantification settings. On the left side, there is a vertical navigation menu with the items UQ, FEM, RV, EDP, RES highlighted, and UQ is currently selected. The main area contains input fields and dropdown menus for the UQ Method, which is set to 'Bayesian Calibration', and the UQ Engine, which is set to 'UCSD-UQ'. Further settings include input fields for Sample Size ('200'), Seed ('0'), Calibration Data File (path provided), and an optional Log Likelihood Script. Two 'Choose' buttons are present next to the file paths, suggesting a browsing option for the user to select files. The settings seem to be part of a computational framework for uncertainty quantification in engineering simulations or analyses.
    :align: center
    :figclass: align-center
 
@@ -173,6 +177,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qfem-0014-FEM.png
    :align: center
+   :alt: Screenshot of a user interface within an application related to finite element modeling (FEM). The UI shows a selected FEM tab on the left with other unselected tabs labeled UQ, RV, EDP, and RES. In the main panel, there's a field for selecting an application, set to "OpenSees," and below it, fields to input the directory paths for an Input Script and an optional Postprocess Script. The Input Script field is populated with a file path leading to a 'model.tcl' file. Two blue 'Choose' buttons are available to browse for the respective script files.
    :figclass: align-center
    :width: 600
 
@@ -183,6 +188,7 @@ For each variable, specify the prior probability distribution - from the **Distr
 
 .. figure:: figures/qfem-0014-RV.png
    :align: center
+   :alt: Screenshot of a software interface showing a section titled "Input Random Variables" with two defined variables, k1 and k2. Both have "Uniform" distribution with minimum and maximum values specified. There are buttons for adding variables, clearing all inputs, showing the probability density function (PDF), and options to export or import settings. A sidebar to the left lists categories: UQ, FEM, RV (highlighted), EDP, and RES.
    :figclass: align-center
    :width: 600
 
@@ -191,6 +197,7 @@ For each variable, specify the prior probability distribution - from the **Distr
 
 .. figure:: figures/qfem-0014-QoI.png
    :width: 600
+   :alt: Screenshot of a user interface with menu options listed on the left, including UQ, FEM, RV, EDP highlighted in blue, and RES. On the right, there's a panel titled "Quantities of Interest" listing variable names 'lambda' and 'phi' each with an associated length value of '1' beside an input field. Two buttons labeled 'Add' and 'Clear all' are positioned above the listed variables.
    :align: center
    :figclass: align-center
 
@@ -205,6 +212,7 @@ Also shown are the moments of the estimated aditional error parameters per respo
 
 .. figure:: figures/qfem-0014-RES1.png
    :align: center
+   :alt: Screenshot of a statistical summary table displaying variables k1, k2, lambda.CovMultiplier, phi.CovMultiplier, lambda, and phi. For each variable, statistics such as mean, standard deviation, skewness, and kurtosis are provided, with values ranging from 1.118326 to 1063.8 for the mean, 0.0567962 to 83.1351 for standard deviation, -0.0976564 to 2.18246 for skewness, and 2.6075 to 11.1355 for kurtosis. The table is part of an interface with tabs named "Summary" and "Data Values", and sections labeled UQ, FEM, RV, EDP, with a highlighted RES section.
    :figclass: align-center
    :width: 600
 
@@ -213,6 +221,7 @@ If the user selects the **Data Values** tab in the results panel, they will be p
 
 .. figure:: figures/qfem-0014-RES2.png
    :align: center
+   :alt: Screenshot of a software interface with a scatter plot and a data table. The plot shows a large number of blue dots representing samples spread across a coordinate system, with the x-axis labeled "Run #" and the y-axis labeled "k1." A sidebar on the left includes options labeled "UQ," "FEM," "RV," "EDP," with "RES" highlighted in blue. On the right, a data table includes columns such as "Run #," "k1," "k2," "mbda.CovMultiplier," "phi.CovMultiplier," "lambda," and "phi," with numerical values for multiple runs listed. The interface includes buttons for "Summary," "Data Values," "Save Table," and "Save Columns Separately."
    :figclass: align-center
    :width: 600
 
@@ -220,11 +229,13 @@ Various views of the graphical display can be obtained by left and right clickin
 
 .. figure:: figures/qfem-0014-RES3.png
    :align: center
+   :alt: The image displays a computer interface with two main sections. On the left, there is a scatter plot graph illustrating numerous blue data points with axes labeled k1 and k2, indicating some form of data analysis with one red point labeled "Run #1" to highlight a specific data point within the cluster. On the right side of the screen is a data table with columns titled "Run #," "k1," "k2," "mbda.CovMultiplier," "phi.CovMultiplier," "lambda," and "phi," displaying a list of numerical values corresponding to different runs of an analysis or simulation. At the top right, there are tabs for "Summary" and "Data Values" as well as options to "Save Table" and "Save Columns Separately."
    :figclass: align-center
    :width: 600
 
 .. figure:: figures/qfem-0014-RES6.png
    :align: center
+   :alt: Screenshot of a software interface with a histogram on the left showing a distribution of data with the label "k1" on the x-axis and "Frequency %" on the y-axis. The right side of the image displays a data table with several columns including "Run #", "k1", "k2", "mbda.CovMultiplier", "phi.CovMultiplier", "lambda", and "phi", showing various numerical values for each run. The table options include "Save Table" and "Save Columns Separately".
    :figclass: align-center
    :width: 600
 
@@ -232,10 +243,12 @@ If a single column of the tabular data is pressed with both right and left butto
 
 .. figure:: figures/qfem-0014-RES4.png
    :align: center
+   :alt: Screenshot of a computer interface displaying a scatter plot and a data table. The scatter plot is on the left side with a large number of blue data points distributed mainly in the center, with axes labeled 'lambda' and 'phi.' On the right side, a data table shows numerical values with columns labeled 'Run #,' 'k1,' 'k2,' 'mbda.CovMultiplier,' 'phi.CovMultiplier,' 'lambda,' and 'phi.' Some interface buttons like 'Save Table' and 'Save Columns Separately' are visible on top. At the very left, there is a vertical navigation bar with highlighted options such as 'UQ,' 'FEM,' 'RV,' 'EDP,' and 'RES.'
    :figclass: align-center
    :width: 600
  
 .. figure:: figures/qfem-0014-RES5.png
    :align: center
+   :alt: Screenshot of a computer interface with a navigation bar on the left side and two main sections on the screen. The left section displays a graph titled "Cumulative Frequency Distribution" with a curved line representing cumulative probability on the y-axis and a variable labeled "k1" on the x-axis. The right section shows a tabbed interface with tabs labeled "Summary" and "Data Values"; the visible "Data Values" tab includes a table with numerical data and columns labeled "Run #," "k1," "k2," "mbda.CovMultiplier," "phi.CovMultiplier," "lambda," and "phi." There are buttons above the table for "Save Table" and "Save Columns Separately."
    :figclass: align-center
    :width: 600
