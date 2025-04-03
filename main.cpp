@@ -53,7 +53,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <GoogleAnalytics.h>
 #include <TapisV3.h>
 #include <QtWebEngine>
-
+#include <Utils/FileOperations.h>
 
 
  // customMessgaeOutput code from web:
@@ -108,32 +108,15 @@ int main(int argc, char *argv[])
     // set up logging of output messages for user debugging
     //
 
-    logFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-      + QDir::separator() + QCoreApplication::applicationName();
-
-
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();    
-    QString workDir = env.value("SIMCENTER_WORKDIR","None");
-    if (workDir != "None") {
-      logFilePath = workDir;
-    }
-
-    // make sure tool dir exists in Documentss folder
-    QDir dirWork(logFilePath);
-    if (!dirWork.exists())
-      if (!dirWork.mkpath(logFilePath)) {
-	qDebug() << QString("Could not create Working Dir: ") << logFilePath;
-      }
-
-    // full path to debug.log file
+    // path to log file
+    QString logFilePath = SCUtils::getAppWorkDir();
     logFilePath = logFilePath + QDir::separator() + QString("debug.log");    
-    
+
     // remove old log file
     QFile debugFile(logFilePath);
     debugFile.remove();
 
     QByteArray envVar = qgetenv("QTDIR");       //  check if the app is run in Qt Creator
-
     if (envVar.isEmpty())
         logToFile = true;
 
