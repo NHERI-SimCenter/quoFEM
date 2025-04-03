@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
     //
 
     // path to log file
-    QString logFilePath = SCUtils::getAppWorkDir();
+    logFilePath = SCUtils::getAppWorkDir();
     logFilePath = logFilePath + QDir::separator() + QString("debug.log");    
 
     // remove old log file
