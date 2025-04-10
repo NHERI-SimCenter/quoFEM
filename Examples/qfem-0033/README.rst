@@ -93,7 +93,7 @@ The sensitivity analysis is performed for a simulation model that reproduces the
 
 Files required
 --------------
-An opensees simulation model that reproduces the CyDSS test for CSR of [0.105, 0.130, 0.151, 0.172, 0.200]: :qfem-0033:`AnalysisScript.tcl <../qfem-0033/src/AnalysisScript.tcl>` and :qfem-0030:`DSS_quad_DispControlModified.tcl <../qfem-0033/src/DSS_quad_DispControlModified.tcl>` 
+An opensees simulation model that reproduces the CyDSS test for CSR of [0.105, 0.130, 0.151, 0.172, 0.200]: :qfem-0033:`AnalysisScript.tcl <../qfem-0033/src/AnalysisScript.tcl>` and :qfem-0033:`DSS_quad_DispControlModified.tcl <../qfem-0033/src/DSS_quad_DispControlModified.tcl>` 
 
 
 UQ workflow
