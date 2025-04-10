@@ -1,0 +1,102 @@
+{
+    "Applications": {
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+                "MS_Path": "{Current_Dir}/.",
+                "mainScript": "AnalysisScript.tcl",
+                "postprocessScript": ""
+            }
+        },
+        "UQ": {
+            "Application": "UCSD-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 1,
+            "name": "nCycles010_1",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "nCycles010_2",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "nCycles013",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "nCycles015",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "nCycles017",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "nCycles020",
+            "type": "scalar"
+        }
+    ],
+    "FEM": {
+    },
+    "UQ_Method": {
+        "calDataFile": "Ottawa_F65_CalibrationFile.txt",
+        "calDataFilePath": "{Current_Dir}/.",
+        "logLikelihoodFile": "",
+        "logLikelihoodPath": "",
+        "numExperiments": 1,
+        "numParticles": 500,
+        "parallelExecution": true,
+        "readUserDefinedCovarianceData": false,
+        "seed": 0,
+        "uqEngine": "UCSD-UQ",
+        "uqType": "Transitional Markov chain Monte Carlo"
+    },
+    "isSurrogate": false,
+    "localAppDir": "/Users/aakash/Desktop/quoFEM.app/Contents/MacOS",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.1,
+            "name": "Dr",
+            "refCount": 3,
+            "upperbound": 0.9,
+            "value": "RV.Dr",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 200,
+            "name": "G0",
+            "refCount": 3,
+            "upperbound": 2000,
+            "value": "RV.G0",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.01,
+            "name": "hpo",
+            "refCount": 3,
+            "upperbound": 5,
+            "value": "RV.hpo",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/Users/aakash/Desktop/quoFEM.app/Contents/MacOS",
+    "resultType": "SimCenterUQResultsSampling",
+    "runType": "runningLocal",
+    "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
+}

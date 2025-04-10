@@ -1,0 +1,111 @@
+{
+    "Applications": {
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+                "MS_Path": "{Current_Dir}/.",
+                "mainScript": "AnalysisScript.tcl",
+                "postprocessScript": ""
+            }
+        },
+        "UQ": {
+            "Application": "SimCenter-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 1,
+            "name": "nCycles010_1",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "nCycles010_2",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "nCycles013",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "nCycles015",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "nCycles017",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "nCycles020",
+            "type": "scalar"
+        }
+    ],
+    "FEM": {
+    },
+    "UQ": {
+        "PCAvarianceRatio": 0.99,
+        "RVsensitivityGroup": "",
+        "advancedOptions": false,
+        "performPCA": "Automatic",
+        "samplingMethodData": {
+            "RVdataGroup": "",
+            "method": "Monte Carlo",
+            "samples": 500,
+            "seed": 827
+        },
+        "uqType": "Sensitivity Analysis"
+    },
+    "correlationMatrix": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+    ],
+    "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.1,
+            "name": "Dr",
+            "refCount": 3,
+            "upperbound": 0.5,
+            "value": "RV.Dr",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 200,
+            "name": "G0",
+            "refCount": 3,
+            "upperbound": 2000,
+            "value": "RV.G0",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.1,
+            "name": "hpo",
+            "refCount": 3,
+            "upperbound": 4,
+            "value": "RV.hpo",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "runType": "runningLocal",
+    "workingDir": "C:/Users/SimCenter/Documents/quoFEM/LocalWorkDir"
+}

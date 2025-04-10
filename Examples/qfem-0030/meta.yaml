@@ -1,0 +1,8 @@
+title: Sensitivity Analysis of PM4Sand Model 
+summary: |
+  PM4Sand example series (1): Sensitivity analysis is performed to identify the important parameters in a liquefaction-capable soil constitutive model, PM4Sand model.
+author:
+- family: Sang-ri
+  given: Yi
+collection-title: PM4Sand
+difficulty: 0
