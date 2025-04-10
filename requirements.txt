@@ -1,0 +1,11 @@
+numpy
+scipy
+sklearn
+pandas
+mpi4py
+GPy  
+emukit
+pydantic  
+matplotlib
+paramz
+openseespy
