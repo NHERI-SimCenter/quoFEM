@@ -113,7 +113,6 @@ It is recommended to request more than 5 nodes (i.e. more than 200 processors) t
 .. figure:: figures/qfem0032-RES2.png
    :align: center
    :figclass: align-center 
-   :width: 20%
 
    RES tab
 
