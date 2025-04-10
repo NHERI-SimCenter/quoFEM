@@ -53,7 +53,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <GoogleAnalytics.h>
 #include <TapisV3.h>
 #include <QtWebEngine>
-
+#include <Utils/FileOperations.h>
 
 
  // customMessgaeOutput code from web:
@@ -102,38 +102,21 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, and Version
     QCoreApplication::setApplicationName("quoFEM");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("4.0.2");
+    QCoreApplication::setApplicationVersion("4.1.0");
 
     //
     // set up logging of output messages for user debugging
     //
 
-    logFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-      + QDir::separator() + QCoreApplication::applicationName();
-
-
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();    
-    QString workDir = env.value("SIMCENTER_WORKDIR","None");
-    if (workDir != "None") {
-      logFilePath = workDir;
-    }
-
-    // make sure tool dir exists in Documentss folder
-    QDir dirWork(logFilePath);
-    if (!dirWork.exists())
-      if (!dirWork.mkpath(logFilePath)) {
-	qDebug() << QString("Could not create Working Dir: ") << logFilePath;
-      }
-
-    // full path to debug.log file
+    // path to log file
+    logFilePath = SCUtils::getAppWorkDir();
     logFilePath = logFilePath + QDir::separator() + QString("debug.log");    
-    
+
     // remove old log file
     QFile debugFile(logFilePath);
     debugFile.remove();
 
     QByteArray envVar = qgetenv("QTDIR");       //  check if the app is run in Qt Creator
-
     if (envVar.isEmpty())
         logToFile = true;
 
@@ -184,7 +167,7 @@ int main(int argc, char *argv[])
 
     QString version = QString("Version ") + QCoreApplication::applicationVersion();
     w.setVersion(version);
-    QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, & Wael Elhaddad. (2024). NHERI-SimCenter/quoFEM: Version 4.0.0 (v4.0.0). Zenodo. https://doi.org/10.5281/zenodo.13324130  \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
+    QString citeText = QString("1) Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, & Wael Elhaddad. (2025). NHERI-SimCenter/quoFEM: Version 4.1.0 (v4.1.0). Zenodo. https://doi.org/10.5281/zenodo.14583957  \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
     
     w.setCite(citeText);
   

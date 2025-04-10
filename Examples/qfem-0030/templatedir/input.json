@@ -13,8 +13,7 @@
             "ApplicationData":
             {
                 "MS_Path": "{Current_Dir}/",
-                "mainScript": "matTestAllParamsReadStrain.tcl",
-                "postprocessScript": ""
+                "mainScript": "matTestAllParamsReadStrain.tcl"
             }
         }
     },
@@ -28,14 +27,15 @@
     ],
     "UQ":
     {
-        "calDataFile": "calDataField.csv",
-        "calDataFilePath": "{Current_Dir}/.",
-        "logLikelihoodFile": "",
-        "logLikelihoodPath": "",
-        "numParticles": 200,
+        "calibration_data_file_name": "calDataField.csv",
+        "calibration_data_path": "{Current_Dir}/.",
+        "log_likelihood_file_name": "",
+        "log_likelihood_path": "",
+        "sample_size": 200,
         "seed": 0,
         "uqEngine": "UCSD-UQ",
-        "uqType": "Transitional Markov chain Monte Carlo"
+        "uqType": "Transitional Markov chain Monte Carlo",
+        "useApproximation": true
     },
     "localAppDir": "/Users/aakash/SimCenter/quoFEM/backend",
     "python": "/Users/aakash/.pyenv/shims/python",

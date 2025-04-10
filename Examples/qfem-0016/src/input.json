@@ -1,21 +1,26 @@
 {
-    "Applications": {
-        "FEM": {
+    "Applications":
+    {
+        "FEM":
+        {
             "Application": "OpenSees",
-            "ApplicationData": {
+            "ApplicationData":
+            {
                 "MS_Path": "{Current_Dir}/",
                 "PS_Path": "{Current_Dir}/",
                 "mainScript": "ShearBuilding_NL.tcl",
                 "postprocessScript": "postprocess.tcl"
             }
         },
-        "UQ": {
+        "UQ":
+        {
             "Application": "SimCenter-UQ",
-            "ApplicationData": {
-            }
+            "ApplicationData":
+            {}
         }
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "length": 1,
             "name": "Node_2_Disp_1_Mean",
@@ -27,10 +32,12 @@
             "type": "scalar"
         }
     ],
-    "FEM": {
-    },
-    "UQ": {
-        "surrogateMethodInfo": {
+    "FEM":
+    {},
+    "UQ":
+    {
+        "surrogateMethodInfo":
+        {
             "DoEmethod": "None",
             "accuracyLimit": 0.02,
             "advancedOpt": true,
@@ -54,7 +61,8 @@
     },
     "isSurrogate": true,
     "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "distribution": "Uniform",
             "inputType": "Parameters",

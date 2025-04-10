@@ -1,8 +1,11 @@
-title: Sensitivity Analysis of PM4Sand Model 
+title: Surrogate-Aided Bayesian Calibration of Material Model Parameters
 summary: |
-  PM4Sand example series (1): Sensitivity analysis is performed to identify the important parameters in a liquefaction-capable soil constitutive model, PM4Sand model.
+  In this example, the parameters of the STEEL02 material model in OpenSees
+  are calibrated by a Gaussian process surrogate aided Bayesian inference. Experimental data is
+  passed in to quoFEM from an external file, and the output is the time-history of
+  stress - a non-scalar response quantity.
 author:
-- family: Sang-ri
-  given: Yi
-collection-title: PM4Sand
-difficulty: 0
+- family: Bangalore Satish
+  given: Aakash
+collection-title: Material Model
+difficulty: 1

@@ -1,8 +1,10 @@
 {
-    "FEM": {
-    },    
-    "UQ": {
-        "samplingMethodData": {
+    "FEM":
+    {},
+    "UQ":
+    {
+        "samplingMethodData":
+        {
             "method": "LHS",
             "samples": 200,
             "seed": 949
@@ -10,7 +12,8 @@
         "uqEngine": "Dakota",
         "uqType": "Forward Propagation"
     },
-    "EDP": [
+    "EDP":
+    [
         {
             "name": "Node_3_Disp_2"
         },
@@ -18,7 +21,8 @@
             "name": "Node_2_Disp_2"
         }
     ],
-    "randomVariables": [
+    "randomVariables":
+    [
         {
             "name": "E",
             "title": "elastic modulus",
@@ -63,20 +67,25 @@
         }
     ],
     "$schema": "https://raw.githubusercontent.com/claudioperez/SimCenterDocumentation/examples/docs/common/user_manual/schemas/quoFEM_Schema.json",
-    "Applications": {
-        "UQ": {
+    "Applications":
+    {
+        "UQ":
+        {
             "Application": "Dakota-UQ",
-            "ApplicationData": {}
+            "ApplicationData":
+            {}
         },
-        "FEM": {
+        "FEM":
+        {
             "Application": "OpenSeesPy",
-            "ApplicationData": {
-		"MS_Path": "{Current_Dir}/.",
-		"mainScript": "TrussModel.py",
-		"parametersScript": "TrussParams.py",
-		"PA_Path": "{Current_Dir}/.",
-        "postprocessScript": ""
-	    }
-        }		
+            "ApplicationData":
+            {
+                "MS_Path": "{Current_Dir}/.",
+                "mainScript": "TrussModel.py",
+                "parametersScript": "TrussParams.py",
+                "PA_Path": "{Current_Dir}/.",
+                "postprocessScript": ""
+            }
+        }
     }
 }

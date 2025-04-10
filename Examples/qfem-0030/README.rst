@@ -1,7 +1,7 @@
 .. _qfem-0030:
 
-Sensitivity Analysis of PM4Sand Model
-===============================================================
+Gaussian Process Surrogate Aided Bayesian Calibration of Material Model Parameters
+==================================================================================
 
 +---------------+----------------------------------------------+
 | Problem files | :github:`Github <Examples/qfem-0030/>`       |
@@ -9,173 +9,231 @@ Sensitivity Analysis of PM4Sand Model
 
 Outline
 -------
+In this example, the parameters of the STEEL02 material model in OpenSees are calibrated using Bayesian inference aided by a Gaussian process surrogate model for the response. Experimental data is passed in to quoFEM from an external file, and the output is the time-history of stress.
 
-This is the first example of the **PM4Sand example series**. In this example series, we demonstrate several UQ techniques (sensitivity analysis, Bayesian calibration, and forward propagation) using the PM4Sand constitutive model [Liu1986]_
-[Liu1986]_, a liquefaction-capable soil model in OpenSees. This complex material model is often calibrated using a small number of experimental results which yields imperfect information about its parameters. This leads to uncertain model predictions. Quantifying such uncertainties and inspecting the uncertainty bounds of model predictions can provide more information about the importance of each model parameter. Recognizing these uncertainties can incentivize more sophisticated modeling and calibration techniques that can better utilize the available data from experiments to reduce these bounds and provide more robust and higher fidelity simulations.
+Problem description
+-------------------
+Data
+++++
+The stress-strain data obtained experimentally from a cyclic test on a coupon prepared from a bar of reinforcing steel is shown in :numref:`figExperimentalDataSteelCoupon`. 
 
-The PM4Sand constitutive model has 24 parameters. Among them, apparent relative density *Dr*, shear modulus coefficient *Go*, and contraction rate parameter *hpo*, are known to be important for predicting liquefaction responses. Therefore, these three parameters *Dr, Go*, and *hpo* are considered in the UQ analyses and their prior distributions are assumed to be uniform distributions with the ranges shown in Table 1. These prior distributions shall capture a plausible wide range that includes all possible parameter values for the target soils. The experimental data will be used to constrain this wide range to the domain that best describes the behavior exhibited by the specimen during the experiments.
 
-.. list-table:: Table 1: Parameter Distributions
-   :widths: 15 20 20
-   :header-rows: 1
+.. _figExperimentalDataSteelCoupon:
 
-   * - Parameter
-     - Distribution
-     - Range
-   * - Dr
-     - Uniform
-     - 0.1 - 0.6
-   * - Go
-     - Uniform
-     - 200 - 2000
-   * - hpo
-     - Uniform
-     - 0.01 - 5
-
-In this example series, the amount of reduction in the uncertainty in PM4Sand parameters calibrated to Cyclic Direct Simple Shear (CyDSS) test data is inspected [Morales2021]_ [Ziotopoulou2013]_, and the resulting uncertainty is propagated in an earthquake excitation simulation of a soil column. Three steps of UQ analyses, schematically shown in the below figure, are presented:
-
-.. figure:: figures/qfem0030-fig0.png
-   :alt: Image description
-   :name: fig0
+.. figure:: figures/qf-0019-StressStrainData.png
    :align: center
-   :width: 80%
-
-   Three steps of UQ analyses
-
-.. [Boulanger2017]
-   Boulanger, R.W., Ziotopoulou, K.: PM4Sand (Version 3.1): A sand plasticity model for earthquake engineering applications. Department of Civil and Environmental Engineer-ing, University of California, Davis, Davis, CA, Report UCD/CGM-17/01 (2017)
-.. [Chen2021]
-   Chen, L., Arduino, P.: Implementation, verification, and validation of the PM4Sand model in OpenSees. Pacific Earthquake Engineering Research (PEER) Center, Universi-ty of California, Berkeley, Berkeley, USA, Report 2021/02 (2021)
-.. [Morales2021]
-   Morales, B., Humire, F., Ziotopoulou, K.: Data from: Cyclic Direct Simple Shear Test-ing of Ottawa F50 and F65 Sands (Feb. 1st, 2021). Distributed by Design Safe-CI Data Depot. https://doi.org/10.17603/ds2-eahz-9466. Accessed 28 June 2021
-.. [Ziotopoulou2013]
-   Ziotopoulou, K., Boulanger, R.W.: Calibration and implementation of a sand plasticity plane strain model for earthquake engineering applications. Soil Dynamics and Earth-quake Engineering. 53, 268–280 (2013).
-
-Note that this example can be used to reproduced the contents in the published conference papers.
-
-.. [Yi2022]
-   Yi, S., Satish, A. B., Nair, A. S., Arduino, P., Zsarnóczay, A., & McKenna, F. : Sensitivity Analysis and Bayesian Calibration of OpenSees Models Using quoFEM. In Eurasian Conference on OpenSees (pp. 63-72). Cham: Springer Nature Switzerland.(2022, July) `link <https://link.springer.com/chapter/10.1007/978-3-031-30125-4_6>`_
-.. [Satish2021]
-   Satish, A. B., Yi, S. R., Nair, A. S., & Arduino, P.: Probabilistic Calibration and Prediction of Seismic Soil Liquefaction Using quoFEM. In Conference on Performance-based Design in Earthquake. Geotechnical Engineering (pp. 1700-1707). Cham: Springer International Publishing. (2022, August). `link <https://link.springer.com/chapter/10.1007/978-3-031-11898-2_152>`_
-
-A Jupyter-notebook version of this tutorial is available at DesignSafe `use case gallery <https://designsafe-ci.org/user-guide/usecases/arduino/usecase_quoFEM/>`_.
+   :width: 400
+   :figclass: align-center
+   
+   Stress-strain curve from cyclic test on test coupon from reinforcing steel bar.
 
 
-Related Examples
---------------------
-This page is a part of the PM4Sand example series, focusing on Step 1 **Sensitivity analysis**. Steps 2 and 3 can be found below:
-
-* Step 2: :ref:`qfem-0031`
-* Step 3: :ref:`qfem-0032`
+This stress-strain data was obtained corresponding to a randomized strain history similar to those observed experimentally in reinforcing steel during seismic tests, as shown in :numref:`figExperimentalDataSteelCouponStrain`.
 
 
-Problem description 
---------------------
+.. _figExperimentalDataSteelCouponStrain:
 
-.. note:: This example takes several hours to run on local desktop. It is recommended to run it on DesignSafe with more than 3 nodes. To do this, the user first need to request a job allocation by submitting a ticket at DesignSafe website. Navigate to `DesignSafe webpage <https://www.designsafe-ci.org/>`_, click ``Help`` - ``Submit a Ticket``, and request an allocation to run SimCenter tools.
-
-The sensitivity analysis is performed for a simulation model that reproduces the CyDSS test shown in below Figures. The output quantity of interest is the number of cycles until the onset of liquefaction. The onset of liquefaction is defined as the time step when the shear strain shown in the below image exceeds 3.5%. Liquefaction capacity is affected by the initial shear stress typically characterized by the cyclic shear stress ratio (CSR; i.e., ratio of horizontal cyclic shear stress to vertical consolidation stress). In this sensitivity analysis, a CSR of [0.105, 0.130, 0.151, 0.172, 0.200] are considered. 
-
-.. figure:: figures/qfem0030-fig1.png
-   :alt: Image description
-   :name: fig1
+.. figure:: figures/qf-0019-StrainHistory.png
    :align: center
+   :width: 400
+   :figclass: align-center
+   
+   The test coupon was subjected to this strain history.
 
-   Single element FE model used in sensitivity analysis and Bayesian calibration
+The corresponding stress history is shown in :numref:`figExperimentalDataSteelCouponStress`.
 
+.. _figExperimentalDataSteelCouponStress:
 
-.. figure:: figures/qfem0030-fig2.png
-   :alt: Image description
-   :name: fig2
+.. figure:: figures/qf-0019-StressHistory.png
    :align: center
+   :width: 400
+   :figclass: align-center
+   
+   The stress history obtained from the experiment.
 
-   Simulated cyclic stress-strain curve (left); stress path during the simulated cyclic direct simple shear test (center); evolution of pore water pressure ratio during the simulated CyDSS test (right)
+
+Model
++++++
+For this example, the STEEL02 material model in OpenSees was selected to represent the cyclic stress-strain response of the steel reinforcing bar in finite element simulations. The STEEL02 material model in OpenSees can take a total of 11 parameter values as input, as described in the `documentation <https://opensees.berkeley.edu/wiki/index.php/Steel02_Material_--_Giuffré-Menegotto-Pinto_Model_with_Isotropic_Strain_Hardening>`_. Of these 11 parameters, the value of 7 parameters shown in `Table 1`_ will be calibrated in this example.
+
+.. _Table 1:
+
+Table 1: Parameters of the STEEL02 material model whose values are being calibrated. 
+
+==========================================================  =========== ===========
+Variable                                                    lower bound upper bound
+==========================================================  =========== ===========
+Yield strength :math:`f_y`                                  300		    700
+Initial elastic tangent :math:`E`                           150000	    250000
+Strain hardening ratio :math:`b`                            0	        0.2
+Elastic-plastic transition parameter 1 :math:`cR_1`    	   0	        1
+Elastic-plastic transition parameter 2 :math:`cR_2`         0	    	0.2
+Isotropic hardening parameter for compression :math:`a_1`   0	    	0.1
+Isotropic hardening parameter for tension :math:`a_3`       0		   	0.1
+==========================================================  =========== ===========
+	 
+
+The value of the other four parameters are kept fixed at:
+
+==========================================================  =========== 
+Variable                                                    Value
+==========================================================  =========== 
+Elastic-plastic transition parameter :math:`R_0`            20
+Isotropic hardening parameter for compression :math:`a_2`   1
+Isotropic hardening parameter for tension :math:`a_4`       1
+Initial stress value :math:`sigInit`                        0
+==========================================================  =========== 
+ 
+Parameter estimation setup
+++++++++++++++++++++++++++
+In this example, the values of the parameters shown in `Table 1`_ are being estimated. The table also shows the lower and upper bounds of the uniform distribution that is assumed to the prior probability distribution for these parameters. The unkown parameters in this problem, :math:`\mathbf{\theta}=(f_y, E, b, cR_1, cR_2, a_1, a_3)^T` are estimated using the data of the stress response corresponding to the strain history shown in :numref:`figExperimentalDataSteelCouponStrain`. 
+
+The Gaussian likelihood that is used by default in quoFEM is employed for this problem. This assumes that the errors (i.e. the differences between the finite element prediction of the stress history and the experimentally obtained stress history) follow a zero-mean Gaussian distribution. The components of the error vector are assumed to be statistically independent and identically distributed. Under this assumption, the standard deviation of the error is also an unknown parameter of the likelihood model and is also estimated during the calibration process. quoFEM automatically sets up the prior probability distribution for this additional parameter.
 
 
 Files required
 --------------
-An opensees simulation model that reproduces the CyDSS test for CSR of [0.105, 0.130, 0.151, 0.172, 0.200]: :qfem-0030:`AnalysisScript.tcl <../qfem-0030/src/AnalysisScript.tcl>` and :qfem-0030:`DSS_quad_DispControlModified.tcl <../qfem-0030/src/DSS_quad_DispControlModified.tcl>` 
+The exercise requires one script file and two data files. The user should download these files and place them in a **new** folder. 
 
+.. warning::
+   Do not place the files in your root, downloads, or desktop folder as when the application runs it will copy the contents on the directories and subdirectories containing these files multiple times. If you are like us, your root, Downloads or Documents folders contains a lot of files.
+
+1. :qfem-0030:`matTestAllParamsReadStrain.tcl <src/matTestAllParamsReadStrain.tcl>` - This is an OpenSees script written in tcl which simulates a material test and writes the stress response (in a file called ``results.out``) when subjected to the chosen strain history, for a given value of the parameters of the material model. 
+
+2. :qfem-0030:`stress.1.coords <src/stress.1.coords>` - This file contains the strain history that is used as input during the finite element simulation of the material response. The strain values stored in this file are read in by the tcl script performing the OpenSees analysis.
+
+
+3. :qfem-0030:`calDataField.csv <src/calDataField.csv>` - This is a csv file that contains the stress data. There is one row of data, which implies that the data is obtained from one experiment. If additional data are available from other experiments, then the data from each experiment must be provided on separate lines.
+
+.. note::
+   Since the tcl script creates a ``results.out`` file when it runs, no postprocessing script is needed. 
 
 UQ workflow
 -----------
+.. .. note::
+.. 	Selecting the ``Material Model: Bayesian Calibration with TMCMC`` example in the quoFEM Examples menu will autopopulate all the input fields required to run this example. 
+.. 	The procedure outlined below demonstrates how to manually set up this problem in quoFEM.
 
 The steps involved are as follows:
 
-1. Start the application and the **UQ** panel will be highlighted. Select Sensitivity Analysis. Any of the two engines can be selected and their algorithmic difference can be found in the :ref:`user manual<lblUQ>` or technical manual. Let's select SimCenterUQ.
+1. Start the application and the **UQ** panel will be highlighted. In the **UQ Engine** drop down menu, select the **UCSD_UQ** engine. In the **Method** category drop down menu the **Transitional Markov chain Monte Carlo** option will be highlighted. Enter the values in this panel as shown in the figure below. If manually setting up this problem, choose the path to the file containing the calibration data on your system. 
 
-.. figure:: figures/qfem0030-UQ.png
+.. figure:: figures/qf-0019-UQ.png
    :align: center
    :figclass: align-center
 
 
-2. Next select the **FEM** panel from the input panel selection. This will default to the **OpenSees** FEM engine. In the **Input Script** field, enter the path to the ``AnalysisScript.tcl`` file or select **Choose** and navigate to the file. Only the main file (:qfem-0030:`AnalysisScript.tcl <../qfem-0030/src/AnalysisScript.tcl>`) need to be imported and other supplementary files can be located at the same directory.
+2. Next select the **FEM** panel from the input panel selection. This will default to the **OpenSees** FEM engine. In the **Input Script** field, enter the path to the ``matTestAllParamsReadStrain.tcl`` file or select **Choose** and navigate to the file. 
 
-.. figure:: figures/qfem0030-FEM.png
+.. figure:: figures/qf-0019-FEM.png
    :align: center
    :figclass: align-center
 
-   FEM tab
 
+3. Next select the **RV** tab from the input panel. This panel should be pre-populated with seven random variables. If not, press the **Add** button to create new fields to define the input random variables. Enter the same variable names, as required in the model script. 
 
-3. Next select the **RV** tab from the input panel, and choose uniform distributions with the provided ranges.
+For each variable, specify the prior probability distribution and its parameters, as shown in the figure below. 
 
-.. figure:: figures/qfem0030-RV.png
+.. figure:: figures/qf-0019-RV.png
    :align: center
    :figclass: align-center
 
-   RV tab
 
+4. In the **QoI** panel denote that the variable named ``stress`` is not a scalar response variable, but has a length of 342.
 
-4. In the **EDP** panel denote that the output variables. 
-
-.. figure:: figures/qfem0030-QoI.png
+.. figure:: figures/qf-0019-QOI.png
    :align: center
    :figclass: align-center
-   :width: 50%
 
-   EDP tab
+5. Next click on the **Run** button. This will cause the backend application to launch the **UCSD_UQ** engine, which performs Bayesian calibration using the TMCMC algorithm. When done, the **RES** tab will be selected and the results will be displayed as shown in the figure below. The results show the first four moments of the posterior marginal probability distribution of the parameters estimated in this example. Also shown are the moments of the additional parameter of the likelihood function. Finally, the moments of the predictions of the model corresponding to the samples of the parameter values from their posterior probability distribution are also shown in this panel (not visible in this figure - you can see them by scrolling down in the application).
 
-5. Once ready, let us run the job remotely on DesignSafe HPC cloud computer. Note that you can also perform the analysis locally, but it will take several hours, depending on the computer spec. The remote run will take only a few minutes. To run a remote job, the user first need to request a job allocation by submitting a ticket at DesignSafe website. Navigate to `DesignSafe webpage <https://www.designsafe-ci.org/>`_, click ``Help`` - ``Submit`` a Ticket, and request an allocation to run SimCenter tools. Once the allocation name is identified, the user can run the analysis by clicking the **RUN at DesignSafe** button and filling in the below entries.
 
-.. figure:: figures/qfem0030-DS1.png
+.. figure:: figures/qf-0019-RES1.png
    :align: center
-   :figclass: align-center 
-   :width: 70%
-
-   RUN at DesignSafe window 
+   :figclass: align-center
 
 
-It is recommended to request more than 3 nodes (i.e. more than 120 processors) to obtain the results within a few minutes. Once the job is successfully submitted, you can check the job status by clicking "GET from DesignSafe" button. Once the job status appears ``FINISHED``, left-click the corresponding row and click **Retrieve Data**
+If the user selects the **Data Values** tab in the results panel, they will be presented with both a graphical plot and a tabular listing of the data.
 
-
-.. figure:: figures/qfem0030-DS2.png
+.. figure:: figures/qf-0019-RES2.png
    :align: center
-   :figclass: align-center 
-   :width: 80%
-
-   GET from DesignSafe window 
-
-6. The sensitivity analysis results should be displayed at RES tab.
-
-.. figure:: figures/qfem0030-RES1.png
-   :align: center
-   :figclass: align-center 
-
-   RES tab (1)
+   :figclass: align-center
 
 
-.. figure:: figures/qfem0030-RES2.png
-   :align: center
-   :figclass: align-center 
-
-   RES tab (2)
-
-
-Post-processing script
+Comaparison with deterministic calibration results
 --------------------------------------------------
+For the same data and choice of material model to represent the data, deterministic estimation of the parameters of the material model shown in `Table 1`_ was also conducted in quoFEM using the non-linear least squares minimization algorithm available through the **Dakota** UQ engine. 
 
-Please visit DesignSafe `use case gallery <https://designsafe-ci.org/user-guide/usecases/arduino/usecase_quoFEM/>`_  to find more information on
- (i) running quoFEM on DesignSafe through jupyter-notebook (without using graphical user interface)
- (ii) postprocess the results using jupyer-notebook
+The bounds and the starting point of the search for the optimum parameter values are shown in `Table 2`_.
+
+.. _Table 2:
+ 
+Table 2: Parameters of the STEEL02 material model whose optimum values are being estimated.
+
+==========================================================  =========== =========== =============
+Variable                                                    lower bound upper bound initial point
+==========================================================  =========== =========== =============
+Yield strength :math:`f_y`                                  300		   700			500
+Initial elastic tangent :math:`E`                           100000	   300000		200000
+Strain hardening ratio :math:`b`                            1e-6        1			   0.5
+Elastic-plastic transition parameter 1 :math:`cR_1`    	   1e-6        2			   1
+Elastic-plastic transition parameter 2 :math:`cR_2`         1e-6    	   2			   1
+Isotropic hardening parameter for compression :math:`a_1`   1e-6    	   0.5			0.25
+Isotropic hardening parameter for tension :math:`a_3`       1e-6    	   0.5			0.25
+==========================================================  =========== =========== =============
+
+Like in the Bayesian paramter estimation case, the value of the other four parameters are kept fixed at:
+
+==========================================================  =====
+Variable                                                    Value
+==========================================================  =====
+Elastic-plastic transition parameter :math:`R_0`            20
+Isotropic hardening parameter for compression :math:`a_2`   1
+Isotropic hardening parameter for tension :math:`a_4`       1
+Initial stress value :math:`sigInit`                        0
+==========================================================  =====
+
+
+Solution using quoFEM
++++++++++++++++++++++
+
+.. note::
+	Selecting the ``Material Model: Deterministic Calibration`` example in the quoFEM Examples menu will autopopulate all the input fields required to run this example. 
+
+The inputs in the **FEM** and the **QoI** panels are the same as in the Bayesian parameter estimation case. The inputs that differ from the Bayesian parameter estimation case are shown in the figures below:
+
+
+**UQ** panel:
+
+.. figure:: figures/qf-0018-UQ.png
+   :align: center
+   :figclass: align-center
+
+**RV** panel:
+
+.. figure:: figures/qf-0018-RV.png
+   :align: center
+   :figclass: align-center
+
+
+Results
++++++++
+After conducting the deterministc parameter estimation, the results obtained are shown in the figure below:
+
+.. figure:: figures/qf-0018-RES1.png
+   :align: center
+   :figclass: align-center
+   
+The optimum parameter values estimated in this example match closely match the mean value of the posterior samples shown in the figure of the summary tab of the results panel for the Bayesian parameter estimation case.
+
+
+The fit corresponding to the optimum parameter values is shown in the figures below:
+
+.. figure:: figures/qf-0019-StressResults.png
+   :align: center
+   :figclass: align-center
+
+.. figure:: figures/qf-0019-DeterministicCalibrationResults.png
+   :align: center
+   :figclass: align-center
    
