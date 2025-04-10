@@ -3,7 +3,7 @@
         "FEM": {
             "Application": "OpenSees",
             "ApplicationData": {
-                "MS_Path": "{Current_Dir}/.",
+                "MS_Path": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Examples/qfem-0032/src",
                 "mainScript": "N10_T3_ModifiedCase1.tcl",
                 "postprocessScript": ""
             }
@@ -270,13 +270,14 @@
     },
     "UQ": {
         "samplingMethodData": {
-            "RVdataGroup": "",
+            "RVdataGroup": "{Dr, G0, hpo}",
             "method": "Monte Carlo",
             "samples": 200,
             "seed": 694
         },
         "uqType": "Forward Propagation"
     },
+    "coresPerNode": 40,
     "correlationMatrix": [
         1,
         0,
@@ -288,10 +289,15 @@
         0,
         1
     ],
-    "localAppDir": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug",
+    "execSystemId": "stampede3",
+    "execSystemLogicalQueue": "skx",
+    "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "maxMinutes": 60,
+    "memoryMB": 128000,
+    "nodeCount": 5,
     "randomVariables": [
         {
-            "dataDir": "{Current_Dir}/Dr.in",
+            "dataDir": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Examples/qfem-0032/src/Dr.in",
             "distribution": "Discrete",
             "inputType": "Dataset",
             "name": "Dr",
@@ -300,7 +306,7 @@
             "variableClass": "Uncertain"
         },
         {
-            "dataDir": "{Current_Dir}/G0.in",
+            "dataDir": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Examples/qfem-0032/src/G0.in",
             "distribution": "Discrete",
             "inputType": "Dataset",
             "name": "G0",
@@ -309,7 +315,7 @@
             "variableClass": "Uncertain"
         },
         {
-            "dataDir": "{Current_Dir}/hpo.in",
+            "dataDir": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Examples/qfem-0032/src/hpo.in",
             "distribution": "Discrete",
             "inputType": "Dataset",
             "name": "hpo",
@@ -318,10 +324,10 @@
             "variableClass": "Uncertain"
         }
     ],
-    "remoteAppDir": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug",
+    "remoteAppDir": "/work2/00477/tg457427/stampede3/SimCenterBackendApplications/v25.02.03",
     "resultType": "SimCenterUQResultsSampling",
-    "runType": "runningLocal",
+    "runType": "runningRemote",
     "summary": [
     ],
-    "workingDir": "C:/Users/SimCenter/Documents/quoFEM/LocalWorkDir"
+    "workingDir": "C:/Users/SimCenter/Documents/quoFEM/RemoteWorkDir"
 }
