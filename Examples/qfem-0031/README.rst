@@ -12,7 +12,7 @@ Related Examples
 --------------------
 This page is a part of the PM4Sand example series, focusing on Step 2 **Bayesian Calibration**. Steps 1 and 3 can be found below:
 
-* General description and Step 1: :ref:`qfem-0030`
+* General description and Step 1: :ref:`qfem-0033`
 * Step 3: :ref:`qfem-0032`
 
 Problem description 
