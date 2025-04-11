@@ -1,0 +1,333 @@
+{
+    "Applications": {
+        "FEM": {
+            "Application": "OpenSees",
+            "ApplicationData": {
+                "MS_Path": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Examples/qfem-0032/src",
+                "mainScript": "N10_T3_ModifiedCase1.tcl",
+                "postprocessScript": ""
+            }
+        },
+        "UQ": {
+            "Application": "SimCenter-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": [
+        {
+            "length": 1,
+            "name": "max1",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res1",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max3",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res3",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max5",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res5",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max7",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res7",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max9",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res9",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max11",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res11",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max13",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res13",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max15",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res15",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max17",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res17",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max19",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res19",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max21",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res21",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max23",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res23",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max25",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res25",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max27",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res27",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max29",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res29",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max31",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res31",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max33",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res33",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max35",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res35",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max37",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res37",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max39",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res39",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max41",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res41",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max43",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res43",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max45",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res45",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max47",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res47",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "max49",
+            "type": "scalar"
+        },
+        {
+            "length": 1,
+            "name": "res49",
+            "type": "scalar"
+        }
+    ],
+    "FEM": {
+    },
+    "UQ": {
+        "samplingMethodData": {
+            "RVdataGroup": "{Dr, G0, hpo}",
+            "method": "Monte Carlo",
+            "samples": 200,
+            "seed": 694
+        },
+        "uqType": "Forward Propagation"
+    },
+    "coresPerNode": 40,
+    "correlationMatrix": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+    ],
+    "execSystemId": "stampede3",
+    "execSystemLogicalQueue": "skx",
+    "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "maxMinutes": 60,
+    "memoryMB": 128000,
+    "nodeCount": 5,
+    "randomVariables": [
+        {
+            "dataDir": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Examples/qfem-0032/src/Dr.in",
+            "distribution": "Discrete",
+            "inputType": "Dataset",
+            "name": "Dr",
+            "refCount": 1,
+            "value": "RV.Dr",
+            "variableClass": "Uncertain"
+        },
+        {
+            "dataDir": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Examples/qfem-0032/src/G0.in",
+            "distribution": "Discrete",
+            "inputType": "Dataset",
+            "name": "G0",
+            "refCount": 1,
+            "value": "RV.G0",
+            "variableClass": "Uncertain"
+        },
+        {
+            "dataDir": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Examples/qfem-0032/src/hpo.in",
+            "distribution": "Discrete",
+            "inputType": "Dataset",
+            "name": "hpo",
+            "refCount": 1,
+            "value": "RV.hpo",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/work2/00477/tg457427/stampede3/SimCenterBackendApplications/v25.02.03",
+    "resultType": "SimCenterUQResultsSampling",
+    "runType": "runningRemote",
+    "summary": [
+    ],
+    "workingDir": "C:/Users/SimCenter/Documents/quoFEM/RemoteWorkDir"
+}
