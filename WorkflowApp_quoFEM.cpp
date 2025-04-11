@@ -68,7 +68,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <Stampede3Machine.h>
 #include <SC_ToolDialog.h>
 #include <SC_RemoteAppTool.h>
-#include <RemoteOpenSeesApp.h>
+#include <RemoteOpenSeesApp.h> //#include <JupyterWidget.h>
 
 #include <SimCenterComponentSelection.h>
 #include <RandomVariablesContainer.h>
@@ -263,6 +263,17 @@ WorkflowApp_quoFEM::setMainWindow(MainWindowWorkflowApp* window) {
   connect(showOpenSees, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theOpenSeesApp] {
     theDialog->showTool("OpenSees@DesignSafe");
   });
+
+
+
+  /*
+  JupyterWidget *theNotebook = new JupyterWidget();
+  theToolDialog->addTool(theNotebook, "Jupyter Notebook");
+  QAction *showJupyter = toolsMenu->addAction("&Jupyter Notebooh");
+  connect(showJupyter, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theNotebook] {
+    theDialog->showTool("Jupyter Notebook");
+  });
+  */
   
   
   //
