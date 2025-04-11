@@ -443,7 +443,8 @@ WorkflowApp_quoFEM::inputFromJSON(QJsonObject &jsonObject)
   auto* theNewResults = theUQ_Selection->getResults();
   //
   if (theNewResults->inputFromJSON(jsonObject) == false)
-      this->errorMessage("quoFEM: failed to read RES  data");
+      this->errorMessage("quoFEM: failed to read RES data");
+
   theResults->setResultWidget(theNewResults);
   return true;
 }
