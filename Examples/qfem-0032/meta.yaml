@@ -1,4 +1,4 @@
-title: Forward Propagation using samples of random variables
+title: Forward Propagation of PM4Sand using samples of random variables
 summary: |
   PM4Sand example series (3): Forward propagation is performed for soil column model for simulating lateral spreading response of a site subjected to an earthquake. For this, the PM4Sand parameter samples obtained in Bayesian calibration is directly utilized.
 author:
