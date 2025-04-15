@@ -1,6 +1,6 @@
 .. _qfem-0032:
 
-Forward Propagation using samples of random variables
+Forward Propagation of PM4Sand using samples of random variables
 ===============================================================
 
 +---------------+----------------------------------------------+
