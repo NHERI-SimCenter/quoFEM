@@ -18,10 +18,10 @@ Problem description
 -------------------
 Data
 ++++
-The stress-strain data obtained experimentally from a cyclic test on a coupon prepared from a bar of reinforcing steel is shown in :numref:`figExperimentalDataSteelCoupon`. 
+The stress-strain data obtained experimentally from a cyclic test on a coupon prepared from a bar of reinforcing steel is shown in :numref:`figureExperimentalDataSteelCoupon`. 
 
 
-.. _figExperimentalDataSteelCoupon:
+.. _figureExperimentalDataSteelCoupon:
 
 .. figure:: figures/qf-0019-StressStrainData.png
    :align: center
@@ -31,10 +31,10 @@ The stress-strain data obtained experimentally from a cyclic test on a coupon pr
    Stress-strain curve from cyclic test on test coupon from reinforcing steel bar.
 
 
-This stress-strain data was obtained corresponding to a randomized strain history similar to those observed experimentally in reinforcing steel during seismic tests, as shown in :numref:`figExperimentalDataSteelCouponStrain`.
+This stress-strain data was obtained corresponding to a randomized strain history similar to those observed experimentally in reinforcing steel during seismic tests, as shown in :numref:`figureExperimentalDataSteelCouponStrain`.
 
 
-.. _figExperimentalDataSteelCouponStrain:
+.. _figureExperimentalDataSteelCouponStrain:
 
 .. figure:: figures/qf-0019-StrainHistory.png
    :align: center
@@ -43,9 +43,9 @@ This stress-strain data was obtained corresponding to a randomized strain histor
    
    The test coupon was subjected to this strain history.
 
-The corresponding stress history is shown in :numref:`figExperimentalDataSteelCouponStress`.
+The corresponding stress history is shown in :numref:`figureExperimentalDataSteelCouponStress`.
 
-.. _figExperimentalDataSteelCouponStress:
+.. _figureExperimentalDataSteelCouponStress:
 
 .. figure:: figures/qf-0019-StressHistory.png
    :align: center
@@ -68,11 +68,11 @@ Variable                                                    lower bound upper bo
 ==========================================================  =========== ===========
 Yield strength :math:`f_y`                                  300		    700
 Initial elastic tangent :math:`E`                           150000	    250000
-Strain hardening ratio :math:`b`                            0	        0.2
-Elastic-plastic transition parameter 1 :math:`cR_1`    	    0	        1
-Elastic-plastic transition parameter 2 :math:`cR_2`         0	    	0.2
-Isotropic hardening parameter for compression :math:`a_1`   0	    	0.1
-Isotropic hardening parameter for tension :math:`a_3`       0		   	0.1
+Strain hardening ratio :math:`b`                            0	          0.2
+Elastic-plastic transition parameter 1 :math:`cR_1`    	   0	          1
+Elastic-plastic transition parameter 2 :math:`cR_2`         0	    	    0.2
+Isotropic hardening parameter for compression :math:`a_1`   0	    	    0.1
+Isotropic hardening parameter for tension :math:`a_3`       0		   	 0.1
 ==========================================================  =========== ===========
 	 
 
@@ -89,7 +89,7 @@ Initial stress value :math:`sigInit`                        0
  
 Parameter estimation setup
 ++++++++++++++++++++++++++
-In this example, the values of the parameters shown in `Table 1`_ are being estimated. The table also shows the lower and upper bounds of the uniform distribution that is assumed to the prior probability distribution for these parameters. The unkown parameters in this problem, :math:`\mathbf{\theta}=(f_y, E, b, cR_1, cR_2, a_1, a_3)^T` are estimated using the data of the stress response corresponding to the strain history shown in :numref:`figExperimentalDataSteelCouponStrain`. 
+In this example, the values of the parameters shown in `Table 1`_ are being estimated. The table also shows the lower and upper bounds of the uniform distribution that is assumed to the prior probability distribution for these parameters. The unknown parameters in this problem, :math:`\mathbf{\theta}=(f_y, E, b, cR_1, cR_2, a_1, a_3)^T` are estimated using the data of the stress response corresponding to the strain history shown in :numref:`figureExperimentalDataSteelCouponStrain`. 
 
 The Gaussian likelihood that is used by default in quoFEM is employed for this problem. This assumes that the errors (i.e. the differences between the finite element prediction of the stress history and the experimentally obtained stress history) follow a zero-mean Gaussian distribution. The components of the error vector are assumed to be statistically independent and identically distributed. Under this assumption, the standard deviation of the error is also an unknown parameter of the likelihood model and is also estimated during the calibration process. quoFEM automatically sets up the prior probability distribution for this additional parameter.
 
@@ -109,12 +109,12 @@ The exercise requires one script file and two data files. The user should downlo
 3. :qfem-0019:`calDataField.csv <src/calDataField.csv>` - This is a csv file that contains the stress data. There is one row of data, which implies that the data is obtained from one experiment. If additional data are available from other experiments, then the data from each experiment must be provided on separate lines.
 
 .. note::
-   Since the tcl script creates a ``results.out`` file when it runs, no postprocessing script is needed. 
+   Since the tcl script creates a ``results.out`` file when it runs, no post-processing script is needed. 
 
 UQ workflow
 -----------
 .. note::
-	Selecting the ``Material Model: Bayesian Calibration with TMCMC`` example in the quoFEM Examples menu will autopopulate all the input fields required to run this example. 
+	Selecting the ``Material Model: Bayesian Calibration with TMCMC`` example in the quoFEM Examples menu will auto-populate all the input fields required to run this example. 
 	The procedure outlined below demonstrates how to manually set up this problem in quoFEM.
 
 The steps involved are as follows:
@@ -142,7 +142,7 @@ For each variable, specify the prior probability distribution and its parameters
    :figclass: align-center
 
 
-4. In the **QoI** panel denote that the variable named ``stress`` is not a scalar response variable, but has a length of 342.
+4. In the **EDP** panel denote that the variable named ``stress`` is not a scalar response variable, but has a length of 342.
 
 .. figure:: figures/qf-0019-QOI.png
    :align: center
@@ -163,8 +163,8 @@ If the user selects the **Data Values** tab in the results panel, they will be p
    :figclass: align-center
 
 
-Comaparison with deterministic calibration results
---------------------------------------------------
+Comparison with deterministic calibration results
+-------------------------------------------------
 For the same data and choice of material model to represent the data, deterministic estimation of the parameters of the material model shown in `Table 1`_ was also conducted in quoFEM using the non-linear least squares minimization algorithm available through the **Dakota** UQ engine. 
 
 The bounds and the starting point of the search for the optimum parameter values are shown in `Table 2`_.
@@ -185,7 +185,7 @@ Isotropic hardening parameter for compression :math:`a_1`   1e-6    	0.5			0.25
 Isotropic hardening parameter for tension :math:`a_3`       1e-6    	0.5			0.25
 ==========================================================  =========== =========== =============
 
-Like in the Bayesian paramter estimation case, the value of the other four parameters are kept fixed at:
+Like in the Bayesian parameter estimation case, the value of the other four parameters are kept fixed at:
 
 ==========================================================  =====
 Variable                                                    Value
@@ -201,9 +201,9 @@ Solution using quoFEM
 +++++++++++++++++++++
 
 .. note::
-	Selecting the ``Material Model: Deterministic Calibration`` example in the quoFEM Examples menu will autopopulate all the input fields required to run this example. 
+	Selecting the ``Material Model: Deterministic Calibration`` example in the quoFEM Examples menu will auto-populate all the input fields required to run this example. 
 
-The inputs in the **FEM** and the **QoI** panels are the same as in the Bayesian parameter estimation case. The inputs that differ from the Bayesian parameter estimation case are shown in the figures below:
+The inputs in the **FEM** and the **EDP** panels are the same as in the Bayesian parameter estimation case. The inputs that differ from the Bayesian parameter estimation case are shown in the figures below:
 
 
 **UQ** panel:
@@ -221,13 +221,13 @@ The inputs in the **FEM** and the **QoI** panels are the same as in the Bayesian
 
 Results
 +++++++
-After conducting the deterministc parameter estimation, the results obtained are shown in the figure below:
+After conducting the deterministic parameter estimation, the results obtained are shown in the figure below:
 
 .. figure:: figures/qf-0018-RES1.png
    :align: center
    :figclass: align-center
    
-The optimum parameter values estimated in this example match closely match the mean value of the posterior samples shown in the figure of the summary tab of the results panel for the Bayesian parameter estimation case.
+The optimum parameter values estimated in this example closely match the mean value of the posterior samples shown in the figure of the summary tab of the **RES** panel for the Bayesian parameter estimation case.
 
 
 The fit corresponding to the optimum parameter values is shown in the figures below:
