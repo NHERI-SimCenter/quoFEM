@@ -118,7 +118,7 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
     theRVs = RandomVariablesContainer::getInstance();
     theFEM_Selection = new FEM_Selection(true);
     theUQ_Selection = new UQ_EngineSelection();
-    theEDPs = new InputWidgetEDP();
+    theQOIs = new InputWidgetEDP();
 
     //theResults = new DakotaResultsSampling(theRVs);
     theResults = theUQ_Selection->getResults();
@@ -193,7 +193,7 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
     theComponentSelection->addComponent(QString("UQ"),  theUQ_Selection);
     theComponentSelection->addComponent(QString("FEM"), theFEM_Selection);
     theComponentSelection->addComponent(QString("RV"),  theRVs);
-    theComponentSelection->addComponent(QString("EDP"),  theEDPs);    
+    theComponentSelection->addComponent(QString("QoI"),  theQOIs);    
     theComponentSelection->addComponent(QString("RES"), theResults);
 
     theComponentSelection->displayComponent("UQ");
@@ -330,7 +330,7 @@ WorkflowApp_quoFEM::outputToJSON(QJsonObject &jsonObjectTop) {
     if (result == false)
         return result;
 
-    result = theEDPs->outputToJSON(jsonObjectTop);
+    result = theQOIs->outputToJSON(jsonObjectTop);
     if (result == false)
         return result;    
 
@@ -402,7 +402,7 @@ WorkflowApp_quoFEM::clear(void)
 {
     theFEM_Selection->clear();
     theRVs->clear();
-    theEDPs->clear();
+    theQOIs->clear();
     theUQ_Selection->clear();
 }
 
@@ -435,7 +435,7 @@ WorkflowApp_quoFEM::inputFromJSON(QJsonObject &jsonObject)
   if (theFEM_Selection->inputFromJSON(jsonObject) == false)
     this->errorMessage("quoFEM: failed to read FEM Method data");
 
-  theEDPs->inputFromJSON(jsonObject);
+  theQOIs->inputFromJSON(jsonObject);
   theRVs->inputFromJSON(jsonObject);
 
   theRunWidget->inputFromJSON(jsonObject);

@@ -99,7 +99,7 @@ private:
   RandomVariablesContainer *theRVs;
   FEM_Selection *theFEM_Selection;
   UQ_EngineSelection *theUQ_Selection;
-  InputWidgetEDP *theEDPs;  
+  InputWidgetEDP *theQOIs;  
   UQ_Results *theResults;
   
   // objects for running the workflow and obtaining results
