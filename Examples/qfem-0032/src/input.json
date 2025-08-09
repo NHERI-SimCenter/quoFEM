@@ -3,7 +3,7 @@
         "FEM": {
             "Application": "OpenSees",
             "ApplicationData": {
-                "MS_Path": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Examples/qfem-0032/src",
+                "MS_Path": "{Current_Dir}",
                 "mainScript": "N10_T3_ModifiedCase1.tcl",
                 "postprocessScript": ""
             }
@@ -297,7 +297,7 @@
     "nodeCount": 5,
     "randomVariables": [
         {
-            "dataDir": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Examples/qfem-0032/src/Dr.in",
+            "dataDir": "{Current_Dir}/Dr.in",
             "distribution": "Discrete",
             "inputType": "Dataset",
             "name": "Dr",
@@ -306,7 +306,7 @@
             "variableClass": "Uncertain"
         },
         {
-            "dataDir": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Examples/qfem-0032/src/G0.in",
+            "dataDir": "{Current_Dir}/G0.in",
             "distribution": "Discrete",
             "inputType": "Dataset",
             "name": "G0",
@@ -315,7 +315,7 @@
             "variableClass": "Uncertain"
         },
         {
-            "dataDir": "C:/Users/SimCenter/Sangri/build-quoFEM-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Examples/qfem-0032/src/hpo.in",
+            "dataDir": "{Current_Dir}/hpo.in",
             "distribution": "Discrete",
             "inputType": "Dataset",
             "name": "hpo",
