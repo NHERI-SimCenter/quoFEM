@@ -1,0 +1,8 @@
+title: Bayesian Calibration of PM4Sand Model using Cyclic Direct Simple Shear Test Data
+summary: |
+  PM4Sand example series (2): Bayesian Calibration is performed to obtain the plausible parameters values of PM4Sand model that matches experimental observations.
+author:
+- family: Sang-ri
+  given: Yi
+collection-title: Forward Propagation
+difficulty: 0

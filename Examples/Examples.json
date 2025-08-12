@@ -94,6 +94,21 @@
       "name": "Bayesian Calibration of Hierarchical Model",
       "description": "In this example, a material model is fitted to each of several datasets, and a probability model is fitted to the estimated parameters of the material model from the different datasets.",
       "inputFile": "qfem-0028/src/input.json"
+    },
+    {
+      "name": "Sensitivity Analysis of PM4Sand Model",
+      "description": "PM4Sand example series (1): Sensitivity analysis is performed to identify the important parameters in a liquefaction-capable soil constitutive model, PM4Sand model.",
+      "inputFile": "qfem-0033/src/input.json"
+    },
+    {
+      "name": "Bayesian Calibration of PM4Sand Model using Cyclic Direct Simple Shear Test Data",
+      "description": "PM4Sand example series (2): Bayesian Calibration is performed to obtain the plausible parameters values of PM4Sand model that matches experimental observations.",
+      "inputFile": "qfem-0031/src/input.json"
+    },
+    {
+      "name": "Forward Propagation of PM4Sand using samples of random variables",
+      "description": "PM4Sand example series (3): Forward propagation is performed for soil column model for simulating lateral spreading response of a site subjected to an earthquake. For this, the PM4Sand parameter samples obtained in Bayesian calibration is directly utilized.",
+      "inputFile": "qfem-0032/src/input.json"
     }
   ]
 }

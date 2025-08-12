@@ -68,7 +68,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <Stampede3Machine.h>
 #include <SC_ToolDialog.h>
 #include <SC_RemoteAppTool.h>
-#include <RemoteOpenSeesApp.h>
+#include <RemoteOpenSeesApp.h> //#include <JupyterWidget.h>
 
 #include <SimCenterComponentSelection.h>
 #include <RandomVariablesContainer.h>
@@ -118,7 +118,7 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
     theRVs = RandomVariablesContainer::getInstance();
     theFEM_Selection = new FEM_Selection(true);
     theUQ_Selection = new UQ_EngineSelection();
-    theEDPs = new InputWidgetEDP();
+    theQOIs = new InputWidgetEDP();
 
     //theResults = new DakotaResultsSampling(theRVs);
     theResults = theUQ_Selection->getResults();
@@ -193,7 +193,7 @@ WorkflowApp_quoFEM::WorkflowApp_quoFEM(RemoteService *theService, QWidget *paren
     theComponentSelection->addComponent(QString("UQ"),  theUQ_Selection);
     theComponentSelection->addComponent(QString("FEM"), theFEM_Selection);
     theComponentSelection->addComponent(QString("RV"),  theRVs);
-    theComponentSelection->addComponent(QString("EDP"),  theEDPs);    
+    theComponentSelection->addComponent(QString("QoI"),  theQOIs);    
     theComponentSelection->addComponent(QString("RES"), theResults);
 
     theComponentSelection->displayComponent("UQ");
@@ -263,6 +263,17 @@ WorkflowApp_quoFEM::setMainWindow(MainWindowWorkflowApp* window) {
   connect(showOpenSees, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theOpenSeesApp] {
     theDialog->showTool("OpenSees@DesignSafe");
   });
+
+
+
+  /*
+  JupyterWidget *theNotebook = new JupyterWidget();
+  theToolDialog->addTool(theNotebook, "Jupyter Notebook");
+  QAction *showJupyter = toolsMenu->addAction("&Jupyter Notebooh");
+  connect(showJupyter, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theNotebook] {
+    theDialog->showTool("Jupyter Notebook");
+  });
+  */
   
   
   //
@@ -319,7 +330,7 @@ WorkflowApp_quoFEM::outputToJSON(QJsonObject &jsonObjectTop) {
     if (result == false)
         return result;
 
-    result = theEDPs->outputToJSON(jsonObjectTop);
+    result = theQOIs->outputToJSON(jsonObjectTop);
     if (result == false)
         return result;    
 
@@ -391,7 +402,7 @@ WorkflowApp_quoFEM::clear(void)
 {
     theFEM_Selection->clear();
     theRVs->clear();
-    theEDPs->clear();
+    theQOIs->clear();
     theUQ_Selection->clear();
 }
 
@@ -424,7 +435,7 @@ WorkflowApp_quoFEM::inputFromJSON(QJsonObject &jsonObject)
   if (theFEM_Selection->inputFromJSON(jsonObject) == false)
     this->errorMessage("quoFEM: failed to read FEM Method data");
 
-  theEDPs->inputFromJSON(jsonObject);
+  theQOIs->inputFromJSON(jsonObject);
   theRVs->inputFromJSON(jsonObject);
 
   theRunWidget->inputFromJSON(jsonObject);
@@ -432,7 +443,8 @@ WorkflowApp_quoFEM::inputFromJSON(QJsonObject &jsonObject)
   auto* theNewResults = theUQ_Selection->getResults();
   //
   if (theNewResults->inputFromJSON(jsonObject) == false)
-      this->errorMessage("quoFEM: failed to read RES  data");
+      this->errorMessage("quoFEM: failed to read RES data");
+
   theResults->setResultWidget(theNewResults);
   return true;
 }
@@ -639,7 +651,7 @@ WorkflowApp_quoFEM::getMaxNumParallelTasks() {
 int
 WorkflowApp_quoFEM::createCitation(QJsonObject &citation, QString citeFile) {
 
-  QString cit("{\"quoFEM\": { \"citations\": [{\"citation\": \"Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, & Wael Elhaddad. (2024). NHERI-SimCenter/quoFEM: Version 4.0.0 (v4.0.0). Zenodo. https://doi.org/10.5281/zenodo.13324130 \",\"description\": \"This is the overall tool reference used to indicate the version of the tool.\"},{\"citation\": \"Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706\",\"description\": \" This marker paper describes the SimCenter application framework, which was designed to simulate the impacts of natural hazards on the built environment.It  is a necessary attribute for publishing work resulting from the use of SimCenter tools, software, and datasets.\"}]}}");
+  QString cit("{\"quoFEM\": { \"citations\": [{\"citation\": \"Frank McKenna, Sang-ri Yi, Aakash Bangalore Satish, Adam Zsarnoczay, Michael Gardner, & Wael Elhaddad. (2025). NHERI-SimCenter/quoFEM: Version 4.1.0 (v4.1.0). https://doi.org/10.5281/zenodo.14583957 \",\"description\": \"This is the overall tool reference used to indicate the version of the tool.\"},{\"citation\": \"Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706\",\"description\": \" This marker paper describes the SimCenter application framework, which was designed to simulate the impacts of natural hazards on the built environment.It  is a necessary attribute for publishing work resulting from the use of SimCenter tools, software, and datasets.\"}]}}");
 
   QJsonDocument docC = QJsonDocument::fromJson(cit.toUtf8());
   if(!docC.isNull()) {
