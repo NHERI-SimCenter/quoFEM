@@ -18,6 +18,7 @@ expression:
 
 .. figure:: qfem-0005.png
    :width: 500px 
+   :alt: A 3D surface plot with a color gradient representing different values on the surface. The plot demonstrates a smooth, curved shape spread across three axes labeled X, Y, and Z. The colors on the surface transition from red to blue, indicating the variation in magnitude across the surface, with red representing higher values and blue indicating lower values.
    :align: center
 
 A forward propagation analysis will be conducted to numerically
