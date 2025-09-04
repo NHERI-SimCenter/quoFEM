@@ -1,6 +1,6 @@
 .. _qfem-0031:
 
-Bayesian Calibration of PM4Sand Model using Cyclic Direct Simple Shear Test Data
+PM4Sand - Bayesian Calibration using Cyclic Direct Simple Shear Test Data
 ======================================================================================================
 
 +---------------+----------------------------------------------+
