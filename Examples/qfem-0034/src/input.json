@@ -1,0 +1,99 @@
+{
+    "Applications":
+    {
+        "FEM":
+        {
+            "Application": "OpenSeesPy",
+            "ApplicationData":
+            {
+                "MS_Path": "{Current_Dir}/",
+                "PA_Path": "{Current_Dir}/",
+                "mainScript": "ColumnModel.py",
+                "parametersScript": "ColumnParams.py",
+                "postprocessScript": ""
+            }
+        },
+        "UQ":
+        {
+            "Application": "UCSD-UQ",
+            "ApplicationData":
+            {}
+        }
+    },
+    "EDP":
+    [
+        {
+            "length": 548,
+            "name": "force",
+            "type": "field"
+        }
+    ],
+    "FEM":
+    {},
+    "UQ":
+    {
+        "calDataFile": "experimentForce.csv",
+        "calDataFilePath": "{Current_Dir}/",
+        "logLikelihoodFile": "",
+        "logLikelihoodPath": "",
+        "method": "Bayesian Calibration",
+        "numExperiments": 1,
+        "numParticles": 1000,
+        "parallelExecution": true,
+        "readUserDefinedCovarianceData": false,
+        "seed": 20,
+        "uqType": "Transitional Markov chain Monte Carlo",
+        "useApproximation": false
+    },
+    "WorkflowType": "Building Simulation",
+    "correlationMatrix":
+    [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+    ],
+    "localAppDir": "/Applications/quoFEM.app/Contents/MacOS",
+    "randomVariables":
+    [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.05,
+            "name": "crack_factor",
+            "refCount": 1,
+            "upperbound": 0.8,
+            "value": "RV.crack_factor",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 100,
+            "name": "Mp",
+            "refCount": 1,
+            "upperbound": 500,
+            "value": "RV.Mp",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 100,
+            "name": "Mc",
+            "refCount": 1,
+            "upperbound": 500,
+            "value": "RV.Mc",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/Applications/quoFEM.app/Contents/MacOS",
+    "runDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir/tmp.SimCenter",
+    "runType": "runningLocal",
+    "workingDir": "/Users/aakash/Documents/quoFEM/LocalWorkDir"
+}
