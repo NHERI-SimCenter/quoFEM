@@ -61,7 +61,7 @@ The following three parameters are selected for calibration based on their influ
      - kN-m
    * - **Mc**
      - Positive peak moment capacity of plastic hinge
-     - Uniform(100, 500)
+     - Uniform(100, 600)
      - kN-m
 
 Experimental Data
@@ -107,7 +107,7 @@ The calibration is performed using quoFEM with the following configuration:
    * - Mc
      - Uniform
      - 100
-     - 500
+     - 600
 
 .. figure:: figures/RV_panel.png
       :align: center

@@ -43,7 +43,7 @@
         "readUserDefinedCovarianceData": false,
         "seed": 20,
         "uqType": "Transitional Markov chain Monte Carlo",
-        "useApproximation": false
+        "useApproximation": true
     },
     "WorkflowType": "Building Simulation",
     "correlationMatrix":
@@ -87,7 +87,7 @@
             "lowerbound": 100,
             "name": "Mc",
             "refCount": 1,
-            "upperbound": 500,
+            "upperbound": 600,
             "value": "RV.Mc",
             "variableClass": "Uncertain"
         }
