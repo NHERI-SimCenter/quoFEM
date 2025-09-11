@@ -33,11 +33,11 @@ The following parameters are defined in the **RV** tab of quoFEM:
    :math:`(\beta)` of :math:`2.0`, lower bound :math:`(L_B)` of
    :math:`20.0`, upper bound :math:`(U_B)` of :math:`30.0`,
 
-3. Cross sectional area for the other six bars, ``Ao``: **Lognormal**
+3. Cross-sectional area for the other six bars, ``Ao``: **Lognormal**
    distribution with a mean :math:`(\mu)` of :math:`250.0`, standard
    deviation :math:`(\sigma)` of :math:`50.0`,
 
-4. Cross sectional area for the upper three bars, ``Au``: **Normal**
+4. Cross-sectional area for the upper three bars, ``Au``: **Normal**
    distribution with a mean :math:`(\mu)` of :math:`500.0`, standard
    deviation :math:`(\sigma)` of :math:`100.0`,
 

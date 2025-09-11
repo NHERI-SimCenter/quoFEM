@@ -129,7 +129,7 @@ the following files:
 #. `rosenbrock.py <https://raw.githubusercontent.com/claudioperez/SimCenterExamples/master/static/rosenbrock/rosenbrock.py>`_:
    This file is a Python script which implements the Rosenbrock
    function. It is supplied to the **Input Script** field of the **FEM**
-   tab. Because this file write directly to ``results.out``, it obviates
+   tab. Because this file writes directly to ``results.out``, it obviates
    the need for supplying a **Postprocess Script**. When invoked in the
    workflow, the Python routine is supplied a set of random variable
    realizations through the star-import of the script supplied to the

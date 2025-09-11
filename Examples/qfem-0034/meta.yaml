@@ -1,0 +1,8 @@
+title: Surrogate-Aided Bayesian Calibration of RC Column Parameters
+summary: |
+  This example demonstrates surrogate-aided Bayesian calibration of a reinforced concrete column model in OpenSeesPy. A Gaussian process surrogate model approximating the finite element model's response is iteratively refined using adaptive design of experiments to improve the accuracy of the posterior approximation. The trained surrogate model is used to accelerate the calibration of three key parameters (crack factor, yield moment, and capping moment) using experimental force-displacement data from cyclic loading tests.
+author:
+- family: Bangalore Satish
+  given: Aakash
+collection-title: Basic example
+difficulty: 0

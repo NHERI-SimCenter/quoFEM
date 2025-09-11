@@ -35,7 +35,7 @@ The output quantity of interest (QoI) is the amplitude of the maximum base shear
  
 Files required
 --------------
-The exercise uses two finite element models of a structure. The required files to run each model are collected into separate directories per model. In each directory, the following files are required: one main tcl script file, two supplementary tcl scripts used to build the model and run the analysis, one supplementary file that contains the ground motion, and a tcl script to postprocess the output created during the OpenSees analysis and create the quantity of interest which is the maximum absolute value of the base shear. The user should download the required directories and files and place them in a **NEW** folder. 
+The exercise uses two finite element models of a structure. The required files to run each model are collected into separate directories per model. In each directory, the following files are required: one main tcl script file, two supplementary tcl scripts used to build the model and run the analysis, one supplementary file that contains the ground motion, and a tcl script to post-process the output created during the OpenSees analysis and create the quantity of interest which is the maximum absolute value of the base shear. The user should download the required directories and files and place them in a **NEW** folder. 
 
 .. warning::
    Do NOT place the files in your root, downloads, or desktop folder as when the application runs it will copy the contents on the directories and subdirectories containing these files multiple times. If you are like us, your root, Downloads or Documents folders contains a lot of files.
@@ -66,7 +66,7 @@ The steps involved are as follows:
    :figclass: align-center
 
 
-2. Next in the **FEM** panel , select **Multi Model** FEM engine. Use the **Add** or **Remove** option as needed to have two tabs, one for each of the two models being used in this example, and enter the values shown in the following figures:
+2. Next in the **FEM** panel, select **Multi Model** FEM engine. Use the **Add** or **Remove** option as needed to have two tabs, one for each of the two models being used in this example, and enter the values shown in the following figures:
 
 .. figure:: figures/FEM1.png
    :align: center
@@ -79,7 +79,7 @@ The steps involved are as follows:
    :width: 1200
 
 
-3. Select the **RV** tab from the input panel. This panel should be pre-populated with the names of the variables that were defined in the model scripts. If not, press the **Add** button to create a new field to define the input random variable. Enter the same variable name, as required in the model script. For this example, choose the Uniform probability distribution for all the random variabels and enter the Min. and Max. values for each distribution as shown in the figure below:
+3. Select the **RV** tab from the input panel. This panel should be pre-populated with the names of the variables that were defined in the model scripts. If not, press the **Add** button to create a new field to define the input random variable. Enter the same variable name, as required in the model script. For this example, choose the Uniform probability distribution for all the random variables and enter the Min. and Max. values for each distribution as shown in the figure below:
 
 .. figure:: figures/RV.png
    :align: center
@@ -155,4 +155,4 @@ If only Model 2 was used:
    :width: 1200
 
 
-We observe from the summary statistics and the histograms that if it is not known which of the two models considered is the best model to be used to represent the behavior of the structure, the predicted range of the maximum base shear is larger (i.e., the standard deviation of the maximum base shear is higher when using the two models than in the case when either of the two models are used on their own). The mean value of the base shear predicted in this case will be the mean of the maximum base shear predicted by the two models when used on their own (here we numerically estimate the mean by sampling values of the inputs from the specified distribution, hence there is sampling variablity in the estimate of the mean). 
+We observe from the summary statistics and the histograms that if it is not known which of the two models considered is the best model to be used to represent the behavior of the structure, the predicted range of the maximum base shear is larger (i.e., the standard deviation of the maximum base shear is higher when using the two models than in the case when either of the two models are used on their own). The mean value of the base shear predicted in this case will be the mean of the maximum base shear predicted by the two models when used on their own (here we numerically estimate the mean by sampling values of the inputs from the specified distribution, hence there is sampling variability in the estimate of the mean). 

@@ -17,9 +17,9 @@ The dataset used for the inference presented in this example originates from exp
 
 This dataset comprises cyclic stress-strain tests performed on thirty-six coupons. These coupons were sourced from three distinct steel manufacturing mills and adhered to two different manufacturing standards of Grade 60 steel. Specifically, each mill provided two straight #4 bars, each measuring 4.6 meters in length. One bar from each mill complied with Grade 60 A615 manufacturing standards, while the other adhered to Grade 60 A706 standards. From each bar, six coupons were extracted, and each coupon underwent cyclic strain tests with varying input strain histories.
 
-Consequently, a total of 36 coupons were tested, derived from the combination of 3 mills, 2 bars per mill, and 6 coupons per bar. To ensure uniformity in specimen cross-sections, each coupon underwent machining, as illustrated in :numref:`figCoupon`. Machining was employed to maintain a length-to-diameter ratio of 2 in the machined portion of the bars, thereby minimizing the effects of nonlinear geometry, such as partial buckling, in the stress-strain response.
+Consequently, a total of 36 coupons were tested, derived from the combination of 3 mills, 2 bars per mill, and 6 coupons per bar. To ensure uniformity in specimen cross-sections, each coupon underwent machining, as illustrated in :numref:`figureCoupon`. Machining was employed to maintain a length-to-diameter ratio of 2 in the machined portion of the bars, thereby minimizing the effects of nonlinear geometry, such as partial buckling, in the stress-strain response.
 
-.. _figCoupon:
+.. _figureCoupon:
 
 .. figure:: figures/Coupon.png
    :align: center
@@ -28,9 +28,9 @@ Consequently, a total of 36 coupons were tested, derived from the combination of
    Test coupon
 
 
-The experiments involved six distinct random cyclic strain histories, as depicted in :numref:`figStrainHistories`. These strain histories include strain reversals of various amplitudes, along with overall drifts towards positive or negative strains. Notably, the amplitude of these drifts was constrained within :math:`\pm 5\%`, a limit representative of the strain range typically experienced by reinforcing bars during seismic events.
+The experiments involved six distinct random cyclic strain histories, as depicted in :numref:`figureStrainHistories`. These strain histories include strain reversals of various amplitudes, along with overall drifts towards positive or negative strains. Notably, the amplitude of these drifts was constrained within :math:`\pm 5\%`, a limit representative of the strain range typically experienced by reinforcing bars during seismic events.
 
-.. _figStrainHistories:
+.. _figureStrainHistories:
 
 .. figure:: figures/StrainHistories.png
    :align: center
@@ -44,7 +44,7 @@ Model
 The Giuffré-Menegotto-Pinto (GMP) material model is a widely adopted uniaxial material model applicable to both reinforcing and structural steel. It is based on the original formulation of Menegotto and Pinto, later extended by Filippou et al. to incorporate isotropic strain hardening and implemented in OpenSees as the Steel02 material model. This model predicts the evolution of stress as a function of an input strain history.
 
 This model is characterized by ten parameters:
-- Young’s modulus :math:`E_0`for elastic behavior,
+- Young's modulus :math:`E_0`for elastic behavior,
 - Initial yield stress and strain hardening ratio :math:`(f_y, b)` for plastic behavior,
 - Parameters :math:`(R_0, cR_1, cR_2)` governing the Bauschinger effect,
 - Parameters :math:`(a_1, a_2, a_3, a_4)` for isotropic hardening.
@@ -66,11 +66,11 @@ Files required
 .. warning::
    Do NOT place the files in your root, downloads, or desktop folder as when the application runs it will copy the contents on the directories and subdirectories containing these files multiple times. If you are like us, your root, Downloads or Documents folders contain a lot of files.
 
-As depicted in Figure :numref:`figDataAndModel`, the required files for executing this example are organized in two distinct directories. 
+As depicted in Figure :numref:`figureDataAndModel`, the required files for executing this example are organized in two distinct directories. 
 
 The first directory contains the model scripts, which remain consistent across various experiments. The second directory contains the data files. These data files vary from one experiment to another and are further organized into subdirectories corresponding to each experiment, as elaborated below.
 
-.. _figDataAndModel:
+.. _figureDataAndModel:
 
 .. figure:: figures/ModelAndData.png
    :align: center
@@ -81,12 +81,12 @@ The first directory contains the model scripts, which remain consistent across v
 
 1. In this example, a total of 36 datasets comprising cyclic stress-strain measurements are utilized. Each dataset consists of two files. These datasets are organized within subdirectories under the directory named :qfem-0028:`CouponCyclicTestData_every_20th_point <src/CouponCyclicTestData_every_20th_point>`.
 
-When using the hierarchical Bayesian calibration approach, each dataset must be placed in its own dedicated subdirectory. The layout of the data files used in this example is illustrated in Figures :numref:`figDataDirectory` and :numref:`figDatasetSubdirectories`.
+When using the hierarchical Bayesian calibration approach, each dataset must be placed in its own dedicated subdirectory. The layout of the data files used in this example is illustrated in Figures :numref:`figureDataDirectory` and :numref:`figureDatasetSubdirectories`.
 
 Within each experiment's subdirectory, the strain values measured are stored in files named ``input_data.txt``, while the corresponding stress measurements are found in files named ``output_data.txt``.
 
 
-.. _figDataDirectory:
+.. _figureDataDirectory:
 
 .. figure:: figures/DataDirectory.png
    :align: center
@@ -96,7 +96,7 @@ Within each experiment's subdirectory, the strain values measured are stored in 
    Directory with calibration datasets in subdirectories
 
 
-.. _figDatasetSubdirectories:
+.. _figureDatasetSubdirectories:
 
 .. figure:: figures/DatasetSubdirectory.png
    :align: center
@@ -138,7 +138,7 @@ The inputs can also be set up manually through the following steps:
    
    Inputs in the UQ panel
 
-2. Next in the **FEM** panel , select **OpenSees** and populate the **Input Script** field by choosing the path to the model file.
+2. Next in the **FEM** panel, select **OpenSees** and populate the **Input Script** field by choosing the path to the model file.
 
 .. _figHBMFEM:
 

@@ -22,9 +22,9 @@ This example is provided by Professor Joel Conte and his doctoral students Maitr
 
 Structural system
 +++++++++++++++++
-Consider the two-story building structure shown in :numref:`figSteelStructuralSystemBayes`. Each floor slab is made of a composite metal deck and is supported on the steel columns. These four columns are fixed at the base. The story height is :math:`h = 10'`, length of each slab is :math:`33'4''` and :math:`30'` along the X and Y direction, respectively. :math:`m_1 = 0.52 \ \ kips-s^2/in` and :math:`m_2 = 0.26 \ \ kips-s^2/in` are the total mass of floor 1 and floor 2, respectively. For the steel columns, Young’s modulus is :math:`E_s^{col} = 29000 \ \ ksi` and the moment of inertia :math:`I_{yy}^{col} = 1190 \ \ in^4`.
+Consider the two-story building structure shown in :numref:`figureSteelStructuralSystemBayes`. Each floor slab is made of a composite metal deck and is supported on the steel columns. These four columns are fixed at the base. The story height is :math:`h = 10'`, length of each slab is :math:`33'4''` and :math:`30'` along the X and Y direction, respectively. :math:`m_1 = 0.52 \ \ kips-s^2/in` and :math:`m_2 = 0.26 \ \ kips-s^2/in` are the total mass of floor 1 and floor 2, respectively. For the steel columns, Young’s modulus is :math:`E_s^{col} = 29000 \ \ ksi` and the moment of inertia :math:`I_{yy}^{col} = 1190 \ \ in^4`.
 
-.. _figSteelStructuralSystemBayes:
+.. _figureSteelStructuralSystemBayes:
 
 .. figure:: figures/qfem-0014-SteelStructuralSystem.png
    :align: center
@@ -35,12 +35,12 @@ Consider the two-story building structure shown in :numref:`figSteelStructuralSy
    
 Finite element model
 ++++++++++++++++++++
-In this example, only the response of the system along the X direction is considered. For modeling purposes, the floor diaphragms are assumed rigid both in plane and in flexure, and the columns are assumed axially rigid. The structure is modeled as a two-story 2D shear building model as shown in :numref:`figSteelFrameModelBayes`. The finite element (FE) software framework **OpenSees** is utilized for modeling and analysis of the considered structural system. The developed FE model consists of 6 nodes and 6 elastic beam-column elements. To simulate the flexural rigidity of the floors, the moment of inertia :math:`I_{yy}` of the horizontal elements is set to a very large number. The horizontal degrees of freedom of node 3 and node 4 are constrained to be equal throughout the analysis to mimic the axial rigidity of floor 1. Similar modeling is performed for floor 2. The vertical displacements of nodes 3, 4, 5, and 6 are constrained to be zero to model the axial rigidity of the columns (see roller supports in :numref:`figSteelFrameModelBayes`). After making these modeling assumptions, the only active degrees of freedom of the FE model are the horizontal displacements (translations) of floors 1 and 2, :math:`u_1` and :math:`u_2`, respectively, as shown in :numref:`figSteelFrameModelBayes`.
+In this example, only the response of the system along the X direction is considered. For modeling purposes, the floor diaphragms are assumed rigid both in plane and in flexure, and the columns are assumed axially rigid. The structure is modeled as a two-story 2D shear building model as shown in :numref:`figureSteelFrameModelBayes`. The finite element (FE) software framework **OpenSees** is utilized for modeling and analysis of the considered structural system. The developed FE model consists of 6 nodes and 6 elastic beam-column elements. To simulate the flexural rigidity of the floors, the moment of inertia :math:`I_{yy}` of the horizontal elements is set to a very large number. The horizontal degrees of freedom of node 3 and node 4 are constrained to be equal throughout the analysis to mimic the axial rigidity of floor 1. Similar modeling is performed for floor 2. The vertical displacements of nodes 3, 4, 5, and 6 are constrained to be zero to model the axial rigidity of the columns (see roller supports in :numref:`figureSteelFrameModelBayes`). After making these modeling assumptions, the only active degrees of freedom of the FE model are the horizontal displacements (translations) of floors 1 and 2, :math:`u_1` and :math:`u_2`, respectively, as shown in :numref:`figureSteelFrameModelBayes`.
 
 A translational mass :math:`m_1/2` and :math:`m_2/2` is lumped at the nodes of floor 1 and 2, respectively, along the X direction. The lateral story stiffnesses :math:`k_1` and :math:`k_2` of story 1 and 2, respectively, are equal to :math:`48 E_s^{col} I_{yy}^{col}/{h^3}`. Hence, **the story stiffnesses** 
 :math:`k_1` and :math:`k_2` **are both equal to 958.61 kips/in**.
 
-.. _figSteelFrameModelBayes:
+.. _figureSteelFrameModelBayes:
 
 .. figure:: figures/qfem-0014.png
    :align: center
@@ -51,7 +51,7 @@ A translational mass :math:`m_1/2` and :math:`m_2/2` is lumped at the nodes of f
 
 Natural vibration frequencies and mode shapes
 +++++++++++++++++++++++++++++++++++++++++++++
-Since the shear building model shown in :numref:`figSteelFrameModelBayes` has only two degrees of freedom, it has two natural modes of vibration. Let :math:`\lambda_i` and :math:`\phi_i` be the :math:`i^{th}` eigenvalue and its corresponding eigenvector, respectively. The two eigenvalues and eigenvectors are obtained by solving the generalized eigenvalue problem of the considered system in OpenSees. The following two eigenvalues are obtained:
+Since the shear building model shown in :numref:`figureSteelFrameModelBayes` has only two degrees of freedom, it has two natural modes of vibration. Let :math:`\lambda_i` and :math:`\phi_i` be the :math:`i^{th}` eigenvalue and its corresponding eigenvector, respectively. The two eigenvalues and eigenvectors are obtained by solving the generalized eigenvalue problem of the considered system in OpenSees. The following two eigenvalues are obtained:
 
 .. math::
 	\begin{array}{l}
@@ -60,16 +60,16 @@ Since the shear building model shown in :numref:`figSteelFrameModelBayes` has on
 	:label: eqnEigenValuesBayes
 
 
-The corresponding eigenvectors (see degrees of freedom u1 and u2 in :numref:`figSteelFrameModelBayes`) are given by:
+The corresponding eigenvectors (see degrees of freedom u1 and u2 in :numref:`figureSteelFrameModelBayes`) are given by:
 
 
 .. math::
 	\phi_1 = \begin{pmatrix}\phi_{11} \\ \phi_{12}\end{pmatrix} = \begin{pmatrix}1.00 \\ 1.41\end{pmatrix} in, \qquad \phi_2 = \begin{pmatrix}\phi_{21} \\ \phi_{22}\end{pmatrix} = \begin{pmatrix}1.00 \\ -1.41\end{pmatrix} in
 	:label: eqnEigenVectorsBayes
 	
-The eigenvectors in :eq:`eqnEigenVectorsBayes` are normalized such that the first component is 1.0. The two vibration mode shapes are shown in :numref:`figNaturalModeShapesBayes`.
+The eigenvectors in :eq:`eqnEigenVectorsBayes` are normalized such that the first component is 1.0. The two vibration mode shapes are shown in :numref:`figureNaturalModeShapesBayes`.
 
-.. _figNaturalModeShapesBayes:
+.. _figureNaturalModeShapesBayes:
 
 .. figure:: figures/qfem-0014-NaturalModeShapes.png
    :align: center
@@ -81,12 +81,12 @@ The eigenvectors in :eq:`eqnEigenVectorsBayes` are normalized such that the firs
 
 Parameters to be estimated
 ++++++++++++++++++++++++++
-The FE model of a real structural system often consists of parameters that are unknown to some degree. For example, the parameters related to the mass or stiffness or damping of the system might be unknown. The goal of parameter estimation is to estimate such unknown parameters using some measurement data. The measurement data is obtained by using sensors deployed on the real system. To demonstrate the parameter estimation concept/framework on the considered two-story building system, the first and second story story stiffnesses, :math:`k_{1}` and :math:`k_{2}`, are assumed to be unknown while the mass parameters are assumed to be known. In this illustration example, the unknown parameter vector :math:`\mathbf{\theta}=(k_{1}, k_{2})^T` is estimated using the first eigenvalue and the first eigenvector data. 
+The FE model of a real structural system often consists of parameters that are unknown to some degree. For example, the parameters related to the mass or stiffness or damping of the system might be unknown. The goal of parameter estimation is to estimate such unknown parameters using some measurement data. The measurement data is obtained by using sensors deployed on the real system. To demonstrate the parameter estimation concept/framework on the considered two-story building system, the first and second story stiffnesses, :math:`k_{1}` and :math:`k_{2}`, are assumed to be unknown while the mass parameters are assumed to be known. In this illustration example, the unknown parameter vector :math:`\mathbf{\theta}=(k_{1}, k_{2})^T` is estimated using the first eigenvalue and the first eigenvector data. 
 
 
 Synthetic data generation
 +++++++++++++++++++++++++
-In a real-world application, data on the first eigenvalue and the first eigenvector would consist of system identification results obtained from sensor measurement data. Note that the considered two-story building structure (see :numref:`figSteelStructuralSystemBayes`) is used here as a conceptual/pedagogical example and does not exist in the real world. Therefore, sensor measurement data cannot be collected from the system. As a substitute, measurement data (in the form of estimated first eigenvalue and first eigenvector) are artificially simulated for the purpose of this example, i.e., system identification results for :math:`\lambda_i` and :math:`\phi_i` from multiple ambient vibration datasets are simulated. To simulate these system identification results (i.e., measurement data), an eigenvalue analysis of the system is performed assuming the following true principal moment of inertia of the columns:
+In a real-world application, data on the first eigenvalue and the first eigenvector would consist of system identification results obtained from sensor measurement data. Note that the considered two-story building structure (see :numref:`figureSteelStructuralSystemBayes`) is used here as a conceptual/pedagogical example and does not exist in the real world. Therefore, sensor measurement data cannot be collected from the system. As a substitute, measurement data (in the form of estimated first eigenvalue and first eigenvector) are artificially simulated for the purpose of this example, i.e., system identification results for :math:`\lambda_i` and :math:`\phi_i` from multiple ambient vibration datasets are simulated. To simulate these system identification results (i.e., measurement data), an eigenvalue analysis of the system is performed assuming the following true principal moment of inertia of the columns:
 
 .. math:: 
 	\mathbf{\theta}^{true} = \left(k_{1}^{true}, k_{2}^{true}\right)^T; \quad k_{1}^{true} = k_{2}^{true} = 958.61 \ \ kips/in.
@@ -148,7 +148,7 @@ The exercise requires two script files. The user should download these files and
 .. literalinclude:: src/eigData.csv
 
 .. note::
-   Since the tcl script creates a ``results.out`` file when it runs, no postprocessing script is needed. 
+   Since the tcl script creates a ``results.out`` file when it runs, no post-processing script is needed. 
   
 
 
@@ -156,7 +156,7 @@ The exercise requires two script files. The user should download these files and
 UQ workflow
 -----------
 .. note::
-	Selecting the ``Steel Frame: Bayesian Calibration using TMCMC`` example in the quoFEM Examples menu will autopopulate all the input fields required to run this example. 
+	Selecting the ``Steel Frame: Bayesian Calibration using TMCMC`` example in the quoFEM Examples menu will auto-populate all the input fields required to run this example. 
 	The procedure outlined below demonstrates how to manually set up this problem in quoFEM.
 
 The steps involved are as follows:
@@ -187,20 +187,20 @@ For each variable, specify the prior probability distribution - from the **Distr
    :width: 600
 
 
-4. In the **QoI** panel, enter **2** variable names for the two quantities output from the model. 
+4. In the **EDP** panel, enter **2** variable names for the two quantities output from the model. 
 
 .. figure:: figures/qfem-0014-QoI.png
    :width: 600
    :align: center
    :figclass: align-center
 
-.. note::   
+.. note:: 
 
-   For this particular problem setup in which the user is not using a postprocessing script, the user may specify any names for the QoI variables. They are only being used by the UCSD_UQ engine to return information on the results.
+   For this particular problem setup in which the user is not using a post-processing script, the user may specify any names for the QoI variables. They are only being used by the UCSD_UQ engine to return information on the results.
 
 
-5. Next click on the **Run** button. This will cause the backend application to launch the **UCSD_UQ** engine, which performs Bayesian calibration using the TMCMC algorithm. When done, the **RES** tab will be selected and the results will be displayed as shown in the figure below. The results show the first four moments of the posterior marginal probability distribution of :math:`k_1` and :math:`k_2`. The true value of both :math:`k_1` and :math:`k_2` is **958.61  kips/in**.
-Also shown are the moments of the estimated aditional error parameters per response quantity and finally, the moments of the outputs corresponding to the samples from the posterior probability distribution of the parameters. 
+5. Next click on the **Run** button. This will cause the backend application to launch the **UCSD_UQ** engine, which performs Bayesian calibration using the TMCMC algorithm. When done, the **RES** tab will be selected and the results will be displayed as shown in the figure below. The results show the first four moments of the posterior marginal probability distribution of :math:`k_1` and :math:`k_2`. The true value of both :math:`k_1` and :math:`k_2` is **958.61 kips/in**.
+Also shown are the moments of the estimated additional error parameters per response quantity and finally, the moments of the outputs corresponding to the samples from the posterior probability distribution of the parameters. 
 
 
 .. figure:: figures/qfem-0014-RES1.png
@@ -216,7 +216,7 @@ If the user selects the **Data Values** tab in the results panel, they will be p
    :figclass: align-center
    :width: 600
 
-Various views of the graphical display can be obtained by left and right clicking in the columns of the tabular data. 
+Various views of the graphical display can be obtained by left- and right-clicking in the columns of the tabular data. 
 
 .. figure:: figures/qfem-0014-RES3.png
    :align: center
