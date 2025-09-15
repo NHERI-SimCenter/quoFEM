@@ -117,3 +117,15 @@ QMAKE_EXTRA_TARGETS += first copydata CopyDLLs
 
 }
 
+EXAMPLES_SRC = $$PWD/Examples
+
+macx {
+    QMAKE_POST_LINK += $$QMAKE_MKDIR $$shell_quote($$OUT_PWD/$$TARGET.app/Contents/MacOS/Examples) && \
+                       $$QMAKE_COPY_DIR $$shell_quote($$EXAMPLES_SRC) \
+                                         $$shell_quote($$OUT_PWD/$$TARGET.app/Contents/MacOS)
+}
+
+unix:!macx {
+    QMAKE_POST_LINK += $$QMAKE_MKDIR $$shell_quote($$OUT_PWD/Examples) && \
+                       $$QMAKE_COPY_DIR $$shell_quote($$EXAMPLES_SRC) $$shell_quote($$OUT_PWD)
+}
