@@ -340,4 +340,4 @@ References
    PEER Structural Performance Database (SPD). Available at https://nisee.berkeley.edu/spd/index.html
 
 .. [SimCenter_Educational_Modules] 
-   SimCenter Educational Modules: UQ for Structural Models. Available at https://simcenter.designsafe-ci.org/knowledge-hub/teaching-gallery/
+   SimCenter Educational Modules: Uncertainty Quantification (UQ) for Structural Models. Available at https://simcenter.designsafe-ci.org/knowledge-hub/teaching-gallery/
