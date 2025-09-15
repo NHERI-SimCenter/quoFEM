@@ -18,7 +18,7 @@ The experimental dataset is from [Soesianawati_et_al_1986]_, part of the PEER St
 
 **Problem Setup**: A cantilever RC column (0.4m × 0.4m × 1.6m) subjected to cyclic lateral loading is modeled using OpenSeesPy with lumped plasticity. Three critical parameters are calibrated: crack factor (stiffness degradation ratio), yield moment (Mp), and peak moment capacity (Mc) using 548 experimental force-displacement measurements.
 
-**Methodology**: The GP-AB (Gaussian Process - Adaptive Bayesian) algorithm iteratively builds a GP surrogate model through adaptive design of experiments, strategically selecting training points using exploitation and exploration strategies while requiring only 2 × (number of calibration parameters) evaluations per iteration.
+**Methodology**: The GP-AB (Gaussian Process - Aided Bayesian calibration) algorithm iteratively builds a GP surrogate model through adaptive design of experiments, strategically selecting training points using exploitation and exploration strategies while requiring only 2 × (number of calibration parameters) evaluations per iteration.
 
 **Key Findings**: The surrogate-aided approach achieves orders of magnitude reduction in computational demand (66 vs 78,000 model evaluations) and wall-clock time (13.4 vs 95.7 minutes) while maintaining equivalent posterior accuracy with parameter differences below 0.5%.
 
