@@ -262,7 +262,7 @@ Key Findings
 The calibrated parameter values are physically reasonable: crack factor of 0.25 represents realistic stiffness degradation for RC under cyclic loading, while the moment capacities (294.3 and 459.6 kN-m) show appropriate strength hierarchy and consistency with the column geometry. The substantial uncertainty reductions across all parameters indicate the experimental data is highly informative.
 
 Comparison with Results Without Surrogate
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To validate the effectiveness of the surrogate-aided calibration approach, a comparison was performed between results obtained with and without the surrogate approximation:
 
@@ -271,12 +271,12 @@ To validate the effectiveness of the surrogate-aided calibration approach, a com
    :widths: 20 15 15 15 15 15 15
 
    * - Parameter
-     - With Surrogate Mean
-     - With Surrogate Std
-     - Without Surrogate Mean  
-     - Without Surrogate Std
-     - Mean Difference
-     - Std Difference
+     - GP-AB Mean
+     - GP-AB Std
+     - TMCMC Mean
+     - TMCMC Std
+     - Mean Diff
+     - Std Diff
    * - **crack_factor**
      - 0.249
      - 0.004
