@@ -3,9 +3,9 @@
 Steel Frame: Bayesian Calibration using TMCMC
 =============================================
 
-+---------------+----------------------+
-| Problem files | :qfem-0014:`/`       |
-+---------------+----------------------+
++---------------+
+| `Problem Files <https://github.com/NHERI-SimCenter/quoFEM/tree/master/Examples/qfem-0014//>`_   |
++---------------+
 
 Outline
 -------
