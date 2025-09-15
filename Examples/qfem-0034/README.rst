@@ -12,32 +12,29 @@ Surrogate-aided Bayesian Calibration of a Reinforced Concrete Column Using Exper
 Outline
 -------
 
-This example demonstrates the application of surrogate-aided Bayesian calibration [Taflanidis_et_al_2025]_ to identify material and section parameters of a reinforced concrete column model using experimental cyclic loading data. The study showcases quoFEM's new **Use Approximation** feature for Bayesian calibration, which employs Gaussian Process (GP) surrogates within an adaptive Bayesian framework to dramatically reduce computational costs while maintaining calibration accuracy.
+This example demonstrates the application of surrogate-aided Bayesian calibration [Taflanidis_et_al_2025]_ to identify material and section parameters of a reinforced concrete column model using experimental cyclic loading data. The study showcases quoFEM's new **Use Approximation** feature for Bayesian calibration, which employs Gaussian Process (GP) surrogates within an adaptive Bayesian framework to significantly reduce computational costs while maintaining calibration accuracy.
 
-**Problem Setup**: A cantilever RC column (0.4m x 0.4m x 1.6m) subjected to cyclic lateral loading is modeled using OpenSeesPy with a lumped plasticity approach. Three critical parameters are calibrated: crack factor (stiffness degradation ratio), yield moment (Mp), and peak moment capacity (Mc) using 548 experimental force-displacement measurements. The experimental data is sourced from the PEER Structural Performance Database [PEER_SPD]_, specifically from a test conducted by [Soesianawati_et_al_1986]_.
+The experimental dataset is from [Soesianawati_et_al_1986]_, part of the PEER Structural Performance Database [PEER_SPD]_ containing over 400 RC column tests. This example builds on the SimCenter educational module **Uncertainty Quantification (UQ) for structural models** [SimCenter_Educational_Modules]_, which uses the same structural model to demonstrate various UQ methods.
 
-**Methodology**: The surrogate-aided approach uses the GP-AB (Gaussian Process - Aided Bayesian calibration) algorithm [Taflanidis_et_al_2025]_, which iteratively builds a GP surrogate model through adaptive design of experiments. The method strategically selects training points using both exploitation (high-probability regions) and exploration (unexplored parameter space) strategies, requiring only 2 x (number of calibration parameters) evaluations per iteration.
+**Problem Setup**: A cantilever RC column (0.4m × 0.4m × 1.6m) subjected to cyclic lateral loading is modeled using OpenSeesPy with lumped plasticity. Three critical parameters are calibrated: crack factor (stiffness degradation ratio), yield moment (Mp), and peak moment capacity (Mc) using 548 experimental force-displacement measurements.
 
-**Key Findings**: The surrogate-aided calibration achieves substantial computational efficiency gains compared to direct TMCMC sampling, requiring orders of magnitude fewer model evaluations (in this case, 66 vs 78,000) while reducing wall-clock time by approximately an order of magnitude (13.4 vs 95.7 minutes). Despite this dramatic acceleration, the method maintains equivalent posterior accuracy with percentage differences in parameter means below 0.5%.
+**Methodology**: The GP-AB (Gaussian Process - Aided Bayesian calibration) algorithm iteratively builds a GP surrogate model through adaptive design of experiments, strategically selecting training points using exploitation and exploration strategies while requiring only 2 × (number of calibration parameters) evaluations per iteration.
 
-**Broader Impact**: This demonstration validates the surrogate-aided approach as a transformative tool for practical Bayesian calibration of complex structural models. The method enables rigorous uncertainty quantification for computationally expensive finite element models that would otherwise make Bayesian calibration prohibitively expensive, opening new possibilities for model validation and reliability assessment in structural engineering applications.
+**Key Findings**: The surrogate-aided approach achieves orders of magnitude reduction in computational demand (66 vs 78,000 model evaluations) and wall-clock time (13.4 vs 95.7 minutes) while maintaining equivalent posterior accuracy with parameter differences below 0.5%.
+
+**Broader Impact**: This demonstration validates surrogate-aided calibration as a transformative tool for practical Bayesian parameter identification of computationally expensive structural models, enabling rigorous uncertainty quantification that would otherwise be prohibitively costly.
 
 Files Required
 --------------
 1. :qfem-0034:`ColumnModel.py <src/ColumnModel.py>`: OpenSeesPy structural analysis script
 2. :qfem-0034:`ColumnParams.py <src/ColumnParams.py>`: Parameter definitions for calibration
-3. :qfem-0034:`experimentDisp.csv <src/experimentDisp.csv>`: Experimental displacement time history - used by the model
+3. :qfem-0034:`experimentDisp.csv <src/experimentDisp.csv>`: Experimental displacement time history
 4. :qfem-0034:`experimentForce.csv <src/experimentForce.csv>`: Experimental force measurements for calibration
 
-The structural model represents a cantilever reinforced concrete column subjected to cyclic lateral loading under constant axial force. The column exhibits nonlinear behavior including concrete cracking, plastic hinge formation, and hysteretic energy dissipation. Accurate parameter identification is essential for reliable seismic performance assessment of similar structural systems.
+Experimental Setup
+------------------
 
-Experimental Setup and Numerical Model
---------------------------------------
-
-Reinforced Concrete Column Test Program
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The calibration example uses experimental data from a cantilever reinforced concrete column test conducted by [Soesianawati_et_al_1986]_. This test is part of the PEER Structural Performance Database [PEER_SPD]_, which collates over 400 cyclic lateral-load tests of reinforced concrete columns from multiple research institutions worldwide. The database provides a comprehensive resource for validating computational models and benchmark data for calibration studies across various column geometries, reinforcement configurations, and loading protocols.
+The calibration example uses experimental data from [Soesianawati_et_al_1986]_, part of the PEER Structural Performance Database (https://nisee.berkeley.edu/spd/index.html) containing over 400 cyclic lateral-load tests from multiple research institutions worldwide.
 
    .. figure:: figures/column_configuration.png
        :align: center
@@ -45,7 +42,7 @@ The calibration example uses experimental data from a cantilever reinforced conc
 
        Test specimen configuration [Soesianawati_et_al_1986]_
 
-**Test Specimen and Setup**: The column specimen has a 400mm x 400mm square cross-section with a height of 1600mm, representing typical building column proportions. The reinforcement consists of 12 HD16 longitudinal bars with 13mm concrete cover, providing representative detailing for seismic design. The specimen is tested under combined loading conditions: constant axial compression (744 kN) and displacement-controlled cyclic lateral loading.
+**Test Specimen**: The column specimen has a 400mm × 400mm square cross-section with a height of 1600mm, reinforced with 12 HD16 longitudinal bars and 13mm concrete cover. Testing involves constant axial compression (744 kN) and displacement-controlled cyclic lateral loading.
 
    .. figure:: figures/column_reinforcement.png
        :align: center
@@ -53,15 +50,15 @@ The calibration example uses experimental data from a cantilever reinforced conc
 
        Test specimen reinforcement details [Soesianawati_et_al_1986]_
 
-**Loading Protocol and Response**: The test employs a quasi-static cyclic loading protocol that progressively increases displacement amplitude from small inelastic deformations to ultimate capacity at ±78mm (~5% drift ratio). This systematic approach applies multiple cycles at each amplitude level to characterize key behavioral transitions: concrete cracking, steel yielding, post-yield behavior, and near-collapse performance. The protocol captures strength degradation and stiffness deterioration under repeated loading, providing comprehensive data across all performance limit states relevant to seismic design. The resulting force-displacement relationship exhibits the full spectrum of reinforced concrete behavior including pronounced hysteretic energy dissipation and progressive deterioration characteristics essential for validating computational models.
+**Loading Protocol**: The quasi-static cyclic protocol progressively increases displacement amplitude to ±78mm (4.9% drift), applying multiple cycles at each level to characterize behavioral transitions from elastic response through near-collapse performance while capturing strength degradation and stiffness deterioration.
 
    .. figure:: figures/hysteresis_curve_boxed.png
        :align: center
        :figclass: align-center
        
-       Experimental force-displacement hysteretic response showing nonlinear behavior and degradation
+       Experimental force-displacement hysteretic response
 
-**Measured Data**: The experimental dataset comprises 548 synchronized measurements of applied displacement and resulting lateral force, providing comprehensive information for parameter identification across multiple complete hysteretic cycles. This rich dataset spans the full spectrum of structural response and serves as the calibration target for the numerical model.
+**Measured Data**: The dataset comprises 548 synchronized displacement and force measurements across multiple complete hysteretic cycles.
 
    .. figure:: figures/displacement_plot.png
        :align: center
@@ -75,14 +72,10 @@ The calibration example uses experimental data from a cantilever reinforced conc
        
        Experimental force time history used for calibration
 
-**Reference and Database Context**: This experimental dataset is documented in [Soesianawati_et_al_1986]_ and forms part of the PEER Structural Performance Database (SPD) [PEER_SPD]_, which contains over 400 cyclic lateral-load tests of reinforced concrete columns. The database is available at `https://nisee.berkeley.edu/spd/index.html <https://nisee.berkeley.edu/spd/index.html>`_ and serves as a comprehensive validation resource for computational models, providing benchmark data for calibration studies across various column geometries, reinforcement details, and loading protocols.
+Numerical Model
+---------------
 
-For additional background on uncertainty quantification in structural engineering and more details of this calibration problem, refer to the SimCenter educational module on **Uncertainty Quantification (UQ) for structural models** [SimCenter_Educational_Modules]_.
-
-Numerical Model Development
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A lumped plasticity finite element model is developed in OpenSeesPy to reproduce the experimental conditions and enable parameter identification through direct comparison with the measured response. The model serves as a computational analog to the physical test, replicating the geometry, loading conditions, and material configurations.
+An OpenSeesPy lumped plasticity model reproduces the experimental conditions, using an elastic beam-column element connected to a nonlinear rotational spring at the base. This approach concentrates nonlinear behavior in the plastic hinge while treating the remainder as elastic, efficiently capturing global response characteristics while maintaining computational efficiency.
 
    .. figure:: figures/model.png
        :align: center
@@ -90,20 +83,9 @@ A lumped plasticity finite element model is developed in OpenSeesPy to reproduce
        
        Numerical model schematic showing lumped plasticity approach with calibration parameters. Figure from [SimCenter_Educational_Modules]_.
 
-The computational model employs a lumped plasticity approach where nonlinear behavior is concentrated in a rotational spring at the column base, while the remainder of the structure is treated as elastic. This modeling strategy efficiently captures essential global response characteristics while maintaining computational efficiency. Only the top half of the column is modeled, taking advantage of the symmetry of the double-ended cantilever test specimen configuration. 
+The model includes effective stiffness accounting for cracking, applied loads matching experimental conditions (744 kN axial compression and 548-point displacement history), and P-Delta geometric transformation for second-order effects.
 
-**Key Modeling Components**: The model consists of an elastic beam-column element representing the column shaft with effective stiffness accounting for cracking, connected to a nonlinear rotational spring at the base that captures plastic hinge behavior through a hysteretic material model. Applied loads match the experimental conditions with 744 kN axial compression and the 548-point displacement history, while P-Delta geometric transformation is included to account for second-order effects at large displacements.
-
-**Computational Considerations**: Each OpenSeesPy analysis requires approximately 2 seconds per iteration. Direct Bayesian calibration methods typically require thousands of model evaluations, resulting in potentially hours of computational time. This computational demand provides strong motivation for the surrogate-aided approach demonstrated in this example. However, the model is still simple enough to allow direct TMCMC sampling for validation purposes. In more realistic scenarios involving complex finite element models, individual evaluations may require minutes or hours rather than seconds, making direct Bayesian calibration prohibitively expensive. The surrogate-aided approach enables practical calibration of such complex models by dramatically reducing the number of required evaluations.
-
-Calibration Framework
-~~~~~~~~~~~~~~~~~~~~~
-
-**Parameter Selection**: Three parameters are identified for calibration based on their direct influence on the global force-displacement response and their inherent uncertainty in engineering practice: crack factor (affecting initial stiffness), yield moment Mp (controlling yield transition), and peak moment capacity Mc (governing ultimate strength). These parameters collectively determine the key characteristics of the hysteretic envelope and are subject to significant uncertainty due to material variability and modeling assumptions.
-
-**Surrogate-Aided Approach**: The parameter identification employs the GP-AB (Gaussian Process - Adaptive Bayesian) algorithm, which uses Gaussian process surrogates within an adaptive Bayesian framework to dramatically reduce computational cost while maintaining calibration accuracy. This approach transforms a computationally intensive problem requiring several thousands of model evaluations into a practical tool requiring only tens or hundreds of strategically selected evaluations.
-
-**Educational Context**: This example demonstrates practical application of advanced uncertainty quantification methods for structural model calibration. The combination of experimental data from the PEER database with modern computational methods illustrates how historical experimental investments continue to enable methodological advances in application of uncertainty quantification in structural engineering. For background on uncertainty quantification concepts in structural engineering, see the SimCenter educational resources on `UQ for Structural Models <https://simcenter.designsafe-ci.org/knowledge-hub/teaching-gallery/>`_.
+Each analysis requires ~2 seconds per iteration. Direct Bayesian calibration typically needs thousands of evaluations (potentially hours of runtime), motivating the surrogate-aided approach. While this model allows direct TMCMC for validation, complex finite element models requiring minutes or hours per evaluation make direct calibration prohibitively expensive.
 
 quoFEM Setup
 ------------
@@ -277,8 +259,10 @@ Key Findings
 
 **Peak Moment Capacity (Mc)**: The posterior mean of 459.6 kN-m is significantly higher than the prior mean of 350.0 kN-m, suggesting that the experimental data reveals a higher moment capacity than initially expected. Despite having the largest absolute posterior standard deviation (15.1 kN-m), this parameter still shows an 89.6% reduction in uncertainty.
 
+The calibrated parameter values are physically reasonable: crack factor of 0.25 represents realistic stiffness degradation for RC under cyclic loading, while the moment capacities (294.3 and 459.6 kN-m) show appropriate strength hierarchy and consistency with the column geometry. The substantial uncertainty reductions across all parameters indicate the experimental data is highly informative.
+
 Comparison with Results Without Surrogate
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To validate the effectiveness of the surrogate-aided calibration approach, a comparison was performed between results obtained with and without the surrogate approximation:
 
@@ -287,12 +271,12 @@ To validate the effectiveness of the surrogate-aided calibration approach, a com
    :widths: 20 15 15 15 15 15 15
 
    * - Parameter
-     - With Surrogate Mean
-     - With Surrogate Std
-     - Without Surrogate Mean  
-     - Without Surrogate Std
-     - Mean Difference
-     - Std Difference
+     - GP-AB Mean
+     - GP-AB Std
+     - TMCMC Mean
+     - TMCMC Std
+     - Mean Diff
+     - Std Diff
    * - **crack_factor**
      - 0.249
      - 0.004
@@ -320,7 +304,7 @@ To validate the effectiveness of the surrogate-aided calibration approach, a com
 Computational Efficiency
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The log file analysis reveals dramatic computational efficiency gains achieved by the surrogate-aided approach:
+Upon completion of the analysis, the RES panel includes a **Log** tab displaying detailed log file contents. These files provide a comprehensive summary of computational performance, including total runtime and number of model evaluations. Comparing the log files from both calibration approaches reveals the dramatic computational efficiency gains achieved by the surrogate-aided method:
 
 .. list-table:: Computational Performance Comparison
    :header-rows: 1
@@ -343,17 +327,6 @@ The surrogate-aided method demonstrates transformative computational efficiency 
 
 The 7.1x speedup in wall-clock time represents an 86% reduction in computational time, transforming what would be a 95.7-minute direct calibration into a 13.4-minute surrogate-aided process. This efficiency gain becomes even more significant for complex finite element models where individual evaluations may require minutes or hours rather than < 2 seconds. The surrogate-aided approach thus enables practical Bayesian calibration of computationally intensive structural models that would otherwise be prohibitively expensive to analyze.
 
-Model Performance Assessment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The calibration results indicate that the experimental data is highly informative for all three parameters, as evidenced by the substantial uncertainty reductions across all variables. The posterior parameter values are physically reasonable:
-
-- The crack factor of 0.25 represents a realistic level of stiffness degradation for reinforced concrete under cyclic loading
-- The yield and peak moment capacities (294.3 and 459.6 kN-m, respectively) show appropriate strength hierarchy with Mp < Mc
-- The moment capacity values are consistent with the column's geometry (0.4m x 0.4m section) and loading conditions
-
-The successful calibration demonstrates that the lumped plasticity model with hysteretic behavior effectively captures the essential nonlinear response characteristics observed in the experimental cyclic test. The calibrated model can now be used with increased confidence for seismic performance assessment of similar reinforced concrete column systems.
-
 References
 ----------
 
@@ -367,4 +340,4 @@ References
    PEER Structural Performance Database (SPD). Available at https://nisee.berkeley.edu/spd/index.html
 
 .. [SimCenter_Educational_Modules] 
-   SimCenter Educational Modules: UQ for Structural Models. Available at https://simcenter.designsafe-ci.org/knowledge-hub/teaching-gallery/
+   SimCenter Educational Modules: Uncertainty Quantification (UQ) for Structural Models. Available at https://simcenter.designsafe-ci.org/knowledge-hub/teaching-gallery/
