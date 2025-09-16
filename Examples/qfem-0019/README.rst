@@ -61,19 +61,34 @@ For this example, the STEEL02 material model in OpenSees was selected to represe
 
 .. _Table 1:
 
-Table 1: Parameters of the STEEL02 material model whose values are being calibrated. 
+.. list-table:: Parameters of the STEEL02 material model whose values are being calibrated.
+   :header-rows: 1
+   :widths: 60 20 20
 
-==========================================================  =========== ===========
-Variable                                                    lower bound upper bound
-==========================================================  =========== ===========
-Yield strength :math:`f_y`                                  300		    700
-Initial elastic tangent :math:`E`                           150000	    250000
-Strain hardening ratio :math:`b`                            0	          0.2
-Elastic-plastic transition parameter 1 :math:`cR_1`    	   0	          1
-Elastic-plastic transition parameter 2 :math:`cR_2`         0	    	    0.2
-Isotropic hardening parameter for compression :math:`a_1`   0	    	    0.1
-Isotropic hardening parameter for tension :math:`a_3`       0		   	 0.1
-==========================================================  =========== ===========
+   * - Variable
+     - lower bound
+     - upper bound
+   * - Yield strength :math:`f_y`
+     - 300
+     - 700
+   * - Initial elastic tangent :math:`E`
+     - 150000
+     - 250000
+   * - Strain hardening ratio :math:`b`
+     - 0
+     - 0.2
+   * - Elastic-plastic transition parameter 1 :math:`cR_1`
+     - 0
+     - 1
+   * - Elastic-plastic transition parameter 2 :math:`cR_2`
+     - 0
+     - 0.2
+   * - Isotropic hardening parameter for compression :math:`a_1`
+     - 0
+     - 0.1
+   * - Isotropic hardening parameter for tension :math:`a_3`
+     - 0
+     - 0.1
 	 
 
 The value of the other four parameters are kept fixed at:
