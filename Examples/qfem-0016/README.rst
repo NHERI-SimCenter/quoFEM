@@ -90,7 +90,7 @@ UQ Workflow
    :width: 1200
 
 .. note::
-When the user needs to manually add random variables with **add** button, eg. when using a custom FEM application, the user should set the distribution to be **Uniform** using the drop-down menu.
+   When the user needs to manually add random variables with **add** button, eg. when using a custom FEM application, the user should set the distribution to be **Uniform** using the drop-down menu.
 
 
 4. Select the **QoI** tab. Here enter two output names as ``Node_2_Disp_1_Mean`` and ``Node_2_Disp_1_Std``. Note that Node_2_Disp_1 means x-direction displacement of second story floor. These QoI names are processed in the ``postprocess.tcl`` provided at the **FEM** tab.

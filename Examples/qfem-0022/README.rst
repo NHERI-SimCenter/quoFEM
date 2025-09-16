@@ -4,7 +4,7 @@ Two-Dimensional Truss: PLoM Modeling and Simulation
 =====================================================
 
 +----------------+------------------------------------------+
-| Problem files  | :github:`Download <Examples/qfem-0022/>`  |
+| Problem files  | :github:`Download <Examples/qfem-0022/>` |
 +----------------+------------------------------------------+
 
 About PLoM
