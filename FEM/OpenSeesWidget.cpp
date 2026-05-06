@@ -86,7 +86,7 @@ OpenSeesWidget::OpenSeesWidget(InputWidgetParameters *param, InputWidgetEDP *edp
     femSelection->addItem(tr("OpenSeesPy"));
     femSelection->addItem(tr("Custom"));
     femSelection->addItem(tr("SurrogateGP"));
-    connect(femSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(femProgramChanged(QString)));
+    connect(femSelection, SIGNAL(currentTextChanged(QString)), this, SLOT(femProgramChanged(QString)));
 
     titleLayout->addWidget(button);
     titleLayout->addWidget(textOpenSeesWidget);
@@ -1083,7 +1083,7 @@ QStringList OpenSeesWidget::parseGPInputs(QString file1){
     srand(time(NULL));
     gpSeed->setText(QString::number(rand() % 1000 + 1));
 
-    connect(gpOutputSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(gpShowSeed(QString)));
+    connect(gpOutputSelection, SIGNAL(currentTextChanged(QString)), this, SLOT(gpShowSeed(QString)));
 
     return varNamesAndValues;
 }
