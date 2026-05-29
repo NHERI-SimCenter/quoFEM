@@ -49,6 +49,7 @@ In order to calibrate the material model, the stress data measured experimentall
 
 .. figure:: figures/qf-0018-StrainHistory.png
    :align: center
+   :alt: A line graph displaying a blue line with a dotted pattern, illustrating fluctuations in strain over time. The x-axis is labeled "Timestep" and ranges from 0 to 300, while the y-axis is labeled "Strain" and ranges from 0.02 to -0.05. The graph exhibits a periodic pattern with peaks and troughs appearing at regular intervals.
    :figclass: align-center
 
 Files required
@@ -75,6 +76,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0018-UQ.png
    :align: center
+   :alt: Screenshot of a software interface, possibly for uncertainty quantification or simulation, labeled "UQ Engine" with tabs for "Dakota" and "Uncertainty Quantification Methods" selected. The interface displays a form with fields including Dakota Method Category "Parameters Estimation," with options for "Method," "Max # Iterations," "Convergence Tol," and "Calibration data file" filled out with specific values and a file path. There are also checkboxes for "Parallel Execution" and other options, with a blue download or settings icon at the top right. On the left side, a vertical menu includes options such as "FEM," "RV," "QoI," and "RES." No personal or sensitive information is shown.
    :figclass: align-center
 
 
@@ -82,6 +84,7 @@ The steps involved are as follows:
 
 .. figure:: figures/qf-0018-FEM.png
    :align: center
+   :alt: Screenshot of a software interface labeled "Finite Element Method Application" with a menu bar on the left with options for UQ, FEM, RV, QoI, and RES highlighted. The main window shows fields for "Input Script" and "Postprocess Script" with file paths entered and 'Choose' buttons next to each field. The 'OpenSees' option is selected from a drop-down menu in the upper right corner.
    :figclass: align-center
 
 
@@ -92,6 +95,7 @@ For each variable, specify the lower bounds, upper bounds and initial point from
 
 .. figure:: figures/qf-0018-RV.png
    :align: center
+   :alt: Screenshot of a software interface with a section titled "Input Random Variables". It includes a list of variables (fy, E, b, cR1, cR2, a1, a3) with their respective distributions (ContinuousDesign) and three columns specifying their Lower Bound, Upper Bound, and Initial Point. The variables have numerical bounds set with input fields for modifications. On the top right of the interface, buttons labeled 'Add', 'Remove', 'Correlation Matrix', 'Export', and 'Import' are visible. The left side of the interface has a vertical menu with options FEM, RV, QoI, and RES highlighted in blue.
    :figclass: align-center
 
 
@@ -99,6 +103,7 @@ For each variable, specify the lower bounds, upper bounds and initial point from
 
 .. figure:: figures/qf-0018-QOI.png
    :align: center
+   :alt: Screenshot of a user interface from a software application with a navigation menu on the left side showing items labeled as "UQ," "FEM," "RV," "QoI," and "RES," with "QoI" highlighted in blue. The main content area titled "Quantities of Interest" contains a table with a header row listing "Variable Name" and "Length," with one entry below labeled "stress" and a corresponding length value "342." Two buttons labeled "Add" and "Remove" are visible above the table. The overall color scheme is shades of blue and grey.
    :figclass: align-center
 
 5. Next click on the **Run** button. This will cause the backend application to launch the **Dakota** engine, which performs calibration using the selected algorithm in the **UQ** panel. When done the **RES** tab will be selected and the results will be displayed as shown in the figure below. The results show a summary of the best-fit values of each parameters.
@@ -106,6 +111,7 @@ For each variable, specify the lower bounds, upper bounds and initial point from
 
 .. figure:: figures/qf-0018-RES1.png
    :align: center
+   :alt: Screenshot of a software interface with a list of parameters and their respective 'Best Parameter' values. The categories listed on the left side are 'UQ', 'FEM', 'RV', 'QoI', with 'RES' highlighted in blue. Each category has sub-items listed as 'Name' with corresponding numerical values on the right. Tabs labeled 'Summary', 'General', and 'Data Values' are visible across the top of the interface.
    :figclass: align-center
 
 
@@ -113,6 +119,7 @@ If the user selects the **Data Values** tab in the results panel, they will be p
 
 .. figure:: figures/qf-0018-RES2.png
    :align: center
+   :alt: Screenshot of a computer interface with a scatter plot graph and a data table. The graph, labeled "Stress vs. Run #," displays a series of blue dots representing stress values across different runs plotted on the Y-axis, with run numbers on the X-axis. The data table below the graph contains columns with headers such as "Run #," "fy," "E," "b," "cR1," "cR2," "a1," "a3," "stress_1," "stress_2," "stress_3," "stress_4," and other parameters, with numerical values listed for each column corresponding to eight runs. There are tabs labeled "Summary," "General," and "Data Values" above the graph, indicating different views or data categories within the software. The sidebar on the left includes buttons for "UQ," "FEM," "RV," "QoI," and a selected "RES" tab, suggesting different modules or sections of the application. The interface indicates functionalities like saving data with a "Save Data" button visible.
    :figclass: align-center
 
 
@@ -120,9 +127,11 @@ The best-fit obtained is shown in the figures below:
 
 .. figure:: figures/qf-0018-StressResults.png
    :align: center
+   :alt: A line graph displaying stress over time with stress in megapascals (MPa) on the vertical axis ranging from -600 MPa to 600 MPa and time on the horizontal axis. Two lines are present: the 'Data' line in blue, which fluctuates rapidly with a sinusoidal pattern, and the 'Best fit' line in red, which follows a broader, smoother sinusoidal shape. The graph suggests the best fit line is a smoothed approximation of the more erratic data line.
    :figclass: align-center
 
 .. figure:: figures/qf-0018-DeterministicCalibrationResults.png
    :align: center
+   :alt: A graph displaying a cyclic stress-strain curve with stress in megapascals (MPa) on the y-axis ranging from -600 to 600 MPa and strain on the x-axis ranging from -0.05 to 0.02. There are multiple overlapping loops in the graph indicating the material's response to repeated loading and unloading cycles. The graph features two sets of data shown in dashed blue lines and solid red lines with markers, indicating possibly two different material conditions or testing sets.
    :figclass: align-center
    
