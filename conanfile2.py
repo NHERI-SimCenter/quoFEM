@@ -1,5 +1,5 @@
 from conan import ConanFile
-from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps, cmake_layout
+from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps
 from conan.tools.files import copy
 import os
 
@@ -17,11 +17,8 @@ class QuoFEMConan(ConanFile):
         if self.settings.os != "Linux":
             self.requires("libcurl/8.12.1")
 
-    def layout(self):
-        cmake_layout(self)
-
-    # create the toolchain and config files for CMake        
     def generate(self):
+        # create the toolchain and config files for CMake        
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self)

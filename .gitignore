@@ -84,3 +84,4 @@ applications/applications
 */latex/
 
 *.vscode
+build*
