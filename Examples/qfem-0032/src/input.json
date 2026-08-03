@@ -3,7 +3,7 @@
         "FEM": {
             "Application": "OpenSees",
             "ApplicationData": {
-                "MS_Path": "{Current_Dir}",
+                "MS_Path": "{Current_Dir}/",
                 "mainScript": "N10_T3_ModifiedCase1.tcl",
                 "postprocessScript": ""
             }
