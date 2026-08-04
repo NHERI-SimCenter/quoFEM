@@ -379,7 +379,7 @@ for {set i 1} {$i <= $numLayers} {incr i} {
 # fix 1 1 1 0
 
 constraints Transformation
-test        NormDispIncr 1e-4 35 1
+test        NormDispIncr 1e-4 35 
 algorithm   Newton
 numberer    RCM
 system      SparseGeneral
@@ -467,7 +467,7 @@ set beta   0.25
 
 
 constraints Transformation
-test        NormDispIncr 1.0e-4 35 1
+test        NormDispIncr 1.0e-4 35 
 algorithm   Newton
 numberer    RCM
 system      SparseGeneral

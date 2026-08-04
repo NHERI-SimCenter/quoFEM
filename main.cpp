@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, and Version
     QCoreApplication::setApplicationName("quoFEM");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("4.3.3");
+    QCoreApplication::setApplicationVersion("4.3.4");
 
     //
     // set up logging of output messages for user debugging
