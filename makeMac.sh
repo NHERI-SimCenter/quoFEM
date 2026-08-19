@@ -154,7 +154,12 @@ rm -fr "${APP_DIR}/Contents/MacOS/Examples/.archive"
 rm -fr "${APP_DIR}/Contents/MacOS/Examples/.aurore"
 rm -fr "${APP_DIR}/Contents/MacOS/Examples/.gitignore"
 find "${APP_DIR}/Contents/MacOS/Examples" -type d -name "figures" -prune -exec rm -rf {} +
+find "${APP_DIR}/Contents/MacOS/Examples" -type d -name "verification" -prune -exec rm -rf {} +
 find "${APP_DIR}/Contents/MacOS/Examples" -type f -name "*.rst" -delete
+find "${APP_DIR}/Contents/MacOS/Examples" -type f -name "*.yaml" -delete
+find "${APP_DIR}/Contents/MacOS/Examples" -type f -name "*.png" -delete
+find "${APP_DIR}/Contents/MacOS/Examples" -type f -name "*.zip" -delete
+
 
 if [[ "$RELEASE" != "YES" ]]; then
 
@@ -210,6 +215,9 @@ else
     source userID.sh    
 fi
 
+
+#msg "stripping extended attributes from $APP_DIR before signing"
+#xattr -cr "$APP_DIR" || die "FAIL: xattr -cr failed."
 
 #
 # now codesign
