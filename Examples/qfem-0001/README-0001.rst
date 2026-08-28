@@ -18,6 +18,7 @@ vertical displacement at node 3 using Latin hypercube sampling.
 
 .. figure:: qfem-0001.png
    :alt: Truss schematic diagram
+   :alt: This is a technical drawing of a truss structure for engineering analysis. It includes numerical labels at key points and shows the dimensions of the truss, with lengths marked as 4 meters. There are also two downward pointing forces, labelled P, applied at two nodes of the truss. The logo for OpenSees, which is software for structural engineering simulation, appears in the upper right corner of the image.
    :width: 400px
    :align: center
 

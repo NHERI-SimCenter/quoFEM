@@ -16,6 +16,7 @@ the following simplified finite element model of a steel building.
 
 .. figure:: qfem-0007.png
    :alt: Schematic model of frame.
+   :alt: A technical diagram of a structural system with two vertical members connected by three horizontal members, creating a rectangular frame. The diagram is annotated with mathematical symbols indicating that it is a problem from structural engineering or mechanics. Numbers 1 through 6 indicate different points or joints in the structure, where forces or displacements might be applied or measured, such as "u1" and "u2" at the top horizontal member. "h = 10'" marks the heights of the vertical members, and a length of "33' - 4"" is noted at the bottom horizontal member. There are equations relating constants k1, k2, and terms with E, I, etc., which suggests these are expressions for stiffness or related properties. Three coordinate axes labeled X, Y, and Z are shown in the lower left corner, providing a reference for the spatial orientation of the structure.
    :width: 300px
 
    Schematic model of frame.

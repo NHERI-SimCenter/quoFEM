@@ -20,6 +20,7 @@ The stress-strain data generated synthetically from simulation of a cyclic test 
 
 .. figure:: figures/qf-0019-StressStrainData.png
    :align: center
+   :alt: A graph displaying a series of cyclic stress-strain curves with stress measured in MPa on the y-axis ranging from -600 to 600 MPa and strain on the x-axis ranging from -0.05 to 0.02. The curves exhibit hysteresis loops indicative of material behavior under cyclic loading, showing the material's elastic and plastic response with increasing amplitude in each successive loop. The graph is plotted in blue with dotted line patterns illustrating different cycles.
    :width: 400
    :figclass: align-center
    
@@ -32,6 +33,7 @@ This sample stress-strain data was obtained corresponding to a randomized strain
 
 .. figure:: figures/qf-0019-StrainHistory.png
    :align: center
+   :alt: A line graph displaying a fluctuating strain over time. The horizontal axis is labeled "Timestep" and ranges from 0 to 300, while the vertical axis is labeled "Strain" and ranges from -0.05 to 0.02. The line, depicted in blue with marked data points, shows a repeating pattern of peaks and troughs, with the peaks reaching towards the upper limit of the Y-axis and the troughs dipping close to the lower limit. The wave-like pattern suggests a periodic or oscillatory behavior in the data represented.
    :width: 400
    :figclass: align-center
    
@@ -44,6 +46,7 @@ Six such strain histories, shown in :numref:`figCouponStrainHistories` are used 
 
 .. figure:: figures/StrainHistories.png
    :align: center
+   :alt: The image displays a series of six line graphs titled SH1-L, SH2-L, SH3-L, SH4-L, SH1-H, and SH2-H, plotted over time in seconds. The y-axes represent a measure with units [-], ranging from about -0.0750 to 0.0750, with each graph showing a fluctuating line that indicates varying levels of a particular variable over time. The first four graphs have a time axis up to 500 seconds, while the last two are up to 30 seconds. The lines show a wave-like pattern, suggesting they may represent sensor data or some physical measurements over time.
    :width: 400
    :figclass: align-center
    
