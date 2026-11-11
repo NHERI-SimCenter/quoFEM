@@ -85,3 +85,4 @@ applications/applications
 
 *.vscode
 build*
+CMakePresets.json
